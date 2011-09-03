@@ -1,0 +1,29 @@
+#ifndef CALATK_CONFIG_H
+#define CALATK_CONFIG_H
+
+/**
+ * CALATKConfig.h
+ *
+ * This common header is included in all CALATK files and is used to set up
+ * global options.
+ */
+
+/** Constants to distinguish supported operating systems */
+#define OS_UNKNOWN 0
+#define OS_UNIX 1
+#define OS_WINDOWS 2
+
+/** Configure current os */
+#cmakedefine01 CALATK_SYSTEM_UNIX
+#cmakedefine01 CALATK_SYSTEM_WINDOWS
+
+#if CALATK_SYSTEM_UNIX
+#define HOST_OS OS_UNIX
+#elif CALATK_SYSTEM_WINDOWS
+#define HOST_OS OS_WINDOWS
+#else
+#define HOST_OS OS_UNKNOWN
+#endif
+
+
+#endif

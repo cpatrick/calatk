@@ -1,0 +1,26 @@
+#-----------------------------------------------------------------------------
+#
+# CALATKConfig.cmake - CALATK CMake configuration file for external projects.
+#
+# This file is configured by CALATK and used by the UseCALATK.cmake module
+# to load CALATK's settings for an external project.
+
+# The CALATK include file directories.
+set(CALATK_INCLUDE_DIRS "@CALATK_INCLUDE_DIRS_CONFIG@")
+
+# The CALATK library directories.
+set(CALATK_LIBRARY_DIRS "@CALATK_LIBRARY_DIRS_CONFIG@")
+
+# The location of the UseITK.cmake file.
+set(CALATK_USE_FILE "@CALATK_USE_FILE@")
+
+# A list of all libraries for CALATK.  Those listed here should
+# automatically pull in their dependencies.
+set(CALATK_LIBRARIES
+  ITKCommon
+  ITKIO
+  itksys
+  @FFTW_LIB@
+  CALATK
+)
+
