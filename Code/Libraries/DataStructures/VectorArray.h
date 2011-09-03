@@ -76,7 +76,7 @@ public:
    *
    * @param source - the source array to copy from
    */
-  VectorArray(VectorArray<T,unsigned int>* source);
+  VectorArray(VectorArray<T,VImageDimension>* source);
   
   /**
    * Destructor that frees up all memory
@@ -173,7 +173,7 @@ public:
    *
    * @param source - the source array to copy
    */
-  void copy(VectorArray<T,unsigned int>* source);
+  void copy(VectorArray<T,VImageDimension>* source);
   
   /**
    * Method that returns the size in the x dimension

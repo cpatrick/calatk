@@ -158,19 +158,14 @@ inline T& VectorArray<T, VImageDimension>::getValue(unsigned int x, unsigned int
   if (x >= __sizeX || x < 0) {
     throw std::out_of_range("x subscript out of range");
   }
-  if (y >= __sizeY || y < 0) {
-    throw std::out_of_range("y subscript out of range");
-  }
-  if (z >= __sizeZ || z < 0) {
-    throw std::out_of_range("z subscript out of range");
-  }
+
   if (d >= __dim || d < 0) {
     throw std::out_of_range("d subscript out of range");
   }
 #endif
   
   // if nothing wrong, return the data
-  return __dataPtr[__sub2ind1D(x,y,z,d)];
+  return __dataPtr[__sub2ind1D(x,d)];
 }
 
 //

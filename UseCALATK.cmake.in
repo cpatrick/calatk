@@ -5,14 +5,14 @@
 # obtained from CALATKConfig.cmake.
 #
 
-# Add compiler flags needed to use FRAT.
+# Add compiler flags needed to use CALATK.
 if (NOT WIN32 OR NOT CMAKE_GENERATOR MATCHES Visual*)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp")
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 endif()
 
-# Add include directories needed to use FRAT.
+# Add include directories needed to use CALATK.
 include_directories(BEFORE ${CALATK_INCLUDE_DIRS})
 
-# Add link directories needed to use FRAT.
+# Add link directories needed to use CALATK.
 link_directories(${CALATK_LIBRARY_DIRS})

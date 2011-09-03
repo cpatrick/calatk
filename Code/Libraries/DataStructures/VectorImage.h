@@ -20,9 +20,11 @@ namespace CALATK
 {
 
 template <class T, unsigned int VImageDimension=3, class TSpace = T >
-class VectorImage : public VectorArray<T,VimageDimension> {
+class VectorImage : public VectorArray<T,VImageDimension> {
 
 public:
+
+  typedef VectorArray<T,VImageDimension> Superclass;
 
   /********************************
    * Constructors and Destructors *
@@ -125,12 +127,12 @@ public:
   /**
    * Method to set the origin
    */
-  void setOrigin(ITKVectorImage<T,VImageDimension>::Type::PointType origin);
+  void setOrigin( typename ITKVectorImage<T,VImageDimension>::Type::PointType origin);
   
   /**
    * Method to set the direction
    */
-  void setDirection(ITKVectorImage<T,VImageDimension>::Type::DirectionType direction);
+  void setDirection( typename ITKVectorImage<T,VImageDimension>::Type::DirectionType direction);
   
   /**
    * Method to get the x spacing
@@ -170,12 +172,12 @@ public:
   /**
    * Method to get the origin
    */
-  ITKVectorImage< T, VImageDimension >::Type::PointType::Type getOrigin();
+  typename ITKVectorImage< T, VImageDimension >::Type::PointType getOrigin();
   
   /**
    * Method to get the direction
    */
-  ITKVectorImage< T, VImageDimension >::Type::DirectionType::Type getDirection();
+  typename ITKVectorImage< T, VImageDimension >::Type::DirectionType getDirection();
   
   /**
    * Method that multiplys the elements of the image by a constant
@@ -241,8 +243,8 @@ protected:
   TSpace __spaceZ;
 
   /** ITK Image meta-data */
-  ITKVectorImage< T, VImageDimension >::Type::PointType::Type __origin;
-  ITKVectorImage< T, VImageDimension >::Type::DirectionType::Type __direction;
+  typename ITKVectorImage< T, VImageDimension >::Type::PointType __origin;
+  typename ITKVectorImage< T, VImageDimension >::Type::DirectionType __direction;
 };
 
 #include "VectorImage.txx"

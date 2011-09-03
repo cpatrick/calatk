@@ -5,13 +5,14 @@
 // empty constructor
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-VectorImage< T, VImageDimension, TSpace >::VectorImage() {
-  __sizeX = 0;
-  __sizeY = 0;
-  __sizeZ = 0;
-  __dim = 0;
-  __length = 0;
-  __dataPtr = 0;
+VectorImage< T, VImageDimension, TSpace >::VectorImage()
+{
+  Superclass::__sizeX = 0;
+  Superclass::__sizeY = 0;
+  Superclass::__sizeZ = 0;
+  Superclass::__dim = 0;
+  Superclass::__length = 0;
+  Superclass::__dataPtr = 0;
   __spaceFactor = 1;
   __spaceX = 0;
   __spaceY = 0;
@@ -25,7 +26,7 @@ VectorImage< T, VImageDimension, TSpace >::VectorImage() {
 //
 template <class T, unsigned int VImageDimension, class TSpace >
 VectorImage< T, VImageDimension, TSpace >::VectorImage( unsigned int dim) 
-  : VectorArray( dim )
+  : VectorArray<T,VImageDimension>::VectorArray( dim )
 {
   // all the other data is filled in by the constructor of the superclass
   __spaceFactor = 1;  // FIXME: there was a default spacing of 0.01 here. Make sure what this is needed for
@@ -41,7 +42,7 @@ VectorImage< T, VImageDimension, TSpace >::VectorImage( unsigned int dim)
 //
 template <class T, unsigned int VImageDimension, class TSpace >
 VectorImage< T, VImageDimension, TSpace >::VectorImage(unsigned int sizeX, unsigned int dim) 
-  : VectorArray( sizeX, dim )
+  : VectorArray<T,VImageDimension>::VectorArray( sizeX, dim )
 {
   // all the other data is filled in by the constructor of the superclass
   __spaceFactor = 1;  // FIXME: there was a default spacing of 0.01 here. Make sure what this is needed for
@@ -57,7 +58,7 @@ VectorImage< T, VImageDimension, TSpace >::VectorImage(unsigned int sizeX, unsig
 //
 template <class T, unsigned int VImageDimension, class TSpace >
 VectorImage< T, VImageDimension, TSpace >::VectorImage(unsigned int sizeX, unsigned int sizeY, unsigned int dim) 
-  : VectorArray( sizeX, sizeY, dim )
+  : VectorArray<T,VImageDimension>::VectorArray( sizeX, sizeY, dim )
 {
   // all the other data is filled in by the constructor of the superclass
   __spaceFactor = 1;  // FIXME: there was a default spacing of 0.01 here. Make sure what this is needed for
@@ -73,7 +74,7 @@ VectorImage< T, VImageDimension, TSpace >::VectorImage(unsigned int sizeX, unsig
 //
 template <class T, unsigned int VImageDimension, class TSpace >
 VectorImage< T, VImageDimension, TSpace >::VectorImage(unsigned int sizeX, unsigned int sizeY, unsigned int sizeZ, unsigned int dim) 
-  : VectorArray( sizeX, sizeY, sizeZ, dim )
+  : VectorArray<T,VImageDimension>::VectorArray( sizeX, sizeY, sizeZ, dim )
 {
   // all the other data is filled in by the constructor of the superclass
   __spaceFactor = 1;  // FIXME: there was a default spacing of 0.01 here. Make sure what this is needed for
@@ -89,7 +90,7 @@ VectorImage< T, VImageDimension, TSpace >::VectorImage(unsigned int sizeX, unsig
 //
 template <class T, unsigned int VImageDimension, class TSpace >
 VectorImage< T, VImageDimension, TSpace >::VectorImage(VectorImage* source) 
-  : VectorArray( source )
+  : VectorArray<T,VImageDimension>::VectorArray( source )
 {
   __spaceFactor = source->getSpaceFactor();
   __spaceX = source->getSpaceX();
@@ -105,8 +106,8 @@ VectorImage< T, VImageDimension, TSpace >::VectorImage(VectorImage* source)
 //
 template <class T, unsigned int VImageDimension, class TSpace >
 VectorImage< T, VImageDimension, TSpace >::~VectorImage() {
-  
-  __deallocate();
+
+  Superclass::__deallocate();
 }
 
 
@@ -119,9 +120,8 @@ VectorImage< T, VImageDimension, TSpace >::~VectorImage() {
 //
 template <class T, unsigned int VImageDimension, class TSpace >
 void VectorImage< T, VImageDimension, TSpace >::copy(VectorImage* source) 
-  : VectorArray<T,VImageDimension>::copy( source )
 {
-
+  VectorArray<T,VImageDimension>::copy( source );
   __spaceFactor = source->getSpaceFactor();
   __spaceX = source->getSpaceX();
   __spaceY = source->getSpaceY();
@@ -158,6 +158,7 @@ void VectorImage< T, VImageDimension, TSpace >::setSpaceY(TSpace spaceY) {
 //
 // setSpaceZ
 //
+template <class T, unsigned int VImageDimension, class TSpace >
 void VectorImage< T, VImageDimension, TSpace >::setSpaceZ(TSpace spaceZ) {
   __spaceZ = spaceZ;
 }
@@ -166,7 +167,7 @@ void VectorImage< T, VImageDimension, TSpace >::setSpaceZ(TSpace spaceZ) {
 // setOrigin
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImage< T, VImageDimension, TSpace >::setOrigin(ITKVectorImage< T, VImageDimension >::Type::PointType origin) {
+void VectorImage< T, VImageDimension, TSpace >::setOrigin( typename ITKVectorImage< T, VImageDimension >::Type::PointType origin) {
   __origin = origin;
 }
 
@@ -174,7 +175,7 @@ void VectorImage< T, VImageDimension, TSpace >::setOrigin(ITKVectorImage< T, VIm
 // setDirection
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImage< T, VImageDimension, TSpace >::setDirection(ITKVectorImage< T, VImageDimension>::Type::DirectionType direction) {
+void VectorImage< T, VImageDimension, TSpace >::setDirection( typename ITKVectorImage< T, VImageDimension>::Type::DirectionType direction) {
   __direction = direction;
 }
 
@@ -238,7 +239,7 @@ TSpace VectorImage< T, VImageDimension, TSpace >::getSpaceZ() {
 // getOrigin
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-ITKVectorImage< T, VImageDimension>::Type::PointType VectorImage< T, VImageDimension, TSpace >::getOrigin() {
+typename ITKVectorImage< T, VImageDimension>::Type::PointType VectorImage< T, VImageDimension, TSpace >::getOrigin() {
   return __origin;
 }
 
@@ -246,7 +247,7 @@ ITKVectorImage< T, VImageDimension>::Type::PointType VectorImage< T, VImageDimen
 // getDirection
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-ITKVectorImage< T, VImageDimension>::Type::DirectionType VectorImage< T, VImageDimension, TSpace >::getDirection() {
+typename ITKVectorImage< T, VImageDimension>::Type::DirectionType VectorImage< T, VImageDimension, TSpace >::getDirection() {
   return __direction;
 }
 
@@ -256,9 +257,9 @@ ITKVectorImage< T, VImageDimension>::Type::DirectionType VectorImage< T, VImageD
 template <class T, unsigned int VImageDimension, class TSpace >
 void VectorImage< T, VImageDimension, TSpace >::multConst(T c) {
 
-  for ( unsigned int uiI = 0; uiI < __length; ++uiI )
+  for ( unsigned int uiI = 0; uiI < Superclass::__length; ++uiI )
     {
-    setValue( uiI, getValue( uiI ) * c );
+    this->setValue( uiI, this->getValue( uiI ) * c );
     } 
 
 }
@@ -271,14 +272,14 @@ void VectorImage< T, VImageDimension, TSpace >::multCellwise(VectorImage* im) {
 
 #ifdef DEBUG
   // make sure they are the same size
-  if (im->getSizeX() != __sizeX || im->getSizeY() != __sizeY || im->getSizeZ() != __sizeZ || im->getDim() != __dim) {
+  if (im->getSizeX() != Superclass::__sizeX || im->getSizeY() != Superclass::__sizeY || im->getSizeZ() != Superclass::__sizeZ || im->getDim() != Superclass::__dim) {
   throw std::invalid_argument("Images are of different sizes");
   }
 #endif
 
-  for ( unsigned int uiI = 0; uiI < __length; ++uiI )
+  for ( unsigned int uiI = 0; uiI < Superclass::__length; ++uiI )
     {
-    setValue( uiI, getValue( uiI ) * im->getValue( uiI ) );
+    this->setValue( uiI, this->getValue( uiI ) * im->getValue( uiI ) );
     } 
 
 }
@@ -289,9 +290,9 @@ void VectorImage< T, VImageDimension, TSpace >::multCellwise(VectorImage* im) {
 template <class T, unsigned int VImageDimension, class TSpace >
 void VectorImage< T, VImageDimension, TSpace >::addConst(T c) {
   
-  for ( unsigned int uiI = 0; uiI < __length; ++uiI )
+  for ( unsigned int uiI = 0; uiI < Superclass::__length; ++uiI )
     {
-    setValue( uiI, getValue( uiI ) + c );
+    this->setValue( uiI, this->getValue( uiI ) + c );
     } 
 
 }
@@ -304,14 +305,14 @@ void VectorImage< T, VImageDimension, TSpace >::addImage(VectorImage* im) {
 
 #ifdef DEBUG
   // make sure they are the same size
-  if (im->getSizeX() != __sizeX || im->getSizeY() != __sizeY || im->getSizeZ() != __sizeZ || im->getDim() != __dim) {
+  if (im->getSizeX() != Superclass::__sizeX || im->getSizeY() != Superclass::__sizeY || im->getSizeZ() != Superclass::__sizeZ || im->getDim() != Superclass::__dim) {
     throw std::invalid_argument("Images are of different sizes");
   }
 #endif
   
-  for ( unsigned int uiI = 0; uiI < __length; ++uiI )
+  for ( unsigned int uiI = 0; uiI < Superclass::__length; ++uiI )
     {
-    setValue( uiI, getValue( uiI ) + im->getValue( uiI ) );
+    this->setValue( uiI, this->getValue( uiI ) + im->getValue( uiI ) );
     } 
 
 }
@@ -370,26 +371,26 @@ void VectorImage< T, VImageDimension, TSpace >::print2D(std::ostream& output) {
 template <class T, unsigned int VImageDimension, class TSpace >
 void VectorImage< T, VImageDimension, TSpace >::print3D(std::ostream& output) {
 
-  for (unsigned int z = 0; z < __sizeZ; z++) {
+  for (unsigned int z = 0; z < Superclass::__sizeZ; z++) {
   
   output << "**slice " << z << "**\n";
   
     // store vectors as strings
-    std::vector<std::string> strings(__sizeX * __sizeY); //std::string strings[__sizeX * __sizeY];
+    std::vector<std::string> strings(Superclass::__sizeX * Superclass::__sizeY); //std::string strings[__sizeX * __sizeY];
     unsigned int maxLen= 0;
     
-    for (unsigned int y = 0; y < __sizeY; y++) {
-      for (unsigned int x = 0; x < __sizeX; x++) {
+    for (unsigned int y = 0; y < Superclass::__sizeY; y++) {
+      for (unsigned int x = 0; x < Superclass::__sizeX; x++) {
         
         // write the string for this entry
         std::ostringstream o;
-        unsigned int idx = y*(__sizeX) + x;
+        unsigned int idx = y*(Superclass::__sizeX) + x;
         
         o << "[";
         
-        for (unsigned int d = 0; d < __dim; d++) {
-          o << getValue(x,y,z,d);
-          if (d < __dim-1) {
+        for (unsigned int d = 0; d < Superclass::__dim; d++) {
+          o << this->getValue(x,y,z,d);
+          if (d < Superclass::__dim-1) {
             o << ",";
           }
         }
@@ -402,10 +403,10 @@ void VectorImage< T, VImageDimension, TSpace >::print3D(std::ostream& output) {
     }
     
     // output all strings of the max length
-    for (unsigned int y = 0; y < __sizeY; y++) {
-      for (unsigned int x = 0; x < __sizeX; x++) {
+    for (unsigned int y = 0; y < Superclass::__sizeY; y++) {
+      for (unsigned int x = 0; x < Superclass::__sizeX; x++) {
         
-        std::string s(strings[y*__sizeX + x]);
+        std::string s(strings[y*Superclass::__sizeX + x]);
         while (s.length() < maxLen) {
           s.append(" ");
         }

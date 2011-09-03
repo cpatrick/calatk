@@ -9,7 +9,7 @@
 // empty constructor
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-VectorField< T, VImageDimension, TSpace >::VectorField() : VectorImage() 
+VectorField< T, VImageDimension, TSpace >::VectorField() : VectorImage<T, VImageDimension, TSpace>::VectorImage() 
 {}
 
 //
@@ -17,23 +17,23 @@ VectorField< T, VImageDimension, TSpace >::VectorField() : VectorImage()
 //
 
 template <class T, unsigned int VImageDimension, class TSpace >
-VectoField< T, VImageDimension, TSpace >::VectorField(unsigned int sizeX)
-  : VectorImage(sizeX, 1) {}
+VectorField< T, VImageDimension, TSpace >::VectorField(unsigned int sizeX)
+  : VectorImage<T, VImageDimension, TSpace >::VectorImage(sizeX, 1) {}
 
 template <class T, unsigned int VImageDimension, class TSpace >
-VectoField< T, VImageDimension, TSpace >::VectorField(unsigned int sizeX, unsigned int sizeY )
-  : VectorImage(sizeX, sizeY, 2) {}
+VectorField< T, VImageDimension, TSpace >::VectorField(unsigned int sizeX, unsigned int sizeY )
+  : VectorImage<T, VImageDimension, TSpace >::VectorImage(sizeX, sizeY, 2) {}
 
 template <class T, unsigned int VImageDimension, class TSpace >
-VectoField< T, VImageDimension, TSpace >::VectorField(unsigned int sizeX, unsigned int sizeY, unsigned int sizeZ) 
-  : VectorImage(sizeX, sizeY, sizeZ, 3) {}
+VectorField< T, VImageDimension, TSpace >::VectorField(unsigned int sizeX, unsigned int sizeY, unsigned int sizeZ) 
+  : VectorImage<T, VImageDimension, TSpace >::VectorImage(sizeX, sizeY, sizeZ, 3) {}
 
 //
 // copy constructor
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-VectoField< T, VImageDimension, TSpace >::VectorField(VectorField* source) 
-  : VectorImage(source) {}
+VectorField< T, VImageDimension, TSpace >::VectorField(VectorField* source) 
+  : VectorImage<T, VImageDimension, TSpace >::VectorImage(source) {}
 
 
 ////////////////////
@@ -44,108 +44,108 @@ VectoField< T, VImageDimension, TSpace >::VectorField(VectorField* source)
 // 1D get x
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectoField< T, VImageDimension, TSpace >::getX(unsigned int x) {
+T VectorField< T, VImageDimension, TSpace >::getX(unsigned int x) {
 
-  return getValue(x,0);
+  return this->getValue(x,0);
 }
 
 //
 // 2D get x
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectoField< T, VImageDimension, TSpace >::getX(unsigned int x, unsigned int y) {
+T VectorField< T, VImageDimension, TSpace >::getX(unsigned int x, unsigned int y) {
 
-  return getValue(x,y,0);
+  return this->getValue(x,y,0);
 }
 
 //
 // 3D get x
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectoField< T, VImageDimension, TSpace >::getX(unsigned int x, unsigned int y, unsigned int z) {
+T VectorField< T, VImageDimension, TSpace >::getX(unsigned int x, unsigned int y, unsigned int z) {
 
-  return getValue(x,y,z,0);
+  return this->getValue(x,y,z,0);
 }
 
 //
 // 2D get y
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectoField< T, VImageDimension, TSpace >::getY(unsigned int x, unsigned int y) {
+T VectorField< T, VImageDimension, TSpace >::getY(unsigned int x, unsigned int y) {
 
-  return getValue(x,y,1);
+  return this->getValue(x,y,1);
 }
 
 //
 // 3D get y
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectoField< T, VImageDimension, TSpace >::getY(unsigned int x, unsigned int y, unsigned int z) {
+T VectorField< T, VImageDimension, TSpace >::getY(unsigned int x, unsigned int y, unsigned int z) {
 
-  return getValue(x,y,z,1);
+  return this->getValue(x,y,z,1);
 }
 
 //
 // 3D get z
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectoField< T, VImageDimension, TSpace >::getZ(unsigned int x, unsigned int y, unsigned int z) {
+T VectorField< T, VImageDimension, TSpace >::getZ(unsigned int x, unsigned int y, unsigned int z) {
 
-  return getValue(x,y,z,2);
+  return this->getValue(x,y,z,2);
 }
 
 //
 // 1D set x
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectoField< T, VImageDimension, TSpace >::setX(unsigned int x, T value) {
+void VectorField< T, VImageDimension, TSpace >::setX(unsigned int x, T value) {
 
-  setValue(x,0, value);
+  this->setValue(x,0, value);
 }
 
 //
 // 2D set x
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectoField< T, VImageDimension, TSpace >::setX(unsigned int x, unsigned int y, T value) {
+void VectorField< T, VImageDimension, TSpace >::setX(unsigned int x, unsigned int y, T value) {
 
-  setValue(x,y,0, value);
+  this->setValue(x,y,0, value);
 }
 
 //
 // 3D set x
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectoField< T, VImageDimension, TSpace >::setX(unsigned int x, unsigned int y, unsigned int z, T value) {
+void VectorField< T, VImageDimension, TSpace >::setX(unsigned int x, unsigned int y, unsigned int z, T value) {
 
-  setValue(x,y,z,0, value);
+  this->setValue(x,y,z,0, value);
 }
 
 //
 // 2D set y
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectoField< T, VImageDimension, TSpace >::setY(unsigned int x, unsigned int y, T value) {
+void VectorField< T, VImageDimension, TSpace >::setY(unsigned int x, unsigned int y, T value) {
 
-  setValue(x,y,1, value);
+  this->setValue(x,y,1, value);
 }
 
 //
 // 3D set y
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectoField< T, VImageDimension, TSpace >::setY(unsigned int x, unsigned int y, unsigned int z, T value) {
+void VectorField< T, VImageDimension, TSpace >::setY(unsigned int x, unsigned int y, unsigned int z, T value) {
 
-  setValue(x,y,z,1, value);
+  this->setValue(x,y,z,1, value);
 }
 
 //
 // 3D set z
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectoField< T, VImageDimension, TSpace >::setZ(unsigned int x, unsigned int y, unsigned int z, T value) {
+void VectorField< T, VImageDimension, TSpace >::setZ(unsigned int x, unsigned int y, unsigned int z, T value) {
 
-  setValue(x,y,z,2, value);
+  this->setValue(x,y,z,2, value);
 }
 
 #endif
