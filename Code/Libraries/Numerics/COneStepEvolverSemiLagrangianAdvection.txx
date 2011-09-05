@@ -1,11 +1,11 @@
-#ifndef C_ONESTEPEVOLVERSEMILAGRANGIAN_H
-#define C_ONESTEPEVOLVERSEMILAGRANGIAN_H
+#ifndef C_ONESTEPEVOLVER_SEMILAGRANGIAN_ADVECTION_H
+#define C_ONESTEPEVOLVER_SEMILAGRANGIAN_ADVECTION_H
 
 //
 // empty constructor
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-COneStepEvolverSemiLagrangian<T, VImageDimension, TSpace>::COneStepEvolverSemiLagrangian()
+COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::COneStepEvolverSemiLagrangianAdvection()
 {
 }
 
@@ -13,7 +13,7 @@ COneStepEvolverSemiLagrangian<T, VImageDimension, TSpace>::COneStepEvolverSemiLa
 // Performs a step for a 2D image
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void COneStepEvolverSemiLagrangian<T, VImageDimension, TSpace>::PerformStep2D(  VectorFieldType* v, VectorImageType* In, VectorImageType* Inp1, T dt )
+void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::PerformStep2D(  VectorFieldType* v, VectorImageType* In, VectorImageType* Inp1, T dt )
 {
 
   //
@@ -69,7 +69,7 @@ void COneStepEvolverSemiLagrangian<T, VImageDimension, TSpace>::PerformStep2D(  
 // Performs a step for a 3D image
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void COneStepEvolverSemiLagrangian<T, VImageDimension, TSpace>::PerformStep3D(  VectorFieldType* v, VectorImageType* In, VectorImageType* Inp1, T dt )
+void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::PerformStep3D(  VectorFieldType* v, VectorImageType* In, VectorImageType* Inp1, T dt )
 {
 
   //
@@ -129,7 +129,7 @@ void COneStepEvolverSemiLagrangian<T, VImageDimension, TSpace>::PerformStep3D(  
 
 
 template <class T, unsigned int VImageDimension, class TSpace >
-virtual void COneStepEvolverSemiLagrangian<T, VImageDimension, TSpace>::PerformStep(  VectorFieldType* v, VectorImageType* In, VectorImageType* Inp1, T dt )
+virtual void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::PerformStep(  VectorFieldType* v, VectorImageType* In, VectorImageType* Inp1, T dt )
 {
   switch ( VImageDimension )
     {
@@ -138,7 +138,7 @@ virtual void COneStepEvolverSemiLagrangian<T, VImageDimension, TSpace>::PerformS
     case 3:
       PerformStep3D( v, In, Inp1, dt );
     default:
-      std::runtime_error("COneStepEvolverSemiLagrangian: Cannot solve for this dimension.");
+      std::runtime_error("COneStepEvolverSemiLagrangianAdvection: Cannot solve for this dimension.");
     }
 }
 

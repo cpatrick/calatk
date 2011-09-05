@@ -1,12 +1,13 @@
-#ifndef C_ONESTEPEVOLVERSEMILAGRANGIAN_H
-#define C_ONESTEPEVOLVERSEMILAGRANGIAN_H
+#ifndef C_ONESTEPEVOLVER_SEMILAGRANGIAN_ADVECTION_H
+#define C_ONESTEPEVOLVER_SEMILAGRANGIAN_ADVECTION_H
 
 #include <stdexcept>
 
 #include "COneStepEvolver.h"
 
 /**
- * COneStepEvolverSemiLagrangian.h -- implementation of a one-step evolver using a semi-lagrangian approach
+ * COneStepEvolverSemiLagrangianAdvection.h -- implementation of a one-step advection 
+ * evolver using a semi-lagrangian approach
  *
  */
 
@@ -16,7 +17,7 @@ namespace CALATK
 {
 
 template <class T, unsigned int VImageDimension=3, class TSpace = T >
-class COneStepEvolverSemiLagrangian : public COneStepEvolver< T, VImageDimension, TSpace > {
+class COneStepEvolverSemiLagrangianAdvection : public COneStepEvolver< T, VImageDimension, TSpace > {
 
 public:
 
@@ -27,7 +28,7 @@ public:
   /**
    * Empty Constructor
    */
-  COneStepEvolverSemiLagrangian();
+  COneStepEvolverSemiLagrangianAdvection();
 
   virtual void PerformStep( VectorFieldType* v, VectorImageType* In, VectorImageType* Inp1, T dt );
 
@@ -40,7 +41,7 @@ private:
 
 };
 
-#include "COneStepEvolverSemiLagrangian.txx"
+#include "COneStepEvolverSemiLagrangianAdvection.txx"
 
 } // end namespace
 
