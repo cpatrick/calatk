@@ -1,13 +1,11 @@
 #ifndef VECTOR_IMAGE_UTILS_TXX
 #define VECTOR_IMAGE_UTILS_TXX
 
-#include "VectorImage3DUtils.h"
-
 //
 // maxAll
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImageUtils< T, VImageDimension, TSpace >::maxAll(VectorImage* in) 
+T VectorImageUtils< T, VImageDimension, TSpace >::maxAll(VectorImageType* in) 
 {
   unsigned int len = in->getLength();
 
@@ -29,7 +27,7 @@ T VectorImageUtils< T, VImageDimension, TSpace >::maxAll(VectorImage* in)
 // minAll
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImageUtils< T, VImageDimension, TSpace >::minAll(VectorImage* in) 
+T VectorImageUtils< T, VImageDimension, TSpace >::minAll(VectorImageType* in) 
 {
   unsigned int len = in->getLength();
 
@@ -51,7 +49,7 @@ T VectorImageUtils< T, VImageDimension, TSpace >::minAll(VectorImage* in)
 // absMaxAll
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImageUtils< T, VImageDimension, TSpace >::absMaxAll(VectorImage* in) 
+T VectorImageUtils< T, VImageDimension, TSpace >::absMaxAll(VectorImageType* in) 
 {
   unsigned int len = in->getLength();
 
@@ -59,7 +57,7 @@ T VectorImageUtils< T, VImageDimension, TSpace >::absMaxAll(VectorImage* in)
 
   for ( unsigned int iI=0; iI<len; ++iI )
     {
-    T val = std::abs(in->getValue(x,y,z,d));
+    T val = std::abs( in->getValue(iI) );
     if (val > m) 
       {
       m = val;
@@ -73,7 +71,7 @@ T VectorImageUtils< T, VImageDimension, TSpace >::absMaxAll(VectorImage* in)
 // sumAll
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImageUtils< T, VImageDimension, TSpace >::sumAll(VectorImage* in) 
+T VectorImageUtils< T, VImageDimension, TSpace >::sumAll(VectorImageType* in) 
 {
   unsigned int len = in->getLength();
 
@@ -91,7 +89,7 @@ T VectorImageUtils< T, VImageDimension, TSpace >::sumAll(VectorImage* in)
 // abs
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::abs(VectorImage* in) 
+void VectorImageUtils< T, VImageDimension, TSpace >::abs(VectorImageType* in) 
 {
   unsigned int len = in->getLength();
 
@@ -105,7 +103,8 @@ void VectorImageUtils< T, VImageDimension, TSpace >::abs(VectorImage* in)
 // deconvolutionMatrix 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-VectorImageType* VectorImageUtils< T, VImageDimension, TSpace >::deconvolutionMatrix3D(VectorImageType* I0, T alpha, T gamma) 
+typename VectorImageUtils< T, VImageDimension, TSpace>::VectorImageType* 
+VectorImageUtils< T, VImageDimension, TSpace >::deconvolutionMatrix2D(VectorImageType* I0, T alpha, T gamma) 
 {
   unsigned int szX = I0->getSizeX();
   unsigned int szY = I0->getSizeY();
@@ -136,7 +135,8 @@ VectorImageType* VectorImageUtils< T, VImageDimension, TSpace >::deconvolutionMa
 // deconvolutionMatrix 3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-VectorImageType* VectorImageUtils< T, VImageDimension, TSpace >::deconvolutionMatrix3D(VectorImageType* I0, T alpha, T gamma) 
+typename VectorImageUtils< T, VImageDimension, TSpace>::VectorImageType* 
+VectorImageUtils< T, VImageDimension, TSpace >::deconvolutionMatrix3D(VectorImageType* I0, T alpha, T gamma) 
 {
   unsigned int szX = I0->getSizeX();
   unsigned int szY = I0->getSizeY();
@@ -173,7 +173,8 @@ VectorImageType* VectorImageUtils< T, VImageDimension, TSpace >::deconvolutionMa
 // deconvolutionMatrix
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-VectorImageType* VectorImageUtils< T, VImageDimension, TSpace >::deconvolutionMatrix(VectorImageType* I0, T alpha, T gamma) 
+typename VectorImageUtils< T, VImageDimension, TSpace>::VectorImageType* 
+VectorImageUtils< T, VImageDimension, TSpace >::deconvolutionMatrix(VectorImageType* I0, T alpha, T gamma) 
 {
 
   VectorImageType* A = NULL;
@@ -284,7 +285,7 @@ T VectorImageUtils< T, VImageDimension, TSpace >::getMinFlowTimestep3D(VectorIma
 // getMinFlowTimestep 
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImageUtils< T, VImageDimension, TSpace >::getMinFlowTimestep3D(VectorImageType** v, unsigned int nt) 
+T VectorImageUtils< T, VImageDimension, TSpace >::getMinFlowTimestep(VectorImageType** v, unsigned int nt) 
 {
 
   T timestep = 0;
@@ -312,7 +313,7 @@ T VectorImageUtils< T, VImageDimension, TSpace >::getMinFlowTimestep3D(VectorIma
 // interpolatePos 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImageUtils< T, VImageDimension, TSpace >::interpolatePos(const VectorImage* const imIn, T xPos, T yPos, unsigned int d) 
+T VectorImageUtils< T, VImageDimension, TSpace >::interpolatePos(const VectorImageType* const imIn, T xPos, T yPos, unsigned int d) 
 {
 
   unsigned int szXold = imIn->getSizeX();
@@ -386,48 +387,10 @@ T VectorImageUtils< T, VImageDimension, TSpace >::interpolatePos(const VectorIma
 }
 
 //
-// interpolate 2D
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::interpolate2D(VectorImageType* imIn, VectorImageType* pos, VectorImageType* imOut) 
-{
-
-  unsigned int dim = imIn->getDim();
-
-  unsigned int szXnew = pos->getSizeX();
-  unsigned int szYnew = pos->getSizeY();
-
-#ifdef DEBUG
-  if (pos->getDim() != 2) {
-    throw std::invalid_argument("VectorImageTypeUtils::resize -> invalid pos image");
-  }
-#endif
-
-  // using linear interpolation for now
-  for (unsigned int y = 0; y < szYnew; ++y) 
-    {
-    for (unsigned int x = 0; x < szXnew; ++x) 
-      {
-      for (unsigned int d = 0; d < dim; ++d) 
-        {
-          // interpolate the coordinates
-          T xPos = pos->getValue(x,y,z,0);
-          T yPos = pos->getValue(x,y,z,1);
-
-          // set the new value
-          T val = VectorImageUtils< T, VImageDimension, TSpace >::interpolatePos(imIn, xPos, yPos, d);
-          imOut->setValue(x,y,d, val);
-          }
-        }
-      }
-    }
-}
-
-//
 // interpolate 3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::interpolate3D(VectorImageType* imIn, VectorImageType* pos, VectorImageType* imOut) 
+void VectorImageUtils< T, VImageDimension, TSpace >::interpolate3D( VectorImageType* imIn, VectorImageType* pos, VectorImageType* imOut) 
 {
 
   unsigned int dim = imIn->getDim();
@@ -466,6 +429,43 @@ void VectorImageUtils< T, VImageDimension, TSpace >::interpolate3D(VectorImageTy
     }
 }
 
+//
+// interpolate 2D
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+void VectorImageUtils< T, VImageDimension, TSpace >::interpolate2D(VectorImageType* imIn, VectorImageType* pos, VectorImageType* imOut) 
+{
+
+  unsigned int dim = imIn->getDim();
+  
+  unsigned int szXnew = pos->getSizeX();
+  unsigned int szYnew = pos->getSizeY();
+  
+#ifdef DEBUG
+  if (pos->getDim() != 2) 
+    {
+    throw std::invalid_argument("VectorImageTypeUtils::resize -> invalid pos image");
+    }
+#endif
+  
+  // using linear interpolation for now
+  for (unsigned int y = 0; y < szYnew; ++y) 
+    {
+    for (unsigned int x = 0; x < szXnew; ++x) 
+      {
+      for (unsigned int d = 0; d < dim; ++d) 
+        {
+        // interpolate the coordinates
+        T xPos = pos->getValue(x,y,0);
+        T yPos = pos->getValue(x,y,1);
+        
+        // set the new value
+        T val = VectorImageUtils< T, VImageDimension, TSpace >::interpolatePos(imIn, xPos, yPos, d);
+        imOut->setValue(x,y,d, val);
+        }
+      }
+    }
+}
 
 //
 // interpolate 
@@ -700,7 +700,7 @@ void VectorImageUtils< T, VImageDimension, TSpace >::resize(VectorImageType* imI
 // gaussianFilter 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::gaussianFilter2D(VectorImageType* imIn, float sigma, unsigned int size, VectorImageType* imOut) 
+void VectorImageUtils< T, VImageDimension, TSpace >::gaussianFilter2D(VectorImageType* imIn, T sigma, unsigned int size, VectorImageType* imOut) 
 {
 
 #ifdef DEBUG
@@ -972,7 +972,7 @@ void VectorImageUtils< T, VImageDimension, TSpace >::meanPixelwise(std::vector<V
 // apply ITK affine 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::applyAffineITK(typename ITKAffineTransform2D<T>::Type::Pointer itkAffine, VectorImage2D* imIn, VectorImage2D* imOut, T defaultPixelValue, T originX, T originY) {
+void VectorImageUtils< T, VImageDimension, TSpace >::applyAffineITK(typename ITKAffineTransform2D<T>::Type::Pointer itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue, T originX, T originY) {
 
   unsigned int dim = imIn->getDim();
 
@@ -1044,7 +1044,7 @@ void VectorImageUtils< T, VImageDimension, TSpace >::applyAffineITK(typename ITK
   itkIm->SetOrigin(origin);
 
   // set up the resampler
-  typedef itk::LinearInterpolateImageFunction<ITKImage3D<T>::Type, T> ResampleInterpolatorType;
+  typedef itk::LinearInterpolateImageFunction< typename ITKImage3D<T>::Type, T> ResampleInterpolatorType;
   typename ResampleInterpolatorType::Pointer interpolator = ResampleInterpolatorType::New();
 
   typename ITKResampleFilter3D<T>::Type::Pointer resampler = ITKResampleFilter3D<T>::Type::New();
@@ -1076,6 +1076,79 @@ void VectorImageUtils< T, VImageDimension, TSpace >::applyAffineITK(typename ITK
 /////////////////////////////
 // ITK Interface Functions //
 /////////////////////////////
+
+//
+// to ITK (int)
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+typename ITKCharImage2D::Pointer VectorImageUtils< T, VImageDimension, TSpace>::convertToITKChar( VectorImage<T,2,TSpace>* im) 
+{
+
+  unsigned int szX = im->getSizeX();
+  unsigned int szY = im->getSizeY();
+  unsigned int dim = im->getDim();
+
+  // make sure we're only dealing with one dimension
+  if (dim != 1) 
+    {
+    throw std::invalid_argument("VectorImage2DUtils::convertToITKint -> image has more than 1 vector dimension");
+    }
+
+  // Initialize ITK image
+  typename ITKCharImage2D::Pointer outImage;
+  outImage = ITKCharImage2D::New();
+
+  // Set up region
+  typename ITKCharImage2D::IndexType start;
+  start[0] = 0;
+  start[1] = 0;
+
+  typename ITKCharImage2D::SizeType size;
+  size[0] = szX;
+  size[1] = szY;
+
+  typename ITKCharImage2D::RegionType region;
+  region.SetSize(size);
+  region.SetIndex(start);
+
+  // Set up the spacing
+  typename ITKCharImage2D::SpacingType space;
+  space[0] = im->getSpaceX();
+  space[1] = im->getSpaceY();
+  outImage->SetSpacing(space);
+
+  // Allocate region to image
+  outImage->SetRegions(region);
+  outImage->Allocate();
+
+  // normalize the image onto 0-255
+  typename VectorImage<T,2>::Type* imCopy = new typename VectorImage<T,2>::Type(im);
+  VectorImageUtils::normalize(imCopy, 0, 255);
+
+  // Copy in the data
+  for (unsigned int y = 0; y < szY; ++y) 
+    {
+    for (unsigned int x = 0; x < szX; ++x) 
+      {
+      typename ITKCharImage2D::IndexType px;
+      px[0] = x;
+      px[1] = y;
+
+      outImage->SetPixel(px, (unsigned char)imCopy->getValue(x,y,0));
+      }
+    }
+  
+  // delete the copy
+  delete imCopy;
+  
+  // Set origin and direction
+  outImage->SetOrigin(convertITKVectorOriginTo2D(im->getOrigin()));
+  outImage->SetDirection(convertITKVectorDirectionTo2D(im->getDirection()));
+  
+  // return the result
+  return outImage;
+  
+}
 
 //
 // to ITK 2D
@@ -1199,7 +1272,7 @@ typename ITKVectorImage3D<T>::Type::Pointer VectorImageUtils< T, VImageDimension
         for (unsigned int d = 0; d < dim; ++d) 
           {
 
-          ITKVectorImage3D<T>::Type::IndexType px;
+          typename ITKVectorImage3D<T>::Type::IndexType px;
           px[0] = x;
           px[1] = y;
           px[2] = z;
@@ -1252,7 +1325,7 @@ typename ITKVectorImage<T, VImageDimension>::Type::Pointer VectorImageUtils< T, 
 // to ITK (dim), 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-typename ITKImage2D<T>::Type::Pointer VectorImageUtils< T, VImageDimension, TSpace >::convertDimToITK2D(VectorImage* im, unsigned int dimIn) 
+typename ITKImage2D<T>::Type::Pointer VectorImageUtils< T, VImageDimension, TSpace >::convertDimToITK2D(VectorImageType* im, unsigned int dimIn) 
 {
 
   unsigned int szX = im->getSizeX();
@@ -1435,7 +1508,8 @@ typename ITKImage<T, VImageDimension>::Type::Pointer VectorImageUtils< T, VImage
 // from ITK, 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-VectorImageType* VectorImageUtils< T, VImageDimension, TSpace >::convertFromITK2D( typename ITKVectorImage2D<T>::Type::Pointer itkIm) 
+typename VectorImageUtils< T, VImageDimension, TSpace >::VectorImageType* 
+VectorImageUtils< T, VImageDimension, TSpace >::convertFromITK2D( typename ITKVectorImage2D<T>::Type::Pointer itkIm) 
 {
   typename ITKVectorImage2D<T>::Type::RegionType region = itkIm->GetLargestPossibleRegion();
   typename ITKVectorImage2D<T>::Type::SizeType size = region.GetSize();
@@ -1445,7 +1519,9 @@ VectorImageType* VectorImageUtils< T, VImageDimension, TSpace >::convertFromITK2
   unsigned int szY = size[1];
   unsigned int dim = size[2];
 
-  VectorImage* outImage = new VectorImage(szX, szY, dim, space[0], space[1]);
+  VectorImageType* outImage = new VectorImageType(szX, szY, dim );
+  outImage->SetSpaceX( space[0] );
+  outImage->SetSpaceY( space[1] );
 
   for (unsigned int y = 0; y < szY; ++y) 
     {
@@ -1476,7 +1552,8 @@ VectorImageType* VectorImageUtils< T, VImageDimension, TSpace >::convertFromITK2
 // from ITK, 3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-VectorImageType* VectorImageUtils< T, VImageDimension, TSpace >::convertFromITK3D( typename ITKVectorImage3D<T>::Type::Pointer itkIm) 
+typename VectorImageUtils< T, VImageDimension, TSpace>::VectorImageType*
+VectorImageUtils< T, VImageDimension, TSpace >::convertFromITK3D( typename ITKVectorImage3D<T>::Type::Pointer itkIm) 
 {
 
   typename ITKVectorImage3D<T>::Type::RegionType region = itkIm->GetLargestPossibleRegion();
@@ -1487,7 +1564,10 @@ VectorImageType* VectorImageUtils< T, VImageDimension, TSpace >::convertFromITK3
   unsigned int szZ = size[2];
   unsigned int dim = size[3];
 
-  VectorImageType* outImage = new VectorImageType(szX, szY, szZ, dim, space[0], space[1], space[2]);
+  VectorImageType* outImage = new VectorImageType(szX, szY, szZ, dim );
+  outImage->setSpaceX( space[0] );
+  outImage->setSpaceY( space[1] );
+  outImage->setSpaceZ( space[2] );
 
   for (unsigned int z = 0; z < szZ; ++z) 
     {
@@ -1521,7 +1601,8 @@ VectorImageType* VectorImageUtils< T, VImageDimension, TSpace >::convertFromITK3
 // from ITK  2D/3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-VectorImageType* VectorImageUtils< T, VImageDimension, TSpace >::convertFromITK( typename ITKVectorImage<T,VImageDimension>::Type::Pointer itkIm) 
+typename VectorImageUtils< T, VImageDimension, TSpace >::VectorImageType* 
+VectorImageUtils< T, VImageDimension, TSpace >::convertFromITK( typename ITKVectorImage<T,VImageDimension>::Type::Pointer itkIm) 
 {
   
   VectorImageType* defaultRet = NULL;
@@ -1646,7 +1727,7 @@ void VectorImageUtils< T, VImageDimension, TSpace >::convertDimFromITK3D( typena
 // from ITK (dim)  2D/3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::convertDimFromITK( typename ITKImage<T,VImageDimension>::Type itkIm, unsigned int dim, VectorImageType* imOut) 
+void VectorImageUtils< T, VImageDimension, TSpace >::convertDimFromITK( typename ITKImage<T,VImageDimension>::Type::Pointer itkIm, unsigned int dim, VectorImageType* imOut) 
 {
   
   switch ( VImageDimension )
@@ -1671,9 +1752,9 @@ void VectorImageUtils< T, VImageDimension, TSpace >::convertDimFromITK( typename
 // convertITKVectorOrigin
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-typename ITKImage<T,VImageDimension>::Type::PointType VectorImageUtils< T, VImageDimension, TSpace >::convertITKVectorOrigin(ITKVectorImageType::PointType originIn) 
+typename ITKImage<T,VImageDimension>::Type::PointType VectorImageUtils< T, VImageDimension, TSpace >::convertITKVectorOrigin( typename ITKVectorImage<T,VImageDimension>::Type::PointType originIn) 
 {
-  typename ITKImage<T,VImageDimenson>::Type::PointType out;
+  typename ITKImage<T,VImageDimension>::Type::PointType out;
   for (unsigned int i = 0; i < out.Size(); ++i) 
     {
     out[i] = originIn[i];
@@ -1687,7 +1768,7 @@ typename ITKImage<T,VImageDimension>::Type::PointType VectorImageUtils< T, VImag
 template <class T, unsigned int VImageDimension, class TSpace >
 typename ITKImage<T,VImageDimension>::Type::DirectionType
 VectorImageUtils< T, VImageDimension, TSpace >::
-convertITKVectorDirection(ITKVectorImageType::DirectionType directionIn) {
+convertITKVectorDirection( typename ITKVectorImage<T,VImageDimension>::Type::DirectionType directionIn) {
   typedef typename ITKImage< T, VImageDimension>::Type ImageType;
   ImageType out;
   for (unsigned int r = 0; r < ImageType::DirectionType::RowDimensions; ++r) 
@@ -1704,9 +1785,9 @@ convertITKVectorDirection(ITKVectorImageType::DirectionType directionIn) {
 // convertITKOriginToVector
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-ITKVectorImageType::PointType VectorImageUtils< T, VImageDimension, TSpace >::convertITKOriginToVector( typename ITKImage<T,VImageDimension>::Type::PointType originIn) 
+typename ITKVectorImage<T,VImageDimension>::Type::PointType VectorImageUtils< T, VImageDimension, TSpace >::convertITKOriginToVector( typename ITKImage<T,VImageDimension>::Type::PointType originIn) 
 {
-  ITKVectorImageType::PointType out;
+  typename ITKVectorImage< T, VImageDimension>::Type::PointType out;
   out.Fill(0);
   for (unsigned int i = 0; i < originIn.Size(); ++i) 
     {
@@ -1719,15 +1800,15 @@ ITKVectorImageType::PointType VectorImageUtils< T, VImageDimension, TSpace >::co
 // convertITKDirectionToVector
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-ITKVectorImageType::DirectionType
+typename ITKVectorImage<T,VImageDimension>::Type::DirectionType
 VectorImageUtils< T, VImageDimension, TSpace >::
 convertITKDirectionToVector( typename ITKImage<T,VImageDimension>::Type::DirectionType directionIn) 
 {
-  ITKVectorImageType::DirectionType out;
+  typename ITKVectorImage<T,VImageDimension>::Type::DirectionType out;
   out.Fill(0);
-  for (unsigned int r = 0; r < typename ITKImage<T,VImageDimension>::Type::DirectionType::RowDimensions; ++r) 
+  for (unsigned int r = 0; r < ITKImage<T,VImageDimension>::Type::DirectionType::RowDimensions; ++r) 
     {
-    for (unsigned int c = 0; c < typename ITKImage<T,VImageDimension>>::Type::DirectionType::ColumnDimensions; ++c) 
+    for (unsigned int c = 0; c < ITKImage<T,VImageDimension>::Type::DirectionType::ColumnDimensions; ++c) 
       {
       out[r][c] = directionIn[r][c];
       }
@@ -1819,7 +1900,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTextFile(VectorImageTy
 // writeFileITK, 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK2D(VectorImage* im, std::string filename) 
+bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK2D(VectorImageType* im, std::string filename) 
 {
   
   //
@@ -1835,7 +1916,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK2D(VectorImage*
     {
     
     // Convert to Char
-    typename ITKCharImage2D::Pointer itkImage = VectorImage2DUtils::convertToITKChar(im);
+    typename ITKCharImage2D::Pointer itkImage = VectorImageUtils::convertToITKChar(im);
     
     // Initialize ITK writer
     typename ITKCharImageWriter2D::Pointer imageWriter = ITKCharImageWriter2D::New();
@@ -2488,15 +2569,15 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
 // writeTimeDependentImagesITK, 2D/3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK3D(VectorImageType** ims, unsigned int numTimes, std::string filename) 
+bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK(VectorImageType** ims, unsigned int numTimes, std::string filename) 
 {
   switch ( VImageDimension )
     {
     case 2:
-      return writeTimeDependantImagesITK2D( im, numTimes, filename );
+      return writeTimeDependantImagesITK2D( ims, numTimes, filename );
       break;
     case 3:
-      return writeTimeDependantImagesITK3D( im, numTimes, filename );
+      return writeTimeDependantImagesITK3D( ims, numTimes, filename );
       break;
     default:
       throw std::runtime_error("Cannot write time dependant images of desired dimension");
@@ -2508,7 +2589,8 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
 // readFileITK
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-VectorImageType* VectorImageUtils< T, VImageDimension, TSpace >::readFileITK(std::string filename) {
+typename VectorImageUtils< T, VImageDimension, TSpace >::VectorImageType* 
+VectorImageUtils< T, VImageDimension, TSpace >::readFileITK(std::string filename) {
 
   // Initialize ITK reader
   typedef typename ITKVectorImageReader<T, VImageDimension>::Type ITKVectorImageReaderType;
@@ -2516,7 +2598,7 @@ VectorImageType* VectorImageUtils< T, VImageDimension, TSpace >::readFileITK(std
   reader->SetFileName(filename.c_str());
 
   // Initialize ITK image
-  typename ITKVectorImageType<T,VImageDimension>::Pointer itkImage;
+  typename ITKVectorImage<T,VImageDimension>::Type::Pointer itkImage;
   itkImage = reader->GetOutput();
 
   // Try to read the image
@@ -2566,3 +2648,5 @@ typename ITKAffineTransform<T,VImageDimension>::Type::Pointer VectorImageUtils< 
 
 
 #endif
+
+

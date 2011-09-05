@@ -59,7 +59,7 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::Perform
       for (int d = 0; d < dim; d++) 
         {
         // set the new value
-        Inp1->setValue(x,y,d, VectorImageUtils::interpolatePos(In, xPos, yPos, d) );
+        Inp1->setValue(x,y,d, VectorImageUtils< T, 2 >::interpolatePos(In, xPos, yPos, d) );
         }
       }
     }
@@ -120,7 +120,7 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::Perform
         for (int d = 0; d < dim; d++) 
           {
           // set the new value
-          Inp1->setValue(x,y,z,d, VectorImageUtils::interpolatePos(In, xPos, yPos, zPos, d) );
+          Inp1->setValue(x,y,z,d, VectorImageUtils< T, 3 >::interpolatePos(In, xPos, yPos, zPos, d) );
           }
         }
       }

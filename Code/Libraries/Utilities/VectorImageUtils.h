@@ -9,6 +9,8 @@
 #include <fstream>
 #include <stdexcept>
 
+#include "ApplicationUtils.h"
+
 /**
  * VectorImageUtils.h - Utilities for the VectorImage class
  *
@@ -19,8 +21,9 @@
 namespace CALATK
 {
 
-template <class T, unsinged int VImageDimension=3, class TSpace = T >
-class VectorImageUtils {
+template <class T, unsigned int VImageDimension=3, class TSpace = T >
+class VectorImageUtils 
+{
 
 public:
 
@@ -301,6 +304,15 @@ public:
   /***************************
    * ITK interface functions *
    ***************************/
+  
+  /**
+   * Method that takes a VectorImage2D and returns an unsigned char valued
+   * ITK image.  The image is 2D.  This method should only be used for images
+   * where dim = 1
+   *
+   * @param im - the input image
+   */
+  static typename ITKCharImage2D::Pointer convertToITKChar( VectorImage<T,2,TSpace>* im);
 
   /**
    * 2D Method that takes a VectorImageType and returns an ITK image.  The returned
@@ -348,7 +360,7 @@ public:
    * @param im - the image to convert
    * @param dim - the dimension to use
    */
-  static ITKImage3D<T>::Type::Pointer convertDimToITK3D(VectorImageType* im, unsigned int dim);
+  static typename ITKImage3D<T>::Type::Pointer convertDimToITK3D(VectorImageType* im, unsigned int dim);
 
   /**
    * Method that converts a single dimension of a VectorImageType to an ITK
@@ -357,7 +369,7 @@ public:
    * @param im - the image to convert
    * @param dim - the dimension to use
    */
-  static ITKImage<T,VImageDimension>::Pointer convertDimToITK(VectorImageType* im, unsigned int dim);
+  static typename ITKImage<T,VImageDimension>::Type::Pointer convertDimToITK(VectorImageType* im, unsigned int dim);
 
   /**
    * Method that takes an itk::Image<T, 4> and returns a VectorImageType.
@@ -367,7 +379,7 @@ public:
    *
    * @param itkIm - the input image
    */
-  static VectorImageType* convertFromITK2D( ITKVectorImage2D<T>::Type::Pointer itkIm);
+  static VectorImageType* convertFromITK2D( typename ITKVectorImage2D<T>::Type::Pointer itkIm);
 
   /**
    * Method that takes an itk::Image<T, 4> and returns a VectorImageType.
@@ -417,7 +429,7 @@ public:
    * @param dim - the dimension in which to place the converted image
    * @param imOut - the VectorImageType to be updated
    */
-  static void convertDimFromITK(ITKImage3D::Pointer itkIm, unsigned int dim, VectorImageType* imOut);
+  static void convertDimFromITK( typename ITKImage<T,VImageDimension>::Type::Pointer itkIm, unsigned int dim, VectorImageType* imOut);
 
   /**
    * Method that converts an ITKVectorImage3D's origin (which has 4 dimensions)
@@ -435,7 +447,7 @@ public:
    * @param directionIn - the 4 dimensionsal direction matrix
    * @return the converted 3 dimensional direction matrix
    */
-  static typenae ITKImage<T,VImageDimension>::Type::DirectionType convertITKVectorDirection( typename ITKVectorImage<T,VImageDimension>::Type::DirectionType directionIn);
+  static typename ITKImage<T,VImageDimension>::Type::DirectionType convertITKVectorDirection( typename ITKVectorImage<T,VImageDimension>::Type::DirectionType directionIn);
 
   /**
    * Method that converts an ITKImage3D's origin (which has 3 dimensions)
@@ -444,7 +456,7 @@ public:
    * @param originIn - the 3 dimensionsal origin vector
    * @return the converted 4 dimensional origin vector
    */
-  static ITKVectorImage3D::PointType convertITKOriginToVector(ITKImage3D::PointType originIn);
+  static typename ITKVectorImage<T,VImageDimension>::Type::PointType convertITKOriginToVector( typename ITKImage<T,VImageDimension>::Type::PointType originIn);
 
   /**
    * Method that converts an ITKImage2D's direction (3x3 matrix) to an
@@ -453,7 +465,7 @@ public:
    * @param directionIn - the 3 dimensionsal direction matrix
    * @return the converted 4 dimensional direction matrix
    */
-  static ITKVectorImage3D::DirectionType convertITKDirectionToVector(ITKImage3D::DirectionType directionIn);
+  static typename ITKVectorImage<T,VImageDimension>::Type::DirectionType convertITKDirectionToVector( typename ITKImage<T,VImageDimension>::Type::DirectionType directionIn);
 
   /****************
    * IO Functions *
@@ -531,7 +543,7 @@ public:
    *
    * @param filename - the name of the file to read
    */
-  static ITKAffineTransform3D::Pointer readAffineTransformITK(std::string filename);
+  static typename ITKAffineTransform<T,VImageDimension>::Type::Pointer readAffineTransformITK(std::string filename);
 
 };
 

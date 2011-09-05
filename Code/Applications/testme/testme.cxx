@@ -8,6 +8,7 @@
 #include "VectorArray.h"
 #include "VectorImage.h"
 #include "VectorField.h"
+#include "VectorImageUtils.h"
 
 #include <iostream>
 
@@ -30,6 +31,17 @@ int main(int argc, char **argv)
   CALATK::VectorField< double, 3 > vectorField(3,3,3);
 
   CALATK::VectorImage< double, 3 > vectorImage(3,3,3,9);
+
+  // create a 2D vector image
+  CALATK::VectorImage< double, 2 > image2D(2,2,1);
+  image2D.setValue(0,0,0,1);
+  image2D.setValue(1,0,0,2);
+  image2D.setValue(0,1,0,3);
+  image2D.setValue(1,1,0,4);
+
+  // try to use some of the utility functions
+
+  std::cout << CALATK::VectorImageUtils< double, 2 >::interpolatePos( &image2D, 0.5, 0.5, 0 ) << std::endl;
 
 
   return EXIT_SUCCESS;
