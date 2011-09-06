@@ -10,6 +10,8 @@
 #include "VectorField.h"
 #include "VectorImageUtils.h"
 #include "CImageManager.h"
+#include "CImageManagerFullScale.h"
+#include "LDDMMUtils.h"
 
 #include <iostream>
 
@@ -48,20 +50,24 @@ int main(int argc, char **argv)
 
   // Instantiating the image manager
 
-  CALATK::CImageManager<double,3> imageManager;
-  imageManager.RegisterImage( "im1.nrrd", 1, 0 );
-  imageManager.RegisterImage( "im3.nrrd", 3, 0 );
-  unsigned int uiD = imageManager.RegisterImage( "im2.nrrd", 2, 0 );
+  CALATK::CImageManagerFullScale<double,3> imageManager;
+  imageManager.AddImage( "im1.nrrd", 1, 0 );
+  imageManager.AddImage( "im3.nrrd", 3, 0 );
+  unsigned int uiD = imageManager.AddImage( "im2.nrrd", 2, 0 );
 
-  imageManager.RegisterImageTransform( "transform", uiD );
+  imageManager.AddImageTransform( "transform", uiD );
 
-  unsigned int uiD3 = imageManager.RegisterImage("im4.nrrd", 1, 1 );
-  imageManager.RegisterImage("im4.nrrd", 2, 1 );
-  unsigned int uiD2 = imageManager.RegisterImageAndTransform("im4.nrrd", "trans", 3, 1 );
-  imageManager.RegisterImage("im4.nrrd", 4, 1 );
+  unsigned int uiD3 = imageManager.AddImage("im4.nrrd", 1, 1 );
+  imageManager.AddImage("im4.nrrd", 2, 1 );
+  unsigned int uiD2 = imageManager.AddImageAndTransform("im4.nrrd", "trans", 3, 1 );
+  imageManager.AddImage("im4.nrrd", 4, 1 );
 
-  imageManager.UnregisterTransform( uiD2 );
-  imageManager.UnregisterImage( uiD3 );
+  imageManager.RemoveTransform( uiD2 );
+  imageManager.RemoveImage( uiD3 );
+
+  typedef CALATK::CImageManagerFullScale<double,3>::SImageInformation SImageInformation;
+  std::multiset< SImageInformation >* pImInfo;
+  imageManager.GetImagesWithSubjectIndex( pImInfo, 1 );
 
   imageManager.print( std::cout );
 

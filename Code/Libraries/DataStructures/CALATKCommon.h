@@ -22,7 +22,7 @@
 template <class T, unsigned int VImageDimension>
 struct ITKVectorImage
 {
-  typedef itk::Image< T, VImageDimension > Type;
+  typedef itk::Image< T, VImageDimension + 1 > Type;
 };
 
 template <class T, unsigned int VImageDimension>

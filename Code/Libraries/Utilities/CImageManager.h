@@ -72,7 +72,7 @@ public:
   /**
    * Destructor
    */
-  ~CImageManager();
+  virtual ~CImageManager();
 
    /**
    * Registers the filename of an image with a given timepoint and subject id (for longitudinal studies)
@@ -82,7 +82,7 @@ public:
    * @param uiSubjectIndex - subject index (if multiple subject should be stored -- not recommended)
    * @return returns the id of the registered file, can be used to register a transform later on or to delete it
    */
-  unsigned int RegisterImage( std::string filename, T timepoint, unsigned int uiSubjectIndex );
+  unsigned int AddImage( std::string filename, T timepoint, unsigned int uiSubjectIndex );
 
   /**
    * Registers the filename of an image transform for a given image
@@ -91,7 +91,7 @@ public:
    * @param uiId - id of the image the transform should be registered with
    * @return returns true if the registration was successful (false if there is no image with uiId)
    */
-  bool RegisterImageTransform( std::string filename, unsigned int uiId );
+  bool AddImageTransform( std::string filename, unsigned int uiId );
 
    /**
    * Registers the filename of an image with a given timepoint and subject id (for longitudinal studies)
@@ -103,27 +103,27 @@ public:
    * @param uiSubjectIndex - subject index (if multiple subject should be stored -- not recommended)
    * @return returns the id of the registered file, can be used to register a transform later on or to delete it
    */
-  unsigned int RegisterImageAndTransform( std::string filename, std::string transformFilename, T timepoint, unsigned int uiSubjectIndex );
+  unsigned int AddImageAndTransform( std::string filename, std::string transformFilename, T timepoint, unsigned int uiSubjectIndex );
 
   /**
    * Unregisters an image
    *
    * @params data set id to be unregistered
    */
-  virtual bool UnregisterImage( unsigned int uiId );
+  virtual bool RemoveImage( unsigned int uiId );
 
   /**
    * Unregisters a transform for an imge
    *
    * @params data set id to be unregistered
    */
-  virtual bool UnregisterTransform( unsigned int uiId );
+  virtual bool RemoveTransform( unsigned int uiId );
 
   /**
    * Returns vectors to the actual image data, needs to be implemented by a derived class.
    * Could just return an image, or a downsampled version, ... depending on implementation 
    */
-  virtual void GetImagesWithSubjectIndex( std::multiset< SImageInformation >& imInfo, unsigned int uiSubjectIndex ); 
+  virtual void GetImagesWithSubjectIndex( std::multiset< SImageInformation >*& pImInfo, unsigned int uiSubjectIndex ); 
 
   /**
    * Returns vectors of the time points for a specific subject.

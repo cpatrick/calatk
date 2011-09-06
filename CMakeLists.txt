@@ -86,12 +86,10 @@ SET(CALATK_INCLUDE_DIRS
 #  ${CMAKE_SOURCE_DIR}/Code/Applications/LongitudinalAtlasBuilder
 #  ${CMAKE_SOURCE_DIR}/Code/Applications/AtlasBuilder
 #  ${CMAKE_SOURCE_DIR}/Code/Applications/CALATKUtils
-
   # Common config file
   ${CMAKE_BINARY_DIR}
-  
   # Casey's Code
-#  ${CMAKE_SOURCE_DIR}/Utilities/DTIProcess/Library
+  ${CMAKE_SOURCE_DIR}/Utilities/DTIProcess/Library
 )
 INCLUDE_DIRECTORIES(${CALATK_INCLUDE_DIRS})
 

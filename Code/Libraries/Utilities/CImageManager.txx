@@ -40,13 +40,13 @@ CImageManager< T, VImageDimension, TSpace >::~CImageManager()
 }
 
 //
-// Register an individual image
+// Adds an individual image
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-unsigned int CImageManager< T, VImageDimension, TSpace>::RegisterImage( std::string filename, T timepoint, unsigned int uiSubjectIndex )
+unsigned int CImageManager< T, VImageDimension, TSpace>::AddImage( std::string filename, T timepoint, unsigned int uiSubjectIndex )
 {
 
-  // first check if an image from this subject has already been registered
+  // first check if an image from this subject has already been added
   typename InformationMapType::iterator iter = m_MapImageInformation.find( uiSubjectIndex );
 
   // if subject is not already stored we need to create a new multiset that will store its contents
@@ -103,7 +103,7 @@ bool CImageManager< T, VImageDimension, TSpace>::getCurrentIteratorForId( typena
         {
         if ( iterSet->uiId == uiId )
           {
-          // found it, so let's register the transform
+          // found it, so let's add the transform
           iterRet = iterSet;
           return true;
 
@@ -118,10 +118,10 @@ bool CImageManager< T, VImageDimension, TSpace>::getCurrentIteratorForId( typena
 }
 
 //
-// Register an image transform
+// Add an image transform
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-bool CImageManager< T, VImageDimension, TSpace>::RegisterImageTransform( std::string filename, unsigned int uiId )
+bool CImageManager< T, VImageDimension, TSpace>::AddImageTransform( std::string filename, unsigned int uiId )
 {
 
   bool bFound;
@@ -139,7 +139,7 @@ bool CImageManager< T, VImageDimension, TSpace>::RegisterImageTransform( std::st
     return true;
     }
   
-  // if it made it to here, it could not be registered
+  // if it made it to here, it could not be added
   return false;
 
 }
@@ -148,10 +148,10 @@ bool CImageManager< T, VImageDimension, TSpace>::RegisterImageTransform( std::st
 // Register image and transform 
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-unsigned int CImageManager< T, VImageDimension, TSpace>::RegisterImageAndTransform( std::string filename, std::string transformFilename, T timepoint, unsigned int uiSubjectIndex )
+unsigned int CImageManager< T, VImageDimension, TSpace>::AddImageAndTransform( std::string filename, std::string transformFilename, T timepoint, unsigned int uiSubjectIndex )
 {
 
-  // first check if an image from this subject has already been registered
+  // first check if an image from this subject has already been added
   typename InformationMapType::iterator iter = m_MapImageInformation.find( uiSubjectIndex );
 
   // if subject is not already stored we need to create a new multiset that will store its contents
@@ -183,10 +183,10 @@ unsigned int CImageManager< T, VImageDimension, TSpace>::RegisterImageAndTransfo
 }
 
 //
-// Unregister image and transform 
+// Remove image and transform 
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-bool CImageManager< T, VImageDimension, TSpace>::UnregisterImage( unsigned int uiId )
+bool CImageManager< T, VImageDimension, TSpace>::RemoveImage( unsigned int uiId )
 {
   bool bFound;
   typename std::multiset< SImageInformation >::iterator iterSet;
@@ -205,19 +205,19 @@ bool CImageManager< T, VImageDimension, TSpace>::UnregisterImage( unsigned int u
     
     pInfo->erase( iterSet );
 
-    return true; // was able to unregister
+    return true; // was able to remove
     }
 
-  throw std::runtime_error( "Could not unregister image" );
-  return false; // could not unregister
+  throw std::runtime_error( "Could not remove image" );
+  return false; // could not remove
 
 }
 
 //
-// Unregister image and transform 
+// Remove image and transform 
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-bool CImageManager< T, VImageDimension, TSpace>::UnregisterTransform( unsigned int uiId )
+bool CImageManager< T, VImageDimension, TSpace>::RemoveTransform( unsigned int uiId )
 {
   bool bFound;
   typename std::multiset< SImageInformation >::iterator iterSet;
@@ -239,11 +239,11 @@ bool CImageManager< T, VImageDimension, TSpace>::UnregisterTransform( unsigned i
     pInfo->insert( imInfo );
     // set element does not need to be deleted, because we still have the image
 
-    return true; // was able to unregister
+    return true; // was able to remove
     }
 
-  throw std::runtime_error( "Could not unregister image" );
-  return false; // could not unregister
+  throw std::runtime_error( "Could not remove image" );
+  return false; // could not remove
 
 }
 
@@ -251,9 +251,9 @@ bool CImageManager< T, VImageDimension, TSpace>::UnregisterTransform( unsigned i
 // Returns the set of images for a particular subject index
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void CImageManager< T, VImageDimension, TSpace>::GetImagesWithSubjectIndex( std::multiset< SImageInformation >& imInfo, unsigned int uiSubjectIndex )
+void CImageManager< T, VImageDimension, TSpace>::GetImagesWithSubjectIndex( std::multiset< SImageInformation >*& pImInfo, unsigned int uiSubjectIndex )
 {
-  imInfo = *m_MapImageInformation[ uiSubjectIndex ];
+  pImInfo = m_MapImageInformation[ uiSubjectIndex ];
 }
 
 //
