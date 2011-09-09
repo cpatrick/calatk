@@ -11,6 +11,20 @@
 
 #include "calatkConfigure.h"
 
+/** Set built-in type.  Creates member Set"name"() (e.g., SetVisibility()); */
+#define SetMacro(name,type) \
+  virtual void Set##name (const type _arg) \
+  { \
+      this->m_##name = _arg; \
+  } 
+
+/** Get built-in type.  Creates member Get"name"() (e.g., GetVisibility()); */
+#define GetMacro(name,type) \
+  virtual type Get##name () \
+  { \
+    return this->m_##name; \
+  }
+
 /** min and max macros */
 #ifndef MAX
   #define MAX(x,y) ((x)>(y)?(x):(y))

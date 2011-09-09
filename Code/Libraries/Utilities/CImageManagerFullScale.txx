@@ -40,7 +40,7 @@ void CImageManagerFullScale< T, VImageDimension, TSpace>::GetImagesWithSubjectIn
     // do we need to load the image?
     if ( currentImInfo.pIm == NULL )
       {
-      if ( currentImInfo.sImageFileName.compare("")==0 ) // set to something
+      if ( currentImInfo.sImageFileName.compare("")!=0 ) // set to something
         {
         // load it
         std::cout << "Loading " << currentImInfo.sImageFileName << " ... ";
@@ -52,10 +52,12 @@ void CImageManagerFullScale< T, VImageDimension, TSpace>::GetImagesWithSubjectIn
     // do we need to load the transform?
     if ( currentImInfo.pTransform == NULL )
       {
-      if ( currentImInfo.sImageTransformationFileName.compare("")==0 ) // set to something
+      if ( currentImInfo.sImageTransformationFileName.compare("")!=0 ) // set to something
         {
         // load it
         
+        assert( currentImInfo.pIm != NULL ); // image should have been loaded in previous step
+
         VectorFieldType* mapTrans;
         unsigned int szX, szY, szZ;
         TSpace spX, spY, spZ;

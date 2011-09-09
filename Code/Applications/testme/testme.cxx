@@ -13,6 +13,10 @@
 #include "CImageManagerFullScale.h"
 #include "LDDMMUtils.h"
 
+#include "CStateScalarExample.h"
+#include "CScalarExampleObjectiveFunction.h"
+#include "CSolverLineSearch.h"
+
 #include <iostream>
 
 int main(int argc, char **argv)
@@ -50,26 +54,46 @@ int main(int argc, char **argv)
 
   // Instantiating the image manager
 
-  CALATK::CImageManagerFullScale<double,3> imageManager;
+  CALATK::CImageManagerFullScale<double,2> imageManager;
   imageManager.AddImage( "im1.nrrd", 1, 0 );
   imageManager.AddImage( "im3.nrrd", 3, 0 );
   unsigned int uiD = imageManager.AddImage( "im2.nrrd", 2, 0 );
 
   imageManager.AddImageTransform( "transform", uiD );
 
-  unsigned int uiD3 = imageManager.AddImage("im4.nrrd", 1, 1 );
+  unsigned int uiD3 = imageManager.AddImage("im1.nrrd", 1, 1 );
   imageManager.AddImage("im4.nrrd", 2, 1 );
-  unsigned int uiD2 = imageManager.AddImageAndTransform("im4.nrrd", "trans", 3, 1 );
+  unsigned int uiD2 = imageManager.AddImageAndTransform("im3.nrrd", "trans", 3, 1 );
   imageManager.AddImage("im4.nrrd", 4, 1 );
 
   imageManager.RemoveTransform( uiD2 );
   imageManager.RemoveImage( uiD3 );
 
-  typedef CALATK::CImageManagerFullScale<double,3>::SImageInformation SImageInformation;
+  imageManager.print( std::cout );
+
+  typedef CALATK::CImageManagerFullScale<double,2>::SImageInformation SImageInformation;
   std::multiset< SImageInformation >* pImInfo;
   imageManager.GetImagesWithSubjectIndex( pImInfo, 1 );
 
-  imageManager.print( std::cout );
+  // testing the line search
+
+  typedef CALATK::CStateScalarExample< double > StateType;
+  CALATK::CScalarExampleObjectiveFunction< double, StateType > objectiveFunction;
+
+  CALATK::CSolverLineSearch< double, StateType > lineSearch;
+  lineSearch.SetObjectiveFunctionPointer( &objectiveFunction );
+
+  lineSearch.Solve();
+
+  StateType v1, v2;
+
+  v1.SetValue( 5 );
+  v2.SetValue( 7 );
+  
+  v1 = v2 - v2*3;
+
+  std::cout << "v2 = " << v2 << std::endl;
+  std::cout << "v1 = v2 - v2*3 = " << v1 << std::endl;
 
   return EXIT_SUCCESS;
   // return EXIT_FAILURE;

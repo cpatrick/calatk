@@ -80,6 +80,7 @@ SET(CALATK_INCLUDE_DIRS
 #  ${CMAKE_SOURCE_DIR}/Code/Libraries/Algorithms
   ${CMAKE_SOURCE_DIR}/Code/Libraries/DataStructures
   ${CMAKE_SOURCE_DIR}/Code/Libraries/Utilities
+  ${CMAKE_SOURCE_DIR}/Code/Libraries/Numerics
 #  ${CMAKE_SOURCE_DIR}/Code/Libraries/Utilities/thrpool/src
 #  ${CMAKE_SOURCE_DIR}/Code/Applications/LDDMM
 #  ${CMAKE_SOURCE_DIR}/Code/Applications/TimeSeries
