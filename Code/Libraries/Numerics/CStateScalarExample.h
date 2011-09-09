@@ -1,11 +1,13 @@
 #ifndef C_STATE_SCALAR_EXAMPLE_H
 #define C_STATE_SCALAR_EXAMPLE_H
 
+#include "CState.h"
+
 namespace CALATK
 {
 
 template <class T>
-class CStateScalarExample 
+class CStateScalarExample : public CState< T >
 {
 
 public:
@@ -17,7 +19,7 @@ public:
   // copy constructor, obvious for scalar case, this is just to show the principle
   CStateScalarExample( const CStateScalarExample& c ) : val( c.val ) { }
 
-  // now declare obbious methdods, just to demonstrate how 
+  // now declare obvious methdods, just to demonstrate how 
   // it would be done for a more complicated data structure
 
   // to support assignment
