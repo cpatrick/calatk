@@ -36,10 +36,10 @@ void LDDMMUtils< T, VImageDimension, TSpace>::applyMap(VectorFieldType* map, Vec
 // computeDeterminantOfJacobian
 //
 template < class T, unsigned int VImageDimension, class TSpace >
-typename LDDMMUtils< T, VImageDimension, TSpace>::VectorImageType* LDDMMUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian(VectorFieldType* fld) 
+void LDDMMUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian(VectorFieldType* fld, VectorImageType* imOut) 
 {
   
-  return VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian(fld);
+  VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian( fld, imOut );
   
 }
 

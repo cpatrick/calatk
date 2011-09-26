@@ -2,6 +2,7 @@
 #define C_STATE_SPATIOTEMPORAL_VELOCITY_FIELD_H
 
 #include "CState.h"
+#include "VectorField.h"
 
 namespace CALATK
 {
@@ -15,6 +16,13 @@ public:
    * Empty constructor
    */
   CStateSpatioTemporalVelocityField();
+
+  /**
+   * Constructor which takes a pointer of a vector of vector fields as an input.
+   * Does not copy the data, but just stores the pointers to it. 
+   * Destructor will destroy the vector fields though.
+   */
+  CStateSpatioTemporalVelocityField( const VectorPointerToVectorFieldPointerType pVecVecField );
 
   /**
    * copy constructor, creation of the image for the first time, need to allocate memory
@@ -37,14 +45,34 @@ public:
 
   CStateSpatioTemporalVelocityField & operator-=(const CStateSpatioTemporalVelocityField & p );
 
+  CStateSpatioTemporalVelocityField & operator*=(const T & p );
+
   CStateSpatioTemporalVelocityField operator+(const CStateSpatioTemporalVelocityField & p ) const;
 
   CStateSpatioTemporalVelocityField operator-(const CStateSpatioTemporalVelocityField & p ) const;
 
   CStateSpatioTemporalVelocityField operator*(const T & p ) const;
 
+  // some typedefs
+
+  typedef VectorField< T, VImageDimension >* VectorFieldPointerType;
+  typedef std::vector< VectorFieldPointerType >* VectorPointerToVectorFieldPointerType;
+
+  VectorFieldPointerType GetVectorFieldPointer( unsigned int iI );
+  void SetVectorFieldPointer( unsigned int iI, VectorFieldPointerType ptrVecField );
+
+  void SetSize( unsigned int iS );
+  unsigned int GetSize();
+
 protected:
+
+  void ClearDataStructure();
+  void CopyDataStructure( VectorPointerToVectorFieldPointerType ptrSource );
+
 private:
+
+  std::vector<VectorFieldPointerType> m_vecPtrSTVelocityField;
+
 };
 
 #include "CStateSpatioTemporalVelocityField.txx"

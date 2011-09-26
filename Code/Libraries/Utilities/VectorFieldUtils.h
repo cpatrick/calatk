@@ -136,22 +136,79 @@ public:
    * 2D Function that computes the determinant of the jacobian for a vector field.
    *
    * @param fld - the vector field to be processed
+   * @param imOut - image that will hold the determinant of Jacobian
    */
-  static VectorImageType* computeDeterminantOfJacobian2D(VectorFieldType* fld);
+  static void computeDeterminantOfJacobian2D(VectorFieldType* fld, VectorImageType* imOut);
 
   /**
    * 3D Function that computes the determinant of the jacobian for a vector field.
    *
    * @param fld - the vector field to be processed
+   * @param imOut - image that will hold the determinant of Jacobian
    */
-  static VectorImageType* computeDeterminantOfJacobian3D(VectorFieldType* fld);
+  static void computeDeterminantOfJacobian3D(VectorFieldType* fld, VectorImageType* imOut);
 
   /**
    * 2D/3D Function that computes the determinant of the jacobian for a vector field.
    *
    * @param fld - the vector field to be processed
+   * @param imOut - image that will hold the determinant of Jacobian
    */
-  static VectorImageType* computeDeterminantOfJacobian(VectorFieldType* fld);
+  static void computeDeterminantOfJacobian(VectorFieldType* fld, VectorImageType* imOut );
+
+  /**
+   * 2D function computing the gradient of an individual dimension of an image using central differences
+   *
+   * @params imIn - input image
+   * @params dim - image dimension (for vector-valued image) for which the gradient should be calculated
+   * @params fieldOut - gradient output field
+   */
+  static void computeCentralGradient2D(VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldOut );
+
+  /**
+   * 3D function computing the gradient of an individual dimension of an image using central differences
+   *
+   * @params imIn - input image
+   * @params dim - image dimension (for vector-valued image) for which the gradient should be calculated
+   * @params fieldOut - gradient output field
+   */
+  static void computeCentralGradient3D(VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldOut );
+
+  /**
+   * 2D/3D function computing the gradient of an individual dimension of an image using central differences
+   *
+   * @params imIn - input image
+   * @params dim - image dimension (for vector-valued image) for which the gradient should be calculated
+   * @params fieldOut - gradient output field
+   */
+  static void computeCentralGradient(VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldOut );
+
+  /**
+   * 2D function to multiply a vector image by a scalar image (specified by a dimension of a vectorimage)
+   *
+   * @params imIn - input vector image
+   * @params dim - dimension of the input vector image that should be multiplied by
+   * @params fieldInOut - field image which will be multiplied
+   */
+  static void multiplyVectorByImageDimensionInPlace2D(VectorImageType* imIn, unsinged int dim, VectorFieldType* fieldInOut );
+
+  /**
+   * 3D function to multiply a vector image by a scalar image (specified by a dimension of a vectorimage)
+   *
+   * @params imIn - input vector image
+   * @params dim - dimension of the input vector image that should be multiplied by
+   * @params fieldInOut - field image which will be multiplied
+   */
+  static void multiplyVectorByImageDimensionInPlace3D(VectorImageType* imIn, unsinged int dim, VectorFieldType* fieldInOut );
+
+  /**
+   * 2D/3D function to multiply a vector image by a scalar image (specified by a dimension of a vectorimage)
+   *
+   * @params imIn - input vector image
+   * @params dim - dimension of the input vector image that should be multiplied by
+   * @params fieldInOut - field image which will be multiplied
+   */
+  static void multiplyVectorByImageDimensionInPlace(VectorImageType* imIn, unsinged int dim, VectorFieldType* fieldInOut );
   
   /**
    * 2D Function that converts a map on the image dimension = 1 scale to a map 

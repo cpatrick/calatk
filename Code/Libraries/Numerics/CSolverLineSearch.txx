@@ -179,8 +179,13 @@ bool CSolverLineSearch<T, TState, VImageDimension>::LineSearchWithBacktracking( 
     if ( bHitLowerStepSizeBound ) bTerminate = true;
 
     // doing the gradient step
-    *pState = *pTempState - (*pCurrentGradient)*dAlpha;
-    
+    //*pState = *pTempState - (*pCurrentGradient)*dAlpha;
+    // here comes a more memory efficient version 
+    // (should need no new reallocation of memory, but simply overwrites *pState all the time)
+    *pState = *pCurrentGradient;
+    *pState *= -dAlpha;
+    *pState += *pTempState;
+
     // recompute the energy
     dComputedEnergy = pObj->GetCurrentEnergy();
 

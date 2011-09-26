@@ -281,6 +281,65 @@ void CImageManager< T, VImageDimension, TSpace>::GetTimepointsForSubjectIndex( s
 }
 
 //
+// get available subject ids
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+void CImageManager< T, VImageDimension, TSpace>::GetAvailableSubjectIndices( std::vector< unsigned int >& vecAvailableSubjectIds )
+{
+  vecAvailableSubjectIds.clear();
+  
+  typename InformationMapType::iterator iter;
+  for ( iter = m_MapImageInformation.begin(); iter != m_MapImageInformation.end(); ++iter )
+    {
+    vecAvailableSubjectIds.push_back( iter->second->begin()->uiSubjectId );
+    }
+
+}
+
+//
+// get number of available subject ids
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+unsigned int CImageManager< T, VImageDimension, TSpace>::GetNumberOfAvailableSubjectIndices()
+{
+  return m_MapImageInformation.size();
+}
+
+//
+// Allows access of image information in a time series by index
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+void CImageManager< T, VImageDimension, TSpace>::GetPointerToSubjectImageInformationByIndex( SImageInformation*& pImInfo, typename std::multiset< SImageInformation>* pInfo, unsigned int uiIndex )
+{
+  // TODO: There may be a quicker method to do this. For now we just assume that there are not 
+  // a lot of elements, so we can just do a linear search
+
+  pImInfo = NULL;
+
+  typename std::multiset< SImageInformation>::iterator iter;
+
+  unsigned int uiSize = pInfo->size();
+  if ( uiIndex < uiSize )
+    {
+    unsigned int uiCount = 0;
+    for ( iter = pInfo->begin(); iter != pInfo->end(); ++iter )
+      {
+      if ( uiCount==uiIndex )
+        {
+        pImInfo = &(*iter);
+        return;
+        }
+      ++uiCount;
+      }
+    }
+  else
+    {
+    throw std::runtime_error("Index out of range.");
+    }
+
+}
+
+//
 // Prints the filenames and timepoints
 //
 template <class T, unsigned int VImageDimension, class TSpace >

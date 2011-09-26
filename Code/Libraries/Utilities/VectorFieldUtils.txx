@@ -371,8 +371,7 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::applyMapFraction(VectorField
 // computeDeterminantOfJacobian, 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-typename VectorFieldUtils< T, VImageDimension, TSpace >::VectorImageType* 
-VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian2D(VectorFieldType* fld) 
+void VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian2D(VectorFieldType* fld, VectorImageType* imOut) 
 {
 
   // set up for the loop
@@ -390,7 +389,7 @@ VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian2D(Ve
   T dx = 1/(T)(szX-1);
   T dy = 1/(T)(szY-1);
 
-  VectorImageType* D = new VectorImageType(szX, szY, 1);
+  VectorImageType* D = imOut;
 
   // compute D for each pixel
   for (unsigned int y = 0; y < szY; ++y) 
@@ -461,8 +460,7 @@ VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian2D(Ve
 // computeDeterminantOfJacobian, 3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-typename VectorFieldUtils< T, VImageDimension, TSpace >::VectorImageType* 
-VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian3D(VectorFieldType* fld) 
+void VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian3D(VectorFieldType* fld, VectorImageType *imOut ) 
 {
   
   // set up for the loop  
@@ -475,7 +473,7 @@ VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian3D(Ve
   T dy = 1/(T)(szY-1);
   T dz = 1/(T)(szZ-1);
 
-  VectorImageType* D = new VectorImageType(szX, szY, szZ, 1);
+  VectorImageType* D = imOut;
   
   // compute D for each pixel
   for (unsigned int z = 0; z < szZ; ++z) 
@@ -583,21 +581,251 @@ VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian3D(Ve
 //
 // computeDeterminantOfJacobian, 2D/3D
 //
-
 template <class T, unsigned int VImageDimension, class TSpace >
-typename VectorFieldUtils< T, VImageDimension, TSpace >::VectorImageType* 
-VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian(VectorFieldType* fld) 
+void VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian(VectorFieldType* fld, VectorImageType* imOut ) 
 {
   switch ( VImageDimension )
     {
     case 2:
-      computeDeterminantOfJacobian2D( fld );
+      computeDeterminantOfJacobian2D( fld, imOut );
       break;
     case 3:
-      computeDeterminantOfJacobian3D( fld );
+      computeDeterminantOfJacobian3D( fld, imOut );
       break;
     default:
       throw std::runtime_error("Dimension not supported for computation of determinant of Jacobian.");
+    }
+}
+
+//
+// computeCentralGradient, 2D
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+void VectorFieldUtils< T, VImageDimension, TSpace>::computeCentralGradient2D( VectorImageType* imIn, unsigned int d, VectorFieldType* fieldOut )
+{
+
+  unsigned int szX = imIn[0]->getSizeX();
+  unsigned int szY = imIn[0]->getSizeY();
+  unsigned int dim = imIn[0]->getDim();
+  TSpace dx = imIn[0]->getDX();
+  TSpace dy = imIn[0]->getDY();
+
+  for (unsigned int x = 0; x < szX; ++x) 
+    {   
+    for (unsigned int y = 0; y < szY; ++y) 
+      {  
+      // compute gradients
+      T Idx = 0;
+      T Idy = 0;
+      
+      if (szX == 1) 
+        { 
+        Idx = 0;
+        } 
+      else if (x == 0) 
+        {
+        Idx = (imIn[i]->getValue(x+1,y,d) - imIn[i]->getValue(x,y,d))/dx;
+        } 
+      else if(x == szX-1) 
+        {
+        Idx = (imIn[i]->getValue(x,y,d) - imIn[i]->getValue(x-1,y,d))/dx;
+        } 
+      else 
+        {
+        Idx = (imIn[i]->getValue(x+1,y,d) - imIn[i]->getValue(x-1,y,d))/(2*dx);
+        }
+        
+      if (szY == 1) 
+        { 
+        Idy = 0;
+        } 
+      else if (y == 0) 
+        {
+        Idy = (imIn[i]->getValue(x,y+1,d) - imIn[i]->getValue(x,y,d))/dy;
+        } 
+      else if(y == szY-1) 
+        {
+        Idy = (imIn[i]->getValue(x,y,d) - imIn[i]->getValue(x,y-1,d))/dy;
+        } 
+      else 
+        {
+        Idy = (imIn[i]->getValue(x,y+1,d) - imIn[i]->getValue(x,y-1,d))/(2*dy);
+        }
+                    
+      fieldOut->SetX(x,y,z,Idx);
+      fieldOut->SetY(x,y,z,Idy); 
+
+      }
+    }
+      
+}
+
+//
+// computeCentralGradient, 3D
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+void VectorFieldUtils< T, VImageDimension, TSpace>::computeCentralGradient3D( VectorImageType* imIn, unsigned int d, VectorFieldType* fieldOut )
+{
+
+  unsigned int szX = imIn[0]->getSizeX();
+  unsigned int szY = imIn[0]->getSizeY();
+  unsigned int szZ = imIn[0]->getSizeZ();
+  unsigned int dim = imIn[0]->getDim();
+  TSpace dx = imIn[0]->getDX();
+  TSpace dy = imIn[0]->getDY();
+  TSpace dz = imIn[0]->getDZ();
+
+  for (unsigned int x = 0; x < szX; ++x) 
+    {    
+    for (unsigned int y = 0; y < szY; ++y) 
+      {  
+      for (unsigned int z = 0; z < szZ; ++z) 
+        {
+        
+        // compute gradients
+        T Idx = 0;
+        T Idy = 0;
+        T Idz = 0;
+        if (szX == 1) 
+          { 
+          Idx = 0;
+          } 
+        else if (x == 0) 
+          {
+          Idx += (imIn[i]->getValue(x+1,y,z,d) - imIn[i]->getValue(x,y,z,d))/dx;
+          } 
+        else if(x == szX-1) 
+          {
+          Idx += (imIn[i]->getValue(x,y,z,d) - imIn[i]->getValue(x-1,y,z,d))/dx;
+          } 
+        else 
+          {
+          Idx += (imIn[i]->getValue(x+1,y,z,d) - imIn[i]->getValue(x-1,y,z,d))/(2*dx);
+          }
+
+
+        if (szY == 1) 
+          { 
+          Idy = 0;
+          } 
+        else if (y == 0) 
+          {
+          Idy += (imIn[i]->getValue(x,y+1,z,d) - imIn[i]->getValue(x,y,z,d))/dy;
+          } 
+        else if(y == szY-1) 
+          {
+          Idy += (imIn[i]->getValue(x,y,z,d) - imIn[i]->getValue(x,y-1,z,d))/dy;
+          } 
+        else 
+          {
+          Idy += (imIn[i]->getValue(x,y+1,z,d) - imIn[i]->getValue(x,y-1,z,d))/(2*dy);
+          }
+        
+        if (szZ == 1) 
+          { 
+          Idz = 0;
+          } 
+        else if (z == 0) 
+          {
+          Idz += (imIn[i]->getValue(x,y,z+1,d) - imIn[i]->getValue(x,y,z,d))/dz;
+          } 
+        else if(z == szZ-1) 
+          {
+          Idz += (imIn[i]->getValue(x,y,z,d) - imIn[i]->getValue(x,y,z-1,d))/dz;
+          } 
+        else 
+          {
+          Idz += (imIn[i]->getValue(x,y,z+1,d) - imIn[i]->getValue(x,y,z-1,d))/(2*dz);
+          }
+         
+        fieldOut->SetX(x,y,z,Idx);
+        fieldOut->SetY(x,y,z,Idy);
+        fieldOut->SetZ(x,y,z,Idz);
+        
+        }
+      }
+    }
+
+}
+
+//
+// computeCentralGradient, 2D/3D
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+void VectorFieldUtils< T, VImageDimension, TSpace>::computeCentralGradient( VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldOut )
+{
+  switch ( VImageDimension )
+    {
+    case 2:
+      computeCentralGradient2D( imIn, dim, fieldOut );
+      break;
+    case 3:
+      computeCentralGradient3D( imIn, dim, fieldOut );
+      break;
+    default:
+      throw std::runtime_error("Dimension not supported for computation of gradient.");
+    }
+}
+
+//
+// multiplyVectorByImageDimensionInPlace, 2D
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+void VectorFieldUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensionInPlace2D( VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldInOut )
+{
+  unsigned int szX = imIn->GetSizeX();
+  unsigned int szY = imIn->GetSizeY();
+
+  for ( unsigned int x=0; x<szX; ++x )
+    {
+    for ( unsigned int y=0; y<szY; ++y )
+      {
+      fieldInOut->SetX( x, y, fieldInOut->GetX( x, y )*imIn->getValue( x, y, dim ) );
+      fieldInOut->SetY( x, y, fieldInOut->GetY( x, y )*imIn->getValue( x, y, dim ) );
+      }
+    }
+}
+
+//
+// multiplyVectorByImageDimensionInPlace, 3D
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+void VectorFieldUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensionInPlace3D( VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldInOut )
+{
+  unsigned int szX = imIn->GetSizeX();
+  unsigned int szY = imIn->GetSizeY();
+  unsigned int szZ = imIn->GetSizeZ();
+
+  for ( unsigned int x=0; x<szX; ++x )
+    {
+    for ( unsigned int y=0; y<szY; ++y )
+      {
+      for ( unsigned int z=0; z<szZ; ++z )
+        {
+        fieldInOut->SetX( x, y, z, fieldInOut->GetX( x, y, z )*imIn->getValue( x, y, z, dim ) );
+        fieldInOut->SetY( x, y, z, fieldInOut->GetY( x, y, z )*imIn->getValue( x, y, z, dim ) );
+        fieldInOut->SetZ( x, y, z, fieldInOut->GetZ( x, y, z )*imIn->getValue( x, y, z, dim ) );
+        }
+      }
+    }
+}
+
+//
+// multiplyVectorByImageDimensionInPlace, 2D/3D
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+void VectorFieldUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensionInPlace( VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldInOut )
+{
+  switch ( VImageDimension )
+    {
+    case 2:
+      multiplyVectorByImageDimensionInPlace2D( imIn, dim, fieldOut );
+      break;
+    case 3:
+      multiplyVectorByImageDimensionInPlace3D( imIn, dim, fieldOut );
+      break;
+    default:
+      throw std::runtime_error("Dimension not supported for multiplication of vector image with individual dimension of a vector image.");
     }
 }
 

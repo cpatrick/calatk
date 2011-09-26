@@ -10,6 +10,7 @@ CObjectiveFunction<T, TState, VImageDimension>::CObjectiveFunction()
   m_pState = NULL;
   m_pGradient = NULL;
   m_pMetric = NULL;
+  m_ptrImageManager = NULL;
 }
 
 //

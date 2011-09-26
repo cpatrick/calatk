@@ -131,6 +131,23 @@ public:
    */
   void GetTimepointsForSubjectIndex( std::vector< T >& timepoints, unsigned int uiSubjectIndex );
 
+  /**
+   * Returns the available subject ids
+   */
+  void GetAvailableSubjectIndices( std::vector< unsigned int >& vecAvailableSubjectIds );
+
+  /**
+   * Returns the number of available distinct subjects stored
+   */
+  unsigned int GetNumberOfAvailableSubjectIndices();
+
+  /**
+   * Convenience method which returns a pointer to SImageInformation structure
+   * of a particular index, given a pointer to the multiset
+   */
+
+  void GetPointerToSubjectImageInformationByIndex( SImageInformation*& pImInfo, typename std::multiset< SImageInformation>* pInfo, unsigned int uiIndex );
+
   /** 
    * Prints the state
    */

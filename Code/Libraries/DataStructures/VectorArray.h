@@ -174,6 +174,59 @@ public:
    * @param source - the source array to copy
    */
   void copy(VectorArray<T,VImageDimension>* source);
+
+
+  /**
+   * Method that multiplys the elements of the array by a constant
+   *
+   * @param c - constant factor to multiply by
+   */
+  void multConst(T c);
+
+  /**
+   * Method that sets the elements of the array to a constant
+   *
+   * @param c - constant to set the values to
+   */
+  void setConst(T c);
+  
+  /**
+   * Method that multiplys the elements the array of by those of the input array (cellwise)
+   *
+   * @param im - the first array
+   */
+  void multCellwise(VectorArray* im);
+
+  /**
+   * Method that adds the elements of the array to those of the input array (cellwise)
+   *
+   * @param im - the first array
+   */
+  void addCellwise(VectorArray* im);
+
+  /**
+   * Method that adds the elements of the array to those of the input array (cellwise)
+   * and multiplies at the same time by a constant
+   * @param im - the first array
+   * @param val - constant multiplier
+   */
+  void addCellwiseMultiple(VectorArray* im, T val);
+
+  /**
+   * Method that subtracts the elements the of the input from the array  (cellwise)
+   *
+   * @param im - the first array
+   */
+  void subtractCellwise(VectorArray* im);
+
+
+  /**
+   * Method that adds a constant to the current image
+   *
+   * @param c - the constant to be add
+   */
+  void addConst(T c);
+
   
   /**
    * Method that returns the size in the x dimension

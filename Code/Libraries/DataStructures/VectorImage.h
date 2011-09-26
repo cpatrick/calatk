@@ -180,27 +180,6 @@ public:
   typename ITKVectorImage< T, VImageDimension >::Type::DirectionType getDirection();
   
   /**
-   * Method that multiplys the elements of the image by a constant
-   *
-   * @param c - constant factor to multiply by
-   */
-  void multConst(T c);
-  
-  /**
-   * Method that multiplys the elements the image of by those of the input image (cellwise)
-   *
-   * @param im - the first image
-   */
-  void multCellwise(VectorImage* im);
-
-  /**
-   * Method that adds a constant to the current image
-   *
-   * @param c - the constant to be add
-   */
-  void addConst(T c);
-
-  /**
    * Method that adds the elements of the input image to the current image
    *
    * @param im - the input image

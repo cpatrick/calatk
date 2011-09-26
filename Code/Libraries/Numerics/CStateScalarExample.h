@@ -45,6 +45,13 @@ public:
     return *this;
   }
 
+  // to support *=
+  CStateScalarExample & operator*=(const T &p )
+  {
+    this->val *= p;
+    return *this;
+  }
+
   // to support addition
   CStateScalarExample operator+(const CStateScalarExample &p ) const
   {
@@ -63,8 +70,7 @@ public:
   CStateScalarExample operator*(const T &p ) const
   {
     CStateScalarExample r = *this;
-    r.val *= p;
-    return r;
+    return r *= p;
   }
 
   inline void SetValue( T val )

@@ -66,6 +66,14 @@ public:
   VectorField(VectorField* source);
 
   /**
+   * Copy constructor that takes an existing VectorImage
+   * and creates a zero vectorfield which has the same spacing, direction, etc. as the VectorImage
+   *
+   * @param source - the vector image to copy the information from
+   */
+  VectorField(VectorImage* source);
+
+  /**
    * Destructor that frees up all memory
    */
   virtual ~VectorField() {}

@@ -358,6 +358,126 @@ void VectorArray<T, VImageDimension>::setValue(unsigned int x, unsigned int y, u
 }
 
 //
+// multCellwise
+//
+template <class T, unsigned int VImageDimension >
+void VectorArray< T, VImageDimension >::multCellwise(VectorArray* im) {
+
+#ifdef DEBUG
+  // make sure they are the same size
+  if (im->getSizeX() != __sizeX || im->getSizeY() != __sizeY || im->getSizeZ() != __sizeZ || im->getDim() != __dim) {
+  throw std::invalid_argument("Images are of different sizes");
+  }
+#endif
+
+  for ( unsigned int uiI = 0; uiI < __length; ++uiI )
+    {
+    this->setValue( uiI, this->getValue( uiI ) * im->getValue( uiI ) );
+    } 
+
+}
+
+//
+// addCellwise
+//
+template <class T, unsigned int VImageDimension >
+void VectorArray< T, VImageDimension >::addCellwise(VectorArray* im) {
+
+#ifdef DEBUG
+  // make sure they are the same size
+  if (im->getSizeX() != __sizeX || im->getSizeY() != __sizeY || im->getSizeZ() != __sizeZ || im->getDim() != __dim) {
+    throw std::invalid_argument("Images are of different sizes");
+  }
+#endif
+  
+  for ( unsigned int uiI = 0; uiI < __length; ++uiI )
+    {
+    this->setValue( uiI, this->getValue( uiI ) + im->getValue( uiI ) );
+    } 
+
+}
+
+//
+// addCellwiseMultiple
+//
+template <class T, unsigned int VImageDimension >
+void VectorArray< T, VImageDimension >::addCellwise(VectorArray* im, T val) {
+
+#ifdef DEBUG
+  // make sure they are the same size
+  if (im->getSizeX() != __sizeX || im->getSizeY() != __sizeY || im->getSizeZ() != __sizeZ || im->getDim() != __dim) {
+    throw std::invalid_argument("Images are of different sizes");
+  }
+#endif
+  
+  for ( unsigned int uiI = 0; uiI < __length; ++uiI )
+    {
+    this->setValue( uiI, this->getValue( uiI ) + im->getValue( uiI )*val );
+    } 
+
+}
+
+//
+// subtractCellwise
+//
+template <class T, unsigned int VImageDimension >
+void VectorArray< T, VImageDimension >::subtractCellwise(VectorArray* im) {
+
+#ifdef DEBUG
+  // make sure they are the same size
+  if (im->getSizeX() != __sizeX || im->getSizeY() != __sizeY || im->getSizeZ() != __sizeZ || im->getDim() != __dim) {
+    throw std::invalid_argument("Images are of different sizes");
+  }
+#endif
+  
+  for ( unsigned int uiI = 0; uiI < __length; ++uiI )
+    {
+    this->setValue( uiI, this->getValue( uiI ) - im->getValue( uiI ) );
+    } 
+
+}
+
+//
+// addConst
+//
+template <class T, unsigned int VImageDimension >
+void VectorArray< T, VImageDimension >::addConst(T c) {
+  
+  for ( unsigned int uiI = 0; uiI < __length; ++uiI )
+    {
+    this->setValue( uiI, this->getValue( uiI ) + c );
+    } 
+
+}
+
+//
+// multConst
+//
+template <class T, unsigned int VImageDimension >
+void VectorArray< T, VImageDimension >::multConst(T c) {
+
+  for ( unsigned int uiI = 0; uiI < __length; ++uiI )
+    {
+    this->setValue( uiI, this->getValue( uiI ) * c );
+    } 
+
+}
+
+//
+// setConst
+//
+template <class T, unsigned int VImageDimension >
+void VectorArray< T, VImageDimension >::setConst(T c) {
+
+  for ( unsigned int uiI = 0; uiI < __length; ++uiI )
+    {
+    this->setValue( uiI, c );
+    } 
+
+}
+
+
+//
 // copy
 //
 template <class T, unsigned int VImageDimension>

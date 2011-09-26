@@ -120,8 +120,9 @@ public:
    * Function that computes the determinant of the jacobian for a vector field. (2D/3D)
    *
    * @param fld - the vector field to be processed
+   * @param imOut - image that will hold the determinant of Jacobian
    */
-  static VectorImageType* computeDeterminantOfJacobian(VectorFieldType* fld);
+  static void computeDeterminantOfJacobian(VectorFieldType* fld, VectorImageType* imOut);
   
   /**
    * Function that computes the deconvolution matrix (2D/3D)

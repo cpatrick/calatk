@@ -9,7 +9,14 @@
 #include <itkTransformFileReader.h>
 #include <itkLinearInterpolateImageFunction.h>
 
+#include <math>
+
 #include "calatkConfigure.h"
+
+namespace CALATK
+{
+
+const double PI = 4.0*atan(1.0);
 
 /** Set built-in type.  Creates member Set"name"() (e.g., SetVisibility()); */
 #define SetMacro(name,type) \
@@ -260,6 +267,8 @@ struct ITKDeformationField3D
     std::cerr << msg << std::endl;\
     return EXIT_FAILURE;\
   }
+
+} // end namespace
 
 #endif
 

@@ -35,6 +35,35 @@ template <class T, unsigned int VImageDimension, class TSpace >
 VectorField< T, VImageDimension, TSpace >::VectorField(VectorField* source) 
   : VectorImage<T, VImageDimension, TSpace >::VectorImage(source) {}
 
+//
+// copy constructor from vector image
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+VectorField< T, VImageDimension, TSpace >::VectorField(VectorImage* source) 
+{
+  this->__sizeX = source->getSizeX();
+  this->__sizeY = source->getSizeY();
+  this->__sizeZ = source->getSizeZ();
+  this->__dim = VImageDimension;
+  this->__length = __sizeX*__sizeY*__sizeZ*__dim;
+  this->__dataPtr = NULL;
+  this->__allocate();
+  
+  this->setSpaceFactor( source->getSpaceFactor() );
+  this->setSpaceX( source->getSpaceX() );
+  this->setSpaceY( source->getSpaceY() );
+  this->setSpaceX( source->getSpaceZ() );
+
+  this->setOrigin( source->getOrigin() );
+  this->setDirection( source->getDirection() );
+
+   // initialize everthing with zero, vector image is just used to get the dimensions and spacings
+  for (unsigned int uiIndx = 0; uiIndx < __length; ++uiIndx )
+    {
+    __dataPtr[ uiIndx ] = 0;
+    }
+
+}
 
 ////////////////////
 // Public Methods //
