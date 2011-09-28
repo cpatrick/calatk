@@ -175,7 +175,8 @@ void VectorImage< T, VImageDimension, TSpace >::setOrigin( typename ITKVectorIma
 // setDirection
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImage< T, VImageDimension, TSpace >::setDirection( typename ITKVectorImage< T, VImageDimension>::Type::DirectionType direction) {
+void VectorImage< T, VImageDimension, TSpace >::setDirection( typename ITKVectorImage< T, VImageDimension>::Type::DirectionType direction) 
+{
   __direction = direction;
 }
 
@@ -183,7 +184,8 @@ void VectorImage< T, VImageDimension, TSpace >::setDirection( typename ITKVector
 // getDX
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-TSpace VectorImage< T, VImageDimension, TSpace >::getDX() {
+TSpace VectorImage< T, VImageDimension, TSpace >::getDX() 
+{
   return __spaceX * __spaceFactor;
 }
 
@@ -191,7 +193,8 @@ TSpace VectorImage< T, VImageDimension, TSpace >::getDX() {
 // getDY
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-TSpace VectorImage< T, VImageDimension, TSpace >::getDY() {
+TSpace VectorImage< T, VImageDimension, TSpace >::getDY() 
+{
   return __spaceY * __spaceFactor;
 }
 
@@ -199,8 +202,49 @@ TSpace VectorImage< T, VImageDimension, TSpace >::getDY() {
 // getDZ
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-TSpace VectorImage< T, VImageDimension, TSpace >::getDZ() {
+TSpace VectorImage< T, VImageDimension, TSpace >::getDZ() 
+{
   return __spaceZ * __spaceFactor;
+}
+
+//
+// getElementVolume
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+T VectorImage< T, VImageDimension, TSpace >::getElementVolume()
+{
+  switch ( VImageDimension )
+    {
+    case 1:
+      return this->getDX();
+      break;
+    case 2:
+      return this->getDX()*this->getDY();
+      break;
+    case 3:
+      return this->getDX()*this->getDY()*this->getDZ();
+      break;
+    default:
+      throw std::runtime_error( "Unsupported dimension of image element." );
+    }
+}
+
+//
+// computeSquareNorm
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+T VectorImage< T, VImageDimension, TSpace>::computeSquareNorm()
+{
+  // now square over all elements
+  T dSquareNorm = 0;
+  for ( unsigned int uiI = 0; uiI < this->getLength(); ++uiI )
+    {
+    T dCurrentValue = this->getValue( uiI );
+    dSquareNorm += dCurrentValue*dCurrentValue;
+    } 
+  dSquareNorm *= this->getElementVolume();
+
+  return dSquareNorm;
 }
 
 //

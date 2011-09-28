@@ -96,6 +96,11 @@ public:
    */
   void copy(VectorImage* source);
   
+  /** 
+   * Method which returns the physical size of a volume element
+   */
+  T getElementVolume();
+
   /**
    * Method to set the space factor
    *
@@ -168,6 +173,12 @@ public:
    * Method to get the original z spacing
    */
   TSpace getDZ();
+
+  /**
+   * Computes the squared norm of a vector image;  takes proper accound of spacing
+   *
+   */
+  T computeSquareNorm();
   
   /**
    * Method to get the origin

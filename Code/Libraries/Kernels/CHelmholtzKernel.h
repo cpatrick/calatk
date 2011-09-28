@@ -1,7 +1,7 @@
 #ifndef C_HELMHOLTZ_KERNEL_H
 #define C_HELMHOLTZ_KERNEL_H
 
-#include "CKernel.h"
+#include "CFourierDomainKernel.h"
 #include "CALATKCommon.h"
 
 namespace CALATK
@@ -16,10 +16,13 @@ template <class T, unsigned int VImageDimension=3 >
 class CHelmholtzKernel : public CFourierDomainKernel< T, VImageDimension >
 {
 public:
+
+  typedef CFourierDomainKernel< T, VImageDimension > Superclass;
+  typedef typename Superclass::VectorImageType VectorImageType;
+  typedef typename Superclass::VectorFieldType VectorFieldType;
+
   CHelmholtzKernel();
   ~CHelmholtzKernel();
-  void CreateKernel( VectorField* pVecFieldGraft );
-  void ConvolveWithKernel( VectorField* pVecField );
 
   SetMacro( Alpha, T );
   GetMacro( Alpha, T );
@@ -29,12 +32,12 @@ public:
 
 protected:
 
-  void CreateKernel2D( VectorField* pVecFieldGraft );
-  void CreateKernel3D( VectorField* pVecFieldGraft );
+  void CreateKernelAndInverseKernel( VectorImageType* pVecImageGraft );
+
+  void CreateKernelAndInverseKernel2D( VectorImageType* pVecImageGraft );
+  void CreateKernelAndInverseKernel3D( VectorImageType* pVecImageGraft );
 
 private:
-
-  VectorImage* m_ptrL;
 
   T m_Alpha;
   T m_Gamma;

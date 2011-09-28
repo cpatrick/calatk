@@ -58,7 +58,8 @@ public:
    * Typedefs *
    ********************************/
   
-  typedef std::map< unsigned int, std::multiset< SImageInformation >*> InformationMapType;
+  typedef std::multiset< SImageInformation* > SubjectInformationType;
+  typedef std::map< unsigned int, SubjectInformationType* > SubjectCollectionInformationMapType;
 
   /********************************
    * Constructors and Destructors *
@@ -123,7 +124,7 @@ public:
    * Returns vectors to the actual image data, needs to be implemented by a derived class.
    * Could just return an image, or a downsampled version, ... depending on implementation 
    */
-  virtual void GetImagesWithSubjectIndex( std::multiset< SImageInformation >*& pImInfo, unsigned int uiSubjectIndex ); 
+  virtual void GetImagesWithSubjectIndex( SubjectInformationType*& pImInfo, unsigned int uiSubjectIndex ); 
 
   /**
    * Returns vectors of the time points for a specific subject.
@@ -146,7 +147,7 @@ public:
    * of a particular index, given a pointer to the multiset
    */
 
-  void GetPointerToSubjectImageInformationByIndex( SImageInformation*& pImInfo, typename std::multiset< SImageInformation>* pInfo, unsigned int uiIndex );
+  void GetPointerToSubjectImageInformationByIndex( SImageInformation*& pImInfo, SubjectInformationType* pInfo, unsigned int uiIndex );
 
   /** 
    * Prints the state
@@ -155,13 +156,13 @@ public:
 
 protected:
 
-  InformationMapType m_MapImageInformation;
+  SubjectCollectionInformationMapType m_SubjectCollectionMapImageInformation;
 
   /**
    * Auxiliary function. Given a unqique id it returns the corresponding iterator for the multiset containing it 
    * @return returns true if found and false otherwise
    */
-  bool getCurrentIteratorForId( typename std::multiset< SImageInformation>*& pInfo, typename std::multiset< SImageInformation>::iterator& iterRet, unsigned int uiId );
+  bool getCurrentIteratorForId( SubjectInformationType*& pInfo, typename SubjectInformationType::iterator& iterRet, unsigned int uiId );
 
 private:
 

@@ -17,7 +17,14 @@
 #include "CScalarExampleObjectiveFunction.h"
 #include "CSolverLineSearch.h"
 
+#include "CStateSpatioTemporalVelocityField.h"
+#include "CLDDMMSpatioTemporalVelocityFieldObjectiveFunction.h"
+
+#include "CHelmholtzKernel.h"
+
 #include <iostream>
+
+#include "CStationaryEvolver.h"
 
 int main(int argc, char **argv)
 {
@@ -71,8 +78,11 @@ int main(int argc, char **argv)
 
   imageManager.print( std::cout );
 
-  typedef CALATK::CImageManagerFullScale<double,2>::SImageInformation SImageInformation;
-  std::multiset< SImageInformation >* pImInfo;
+  typedef CALATK::CImageManagerFullScale<double,2> ImageManagerType;
+  typedef ImageManagerType::SImageInformation SImageInformation;
+  typedef ImageManagerType::SubjectInformationType SubjectInformationType;
+ 
+  SubjectInformationType* pImInfo;
   imageManager.GetImagesWithSubjectIndex( pImInfo, 1 );
 
   // testing the line search
@@ -94,6 +104,16 @@ int main(int argc, char **argv)
 
   std::cout << "v2 = " << v2 << std::endl;
   std::cout << "v1 = v2 - v2*3 = " << v1 << std::endl;
+
+  // creating a kernel
+
+  CALATK::CStationaryEvolver< double > evolver;
+
+  //CALATK::CHelmholtzKernel< double, 3 > helmholtzKernel;
+
+
+  typedef CALATK::CStateSpatioTemporalVelocityField< double > LDDMMStateType;
+  CALATK::CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< double, LDDMMStateType, 3 > lddmm;
 
   return EXIT_SUCCESS;
   // return EXIT_FAILURE;

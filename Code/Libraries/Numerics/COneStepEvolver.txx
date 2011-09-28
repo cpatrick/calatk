@@ -7,7 +7,7 @@
 template <class T, unsigned int VImageDimension, class TSpace >
 COneStepEvolver<T, VImageDimension, TSpace>::COneStepEvolver()
 {
-  m_uiThreads = 1; // default number of threads
+  m_uiNrOfThreads = 1; // default number of threads
 }
 
 template <class T, unsigned int VImageDimension, class TSpace >

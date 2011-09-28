@@ -401,7 +401,7 @@ void VectorArray< T, VImageDimension >::addCellwise(VectorArray* im) {
 // addCellwiseMultiple
 //
 template <class T, unsigned int VImageDimension >
-void VectorArray< T, VImageDimension >::addCellwise(VectorArray* im, T val) {
+void VectorArray< T, VImageDimension >::addCellwiseMultiple(VectorArray* im, T val) {
 
 #ifdef DEBUG
   // make sure they are the same size

@@ -190,7 +190,7 @@ public:
    * @params dim - dimension of the input vector image that should be multiplied by
    * @params fieldInOut - field image which will be multiplied
    */
-  static void multiplyVectorByImageDimensionInPlace2D(VectorImageType* imIn, unsinged int dim, VectorFieldType* fieldInOut );
+  static void multiplyVectorByImageDimensionInPlace2D(VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldInOut );
 
   /**
    * 3D function to multiply a vector image by a scalar image (specified by a dimension of a vectorimage)
@@ -199,7 +199,7 @@ public:
    * @params dim - dimension of the input vector image that should be multiplied by
    * @params fieldInOut - field image which will be multiplied
    */
-  static void multiplyVectorByImageDimensionInPlace3D(VectorImageType* imIn, unsinged int dim, VectorFieldType* fieldInOut );
+  static void multiplyVectorByImageDimensionInPlace3D(VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldInOut );
 
   /**
    * 2D/3D function to multiply a vector image by a scalar image (specified by a dimension of a vectorimage)
@@ -208,8 +208,8 @@ public:
    * @params dim - dimension of the input vector image that should be multiplied by
    * @params fieldInOut - field image which will be multiplied
    */
-  static void multiplyVectorByImageDimensionInPlace(VectorImageType* imIn, unsinged int dim, VectorFieldType* fieldInOut );
-  
+  static void multiplyVectorByImageDimensionInPlace(VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldInOut );
+
   /**
    * 2D Function that converts a map on the image dimension = 1 scale to a map 
    * on the pixel size = 1 scale.  This is to be used for interfacing with

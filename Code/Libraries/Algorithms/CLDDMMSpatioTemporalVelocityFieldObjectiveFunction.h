@@ -11,13 +11,21 @@ class CLDDMMSpatioTemporalVelocityFieldObjectiveFunction : public CVelocityField
 {
 public:
   
-  // some typedefs
+  /** some useful typedefs */
 
-  typedef VectorField< T, VImageDimension >* VectorFieldPointerType;
+  typedef CVelocityFieldObjectiveFunction< T, TState, VImageDimension > Superclass;
+  typedef typename Superclass::VectorImageType VectorImageType;
+  typedef typename Superclass::VectorFieldType VectorFieldType;
+
+  typedef VectorFieldType* VectorFieldPointerType;
   typedef std::vector< VectorFieldPointerType >* VectorPointerToVectorFieldPointerType;
 
-  typedef VectorImage< T, VImageDimension >* VectorImagePointerType;
+  typedef VectorImageType* VectorImagePointerType;
   typedef std::vector< VectorImagePointerType >* VectorPointerToVectorImagePointerType;
+
+  typedef CImageManager< T, VImageDimension > ImageManagerType;
+  typedef typename ImageManagerType::SImageInformation SImageInformation;
+  typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
 
   CLDDMMSpatioTemporalVelocityFieldObjectiveFunction();
   ~CLDDMMSpatioTemporalVelocityFieldObjectiveFunction();
@@ -25,13 +33,15 @@ public:
   T GetCurrentEnergy();
   void ComputeGradient();
 
-  void InitializeDataStructureFromState( TState* pState );
+  void GetMap( VectorFieldType* ptrMap, T dTime );
+  void GetImage( VectorImageType* ptrIm, T dTime );
+
+  void InitializeState();
   void InitializeDataStructures();
+  void InitializeDataStructuresFromState( TState* pState );
 
   SetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );
   GetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );
-
-  void InitializeState();
 
 protected:
 
@@ -43,7 +53,7 @@ private:
   VectorFieldPointerType m_ptrMapOut; // map for the numerical solution
   VectorFieldPointerType m_ptrMapTmp; // map for the numerical solution
 
-  VectorFieldPointerType m_ptrTmpVelocityField; // to hold the negated vector field when flowing backwards
+  VectorFieldPointerType m_ptrTmpVelocityField; // generic temoorary velocity field
   VectorFieldPointerType m_ptrTmpGradient; // to store the temporary gradient
   VectorImagePointerType m_ptrI0; // initial image
   VectorImagePointerType m_ptrCurrentLambdaEnd; // current value of the adjoint, gets successively updated for multiple time points

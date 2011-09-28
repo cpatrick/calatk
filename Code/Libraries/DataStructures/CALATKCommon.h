@@ -9,7 +9,7 @@
 #include <itkTransformFileReader.h>
 #include <itkLinearInterpolateImageFunction.h>
 
-#include <math>
+#include <math.h>
 
 #include "calatkConfigure.h"
 

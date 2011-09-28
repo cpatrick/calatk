@@ -4,7 +4,7 @@
 #include "CALATKCommon.h"
 #include "CMetric.h"
 #include "CImageManager.h"
-//#include "CKernelManager.h"
+#include "CKernel.h"
 
 namespace CALATK
 {
@@ -13,18 +13,33 @@ template <class T, class TState, unsigned int VImageDimension=3 >
 class CObjectiveFunction
 {
 public:
+
+  /** some useful typedefs */
   
   typedef TState* ptrStateType;
-  typedef CMetric< T, VImageDimension >* ptrMetricType;
 
+  typedef CMetric< T, VImageDimension >* ptrMetricType;
+  typedef CKernel< T, VImageDimension >* ptrKernelType;
   typedef CImageManager< T, VImageDimension >* ptrImageManagerType;
+
+  typedef VectorImage< T, VImageDimension > VectorImageType;
+  typedef VectorField< T, VImageDimension > VectorFieldType;
 
   CObjectiveFunction();
   virtual ~CObjectiveFunction();
 
+  /* Returns the energy of the objective function */
   virtual T GetCurrentEnergy() = 0;
+
+  /* Compute the gradient of the objective function and store it in the gradient member variable */
   virtual void ComputeGradient();
-  
+
+  /* Gets the map at a specific time, assuming that the map for the initial image is the identity */
+  virtual void GetMap( VectorFieldType* ptrMap, T dTime ) = 0;
+
+  /* Gets the image at a specific time point */
+  virtual void GetImage( VectorImageType* ptrIm, T dTime ) = 0;
+
   virtual void InitializeState() = 0;
   virtual void InitializeDataStructures() = 0;
   virtual void InitializeDataStructuresFromState( TState* ) = 0;
@@ -34,22 +49,10 @@ public:
     m_ptrImageManager = ptrImageManager;
   };
 
-  ptrImageMangerType GetImageManagerPointer()
+  ptrImageManagerType GetImageManagerPointer()
   {
     return m_ptrImageManager;
   };
-
-/*  TODO: Implement a kernel manager, so we can choose different kernels here
-    and also so that we can easily interface with the multi-scale manager
-    void SetKernelManagerPointer( ptrImageManagerType ptrImageManager )
-  {
-    m_ptrKernelManager = ptrKernelManager;
-  };
-
-  ptrImageMangerType GetKernelManagerPointer()
-  {
-    return m_ptrKernelManager;
-    };*/
 
   void SetStatePointer( ptrStateType pState )
   {
@@ -81,13 +84,26 @@ public:
     return m_pMetric;
   };
 
+  void SetKernel( ptrKernelType pKernel )
+  {
+    m_pKernel = pKernel;
+  };
+
+  ptrKernelType GetKernel()
+  {
+    return m_pKernel;
+  };
+
 protected:
 
   ptrStateType m_pState;
   ptrStateType m_pGradient;
 
-  // FIXME, needs to be an array, so we can in principle support registrations at every measurement
+  // TODO: FIXME, needs to be an array, so we can in principle support registrations at every measurement
   ptrMetricType m_pMetric;
+  
+  // TODO: FIXME, support an array, so we can use different types of kernels
+  ptrKernelType m_pKernel;
 
   ptrImageManagerType m_ptrImageManager;
 

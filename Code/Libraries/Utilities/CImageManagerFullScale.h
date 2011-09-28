@@ -26,6 +26,8 @@ public:
   typedef CImageManager< T, VImageDimension, TSpace> Superclass;
   typedef typename Superclass::SImageInformation SImageInformation;
   typedef typename Superclass::VectorFieldType VectorFieldType;
+  typedef typename Superclass::SubjectInformationType SubjectInformationType;
+  typedef typename Superclass::SubjectCollectionInformationMapType SubjectCollectionInformationMapType;
 
   /********************************
    * Constructors and Destructors *
@@ -46,7 +48,7 @@ public:
    * Returns vectors to the actual image data, needs to be implemented by a derived class.
    * Could just return an image, or a downsampled version, ... depending on implementation 
    */
-  void GetImagesWithSubjectIndex( std::multiset< SImageInformation >*& imInfo, unsigned int uiSubjectIndex ); 
+  void GetImagesWithSubjectIndex( SubjectInformationType*& imInfo, unsigned int uiSubjectIndex ); 
 
 protected:
 private:

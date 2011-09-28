@@ -12,14 +12,14 @@ CStationaryEvolver< T, VImageDimension, TSpace >::~CStationaryEvolver()
 }
 
 template <class T, unsigned int VImageDimension, class TSpace >
-bool CStationaryEvolver< T, VImageDimension, TSpace >::SolveForward( VectorField* pV, VectorImage* pImIn, VectorImage* pImOut, VectorImage* pImTmp, T dT )
+void CStationaryEvolver< T, VImageDimension, TSpace >::SolveForward( VectorFieldType* pV, VectorImageType* pImIn, VectorImageType* pImOut, VectorImageType* pImTmp, T dT )
 {
   T dMaxTimeStep = this->m_ptrOneStepEvolver->ComputeMaximalUpdateStep( pV );
   
   T dCurrentTime = 0;
 
   // convencience variable to allow for easy toggling between the two storage variables while solving
-  VectorImage* pTmpResults[ 2 ];
+  VectorImageType* pTmpResults[ 2 ];
   pTmpResults[ 0 ] = pImOut;
   pTmpResults[ 1 ] = pImTmp;
   

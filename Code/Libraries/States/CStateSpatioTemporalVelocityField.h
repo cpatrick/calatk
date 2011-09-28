@@ -11,6 +11,11 @@ template <class T, unsigned int VImageDimension=3 >
 class CStateSpatioTemporalVelocityField : public CState< T >
 {
 public:
+
+  /** some useful typedefs */
+
+  typedef VectorField< T, VImageDimension >* VectorFieldPointerType;
+  typedef std::vector< VectorFieldPointerType >* VectorPointerToVectorFieldPointerType;
   
   /**
    * Empty constructor
@@ -52,11 +57,6 @@ public:
   CStateSpatioTemporalVelocityField operator-(const CStateSpatioTemporalVelocityField & p ) const;
 
   CStateSpatioTemporalVelocityField operator*(const T & p ) const;
-
-  // some typedefs
-
-  typedef VectorField< T, VImageDimension >* VectorFieldPointerType;
-  typedef std::vector< VectorFieldPointerType >* VectorPointerToVectorFieldPointerType;
 
   VectorFieldPointerType GetVectorFieldPointer( unsigned int iI );
   void SetVectorFieldPointer( unsigned int iI, VectorFieldPointerType ptrVecField );

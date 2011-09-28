@@ -11,6 +11,10 @@ class CScalarExampleObjectiveFunction : public CObjectiveFunction< T, TState, VI
 {
 public:
 
+  /** typedefs */
+
+  typedef CObjectiveFunction< T, TState, VImageDimension > Superclass;
+
   CScalarExampleObjectiveFunction()
   {
     state.SetValue( 0 );
@@ -40,13 +44,25 @@ public:
 
   void InitializeDataStructuresFromState( TState *p )
   {
-    state.SetValue( p.GetValue() );
+    state.SetValue( p->GetValue() );
   }
 
   void InitializeState()
   {
     state.SetValue( 0 );
   }
+
+protected:
+
+  /** typedefs */
+
+  typedef typename Superclass::VectorImageType VectorImageType;
+  typedef typename Superclass::VectorFieldType VectorFieldType;
+
+  /** purposefully not implemented */
+  void GetMap( VectorFieldType*, T ) {};
+  /** purposefully not implemented */   
+  void GetImage( VectorImageType*, T ) {};
 
 private:
   TState state;

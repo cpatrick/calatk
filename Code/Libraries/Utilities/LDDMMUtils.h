@@ -6,7 +6,6 @@
 #include "VectorImageUtils.h"
 #include "VectorFieldUtils.h"
 
-#include <fftw3.h>
 #include <stdexcept>
 #include <cmath>
 
@@ -15,69 +14,6 @@
 
 namespace CALATK
 {
-
-/**
- * fftwData2D
- *
- * A struct that holds the necessary fftw data structures for the LDDMM
- * fourier domain operations (2D)
- */
-struct fftwData2D {
-  /** Array of input doubles to be transformed for X field component */
-  double* inX;
-  /** Array of output double-pairs to hold the result for the transformed X component */
-  fftw_complex* outX;
-  /** Array of input doubles to be transformed for Y field component */
-  double* inY;
-  /** Array of output double-pairs to hold the result for the transformed Y component */
-  fftw_complex* outY;
-  
-  /** FFTW plan object for the forward X transformation */
-  fftw_plan fwdX;
-  /** FFTW plan object for the backward X transformation */
-  fftw_plan bckX;
-  /** FFTW plan object for the forward Y transformation */
-  fftw_plan fwdY;
-  /** FFTW plan object for the backward Y transformation */
-  fftw_plan bckY;
-
-};
-
-/**
- * fftwData3D
- *
- * A struct that holds the necessary fftw data structures for the LDDMM
- * fourier domain operations (3D)
- */
-struct fftwData3D {
-
-  /** Array of input doubles to be transformed for X field component */
-  double* inX;
-  /** Array of output double-pairs to hold the result for the transformed X component */
-  fftw_complex* outX;
-  /** Array of input doubles to be transformed for Y field component */
-  double* inY;
-  /** Array of output double-pairs to hold the result for the transformed Y component */
-  fftw_complex* outY;
-  /** Array of input doubles to be transformed for Z field component */
-  double* inZ;
-  /** Array of output double-pairs to hold the result for the transformed Z component */
-  fftw_complex* outZ;
-  
-  /** FFTW plan object for the forward X transformation */
-  fftw_plan fwdX;
-  /** FFTW plan object for the backward X transformation */
-  fftw_plan bckX;
-  /** FFTW plan object for the forward Y transformation */
-  fftw_plan fwdY;
-  /** FFTW plan object for the backward Y transformation */
-  fftw_plan bckY;
-  /** FFTW plan object for the forward Z transformation */
-  fftw_plan fwdZ;
-  /** FFTW plan object for the backward Z transformation */
-  fftw_plan bckZ;
-
-};
 
 /**
  * LDDMMUtils.h - Utilities for the LDDMM algorithm

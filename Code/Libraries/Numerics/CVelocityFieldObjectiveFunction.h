@@ -12,9 +12,15 @@ template <class T, class TState, unsigned int VImageDimension=3 >
 class CVelocityFieldObjectiveFunction : public CObjectiveFunction< T, TState, VImageDimension >
 {
 public:
-  // some typedefs
+
+  /** some useful typedefs */
+
   typedef CEvolver< T, VImageDimension >* ptrEvolverType;
   typedef CKernel< T, VImageDimension >* ptrKernelType;
+
+  typedef CObjectiveFunction< T, TState, VImageDimension > Superclass;
+  typedef typename Superclass::VectorImageType VectorImageType;
+  typedef typename Superclass::VectorFieldType VectorFieldType;
 
   CVelocityFieldObjectiveFunction();
 
@@ -25,10 +31,11 @@ public:
   ptrKernelType GetKernelPointer();
 
 protected:
-private:
 
   ptrEvolverType m_ptrEvolver;
   ptrKernelType m_ptrKernel;
+
+private:
 
 };
 

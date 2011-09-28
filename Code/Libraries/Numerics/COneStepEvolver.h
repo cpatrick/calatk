@@ -29,13 +29,15 @@ template <class T, unsigned int VImageDimension=3, class TSpace = T >
 class COneStepEvolver {
 
 public:
+
+  /** Some useful typedefs */
   
+  typedef VectorField< T, VImageDimension, TSpace > VectorFieldType;
+  typedef VectorImage< T, VImageDimension, TSpace > VectorImageType;
+
   /********************************
    * Constructors and Destructors *
    ********************************/
-  
-  typedef VectorField< T, VImageDimension, TSpace > VectoFieldType;
-  typedef VectorImage< T, VImageDimension, TSpace > VectorImageType;
 
   /**
    * Empty Constructor
@@ -83,7 +85,7 @@ private:
 
 };
 
-#include "CEvolver.txx"
+#include "COneStepEvolver.txx"
 
 } // end namespace
 

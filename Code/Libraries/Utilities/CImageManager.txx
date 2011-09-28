@@ -20,18 +20,19 @@ template <class T, unsigned int VImageDimension, class TSpace >
 CImageManager< T, VImageDimension, TSpace >::~CImageManager()
 {
   // cleans up the map
-  typename InformationMapType::iterator iterSubject;
+  typename SubjectCollectionInformationMapType::iterator iterSubject;
 
-  for ( iterSubject=m_MapImageInformation.begin(); iterSubject!=m_MapImageInformation.end(); ++iterSubject )
+  for ( iterSubject=m_SubjectCollectionMapImageInformation.begin(); iterSubject!=m_SubjectCollectionMapImageInformation.end(); ++iterSubject )
     {
     if ( iterSubject->second != NULL )
       {
-      typename std::multiset< SImageInformation >::iterator iter;
+      typename SubjectInformationType::iterator iter;
       for ( iter = iterSubject->second->begin(); iter != iterSubject->second->end(); ++iter )
         {
         // should already be done by the derived class which loads the images and takes care of the memory management
-        if ( iter->pIm != NULL ) delete iter->pIm;
-        if ( iter->pTransform != NULL ) delete iter->pTransform;
+        if ( (*iter)->pIm != NULL ) delete (*iter)->pIm;
+        if ( (*iter)->pTransform != NULL ) delete (*iter)->pTransform;
+        delete *iter;
         }
       // now get rid of the multiset itself
       delete iterSubject->second; 
@@ -47,33 +48,33 @@ unsigned int CImageManager< T, VImageDimension, TSpace>::AddImage( std::string f
 {
 
   // first check if an image from this subject has already been added
-  typename InformationMapType::iterator iter = m_MapImageInformation.find( uiSubjectIndex );
+  typename SubjectCollectionInformationMapType::iterator iter = m_SubjectCollectionMapImageInformation.find( uiSubjectIndex );
 
   // if subject is not already stored we need to create a new multiset that will store its contents
-  if (iter == m_MapImageInformation.end() ) 
+  if ( iter == m_SubjectCollectionMapImageInformation.end() ) 
     {
-    std::multiset< SImageInformation >* pMS = new std::multiset< SImageInformation >;
-    m_MapImageInformation[ uiSubjectIndex ] = pMS;
+    SubjectInformationType* pMS = new SubjectInformationType;
+    m_SubjectCollectionMapImageInformation[ uiSubjectIndex ] = pMS;
     }
 
   // now that we know that the multiset for the subject has been initialized 
   // we can create the element and enter it into the structure
 
-  SImageInformation currentImageInformation;
-  currentImageInformation.sImageFileName = filename;
-  currentImageInformation.sImageTransformationFileName = "";
-  currentImageInformation.pIm = NULL;
-  currentImageInformation.pTransform = NULL;
-  currentImageInformation.timepoint = timepoint;
-  currentImageInformation.uiId = m_uiCurrentRunningId++;
-  currentImageInformation.uiSubjectId = uiSubjectIndex;
+  SImageInformation* pCurrentImageInformation = new SImageInformation;
+  pCurrentImageInformation->sImageFileName = filename;
+  pCurrentImageInformation->sImageTransformationFileName = "";
+  pCurrentImageInformation->pIm = NULL;
+  pCurrentImageInformation->pTransform = NULL;
+  pCurrentImageInformation->timepoint = timepoint;
+  pCurrentImageInformation->uiId = m_uiCurrentRunningId++;
+  pCurrentImageInformation->uiSubjectId = uiSubjectIndex;
 
-  m_MapImageInformation[ uiSubjectIndex ]->insert( currentImageInformation );
+  m_SubjectCollectionMapImageInformation[ uiSubjectIndex ]->insert( pCurrentImageInformation );
 
   // keep track of which subject an id came from
-  m_MapIdToSubjectId[ currentImageInformation.uiId ] = uiSubjectIndex;
+  m_MapIdToSubjectId[ pCurrentImageInformation->uiId ] = uiSubjectIndex;
 
-  return currentImageInformation.uiId;
+  return pCurrentImageInformation->uiId;
 
 }
 
@@ -81,7 +82,7 @@ unsigned int CImageManager< T, VImageDimension, TSpace>::AddImage( std::string f
 // Auxiliary function to get a multiset iterator from the dataset id
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-bool CImageManager< T, VImageDimension, TSpace>::getCurrentIteratorForId( typename std::multiset< SImageInformation >*& pInfo, typename std::multiset< SImageInformation>::iterator& iterRet, unsigned int uiId )
+bool CImageManager< T, VImageDimension, TSpace>::getCurrentIteratorForId( SubjectInformationType*& pInfo, typename SubjectInformationType::iterator& iterRet, unsigned int uiId )
 {
   pInfo = NULL; // default return value
 
@@ -90,18 +91,18 @@ bool CImageManager< T, VImageDimension, TSpace>::getCurrentIteratorForId( typena
   if ( iterIdToSubjectId != m_MapIdToSubjectId.end() )
     {
     // found the element
-    typename InformationMapType::iterator iter = m_MapImageInformation.find( iterIdToSubjectId->second );
-    pInfo = m_MapImageInformation[ iterIdToSubjectId->second ];
+    typename SubjectCollectionInformationMapType::iterator iter = m_SubjectCollectionMapImageInformation.find( iterIdToSubjectId->second );
+    pInfo = m_SubjectCollectionMapImageInformation[ iterIdToSubjectId->second ];
     
-    if ( iter != m_MapImageInformation.end() )
+    if ( iter != m_SubjectCollectionMapImageInformation.end() )
       {
       // found, so let's see if we can still find it in the set
       
-      typename std::multiset< SImageInformation >::iterator iterSet;
+      typename SubjectInformationType::iterator iterSet;
       
       for ( iterSet = iter->second->begin(); iterSet != iter->second->end(); ++iterSet )
         {
-        if ( iterSet->uiId == uiId )
+        if ( (*iterSet)->uiId == uiId )
           {
           // found it, so let's add the transform
           iterRet = iterSet;
@@ -125,17 +126,18 @@ bool CImageManager< T, VImageDimension, TSpace>::AddImageTransform( std::string 
 {
 
   bool bFound;
-  typename std::multiset< SImageInformation >::iterator iterSet;
-  typename std::multiset< SImageInformation >* pInfo;
+  typename SubjectInformationType::iterator iterSet;
+  SubjectInformationType* pInfo;
 
   bFound = getCurrentIteratorForId( pInfo, iterSet, uiId );
 
   if ( bFound )
     {
-    SImageInformation imInfo = *iterSet;
-    imInfo.sImageTransformationFileName = filename;
+    SImageInformation* pImInfo = new SImageInformation;
+    *pImInfo = *( *iterSet );
+    pImInfo->sImageTransformationFileName = filename;
     pInfo->erase( iterSet );
-    pInfo->insert( imInfo );
+    pInfo->insert( pImInfo );
     return true;
     }
   
@@ -152,33 +154,33 @@ unsigned int CImageManager< T, VImageDimension, TSpace>::AddImageAndTransform( s
 {
 
   // first check if an image from this subject has already been added
-  typename InformationMapType::iterator iter = m_MapImageInformation.find( uiSubjectIndex );
+  typename SubjectCollectionInformationMapType::iterator iter = m_SubjectCollectionMapImageInformation.find( uiSubjectIndex );
 
   // if subject is not already stored we need to create a new multiset that will store its contents
-  if (iter == m_MapImageInformation.end() ) 
+  if ( iter == m_SubjectCollectionMapImageInformation.end() ) 
     {
-    std::multiset< SImageInformation >* pMS = new std::multiset< SImageInformation >;
-    m_MapImageInformation[ uiSubjectIndex ] = pMS;
+    SubjectInformationType* pMS = new SubjectInformationType;
+    m_SubjectCollectionMapImageInformation[ uiSubjectIndex ] = pMS;
     }
 
   // now that we know that the multiset for the subject has been initialized 
   // we can create the element and enter it into the structure
 
-  SImageInformation currentImageInformation;
-  currentImageInformation.sImageFileName = filename;
-  currentImageInformation.sImageTransformationFileName = transformFilename;
-  currentImageInformation.pIm = NULL;
-  currentImageInformation.pTransform = NULL;
-  currentImageInformation.timepoint = timepoint;
-  currentImageInformation.uiId = m_uiCurrentRunningId++;
-  currentImageInformation.uiSubjectId = uiSubjectIndex;
+  SImageInformation* pCurrentImageInformation = new SImageInformation;
+  pCurrentImageInformation->sImageFileName = filename;
+  pCurrentImageInformation->sImageTransformationFileName = transformFilename;
+  pCurrentImageInformation->pIm = NULL;
+  pCurrentImageInformation->pTransform = NULL;
+  pCurrentImageInformation->timepoint = timepoint;
+  pCurrentImageInformation->uiId = m_uiCurrentRunningId++;
+  pCurrentImageInformation->uiSubjectId = uiSubjectIndex;
 
-  m_MapImageInformation[ uiSubjectIndex ]->insert( currentImageInformation );
+  m_SubjectCollectionMapImageInformation[ uiSubjectIndex ]->insert( pCurrentImageInformation );
 
   // keep track of which subject an id came from
-  m_MapIdToSubjectId[ currentImageInformation.uiId ] = uiSubjectIndex;
+  m_MapIdToSubjectId[ pCurrentImageInformation->uiId ] = uiSubjectIndex;
 
-  return currentImageInformation.uiId;
+  return pCurrentImageInformation->uiId;
 
 }
 
@@ -189,8 +191,8 @@ template <class T, unsigned int VImageDimension, class TSpace >
 bool CImageManager< T, VImageDimension, TSpace>::RemoveImage( unsigned int uiId )
 {
   bool bFound;
-  typename std::multiset< SImageInformation >::iterator iterSet;
-  typename std::multiset< SImageInformation>* pInfo;
+  typename SubjectInformationType::iterator iterSet;
+  SubjectInformationType* pInfo;
 
   bFound = getCurrentIteratorForId( pInfo, iterSet, uiId );
 
@@ -198,8 +200,8 @@ bool CImageManager< T, VImageDimension, TSpace>::RemoveImage( unsigned int uiId 
     {
     // we can delete it from the set after deleting the data content
     
-    if ( iterSet->pIm != NULL ) delete iterSet->pIm;
-    if ( iterSet->pTransform != NULL ) delete iterSet->pTransform;
+    if ( (*iterSet)->pIm != NULL ) delete (*iterSet)->pIm;
+    if ( (*iterSet)->pTransform != NULL ) delete (*iterSet)->pTransform;
 
     // now delete the set element
     
@@ -220,8 +222,8 @@ template <class T, unsigned int VImageDimension, class TSpace >
 bool CImageManager< T, VImageDimension, TSpace>::RemoveTransform( unsigned int uiId )
 {
   bool bFound;
-  typename std::multiset< SImageInformation >::iterator iterSet;
-  typename std::multiset< SImageInformation >* pInfo;
+  typename SubjectInformationType::iterator iterSet;
+  SubjectInformationType* pInfo;
 
   bFound = getCurrentIteratorForId( pInfo, iterSet, uiId );
 
@@ -229,14 +231,15 @@ bool CImageManager< T, VImageDimension, TSpace>::RemoveTransform( unsigned int u
     {
     // we can delete it from the set after deleting the data content
     
-    if ( iterSet->pTransform != NULL ) delete iterSet->pTransform;
+    if ( (*iterSet)->pTransform != NULL ) delete (*iterSet)->pTransform;
     
-    SImageInformation imInfo = *iterSet;
-    imInfo.pTransform = NULL;
-    imInfo.sImageTransformationFileName = "";
+    SImageInformation* pImInfo = new SImageInformation;
+    *pImInfo = *( *iterSet );
+    pImInfo->pTransform = NULL;
+    pImInfo->sImageTransformationFileName = "";
 
     pInfo->erase( iterSet );
-    pInfo->insert( imInfo );
+    pInfo->insert( pImInfo );
     // set element does not need to be deleted, because we still have the image
 
     return true; // was able to remove
@@ -251,9 +254,9 @@ bool CImageManager< T, VImageDimension, TSpace>::RemoveTransform( unsigned int u
 // Returns the set of images for a particular subject index
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void CImageManager< T, VImageDimension, TSpace>::GetImagesWithSubjectIndex( std::multiset< SImageInformation >*& pImInfo, unsigned int uiSubjectIndex )
+void CImageManager< T, VImageDimension, TSpace>::GetImagesWithSubjectIndex( SubjectInformationType*& pImInfo, unsigned int uiSubjectIndex )
 {
-  pImInfo = m_MapImageInformation[ uiSubjectIndex ];
+  pImInfo = m_SubjectCollectionMapImageInformation[ uiSubjectIndex ];
 }
 
 //
@@ -263,18 +266,18 @@ template <class T, unsigned int VImageDimension, class TSpace >
 void CImageManager< T, VImageDimension, TSpace>::GetTimepointsForSubjectIndex( std::vector< T >& timepoints,  unsigned int uiSubjectIndex )
 {
   // first check if an image from this subject has already been registered
-  typename InformationMapType::iterator iter = m_MapImageInformation.find( uiSubjectIndex );
+  typename SubjectCollectionInformationMapType::iterator iter = m_SubjectCollectionMapImageInformation.find( uiSubjectIndex );
 
-  if ( iter != m_MapImageInformation.end() )
+  if ( iter != m_SubjectCollectionMapImageInformation.end() )
     {
-    std::multiset< SImageInformation > *pSubjectInfo = m_MapImageInformation[ uiSubjectIndex ];
+    SubjectInformationType* pSubjectInfo = m_SubjectCollectionMapImageInformation[ uiSubjectIndex ];
 
-    typename std::multiset< SImageInformation >::iterator iterSet; 
+    typename SubjectInformationType::iterator iterSet; 
     timepoints.clear(); // emtpy the vector
 
     for ( iterSet = pSubjectInfo->begin(); iterSet != pSubjectInfo->end(); ++iterSet )
       {
-      timepoints.push_back( iterSet->timepoint );
+      timepoints.push_back( (*iterSet)->timepoint );
       }
 
     }
@@ -288,10 +291,10 @@ void CImageManager< T, VImageDimension, TSpace>::GetAvailableSubjectIndices( std
 {
   vecAvailableSubjectIds.clear();
   
-  typename InformationMapType::iterator iter;
-  for ( iter = m_MapImageInformation.begin(); iter != m_MapImageInformation.end(); ++iter )
+  typename SubjectCollectionInformationMapType::iterator iter;
+  for ( iter = m_SubjectCollectionMapImageInformation.begin(); iter != m_SubjectCollectionMapImageInformation.end(); ++iter )
     {
-    vecAvailableSubjectIds.push_back( iter->second->begin()->uiSubjectId );
+    vecAvailableSubjectIds.push_back( ( * ( iter->second->begin() ) )->uiSubjectId );
     }
 
 }
@@ -302,21 +305,21 @@ void CImageManager< T, VImageDimension, TSpace>::GetAvailableSubjectIndices( std
 template <class T, unsigned int VImageDimension, class TSpace >
 unsigned int CImageManager< T, VImageDimension, TSpace>::GetNumberOfAvailableSubjectIndices()
 {
-  return m_MapImageInformation.size();
+  return m_SubjectCollectionMapImageInformation.size();
 }
 
 //
 // Allows access of image information in a time series by index
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void CImageManager< T, VImageDimension, TSpace>::GetPointerToSubjectImageInformationByIndex( SImageInformation*& pImInfo, typename std::multiset< SImageInformation>* pInfo, unsigned int uiIndex )
+void CImageManager< T, VImageDimension, TSpace>::GetPointerToSubjectImageInformationByIndex( SImageInformation*& pImInfo, SubjectInformationType* pInfo, unsigned int uiIndex )
 {
   // TODO: There may be a quicker method to do this. For now we just assume that there are not 
   // a lot of elements, so we can just do a linear search
 
   pImInfo = NULL;
 
-  typename std::multiset< SImageInformation>::iterator iter;
+  typename SubjectInformationType::iterator iter;
 
   unsigned int uiSize = pInfo->size();
   if ( uiIndex < uiSize )
@@ -326,7 +329,7 @@ void CImageManager< T, VImageDimension, TSpace>::GetPointerToSubjectImageInforma
       {
       if ( uiCount==uiIndex )
         {
-        pImInfo = &(*iter);
+        pImInfo = (*iter);
         return;
         }
       ++uiCount;
@@ -345,24 +348,24 @@ void CImageManager< T, VImageDimension, TSpace>::GetPointerToSubjectImageInforma
 template <class T, unsigned int VImageDimension, class TSpace >
 void CImageManager< T, VImageDimension, TSpace>::print( std::ostream& output )
 {
-  typename InformationMapType::iterator iterSubjects;
+  typename SubjectCollectionInformationMapType::iterator iterSubjects;
 
   // loop over subjects
-  for ( iterSubjects = m_MapImageInformation.begin(); iterSubjects != m_MapImageInformation.end() ; ++iterSubjects )
+  for ( iterSubjects = m_SubjectCollectionMapImageInformation.begin(); iterSubjects != m_SubjectCollectionMapImageInformation.end() ; ++iterSubjects )
     {
     // loop over time points
 
-    output << "Subject " << iterSubjects->second->begin()->uiSubjectId << " : " << std::endl;
+    output << "Subject " << ( *(iterSubjects->second->begin() ) )->uiSubjectId << " : " << std::endl;
 
-    typename std::multiset< SImageInformation >::iterator iter;
+    typename SubjectInformationType::iterator iter;
     for ( iter = iterSubjects->second->begin(); iter != iterSubjects->second->end(); ++iter )
       {
       output << std::endl;
-      output << " t = " << iter->timepoint << std::endl;
-      output << "     " << "image name     = " << iter->sImageFileName << std::endl;
-      output << "     " << "transform name = " << iter->sImageTransformationFileName << std::endl;
-      output << "     " << "subject id     = " << iter->uiSubjectId << std::endl;
-      output << "     " << "dataset id     = " << iter->uiId << std::endl;
+      output << " t = " << (*iter)->timepoint << std::endl;
+      output << "     " << "image name     = " << (*iter)->sImageFileName << std::endl;
+      output << "     " << "transform name = " << (*iter)->sImageTransformationFileName << std::endl;
+      output << "     " << "subject id     = " << (*iter)->uiSubjectId << std::endl;
+      output << "     " << "dataset id     = " << (*iter)->uiId << std::endl;
       output << std::endl;
       }
 

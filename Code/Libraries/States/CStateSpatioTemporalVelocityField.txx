@@ -19,7 +19,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension >::CStateSpatioTemporalVel
 {
   if ( this != &c )
     {
-    VectorPointerToVectorfieldPointerType ptrSource = c.GetVectorPointerToVectorFieldPointer();
+    VectorPointerToVectorFieldPointerType ptrSource = c.GetVectorPointerToVectorFieldPointer();
     CopyDataStructure( ptrSource );
     }
 }
@@ -68,11 +68,11 @@ void CStateSpatioTemporalVelocityField< T, VImageDimension>::CopyDataStructure( 
     if ( ptrSource != NULL )
       {
       // iterate through it and create a new vector field here
-      typename std::vec< VectorFieldPointerType >::iterator iter;
+      typename std::vector< VectorFieldPointerType >::iterator iter;
       for ( iter = ptrSource->begin(); iter != ptrSource->end(); ++iter )
         {
         // create a vector and initialize its content 
-        VectorFieldPointer ptrCurrentVectorField = new VectorFieldPointerType( *iter );
+        VectorFieldPointerType ptrCurrentVectorField = new VectorFieldPointerType( *iter );
         m_vecPtrSTVelocityField.push_back( ptrCurrentVectorField );
         }
       }
@@ -134,12 +134,12 @@ void CStateSpatioTemporalVelocityField< T, VImageDimension >::SetVectorFieldPoin
 // Here come the algebraic operators and assignment
 
 template <class T, unsigned int VImageDimension>
-CStateSpatioTemporalVelocityField & 
+CStateSpatioTemporalVelocityField< T, VImageDimension > & 
 CStateSpatioTemporalVelocityField< T, VImageDimension >::operator=(const CStateSpatioTemporalVelocityField & p )
 {
   if ( this != &p )
     {
-    VectorPointerToVectorfieldPointerType ptrSource = c.GetVectorPointerToVectorFieldPointer();
+    VectorPointerToVectorFieldPointerType ptrSource = p.GetVectorPointerToVectorFieldPointer();
 
     // now do a deep copy
     
@@ -149,8 +149,8 @@ CStateSpatioTemporalVelocityField< T, VImageDimension >::operator=(const CStateS
       // already memory of appropriate size allocated, so just copy
       // iterate and copy
       
-      typename std::vec< VectorFieldPointerType >::iterator iterSource;
-      typename std::vec< VectorFieldPointerType >::iterator iterTarget;
+      typename std::vector< VectorFieldPointerType >::iterator iterSource;
+      typename std::vector< VectorFieldPointerType >::iterator iterTarget;
       for ( iterSource = ptrSource->begin(), iterTarget = m_vecPtrSTVelocityField.begin(); 
             iterSource != ptrSource->end(), iterTarget != m_vecPtrSTVelocityField.end(); 
             ++iterSource, ++iterTarget )
@@ -173,7 +173,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension >::operator=(const CStateS
 }
 
 template <class T, unsigned int VImageDimension>
-CStateSpatioTemporalVelocityField & 
+CStateSpatioTemporalVelocityField< T, VImageDimension > & 
 CStateSpatioTemporalVelocityField< T, VImageDimension >::operator+=(const CStateSpatioTemporalVelocityField & p )
 {
   if ( m_vecPtrSTVelocityField.size() != p.GetVectorPointerToVectorFieldPointer->size() )
@@ -182,10 +182,10 @@ CStateSpatioTemporalVelocityField< T, VImageDimension >::operator+=(const CState
     return;
     }
 
-  VectorPointerToVectorfieldPointerType ptrSource = p.GetVectorPointerToVectorFieldPointer();
+  VectorPointerToVectorFieldPointerType ptrSource = p.GetVectorPointerToVectorFieldPointer();
 
-  typename std::vec< VectorFieldPointerType >::iterator iterSource;
-  typename std::vec< VectorFieldPointerType >::iterator iterTarget;
+  typename std::vector< VectorFieldPointerType >::iterator iterSource;
+  typename std::vector< VectorFieldPointerType >::iterator iterTarget;
   for ( iterSource = ptrSource->begin(), iterTarget = m_vecPtrSTVelocityField.begin(); 
         iterSource != ptrSource->end(), iterTarget != m_vecPtrSTVelocityField.end(); 
         ++iterSource, ++iterTarget )
@@ -198,7 +198,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension >::operator+=(const CState
 }
 
 template <class T, unsigned int VImageDimension>
-CStateSpatioTemporalVelocityField & 
+CStateSpatioTemporalVelocityField< T, VImageDimension > & 
 CStateSpatioTemporalVelocityField< T, VImageDimension >::operator-=(const CStateSpatioTemporalVelocityField & p )
 {
 
@@ -208,10 +208,10 @@ CStateSpatioTemporalVelocityField< T, VImageDimension >::operator-=(const CState
     return;
     }
 
-  VectorPointerToVectorfieldPointerType ptrSource = p.GetVectorPointerToVectorFieldPointer();
+  VectorPointerToVectorFieldPointerType ptrSource = p.GetVectorPointerToVectorFieldPointer();
 
-  typename std::vec< VectorFieldPointerType >::iterator iterSource;
-  typename std::vec< VectorFieldPointerType >::iterator iterTarget;
+  typename std::vector< VectorFieldPointerType >::iterator iterSource;
+  typename std::vector< VectorFieldPointerType >::iterator iterTarget;
   for ( iterSource = ptrSource->begin(), iterTarget = m_vecPtrSTVelocityField.begin(); 
         iterSource != ptrSource->end(), iterTarget != m_vecPtrSTVelocityField.end(); 
         ++iterSource, ++iterTarget )
@@ -224,11 +224,11 @@ CStateSpatioTemporalVelocityField< T, VImageDimension >::operator-=(const CState
 }
 
 template <class T, unsigned int VImageDimension>
-CStateSpatioTemporalVelocityField & 
+CStateSpatioTemporalVelocityField< T, VImageDimension > & 
 CStateSpatioTemporalVelocityField< T, VImageDimension >::operator*=(const T & p )
 {
 
-  typename std::vec< VectorFieldPointerType >::iterator iterTarget;
+  typename std::vector< VectorFieldPointerType >::iterator iterTarget;
   for ( iterTarget = m_vecPtrSTVelocityField.begin(); iterTarget != m_vecPtrSTVelocityField.end(); ++iterTarget )
     {
     // multiply by the value
@@ -239,7 +239,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension >::operator*=(const T & p 
 }
 
 template <class T, unsigned int VImageDimension>
-CStateSpatioTemporalVelocityField 
+CStateSpatioTemporalVelocityField< T, VImageDimension >
 CStateSpatioTemporalVelocityField< T, VImageDimension >::operator+(const CStateSpatioTemporalVelocityField & p ) const
 {
   CStateSpatioTemporalVelocityField r = *this;
@@ -247,7 +247,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension >::operator+(const CStateS
 }
 
 template <class T, unsigned int VImageDimension>
-CStateSpatioTemporalVelocityField 
+CStateSpatioTemporalVelocityField< T, VImageDimension >
 CStateSpatioTemporalVelocityField< T, VImageDimension >::operator-(const CStateSpatioTemporalVelocityField & p ) const
 {
   CStateSpatioTemporalVelocityField r = *this;
@@ -255,7 +255,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension >::operator-(const CStateS
 }
 
 template <class T, unsigned int VImageDimension>
-CStateSpatioTemporalVelocityField 
+CStateSpatioTemporalVelocityField< T, VImageDimension > 
 CStateSpatioTemporalVelocityField< T, VImageDimension >::operator*(const T & p ) const
 {
   CStateSpatioTemporalVelocityField r = *this;

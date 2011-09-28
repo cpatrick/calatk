@@ -450,9 +450,8 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian
     }
   }
 
-  // take the absolute value and return it
+  // take the absolute value
   VectorImageUtils< T, VImageDimension, TSpace>::abs(D);
-  return D;
 
 }
 
@@ -573,9 +572,9 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian
     }
   }
   
-  // take the absolute value and return it
+  // take the absolute value
   VectorImageUtils< T, VImageDimension, TSpace>::abs(D);
-  return D;
+
 }
 
 //
@@ -604,11 +603,10 @@ template <class T, unsigned int VImageDimension, class TSpace >
 void VectorFieldUtils< T, VImageDimension, TSpace>::computeCentralGradient2D( VectorImageType* imIn, unsigned int d, VectorFieldType* fieldOut )
 {
 
-  unsigned int szX = imIn[0]->getSizeX();
-  unsigned int szY = imIn[0]->getSizeY();
-  unsigned int dim = imIn[0]->getDim();
-  TSpace dx = imIn[0]->getDX();
-  TSpace dy = imIn[0]->getDY();
+  unsigned int szX = imIn->getSizeX();
+  unsigned int szY = imIn->getSizeY();
+  TSpace dx = imIn->getDX();
+  TSpace dy = imIn->getDY();
 
   for (unsigned int x = 0; x < szX; ++x) 
     {   
@@ -624,15 +622,15 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::computeCentralGradient2D( Ve
         } 
       else if (x == 0) 
         {
-        Idx = (imIn[i]->getValue(x+1,y,d) - imIn[i]->getValue(x,y,d))/dx;
+        Idx = (imIn->getValue(x+1,y,d) - imIn->getValue(x,y,d))/dx;
         } 
       else if(x == szX-1) 
         {
-        Idx = (imIn[i]->getValue(x,y,d) - imIn[i]->getValue(x-1,y,d))/dx;
+        Idx = (imIn->getValue(x,y,d) - imIn->getValue(x-1,y,d))/dx;
         } 
       else 
         {
-        Idx = (imIn[i]->getValue(x+1,y,d) - imIn[i]->getValue(x-1,y,d))/(2*dx);
+        Idx = (imIn->getValue(x+1,y,d) - imIn->getValue(x-1,y,d))/(2*dx);
         }
         
       if (szY == 1) 
@@ -641,19 +639,19 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::computeCentralGradient2D( Ve
         } 
       else if (y == 0) 
         {
-        Idy = (imIn[i]->getValue(x,y+1,d) - imIn[i]->getValue(x,y,d))/dy;
+        Idy = (imIn->getValue(x,y+1,d) - imIn->getValue(x,y,d))/dy;
         } 
       else if(y == szY-1) 
         {
-        Idy = (imIn[i]->getValue(x,y,d) - imIn[i]->getValue(x,y-1,d))/dy;
+        Idy = (imIn->getValue(x,y,d) - imIn->getValue(x,y-1,d))/dy;
         } 
       else 
         {
-        Idy = (imIn[i]->getValue(x,y+1,d) - imIn[i]->getValue(x,y-1,d))/(2*dy);
+        Idy = (imIn->getValue(x,y+1,d) - imIn->getValue(x,y-1,d))/(2*dy);
         }
                     
-      fieldOut->SetX(x,y,z,Idx);
-      fieldOut->SetY(x,y,z,Idy); 
+      fieldOut->setX(x,y,Idx);
+      fieldOut->setY(x,y,Idy); 
 
       }
     }
@@ -667,13 +665,12 @@ template <class T, unsigned int VImageDimension, class TSpace >
 void VectorFieldUtils< T, VImageDimension, TSpace>::computeCentralGradient3D( VectorImageType* imIn, unsigned int d, VectorFieldType* fieldOut )
 {
 
-  unsigned int szX = imIn[0]->getSizeX();
-  unsigned int szY = imIn[0]->getSizeY();
-  unsigned int szZ = imIn[0]->getSizeZ();
-  unsigned int dim = imIn[0]->getDim();
-  TSpace dx = imIn[0]->getDX();
-  TSpace dy = imIn[0]->getDY();
-  TSpace dz = imIn[0]->getDZ();
+  unsigned int szX = imIn->getSizeX();
+  unsigned int szY = imIn->getSizeY();
+  unsigned int szZ = imIn->getSizeZ();
+  TSpace dx = imIn->getDX();
+  TSpace dy = imIn->getDY();
+  TSpace dz = imIn->getDZ();
 
   for (unsigned int x = 0; x < szX; ++x) 
     {    
@@ -692,15 +689,15 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::computeCentralGradient3D( Ve
           } 
         else if (x == 0) 
           {
-          Idx += (imIn[i]->getValue(x+1,y,z,d) - imIn[i]->getValue(x,y,z,d))/dx;
+          Idx += (imIn->getValue(x+1,y,z,d) - imIn->getValue(x,y,z,d))/dx;
           } 
         else if(x == szX-1) 
           {
-          Idx += (imIn[i]->getValue(x,y,z,d) - imIn[i]->getValue(x-1,y,z,d))/dx;
+          Idx += (imIn->getValue(x,y,z,d) - imIn->getValue(x-1,y,z,d))/dx;
           } 
         else 
           {
-          Idx += (imIn[i]->getValue(x+1,y,z,d) - imIn[i]->getValue(x-1,y,z,d))/(2*dx);
+          Idx += (imIn->getValue(x+1,y,z,d) - imIn->getValue(x-1,y,z,d))/(2*dx);
           }
 
 
@@ -710,15 +707,15 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::computeCentralGradient3D( Ve
           } 
         else if (y == 0) 
           {
-          Idy += (imIn[i]->getValue(x,y+1,z,d) - imIn[i]->getValue(x,y,z,d))/dy;
+          Idy += (imIn->getValue(x,y+1,z,d) - imIn->getValue(x,y,z,d))/dy;
           } 
         else if(y == szY-1) 
           {
-          Idy += (imIn[i]->getValue(x,y,z,d) - imIn[i]->getValue(x,y-1,z,d))/dy;
+          Idy += (imIn->getValue(x,y,z,d) - imIn->getValue(x,y-1,z,d))/dy;
           } 
         else 
           {
-          Idy += (imIn[i]->getValue(x,y+1,z,d) - imIn[i]->getValue(x,y-1,z,d))/(2*dy);
+          Idy += (imIn->getValue(x,y+1,z,d) - imIn->getValue(x,y-1,z,d))/(2*dy);
           }
         
         if (szZ == 1) 
@@ -727,20 +724,20 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::computeCentralGradient3D( Ve
           } 
         else if (z == 0) 
           {
-          Idz += (imIn[i]->getValue(x,y,z+1,d) - imIn[i]->getValue(x,y,z,d))/dz;
+          Idz += (imIn->getValue(x,y,z+1,d) - imIn->getValue(x,y,z,d))/dz;
           } 
         else if(z == szZ-1) 
           {
-          Idz += (imIn[i]->getValue(x,y,z,d) - imIn[i]->getValue(x,y,z-1,d))/dz;
+          Idz += (imIn->getValue(x,y,z,d) - imIn->getValue(x,y,z-1,d))/dz;
           } 
         else 
           {
-          Idz += (imIn[i]->getValue(x,y,z+1,d) - imIn[i]->getValue(x,y,z-1,d))/(2*dz);
+          Idz += (imIn->getValue(x,y,z+1,d) - imIn->getValue(x,y,z-1,d))/(2*dz);
           }
          
-        fieldOut->SetX(x,y,z,Idx);
-        fieldOut->SetY(x,y,z,Idy);
-        fieldOut->SetZ(x,y,z,Idz);
+        fieldOut->setX(x,y,z,Idx);
+        fieldOut->setY(x,y,z,Idy);
+        fieldOut->setZ(x,y,z,Idz);
         
         }
       }
@@ -773,15 +770,15 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::computeCentralGradient( Vect
 template <class T, unsigned int VImageDimension, class TSpace >
 void VectorFieldUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensionInPlace2D( VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldInOut )
 {
-  unsigned int szX = imIn->GetSizeX();
-  unsigned int szY = imIn->GetSizeY();
+  unsigned int szX = imIn->getSizeX();
+  unsigned int szY = imIn->getSizeY();
 
   for ( unsigned int x=0; x<szX; ++x )
     {
     for ( unsigned int y=0; y<szY; ++y )
       {
-      fieldInOut->SetX( x, y, fieldInOut->GetX( x, y )*imIn->getValue( x, y, dim ) );
-      fieldInOut->SetY( x, y, fieldInOut->GetY( x, y )*imIn->getValue( x, y, dim ) );
+      fieldInOut->setX( x, y, fieldInOut->getX( x, y )*imIn->getValue( x, y, dim ) );
+      fieldInOut->setY( x, y, fieldInOut->getY( x, y )*imIn->getValue( x, y, dim ) );
       }
     }
 }
@@ -792,9 +789,9 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensi
 template <class T, unsigned int VImageDimension, class TSpace >
 void VectorFieldUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensionInPlace3D( VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldInOut )
 {
-  unsigned int szX = imIn->GetSizeX();
-  unsigned int szY = imIn->GetSizeY();
-  unsigned int szZ = imIn->GetSizeZ();
+  unsigned int szX = imIn->getSizeX();
+  unsigned int szY = imIn->getSizeY();
+  unsigned int szZ = imIn->getSizeZ();
 
   for ( unsigned int x=0; x<szX; ++x )
     {
@@ -802,9 +799,9 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensi
       {
       for ( unsigned int z=0; z<szZ; ++z )
         {
-        fieldInOut->SetX( x, y, z, fieldInOut->GetX( x, y, z )*imIn->getValue( x, y, z, dim ) );
-        fieldInOut->SetY( x, y, z, fieldInOut->GetY( x, y, z )*imIn->getValue( x, y, z, dim ) );
-        fieldInOut->SetZ( x, y, z, fieldInOut->GetZ( x, y, z )*imIn->getValue( x, y, z, dim ) );
+        fieldInOut->setX( x, y, z, fieldInOut->getX( x, y, z )*imIn->getValue( x, y, z, dim ) );
+        fieldInOut->setY( x, y, z, fieldInOut->getY( x, y, z )*imIn->getValue( x, y, z, dim ) );
+        fieldInOut->setZ( x, y, z, fieldInOut->getZ( x, y, z )*imIn->getValue( x, y, z, dim ) );
         }
       }
     }
@@ -819,10 +816,10 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensi
   switch ( VImageDimension )
     {
     case 2:
-      multiplyVectorByImageDimensionInPlace2D( imIn, dim, fieldOut );
+      multiplyVectorByImageDimensionInPlace2D( imIn, dim, fieldInOut );
       break;
     case 3:
-      multiplyVectorByImageDimensionInPlace3D( imIn, dim, fieldOut );
+      multiplyVectorByImageDimensionInPlace3D( imIn, dim, fieldInOut );
       break;
     default:
       throw std::runtime_error("Dimension not supported for multiplication of vector image with individual dimension of a vector image.");

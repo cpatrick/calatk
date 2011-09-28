@@ -13,14 +13,14 @@ CEvolver< T, VImageDimension, TSpace >::~CEvolver()
 }
 
 template <class T, unsigned int VImageDimension, class TSpace >
-void CEvolver< T, VImageDimension, TSpace >::SetOneStepEvolver( ptrOneStepEvolverType pOneStepEvolver )
+void CEvolver< T, VImageDimension, TSpace >::SetOneStepEvolverPointer( ptrOneStepEvolverType pOneStepEvolver )
 {
   m_ptrOneStepEvolver = pOneStepEvolver;
 }
 
 template <class T, unsigned int VImageDimension, class TSpace >
 COneStepEvolver< T, VImageDimension, TSpace >*
-CEvolver< T, VImageDimension, TSpace >::GetOneStepEvolver()
+CEvolver< T, VImageDimension, TSpace >::GetOneStepEvolverPointer()
 {
   return m_ptrOneStepEvolver;
 }

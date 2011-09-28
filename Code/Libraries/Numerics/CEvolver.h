@@ -20,11 +20,16 @@ namespace CALATK
 {
 
 template <class T, unsigned int VImageDimension=3, class TSpace = T >
-class CEvolver {
+class CEvolver 
+{
 
 public:
 
+  /** Some useful typedefs */
+
   typedef COneStepEvolver< T, VImageDimension, TSpace >* ptrOneStepEvolverType;
+  typedef VectorImage< T, VImageDimension, TSpace > VectorImageType;
+  typedef VectorField< T, VImageDimension, TSpace > VectorFieldType;
 
   CEvolver();
   virtual ~CEvolver();
@@ -41,19 +46,19 @@ public:
    * @param pImOut - output image (after solution)
    * @param pImTmp - temporary storage which can be used by the solver
    */
-  virtual bool SolveForward( VectorField* pV, VectorImage* pImIn, VectorImage* pImOut, VectorImage* pImTmp, T dT ) = 0;
+  virtual void SolveForward( VectorFieldType* pV, VectorImageType* pImIn, VectorImageType* pImOut, VectorImageType* pImTmp, T dT ) = 0;
 
 protected:
 
-private:
-
   ptrOneStepEvolverType m_ptrOneStepEvolver;
+
+private:
 
 };
 
 #include "CEvolver.txx"
 
-}
+} // end namespace
 
 #endif
 

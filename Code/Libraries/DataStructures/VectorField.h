@@ -24,6 +24,11 @@ class VectorField: public VectorImage< T, VImageDimension, TSpace > {
 
 public:
 
+  // standard typedef
+
+  typedef VectorImage< T, VImageDimension, TSpace > VectorImageType;
+  typedef VectorImageType Superclass;
+
   /********************************
    * Constructors and Destructors *
    ********************************/
@@ -71,12 +76,12 @@ public:
    *
    * @param source - the vector image to copy the information from
    */
-  VectorField(VectorImage* source);
+  VectorField(VectorImageType* source);
 
   /**
    * Destructor that frees up all memory
    */
-  virtual ~VectorField() {}
+  virtual ~VectorField() {};
 
 
   /******************

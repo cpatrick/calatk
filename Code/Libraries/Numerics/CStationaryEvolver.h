@@ -15,6 +15,12 @@ class CStationaryEvolver : public CEvolver< T, VImageDimension, TSpace > {
 
 public:
 
+  /** Some useful typedefs */
+
+  typedef CEvolver< T, VImageDimension, TSpace > Superclass;
+  typedef typename Superclass::VectorImageType VectorImageType;
+  typedef typename Superclass::VectorFieldType VectorFieldType;
+
   CStationaryEvolver();
   ~CStationaryEvolver();
 
@@ -27,7 +33,7 @@ public:
    * @param pImOut - output image (after solution)
    * @param pImTmp - temporary storage which can be used by the solver
    */
-  bool SolveForward( VectorField* pV, VectorImage* pImIn, VectorImage* pImOut, VectorImage* pImTmp, T dT );
+  void SolveForward( VectorFieldType* pV, VectorImageType* pImIn, VectorImageType* pImOut, VectorImageType* pImTmp, T dT );
 
 protected:
 

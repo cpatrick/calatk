@@ -6,31 +6,27 @@ CHelmholtzKernel< T, VImageDimension >::CHelmholtzKernel()
 {
   m_Alpha = 0.01;
   m_Gamma = 0.1;
-  m_ptrL = NULL;
 }
 
 template <class T, unsigned int VImageDimension >
 CHelmholtzKernel< T, VImageDimension >::~CHelmholtzKernel()
 {
-  if ( m_ptrL != NULL ) delete m_ptrL;
 }
 
 template <class T, unsigned int VImageDimension >
-void CHelmholtzKernel< T, VImageDimension >::CreateKernel2D( VectorField* pVecFieldGraft )
+void CHelmholtzKernel< T, VImageDimension >::CreateKernelAndInverseKernel2D( VectorImageType* pVecImageGraft )
 {
 
-  unsigned int szX = pVecFieldGraft->getSizeX();
-  unsigned int szY = pVecFieldGraft->getSizeY();
+  unsigned int szX = pVecImageGraft->getSizeX();
+  unsigned int szY = pVecImageGraft->getSizeY();
 
-  T dx = pVecFieldGraft->getDX();
-  T dy = pVecFieldGraft->getDY();
+  T dx = pVecImageGraft->getDX();
+  T dy = pVecImageGraft->getDY();
 
   T dxHat = 1/(T)(szX);
   T dyHat = 1/(T)(szY);
 
   T pi = (T)CALATK::PI;
-
-  m_ptrL = new VectorImage(szX, szY, 1);
 
   for (unsigned int y = 0; y < szY; ++y) 
     {
@@ -39,30 +35,29 @@ void CHelmholtzKernel< T, VImageDimension >::CreateKernel2D( VectorField* pVecFi
       T val = m_Gamma + 2*m_Alpha*( 
         (1 - std::cos(2*pi*(T)x*dxHat))/(dx*dx) + 
         (1 - std::cos(2*pi*(T)y*dyHat))/(dy*dy) );
-      m_ptrL->setValue(x,y,0, val);
+      this->m_ptrL->setValue(x,y,0, val);
+      this->m_ptrLInv->setValue(x,y,0,1.0/val);
       }
     }
 }
 
 template <class T, unsigned int VImageDimension >
-void CHelmholtzKernel< T, VImageDimension >::CreateKernel3D( VectorField* pVecFieldGraft )
+void CHelmholtzKernel< T, VImageDimension >::CreateKernelAndInverseKernel3D( VectorImageType* pVecImageGraft )
 {
 
-  unsigned int szX = pVecFieldGraft->getSizeX();
-  unsigned int szY = pVecFieldGraft->getSizeY();
-  unsigned int szZ = pVecFieldGraft->getSizeZ();
+  unsigned int szX = pVecImageGraft->getSizeX();
+  unsigned int szY = pVecImageGraft->getSizeY();
+  unsigned int szZ = pVecImageGraft->getSizeZ();
 
-  T dx = pVecFieldGraft->getDX();
-  T dy = pVecFieldGraft->getDY();
-  T dz = pVecFieldGraft->getDZ();
+  T dx = pVecImageGraft->getDX();
+  T dy = pVecImageGraft->getDY();
+  T dz = pVecImageGraft->getDZ();
 
   T dxHat = 1/(T)(szX);
   T dyHat = 1/(T)(szY);
   T dzHat = 1/(T)(szZ);
 
   T pi = (T)CALATK::PI;
-
-  m_ptrL = new VectorImage(szX, szY, szZ, 1);
 
   for (unsigned int z = 0; z < szZ; ++z) 
     {
@@ -74,7 +69,8 @@ void CHelmholtzKernel< T, VImageDimension >::CreateKernel3D( VectorField* pVecFi
           (1 - std::cos(2*pi*(T)x*dxHat))/(dx*dx) + 
           (1 - std::cos(2*pi*(T)y*dyHat))/(dy*dy) + 
           (1 - std::cos(2*pi*(T)z*dzHat))/(dz*dz) );
-        m_ptrL->setValue(x,y,z,0, val);
+        this->m_ptrL->setValue(x,y,z,0, val);
+        this->m_ptrLInv->setValue(x,y,z,0,1.0/val);
         }
       }
     }
@@ -82,24 +78,22 @@ void CHelmholtzKernel< T, VImageDimension >::CreateKernel3D( VectorField* pVecFi
 
 
 template <class T, unsigned int VImageDimension >
-void CHelmholtzKernel< T, VImageDimension >::CreateKernel( VectorField* pVecFieldGraft )
+void CHelmholtzKernel< T, VImageDimension >::CreateKernelAndInverseKernel( VectorImageType* pVecImageGraft )
 {
+  // allocate all the required memory
+  AllocateFFTDataStructures( pVecImageGraft ); 
+
   switch ( VImageDimension )
     {
     case 2:
-      CreateKernel2D( pVecFieldGraft );
+      CreateKernelAndInverseKernel2D( pVecImageGraft );
       break;
     case 3:
-      CreateKernel3D( pVecFieldGraft );
+      CreateKernelAndInverseKernel3D( pVecImageGraft );
       break;
     default:
       throw std::runtime_error("Cannot create kernel of desired dimension.");
     }
-}
-
-template <class T, unsigned int VImageDimension >
-void CHelmholtzKernel< T, VImageDimension >::ConvolveWithKernel( VectorField* pVecField )
-{
 }
 
 #endif
