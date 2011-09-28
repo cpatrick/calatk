@@ -1,5 +1,5 @@
-#ifndef C_ONESTEPEVOLVER_SEMILAGRANGIAN_ADVECTION_H
-#define C_ONESTEPEVOLVER_SEMILAGRANGIAN_ADVECTION_H
+#ifndef C_ONESTEPEVOLVER_SEMILAGRANGIAN_ADVECTION_TXX
+#define C_ONESTEPEVOLVER_SEMILAGRANGIAN_ADVECTION_TXX
 
 //
 // empty constructor
@@ -46,20 +46,21 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::Perform
   // do the first order accurate flow
   //
 
-#pragma omp parallel for num_threads(Superclass::m_uiNrOfThreads)
+// TODO: put openmp back in here
+//#pragma omp parallel for num_threads(Superclass::m_uiNrOfThreads)
   for (int y = 0; y < szY; ++y) 
     {
     for (int x = 0; x < szX; ++x) 
       {
         
       // get desired coordinates
-      T xPos = x - v->getX(x,y,z)*dt_div_dx;
-      T yPos = y - v->getY(x,y,z)*dt_div_dy;
+      T xPos = x - v->getX(x,y)*dt_div_dx;
+      T yPos = y - v->getY(x,y)*dt_div_dy;
       
       for (int d = 0; d < dim; d++) 
         {
         // set the new value
-        Inp1->setValue(x,y,d, VectorImageUtils< T, 2 >::interpolatePos(In, xPos, yPos, d) );
+        Inp1->setValue(x,y,d, VectorImageUtils< T, VImageDimension >::interpolatePos(In, xPos, yPos, d) );
         }
       }
     }
@@ -104,7 +105,8 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::Perform
   // do the first order accurate flow
   //
 
-#pragma omp parallel for num_threads(Superclass::m_uiNrOfThreads)
+// TODO: put openmp back in here
+//#pragma omp parallel for num_threads(Superclass::m_uiNrOfThreads)
   for (int z = 0; z < szZ; ++z) 
     {
     for (int y = 0; y < szY; ++y) 
@@ -120,7 +122,7 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::Perform
         for (int d = 0; d < dim; d++) 
           {
           // set the new value
-          Inp1->setValue(x,y,z,d, VectorImageUtils< T, 3 >::interpolatePos(In, xPos, yPos, zPos, d) );
+          Inp1->setValue(x,y,z,d, VectorImageUtils< T, VImageDimension >::interpolatePos(In, xPos, yPos, zPos, d) );
           }
         }
       }
@@ -129,7 +131,7 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::Perform
 
 
 template <class T, unsigned int VImageDimension, class TSpace >
-virtual void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::PerformStep(  VectorFieldType* v, VectorImageType* In, VectorImageType* Inp1, T dt )
+void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::PerformStep(  VectorFieldType* v, VectorImageType* In, VectorImageType* Inp1, T dt )
 {
   switch ( VImageDimension )
     {

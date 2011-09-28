@@ -8,14 +8,14 @@
 namespace CALATK
 {
 
-template <class T, unsigned int VImageDimension = 3, class TSpace = T >
-class CMetricSSD : public CMetric< T, VImageDimension, TSpace >
+template <class T, unsigned int VImageDimension = 3 >
+class CMetricSSD : public CMetric< T, VImageDimension >
 {
 public:
 
   /** some typedefs */
 
-  typedef CMetric< T, VImageDimension, TSpace > Superclass;
+  typedef CMetric< T, VImageDimension > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
 
   CMetricSSD();

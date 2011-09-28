@@ -4,7 +4,6 @@
 template <class T, class TState, unsigned int VImageDimension >
 CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension >::CLDDMMSpatioTemporalVelocityFieldObjectiveFunction()
 {
-  this->m_ptrImageManager = NULL;
   m_NumberOfDiscretizationVolumesPerUnitTime = 0;
 
   m_ptrI = NULL;
@@ -23,9 +22,29 @@ CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension >
 }
 
 template <class T, class TState, unsigned int VImageDimension >
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension >::DeleteData()
+{
+  
+  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapIn );
+  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapOut );
+  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapTmp );
+
+  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrTmpVelocityField );
+  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrTmpGradient );
+
+  SaveDelete< VectorImagePointerType >::Pointer( m_ptrI0 );
+  SaveDelete< VectorImagePointerType >::Pointer( m_ptrCurrentLambdaEnd );
+  SaveDelete< VectorImagePointerType >::Pointer( m_ptrDeterminantOfJacobian );
+ 
+  SaveDelete< VectorImagePointerType >::PointerVector( m_ptrI );
+  SaveDelete< VectorImagePointerType >::PointerVector( m_ptrLambda );
+
+}
+
+template <class T, class TState, unsigned int VImageDimension >
 CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension >::~CLDDMMSpatioTemporalVelocityFieldObjectiveFunction()
 {
-  // TODO: clean up all the dynamically allocated memory
+  DeleteData();
 }
 
 template <class T, class TState, unsigned int VImageDimension >
@@ -69,7 +88,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimens
 template <class T, class TState, unsigned int VImageDimension >                        
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension >::InitializeDataStructuresFromState( TState* pState )
 {
-  // TODO, NEEDED?
+  // TODO, NEEDED to support multiscaling later on, so we can pass an upsampled state externally!!
   throw std::runtime_error( "Not yet implemented" );
 }
 

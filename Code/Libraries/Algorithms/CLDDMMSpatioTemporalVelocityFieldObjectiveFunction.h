@@ -2,6 +2,7 @@
 #define C_LDDMM_SPATIO_TEMPORAL_VELOCITY_FIELD_OBJECTIVE_FUNCTION_H
 
 #include "CVelocityFieldObjectiveFunction.h"
+#include "CALATKCommon.h"
 
 namespace CALATK
 {
@@ -45,6 +46,7 @@ public:
 
 protected:
 
+  void DeleteData();
   void CreateTimeDiscretization( std::vector< T > &vecTimePoints, std::vector< T > &vecTimeIncrements, std::vector< T > &vecMeasurementTimePoints, T dNumberOfDiscretizationVolumesPerUnitTime );
 
 private:

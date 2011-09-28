@@ -33,6 +33,7 @@ public:
 protected:
 
   ptrEvolverType m_ptrEvolver;
+  // TODO: FIXME, support an array, so we can use different types of kernels
   ptrKernelType m_ptrKernel;
 
 private:

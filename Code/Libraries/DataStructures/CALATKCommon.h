@@ -246,6 +246,37 @@ struct ITKDeformationField3D
   typedef itk::Image< typename ITKDeformationPixel3D<T>::Type, 3> Type;
 };
 
+template <class T>
+struct SaveDelete
+{
+  static void Pointer( T& ptr )
+  {
+    if ( ptr != NULL ) delete ptr;
+    ptr = NULL;
+  }
+
+  static void PointerVector( std::vector< T >& ptrVec )
+  {
+    typename std::vector< T >::iterator iter;
+    for ( iter=ptrVec.begin(); iter != ptrVec.end(); ++iter )
+      {
+      SaveDelete< T >::Pointer( *iter );
+      }
+    ptrVec.clear();
+  }
+
+  static void PointerVector( std::vector< T >*& ptrVec )
+  {
+    typename std::vector< T >::iterator iter;
+    for ( iter=ptrVec->begin(); iter != ptrVec->end(); ++iter )
+      {
+      SaveDelete< T >::Pointer( *iter );
+      }
+    ptrVec->clear();
+  }
+
+};
+
 
 /**
  * Testing macros

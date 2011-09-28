@@ -10,14 +10,14 @@
 namespace CALATK
 {
 
-template <class T, unsigned int VImageDimension = 3, class TSpace = T >
+template <class T, unsigned int VImageDimension = 3 >
 class CMetric
 {
 public:
 
   // some typedefs
 
-  typedef VectorImage< T, VImageDimension, TSpace > VectorImageType;
+  typedef VectorImage< T, VImageDimension > VectorImageType;
 
   CMetric()
   {

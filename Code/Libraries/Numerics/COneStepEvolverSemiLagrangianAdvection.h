@@ -22,8 +22,8 @@ class COneStepEvolverSemiLagrangianAdvection : public COneStepEvolver< T, VImage
 public:
 
   typedef COneStepEvolver< T, VImageDimension, TSpace > Superclass;
-  typedef Superclass::VectorFieldType VectorFieldType;
-  typedef Superclass::VectorImageType VectorImageType;
+  typedef typename Superclass::VectorFieldType VectorFieldType;
+  typedef typename Superclass::VectorImageType VectorImageType;
 
   /**
    * Empty Constructor

@@ -21,10 +21,14 @@
 #include "CLDDMMSpatioTemporalVelocityFieldObjectiveFunction.h"
 
 #include "CHelmholtzKernel.h"
+#include "CMetricSSD.h"
+#include "COneStepEvolverSemiLagrangianAdvection.h"
 
 #include <iostream>
 
 #include "CStationaryEvolver.h"
+
+#define DIMENSION 2
 
 int main(int argc, char **argv)
 {
@@ -61,7 +65,7 @@ int main(int argc, char **argv)
 
   // Instantiating the image manager
 
-  CALATK::CImageManagerFullScale<double,2> imageManager;
+  CALATK::CImageManagerFullScale<double,DIMENSION> imageManager;
   imageManager.AddImage( "im1.nrrd", 1, 0 );
   imageManager.AddImage( "im3.nrrd", 3, 0 );
   unsigned int uiD = imageManager.AddImage( "im2.nrrd", 2, 0 );
@@ -78,7 +82,7 @@ int main(int argc, char **argv)
 
   imageManager.print( std::cout );
 
-  typedef CALATK::CImageManagerFullScale<double,2> ImageManagerType;
+  typedef CALATK::CImageManagerFullScale<double,DIMENSION> ImageManagerType;
   typedef ImageManagerType::SImageInformation SImageInformation;
   typedef ImageManagerType::SubjectInformationType SubjectInformationType;
  
@@ -105,15 +109,27 @@ int main(int argc, char **argv)
   std::cout << "v2 = " << v2 << std::endl;
   std::cout << "v1 = v2 - v2*3 = " << v1 << std::endl;
 
+
+  // create the method to take a simple step
+  CALATK::COneStepEvolverSemiLagrangianAdvection< double, DIMENSION > oneStepEvolver;
+
+  // create an evolution class
+  CALATK::CStationaryEvolver< double, DIMENSION > evolver;
+  evolver.SetOneStepEvolverPointer( &oneStepEvolver );
+
   // creating a kernel
+  CALATK::CHelmholtzKernel< double, DIMENSION > kernel;
 
-  CALATK::CStationaryEvolver< double > evolver;
+  // create a metric
+  CALATK::CMetricSSD< double, DIMENSION > metric;
 
-  //CALATK::CHelmholtzKernel< double, 3 > helmholtzKernel;
+  typedef CALATK::CStateSpatioTemporalVelocityField< double, DIMENSION > LDDMMStateType;
+  CALATK::CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< double, LDDMMStateType, DIMENSION > lddmm;
 
-
-  typedef CALATK::CStateSpatioTemporalVelocityField< double > LDDMMStateType;
-  CALATK::CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< double, LDDMMStateType, 3 > lddmm;
+  lddmm.SetEvolverPointer( &evolver );
+  lddmm.SetKernelPointer( &kernel );
+  lddmm.SetMetricPointer( &metric );
+  lddmm.SetImageManagerPointer( &imageManager );
 
   return EXIT_SUCCESS;
   // return EXIT_FAILURE;

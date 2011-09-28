@@ -74,24 +74,14 @@ public:
     return m_pGradient;
   };
 
-  void SetMetric( ptrMetricType pMetric )
+  void SetMetricPointer( ptrMetricType pMetric )
   {
     m_pMetric = pMetric;
   };
 
-  ptrMetricType GetMetric()
+  ptrMetricType GetMetricPointer()
   {
     return m_pMetric;
-  };
-
-  void SetKernel( ptrKernelType pKernel )
-  {
-    m_pKernel = pKernel;
-  };
-
-  ptrKernelType GetKernel()
-  {
-    return m_pKernel;
   };
 
 protected:
@@ -101,10 +91,6 @@ protected:
 
   // TODO: FIXME, needs to be an array, so we can in principle support registrations at every measurement
   ptrMetricType m_pMetric;
-  
-  // TODO: FIXME, support an array, so we can use different types of kernels
-  ptrKernelType m_pKernel;
-
   ptrImageManagerType m_ptrImageManager;
 
 private:
