@@ -46,8 +46,24 @@ public:
 
 protected:
 
+  struct STimePoint
+  {
+    bool bIsMeasurementPoint;
+    T dTime;
+    std::vector< VectorImagePointerType > vecMeasurementImages; // to support multiple images per time point
+    std::vector< VectorFieldPointerType > vecMeasurementTransforms;
+    VectorImagePointerType ptrEstimatedImage;
+  };
+
   void DeleteData();
-  void CreateTimeDiscretization( std::vector< T > &vecTimePoints, std::vector< T > &vecTimeIncrements, std::vector< T > &vecMeasurementTimePoints, T dNumberOfDiscretizationVolumesPerUnitTime );
+  void CreateTimeDiscretization();
+  void CreateTimeDiscretization( SubjectInformationType* pSubjectInfo, std::vector< STimePoint >& vecTimeDiscretization, std::vector< T >& vecTimeIncrements, T dNumberOfDiscretizationVolumesPerUnitTime );
+  void CreateNewStateStructures();
+  void ShallowCopyStateStructures( TState* pState );
+  void CreateGradientAndAuxiliaryStructures();
+
+  void ComputeImagesForward();
+  void ComputeAdjointBackward();
 
 private:
 
@@ -59,6 +75,7 @@ private:
   VectorFieldPointerType m_ptrTmpGradient; // to store the temporary gradient
   VectorImagePointerType m_ptrI0; // initial image
   VectorImagePointerType m_ptrCurrentLambdaEnd; // current value of the adjoint, gets successively updated for multiple time points
+  VectorImagePointerType m_ptrCurrentAdjointDifference;
 
   VectorImagePointerType m_ptrDeterminantOfJacobian;
 
@@ -66,10 +83,16 @@ private:
   VectorPointerToVectorImagePointerType m_ptrLambda; // adjoint
 
   T m_NumberOfDiscretizationVolumesPerUnitTime;
+
   std::vector< T > m_vecMeasurementTimepoints;
-  unsigned int m_uiTotalNumberOfDiscretizationSteps;
+
+  // bookkeeping structure, which keeps track of what measurements need to be compared to what estimated images
+
+  std::vector< STimePoint > m_vecTimeDiscretization;
+
   std::vector< T > m_vecTimeIncrements;
-  std::vector< T > m_vecTimePoints;
+
+
 };
 
 #include "CLDDMMSpatioTemporalVelocityFieldObjectiveFunction.txx"

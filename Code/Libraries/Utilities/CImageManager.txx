@@ -312,7 +312,7 @@ unsigned int CImageManager< T, VImageDimension, TSpace>::GetNumberOfAvailableSub
 // Allows access of image information in a time series by index
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void CImageManager< T, VImageDimension, TSpace>::GetPointerToSubjectImageInformationByIndex( SImageInformation*& pImInfo, SubjectInformationType* pInfo, unsigned int uiIndex )
+void CImageManager< T, VImageDimension, TSpace>::GetPointerToSubjectImageInformationBySubjectInformationAndIndex( SImageInformation*& pImInfo, SubjectInformationType* pInfo, unsigned int uiTimeIndex )
 {
   // TODO: There may be a quicker method to do this. For now we just assume that there are not 
   // a lot of elements, so we can just do a linear search
@@ -322,12 +322,12 @@ void CImageManager< T, VImageDimension, TSpace>::GetPointerToSubjectImageInforma
   typename SubjectInformationType::iterator iter;
 
   unsigned int uiSize = pInfo->size();
-  if ( uiIndex < uiSize )
+  if ( uiTimeIndex < uiSize )
     {
     unsigned int uiCount = 0;
     for ( iter = pInfo->begin(); iter != pInfo->end(); ++iter )
       {
-      if ( uiCount==uiIndex )
+      if ( uiCount==uiTimeIndex )
         {
         pImInfo = (*iter);
         return;
@@ -339,6 +339,24 @@ void CImageManager< T, VImageDimension, TSpace>::GetPointerToSubjectImageInforma
     {
     throw std::runtime_error("Index out of range.");
     }
+
+}
+
+//
+// Allows access of image information in a time series by index
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+void CImageManager< T, VImageDimension, TSpace>::GetPointerToSubjectImageInformationByIndex( SImageInformation*& pImInfo, unsigned int uiSubjectIndex, unsigned int uiTimeIndex )
+{
+  SubjectInformationType* pSubjectInfo;
+  this->GetImagesWithSubjectIndex( pSubjectInfo, uiSubjectIndex );
+
+  unsigned int uiNrOfImages = pSubjectInfo->size();
+
+  assert( uiNrOfImages>uiTimeIndex );
+
+  // get information from the first image to figure out the dimensions
+  this->GetPointerToSubjectImageInformationBySubjectInformationAndIndex( pImInfo, pSubjectInfo, uiTimeIndex );
 
 }
 

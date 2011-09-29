@@ -13,6 +13,7 @@ CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension >
   m_ptrTmpVelocityField = NULL;
   m_ptrTmpGradient = NULL;
   m_ptrCurrentLambdaEnd = NULL;
+  m_ptrCurrentAdjointDifference = NULL;
   m_ptrDeterminantOfJacobian = NULL;
 
   m_ptrMapIn = NULL;
@@ -34,10 +35,21 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimens
 
   SaveDelete< VectorImagePointerType >::Pointer( m_ptrI0 );
   SaveDelete< VectorImagePointerType >::Pointer( m_ptrCurrentLambdaEnd );
+  SaveDelete< VectorImagePointerType >::Pointer( m_ptrCurrentAdjointDifference );
   SaveDelete< VectorImagePointerType >::Pointer( m_ptrDeterminantOfJacobian );
  
   SaveDelete< VectorImagePointerType >::PointerVector( m_ptrI );
   SaveDelete< VectorImagePointerType >::PointerVector( m_ptrLambda );
+
+  m_vecMeasurementTimepoints.clear();
+  m_vecTimeIncrements.clear();
+
+  m_vecTimeDiscretization.clear();
+
+  m_NumberOfDiscretizationVolumesPerUnitTime = 0;
+
+  SaveDelete< TState* >::Pointer( this->m_pState );
+  SaveDelete< TState* >::Pointer( this->m_pGradient );
 
 }
 
@@ -48,52 +60,97 @@ CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension >
 }
 
 template <class T, class TState, unsigned int VImageDimension >
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension >::CreateTimeDiscretization( std::vector< T > &vecTimePoints, std::vector< T > &vecTimeIncrements, std::vector< T > &vecMeasurementTimePoints, T dNumberOfDiscretizationVolumesPerUnitTime )
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension >::CreateTimeDiscretization( SubjectInformationType* pSubjectInfo, std::vector< STimePoint >& vecTimeDiscretization, std::vector< T >& vecTimeIncrements, T dNumberOfDiscretizationVolumesPerUnitTime )
 {
-  vecTimePoints.clear();
+
+  vecTimeDiscretization.clear();
   vecTimeIncrements.clear();
-
-  unsigned int uiNrOfMeasurementTimePoints = vecMeasurementTimePoints.size();
-
-  assert( uiNrOfMeasurementTimePoints>1 ); // we need at least two images to do the registration
 
   T dDesiredTimeStep = 1.0/dNumberOfDiscretizationVolumesPerUnitTime;
 
-  for ( unsigned int iI=0; iI<uiNrOfMeasurementTimePoints-1; ++iI )
+  // go through all the timepoints and enter them into the vecTimeDiscretization structure
+
+  typename SubjectInformationType::iterator iter;
+ 
+  T dLastTimePoint = 0;  
+
+  for ( iter = pSubjectInfo->begin(); iter != pSubjectInfo->end(); ++iter )
     {
-    T dThisTimePoint = vecMeasurementTimePoints[ iI ];
-    T dNextTimePoint = vecMeasurementTimePoints[ iI+1 ];
 
-    T dCurrentTime = dThisTimePoint;
-
-    while ( dCurrentTime + dDesiredTimeStep <= dNextTimePoint )
+    if ( vecTimeDiscretization.empty() )
       {
-      vecTimePoints.push_back( dCurrentTime );
-      vecTimeIncrements.push_back( dDesiredTimeStep );
-      dCurrentTime += dDesiredTimeStep;
-      }
+      // this is the first value so let's enter it
+      STimePoint timePoint;
+      timePoint.bIsMeasurementPoint = true; // all of them are measurements
+      timePoint.dTime = (*iter)->timepoint;
+      timePoint.vecMeasurementImages.push_back( (*iter)->pIm );
+      timePoint.vecMeasurementTransforms.push_back( (*iter)->pTransform );
+      timePoint.ptrEstimatedImage = NULL; // not known yet, needs to be associated afterwards
 
-    // let's see if we need to add a fractional time step
-    if ( dCurrentTime < dNextTimePoint )
+      vecTimeDiscretization.push_back( timePoint );
+
+      dLastTimePoint = (*iter)->timepoint;
+
+      }
+    else
       {
-      T dFractionalTimeStep = dNextTimePoint - dCurrentTime;
-      vecTimePoints.push_back( dCurrentTime );
-      vecTimeIncrements.push_back( dFractionalTimeStep );
-      }
+      // if we have the same timepoint than we have multiple measurements here, so just add the information to the last structure
+      if ( (*iter)->timepoint == dLastTimePoint )
+        {
+        vecTimeDiscretization[ vecTimeDiscretization.size()-1 ].vecMeasurementImages.push_back( (*iter)->pIm );
+        vecTimeDiscretization[ vecTimeDiscretization.size()-1 ].vecMeasurementTransforms.push_back( (*iter)->pTransform );
+        }
+      else
+        {
+        // this is a different timepoint. Need to create discretization in between if too far away from last time point
 
+        while ( (*iter)->timepoint - dLastTimePoint > dDesiredTimeStep )
+          {
+          dLastTimePoint += dDesiredTimeStep;
+          STimePoint timePoint;
+          timePoint.bIsMeasurementPoint = false;
+          timePoint.dTime = dLastTimePoint;
+          timePoint.ptrEstimatedImage = NULL;
+          }
+
+        // now it should be small enough, so enter the image information here
+        T deltaT = (*iter)->timepoint - dLastTimePoint;
+        assert( deltaT <= dDesiredTimeStep );
+
+        STimePoint timePoint;
+        timePoint.bIsMeasurementPoint = true;
+        timePoint.dTime = (*iter)->timepoint;
+        timePoint.vecMeasurementImages.push_back( (*iter)->pIm );
+        timePoint.vecMeasurementTransforms.push_back( (*iter)->pTransform );
+        timePoint.ptrEstimatedImage = NULL; // not known yet, needs to be associated afterwards
+
+        vecTimeDiscretization.push_back( timePoint );
+
+        dLastTimePoint = (*iter)->timepoint;
+
+        } // end of else (found a distinct time point )
+
+      } // end of else (not the first measurement)
+
+    } // end loop over all the subject data
+
+  // go through the time discretization and determine the time-increments
+
+  typename std::vector< STimePoint >::iterator iterTimeDiscretization;
+  iterTimeDiscretization = vecTimeDiscretization.begin();
+  
+  T dTimeNM1 = iterTimeDiscretization->dTime;
+
+  for ( ++iterTimeDiscretization; iterTimeDiscretization != vecTimeDiscretization.end(); ++iterTimeDiscretization )
+    {
+    T dTimeN = iterTimeDiscretization->dTime;
+    vecTimeIncrements.push_back( dTimeN - dTimeNM1 );
     }
 
 }
 
-template <class T, class TState, unsigned int VImageDimension >                        
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension >::InitializeDataStructuresFromState( TState* pState )
-{
-  // TODO, NEEDED to support multiscaling later on, so we can pass an upsampled state externally!!
-  throw std::runtime_error( "Not yet implemented" );
-}
-
 template <class T, class TState, unsigned int VImageDimension >
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension >::InitializeDataStructures()
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension >::CreateTimeDiscretization()
 {
 
   if ( this->m_ptrImageManager == 0 )
@@ -114,58 +171,121 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimens
     return;
     }
 
+  // make sure we have at least two timepoints
   this->m_ptrImageManager->GetTimepointsForSubjectIndex( m_vecMeasurementTimepoints, vecSubjectIndices[ 0 ] );
+  assert( m_vecMeasurementTimepoints.size() > 1 );
 
-  CreateTimeDiscretization( m_vecTimePoints, m_vecTimeIncrements, m_vecMeasurementTimepoints, m_NumberOfDiscretizationVolumesPerUnitTime );
+  // get the full time-course information for the subject
+  SubjectInformationType* pSubjectInfo;
+  this->m_ptrImageManager->GetImagesWithSubjectIndex( pSubjectInfo, vecSubjectIndices[ 0 ] );
 
-  m_uiTotalNumberOfDiscretizationSteps = m_vecTimePoints.size(); // this is also the number of velocity fields that the state will have and the gradient
+  CreateTimeDiscretization( pSubjectInfo, m_vecTimeDiscretization, m_vecTimeIncrements, m_NumberOfDiscretizationVolumesPerUnitTime );
 
-  // allocate state and gradient structures
+  // the time discretization vector has all the N timepoint. There will be N-1 vector fields in between
+
+}
+
+template <class T, class TState, unsigned int VImageDimension >
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension >::CreateNewStateStructures()
+{
 
   assert( this->m_pState == NULL );
-  assert( this->m_pGradient == NULL );
+  assert( m_vecTimeDiscretization.size() > 1 );
 
-  // get images
-  
-  SubjectInformationType* pSubjectInfo;
-  this->m_ptrImageManager->GetImagesWithSubjectIndex( pSubjectInfo, vecSubjectIndices[0] );
+  // get the subject ids
+  std::vector< unsigned int > vecSubjectIndices;
+  this->m_ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
 
-  unsigned int uiNrOfImages = pSubjectInfo->size();
+  assert( vecSubjectIndices.size()>0 );
 
-  // FIXME: Treat multiple images
-  // FIXME: account for transformations
-
-  assert( uiNrOfImages>1 );
+  // obtain image from which to graft the image information for the data structures
 
   SImageInformation* pImInfo;
-
   // get information from the first image to figure out the dimensions
-  this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, pSubjectInfo, 0 );
-
-  // all the dimension information is grafted from this image, but passing it to the constructors
-
-  // create the memory to store the state and the gradient
-
-  std::vector< VectorFieldPointerType > vecState;
-  std::vector< VectorFieldPointerType > vecGradient;
-
-  m_ptrI = new std::vector< VectorImagePointerType >;
-  m_ptrLambda = new std::vector< VectorImagePointerType >;
+  this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
   
-  for ( unsigned int iI=0; iI<m_uiTotalNumberOfDiscretizationSteps; ++iI )
+  std::vector< VectorFieldPointerType > vecState;
+
+  for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size()-1; ++iI )
     {
     VectorFieldPointerType ptrCurrentVectorField = new VectorFieldType( pImInfo->pIm );
     vecState.push_back( ptrCurrentVectorField );
+    }
+
+  // associate the allocated memory with the state
+  this->m_pState = new TState( &vecState );
     
-    ptrCurrentVectorField = new VectorField< T, VImageDimension >( pImInfo->pIm );
+}
+
+template <class T, class TState, unsigned int VImageDimension >
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension >::ShallowCopyStateStructures( TState* pState )
+{
+
+  assert( this->m_pState == NULL );
+
+  std::vector< VectorFieldPointerType > vecState;
+    
+  for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size()-1; ++iI )
+    {
+    VectorFieldPointerType ptrCurrentVectorField = pState->GetVectorFieldPointer( iI );
+    vecState.push_back( ptrCurrentVectorField );
+    }
+    
+  // associate the allocated memory with the state
+  this->m_pState = new TState( &vecState );
+
+}
+
+template <class T, class TState, unsigned int VImageDimension >
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension >::CreateGradientAndAuxiliaryStructures()
+{
+
+  // get the subject ids
+  std::vector< unsigned int > vecSubjectIndices;
+  this->m_ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
+
+  assert( vecSubjectIndices.size()>0 );
+
+  // obtain image from which to graft the image information for the data structures
+
+  SImageInformation* pImInfo;
+  // get information from the first image to figure out the dimensions
+  this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
+
+  // allocate the memory for the gradient
+
+  std::vector< VectorFieldPointerType > vecGradient;
+
+  for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size()-1; ++iI )
+    {
+    VectorFieldPointerType ptrCurrentVectorField = new VectorFieldType( pImInfo->pIm );
     vecGradient.push_back( ptrCurrentVectorField );
-    
+    }
+
+  // associate the allocated memory with the gradient
+  this->m_pGradient = new TState( &vecGradient );
+
+  // allocate all the auxiliary data
+
+  // image and adjoint time-series
+  m_ptrI = new std::vector< VectorImagePointerType >;
+  m_ptrLambda = new std::vector< VectorImagePointerType >;
+
+  // storage for the initial image
+
+  m_ptrI0 = new VectorImageType( pImInfo->pIm );
+  m_vecTimeDiscretization[ 0 ].ptrEstimatedImage = m_ptrI0;
+
+  for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size()-1; ++iI )
+    {
     VectorImagePointerType ptrCurrentVectorImage = new VectorImageType( pImInfo->pIm ); 
     m_ptrI->push_back( ptrCurrentVectorImage );
+
+    // bookkeeping to simplify metric computations
+    m_vecTimeDiscretization[ iI+1 ].ptrEstimatedImage = ptrCurrentVectorImage;
     
     ptrCurrentVectorImage = new VectorImageType( pImInfo->pIm ); 
     m_ptrLambda->push_back( ptrCurrentVectorImage );
-    
     }
 
   // storage for the maps
@@ -174,13 +294,13 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimens
   m_ptrMapOut = new VectorFieldType( pImInfo->pIm );
   m_ptrMapTmp = new VectorFieldType( pImInfo->pIm );
 
-  // storage for the initial image
-
-  m_ptrI0 = new VectorImageType( pImInfo->pIm );
-
   // storage for the adjoint
 
   m_ptrCurrentLambdaEnd = new VectorImageType( pImInfo->pIm );
+
+  // storage for the adjoint difference
+
+  m_ptrCurrentAdjointDifference = new VectorImageType( pImInfo->pIm );
 
   // storage for the determinant of Jacobian
   m_ptrDeterminantOfJacobian  = new VectorImageType( pImInfo->pIm );
@@ -191,56 +311,97 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimens
   // storage for the temporary gradient
   m_ptrTmpGradient = new VectorFieldType( pImInfo->pIm );
 
-  // associate the allocated memory with the state and the gradient
+}
 
-  this->m_pState = new TState( &vecState );
-  this->m_pGradient = new TState( &vecGradient );
+template <class T, class TState, unsigned int VImageDimension >                        
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension >::InitializeDataStructuresFromState( TState* pState )
+{
+
+  DeleteData();
+
+  CreateTimeDiscretization();
+  
+  // shallow copy (i.e., we just take over the externally allocated memory)
+  ShallowCopyStateStructures( pState );
+
+  // gradient and everything else
+  CreateGradientAndAuxiliaryStructures();
+
+}
+
+template <class T, class TState, unsigned int VImageDimension >
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension >::InitializeDataStructures()
+{
+
+  DeleteData();
+
+  assert( this->m_pGradient == NULL );
+
+  CreateTimeDiscretization();
+
+  // allocate state structures
+  CreateNewStateStructures();
+
+  // gradient and everything else
+  CreateGradientAndAuxiliaryStructures();
 
 }
 
 template <class T, class TState, unsigned int VImageDimension >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension >::GetMap( VectorFieldType* ptrMap, T dTime )
 {
+  
 }
 
 template <class T, class TState, unsigned int VImageDimension >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension >::GetImage( VectorImageType* ptrIm, T dTime )
 {
+  // TODO: account for appearance changes, based on closeby images
+  GetMap( m_ptrMapTmp, dTime );
+  // now compute the image by interpolation
+  LDDMMUtils< T, VImageDimension >::applyMap( m_ptrMapTmp, m_ptrI0, ptrIm );
 }
 
 template <class T, class TState, unsigned int VImageDimension >
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension >::ComputeGradient()
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension >::ComputeImagesForward()
 {
-
-  // FIXME: define final conditions
-
   LDDMMUtils< T, VImageDimension >::identityMap( m_ptrMapIn );
-
-  for ( unsigned int iI = 0; iI < m_uiTotalNumberOfDiscretizationSteps; ++iI )
+  
+  for ( unsigned int iI = 0; iI < m_vecTimeDiscretization.size()-1; ++iI )
     {
     this->m_ptrEvolver->SolveForward( this->m_pState->GetVectorFieldPointer( iI ), m_ptrMapIn, m_ptrMapOut, m_ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
 
-    // now compute the image by interpolation
-    LDDMMUtils< T, VImageDimension >::applyMap( m_ptrMapOut, m_ptrI0, (*m_ptrI)[ iI ] );
-
     // for next step, copy
     m_ptrMapIn->copy( m_ptrMapOut );
+
+    // now compute the image by interpolation
+    LDDMMUtils< T, VImageDimension >::applyMap( m_ptrMapIn, m_ptrI0, (*m_ptrI)[ iI ] );
+    
     }
+}
 
+template <class T, class TState, unsigned int VImageDimension >
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension >::ComputeAdjointBackward()
+{
   // create the final condition
-  // FIXME: Here we need to put the final condition depending on the metric
-  std::cout << "FIXME" << std::endl;
-  //m_ptrCurrentLambdaEnd->copy( this->m_pMetric->GetAdjointMatchingDiffereneImage( , , , ) );
 
+  m_ptrCurrentLambdaEnd->setConst( 0 );
+  
+  unsigned int uiNrOfTimePoints = m_vecTimeDiscretization.size();
+  unsigned int uiNrOfMeasuredImagesAtTimePoint = 0;
+
+  uiNrOfMeasuredImagesAtTimePoint = m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecMeasurementImages.size();
+  // first set the final condition
+  for ( unsigned int iM = 0; iM <  uiNrOfMeasuredImagesAtTimePoint; ++iM ) 
+    {
+    this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].ptrEstimatedImage , m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecMeasurementImages[ iM ] );
+    m_ptrCurrentLambdaEnd->addCellwise( m_ptrCurrentAdjointDifference );
+    }
+  
   // reset the map to flow backwards
   LDDMMUtils<T,VImageDimension>::identityMap( m_ptrMapIn );
 
-  // FIXME, do the implementation for multiple images (= time-series)
-
-  // FIXME: Check that the quantities are stored at the right timepoints, 
-  //because there will be N velocity fields for N+1 images!!
-
-  for ( int iI = (int)m_uiTotalNumberOfDiscretizationSteps-1; iI >= 0; --iI )
+  for ( int iI = (int)m_vecTimeDiscretization.size()-1-1; iI >= 0; --iI )
     {
 
     // need to reverse the velocity field, because we are evolving in the backward direction
@@ -260,14 +421,38 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimens
     // for next step, copy
     m_ptrMapIn->copy( m_ptrMapOut );
 
+    // update if we need to jump at the current time-point
+    if ( m_vecTimeDiscretization[ iI ].bIsMeasurementPoint )
+      {
+      // reset the current adjoint to the adjoint at current time point
+      m_ptrCurrentLambdaEnd->copy( (*m_ptrLambda)[ iI ] );
+      // reset the map to flow backwards, because we update the current adjoint
+      LDDMMUtils<T,VImageDimension>::identityMap( m_ptrMapIn );
+      
+      // account for all possible jumps of the adjoint at this time-point
+      uiNrOfMeasuredImagesAtTimePoint = m_vecTimeDiscretization[ iI ].vecMeasurementImages.size();
+      for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM ) 
+        {
+        this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].ptrEstimatedImage , m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecMeasurementImages[ iM ] );
+        m_ptrCurrentLambdaEnd->addCellwise( m_ptrCurrentAdjointDifference );
+        }
+      }
     }
+}
+
+template <class T, class TState, unsigned int VImageDimension >
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension >::ComputeGradient()
+{
+
+  ComputeImagesForward();
+  ComputeAdjointBackward();
 
   // can compute the gradient from this
   // \f$ \nabla E = 2 v + (L^\dagger L)^{-1}(\sum_i \lambda_i \nabla I_i ) \f$
 
   unsigned int dim = m_ptrI0->getDim();
 
-  for ( unsigned int iI = 0; iI < m_uiTotalNumberOfDiscretizationSteps; ++iI )
+  for ( unsigned int iI = 0; iI < m_vecTimeDiscretization.size()-1; ++iI )
     {
     // initialize to 0
     VectorFieldPointerType ptrCurrentGradient = this->m_pGradient->GetVectorFieldPointer( iI );
@@ -297,7 +482,7 @@ T CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension
   T dEnergy = 0;
 
   // computing the square velocity for this time step using the kernel (and not it's inverse)
-  for ( unsigned int iI=0; iI < m_uiTotalNumberOfDiscretizationSteps; ++iI )
+  for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size()-1; ++iI )
     {
     // copy current velocity field (of the state)
     m_ptrTmpVelocityField->copy( this->m_pState->GetVectorFieldPointer( iI ) );
@@ -310,14 +495,21 @@ T CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, TState, VImageDimension
     }
 
   // now add the contributions of the data terms
-  unsigned int uiNumberOfMeasurements = m_vecMeasurementTimepoints.size();
-
-  // create the current images accoring to the current state 
+  
+  // create the current images according to the current state 
   // (in case the velocities were updated externally by the optimizer for example)
 
-  for ( unsigned int iI=0; iI < uiNumberOfMeasurements; ++iI )
+  ComputeImagesForward();
+
+  for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size(); ++iI )
     {
-    //dEnergy += m_pMetric->GetMetric( I_Measured, I_Estimated );
+    // account for all possible measurements
+    unsigned int uiNrOfMeasuredImagesAtTimePoint = m_vecTimeDiscretization[ iI ].vecMeasurementImages.size();
+    for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM ) 
+      {
+      dEnergy += this->m_pMetric->GetMetric( m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ], m_vecTimeDiscretization[ iI ].ptrEstimatedImage );
+      }
+
     }
 
   return dEnergy;

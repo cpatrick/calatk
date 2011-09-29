@@ -147,7 +147,14 @@ public:
    * of a particular index, given a pointer to the multiset
    */
 
-  void GetPointerToSubjectImageInformationByIndex( SImageInformation*& pImInfo, SubjectInformationType* pInfo, unsigned int uiIndex );
+  void GetPointerToSubjectImageInformationBySubjectInformationAndIndex( SImageInformation*& pImInfo, SubjectInformationType* pInfo, unsigned int uiTimeIndex );
+
+  /**
+   * Convenience method which returns a particular time-point of a specific subject specified by index
+   *
+   */
+  
+  void GetPointerToSubjectImageInformationByIndex( SImageInformation*& pImInfo, unsigned int uiSubjectIndex, unsigned int uiTimeIndex );
 
   /** 
    * Prints the state
