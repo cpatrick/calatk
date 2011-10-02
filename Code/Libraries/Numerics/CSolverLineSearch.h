@@ -11,12 +11,12 @@
 
 namespace CALATK
 {
-template <class T, class TState, unsigned int VImageDimension=3 >
-class CSolverLineSearch : public CSolver< T, TState, VImageDimension >
+template <class T, unsigned int VImageDimension, class TState >
+class CSolverLineSearch : public CSolver< T, VImageDimension, TState >
 {
 public:
 
-  typedef CSolver< T, TState, VImageDimension > Superclass;
+  typedef CSolver< T, VImageDimension, TState > Superclass;
   typedef typename Superclass::ptrObjectiveFunctionType ptrObjectiveFunctionType;
 
 /**

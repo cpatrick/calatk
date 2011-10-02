@@ -76,7 +76,7 @@ public:
    *
    * @param source - the source array to copy from
    */
-  VectorArray(VectorArray<T,VImageDimension>* source);
+  VectorArray( const VectorArray<T,VImageDimension>* source);
   
   /**
    * Destructor that frees up all memory

@@ -1,21 +1,40 @@
 /**
- * Tests the image datastructures
+ * Interface for LDDMM registration (including time series)
  *
  */
 
-// FIXME: Improve the test, currently mostly does instantiations
+#include <iostream>
+#include "CLDDMMSpatioTemporalVelocityFieldRegistration.h"
+#include "VectorImageUtils.h"
 
-#include "VectorArray.h"
-#include "VectorImage.h"
-#include "VectorField.h"
+#include "LDDMMCLP.h"
+
+const unsigned int DIMENSION = 2;
+typedef double TFLOAT;
 
 int main(int argc, char **argv)
 {
+  PARSE_ARGS;
 
-  // create a 2D vector array
-  CALATK::VectorArray< double, 2 > array2D(10,10,1);
+  typedef CALATK::CLDDMMSpatioTemporalVelocityFieldRegistration< TFLOAT, DIMENSION > regType;
+  typedef CALATK::VectorImageUtils< TFLOAT, DIMENSION > VectorImageUtilsType;
 
+  regType lddmm;
+  regType::ptrImageManagerType ptrImageManager = lddmm.GetImageManagerPointer();
+
+  ptrImageManager->AddImage( source, 0.0, 0 );
+  ptrImageManager->AddImage( target, 1.0, 0 );
+
+  ptrImageManager->print( std::cout );
+
+  lddmm.Solve();
+
+  const regType::VectorImageType* ptrIm = lddmm.GetImage( 1.0 );
+  const regType::VectorFieldType* ptrMap = lddmm.GetMap( 1.0 );
+
+  VectorImageUtilsType::writeFileITK( ptrIm, "imOut.nrrd" );
+  VectorImageUtilsType::writeFileITK( ptrMap, "mapOut.nrrd" );
 
   return EXIT_SUCCESS;
-  // return EXIT_FAILURE;
 }
+

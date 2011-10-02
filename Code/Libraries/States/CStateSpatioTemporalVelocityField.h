@@ -14,9 +14,10 @@ public:
 
   /** some useful typedefs */
 
-  typedef VectorField< T, VImageDimension >* VectorFieldPointerType;
+  typedef VectorField< T, VImageDimension > VectorFieldType;
+  typedef VectorFieldType* VectorFieldPointerType;
   typedef std::vector< VectorFieldPointerType >* VectorPointerToVectorFieldPointerType;
-  
+  typedef const std::vector< VectorFieldPointerType >* ConstVectorPointerToVectorFieldPointerType;
   /**
    * Empty constructor
    */
@@ -27,7 +28,7 @@ public:
    * Does not copy the data, but just stores the pointers to it. 
    * Destructor will destroy the vector fields though.
    */
-  CStateSpatioTemporalVelocityField( const VectorPointerToVectorFieldPointerType pVecVecField );
+  CStateSpatioTemporalVelocityField( ConstVectorPointerToVectorFieldPointerType pVecVecField );
 
   /**
    * copy constructor, creation of the image for the first time, need to allocate memory
@@ -44,7 +45,7 @@ public:
   /**
    * assignment, memory already allocated, may need to be destroyed and re-allocated
    */
-  CStateSpatioTemporalVelocityField & operator=(const CStateSpatioTemporalVelocityField & p );
+  CStateSpatioTemporalVelocityField & operator=( const CStateSpatioTemporalVelocityField & p );
 
   CStateSpatioTemporalVelocityField & operator+=(const CStateSpatioTemporalVelocityField & p );
 
@@ -58,6 +59,9 @@ public:
 
   CStateSpatioTemporalVelocityField operator*(const T & p ) const;
 
+  ConstVectorPointerToVectorFieldPointerType GetVectorPointerToVectorFieldPointer() const;
+  VectorPointerToVectorFieldPointerType GetVectorPointerToVectorFieldPointer();
+
   VectorFieldPointerType GetVectorFieldPointer( unsigned int iI );
   void SetVectorFieldPointer( unsigned int iI, VectorFieldPointerType ptrVecField );
 
@@ -67,7 +71,7 @@ public:
 protected:
 
   void ClearDataStructure();
-  void CopyDataStructure( VectorPointerToVectorFieldPointerType ptrSource );
+  void CopyDataStructure( ConstVectorPointerToVectorFieldPointerType ptrSource );
 
 private:
 

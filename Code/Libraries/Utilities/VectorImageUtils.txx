@@ -1096,7 +1096,7 @@ void VectorImageUtils< T, VImageDimension, TSpace >::applyAffineITK(typename ITK
 // to ITK (int)
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-typename ITKCharImage2D::Pointer VectorImageUtils< T, VImageDimension, TSpace>::convertToITKChar( VectorImage<T,2,TSpace>* im) 
+typename ITKCharImage2D::Pointer VectorImageUtils< T, VImageDimension, TSpace>::convertToITKChar( const VectorImage<T,2,TSpace>* im) 
 {
 
   unsigned int szX = im->getSizeX();
@@ -1137,8 +1137,10 @@ typename ITKCharImage2D::Pointer VectorImageUtils< T, VImageDimension, TSpace>::
   outImage->Allocate();
 
   // normalize the image onto 0-255
-  typename VectorImage<T,2>::Type* imCopy = new typename VectorImage<T,2>::Type(im);
-  VectorImageUtils::normalize(imCopy, 0, 255);
+  VectorImage<T,2>* imCopy = new VectorImage<T,2>(im);
+  typedef VectorImageUtils<T,2,TSpace> VectorImageUtilsType;
+
+  VectorImageUtilsType::normalize(imCopy, 0, 255);
 
   // Copy in the data
   for (unsigned int y = 0; y < szY; ++y) 
@@ -1157,8 +1159,8 @@ typename ITKCharImage2D::Pointer VectorImageUtils< T, VImageDimension, TSpace>::
   delete imCopy;
   
   // Set origin and direction
-  outImage->SetOrigin(convertITKVectorOriginTo2D(im->getOrigin()));
-  outImage->SetDirection(convertITKVectorDirectionTo2D(im->getDirection()));
+  outImage->SetOrigin(VectorImageUtilsType::convertITKVectorOrigin(im->getOrigin()));
+  outImage->SetDirection(VectorImageUtilsType::convertITKVectorDirection(im->getDirection()));
   
   // return the result
   return outImage;
@@ -1169,7 +1171,7 @@ typename ITKCharImage2D::Pointer VectorImageUtils< T, VImageDimension, TSpace>::
 // to ITK 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-typename ITKVectorImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension, TSpace >::convertToITK2D(VectorImageType* im) 
+typename ITKVectorImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension, TSpace >::convertToITK2D( const VectorImageType* im) 
 {
 
   if ( VImageDimension != 2 )
@@ -1184,7 +1186,7 @@ typename ITKVectorImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, V
 
   // Initialize ITK image
   typename ITKVectorImage<T,VImageDimension>::Type::Pointer outImage;
-  outImage = typename ITKVectorImage<T,VImageDimension>::Type::New();
+  outImage = ITKVectorImage<T,VImageDimension>::Type::New();
 
   // Set up region
   typename ITKVectorImage<T,VImageDimension>::Type::IndexType start;
@@ -1242,7 +1244,7 @@ typename ITKVectorImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, V
 // to ITK 3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-typename ITKVectorImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension, TSpace >::convertToITK3D(VectorImageType* im) 
+typename ITKVectorImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension, TSpace >::convertToITK3D( const VectorImageType* im) 
 {
 
   if ( VImageDimension != 3 )
@@ -1323,7 +1325,7 @@ typename ITKVectorImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, V
 // to ITK 2D/3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-typename ITKVectorImage<T, VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension, TSpace >::convertToITK(VectorImageType* im) 
+typename ITKVectorImage<T, VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension, TSpace >::convertToITK( const VectorImageType* im) 
 {
   
   typename ITKVectorImage<T, VImageDimension>::Type::Pointer defaultRet = NULL;
@@ -1351,7 +1353,7 @@ typename ITKVectorImage<T, VImageDimension>::Type::Pointer VectorImageUtils< T, 
 // to ITK (dim), 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-typename ITKImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension, TSpace >::convertDimToITK2D(VectorImageType* im, unsigned int dimIn) 
+typename ITKImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension, TSpace >::convertDimToITK2D( const VectorImageType* im, unsigned int dimIn) 
 {
 
   unsigned int szX = im->getSizeX();
@@ -1424,7 +1426,7 @@ typename ITKImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageD
 // to ITK (dim), 3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-typename ITKImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension, TSpace >::convertDimToITK3D(VectorImageType* im, unsigned int dimIn)
+typename ITKImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension, TSpace >::convertDimToITK3D( const VectorImageType* im, unsigned int dimIn)
 {
 
   unsigned int szX = im->getSizeX();
@@ -1506,7 +1508,7 @@ typename ITKImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageD
 // to ITK (dim) 2D/3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-typename ITKImage<T, VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension, TSpace >::convertDimToITK(VectorImageType* im, unsigned int dim) 
+typename ITKImage<T, VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension, TSpace >::convertDimToITK( const VectorImageType* im, unsigned int dim) 
 {
   
   typename ITKImage<T, VImageDimension>::Type::Pointer defaultRet = NULL;
@@ -1936,7 +1938,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTextFile(VectorImageTy
 // writeFileITK, 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK2D(VectorImageType* im, std::string filename) 
+bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK2D(const VectorImageType* im, std::string filename) 
 {
   
   //
@@ -2022,7 +2024,11 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK2D(VectorImageT
     outImage->Allocate();
 
     // normalize the image onto 0-255
-    VectorImageUtils<T,VImageDimension,TSpace>::normalize(im, 0, 255);
+    VectorImageType* imNormalized = new VectorImageType( im );
+
+    typedef VectorImageUtils<T,VImageDimension,TSpace> VectorImageUtilsType;
+
+    VectorImageUtilsType::normalize(imNormalized, 0, 255);
 
     // Copy in the data
     for (unsigned int y = 0; y < szY; ++y) 
@@ -2035,17 +2041,19 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK2D(VectorImageT
         px[1] = y;
 
         RGBPx val;
-        val[0] = (unsigned char)im->getValue(x,y,0);
-        val[1] = (unsigned char)im->getValue(x,y,1);
-        val[2] = (unsigned char)im->getValue(x,y,2);
+        val[0] = (unsigned char)imNormalized->getValue(x,y,0);
+        val[1] = (unsigned char)imNormalized->getValue(x,y,1);
+        val[2] = (unsigned char)imNormalized->getValue(x,y,2);
         
         outImage->SetPixel(px, val);
         }
       }
     
+    delete imNormalized;
+
     // Set origin and direction
-    outImage->SetOrigin(convertITKVectorOriginTo2D(im->getOrigin()));
-    outImage->SetDirection(convertITKVectorDirectionTo2D(im->getDirection()));
+    outImage->SetOrigin(VectorImageUtilsType::convertITKVectorOrigin(im->getOrigin()));
+    outImage->SetDirection(VectorImageUtilsType::convertITKVectorDirection(im->getDirection()));
     
     // Initialize ITK writer
     typename ColorWriterType::Pointer colorImageWriter = ColorWriterType::New();
@@ -2105,7 +2113,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK2D(VectorImageT
   typename ITKImage<T,VImageDimension>::Type::Pointer scalarIm = convertDimToITK(im, 0);
 
   // Write out the image
-  typename ITKImageWriter<T,VImageDimension>::Type::Pointer writer = typename ITKImageWriter<T,VImageDimension>::Type::New();
+  typename ITKImageWriter<T,VImageDimension>::Type::Pointer writer = ITKImageWriter<T,VImageDimension>::Type::New();
   writer->SetInput(scalarIm);
   writer->SetFileName(filename);
   try {
@@ -2131,7 +2139,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK2D(VectorImageT
     itkImage = VectorImageUtils<T,VImageDimension,TSpace>::convertToITK(im);
 
     // Initialize ITK writer
-    typename ITKVectorImageWriter<T,VImageDimension>::Type::Pointer vectorImageWriter = typename ITKVectorImageWriter<T,VImageDimension>::Type::New();
+    typename ITKVectorImageWriter<T,VImageDimension>::Type::Pointer vectorImageWriter = ITKVectorImageWriter<T,VImageDimension>::Type::New();
     vectorImageWriter->SetFileName(filename.c_str());
     vectorImageWriter->SetInput(itkImage);
 
@@ -2156,7 +2164,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK2D(VectorImageT
 // writeFileITK, 3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK3D(VectorImageType* im, std::string filename) 
+bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK3D( const VectorImageType* im, std::string filename) 
 {
 
   //
@@ -2170,7 +2178,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK3D(VectorImageT
     itkImage = VectorImageUtils< T, VImageDimension, TSpace >::convertDimToITK(im, 0);
 
     // Initialize ITK writer
-    typename ITKImageWriter<T,VImageDimension>::Type::Pointer writer = typename ITKImageWriter<T,VImageDimension>::Type::New();
+    typename ITKImageWriter<T,VImageDimension>::Type::Pointer writer = ITKImageWriter<T,VImageDimension>::Type::New();
     writer->SetFileName(filename.c_str());
     writer->SetInput(itkImage);
 
@@ -2198,7 +2206,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK3D(VectorImageT
     itkImage = VectorImageUtils< T, VImageDimension, TSpace >::convertToITK(im);
 
     // Initialize ITK writer
-    typename ITKVectorImageWriter<T,VImageDimension>::Type::Pointer writer = typename ITKVectorImageWriter<T,VImageDimension>::Type::New();
+    typename ITKVectorImageWriter<T,VImageDimension>::Type::Pointer writer = ITKVectorImageWriter<T,VImageDimension>::Type::New();
     writer->SetFileName(filename.c_str());
     writer->SetInput(itkImage);
     
@@ -2222,7 +2230,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK3D(VectorImageT
 // writeFileITK, 2D/3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK(VectorImageType* im, std::string filename) 
+bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK( const VectorImageType* im, std::string filename) 
 {
   switch ( VImageDimension )
     {

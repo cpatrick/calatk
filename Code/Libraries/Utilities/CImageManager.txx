@@ -251,15 +251,6 @@ bool CImageManager< T, VImageDimension, TSpace>::RemoveTransform( unsigned int u
 }
 
 //
-// Returns the set of images for a particular subject index
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-void CImageManager< T, VImageDimension, TSpace>::GetImagesWithSubjectIndex( SubjectInformationType*& pImInfo, unsigned int uiSubjectIndex )
-{
-  pImInfo = m_SubjectCollectionMapImageInformation[ uiSubjectIndex ];
-}
-
-//
 // Returns the time points for a particular subject index
 //
 template <class T, unsigned int VImageDimension, class TSpace >
@@ -330,6 +321,8 @@ void CImageManager< T, VImageDimension, TSpace>::GetPointerToSubjectImageInforma
       if ( uiCount==uiTimeIndex )
         {
         pImInfo = (*iter);
+        // load image of subject if necessary
+        this->GetImage( pImInfo );
         return;
         }
       ++uiCount;

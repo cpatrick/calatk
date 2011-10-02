@@ -4,8 +4,8 @@
 //
 // empty constructor
 //
-template <class T, class TState, unsigned int VImageDimension >
-CSolverLineSearch<T, TState, VImageDimension>::CSolverLineSearch()
+template <class T, unsigned int VImageDimension, class TState >
+CSolverLineSearch<T, VImageDimension, TState>::CSolverLineSearch()
 {
   // default setting for the parameters
 
@@ -41,16 +41,16 @@ CSolverLineSearch<T, TState, VImageDimension>::CSolverLineSearch()
 //
 // destructor
 //
-template <class T, class TState, unsigned int VImageDimension >
-CSolverLineSearch<T, TState, VImageDimension>::~CSolverLineSearch()
+template <class T, unsigned int VImageDimension, class TState >
+CSolverLineSearch<T, VImageDimension, TState>::~CSolverLineSearch()
 {
 }
 
 //
 // minimizes the objective function
 //
-template <class T, class TState, unsigned int VImageDimension >
-bool CSolverLineSearch<T, TState, VImageDimension>::Solve()
+template <class T, unsigned int VImageDimension, class TState >
+bool CSolverLineSearch<T, VImageDimension, TState>::Solve()
 {
   ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();
 
@@ -141,8 +141,8 @@ bool CSolverLineSearch<T, TState, VImageDimension>::Solve()
 
 }
 
-template <class T, class TState, unsigned int VImageDimension >
-bool CSolverLineSearch<T, TState, VImageDimension>::LineSearchWithBacktracking( T dDesiredStepSize, T& dAlpha, T& dResultingEnergy )
+template <class T, unsigned int VImageDimension, class TState >
+bool CSolverLineSearch<T, VImageDimension, TState>::LineSearchWithBacktracking( T dDesiredStepSize, T& dAlpha, T& dResultingEnergy )
 {
 
   ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();

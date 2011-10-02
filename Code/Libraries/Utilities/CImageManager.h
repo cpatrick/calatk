@@ -124,7 +124,12 @@ public:
    * Returns vectors to the actual image data, needs to be implemented by a derived class.
    * Could just return an image, or a downsampled version, ... depending on implementation 
    */
-  virtual void GetImagesWithSubjectIndex( SubjectInformationType*& pImInfo, unsigned int uiSubjectIndex ); 
+  virtual void GetImagesWithSubjectIndex( SubjectInformationType*& pImInfo, unsigned int uiSubjectIndex ) = 0; 
+
+  /**
+   * Loads image and potentially transform for a given image information structure
+   */
+  virtual void GetImage( SImageInformation* pCurrentImInfo ) = 0; 
 
   /**
    * Returns vectors of the time points for a specific subject.

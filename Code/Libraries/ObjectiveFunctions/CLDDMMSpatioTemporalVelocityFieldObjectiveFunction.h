@@ -2,19 +2,20 @@
 #define C_LDDMM_SPATIO_TEMPORAL_VELOCITY_FIELD_OBJECTIVE_FUNCTION_H
 
 #include "CVelocityFieldObjectiveFunction.h"
+#include "LDDMMUtils.h"
 #include "CALATKCommon.h"
 
 namespace CALATK
 {
 
-template <class T, class TState, unsigned int VImageDimension=3 >
-class CLDDMMSpatioTemporalVelocityFieldObjectiveFunction : public CVelocityFieldObjectiveFunction< T, TState, VImageDimension >
+template <class T, unsigned int VImageDimension, class TState >
+class CLDDMMSpatioTemporalVelocityFieldObjectiveFunction : public CVelocityFieldObjectiveFunction< T, VImageDimension, TState >
 {
 public:
   
   /** some useful typedefs */
 
-  typedef CVelocityFieldObjectiveFunction< T, TState, VImageDimension > Superclass;
+  typedef CVelocityFieldObjectiveFunction< T, VImageDimension, TState > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 

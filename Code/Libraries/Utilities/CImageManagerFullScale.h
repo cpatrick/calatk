@@ -49,6 +49,7 @@ public:
    * Could just return an image, or a downsampled version, ... depending on implementation 
    */
   void GetImagesWithSubjectIndex( SubjectInformationType*& imInfo, unsigned int uiSubjectIndex ); 
+  void GetImage( SImageInformation* pCurrentImInfo );
 
 protected:
 private:

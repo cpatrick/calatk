@@ -10,12 +10,12 @@
 namespace CALATK
 {
 
-template <class T, class TState, unsigned int VImageDimension=3 >
+template <class T, unsigned int VImageDimension, class TState >
 class CSolver
 {
 public:
 
-  typedef CObjectiveFunction< T, TState, VImageDimension>* ptrObjectiveFunctionType;
+  typedef CObjectiveFunction< T, VImageDimension, TState>* ptrObjectiveFunctionType;
 
   CSolver();
   virtual ~CSolver();

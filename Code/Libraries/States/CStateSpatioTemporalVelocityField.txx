@@ -29,10 +29,10 @@ CStateSpatioTemporalVelocityField< T, VImageDimension >::CStateSpatioTemporalVel
 // constructor which takes a vector of vectorfields as input
 //
 template <class T, unsigned int VImageDimension>  
-CStateSpatioTemporalVelocityField< T, VImageDimension >::CStateSpatioTemporalVelocityField( const VectorPointerToVectorFieldPointerType pVecVecField )
+CStateSpatioTemporalVelocityField< T, VImageDimension >::CStateSpatioTemporalVelocityField( ConstVectorPointerToVectorFieldPointerType pVecVecField )
 {
   ClearDataStructure(); // just in case we are overwriting something
-  typename std::vector<VectorFieldPointerType>::iterator iter;
+  typename std::vector<VectorFieldPointerType>::const_iterator iter;
   for ( iter = pVecVecField->begin(); iter != pVecVecField->end(); ++iter )
     {
     m_vecPtrSTVelocityField.push_back( *iter );
@@ -61,18 +61,18 @@ void CStateSpatioTemporalVelocityField< T, VImageDimension>::ClearDataStructure(
 // copy data structures
 //
 template <class T, unsigned int VImageDimension>
-void CStateSpatioTemporalVelocityField< T, VImageDimension>::CopyDataStructure( VectorPointerToVectorFieldPointerType ptrSource )
+void CStateSpatioTemporalVelocityField< T, VImageDimension>::CopyDataStructure( ConstVectorPointerToVectorFieldPointerType ptrSource )
 {
     ClearDataStructure();
 
     if ( ptrSource != NULL )
       {
       // iterate through it and create a new vector field here
-      typename std::vector< VectorFieldPointerType >::iterator iter;
+      typename std::vector< VectorFieldPointerType >::const_iterator iter;
       for ( iter = ptrSource->begin(); iter != ptrSource->end(); ++iter )
         {
         // create a vector and initialize its content 
-        VectorFieldPointerType ptrCurrentVectorField = new VectorFieldPointerType( *iter );
+        VectorFieldPointerType ptrCurrentVectorField = new VectorFieldType( *iter );
         m_vecPtrSTVelocityField.push_back( ptrCurrentVectorField );
         }
       }
@@ -122,6 +122,23 @@ CStateSpatioTemporalVelocityField< T, VImageDimension >::GetVectorFieldPointer( 
 }
 
 //
+// returns the pointer to all the vector field pointers
+//
+template <class T, unsigned int VImageDimension>
+typename CStateSpatioTemporalVelocityField< T, VImageDimension >::ConstVectorPointerToVectorFieldPointerType
+CStateSpatioTemporalVelocityField< T, VImageDimension >::GetVectorPointerToVectorFieldPointer() const
+{
+  return &m_vecPtrSTVelocityField;
+}
+
+template <class T, unsigned int VImageDimension>
+typename CStateSpatioTemporalVelocityField< T, VImageDimension >::VectorPointerToVectorFieldPointerType
+CStateSpatioTemporalVelocityField< T, VImageDimension >::GetVectorPointerToVectorFieldPointer()
+{
+  return &m_vecPtrSTVelocityField;
+}
+
+//
 // sets a vector field as an element of the spatio temporal velocity field data structure
 //
 template <class T, unsigned int VImageDimension>
@@ -139,24 +156,24 @@ CStateSpatioTemporalVelocityField< T, VImageDimension >::operator=(const CStateS
 {
   if ( this != &p )
     {
-    VectorPointerToVectorFieldPointerType ptrSource = p.GetVectorPointerToVectorFieldPointer();
+    ConstVectorPointerToVectorFieldPointerType ptrSource = p.GetVectorPointerToVectorFieldPointer();
 
     // now do a deep copy
     
     // check if we already have the same number of elements. If so overwrite, otherwise recreate
-    if ( m_vecPtrSTVelocityField.size() == p.GetVectorPointerToVectorFieldPointer->size() )
+    if ( m_vecPtrSTVelocityField.size() == p.GetVectorPointerToVectorFieldPointer()->size() )
       {
       // already memory of appropriate size allocated, so just copy
       // iterate and copy
       
-      typename std::vector< VectorFieldPointerType >::iterator iterSource;
+      typename std::vector< VectorFieldPointerType >::const_iterator iterSource;
       typename std::vector< VectorFieldPointerType >::iterator iterTarget;
       for ( iterSource = ptrSource->begin(), iterTarget = m_vecPtrSTVelocityField.begin(); 
             iterSource != ptrSource->end(), iterTarget != m_vecPtrSTVelocityField.end(); 
             ++iterSource, ++iterTarget )
         {
         // copy the current vector field
-        iterTarget->copy( *iterSource );
+        (*iterTarget)->copy( *iterSource );
         }
       }
     else
@@ -165,6 +182,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension >::operator=(const CStateS
       std::cerr << "WARINING: reallocating memory, should already have been assigned." << std::endl;
       CopyDataStructure( ptrSource );      
       }
+    return *this;
     }
   else
     {
@@ -176,22 +194,21 @@ template <class T, unsigned int VImageDimension>
 CStateSpatioTemporalVelocityField< T, VImageDimension > & 
 CStateSpatioTemporalVelocityField< T, VImageDimension >::operator+=(const CStateSpatioTemporalVelocityField & p )
 {
-  if ( m_vecPtrSTVelocityField.size() != p.GetVectorPointerToVectorFieldPointer->size() )
+  if ( m_vecPtrSTVelocityField.size() != p.GetVectorPointerToVectorFieldPointer()->size() )
     {
     throw std::runtime_error( "Size mismatch of vector of vector fields. ABORT." );
-    return;
     }
 
-  VectorPointerToVectorFieldPointerType ptrSource = p.GetVectorPointerToVectorFieldPointer();
+  ConstVectorPointerToVectorFieldPointerType ptrSource = p.GetVectorPointerToVectorFieldPointer();
 
-  typename std::vector< VectorFieldPointerType >::iterator iterSource;
+  typename std::vector< VectorFieldPointerType >::const_iterator iterSource;
   typename std::vector< VectorFieldPointerType >::iterator iterTarget;
   for ( iterSource = ptrSource->begin(), iterTarget = m_vecPtrSTVelocityField.begin(); 
         iterSource != ptrSource->end(), iterTarget != m_vecPtrSTVelocityField.end(); 
         ++iterSource, ++iterTarget )
     {
     // add the source to the target
-    iterTarget->addCellwise( *iterSource );
+    (*iterTarget)->addCellwise( *iterSource );
     }
 
   return *this;
@@ -232,7 +249,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension >::operator*=(const T & p 
   for ( iterTarget = m_vecPtrSTVelocityField.begin(); iterTarget != m_vecPtrSTVelocityField.end(); ++iterTarget )
     {
     // multiply by the value
-    iterTarget->multConst( p );
+    (*iterTarget)->multConst( p );
     }
 
   return *this;

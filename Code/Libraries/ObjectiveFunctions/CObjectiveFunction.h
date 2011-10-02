@@ -9,7 +9,7 @@
 namespace CALATK
 {
 
-template <class T, class TState, unsigned int VImageDimension=3 >
+template <class T, unsigned int VImageDimension, class TState >
 class CObjectiveFunction
 {
 public:

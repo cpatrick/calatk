@@ -92,9 +92,9 @@ int main(int argc, char **argv)
   // testing the line search
 
   typedef CALATK::CStateScalarExample< double > StateType;
-  CALATK::CScalarExampleObjectiveFunction< double, StateType > objectiveFunction;
+  CALATK::CScalarExampleObjectiveFunction< double, DIMENSION, StateType > objectiveFunction;
 
-  CALATK::CSolverLineSearch< double, StateType > lineSearch;
+  CALATK::CSolverLineSearch< double, DIMENSION, StateType > lineSearch;
   lineSearch.SetObjectiveFunctionPointer( &objectiveFunction );
 
   lineSearch.Solve();
@@ -124,7 +124,7 @@ int main(int argc, char **argv)
   CALATK::CMetricSSD< double, DIMENSION > metric;
 
   typedef CALATK::CStateSpatioTemporalVelocityField< double, DIMENSION > LDDMMStateType;
-  CALATK::CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< double, LDDMMStateType, DIMENSION > lddmm;
+  CALATK::CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< double, DIMENSION, LDDMMStateType > lddmm;
 
   lddmm.SetEvolverPointer( &evolver );
   lddmm.SetKernelPointer( &kernel );

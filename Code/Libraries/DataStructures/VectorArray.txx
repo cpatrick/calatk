@@ -83,7 +83,7 @@ VectorArray<T, VImageDimension>::VectorArray(unsigned int sizeX, unsigned int si
 // copy constructor
 //
 template <class T, unsigned int VImageDimension>
-VectorArray<T, VImageDimension>::VectorArray(VectorArray<T, VImageDimension>* source) :
+VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, VImageDimension>* source) :
   __sizeX(source->getSizeX()),
   __sizeY(source->getSizeY()),
   __sizeZ(source->getSizeZ()),

@@ -4,23 +4,23 @@
 //
 // empty constructor
 //
-template <class T, class TState, unsigned int VImageDimension >
-CSolver< T, TState, VImageDimension >::CSolver()
+template <class T, unsigned int VImageDimension, class TState >
+CSolver< T, VImageDimension, TState >::CSolver()
 {
 }
 
 //
 // destructor
 //
-template <class T, class TState, unsigned int VImageDimension >
-CSolver< T, TState, VImageDimension >::~CSolver()
+template <class T, unsigned int VImageDimension, class TState >
+CSolver< T, VImageDimension, TState >::~CSolver()
 {
 }
 
 //
 // setting the objective function pointer
-template <class T, class TState, unsigned int VImageDimension >
-void CSolver< T, TState, VImageDimension >::SetObjectiveFunctionPointer( ptrObjectiveFunctionType pObj )
+template <class T, unsigned int VImageDimension, class TState >
+void CSolver< T, VImageDimension, TState >::SetObjectiveFunctionPointer( ptrObjectiveFunctionType pObj )
 {
   m_pObjectiveFunction = pObj;
 }
@@ -28,9 +28,9 @@ void CSolver< T, TState, VImageDimension >::SetObjectiveFunctionPointer( ptrObje
 //
 // returning the objective function pointer
 //
-template <class T, class TState, unsigned int VImageDimension >
-typename CSolver< T, TState, VImageDimension >::ptrObjectiveFunctionType 
-CSolver< T, TState, VImageDimension >::GetObjectiveFunctionPointer()
+template <class T, unsigned int VImageDimension, class TState >
+typename CSolver< T, VImageDimension, TState >::ptrObjectiveFunctionType 
+CSolver< T, VImageDimension, TState >::GetObjectiveFunctionPointer()
 {
   return m_pObjectiveFunction;
 }

@@ -89,7 +89,7 @@ VectorImage< T, VImageDimension, TSpace >::VectorImage(unsigned int sizeX, unsig
 // copy constructor
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-VectorImage< T, VImageDimension, TSpace >::VectorImage(VectorImage* source) 
+VectorImage< T, VImageDimension, TSpace >::VectorImage( const VectorImage* source) 
   : VectorArray<T,VImageDimension>::VectorArray( source )
 {
   __spaceFactor = source->getSpaceFactor();
@@ -184,7 +184,7 @@ void VectorImage< T, VImageDimension, TSpace >::setDirection( typename ITKVector
 // getDX
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-TSpace VectorImage< T, VImageDimension, TSpace >::getDX() 
+TSpace VectorImage< T, VImageDimension, TSpace >::getDX() const 
 {
   return __spaceX * __spaceFactor;
 }
@@ -193,7 +193,7 @@ TSpace VectorImage< T, VImageDimension, TSpace >::getDX()
 // getDY
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-TSpace VectorImage< T, VImageDimension, TSpace >::getDY() 
+TSpace VectorImage< T, VImageDimension, TSpace >::getDY() const 
 {
   return __spaceY * __spaceFactor;
 }
@@ -202,7 +202,7 @@ TSpace VectorImage< T, VImageDimension, TSpace >::getDY()
 // getDZ
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-TSpace VectorImage< T, VImageDimension, TSpace >::getDZ() 
+TSpace VectorImage< T, VImageDimension, TSpace >::getDZ() const
 {
   return __spaceZ * __spaceFactor;
 }
@@ -211,7 +211,7 @@ TSpace VectorImage< T, VImageDimension, TSpace >::getDZ()
 // getElementVolume
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImage< T, VImageDimension, TSpace >::getElementVolume()
+T VectorImage< T, VImageDimension, TSpace >::getElementVolume() const
 {
   switch ( VImageDimension )
     {
@@ -251,7 +251,8 @@ T VectorImage< T, VImageDimension, TSpace>::computeSquareNorm()
 // getSpaceFactor
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-TSpace VectorImage< T, VImageDimension, TSpace >::getSpaceFactor() {
+TSpace VectorImage< T, VImageDimension, TSpace >::getSpaceFactor() const
+{
   return __spaceFactor;
 }
 
@@ -259,7 +260,8 @@ TSpace VectorImage< T, VImageDimension, TSpace >::getSpaceFactor() {
 // getSpaceX
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-TSpace VectorImage< T, VImageDimension, TSpace >::getSpaceX() {
+TSpace VectorImage< T, VImageDimension, TSpace >::getSpaceX() const
+{
   return __spaceX;
 }
 
@@ -267,7 +269,8 @@ TSpace VectorImage< T, VImageDimension, TSpace >::getSpaceX() {
 // getSpaceY
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-TSpace VectorImage< T, VImageDimension, TSpace >::getSpaceY() {
+TSpace VectorImage< T, VImageDimension, TSpace >::getSpaceY() const
+{
   return __spaceY;
 }
 
@@ -275,7 +278,8 @@ TSpace VectorImage< T, VImageDimension, TSpace >::getSpaceY() {
 // getSpaceZ
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-TSpace VectorImage< T, VImageDimension, TSpace >::getSpaceZ() {
+TSpace VectorImage< T, VImageDimension, TSpace >::getSpaceZ() const
+{
   return __spaceZ;
 }
 
@@ -283,7 +287,8 @@ TSpace VectorImage< T, VImageDimension, TSpace >::getSpaceZ() {
 // getOrigin
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-typename ITKVectorImage< T, VImageDimension>::Type::PointType VectorImage< T, VImageDimension, TSpace >::getOrigin() {
+typename ITKVectorImage< T, VImageDimension>::Type::PointType VectorImage< T, VImageDimension, TSpace >::getOrigin() const
+{
   return __origin;
 }
 
@@ -291,7 +296,8 @@ typename ITKVectorImage< T, VImageDimension>::Type::PointType VectorImage< T, VI
 // getDirection
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-typename ITKVectorImage< T, VImageDimension>::Type::DirectionType VectorImage< T, VImageDimension, TSpace >::getDirection() {
+typename ITKVectorImage< T, VImageDimension>::Type::DirectionType VectorImage< T, VImageDimension, TSpace >::getDirection() const
+{
   return __direction;
 }
 

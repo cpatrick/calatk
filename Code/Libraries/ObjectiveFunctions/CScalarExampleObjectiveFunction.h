@@ -6,14 +6,14 @@
 namespace CALATK
 {
 
-template <class T, class TState, unsigned int VImageDimension=3 >
-class CScalarExampleObjectiveFunction : public CObjectiveFunction< T, TState, VImageDimension >
+template <class T, unsigned int VImageDimension, class TState >
+class CScalarExampleObjectiveFunction : public CObjectiveFunction< T, VImageDimension, TState >
 {
 public:
 
   /** typedefs */
 
-  typedef CObjectiveFunction< T, TState, VImageDimension > Superclass;
+  typedef CObjectiveFunction< T, VImageDimension, TState > Superclass;
 
   CScalarExampleObjectiveFunction()
   {

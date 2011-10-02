@@ -8,8 +8,8 @@
 namespace CALATK
 {
 
-template <class T, class TState, unsigned int VImageDimension=3 >
-class CVelocityFieldObjectiveFunction : public CObjectiveFunction< T, TState, VImageDimension >
+template <class T, unsigned int VImageDimension, class TState >
+class CVelocityFieldObjectiveFunction : public CObjectiveFunction< T, VImageDimension, TState >
 {
 public:
 
@@ -18,7 +18,7 @@ public:
   typedef CEvolver< T, VImageDimension >* ptrEvolverType;
   typedef CKernel< T, VImageDimension >* ptrKernelType;
 
-  typedef CObjectiveFunction< T, TState, VImageDimension > Superclass;
+  typedef CObjectiveFunction< T, VImageDimension, TState > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 

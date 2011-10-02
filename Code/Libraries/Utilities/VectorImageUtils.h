@@ -312,7 +312,7 @@ public:
    *
    * @param im - the input image
    */
-  static typename ITKCharImage2D::Pointer convertToITKChar( VectorImage<T,2,TSpace>* im);
+  static typename ITKCharImage2D::Pointer convertToITKChar( const VectorImage<T,2,TSpace>* im);
 
   /**
    * 2D Method that takes a VectorImageType and returns an ITK image.  The returned
@@ -322,7 +322,7 @@ public:
    *
    * @param im - the input image
    */
-  static typename ITKVectorImage<T,VImageDimension>::Type::Pointer convertToITK2D(VectorImageType* im);
+  static typename ITKVectorImage<T,VImageDimension>::Type::Pointer convertToITK2D( const VectorImageType* im);
 
   /**
    * 3D Method that takes a VectorImageType and returns an ITK image.  The returned
@@ -332,7 +332,7 @@ public:
    *
    * @param im - the input image
    */
-  static typename ITKVectorImage<T,VImageDimension>::Type::Pointer convertToITK3D(VectorImageType* im);
+  static typename ITKVectorImage<T,VImageDimension>::Type::Pointer convertToITK3D( const VectorImageType* im);
 
   /**
    * Method that takes a VectorImageType and returns an ITK image.  The returned
@@ -342,7 +342,7 @@ public:
    *
    * @param im - the input image
    */
-  static typename ITKVectorImage<T, VImageDimension>::Type::Pointer convertToITK(VectorImageType* im);
+  static typename ITKVectorImage<T, VImageDimension>::Type::Pointer convertToITK( const VectorImageType* im);
 
   /**
    * 2D Method that converts a single dimension of a VectorImageType to an ITK
@@ -351,7 +351,7 @@ public:
    * @param im - the image to convert
    * @param dim - the dimension to use
    */
-  static typename ITKImage<T,VImageDimension>::Type::Pointer convertDimToITK2D(VectorImageType* im, unsigned int dim);
+  static typename ITKImage<T,VImageDimension>::Type::Pointer convertDimToITK2D( const VectorImageType* im, unsigned int dim);
 
   /**
    * 3D Method that converts a single dimension of a VectorImageType to an ITK
@@ -360,7 +360,7 @@ public:
    * @param im - the image to convert
    * @param dim - the dimension to use
    */
-  static typename ITKImage<T,VImageDimension>::Type::Pointer convertDimToITK3D(VectorImageType* im, unsigned int dim);
+  static typename ITKImage<T,VImageDimension>::Type::Pointer convertDimToITK3D( const VectorImageType* im, unsigned int dim);
 
   /**
    * Method that converts a single dimension of a VectorImageType to an ITK
@@ -369,7 +369,7 @@ public:
    * @param im - the image to convert
    * @param dim - the dimension to use
    */
-  static typename ITKImage<T,VImageDimension>::Type::Pointer convertDimToITK(VectorImageType* im, unsigned int dim);
+  static typename ITKImage<T,VImageDimension>::Type::Pointer convertDimToITK( const VectorImageType* im, unsigned int dim);
 
   /**
    * Method that takes an itk::Image<T, 4> and returns a VectorImageType.
@@ -486,7 +486,7 @@ public:
    * @param im - the image to write
    * @param filename - the name of the file to write to
    */
-  static bool writeFileITK2D(VectorImageType* im, std::string filename);
+  static bool writeFileITK2D(const VectorImageType* im, std::string filename);
 
   /**
    * 3D Method that uses ITK to write the image out
@@ -494,7 +494,7 @@ public:
    * @param im - the image to write
    * @param filename - the name of the file to write to
    */
-  static bool writeFileITK3D(VectorImageType* im, std::string filename);
+  static bool writeFileITK3D(const VectorImageType* im, std::string filename);
 
   /**
    * 2D/3D Method that uses ITK to write the image out
@@ -502,7 +502,7 @@ public:
    * @param im - the image to write
    * @param filename - the name of the file to write to
    */
-  static bool writeFileITK(VectorImageType* im, std::string filename);
+  static bool writeFileITK(const VectorImageType* im, std::string filename);
 
   /**
    * 2D Method that uses ITK to write the time dependant image set out

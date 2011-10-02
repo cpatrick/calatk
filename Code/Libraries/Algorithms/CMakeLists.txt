@@ -1,6 +1,6 @@
 
 # Set up source for Algorithms
-set(FRAT_Algorithms_source
+set(CALATK_Algorithms_source
   ${CMAKE_CURRENT_SOURCE_DIR}/FlowAdvectionSemiLagrangian.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/FlowScalarConservation.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/AtlasBuilder.cxx

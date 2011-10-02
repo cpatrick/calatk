@@ -32,14 +32,14 @@ VectorField< T, VImageDimension, TSpace >::VectorField(unsigned int sizeX, unsig
 // copy constructor
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-VectorField< T, VImageDimension, TSpace >::VectorField(VectorField* source) 
+VectorField< T, VImageDimension, TSpace >::VectorField( const VectorField* source) 
   : VectorImage<T, VImageDimension, TSpace >::VectorImage(source) {}
 
 //
 // copy constructor from vector image
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-VectorField< T, VImageDimension, TSpace >::VectorField(VectorImageType* source) 
+VectorField< T, VImageDimension, TSpace >::VectorField( const VectorImageType* source) 
 {
   this->__sizeX = source->getSizeX();
   this->__sizeY = source->getSizeY();

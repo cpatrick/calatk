@@ -68,7 +68,7 @@ public:
    *
    * @param source - the field array to copy from
    */
-  VectorField(VectorField* source);
+  VectorField( const VectorField* source);
 
   /**
    * Copy constructor that takes an existing VectorImage
@@ -76,7 +76,7 @@ public:
    *
    * @param source - the vector image to copy the information from
    */
-  VectorField(VectorImageType* source);
+  VectorField( const VectorImageType* source);
 
   /**
    * Destructor that frees up all memory

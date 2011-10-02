@@ -77,7 +77,7 @@ public:
    *
    * @param source - the source image to copy from
    */
-  VectorImage(VectorImage* source);
+  VectorImage( const VectorImage* source);
   
   /**
    * Destructor that frees up all memory
@@ -99,7 +99,7 @@ public:
   /** 
    * Method which returns the physical size of a volume element
    */
-  T getElementVolume();
+  T getElementVolume() const;
 
   /**
    * Method to set the space factor
@@ -142,37 +142,37 @@ public:
   /**
    * Method to get the x spacing
    */
-  TSpace getSpaceX();
+  TSpace getSpaceX() const;
   
   /**
    * Method to get the y spacing
    */
-  TSpace getSpaceY();
+  TSpace getSpaceY() const;
   
   /**
    * Method to get the z spacing
    */
-  TSpace getSpaceZ();
+  TSpace getSpaceZ() const;
   
   /**
    * Method to get the space factor
    */
-  TSpace getSpaceFactor();
+  TSpace getSpaceFactor() const;
   
   /**
    * Method to get the original x spacing
    */
-  TSpace getDX();
+  TSpace getDX() const;
   
   /**
    * Method to get the original y spacing
    */
-  TSpace getDY();
+  TSpace getDY() const;
   
   /**
    * Method to get the original z spacing
    */
-  TSpace getDZ();
+  TSpace getDZ() const;
 
   /**
    * Computes the squared norm of a vector image;  takes proper accound of spacing
@@ -183,12 +183,12 @@ public:
   /**
    * Method to get the origin
    */
-  typename ITKVectorImage< T, VImageDimension >::Type::PointType getOrigin();
+  typename ITKVectorImage< T, VImageDimension >::Type::PointType getOrigin() const;
   
   /**
    * Method to get the direction
    */
-  typename ITKVectorImage< T, VImageDimension >::Type::DirectionType getDirection();
+  typename ITKVectorImage< T, VImageDimension >::Type::DirectionType getDirection() const;
   
   /**
    * Method that adds the elements of the input image to the current image
