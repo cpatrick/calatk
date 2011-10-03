@@ -35,21 +35,21 @@ public:
    *
    * @param in - the input image
    */
-  static T maxAll(VectorFieldType* in);
+  static T maxAll( const VectorFieldType* in);
   
   /**
    * Method that returns the min of the data in the image
    *
    * @param in - the input image
    */
-  static T minAll(VectorFieldType* in);
+  static T minAll( const VectorFieldType* in);
   
   /**
    * Method that returns the absolute max of the data in the image
    *
    * @param in - the input image
    */
-  static T absMaxAll(VectorFieldType* in);
+  static T absMaxAll( const VectorFieldType* in);
   
   /**
    * 3D Method that sets input vector field to the identity map

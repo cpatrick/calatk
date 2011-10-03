@@ -109,7 +109,7 @@ int main(int argc, char **argv)
   std::cout << "v2 = " << v2 << std::endl;
   std::cout << "v1 = v2 - v2*3 = " << v1 << std::endl;
 
-
+/*
   // create the method to take a simple step
   CALATK::COneStepEvolverSemiLagrangianAdvection< double, DIMENSION > oneStepEvolver;
 
@@ -130,6 +130,8 @@ int main(int argc, char **argv)
   lddmm.SetKernelPointer( &kernel );
   lddmm.SetMetricPointer( &metric );
   lddmm.SetImageManagerPointer( &imageManager );
+
+*/
 
   return EXIT_SUCCESS;
   // return EXIT_FAILURE;

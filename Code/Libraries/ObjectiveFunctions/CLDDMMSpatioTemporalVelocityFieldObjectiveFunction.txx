@@ -4,7 +4,7 @@
 template <class T, unsigned int VImageDimension, class TState >
 CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::CLDDMMSpatioTemporalVelocityFieldObjectiveFunction()
 {
-  m_NumberOfDiscretizationVolumesPerUnitTime = 0;
+  m_NumberOfDiscretizationVolumesPerUnitTime = 10;
 
   m_ptrI = NULL;
   m_ptrLambda = NULL;
@@ -45,8 +45,6 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
   m_vecTimeIncrements.clear();
 
   m_vecTimeDiscretization.clear();
-
-  m_NumberOfDiscretizationVolumesPerUnitTime = 0;
 
   SaveDelete< TState* >::Pointer( this->m_pState );
   SaveDelete< TState* >::Pointer( this->m_pGradient );
@@ -153,7 +151,7 @@ template <class T, unsigned int VImageDimension, class TState >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::CreateTimeDiscretization()
 {
 
-  if ( this->m_ptrImageManager == 0 )
+  if ( this->m_ptrImageManager == NULL )
     {
     throw std::runtime_error( "ERROR: No image manager specified." );
     return;
@@ -209,6 +207,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
   for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size()-1; ++iI )
     {
     VectorFieldPointerType ptrCurrentVectorField = new VectorFieldType( pImInfo->pIm );
+    ptrCurrentVectorField->setConst( 0 );
     vecState.push_back( ptrCurrentVectorField );
     }
 
@@ -259,6 +258,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
   for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size()-1; ++iI )
     {
     VectorFieldPointerType ptrCurrentVectorField = new VectorFieldType( pImInfo->pIm );
+    ptrCurrentVectorField->setConst( 0 );
     vecGradient.push_back( ptrCurrentVectorField );
     }
 
@@ -537,6 +537,7 @@ template <class T, unsigned int VImageDimension, class TState >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::InitializeState()
 {
   // TODO: Set all the velocities to zero and the initial image to the first image of the time series
+  InitializeDataStructures();
 }
 
 #endif

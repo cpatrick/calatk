@@ -22,8 +22,11 @@ int main(int argc, char **argv)
   regType lddmm;
   regType::ptrImageManagerType ptrImageManager = lddmm.GetImageManagerPointer();
 
-  ptrImageManager->AddImage( source, 0.0, 0 );
-  ptrImageManager->AddImage( target, 1.0, 0 );
+  //ptrImageManager->AddImage( source, 0.0, 0 );
+  //ptrImageManager->AddImage( target, 1.0, 0 );
+
+  ptrImageManager->AddImage( "im1.nrrd", 0.0, 0 );
+  ptrImageManager->AddImage( "im2.nrrd", 1.0, 0 );
 
   ptrImageManager->print( std::cout );
 

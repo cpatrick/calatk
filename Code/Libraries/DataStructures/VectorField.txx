@@ -49,10 +49,11 @@ VectorField< T, VImageDimension, TSpace >::VectorField( const VectorImageType* s
   this->__dataPtr = NULL;
   this->__allocate();
   
-  this->setSpaceFactor( source->getSpaceFactor() );
-  this->setSpaceX( source->getSpaceX() );
-  this->setSpaceY( source->getSpaceY() );
-  this->setSpaceX( source->getSpaceZ() );
+  this->__spaceFactor = source->getSpaceFactor();
+  
+  this->__spaceX = source->getSpaceX();
+  this->__spaceY = source->getSpaceY();
+  this->__spaceZ = source->getSpaceZ();
 
   this->setOrigin( source->getOrigin() );
   this->setDirection( source->getDirection() );
@@ -73,8 +74,8 @@ VectorField< T, VImageDimension, TSpace >::VectorField( const VectorImageType* s
 // 1D get x
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorField< T, VImageDimension, TSpace >::getX(unsigned int x) {
-
+T VectorField< T, VImageDimension, TSpace >::getX(unsigned int x) const
+{
   return this->getValue(x,0);
 }
 
@@ -82,8 +83,8 @@ T VectorField< T, VImageDimension, TSpace >::getX(unsigned int x) {
 // 2D get x
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorField< T, VImageDimension, TSpace >::getX(unsigned int x, unsigned int y) {
-
+T VectorField< T, VImageDimension, TSpace >::getX(unsigned int x, unsigned int y) const
+{
   return this->getValue(x,y,0);
 }
 
@@ -91,8 +92,8 @@ T VectorField< T, VImageDimension, TSpace >::getX(unsigned int x, unsigned int y
 // 3D get x
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorField< T, VImageDimension, TSpace >::getX(unsigned int x, unsigned int y, unsigned int z) {
-
+T VectorField< T, VImageDimension, TSpace >::getX(unsigned int x, unsigned int y, unsigned int z) const
+{
   return this->getValue(x,y,z,0);
 }
 
@@ -100,8 +101,8 @@ T VectorField< T, VImageDimension, TSpace >::getX(unsigned int x, unsigned int y
 // 2D get y
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorField< T, VImageDimension, TSpace >::getY(unsigned int x, unsigned int y) {
-
+T VectorField< T, VImageDimension, TSpace >::getY(unsigned int x, unsigned int y) const
+{
   return this->getValue(x,y,1);
 }
 
@@ -109,8 +110,8 @@ T VectorField< T, VImageDimension, TSpace >::getY(unsigned int x, unsigned int y
 // 3D get y
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorField< T, VImageDimension, TSpace >::getY(unsigned int x, unsigned int y, unsigned int z) {
-
+T VectorField< T, VImageDimension, TSpace >::getY(unsigned int x, unsigned int y, unsigned int z) const
+{
   return this->getValue(x,y,z,1);
 }
 
@@ -118,8 +119,8 @@ T VectorField< T, VImageDimension, TSpace >::getY(unsigned int x, unsigned int y
 // 3D get z
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorField< T, VImageDimension, TSpace >::getZ(unsigned int x, unsigned int y, unsigned int z) {
-
+T VectorField< T, VImageDimension, TSpace >::getZ(unsigned int x, unsigned int y, unsigned int z) const
+{
   return this->getValue(x,y,z,2);
 }
 

@@ -49,7 +49,7 @@ public:
    *
    * @param v - vector field to be evolved by
    */
-  virtual T ComputeMaximalUpdateStep( VectorFieldType* v  ) const;
+  virtual T ComputeMaximalUpdateStep( const VectorFieldType* v  ) const = 0;
 
   /**
    * Performs an update step, to be implemented by the derived class (pure virtual).
@@ -59,7 +59,7 @@ public:
    * @param Inp1 - resulting evolved image
    * @param dt - time step
    */
-  virtual void PerformStep( VectorFieldType* v, VectorImageType* In, VectorImageType* Inp1, T dt ) = 0;
+  virtual void PerformStep( const VectorFieldType* v, const VectorImageType* In, VectorImageType* Inp1, T dt ) = 0;
 
 
   /**

@@ -94,7 +94,7 @@ public:
    *
    * @param x - x-coordinate
    */
-  T getX(unsigned int x);
+  T getX(unsigned int x) const;
 
   /**
    * 2D Method that returns the value stored in the x dimension of the
@@ -103,7 +103,7 @@ public:
    * @param x - x-coordinate
    * @param y - y-coordinate
    */
-  T getX(unsigned int x, unsigned int y);
+  T getX(unsigned int x, unsigned int y) const;
 
   /**
    * 3D Method that returns the value stored in the x dimension of the
@@ -113,7 +113,7 @@ public:
    * @param y - y-coordinate
    * @param z - z-coordinate
    */
-  T getX(unsigned int x, unsigned int y, unsigned int z);
+  T getX(unsigned int x, unsigned int y, unsigned int z) const;
 
   /**
    * 2D Method that returns the value stored in the y dimension of the
@@ -122,7 +122,7 @@ public:
    * @param x - x-coordinate
    * @param y - y-coordinate
    */
-  T getY(unsigned int x, unsigned int y);
+  T getY(unsigned int x, unsigned int y) const;
 
   /**
    * 3D Method that returns the value stored in the y dimension of the
@@ -132,7 +132,7 @@ public:
    * @param y - y-coordinate
    * @param z - z-coordinate
    */
-  T getY(unsigned int x, unsigned int y, unsigned int z);
+  T getY(unsigned int x, unsigned int y, unsigned int z) const;
 
   /**
    * 3D Method that returns the value stored in the z dimension of the
@@ -142,7 +142,7 @@ public:
    * @param y - y-coordinate
    * @param z - z-coordinate
    */
-  T getZ(unsigned int x, unsigned int y, unsigned int z);
+  T getZ(unsigned int x, unsigned int y, unsigned int z) const;
 
   /**
    * 1D Method that puts the value in the x dimension of the vector at the

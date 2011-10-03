@@ -5,7 +5,7 @@
 // maxAll
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorFieldUtils< T, VImageDimension, TSpace>::maxAll(VectorFieldType* in) 
+T VectorFieldUtils< T, VImageDimension, TSpace>::maxAll( const VectorFieldType* in) 
 {
   unsigned int len = in->getLength();
 
@@ -27,7 +27,7 @@ T VectorFieldUtils< T, VImageDimension, TSpace>::maxAll(VectorFieldType* in)
 // minAll
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorFieldUtils< T, VImageDimension, TSpace>::minAll(VectorFieldType* in) 
+T VectorFieldUtils< T, VImageDimension, TSpace>::minAll( const VectorFieldType* in) 
 {
   unsigned int len = in->getLength();
   
@@ -49,7 +49,7 @@ T VectorFieldUtils< T, VImageDimension, TSpace>::minAll(VectorFieldType* in)
 // absMaxAll
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorFieldUtils< T, VImageDimension, TSpace>::absMaxAll(VectorFieldType* in) 
+T VectorFieldUtils< T, VImageDimension, TSpace>::absMaxAll( const VectorFieldType* in)
 {
   unsigned int len = in->getLength();
 

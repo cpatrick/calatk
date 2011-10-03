@@ -10,14 +10,6 @@ COneStepEvolver<T, VImageDimension, TSpace>::COneStepEvolver()
   m_uiNrOfThreads = 1; // default number of threads
 }
 
-template <class T, unsigned int VImageDimension, class TSpace >
-T COneStepEvolver<T, VImageDimension, TSpace>::ComputeMaximalUpdateStep( VectorFieldType* v ) const
-{
-  // Default is zero, because it is unknown. Needs to be overwritten by derived class.
-  // But not required for proper functioning if one is bold enough to step with a fixed step size.
-  return 0;
-}
-
 // returning the number of threads
 template <class T, unsigned int VImageDimension, class TSpace >
 unsigned int COneStepEvolver<T, VImageDimension, TSpace>::GetNumberOfThreads() const

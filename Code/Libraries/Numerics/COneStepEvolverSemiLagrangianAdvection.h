@@ -30,12 +30,14 @@ public:
    */
   COneStepEvolverSemiLagrangianAdvection();
 
-  virtual void PerformStep( VectorFieldType* v, VectorImageType* In, VectorImageType* Inp1, T dt );
+  virtual void PerformStep( const VectorFieldType* v, const VectorImageType* In, VectorImageType* Inp1, T dt );
+
+  T ComputeMaximalUpdateStep( const VectorFieldType* v ) const;
 
 protected:
 
-  void PerformStep2D( VectorFieldType* v, VectorImageType* In, VectorImageType* Inp1, T dt );
-  void PerformStep3D( VectorFieldType* v, VectorImageType* In, VectorImageType* Inp1, T dt );
+  void PerformStep2D( const VectorFieldType* v, const VectorImageType* In, VectorImageType* Inp1, T dt );
+  void PerformStep3D( const VectorFieldType* v, const VectorImageType* In, VectorImageType* Inp1, T dt );
 
 private:
 

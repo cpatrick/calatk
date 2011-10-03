@@ -57,11 +57,6 @@ void CLDDMMSpatioTemporalVelocityFieldRegistration< T, VImageDimension, TState >
 {
   // make sure that all we need has already been allocated
 
-  if ( this->m_ptrSolver == NULL )
-    {
-    throw std::runtime_error( "Solver needs to be defined before default objective function can be created." );
-    }
-
   if ( this->m_ptrKernel == NULL )
     {
     throw std::runtime_error( "Kernel needs to be defined before default objective function can be created." );
@@ -77,12 +72,14 @@ void CLDDMMSpatioTemporalVelocityFieldRegistration< T, VImageDimension, TState >
     throw std::runtime_error( "Image manager needs to be defined before default objective function can be created." );
     }
 
-  this->m_ptrObjectiveFunction = new CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >;
-  this->SetEvolverPointer( this->m_ptrEvolver );
-  this->SetSolverPointer( this->m_ptrSolver );
-  this->SetKernelPointer( this->m_ptrKernel );
-  this->SetMetricPointer( this->m_ptrMetric );
-  this->SetImageManagerPointer( this->m_ptrImageManager );
+  typedef CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState > CLDDMMType;
+  CLDDMMType* plddmm = new CLDDMMType;
+  plddmm->SetEvolverPointer( this->m_ptrEvolver );
+  plddmm->SetKernelPointer( this->m_ptrKernel );
+  plddmm->SetMetricPointer( this->m_ptrMetric );
+  plddmm->SetImageManagerPointer( this->m_ptrImageManager );
+  this->m_ptrObjectiveFunction = plddmm;
+
 }
 
 template < class T, unsigned int VImageDimension, class TState >

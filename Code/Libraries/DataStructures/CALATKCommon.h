@@ -258,23 +258,28 @@ struct SaveDelete
   static void PointerVector( std::vector< T >& ptrVec )
   {
     typename std::vector< T >::iterator iter;
-    for ( iter=ptrVec.begin(); iter != ptrVec.end(); ++iter )
+    if ( ptrVec != NULL )
       {
-      SaveDelete< T >::Pointer( *iter );
+      for ( iter=ptrVec.begin(); iter != ptrVec.end(); ++iter )
+        {
+        SaveDelete< T >::Pointer( *iter );
+        }
+      ptrVec.clear();
       }
-    ptrVec.clear();
   }
 
   static void PointerVector( std::vector< T >*& ptrVec )
   {
     typename std::vector< T >::iterator iter;
-    for ( iter=ptrVec->begin(); iter != ptrVec->end(); ++iter )
+    if ( ptrVec != NULL )
       {
-      SaveDelete< T >::Pointer( *iter );
+      for ( iter=ptrVec->begin(); iter != ptrVec->end(); ++iter )
+        {
+        SaveDelete< T >::Pointer( *iter );
+        }
+      ptrVec->clear();
       }
-    ptrVec->clear();
   }
-
 };
 
 

@@ -13,7 +13,7 @@ COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::COneStepEvol
 // Performs a step for a 2D image
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::PerformStep2D(  VectorFieldType* v, VectorImageType* In, VectorImageType* Inp1, T dt )
+void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::PerformStep2D(  const VectorFieldType* v, const VectorImageType* In, VectorImageType* Inp1, T dt )
 {
 
   //
@@ -70,7 +70,7 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::Perform
 // Performs a step for a 3D image
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::PerformStep3D(  VectorFieldType* v, VectorImageType* In, VectorImageType* Inp1, T dt )
+void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::PerformStep3D(  const VectorFieldType* v, const VectorImageType* In, VectorImageType* Inp1, T dt )
 {
 
   //
@@ -131,7 +131,7 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::Perform
 
 
 template <class T, unsigned int VImageDimension, class TSpace >
-void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::PerformStep(  VectorFieldType* v, VectorImageType* In, VectorImageType* Inp1, T dt )
+void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::PerformStep(  const VectorFieldType* v, const VectorImageType* In, VectorImageType* Inp1, T dt )
 {
   switch ( VImageDimension )
     {
@@ -142,6 +142,37 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::Perform
     default:
       std::runtime_error("COneStepEvolverSemiLagrangianAdvection: Cannot solve for this dimension.");
     }
+}
+
+template <class T, unsigned int VImageDimension, class TSpace >
+T COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::ComputeMaximalUpdateStep( const VectorFieldType* v ) const
+{
+
+  // TODO: fixme: improve this. Handle anisotropic spacing and introduce a factor which allows for larger steps for the semi-lagrangian scheme
+
+  T vMax = VectorFieldUtils< T, VImageDimension >::absMaxAll( v );
+
+  if ( vMax==0 ) vMax = 1; // if everything is zero use a default value
+
+  T dtx = v->getDX()/vMax;
+
+  T dty = std::numeric_limits< T >::infinity();
+  T dtz = std::numeric_limits< T >::infinity();
+
+  if ( VImageDimension>1 )
+    {
+    dty = v->getDY()/vMax;
+    }
+
+  if ( VImageDimension>2 )
+    {
+    dtz = v->getDZ()/vMax;
+    }
+
+  T minDT = std::min( dtx, dty );
+  minDT = std::min( minDT, dtz );
+
+  return minDT;
 }
 
 

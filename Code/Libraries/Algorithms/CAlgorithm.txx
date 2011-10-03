@@ -153,10 +153,12 @@ void CAlgorithm< T, VImageDimension, TState >::SetDefaultsIfNeeded()
 template <class T, unsigned int VImageDimension, class TState >
 void CAlgorithm< T, VImageDimension, TState >::Solve()
 {
+  // image manager needs to be specified, so that data can be assigned
   assert( m_ptrImageManager != NULL );
   SetDefaultsIfNeeded();
 
-  m_ptrSolver->Solve();
+  this->m_ptrSolver->SetObjectiveFunctionPointer( this->m_ptrObjectiveFunction );
+  this->m_ptrSolver->Solve();
 
 }
 
