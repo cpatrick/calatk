@@ -20,7 +20,7 @@ T CMetricSSD< T, VImageDimension >::GetMetric( VectorImageType* pI0, VectorImage
   for ( unsigned int uiI = 0; uiI < pI0->getLength(); ++uiI )
     {
     T dCurrentDifference = pI0->getValue( uiI ) - pI1->getValue( uiI );
-    dMetric = dCurrentDifference*dCurrentDifference;
+    dMetric += dCurrentDifference*dCurrentDifference;
     }
 
   // needs to be a proper integral so multiply by volume of element

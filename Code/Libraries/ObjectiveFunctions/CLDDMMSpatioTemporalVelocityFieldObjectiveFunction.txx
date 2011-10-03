@@ -64,6 +64,8 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
   vecTimeDiscretization.clear();
   vecTimeIncrements.clear();
 
+  const T dTolerance = 1e-10; // discretization tolerance, so we don't end up with a time-step of this size
+
   T dDesiredTimeStep = 1.0/dNumberOfDiscretizationVolumesPerUnitTime;
 
   // go through all the timepoints and enter them into the vecTimeDiscretization structure
@@ -102,18 +104,20 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
         {
         // this is a different timepoint. Need to create discretization in between if too far away from last time point
 
-        while ( (*iter)->timepoint - dLastTimePoint > dDesiredTimeStep )
+        while ( (*iter)->timepoint - dLastTimePoint > dDesiredTimeStep + dTolerance )
           {
           dLastTimePoint += dDesiredTimeStep;
           STimePoint timePoint;
           timePoint.bIsMeasurementPoint = false;
           timePoint.dTime = dLastTimePoint;
           timePoint.ptrEstimatedImage = NULL;
+          
+          vecTimeDiscretization.push_back( timePoint );
           }
 
         // now it should be small enough, so enter the image information here
         T deltaT = (*iter)->timepoint - dLastTimePoint;
-        assert( deltaT <= dDesiredTimeStep );
+        assert( deltaT <= dDesiredTimeStep + dTolerance );
 
         STimePoint timePoint;
         timePoint.bIsMeasurementPoint = true;
@@ -143,7 +147,10 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
     {
     T dTimeN = iterTimeDiscretization->dTime;
     vecTimeIncrements.push_back( dTimeN - dTimeNM1 );
+    dTimeNM1 = dTimeN;
     }
+
+  std::cout << "vecTimeIncrements = " << vecTimeIncrements << std::endl;
 
 }
 
@@ -272,8 +279,9 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
   m_ptrLambda = new std::vector< VectorImagePointerType >;
 
   // storage for the initial image
-
+  // and initialize it with the first image of the time-series
   m_ptrI0 = new VectorImageType( pImInfo->pIm );
+
   m_vecTimeDiscretization[ 0 ].ptrEstimatedImage = m_ptrI0;
 
   for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size()-1; ++iI )
@@ -386,6 +394,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
   
   for ( unsigned int iI = 0; iI < m_vecTimeDiscretization.size()-1; ++iI )
     {
+
     this->m_ptrEvolver->SolveForward( this->m_pState->GetVectorFieldPointer( iI ), m_ptrMapIn, m_ptrMapOut, m_ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
 
     // for next step, copy

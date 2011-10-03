@@ -179,7 +179,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension >::operator=(const CStateS
     else
       {
       // clear and then allocate, this should typically not be necessary
-      std::cerr << "WARINING: reallocating memory, should already have been assigned." << std::endl;
+      std::cerr << "WARNING: reallocating memory, should already have been assigned." << std::endl;
       CopyDataStructure( ptrSource );      
       }
     return *this;

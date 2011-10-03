@@ -33,7 +33,9 @@ void CStationaryEvolver< T, VImageDimension, TSpace >::SolveForward( VectorField
   while ( dCurrentTime < dT )
     {
     T dDesiredTimeStep = std::min( dT-dCurrentTime, dMaxTimeStep );
+
     this->m_ptrOneStepEvolver->PerformStep( pV, pTmpResults[ bResultToggle ], pTmpResults[ !bResultToggle ], dDesiredTimeStep );
+
     bResultToggle = !bResultToggle;
     dCurrentTime += dDesiredTimeStep;
     }

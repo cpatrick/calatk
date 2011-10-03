@@ -137,8 +137,10 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::Perform
     {
     case 2:
       PerformStep2D( v, In, Inp1, dt );
+      break;
     case 3:
       PerformStep3D( v, In, Inp1, dt );
+      break;
     default:
       std::runtime_error("COneStepEvolverSemiLagrangianAdvection: Cannot solve for this dimension.");
     }

@@ -511,7 +511,7 @@ public:
    * @param numTimes - the number of time discretized images
    * @param filename - the name of the file to write to
    */
-  static bool writeTimeDependantImagesITK2D(VectorImageType** ims, unsigned int numTimes, std::string filename);
+  static bool writeTimeDependantImagesITK2D( const std::vector< VectorImageType* >* ims, std::string filename);
 
   /**
    * 3D Method that uses ITK to write the time dependant image set out
@@ -520,7 +520,7 @@ public:
    * @param numTimes - the number of time discretized images
    * @param filename - the name of the file to write to
    */
-  static bool writeTimeDependantImagesITK3D(VectorImageType** ims, unsigned int numTimes, std::string filename);
+  static bool writeTimeDependantImagesITK3D( const std::vector< VectorImageType* >* ims, std::string filename);
 
   /**
    * Method that uses ITK to write the time dependant image set out
@@ -529,7 +529,7 @@ public:
    * @param numTimes - the number of time discretized images
    * @param filename - the name of the file to write to
    */
-  static bool writeTimeDependantImagesITK(VectorImageType** ims, unsigned int numTimes, std::string filename);
+  static bool writeTimeDependantImagesITK( const std::vector< VectorImageType* >* ims, std::string filename);
 
   /**
    * Method that uses ITK to read a file in

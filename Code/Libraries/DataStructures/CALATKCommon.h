@@ -10,6 +10,8 @@
 #include <itkLinearInterpolateImageFunction.h>
 
 #include <math.h>
+#include <iostream>
+#include <iterator>
 
 #include "calatkConfigure.h"
 
@@ -303,6 +305,20 @@ struct SaveDelete
     std::cerr << msg << std::endl;\
     return EXIT_FAILURE;\
   }
+
+/* Output functionality */
+
+template <typename T>
+std::ostream& operator << (std::ostream& os, const std::vector<T>& vec)
+{
+  typename std::vector<T>::const_iterator iter;
+  for ( iter = vec.begin(); iter != vec.end(); ++iter )
+    {
+    os << *iter << " ";
+    }
+  os << std::endl;
+  return os;
+}
 
 } // end namespace
 

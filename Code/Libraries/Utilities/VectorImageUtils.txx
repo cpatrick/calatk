@@ -566,8 +566,8 @@ void VectorImageUtils< T, VImageDimension, TSpace >::resize(VectorImageType* imI
 
   //float fx = (float)(szXold-1)/(szXnew-1);
   //float fy = (float)(szYold-1)/(szYnew-1);
-  T fx = (float)(szXold)/(szXnew);
-  T fy = (float)(szYold)/(szYnew);
+  T fx = (T)(szXold)/(szXnew);
+  T fy = (T)(szYold)/(szYnew);
 
   VectorImageType* pos = new VectorImageType(szXnew, szYnew, 2);
 
@@ -814,7 +814,7 @@ void VectorImageUtils< T, VImageDimension, TSpace >::gaussianFilter3D(VectorImag
 
   // set up the gaussian filter
   VectorImageType* filt = new VectorImageType(size, size, size, 1);
-  float pi = 3.1415926535897;
+  T pi = 3.1415926535897;
   int r = (unsigned int)((T)(size-1)/2);
 
   for (int z = -r; z < (int)size-r; ++z) 
@@ -823,7 +823,7 @@ void VectorImageUtils< T, VImageDimension, TSpace >::gaussianFilter3D(VectorImag
       {
       for (int x = -r; x < (int)size-r; ++x) 
         {
-        float val = 1/pow((T)(2*pi*pow(sigma,2)),(T)1.5)*exp(-1*(pow((T)x,2) + pow((T)y,2) + pow((T)z,2))/(2*pow(sigma,2)) );
+        T val = 1/pow((T)(2*pi*pow(sigma,2)),(T)1.5)*exp(-1*(pow((T)x,2) + pow((T)y,2) + pow((T)z,2))/(2*pow(sigma,2)) );
         //float val = pow(sigma,2);
         filt->setValue((unsigned int)(x+r),(unsigned int)(y+r), (unsigned int)(z+r), 0, val);
         }
@@ -847,7 +847,7 @@ void VectorImageUtils< T, VImageDimension, TSpace >::gaussianFilter3D(VectorImag
         {
         for (unsigned int d = 0; d < imIn->getDim(); ++d) 
           {
-          float val = 0;
+          T val = 0;
 
           for (int zz = -r; zz < (int)size-r; ++zz) 
             {
@@ -2252,10 +2252,10 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK( const VectorI
 // writeTimeDependantImagesITK, 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK2D(VectorImageType** ims, unsigned int numTimes, std::string filename) 
+bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK2D( const std::vector< VectorImageType* >* ims, std::string filename) 
 {
   // see if we're dealing with one or more dimensions
-  if (ims[0]->getDim() == 1) 
+  if ( (*ims)[0]->getDim() == 1) 
     {
 
     typedef itk::Image<T, 3> ITKTimeImage2D;
@@ -2266,8 +2266,8 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
     itkImage = ITKTimeImage2D::New();
 
     // Convert to the ITK image
-    unsigned int szX = ims[0]->getSizeX();
-    unsigned int szY = ims[0]->getSizeY();
+    unsigned int szX = (*ims)[0]->getSizeX();
+    unsigned int szY = (*ims)[0]->getSizeY();
 
     // Set up region
     typename ITKTimeImage2D::IndexType start;
@@ -2278,7 +2278,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
     typename ITKTimeImage2D::SizeType size;
     size[0] = szX;
     size[1] = szY;
-    size[2] = numTimes;
+    size[2] = ims->size();
 
     typename ITKTimeImage2D::RegionType region;
     region.SetSize(size);
@@ -2286,8 +2286,8 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
 
     // Set up the spacing
     typename ITKTimeImage2D::SpacingType space;
-    space[0] = ims[0]->getSpaceX();
-    space[1] = ims[0]->getSpaceY();
+    space[0] = (*ims)[0]->getSpaceX();
+    space[1] = (*ims)[0]->getSpaceY();
     space[2] = 1.0;
     itkImage->SetSpacing(space);
 
@@ -2296,7 +2296,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
     itkImage->Allocate();
 
     // Copy in the data
-    for (unsigned int t = 0; t < numTimes; ++t) 
+    for (unsigned int t = 0; t < ims->size(); ++t) 
       {
       for (unsigned int y = 0; y < szY; ++y) 
         {
@@ -2308,7 +2308,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
           px[1] = y;
           px[2] = t;
           
-          itkImage->SetPixel(px, ims[t]->getValue(x,y,0));
+          itkImage->SetPixel(px, (*ims)[t]->getValue(x,y,0));
           }
         }
       }
@@ -2342,9 +2342,9 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
     itkImage = ITKTimeImage2D::New();
 
     // Convert to the ITK image
-    unsigned int szX = ims[0]->getSizeX();
-    unsigned int szY = ims[0]->getSizeY();
-    unsigned int dim = ims[0]->getDim();
+    unsigned int szX = (*ims)[0]->getSizeX();
+    unsigned int szY = (*ims)[0]->getSizeY();
+    unsigned int dim = (*ims)[0]->getDim();
 
     // Set up region
     typename ITKTimeImage2D::IndexType start;
@@ -2357,7 +2357,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
     size[0] = szX;
     size[1] = szY;
     size[2] = dim;
-    size[3] = numTimes;
+    size[3] = ims->size();
 
     typename ITKTimeImage2D::RegionType region;
     region.SetSize(size);
@@ -2365,8 +2365,8 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
 
     // Set up the spacing
     typename ITKTimeImage2D::SpacingType space;
-    space[0] = ims[0]->getSpaceX();
-    space[1] = ims[0]->getSpaceY();
+    space[0] = (*ims)[0]->getSpaceX();
+    space[1] = (*ims)[0]->getSpaceY();
     space[2] = 1.0;
     space[3] = 1.0;
     itkImage->SetSpacing(space);
@@ -2376,7 +2376,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
     itkImage->Allocate();
 
     // Copy in the data
-    for (unsigned int t = 0; t < numTimes; ++t) 
+    for (unsigned int t = 0; t < ims->size(); ++t) 
       {
       for (unsigned int y = 0; y < szY; ++y) 
         {
@@ -2391,7 +2391,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
           px[2] = d;
           px[3] = t;
           
-          itkImage->SetPixel(px, ims[t]->getValue(x,y,d));
+          itkImage->SetPixel(px, (*ims)[t]->getValue(x,y,d));
           }
         }
         }
@@ -2424,11 +2424,11 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
 // writeTimeDependentImagesITK, 3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK3D(VectorImageType** ims, unsigned int numTimes, std::string filename) 
+bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK3D( const std::vector< VectorImageType*> * ims, std::string filename) 
 {
 
   // see if we're dealing with one or two dimensions
-  if (ims[0]->getDim() == 1) 
+  if ((*ims)[0]->getDim() == 1) 
     {
 
     typedef itk::Image<T, 4> ITKTimeImage3D;
@@ -2439,9 +2439,9 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
     itkImage = ITKTimeImage3D::New();
 
     // Convert to the ITK image
-    unsigned int szX = ims[0]->getSizeX();
-    unsigned int szY = ims[0]->getSizeY();
-    unsigned int szZ = ims[0]->getSizeZ();
+    unsigned int szX = (*ims)[0]->getSizeX();
+    unsigned int szY = (*ims)[0]->getSizeY();
+    unsigned int szZ = (*ims)[0]->getSizeZ();
     
     // Set up region
     typename ITKTimeImage3D::IndexType start;
@@ -2454,7 +2454,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
     size[0] = szX;
     size[1] = szY;
     size[2] = szZ;
-    size[3] = numTimes;
+    size[3] = ims->size();
 
     typename ITKTimeImage3D::RegionType region;
     region.SetSize(size);
@@ -2462,9 +2462,9 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
 
     // Set up the spacing
     typename ITKTimeImage3D::SpacingType space;
-    space[0] = ims[0]->getSpaceX();
-    space[1] = ims[0]->getSpaceY();
-    space[2] = ims[0]->getSpaceZ();
+    space[0] = (*ims)[0]->getSpaceX();
+    space[1] = (*ims)[0]->getSpaceY();
+    space[2] = (*ims)[0]->getSpaceZ();
     space[3] = 1.0;
     itkImage->SetSpacing(space);
 
@@ -2473,7 +2473,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
     itkImage->Allocate();
 
     // Copy in the data
-    for (unsigned int t = 0; t < numTimes; ++t) 
+    for (unsigned int t = 0; t < ims->size(); ++t) 
       {
       for (unsigned int z = 0; z < szZ; ++z) 
         {
@@ -2488,7 +2488,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
             px[2] = z;
             px[3] = t;
 
-            itkImage->SetPixel(px, ims[t]->getValue(x,y,z,0));
+            itkImage->SetPixel(px, (*ims)[t]->getValue(x,y,z,0));
             }
           }
         }
@@ -2515,7 +2515,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
   else 
     {
 
-    typedef itk::Image<float, 5> ITKTimeImage3D;
+    typedef itk::Image<T, 5> ITKTimeImage3D;
     typedef itk::ImageFileWriter< ITKTimeImage3D >  ITKTimeImageWriter3D;
 
     // Initialize ITK image
@@ -2523,10 +2523,10 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
     itkImage = ITKTimeImage3D::New();
 
     // Convert to the ITK image
-    unsigned int szX = ims[0]->getSizeX();
-    unsigned int szY = ims[0]->getSizeY();
-    unsigned int szZ = ims[0]->getSizeZ();
-    unsigned int dim = ims[0]->getDim();
+    unsigned int szX = (*ims)[0]->getSizeX();
+    unsigned int szY = (*ims)[0]->getSizeY();
+    unsigned int szZ = (*ims)[0]->getSizeZ();
+    unsigned int dim = (*ims)[0]->getDim();
 
     // Set up region
     typename ITKTimeImage3D::IndexType start;
@@ -2541,7 +2541,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
     size[1] = szY;
     size[2] = szZ;
     size[3] = dim;
-    size[4] = numTimes;
+    size[4] = ims->size();
 
     typename ITKTimeImage3D::RegionType region;
     region.SetSize(size);
@@ -2549,9 +2549,9 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
 
     // Set up the spacing
     typename ITKTimeImage3D::SpacingType space;
-    space[0] = ims[0]->getSpaceX();
-    space[1] = ims[0]->getSpaceY();
-    space[2] = ims[0]->getSpaceZ();
+    space[0] = (*ims)[0]->getSpaceX();
+    space[1] = (*ims)[0]->getSpaceY();
+    space[2] = (*ims)[0]->getSpaceZ();
     space[3] = 1.0;
     space[4] = 1.0;
     itkImage->SetSpacing(space);
@@ -2561,7 +2561,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
     itkImage->Allocate();
 
     // Copy in the data
-    for (unsigned int t = 0; t < numTimes; ++t) 
+    for (unsigned int t = 0; t < ims->size(); ++t) 
       {
       for (unsigned int z = 0; z < szZ; ++z) 
         {
@@ -2579,7 +2579,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
               px[3] = d;
               px[4] = t;
               
-              itkImage->SetPixel(px, ims[t]->getValue(x,y,z,d));
+              itkImage->SetPixel(px, (*ims)[t]->getValue(x,y,z,d));
               }
             }
           }
@@ -2613,15 +2613,15 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
 // writeTimeDependentImagesITK, 2D/3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK(VectorImageType** ims, unsigned int numTimes, std::string filename) 
+bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK( const std::vector< VectorImageType*>* ims, std::string filename) 
 {
   switch ( VImageDimension )
     {
     case 2:
-      return writeTimeDependantImagesITK2D( ims, numTimes, filename );
+      return writeTimeDependantImagesITK2D( ims, filename );
       break;
     case 3:
-      return writeTimeDependantImagesITK3D( ims, numTimes, filename );
+      return writeTimeDependantImagesITK3D( ims, filename );
       break;
     default:
       throw std::runtime_error("Cannot write time dependant images of desired dimension");
