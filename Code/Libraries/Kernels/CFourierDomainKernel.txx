@@ -52,8 +52,18 @@ void CFourierDomainKernel< T, VImageDimension >::DeleteData()
     fftwData3D = NULL;
     }
 
-  if ( m_ptrL != NULL ) delete m_ptrL;
-  if ( m_ptrLInv != NULL ) delete m_ptrLInv;
+  if ( m_ptrL != NULL ) 
+    {
+    delete m_ptrL;
+    m_ptrL = NULL;
+    }
+
+  if ( m_ptrLInv != NULL ) 
+    {
+    delete m_ptrLInv;
+    m_ptrLInv = NULL;
+    }
+
 }
 
 template <class T, unsigned int VImageDimension >

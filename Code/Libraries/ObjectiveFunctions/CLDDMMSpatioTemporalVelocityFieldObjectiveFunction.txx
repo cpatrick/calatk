@@ -473,6 +473,11 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
   ComputeImagesForward();
   ComputeAdjointBackward();
 
+  VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( m_ptrI, "is.nrrd" );
+  VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( m_ptrLambda, "lambdas.nrrd" );
+
+  exit( -1 );
+
   // can compute the gradient from this
   // \f$ \nabla E = 2 v + (L^\dagger L)^{-1}(\sum_i \lambda_i \nabla I_i ) \f$
 
@@ -518,6 +523,7 @@ T CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState
 
     // add energy increment, assuring that we have the correct spatio-temporal volume contribution
     dEnergy += m_vecTimeIncrements[ iI ]*m_ptrTmpVelocityField->computeSquareNorm();
+
     }
 
   // now add the contributions of the data terms
