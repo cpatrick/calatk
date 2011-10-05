@@ -26,7 +26,8 @@ end
 
 % ---- Images ---- %
 
-scenario = 2;
+doSmoothing = true;
+scenario = 3;
 
 if ( scenario == 1 )
   
@@ -63,13 +64,28 @@ if ( scenario == 2 )
 
 end
 
+if ( scenario == 3 )
+  
+  I0 = double( nrrdLoad('../../TestingData/I0_short.nrrd') );
+  I1 = double( nrrdLoad('../../TestingData/I1_short.nrrd') );
+
+  vMask = ones( size( I0 ) );
+
+  doSmoothing = false;
+  
+end
+
 % Smooth them a little bit (will be better for the numerics)
 
-I0Orig = I0;
-I0 = myDiffusion( I0, 5, 0.1 );
+if ( doSmoothing )
 
-I1Orig = I1;
-I1 = myDiffusion( I1, 5, 0.1 );
+  I0Orig = I0;
+  I0 = myDiffusion( I0, 5, 0.1 );
+  
+  I1Orig = I1;
+  I1 = myDiffusion( I1, 5, 0.1 );
+  
+end
 
 % ---- Default Parameters ---- %
 
@@ -291,7 +307,7 @@ for iter=0:options.iterations-1
         end
         
         % compute the current trial energy
-        currentTrialEnergy = computeEnergy( vars.vx, vars.vy, vars.I(:,:,end), vars.I1, vars.A, tinc, options.nt, options.sigma );
+        [currentTrialEnergy,imageMatchEnergy,velEnergy] = computeEnergy( vars.vx, vars.vy, vars.I(:,:,end), vars.I1, vars.A, tinc, options.nt, options.sigma );
         
         if( currentTrialEnergy<currentEnergy )
             keepTrying = 0;
@@ -300,7 +316,8 @@ for iter=0:options.iterations-1
             numberOfIterationsWithReduction = numberOfIterationsWithReduction + 1;
 
             numberOfReductionAttempts = 0;
-            
+
+            fprintf('E = %f, imageE = %f, velE = %f\n', currentTrialEnergy, imageMatchEnergy, velEnergy );
             fprintf('Accepting step with energy %f\n', currentTrialEnergy );
             
             vx_old = vars.vx;

@@ -1,4 +1,4 @@
-function [ce, imageMatch, velNorms] = computeEnergy( vx, vy, J0T, J1T, A, ...
+function [ce, imageMatch, velSquareNorm] = computeEnergy( vx, vy, J0T, J1T, A, ...
                                                   tinc, nt, sigma )
 
 % first compute the norms of the velocity field
@@ -14,18 +14,11 @@ end
 iXS = size( vx, 1 );
 iYS = size( vx, 2 );
 
-% Need to use the second to last image here
-% to be consistent with the piecewise constant velocity model
-
-if(size(J0T,3) > 1)
-    J0TE = J0T(:,:,end-1);
-    J1TE = J1T(:,:,end-1);
-else
-    J0TE = J0T;
-    J1TE = J1T;
-end
+J0TE = J0T;
+J1TE = J1T;
 
 imageMatch = 1/(sigma^2)*sum( (J0TE(:)-J1TE(:)).^2 )/(iXS*iYS);
-ce = tinc*sum( velNorms.^2 ) * 0.5 + imageMatch;
+velSquareNorm = 0.5*tinc*sum( velNorms.^2 );
+ce = velSquareNorm + imageMatch;
 
-%ce = tinc*sum( velNorms.^2 ) + imageMatch;
+

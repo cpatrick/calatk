@@ -25,8 +25,8 @@ int main(int argc, char **argv)
   //ptrImageManager->AddImage( source, 0.0, 0 );
   //ptrImageManager->AddImage( target, 1.0, 0 );
 
-  ptrImageManager->AddImage( "I0_short.nrrd", 0.0, 0 );
-  ptrImageManager->AddImage( "I1_short.nrrd", 1.0, 0 );
+  ptrImageManager->AddImage( "I0_short.nhdr", 0.0, 0 );
+  ptrImageManager->AddImage( "I1_short.nhdr", 1.0, 0 );
 
   ptrImageManager->print( std::cout );
 

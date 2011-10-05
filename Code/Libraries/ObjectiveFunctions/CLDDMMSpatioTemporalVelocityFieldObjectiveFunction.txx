@@ -196,6 +196,9 @@ template <class T, unsigned int VImageDimension, class TState >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::CreateNewStateStructures()
 {
 
+  // Images and adjoints will be saved at all time-points
+  // velcoity fields have one less entry (because they 'live' in between the measurement points)
+
   assert( this->m_pState == NULL );
   assert( m_vecTimeDiscretization.size() > 1 );
 
@@ -213,6 +216,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
   
   std::vector< VectorFieldPointerType > vecState;
 
+  // -1, because these are velocity fields
   for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size()-1; ++iI )
     {
     VectorFieldPointerType ptrCurrentVectorField = new VectorFieldType( pImInfo->pIm );
@@ -233,6 +237,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
 
   std::vector< VectorFieldPointerType > vecState;
     
+  // -1, because these are velocity fields
   for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size()-1; ++iI )
     {
     VectorFieldPointerType ptrCurrentVectorField = pState->GetVectorFieldPointer( iI );
@@ -264,6 +269,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
 
   std::vector< VectorFieldPointerType > vecGradient;
 
+  // -1, because these are velocity fields
   for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size()-1; ++iI )
     {
     VectorFieldPointerType ptrCurrentVectorField = new VectorFieldType( pImInfo->pIm );
@@ -284,15 +290,14 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
   // and initialize it with the first image of the time-series
   m_ptrI0 = new VectorImageType( pImInfo->pIm );
 
-  m_vecTimeDiscretization[ 0 ].ptrEstimatedImage = m_ptrI0;
-
-  for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size()-1; ++iI )
+  // one more than for the velocity fields
+  for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size(); ++iI )
     {
     VectorImagePointerType ptrCurrentVectorImage = new VectorImageType( pImInfo->pIm ); 
     m_ptrI->push_back( ptrCurrentVectorImage );
 
     // bookkeeping to simplify metric computations
-    m_vecTimeDiscretization[ iI+1 ].ptrEstimatedImage = ptrCurrentVectorImage;
+    m_vecTimeDiscretization[ iI ].ptrEstimatedImage = ptrCurrentVectorImage;
     
     ptrCurrentVectorImage = new VectorImageType( pImInfo->pIm ); 
     m_ptrLambda->push_back( ptrCurrentVectorImage );
@@ -394,6 +399,8 @@ template <class T, unsigned int VImageDimension, class TState >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::ComputeImagesForward()
 {
   LDDMMUtils< T, VImageDimension >::identityMap( m_ptrMapIn );
+  // FIXME: This is just to make things easier and to support estimating the initial image (todo) later 
+  (*m_ptrI)[ 0 ]->copy( m_ptrI0 );
   
   for ( unsigned int iI = 0; iI < m_vecTimeDiscretization.size()-1; ++iI )
     {
@@ -404,7 +411,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
     m_ptrMapIn->copy( m_ptrMapOut );
 
     // now compute the image by interpolation
-    LDDMMUtils< T, VImageDimension >::applyMap( m_ptrMapIn, m_ptrI0, (*m_ptrI)[ iI ] );
+    LDDMMUtils< T, VImageDimension >::applyMap( m_ptrMapIn, m_ptrI0, (*m_ptrI)[ iI+1 ] );
     
     }
 }
@@ -424,9 +431,13 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
   for ( unsigned int iM = 0; iM <  uiNrOfMeasuredImagesAtTimePoint; ++iM ) 
     {
     this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].ptrEstimatedImage , m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecMeasurementImages[ iM ] );
+    m_ptrCurrentAdjointDifference->multConst( 1.0/m_SigmaSqr );
     m_ptrCurrentLambdaEnd->addCellwise( m_ptrCurrentAdjointDifference );
     }
   
+  // last adjoint; just for book-keeping, currently not really used in the algorithm
+  (*m_ptrLambda)[ uiNrOfTimePoints-1 ]->copy( m_ptrCurrentLambdaEnd );
+
   // reset the map to flow backwards
   LDDMMUtils<T,VImageDimension>::identityMap( m_ptrMapIn );
 
@@ -463,6 +474,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
       for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM ) 
         {
         this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].ptrEstimatedImage , m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecMeasurementImages[ iM ] );
+        m_ptrCurrentAdjointDifference->multConst( 1.0/m_SigmaSqr );
         m_ptrCurrentLambdaEnd->addCellwise( m_ptrCurrentAdjointDifference );
         }
       }
@@ -477,7 +489,11 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
   ComputeAdjointBackward();
 
   // can compute the gradient from this
-  // \f$ \nabla E = 2 v + (L^\dagger L)^{-1}(\sum_i \lambda_i \nabla I_i ) \f$
+  // \f$ \nabla E = v + (L^\dagger L)^{-1}(\sum_i \lambda_i \nabla I_i ) \f$
+  //
+  // Here the energy is defined as
+  // \f$ E = 1/2 \int_0^1 \|v\|_L^2~dt + 1/(sigma^2)\|I(1)-I_1\|^2
+  // and the gradient used is the Hilbert gradient
 
   unsigned int dim = m_ptrI0->getDim();
 
@@ -500,13 +516,13 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
 
     //VectorImageUtils< T, VImageDimension >::writeFileITK( ptrCurrentGradient, "curGradAfterConv.nrrd" );
 
-    // add 2v \sigma^2
+    // add v 
     VectorFieldPointerType ptrCurrentVelocity = this->m_pState->GetVectorFieldPointer( iI );
-    ptrCurrentGradient->addCellwiseMultiple( ptrCurrentVelocity, 2*m_SigmaSqr );
+    ptrCurrentGradient->addCellwise( ptrCurrentVelocity );
 
     }
 
-  VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( this->m_pGradient->GetVectorPointerToVectorFieldPointer(), "gradientAfterComputation.nrrd" );
+  //VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( this->m_pGradient->GetVectorPointerToVectorFieldPointer(), "gradientAfterComputation.nrrd" );
 
 }
 
@@ -526,9 +542,11 @@ T CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState
     this->m_ptrKernel->ConvolveWithKernel( m_ptrTmpVelocityField );
 
     // add energy increment, assuring that we have the correct spatio-temporal volume contribution
-    dEnergy += m_SigmaSqr*m_vecTimeIncrements[ iI ]*m_ptrTmpVelocityField->computeSquareNorm();
+    dEnergy += 0.5*m_vecTimeIncrements[ iI ]*m_ptrTmpVelocityField->computeSquareNorm();
 
     }
+
+  T dVelocitySquareNorm = dEnergy;
 
   // now add the contributions of the data terms
   
@@ -537,16 +555,23 @@ T CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState
 
   ComputeImagesForward();
 
+  T dImageNorm = 0;
+
   for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size(); ++iI )
     {
     // account for all possible measurements
     unsigned int uiNrOfMeasuredImagesAtTimePoint = m_vecTimeDiscretization[ iI ].vecMeasurementImages.size();
     for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM ) 
       {
-      dEnergy += this->m_pMetric->GetMetric( m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ], m_vecTimeDiscretization[ iI ].ptrEstimatedImage );
+      T dCurrentImageMetric = 1.0/m_SigmaSqr*this->m_pMetric->GetMetric( m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ], m_vecTimeDiscretization[ iI ].ptrEstimatedImage );
+      dImageNorm += dCurrentImageMetric;
       }
 
     }
+
+  dEnergy += dImageNorm;
+
+  std::cout << "E = " << dEnergy << "; dV = " << dVelocitySquareNorm << "; dI = " << dImageNorm << std::endl;
 
   return dEnergy;
 

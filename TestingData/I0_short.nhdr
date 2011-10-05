@@ -1,0 +1,12 @@
+NRRD0001
+# Complete NRRD file format specification at:
+# http://teem.sourceforge.net/nrrd/format.html
+type: unsigned short
+dimension: 3
+space: left-posterior-superior
+sizes: 50 50 1
+space directions: (0.02,0,0) (0,0.02,0) (0,0,0.02)
+kinds: domain domain domain
+endian: little
+encoding: gzip
+data file: ./I0_short.raw.gz
