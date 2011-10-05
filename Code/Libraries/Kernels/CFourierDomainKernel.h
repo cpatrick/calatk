@@ -90,6 +90,8 @@ public:
   void ConvolveWithInverseKernel( VectorFieldType* pVecField );
 
 protected:
+  
+  void ConfirmKernelsWereCreated();
 
   void ConvolveInFourierDomain( VectorFieldType* pVecField, VectorImageType* pL );
   void AllocateFFTDataStructures( VectorImageType* pVecIm );

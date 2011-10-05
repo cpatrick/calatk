@@ -31,16 +31,16 @@ T CMetricSSD< T, VImageDimension >::GetMetric( VectorImageType* pI0, VectorImage
 }
 
 template <class T, unsigned int VImageDimension >
-void CMetricSSD< T, VImageDimension >::GetAdjointMatchingDifferenceImage( VectorImageType* pAdjointDifference, VectorImageType* pI0, VectorImageType* pI1 )
+void CMetricSSD< T, VImageDimension >::GetAdjointMatchingDifferenceImage( VectorImageType* pAdjointDifference, VectorImageType* pIEstimated, VectorImageType* pIMeasured )
 {
-  assert( pI0->getLength() == pI1->getLength() );
-  assert( pAdjointDifference->getLength() == pI0->getLength() );
+  assert( pIEstimated->getLength() == pIMeasured->getLength() );
+  assert( pAdjointDifference->getLength() == pIMeasured->getLength() );
 
   // TODO: check that this is the correct sign for the difference
 
-  for ( unsigned int uiI = 0; uiI < pI0->getLength(); ++uiI )
+  for ( unsigned int uiI = 0; uiI < pIMeasured->getLength(); ++uiI )
     {
-    T dAdjointDifferenceValue = 2*( pI0->getValue( uiI ) - pI1->getValue( uiI ) );
+    T dAdjointDifferenceValue = 2*( pIMeasured->getValue( uiI ) - pIEstimated->getValue( uiI ) );
     pAdjointDifference->setValue( uiI, dAdjointDifferenceValue );
     }
 

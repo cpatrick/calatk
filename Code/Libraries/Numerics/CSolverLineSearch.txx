@@ -68,7 +68,7 @@ bool CSolverLineSearch<T, VImageDimension, TState>::Solve()
   T dResultingEnergy;
 
   // creating new temp state
-  pTempState = new TState;
+  pTempState = new TState( *pObj->GetStatePointer() );
 
   for ( unsigned int uiIter = 0; uiIter<m_uiMaxNumberOfIterations; ++uiIter )
     {
@@ -182,12 +182,20 @@ bool CSolverLineSearch<T, VImageDimension, TState>::LineSearchWithBacktracking( 
     //*pState = *pTempState - (*pCurrentGradient)*dAlpha;
     // here comes a more memory efficient version 
     // (should need no new reallocation of memory, but simply overwrites *pState all the time)
+
+    //VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( pState->GetVectorPointerToVectorFieldPointer(), "stateBefore.nrrd" );
+    //VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( pCurrentGradient->GetVectorPointerToVectorFieldPointer(), "gradientBefore.nrrd" );
+
     *pState = *pCurrentGradient;
     *pState *= -dAlpha;
     *pState += *pTempState;
 
+    //VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( pState->GetVectorPointerToVectorFieldPointer(), "stateAfter.nrrd" );
+
     // recompute the energy
     dComputedEnergy = pObj->GetCurrentEnergy();
+
+    std::cout << "dComputedEnergy = " << dComputedEnergy << std::endl;
 
     if ( dComputedEnergy >= dInitialEnergy )
       {

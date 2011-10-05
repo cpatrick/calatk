@@ -20,6 +20,8 @@ CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >
   m_ptrMapOut = NULL;
   m_ptrMapTmp = NULL;
 
+  m_SigmaSqr = 0.01;
+
 }
 
 template <class T, unsigned int VImageDimension, class TState >
@@ -370,12 +372,13 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
     else
       {
       this->m_ptrEvolver->SolveForward( this->m_pState->GetVectorFieldPointer( iI ), m_ptrMapIn, m_ptrMapOut, m_ptrMapTmp, dTime-dCurrentTime );
-      ptrMap->copy( m_ptrMapOut );
       break;
       }
     // for next step, copy
     m_ptrMapIn->copy( m_ptrMapOut );
     }
+  ptrMap->copy( m_ptrMapOut );
+
 }
 
 template <class T, unsigned int VImageDimension, class TState >
@@ -473,11 +476,6 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
   ComputeImagesForward();
   ComputeAdjointBackward();
 
-  VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( m_ptrI, "is.nrrd" );
-  VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( m_ptrLambda, "lambdas.nrrd" );
-
-  exit( -1 );
-
   // can compute the gradient from this
   // \f$ \nabla E = 2 v + (L^\dagger L)^{-1}(\sum_i \lambda_i \nabla I_i ) \f$
 
@@ -496,13 +494,19 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
       ptrCurrentGradient->addCellwise( m_ptrTmpGradient );
       }
 
+    //VectorImageUtils< T, VImageDimension >::writeFileITK( ptrCurrentGradient, "curGradBeforeConv.nrrd" );
+
     this->m_ptrKernel->ConvolveWithInverseKernel( ptrCurrentGradient );
 
-    // add 2v
+    //VectorImageUtils< T, VImageDimension >::writeFileITK( ptrCurrentGradient, "curGradAfterConv.nrrd" );
+
+    // add 2v \sigma^2
     VectorFieldPointerType ptrCurrentVelocity = this->m_pState->GetVectorFieldPointer( iI );
-    ptrCurrentGradient->addCellwiseMultiple( ptrCurrentVelocity, 2 );
+    ptrCurrentGradient->addCellwiseMultiple( ptrCurrentVelocity, 2*m_SigmaSqr );
 
     }
+
+  VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( this->m_pGradient->GetVectorPointerToVectorFieldPointer(), "gradientAfterComputation.nrrd" );
 
 }
 
@@ -522,7 +526,7 @@ T CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState
     this->m_ptrKernel->ConvolveWithKernel( m_ptrTmpVelocityField );
 
     // add energy increment, assuring that we have the correct spatio-temporal volume contribution
-    dEnergy += m_vecTimeIncrements[ iI ]*m_ptrTmpVelocityField->computeSquareNorm();
+    dEnergy += m_SigmaSqr*m_vecTimeIncrements[ iI ]*m_ptrTmpVelocityField->computeSquareNorm();
 
     }
 

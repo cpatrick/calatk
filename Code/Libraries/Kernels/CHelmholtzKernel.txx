@@ -4,8 +4,8 @@
 template <class T, unsigned int VImageDimension >
 CHelmholtzKernel< T, VImageDimension >::CHelmholtzKernel()
 {
-  m_Alpha = 0.01;
-  m_Gamma = 0.1;
+  m_Alpha = 0.1;
+  m_Gamma = 1;
 }
 
 template <class T, unsigned int VImageDimension >
@@ -16,10 +16,15 @@ CHelmholtzKernel< T, VImageDimension >::~CHelmholtzKernel()
 template <class T, unsigned int VImageDimension >
 void CHelmholtzKernel< T, VImageDimension >::CreateKernelAndInverseKernel2D( VectorImageType* pVecImageGraft )
 {
-
   unsigned int szX = pVecImageGraft->getSizeX();
   unsigned int szY = pVecImageGraft->getSizeY();
 
+  assert( this->m_ptrL == NULL );
+  assert( this->m_ptrLInv == NULL );
+
+  this->m_ptrL = new VectorImageType( szX, szY, 1 );
+  this->m_ptrLInv = new VectorImageType( szX, szY, 1 );
+  
   T dx = pVecImageGraft->getDX();
   T dy = pVecImageGraft->getDY();
 
@@ -39,6 +44,7 @@ void CHelmholtzKernel< T, VImageDimension >::CreateKernelAndInverseKernel2D( Vec
       this->m_ptrLInv->setValue(x,y,0,1.0/val);
       }
     }
+
 }
 
 template <class T, unsigned int VImageDimension >
@@ -48,6 +54,12 @@ void CHelmholtzKernel< T, VImageDimension >::CreateKernelAndInverseKernel3D( Vec
   unsigned int szX = pVecImageGraft->getSizeX();
   unsigned int szY = pVecImageGraft->getSizeY();
   unsigned int szZ = pVecImageGraft->getSizeZ();
+
+  assert( this->m_ptrL == NULL );
+  assert( this->m_ptrLInv == NULL );
+
+  this->m_ptrL = new VectorImageType( szX, szY, szZ, 1 );
+  this->m_ptrLInv = new VectorImageType( szX, szY, szZ, 1 );
 
   T dx = pVecImageGraft->getDX();
   T dy = pVecImageGraft->getDY();

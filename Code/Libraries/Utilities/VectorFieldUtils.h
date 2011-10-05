@@ -306,6 +306,8 @@ public:
    * @return - a std::vector of the x, y, and z components of the transformed point
    */
   static std::vector<T> transformPointITK( typename ITKAffineTransform<T,3>::Type::Pointer itkAffine, std::vector<T> coorVector);
+
+  static bool writeTimeDependantImagesITK( const std::vector< VectorFieldType* >* ims, std::string filename);
   
 };
 

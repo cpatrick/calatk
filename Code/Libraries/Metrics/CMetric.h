@@ -40,10 +40,10 @@ public:
    * E.g., for SSD: \|I(1)-I_1\|^2 -> 2 ( I(1)-I_1 )
    *
    * @params pAdjointDiffernce - output image which will hold the difference image influencing the adjoint variable
-   * @params pI0 - pointer to image 0 which is the one influenced by the transform
-   * @params pI1 - pointer to image 1 (to be compared with image 0), which is the image to be compared to
+   * @params pIEstimated - pointer to image 0 which is the one influenced by the transform
+   * @params pIMeasured - pointer to image 1 (to be compared with image 0), which is the image to be compared to
    */
-  virtual void GetAdjointMatchingDifferenceImage( VectorImageType* pAdjointDifference, VectorImageType* pI0, VectorImageType* pI1 ) = 0;
+  virtual void GetAdjointMatchingDifferenceImage( VectorImageType* pAdjointDifference, VectorImageType* pIEstimated, VectorImageType* pIMeasured ) = 0;
 
   virtual ~CMetric()
   {

@@ -60,7 +60,6 @@ public:
   CStateSpatioTemporalVelocityField operator*(const T & p ) const;
 
   ConstVectorPointerToVectorFieldPointerType GetVectorPointerToVectorFieldPointer() const;
-  VectorPointerToVectorFieldPointerType GetVectorPointerToVectorFieldPointer();
 
   VectorFieldPointerType GetVectorFieldPointer( unsigned int iI );
   void SetVectorFieldPointer( unsigned int iI, VectorFieldPointerType ptrVecField );

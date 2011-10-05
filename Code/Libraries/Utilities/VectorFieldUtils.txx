@@ -1349,4 +1349,20 @@ std::vector<T> VectorFieldUtils< T, VImageDimension, TSpace>::transformPointITK(
   
 }
 
+template <class T, unsigned int VImageDimension, class TSpace >
+bool VectorFieldUtils< T, VImageDimension, TSpace>::writeTimeDependantImagesITK( const std::vector< VectorFieldType* >* ims, std::string filename )
+{
+  // convert this to a vector of VectorImageType and write it out
+  std::vector< VectorImageType* > convIms;
+  
+  typename std::vector< VectorFieldType* >::const_iterator iter;
+  for ( iter = ims->begin(); iter != ims->end(); ++iter )
+    {
+    convIms.push_back( *iter );
+    }
+  return VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( &convIms, filename );
+  
+
+}
+
 #endif

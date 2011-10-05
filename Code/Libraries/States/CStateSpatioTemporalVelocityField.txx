@@ -19,7 +19,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension >::CStateSpatioTemporalVel
 {
   if ( this != &c )
     {
-    VectorPointerToVectorFieldPointerType ptrSource = c.GetVectorPointerToVectorFieldPointer();
+    ConstVectorPointerToVectorFieldPointerType ptrSource = c.GetVectorPointerToVectorFieldPointer();
     CopyDataStructure( ptrSource );
     }
 }
@@ -131,12 +131,14 @@ CStateSpatioTemporalVelocityField< T, VImageDimension >::GetVectorPointerToVecto
   return &m_vecPtrSTVelocityField;
 }
 
+/*
 template <class T, unsigned int VImageDimension>
 typename CStateSpatioTemporalVelocityField< T, VImageDimension >::VectorPointerToVectorFieldPointerType
 CStateSpatioTemporalVelocityField< T, VImageDimension >::GetVectorPointerToVectorFieldPointer()
 {
   return &m_vecPtrSTVelocityField;
 }
+*/
 
 //
 // sets a vector field as an element of the spatio temporal velocity field data structure

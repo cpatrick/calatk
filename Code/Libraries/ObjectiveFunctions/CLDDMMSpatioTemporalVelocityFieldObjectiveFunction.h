@@ -35,6 +35,9 @@ public:
   T GetCurrentEnergy();
   void ComputeGradient();
 
+  SetMacro( SigmaSqr, T );
+  GetMacro( SigmaSqr, T );
+
   void GetMap( VectorFieldType* ptrMap, T dTime );
   void GetImage( VectorImageType* ptrIm, T dTime );
 
@@ -93,6 +96,7 @@ private:
 
   std::vector< T > m_vecTimeIncrements;
 
+  T m_SigmaSqr; // 1/m_SigmaSqr is the multiplier for the data attachment term
 
 };
 

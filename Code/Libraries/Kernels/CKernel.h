@@ -34,8 +34,13 @@ public:
 protected:
 
   virtual void CreateKernelAndInverseKernel( VectorImageType* ) = 0;
+  // just to force that the variable is set
+  virtual void ConfirmKernelsWereCreated() = 0;
+
+  bool m_KernelsWereCreated;
 
 private:
+
 };
 
 #include "CKernel.txx"

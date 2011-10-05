@@ -122,20 +122,13 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures( Vect
   unsigned int szY = pVecIm->getSizeY();
   unsigned int szZ = pVecIm->getSizeZ();
 
-  // clean up, just in case this is called twice
-  DeleteData();
-  
   switch ( VImageDimension )
     {
     case 2:
       AllocateFFTDataStructures2D( szX, szY );
-      m_ptrL = new VectorImageType( szX, szY, 1 );
-      m_ptrLInv = new VectorImageType( szX, szY, 1 );
       break;
     case 3:
       AllocateFFTDataStructures3D( szX, szY, szZ );
-      m_ptrL = new VectorImageType( szX, szY, szZ, 1 );
-      m_ptrLInv = new VectorImageType( szX, szY, szZ, 1 );
       break;
     default:
       throw std::runtime_error( "Cannot allocate FFT data structure of desired dimension." );
@@ -325,13 +318,15 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
 template <class T, unsigned int VImageDimension >
 void CFourierDomainKernel< T, VImageDimension >::ConvolveWithKernel( VectorFieldType* pVecField )
 {
-
-  if ( m_ptrL == NULL )
+  if ( !this->m_KernelsWereCreated )
     {
+    this->CreateKernelAndInverseKernel( pVecField );
+    ConfirmKernelsWereCreated();
     AllocateFFTDataStructures( pVecField );
     }
   else 
     {
+    assert( m_ptrL != NULL );
     if ( pVecField->getSizeX() != m_ptrL->getSizeX() ||
          pVecField->getSizeY() != m_ptrL->getSizeY() ||
          pVecField->getSizeZ() != m_ptrL->getSizeZ() )
@@ -348,20 +343,33 @@ template <class T, unsigned int VImageDimension >
 void CFourierDomainKernel< T, VImageDimension >::ConvolveWithInverseKernel( VectorFieldType* pVecField )
 {
 
-  if ( m_ptrLInv == NULL )
+  if ( !this->m_KernelsWereCreated )
     {
+    this->CreateKernelAndInverseKernel( pVecField );
+    ConfirmKernelsWereCreated();
     AllocateFFTDataStructures( pVecField );
     }
   else
+    {
+    assert( m_ptrLInv != NULL );
     if ( pVecField->getSizeX() != m_ptrLInv->getSizeX() ||
          pVecField->getSizeY() != m_ptrLInv->getSizeY() ||
          pVecField->getSizeZ() != m_ptrLInv->getSizeZ() )
       {
       throw std::runtime_error( "Kernel incompatible with velocity field size.");
       }
+    }
 
   assert( m_ptrLInv != NULL );
   ConvolveInFourierDomain( pVecField, m_ptrLInv );
 }
+
+template <class T, unsigned int VImageDimension >
+void CFourierDomainKernel< T, VImageDimension >::ConfirmKernelsWereCreated()
+{
+  this->m_KernelsWereCreated = true;
+}
+
+
 
 #endif

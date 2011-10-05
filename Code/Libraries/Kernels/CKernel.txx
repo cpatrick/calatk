@@ -4,6 +4,7 @@
 template <class T, unsigned int VImageDimension >
 CKernel< T, VImageDimension >::CKernel()
 {
+  m_KernelsWereCreated = false;
 }
 
 template <class T, unsigned int VImageDimension >

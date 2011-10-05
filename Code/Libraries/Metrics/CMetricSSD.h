@@ -22,7 +22,7 @@ public:
   ~CMetricSSD();
 
   T GetMetric( VectorImageType* pI0, VectorImageType* pI1 );
-  void GetAdjointMatchingDifferenceImage( VectorImageType* pAdjointDifference, VectorImageType* pI0, VectorImageType* pI1 );
+  void GetAdjointMatchingDifferenceImage( VectorImageType* pAdjointDifference, VectorImageType* pIEstimated, VectorImageType* pIMeasured );
 protected:
 private:
 };

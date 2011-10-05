@@ -90,14 +90,17 @@ int main(int argc, char **argv)
   imageManager.GetImagesWithSubjectIndex( pImInfo, 1 );
 
   // testing the line search
-
   typedef CALATK::CStateScalarExample< double > StateType;
+
+/*
   CALATK::CScalarExampleObjectiveFunction< double, DIMENSION, StateType > objectiveFunction;
 
   CALATK::CSolverLineSearch< double, DIMENSION, StateType > lineSearch;
   lineSearch.SetObjectiveFunctionPointer( &objectiveFunction );
 
   lineSearch.Solve();
+
+*/
 
   StateType v1, v2;
 
