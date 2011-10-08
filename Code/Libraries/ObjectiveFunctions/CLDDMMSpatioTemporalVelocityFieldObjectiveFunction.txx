@@ -538,17 +538,18 @@ T CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState
     // copy current velocity field (of the state)
     m_ptrTmpVelocityField->copy( this->m_pState->GetVectorFieldPointer( iI ) );
 
-    // convolve it with the kernel
+    // convolve it with the kernel, L^\dagger L v
     this->m_ptrKernel->ConvolveWithKernel( m_ptrTmpVelocityField );
 
-    VectorImageUtils< T, VImageDimension >::writeFileITK( m_ptrTmpVelocityField, "lastVConvolved.nrrd" );
+    // now multiply it with v
+    T dCurrentEnergy = 0.5*m_vecTimeIncrements[ iI ]*m_ptrTmpVelocityField->computeInnerProduct( this->m_pState->GetVectorFieldPointer( iI ) );
 
     // add energy increment, assuring that we have the correct spatio-temporal volume contribution
-    dEnergy += 0.5*m_vecTimeIncrements[ iI ]*m_ptrTmpVelocityField->computeSquareNorm();
+    dEnergy += dCurrentEnergy;
 
     }
 
-  T dVelocitySquareNorm = dEnergy;
+  //T dVelocitySquareNorm = dEnergy;
 
   // now add the contributions of the data terms
   
@@ -573,14 +574,14 @@ T CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState
 
   dEnergy += dImageNorm;
 
-  std::cout << "E = " << dEnergy << "; dV = " << dVelocitySquareNorm << "; dI = " << dImageNorm << std::endl;
+  //std::cout << "E = " << dEnergy << "; dV = " << dVelocitySquareNorm << "; dI = " << dImageNorm << std::endl;
 
   // write out the velocity, the image and the adjoint (everything basically)
 
-  VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( this->m_pState->GetVectorPointerToVectorFieldPointer(), "vs.nrrd" );
-  VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( this->m_ptrI, "is.nrrd" );
-  VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( this->m_ptrI, "lambdas.nrrd" );
-  VectorImageUtils< T, VImageDimension >::writeFileITK( this->m_ptrKernel->GetKernel() , "kernel.nrrd");
+  //VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( this->m_pState->GetVectorPointerToVectorFieldPointer(), "vs.nrrd" );
+  //VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( this->m_ptrI, "is.nrrd" );
+  //VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( this->m_ptrI, "lambdas.nrrd" );
+  //VectorImageUtils< T, VImageDimension >::writeFileITK( this->m_ptrKernel->GetKernel() , "kernel.nrrd");
 
   return dEnergy;
 

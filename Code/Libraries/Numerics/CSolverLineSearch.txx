@@ -10,8 +10,7 @@ CSolverLineSearch<T, VImageDimension, TState>::CSolverLineSearch()
   // default setting for the parameters
 
   // intial step size of the solver
-  //m_dInitialStepSize = 0.001;
-  m_dInitialStepSize = 0.0003;
+  m_dInitialStepSize = 0.001;
 
   // factor the step size is increase by if solutions do not require a reduction
   m_dAdjustStepSizeUpFactor = 2;
@@ -32,7 +31,7 @@ CSolverLineSearch<T, VImageDimension, TState>::CSolverLineSearch()
   m_dMinAllowedStepSize = 1e-6;
 
   // maximal number of iterations
-  m_uiMaxNumberOfIterations = 100;
+  m_uiMaxNumberOfIterations = 500;
 
   // maximal number of tries in one backtracking line search
   m_uiMaxNumberOfTries = 10;
@@ -196,7 +195,7 @@ bool CSolverLineSearch<T, VImageDimension, TState>::LineSearchWithBacktracking( 
     // recompute the energy
     dComputedEnergy = pObj->GetCurrentEnergy();
 
-    std::cout << "dComputedEnergy = " << dComputedEnergy << std::endl;
+    //std::cout << "dComputedEnergy = " << dComputedEnergy << std::endl;
 
     if ( dComputedEnergy >= dInitialEnergy )
       {

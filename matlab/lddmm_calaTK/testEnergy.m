@@ -1,6 +1,6 @@
 clear all; close all
 
-load A
+A = deconvolutionMatrix( 50, 50, 0.025, 1 );
 
 I0 = double( nrrdLoad('../../TestingData/I0_short.nhdr') );
 I1 = double( nrrdLoad('../../TestingData/I1_short.nhdr') );
@@ -18,4 +18,4 @@ K = nrrdLoad( 'kernel.nrrd' );
 
 [energy, imEnergy, velEnergy, velNorms ] = computeEnergy( vx, vy, I(:,:,end), I1, A, 0.1, 10, 0.1 )
 
-%[energy, imEnergy, velEnergy ] = computeEnergy( vx, vy, I(:,:,end), I1, K, 0.1, 10, 0.1 )
+

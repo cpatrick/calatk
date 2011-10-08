@@ -179,6 +179,12 @@ public:
    *
    */
   T computeSquareNorm();
+
+  /**
+   * Computes the inner product with another image
+   *
+   */
+  T computeInnerProduct( const VectorImage* im ) const;
   
   /**
    * Method to get the origin

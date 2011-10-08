@@ -229,6 +229,7 @@ T VectorImage< T, VImageDimension, TSpace >::getElementVolume() const
     }
 }
 
+
 //
 // computeSquareNorm
 //
@@ -245,6 +246,24 @@ T VectorImage< T, VImageDimension, TSpace>::computeSquareNorm()
   dSquareNorm *= this->getElementVolume();
 
   return dSquareNorm;
+}
+
+
+//
+// computeInnerProduct
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+T VectorImage< T, VImageDimension, TSpace>::computeInnerProduct( const VectorImage* im ) const
+{
+  // now square over all elements
+  T dInnerProduct = 0;
+  for ( unsigned int uiI = 0; uiI < this->getLength(); ++uiI )
+    {
+    dInnerProduct += this->getValue( uiI )*im->getValue( uiI );
+    } 
+  dInnerProduct *= this->getElementVolume();
+
+  return dInnerProduct;
 }
 
 //
