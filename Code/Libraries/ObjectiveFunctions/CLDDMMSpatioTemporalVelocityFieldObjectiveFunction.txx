@@ -541,6 +541,8 @@ T CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState
     // convolve it with the kernel
     this->m_ptrKernel->ConvolveWithKernel( m_ptrTmpVelocityField );
 
+    VectorImageUtils< T, VImageDimension >::writeFileITK( m_ptrTmpVelocityField, "lastVConvolved.nrrd" );
+
     // add energy increment, assuring that we have the correct spatio-temporal volume contribution
     dEnergy += 0.5*m_vecTimeIncrements[ iI ]*m_ptrTmpVelocityField->computeSquareNorm();
 
@@ -572,6 +574,13 @@ T CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState
   dEnergy += dImageNorm;
 
   std::cout << "E = " << dEnergy << "; dV = " << dVelocitySquareNorm << "; dI = " << dImageNorm << std::endl;
+
+  // write out the velocity, the image and the adjoint (everything basically)
+
+  VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( this->m_pState->GetVectorPointerToVectorFieldPointer(), "vs.nrrd" );
+  VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( this->m_ptrI, "is.nrrd" );
+  VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( this->m_ptrI, "lambdas.nrrd" );
+  VectorImageUtils< T, VImageDimension >::writeFileITK( this->m_ptrKernel->GetKernel() , "kernel.nrrd");
 
   return dEnergy;
 

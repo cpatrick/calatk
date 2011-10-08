@@ -31,6 +31,9 @@ public:
   virtual void ConvolveWithKernel( VectorFieldType* ) = 0;
   virtual void ConvolveWithInverseKernel( VectorFieldType* ) = 0;
 
+  virtual const VectorImageType *GetKernel() const = 0;
+  virtual const VectorImageType *GetInverseKernel() const = 0;
+
 protected:
 
   virtual void CreateKernelAndInverseKernel( VectorImageType* ) = 0;

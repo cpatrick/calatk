@@ -1,4 +1,4 @@
-function [ce, imageMatch, velSquareNorm] = computeEnergy( vx, vy, J0T, J1T, A, ...
+function [ce, imageMatch, velSquareNorm, velNorms] = computeEnergy( vx, vy, J0T, J1T, A, ...
                                                   tinc, nt, sigma )
 
 % first compute the norms of the velocity field
@@ -21,4 +21,5 @@ imageMatch = 1/(sigma^2)*sum( (J0TE(:)-J1TE(:)).^2 )/(iXS*iYS);
 velSquareNorm = 0.5*tinc*sum( velNorms.^2 );
 ce = velSquareNorm + imageMatch;
 
+velNorms
 

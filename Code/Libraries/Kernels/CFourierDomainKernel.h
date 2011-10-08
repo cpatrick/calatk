@@ -89,6 +89,16 @@ public:
   void ConvolveWithKernel( VectorFieldType* pVecField );
   void ConvolveWithInverseKernel( VectorFieldType* pVecField );
 
+  const VectorImageType *GetKernel() const
+  {
+    return m_ptrL;
+  }
+
+  const VectorImageType *GetInverseKernel() const
+  {
+    return m_ptrLInv;
+  }
+
 protected:
   
   void ConfirmKernelsWereCreated();

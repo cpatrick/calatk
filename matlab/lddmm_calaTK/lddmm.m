@@ -66,8 +66,8 @@ end
 
 if ( scenario == 3 )
   
-  I0 = double( nrrdLoad('../../TestingData/I0_short.nrrd') );
-  I1 = double( nrrdLoad('../../TestingData/I1_short.nrrd') );
+  I0 = double( nrrdLoad('../../TestingData/I0_short.nhdr') );
+  I1 = double( nrrdLoad('../../TestingData/I1_short.nhdr') );
 
   vMask = ones( size( I0 ) );
 
@@ -205,7 +205,8 @@ else
     vars.lam = flowImagesBackward( vars.lam, vars.vx, vars.vy, tinc, options.nt, options.secondOrderAccurate );   
 end
 
-currentEnergy = computeEnergy( vars.vx, vars.vy, vars.I(:,:,end), vars.I1, vars.A, tinc, options.nt, options.sigma );
+[currentEnergy, imageMatchEnergy, velEnergy] = computeEnergy( vars.vx, vars.vy, vars.I(:,:,end), vars.I1, vars.A, tinc, options.nt, options.sigma );
+fprintf('Initial: E = %f, imageE = %f, velE = %f\n', currentEnergy, imageMatchEnergy, velEnergy );
 
 lastEnergy = currentEnergy;
 

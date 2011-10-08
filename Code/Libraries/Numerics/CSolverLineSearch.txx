@@ -10,7 +10,8 @@ CSolverLineSearch<T, VImageDimension, TState>::CSolverLineSearch()
   // default setting for the parameters
 
   // intial step size of the solver
-  m_dInitialStepSize = 0.001;
+  //m_dInitialStepSize = 0.001;
+  m_dInitialStepSize = 0.0003;
 
   // factor the step size is increase by if solutions do not require a reduction
   m_dAdjustStepSizeUpFactor = 2;
