@@ -354,6 +354,28 @@ void CImageManager< T, VImageDimension, TSpace>::GetPointerToSubjectImageInforma
 }
 
 //
+// Returns the set of images for a particular subject index
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+void CImageManager< T, VImageDimension, TSpace>::GetImagesWithSubjectIndex( SubjectInformationType*& pImInfo, unsigned int uiSubjectIndex )
+{
+  // we actually load the images and the transforms
+  // if they have been specified but are not in memory yet
+
+  pImInfo = this->m_SubjectCollectionMapImageInformation[ uiSubjectIndex ];
+
+  // now go through the list and load images if they have not been loaded yet
+
+  typename SubjectInformationType::iterator iter;
+
+  for ( iter = pImInfo->begin(); iter != pImInfo->end(); ++iter )
+    {
+    SImageInformation* pCurrentImInfo = *iter;
+    this->GetImage( pCurrentImInfo );
+    }
+}
+
+//
 // Prints the filenames and timepoints
 //
 template <class T, unsigned int VImageDimension, class TSpace >
