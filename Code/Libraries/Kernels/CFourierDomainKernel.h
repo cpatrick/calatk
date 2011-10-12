@@ -89,16 +89,6 @@ public:
   void ConvolveWithKernel( VectorFieldType* pVecField );
   void ConvolveWithInverseKernel( VectorFieldType* pVecField );
 
-  const VectorImageType *GetKernel() const
-  {
-    return m_ptrL;
-  }
-
-  const VectorImageType *GetInverseKernel() const
-  {
-    return m_ptrLInv;
-  }
-
 protected:
 
   /** 
@@ -107,13 +97,13 @@ protected:
    */
   static T GetKFromIndex( unsigned int iI, unsigned int iM, T dx );
   
-  void ConfirmKernelsWereCreated();
+  void ConfirmKernelsWereComputed();
+  void ConfirmMemoryWasAllocated();
 
   void ConvolveInFourierDomain( VectorFieldType* pVecField, VectorImageType* pL );
-  void AllocateFFTDataStructures( VectorImageType* pVecIm );
 
-  VectorImageType *m_ptrL;
-  VectorImageType *m_ptrLInv;
+  void AllocateFFTDataStructures( VectorImageType* pVecIm );
+  void AllocateMemoryAndComputeKernelsIfNeeded( VectorFieldType* pVecField );
 
 private:
 

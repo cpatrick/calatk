@@ -14,17 +14,25 @@ CHelmholtzKernel< T, VImageDimension >::~CHelmholtzKernel()
 }
 
 template <class T, unsigned int VImageDimension >
-void CHelmholtzKernel< T, VImageDimension >::CreateKernelAndInverseKernel2D( VectorImageType* pVecImageGraft )
+void CHelmholtzKernel< T, VImageDimension >::SetAlpha( T dAlpha )
+{
+  m_Alpha = dAlpha;
+  ConfirmKernelsNeedToBeComputed();
+}
+
+template <class T, unsigned int VImageDimension >
+void CHelmholtzKernel< T, VImageDimension >::SetGamma( T dGamma )
+{
+  m_Gamma = dGamma;
+  ConfirmKernelsNeedToBeComputed();
+}
+
+template <class T, unsigned int VImageDimension >
+void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel2D( VectorImageType* pVecImageGraft )
 {
   unsigned int szX = pVecImageGraft->getSizeX();
   unsigned int szY = pVecImageGraft->getSizeY();
 
-  assert( this->m_ptrL == NULL );
-  assert( this->m_ptrLInv == NULL );
-
-  this->m_ptrL = new VectorImageType( szX, szY, 1 );
-  this->m_ptrLInv = new VectorImageType( szX, szY, 1 );
-  
   T dx = pVecImageGraft->getDX();
   T dy = pVecImageGraft->getDY();
 
@@ -50,18 +58,12 @@ void CHelmholtzKernel< T, VImageDimension >::CreateKernelAndInverseKernel2D( Vec
 }
 
 template <class T, unsigned int VImageDimension >
-void CHelmholtzKernel< T, VImageDimension >::CreateKernelAndInverseKernel3D( VectorImageType* pVecImageGraft )
+void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel3D( VectorImageType* pVecImageGraft )
 {
 
   unsigned int szX = pVecImageGraft->getSizeX();
   unsigned int szY = pVecImageGraft->getSizeY();
   unsigned int szZ = pVecImageGraft->getSizeZ();
-
-  assert( this->m_ptrL == NULL );
-  assert( this->m_ptrLInv == NULL );
-
-  this->m_ptrL = new VectorImageType( szX, szY, szZ, 1 );
-  this->m_ptrLInv = new VectorImageType( szX, szY, szZ, 1 );
 
   T dx = pVecImageGraft->getDX();
   T dy = pVecImageGraft->getDY();
@@ -95,22 +97,25 @@ void CHelmholtzKernel< T, VImageDimension >::CreateKernelAndInverseKernel3D( Vec
 
 
 template <class T, unsigned int VImageDimension >
-void CHelmholtzKernel< T, VImageDimension >::CreateKernelAndInverseKernel( VectorImageType* pVecImageGraft )
+void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType* pVecImageGraft )
 {
-  // allocate all the required memory
-  AllocateFFTDataStructures( pVecImageGraft ); 
-
   switch ( VImageDimension )
     {
     case 2:
-      CreateKernelAndInverseKernel2D( pVecImageGraft );
+      ComputeKernelAndInverseKernel2D( pVecImageGraft );
       break;
     case 3:
-      CreateKernelAndInverseKernel3D( pVecImageGraft );
+      ComputeKernelAndInverseKernel3D( pVecImageGraft );
       break;
     default:
       throw std::runtime_error("Cannot create kernel of desired dimension.");
     }
+}
+
+template <class T, unsigned int VImageDimension >
+void CHelmholtzKernel< T, VImageDimension >::ConfirmKernelsNeedToBeComputed()
+{
+  this->m_KernelsNeedToBeComputed = true;
 }
 
 #endif

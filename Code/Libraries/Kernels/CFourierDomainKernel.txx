@@ -6,9 +6,6 @@ CFourierDomainKernel< T, VImageDimension >::CFourierDomainKernel()
 {
   fftwData2D = NULL;
   fftwData3D = NULL;
-
-  m_ptrL = NULL;
-  m_ptrLInv = NULL;
 }
 
 template <class T, unsigned int VImageDimension >
@@ -51,19 +48,6 @@ void CFourierDomainKernel< T, VImageDimension >::DeleteData()
     delete fftwData3D;
     fftwData3D = NULL;
     }
-
-  if ( m_ptrL != NULL ) 
-    {
-    delete m_ptrL;
-    m_ptrL = NULL;
-    }
-
-  if ( m_ptrLInv != NULL ) 
-    {
-    delete m_ptrLInv;
-    m_ptrLInv = NULL;
-    }
-
 }
 
 template <class T, unsigned int VImageDimension >
@@ -134,7 +118,6 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures( Vect
       throw std::runtime_error( "Cannot allocate FFT data structure of desired dimension." );
     }
 }
-
 
 template <class T, unsigned int VImageDimension >
 T CFourierDomainKernel< T, VImageDimension >::GetKFromIndex( unsigned int iI, unsigned int iM, T dx )
@@ -349,60 +332,64 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
 }
 
 template <class T, unsigned int VImageDimension >
-void CFourierDomainKernel< T, VImageDimension >::ConvolveWithKernel( VectorFieldType* pVecField )
+void CFourierDomainKernel< T, VImageDimension >::AllocateMemoryAndComputeKernelsIfNeeded( VectorFieldType* pVecField )
 {
-  if ( !this->m_KernelsWereCreated )
+  if ( !this->m_MemoryWasAllocated )
     {
-    this->CreateKernelAndInverseKernel( pVecField );
-    ConfirmKernelsWereCreated();
+    this->AllocateMemoryForKernelAndInverseKernel( pVecField );
     AllocateFFTDataStructures( pVecField );
-    }
-  else 
-    {
-    assert( m_ptrL != NULL );
-    if ( pVecField->getSizeX() != m_ptrL->getSizeX() ||
-         pVecField->getSizeY() != m_ptrL->getSizeY() ||
-         pVecField->getSizeZ() != m_ptrL->getSizeZ() )
-      {
-      throw std::runtime_error( "Kernel incompatible with velocity field size.");
-      }
+    ConfirmMemoryWasAllocated();
     }
 
-  assert( m_ptrL != NULL );
-  ConvolveInFourierDomain( pVecField, m_ptrL );
+  if ( this->m_KernelsNeedToBeComputed )
+    {
+    this->ComputeKernelAndInverseKernel( pVecField );
+    ConfirmKernelsWereComputed();
+    }
+
+  assert( this->m_ptrL != NULL );
+
+  if ( pVecField->getSizeX() != this->m_ptrL->getSizeX() ||
+       pVecField->getSizeY() != this->m_ptrL->getSizeY() ||
+       pVecField->getSizeZ() != this->m_ptrL->getSizeZ() )
+    {
+    throw std::runtime_error( "Kernel incompatible with velocity field size.");
+    }
+
+  assert( this->m_ptrLInv != NULL );
+  
+  if ( pVecField->getSizeX() != this->m_ptrLInv->getSizeX() ||
+       pVecField->getSizeY() != this->m_ptrLInv->getSizeY() ||
+       pVecField->getSizeZ() != this->m_ptrLInv->getSizeZ() )
+    {
+    throw std::runtime_error( "Kernel incompatible with velocity field size.");
+    }
+}
+
+template <class T, unsigned int VImageDimension >
+void CFourierDomainKernel< T, VImageDimension >::ConvolveWithKernel( VectorFieldType* pVecField )
+{
+  AllocateMemoryAndComputeKernelsIfNeeded( pVecField );
+  ConvolveInFourierDomain( pVecField, this->m_ptrL );
 }
 
 template <class T, unsigned int VImageDimension >
 void CFourierDomainKernel< T, VImageDimension >::ConvolveWithInverseKernel( VectorFieldType* pVecField )
 {
-
-  if ( !this->m_KernelsWereCreated )
-    {
-    this->CreateKernelAndInverseKernel( pVecField );
-    ConfirmKernelsWereCreated();
-    AllocateFFTDataStructures( pVecField );
-    }
-  else
-    {
-    assert( m_ptrLInv != NULL );
-    if ( pVecField->getSizeX() != m_ptrLInv->getSizeX() ||
-         pVecField->getSizeY() != m_ptrLInv->getSizeY() ||
-         pVecField->getSizeZ() != m_ptrLInv->getSizeZ() )
-      {
-      throw std::runtime_error( "Kernel incompatible with velocity field size.");
-      }
-    }
-
-  assert( m_ptrLInv != NULL );
-  ConvolveInFourierDomain( pVecField, m_ptrLInv );
+  AllocateMemoryAndComputeKernelsIfNeeded( pVecField );
+  ConvolveInFourierDomain( pVecField, this->m_ptrLInv );
 }
 
 template <class T, unsigned int VImageDimension >
-void CFourierDomainKernel< T, VImageDimension >::ConfirmKernelsWereCreated()
+void CFourierDomainKernel< T, VImageDimension >::ConfirmMemoryWasAllocated()
 {
-  this->m_KernelsWereCreated = true;
+  this->m_MemoryWasAllocated = true;
 }
 
-
+template <class T, unsigned int VImageDimension >
+void CFourierDomainKernel< T, VImageDimension >::ConfirmKernelsWereComputed()
+{
+  this->m_KernelsNeedToBeComputed = false;
+}
 
 #endif

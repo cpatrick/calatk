@@ -13,17 +13,18 @@ CGaussianKernel< T, VImageDimension >::~CGaussianKernel()
 }
 
 template <class T, unsigned int VImageDimension >
-void CGaussianKernel< T, VImageDimension >::CreateKernelAndInverseKernel2D( VectorImageType* pVecImageGraft )
+void CGaussianKernel< T, VImageDimension >::SetSigma( T dSigma )
+{
+  m_Sigma = dSigma;
+  ConfirmKernelsNeedToBeComputed();
+}
+
+template <class T, unsigned int VImageDimension >
+void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel2D( VectorImageType* pVecImageGraft )
 {
   unsigned int szX = pVecImageGraft->getSizeX();
   unsigned int szY = pVecImageGraft->getSizeY();
 
-  assert( this->m_ptrL == NULL );
-  assert( this->m_ptrLInv == NULL );
-
-  this->m_ptrL = new VectorImageType( szX, szY, 1 );
-  this->m_ptrLInv = new VectorImageType( szX, szY, 1 );
-  
   T dx = pVecImageGraft->getDX();
   T dy = pVecImageGraft->getDY();
 
@@ -47,18 +48,12 @@ void CGaussianKernel< T, VImageDimension >::CreateKernelAndInverseKernel2D( Vect
 }
 
 template <class T, unsigned int VImageDimension >
-void CGaussianKernel< T, VImageDimension >::CreateKernelAndInverseKernel3D( VectorImageType* pVecImageGraft )
+void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel3D( VectorImageType* pVecImageGraft )
 {
 
   unsigned int szX = pVecImageGraft->getSizeX();
   unsigned int szY = pVecImageGraft->getSizeY();
   unsigned int szZ = pVecImageGraft->getSizeZ();
-
-  assert( this->m_ptrL == NULL );
-  assert( this->m_ptrLInv == NULL );
-
-  this->m_ptrL = new VectorImageType( szX, szY, szZ, 1 );
-  this->m_ptrLInv = new VectorImageType( szX, szY, szZ, 1 );
 
   T dx = pVecImageGraft->getDX();
   T dy = pVecImageGraft->getDY();
@@ -89,22 +84,25 @@ void CGaussianKernel< T, VImageDimension >::CreateKernelAndInverseKernel3D( Vect
 
 
 template <class T, unsigned int VImageDimension >
-void CGaussianKernel< T, VImageDimension >::CreateKernelAndInverseKernel( VectorImageType* pVecImageGraft )
+void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType* pVecImageGraft )
 {
-  // allocate all the required memory
-  AllocateFFTDataStructures( pVecImageGraft ); 
-
   switch ( VImageDimension )
     {
     case 2:
-      CreateKernelAndInverseKernel2D( pVecImageGraft );
+      ComputeKernelAndInverseKernel2D( pVecImageGraft );
       break;
     case 3:
-      CreateKernelAndInverseKernel3D( pVecImageGraft );
+      ComputeKernelAndInverseKernel3D( pVecImageGraft );
       break;
     default:
       throw std::runtime_error("Cannot create kernel of desired dimension.");
     }
+}
+
+template <class T, unsigned int VImageDimension >
+void CGaussianKernel< T, VImageDimension >::ConfirmKernelsNeedToBeComputed()
+{
+  this->m_KernelsNeedToBeComputed = true;
 }
 
 #endif

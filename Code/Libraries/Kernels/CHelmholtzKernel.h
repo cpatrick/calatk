@@ -24,18 +24,20 @@ public:
   CHelmholtzKernel();
   ~CHelmholtzKernel();
 
-  SetMacro( Alpha, T );
-  GetMacro( Alpha, T );
+  void SetAlpha( T dAlpha );
+  void SetGamma( T dGamma );
 
-  SetMacro( Gamma, T );
+  GetMacro( Alpha, T );
   GetMacro( Gamma, T );
 
 protected:
 
-  void CreateKernelAndInverseKernel( VectorImageType* pVecImageGraft );
+  void ComputeKernelAndInverseKernel( VectorImageType* pVecImageGraft );
 
-  void CreateKernelAndInverseKernel2D( VectorImageType* pVecImageGraft );
-  void CreateKernelAndInverseKernel3D( VectorImageType* pVecImageGraft );
+  void ComputeKernelAndInverseKernel2D( VectorImageType* pVecImageGraft );
+  void ComputeKernelAndInverseKernel3D( VectorImageType* pVecImageGraft );
+
+  void ConfirmKernelsNeedToBeComputed();
 
 private:
 

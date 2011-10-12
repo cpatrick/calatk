@@ -31,16 +31,31 @@ public:
   virtual void ConvolveWithKernel( VectorFieldType* ) = 0;
   virtual void ConvolveWithInverseKernel( VectorFieldType* ) = 0;
 
-  virtual const VectorImageType *GetKernel() const = 0;
-  virtual const VectorImageType *GetInverseKernel() const = 0;
+  virtual const VectorImageType *GetKernel() const
+  {
+    return m_ptrL;
+  }
+
+  virtual const VectorImageType *GetInverseKernel() const
+  {
+    return m_ptrLInv;
+  }
 
 protected:
 
-  virtual void CreateKernelAndInverseKernel( VectorImageType* ) = 0;
+  virtual void AllocateMemoryForKernelAndInverseKernel( VectorImageType* );
+  virtual void ComputeKernelAndInverseKernel( VectorImageType* ) = 0;
   // just to force that the variable is set
-  virtual void ConfirmKernelsWereCreated() = 0;
+  virtual void ConfirmMemoryWasAllocated() = 0;
+  // to force that these variables are set 
+  virtual void ConfirmKernelsWereComputed() = 0;
+  virtual void ConfirmKernelsNeedToBeComputed() = 0;
 
-  bool m_KernelsWereCreated;
+  bool m_MemoryWasAllocated;
+  bool m_KernelsNeedToBeComputed;
+
+  VectorImageType *m_ptrL;
+  VectorImageType *m_ptrLInv;
 
 private:
 

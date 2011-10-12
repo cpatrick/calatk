@@ -24,15 +24,18 @@ public:
   CGaussianKernel();
   ~CGaussianKernel();
 
-  SetMacro( Sigma, T );
+  void SetSigma( T dSigma );
+
   GetMacro( Sigma, T );
 
 protected:
 
-  void CreateKernelAndInverseKernel( VectorImageType* pVecImageGraft );
+  void ComputeKernelAndInverseKernel( VectorImageType* pVecImageGraft );
 
-  void CreateKernelAndInverseKernel2D( VectorImageType* pVecImageGraft );
-  void CreateKernelAndInverseKernel3D( VectorImageType* pVecImageGraft );
+  void ComputeKernelAndInverseKernel2D( VectorImageType* pVecImageGraft );
+  void ComputeKernelAndInverseKernel3D( VectorImageType* pVecImageGraft );
+
+  void ConfirmKernelsNeedToBeComputed();
 
 private:
 
