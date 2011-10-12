@@ -40,6 +40,7 @@ public:
     std::string sImageFileName;
     std::string sImageTransformationFileName;
     VectorImageType *pIm;
+    VectorImageType *pImOrig;
     VectorFieldType *pTransform;
     T timepoint;
     unsigned int uiSubjectId;

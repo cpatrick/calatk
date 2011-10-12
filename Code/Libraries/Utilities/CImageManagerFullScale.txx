@@ -32,6 +32,7 @@ void CImageManagerFullScale< T, VImageDimension, TSpace>::GetImage( SImageInform
       // load it
       std::cout << "Loading " << pCurrentImInfo->sImageFileName << " ... ";
       pCurrentImInfo->pIm = VectorImageUtils< T, VImageDimension, TSpace>::readFileITK( pCurrentImInfo->sImageFileName );
+      pCurrentImInfo->pImOrig = pCurrentImInfo->pIm;
       std::cout << "done." << std::endl;
       }
     }

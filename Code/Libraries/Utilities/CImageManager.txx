@@ -30,7 +30,7 @@ CImageManager< T, VImageDimension, TSpace >::~CImageManager()
       for ( iter = iterSubject->second->begin(); iter != iterSubject->second->end(); ++iter )
         {
         // should already be done by the derived class which loads the images and takes care of the memory management
-        if ( (*iter)->pIm != NULL ) delete (*iter)->pIm;
+        if ( (*iter)->pImOrig != NULL ) delete (*iter)->pImOrig;
         if ( (*iter)->pTransform != NULL ) delete (*iter)->pTransform;
         delete *iter;
         }
@@ -64,6 +64,7 @@ unsigned int CImageManager< T, VImageDimension, TSpace>::AddImage( std::string f
   pCurrentImageInformation->sImageFileName = filename;
   pCurrentImageInformation->sImageTransformationFileName = "";
   pCurrentImageInformation->pIm = NULL;
+  pCurrentImageInformation->pImOrig = NULL;
   pCurrentImageInformation->pTransform = NULL;
   pCurrentImageInformation->timepoint = timepoint;
   pCurrentImageInformation->uiId = m_uiCurrentRunningId++;
@@ -170,6 +171,7 @@ unsigned int CImageManager< T, VImageDimension, TSpace>::AddImageAndTransform( s
   pCurrentImageInformation->sImageFileName = filename;
   pCurrentImageInformation->sImageTransformationFileName = transformFilename;
   pCurrentImageInformation->pIm = NULL;
+  pCurrentImageInformation->pImOrig = NULL;
   pCurrentImageInformation->pTransform = NULL;
   pCurrentImageInformation->timepoint = timepoint;
   pCurrentImageInformation->uiId = m_uiCurrentRunningId++;

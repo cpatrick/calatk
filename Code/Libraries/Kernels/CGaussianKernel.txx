@@ -1,20 +1,19 @@
-#ifndef C_HELMHOLTZ_KERNEL_TXX
-#define C_HELMHOLTZ_KERNEL_TXX
+#ifndef C_GAUSSIAN_KERNEL_TXX
+#define C_GAUSSIAN_KERNEL_TXX
 
 template <class T, unsigned int VImageDimension >
-CHelmholtzKernel< T, VImageDimension >::CHelmholtzKernel()
+CGaussianKernel< T, VImageDimension >::CGaussianKernel()
 {
-  m_Alpha = 0.025;
-  m_Gamma = 1;
+  m_Sigma = 0;
 }
 
 template <class T, unsigned int VImageDimension >
-CHelmholtzKernel< T, VImageDimension >::~CHelmholtzKernel()
+CGaussianKernel< T, VImageDimension >::~CGaussianKernel()
 {
 }
 
 template <class T, unsigned int VImageDimension >
-void CHelmholtzKernel< T, VImageDimension >::CreateKernelAndInverseKernel2D( VectorImageType* pVecImageGraft )
+void CGaussianKernel< T, VImageDimension >::CreateKernelAndInverseKernel2D( VectorImageType* pVecImageGraft )
 {
   unsigned int szX = pVecImageGraft->getSizeX();
   unsigned int szY = pVecImageGraft->getSizeY();
@@ -48,7 +47,7 @@ void CHelmholtzKernel< T, VImageDimension >::CreateKernelAndInverseKernel2D( Vec
 }
 
 template <class T, unsigned int VImageDimension >
-void CHelmholtzKernel< T, VImageDimension >::CreateKernelAndInverseKernel3D( VectorImageType* pVecImageGraft )
+void CGaussianKernel< T, VImageDimension >::CreateKernelAndInverseKernel3D( VectorImageType* pVecImageGraft )
 {
 
   unsigned int szX = pVecImageGraft->getSizeX();
@@ -90,7 +89,7 @@ void CHelmholtzKernel< T, VImageDimension >::CreateKernelAndInverseKernel3D( Vec
 
 
 template <class T, unsigned int VImageDimension >
-void CHelmholtzKernel< T, VImageDimension >::CreateKernelAndInverseKernel( VectorImageType* pVecImageGraft )
+void CGaussianKernel< T, VImageDimension >::CreateKernelAndInverseKernel( VectorImageType* pVecImageGraft )
 {
   // allocate all the required memory
   AllocateFFTDataStructures( pVecImageGraft ); 

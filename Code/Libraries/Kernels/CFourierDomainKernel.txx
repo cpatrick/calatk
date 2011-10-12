@@ -177,10 +177,10 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain2D( Vect
       unsigned int index = y + ((szY/2+1) * x);
       T lVal = pL->getValue(x,y,0);
       
-      fftwData2D->outX[index][0] = fftwData2D->outX[index][0] * (lVal*lVal);
-      fftwData2D->outX[index][1] = fftwData2D->outX[index][1] * (lVal*lVal);
-      fftwData2D->outY[index][0] = fftwData2D->outY[index][0] * (lVal*lVal);
-      fftwData2D->outY[index][1] = fftwData2D->outY[index][1] * (lVal*lVal);
+      fftwData2D->outX[index][0] = fftwData2D->outX[index][0] * lVal;
+      fftwData2D->outX[index][1] = fftwData2D->outX[index][1] * lVal;
+      fftwData2D->outY[index][0] = fftwData2D->outY[index][0] * lVal;
+      fftwData2D->outY[index][1] = fftwData2D->outY[index][1] * lVal;
       
       }
     }
@@ -259,12 +259,12 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain3D( Vect
         unsigned int index = z + (szZ/2+1) * (y + szY*x);
         T lVal = pL->getValue(x,y,z,0);
         
-        fftwData3D->outX[index][0] = fftwData3D->outX[index][0] * (lVal*lVal);
-        fftwData3D->outX[index][1] = fftwData3D->outX[index][1] * (lVal*lVal);
-        fftwData3D->outY[index][0] = fftwData3D->outY[index][0] * (lVal*lVal);
-        fftwData3D->outY[index][1] = fftwData3D->outY[index][1] * (lVal*lVal);
-        fftwData3D->outZ[index][0] = fftwData3D->outZ[index][0] * (lVal*lVal);
-        fftwData3D->outZ[index][1] = fftwData3D->outZ[index][1] * (lVal*lVal);
+        fftwData3D->outX[index][0] = fftwData3D->outX[index][0] * lVal;
+        fftwData3D->outX[index][1] = fftwData3D->outX[index][1] * lVal;
+        fftwData3D->outY[index][0] = fftwData3D->outY[index][0] * lVal;
+        fftwData3D->outY[index][1] = fftwData3D->outY[index][1] * lVal;
+        fftwData3D->outZ[index][0] = fftwData3D->outZ[index][0] * lVal;
+        fftwData3D->outZ[index][1] = fftwData3D->outZ[index][1] * lVal;
         }
       }
     }
