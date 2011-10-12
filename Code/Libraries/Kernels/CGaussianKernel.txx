@@ -4,7 +4,7 @@
 template <class T, unsigned int VImageDimension >
 CGaussianKernel< T, VImageDimension >::CGaussianKernel()
 {
-  m_Sigma = 0;
+  m_Sigma = 1;
 }
 
 template <class T, unsigned int VImageDimension >
@@ -27,20 +27,20 @@ void CGaussianKernel< T, VImageDimension >::CreateKernelAndInverseKernel2D( Vect
   T dx = pVecImageGraft->getDX();
   T dy = pVecImageGraft->getDY();
 
-  T dxHat = 1/(T)(szX);
-  T dyHat = 1/(T)(szY);
-
   T pi = (T)CALATK::PI;
+
+  T k1Eff = 0;
+  T k2Eff = 0;
 
   for (unsigned int y = 0; y < szY; ++y) 
     {
+    k2Eff = GetKFromIndex( y, szY, dy );
     for (unsigned int x = 0; x < szX; ++x) 
       {
-      T val = m_Gamma + 2*m_Alpha*( 
-        (1 - std::cos(2*pi*(T)x*dxHat))/(dx*dx) + 
-        (1 - std::cos(2*pi*(T)y*dyHat))/(dy*dy) );
-      this->m_ptrL->setValue(x,y,0, val*val );
-      this->m_ptrLInv->setValue(x,y,0,1.0/(val*val) );
+      k1Eff = GetKFromIndex( x, szX, dx );
+      T val = exp( -m_Sigma*m_Sigma*( k1Eff*k1Eff + k2Eff*k2Eff )/2 );
+      this->m_ptrL->setValue(x,y,0, val );
+      this->m_ptrLInv->setValue(x,y,0,1.0/(val) );
       }
     }
 
@@ -64,24 +64,24 @@ void CGaussianKernel< T, VImageDimension >::CreateKernelAndInverseKernel3D( Vect
   T dy = pVecImageGraft->getDY();
   T dz = pVecImageGraft->getDZ();
 
-  T dxHat = 1/(T)(szX);
-  T dyHat = 1/(T)(szY);
-  T dzHat = 1/(T)(szZ);
-
   T pi = (T)CALATK::PI;
+
+  T k1Eff = 0;
+  T k2Eff = 0;
+  T k3Eff = 0;
 
   for (unsigned int z = 0; z < szZ; ++z) 
     {
+    k3Eff = GetKFromIndex( z, szZ, dz );
     for (unsigned int y = 0; y < szY; ++y) 
       {
+      k2Eff = GetKFromIndex( y, szY, dy );
       for (unsigned int x = 0; x < szX; ++x) 
         {
-        T val = m_Gamma + 2*m_Alpha*( 
-          (1 - std::cos(2*pi*(T)x*dxHat))/(dx*dx) + 
-          (1 - std::cos(2*pi*(T)y*dyHat))/(dy*dy) + 
-          (1 - std::cos(2*pi*(T)z*dzHat))/(dz*dz) );
-        this->m_ptrL->setValue(x,y,z,0, (val*val) );
-        this->m_ptrLInv->setValue(x,y,z,0,1.0/(val*val) );
+        k1Eff = GetKFromIndex( x, szX, dx );
+        T val = exp( -m_Sigma*m_Sigma*( k1Eff*k1Eff + k2Eff*k2Eff + k3Eff*k3Eff)/2 );
+        this->m_ptrL->setValue(x,y,z,0, val );
+        this->m_ptrLInv->setValue(x,y,z,0,1.0/(val) );
         }
       }
     }

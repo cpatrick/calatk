@@ -1,11 +1,22 @@
-function G = gaussianConvolutionMatrix( iXS, iYS, sigma )
+function G = gaussianConvolutionMatrix( M, N, dx, dy, sigma )
 
-dxi = 1/(iXS);
-dyi = 1/(iYS);
+% Implements a Gaussian in the Fourier domain
 
-A = zeros(iXS,iYS);
-for k1=0:iXS-1
-  for k2=0:iYS-1
-    A(k1+1,k2+1) = gamma + 2*alpha*( (1-cos(2*pi*(k1)*dxi))/(dxi^2) + (1-cos(2*pi*(k2)*dyi))/(dyi^2) );
+% create the frequencies
+
+for k1=0:M-1
+    
+  k1Eff = getKFromIndex( k1, M, dx );
+       
+  for k2=0:N-1
+    
+    k2Eff = getKFromIndex( k2, N, dy );
+    
+    A1( k1+1, k2+1 ) = k1Eff;
+    A2( k1+1, k2+1 ) = k2Eff;
+    
+    G( k1+1, k2+1 ) = exp( -sigma^2*(k1Eff^2 + k2Eff^2)/2 );
+    
   end
 end
+

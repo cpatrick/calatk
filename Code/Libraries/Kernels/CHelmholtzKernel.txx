@@ -28,18 +28,20 @@ void CHelmholtzKernel< T, VImageDimension >::CreateKernelAndInverseKernel2D( Vec
   T dx = pVecImageGraft->getDX();
   T dy = pVecImageGraft->getDY();
 
-  T dxHat = 1/(T)(szX);
-  T dyHat = 1/(T)(szY);
-
   T pi = (T)CALATK::PI;
+
+  T k1Eff = 0;
+  T k2Eff = 0;
 
   for (unsigned int y = 0; y < szY; ++y) 
     {
+    k2Eff = GetKFromIndex( y, szY, dy );
     for (unsigned int x = 0; x < szX; ++x) 
       {
+      k1Eff = GetKFromIndex( x, szX, dx );
       T val = m_Gamma + 2*m_Alpha*( 
-        (1 - std::cos(2*pi*(T)x*dxHat))/(dx*dx) + 
-        (1 - std::cos(2*pi*(T)y*dyHat))/(dy*dy) );
+        (1 - std::cos(2*pi*k1Eff*dx))/(dx*dx) + 
+        (1 - std::cos(2*pi*k2Eff*dy))/(dy*dy) );
       this->m_ptrL->setValue(x,y,0, val*val );
       this->m_ptrLInv->setValue(x,y,0,1.0/(val*val) );
       }
@@ -65,22 +67,25 @@ void CHelmholtzKernel< T, VImageDimension >::CreateKernelAndInverseKernel3D( Vec
   T dy = pVecImageGraft->getDY();
   T dz = pVecImageGraft->getDZ();
 
-  T dxHat = 1/(T)(szX);
-  T dyHat = 1/(T)(szY);
-  T dzHat = 1/(T)(szZ);
-
   T pi = (T)CALATK::PI;
+
+  T k1Eff = 0;
+  T k2Eff = 0;
+  T k3Eff = 0;
 
   for (unsigned int z = 0; z < szZ; ++z) 
     {
+    k3Eff = GetKFromIndex( z, szZ, dz );
     for (unsigned int y = 0; y < szY; ++y) 
       {
+      k2Eff = GetKFromIndex( y, szY, dy );
       for (unsigned int x = 0; x < szX; ++x) 
         {
+        k1Eff = GetKFromIndex( x, szX, dx );
         T val = m_Gamma + 2*m_Alpha*( 
-          (1 - std::cos(2*pi*(T)x*dxHat))/(dx*dx) + 
-          (1 - std::cos(2*pi*(T)y*dyHat))/(dy*dy) + 
-          (1 - std::cos(2*pi*(T)z*dzHat))/(dz*dz) );
+          (1 - std::cos(2*pi*k1Eff*dx))/(dx*dx) + 
+          (1 - std::cos(2*pi*k2Eff*dy))/(dy*dy) + 
+          (1 - std::cos(2*pi*k3Eff*dz))/(dz*dz) );
         this->m_ptrL->setValue(x,y,z,0, (val*val) );
         this->m_ptrLInv->setValue(x,y,z,0,1.0/(val*val) );
         }
