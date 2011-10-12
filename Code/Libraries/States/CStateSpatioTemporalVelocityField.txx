@@ -278,10 +278,6 @@ CStateSpatioTemporalVelocityField< T, VImageDimension >
 CStateSpatioTemporalVelocityField< T, VImageDimension >::operator*(const T & p ) const
 {
   CStateSpatioTemporalVelocityField r = *this;
-
-  // multiply all values with a scalar
-  r.multConst( p );
-
   return r*= p;
 }
 
