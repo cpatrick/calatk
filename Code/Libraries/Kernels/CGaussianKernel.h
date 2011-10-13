@@ -19,7 +19,6 @@ public:
 
   typedef CFourierDomainKernel< T, VImageDimension > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
-  typedef typename Superclass::VectorFieldType VectorFieldType;
 
   CGaussianKernel();
   ~CGaussianKernel();

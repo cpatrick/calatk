@@ -5,7 +5,7 @@
 // maxAll
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImageUtils< T, VImageDimension, TSpace >::maxAll(VectorImageType* in) 
+T VectorImageUtils< T, VImageDimension, TSpace >::maxAll( const VectorImageType* in) 
 {
   unsigned int len = in->getLength();
 
@@ -27,7 +27,7 @@ T VectorImageUtils< T, VImageDimension, TSpace >::maxAll(VectorImageType* in)
 // minAll
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImageUtils< T, VImageDimension, TSpace >::minAll(VectorImageType* in) 
+T VectorImageUtils< T, VImageDimension, TSpace >::minAll( const VectorImageType* in) 
 {
   unsigned int len = in->getLength();
 
@@ -49,7 +49,7 @@ T VectorImageUtils< T, VImageDimension, TSpace >::minAll(VectorImageType* in)
 // absMaxAll
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImageUtils< T, VImageDimension, TSpace >::absMaxAll(VectorImageType* in) 
+T VectorImageUtils< T, VImageDimension, TSpace >::absMaxAll( const VectorImageType* in) 
 {
   unsigned int len = in->getLength();
 
@@ -71,7 +71,7 @@ T VectorImageUtils< T, VImageDimension, TSpace >::absMaxAll(VectorImageType* in)
 // sumAll
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImageUtils< T, VImageDimension, TSpace >::sumAll(VectorImageType* in) 
+T VectorImageUtils< T, VImageDimension, TSpace >::sumAll( const VectorImageType* in) 
 {
   unsigned int len = in->getLength();
 
@@ -89,7 +89,7 @@ T VectorImageUtils< T, VImageDimension, TSpace >::sumAll(VectorImageType* in)
 // abs
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::abs(VectorImageType* in) 
+void VectorImageUtils< T, VImageDimension, TSpace >::abs( VectorImageType* in) 
 {
   unsigned int len = in->getLength();
 
@@ -97,105 +97,6 @@ void VectorImageUtils< T, VImageDimension, TSpace >::abs(VectorImageType* in)
     {
     in->setValue( iI, std::abs( in->getValue( iI ) ) );
     }
-}
-
-//
-// deconvolutionMatrix 2D
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-typename VectorImageUtils< T, VImageDimension, TSpace>::VectorImageType* 
-VectorImageUtils< T, VImageDimension, TSpace >::deconvolutionMatrix2D(VectorImageType* I0, T alpha, T gamma) 
-{
-  unsigned int szX = I0->getSizeX();
-  unsigned int szY = I0->getSizeY();
-
-  TSpace dx = I0->getDX();
-  TSpace dy = I0->getDY();
-
-  T dxHat = 1/(T)(szX);
-  T dyHat = 1/(T)(szY);
-
-  T pi = 3.1415926535897932;
-
-  VectorImageType* A = new VectorImageType(szX, szY, 1);
-
-  for (unsigned int y = 0; y < szY; ++y) 
-    {
-    for (unsigned int x = 0; x < szX; ++x) 
-      {
-      T val = gamma + 2*alpha*( (1 - std::cos(2*pi*(T)x*dxHat))/(dx*dx) + (1 - std::cos(2*pi*(T)y*dyHat))/(dy*dy) );
-      A->setValue(x,y,0, val);
-      }
-    }
-
-  return A;
-}
-
-//
-// deconvolutionMatrix 3D
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-typename VectorImageUtils< T, VImageDimension, TSpace>::VectorImageType* 
-VectorImageUtils< T, VImageDimension, TSpace >::deconvolutionMatrix3D(VectorImageType* I0, T alpha, T gamma) 
-{
-  unsigned int szX = I0->getSizeX();
-  unsigned int szY = I0->getSizeY();
-  unsigned int szZ = I0->getSizeZ();
-  
-  TSpace dx = I0->getDX();
-  TSpace dy = I0->getDY();
-  TSpace dz = I0->getDZ();
-
-  T dxHat = 1/(T)(szX);
-  T dyHat = 1/(T)(szY);
-  T dzHat = 1/(T)(szZ);
-
-  T pi = 3.1415926535897932;
-
-  VectorImageType* A = new VectorImageType(szX, szY, szZ, 1);
-
-  for (unsigned int z = 0; z < szZ; ++z) 
-    {
-    for (unsigned int y = 0; y < szY; ++y) 
-      {
-      for (unsigned int x = 0; x < szX; ++x) 
-        {
-        T val = gamma + 2*alpha*( (1 - std::cos(2*pi*(T)x*dxHat))/(dx*dx) + (1 - std::cos(2*pi*(T)y*dyHat))/(dy*dy) + (1 - std::cos(2*pi*(T)z*dzHat))/(dz*dz) );
-        A->setValue(x,y,z,0, val);
-        }
-    }
-  }
-
-  return A;
-}
-
-//
-// deconvolutionMatrix
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-typename VectorImageUtils< T, VImageDimension, TSpace>::VectorImageType* 
-VectorImageUtils< T, VImageDimension, TSpace >::deconvolutionMatrix(VectorImageType* I0, T alpha, T gamma) 
-{
-
-  VectorImageType* A = NULL;
-
-  switch ( VImageDimension )
-    {
-    case 1:
-      throw std::runtime_error( "Unsupported dimension for the devonvolution matrix" );
-      break;
-    case 2:
-      return VectorImageUtils< T, VImageDimension, TSpace >::deconvolutionMatrix2D( I0, alpha, gamma );
-      break;
-    case 3:
-      return VectorImageUtils< T, VImageDimension, TSpace >::deconvolutionMatrix3D( I0, alpha, gamma );
-      break;
-    default:
-      throw std::runtime_error( "Unsupported dimension for the devonvolution matrix" );
-    }
-
-  return A; // should only get here if one could not be computed
-
 }
 
 //
@@ -318,7 +219,7 @@ T VectorImageUtils< T, VImageDimension, TSpace >::getMinFlowTimestep(VectorImage
 // interpolatePos 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImageUtils< T, VImageDimension, TSpace >::interpolatePos(const VectorImageType* const imIn, T xPos, T yPos, unsigned int d) 
+T VectorImageUtils< T, VImageDimension, TSpace >::interpolatePos( const VectorImageType* imIn, T xPos, T yPos, unsigned int d) 
 {
 
   unsigned int szXold = imIn->getSizeX();
@@ -351,7 +252,7 @@ T VectorImageUtils< T, VImageDimension, TSpace >::interpolatePos(const VectorIma
 // interpolatePos 3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImageUtils< T, VImageDimension, TSpace >::interpolatePos(const VectorImageType* const imIn, T xPos, T yPos, T zPos, unsigned int d) 
+T VectorImageUtils< T, VImageDimension, TSpace >::interpolatePos( const VectorImageType* imIn, T xPos, T yPos, T zPos, unsigned int d) 
 {
 
   unsigned int szXold = imIn->getSizeX();
@@ -395,7 +296,7 @@ T VectorImageUtils< T, VImageDimension, TSpace >::interpolatePos(const VectorIma
 // interpolate 3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::interpolate3D( VectorImageType* imIn, VectorImageType* pos, VectorImageType* imOut) 
+void VectorImageUtils< T, VImageDimension, TSpace >::interpolate3D( const VectorImageType* imIn, const VectorImageType* pos, VectorImageType* imOut) 
 {
 
   if ( VImageDimension != 3 )
@@ -443,7 +344,7 @@ void VectorImageUtils< T, VImageDimension, TSpace >::interpolate3D( VectorImageT
 // interpolate 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::interpolate2D(VectorImageType* imIn, VectorImageType* pos, VectorImageType* imOut) 
+void VectorImageUtils< T, VImageDimension, TSpace >::interpolate2D( const VectorImageType* imIn, const VectorImageType* pos, VectorImageType* imOut) 
 {
 
   unsigned int dim = imIn->getDim();
@@ -481,7 +382,7 @@ void VectorImageUtils< T, VImageDimension, TSpace >::interpolate2D(VectorImageTy
 // interpolate 
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::interpolate(VectorImageType* imIn, VectorImageType* pos, VectorImageType* imOut) 
+void VectorImageUtils< T, VImageDimension, TSpace >::interpolate( const VectorImageType* imIn, const VectorImageType* pos, VectorImageType* imOut) 
 {
 
   switch ( VImageDimension )
@@ -502,10 +403,10 @@ void VectorImageUtils< T, VImageDimension, TSpace >::interpolate(VectorImageType
 }
 
 //
-// resize - fact
+// resize 
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::resize(VectorImageType* imIn, T fact, VectorImageType* imOut) 
+void VectorImageUtils< T, VImageDimension, TSpace >::resize( const VectorImageType* imIn, VectorImageType* imOut) 
 {
 
   switch ( VImageDimension )
@@ -514,10 +415,10 @@ void VectorImageUtils< T, VImageDimension, TSpace >::resize(VectorImageType* imI
       throw std::runtime_error( "Unsupported dimension for resizing" );
       break;
     case 2:
-      VectorImageUtils< T, VImageDimension, TSpace >::resize(imIn, fact, fact, imOut);
+      VectorImageUtils< T, VImageDimension, TSpace >::resize2D(imIn, imOut);
       break;
     case 3:
-      VectorImageUtils< T, VImageDimension, TSpace >::resize(imIn, fact, fact, fact, imOut);
+      VectorImageUtils< T, VImageDimension, TSpace >::resize3D(imIn, imOut);
       break;
     default:
       throw std::runtime_error( "Unsupported dimension for resizeing" );
@@ -526,48 +427,25 @@ void VectorImageUtils< T, VImageDimension, TSpace >::resize(VectorImageType* imI
 }
 
 //
-// resize -xfact, yfact
+// resize2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::resize(VectorImageType* imIn, T factX, T factY, VectorImageType* imOut) 
+void VectorImageUtils< T, VImageDimension, TSpace >::resize2D( const VectorImageType* imIn, VectorImageType* imOut) 
 {
 
-#ifdef DEBUG
-  if (factX == 0 || factY == 0) 
-    {
-    throw std::invalid_argument("VectorImageUtils::resize -> invalid factor = 0");
-    }
-#endif
-
   unsigned int szXold = imIn->getSizeX();
   unsigned int szYold = imIn->getSizeY();
 
-  unsigned int szXnew = (unsigned int)std::floor((T)szXold * factX);
-  unsigned int szYnew = (unsigned int)std::floor((T)szYold * factY);
+  unsigned int szXnew = imOut->getSizeX();
+  unsigned int szYnew = imOut->getSizeY();
 
-  VectorImageUtils< T, VImageDimension, TSpace >::resize(imIn, szXnew, szYnew, imOut);
-}
-
-//
-// resize - szX, szY
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::resize(VectorImageType* imIn, unsigned int szXnew, unsigned int szYnew, VectorImageType* imOut, bool blur = true) {
-
-#ifdef DEBUG
-  if (szXnew == 0 || szYnew == 0) {
-    throw std::invalid_argument("VectorImageUtils::resize -> invalid size = 0");
-  }
-#endif
-
-  unsigned int szXold = imIn->getSizeX();
-  unsigned int szYold = imIn->getSizeY();
-  unsigned int dim = imIn->getDim();
-
-  //float fx = (float)(szXold-1)/(szXnew-1);
-  //float fy = (float)(szYold-1)/(szYnew-1);
   T fx = (T)(szXold)/(szXnew);
   T fy = (T)(szYold)/(szYnew);
+
+  assert( szXnew>0 );
+  assert( szYnew>0 );
+
+  unsigned int dim = imIn->getDim();
 
   VectorImageType* pos = new VectorImageType(szXnew, szYnew, 2);
 
@@ -578,78 +456,36 @@ void VectorImageUtils< T, VImageDimension, TSpace >::resize(VectorImageType* imI
       {
       for (unsigned int d = 0; d < dim; ++d) 
         {
-
         // perform the interpolation
         pos->setValue(x,y,0, (T)x*fx);
         pos->setValue(x,y,1, (T)y*fy);
-        //pos->setValue(x,y,0, (float)(x+1)*fx-1);
-        //pos->setValue(x,y,1, (float)(y+1)*fy-1);
         }
       }
     }
 
-  // if doing any form of downsampeling, blur the image first
-  if (fx > 1 || fy > 1) 
-    {
-    // blur the input image (for now just using 5x5 gaussian w/ sigma= 2)
-    VectorImageType* blurredIn = new VectorImageType(imIn);
-    if (blur)
-      {
-        VectorImageUtils< T, VImageDimension, TSpace >::gaussianFilter(blurredIn, sqrt((fx+fy)/2), 5, blurredIn);
-      }
-    
-    // interpolate
-    VectorImageUtils< T, VImageDimension, TSpace >::interpolate(blurredIn, pos, imOut);
-    
-    delete blurredIn;
-    } 
-  else 
-    {
-    
-    // interpolate
-    VectorImageUtils< T, VImageDimension, TSpace >::interpolate(imIn, pos, imOut);
-    }
+  // interpolate
+  VectorImageUtils< T, VImageDimension, TSpace >::interpolate(imIn, pos, imOut);
   
   // clean up
   delete pos;
-}
-
-
-//
-// resize - factX, factY, factZ
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::resize(VectorImageType* imIn, T factX, T factY, T factZ, VectorImageType* imOut) 
-{
-
-#ifdef DEBUG
-  if (factX == 0 || factY == 0 || factX == 0) {
-    throw std::invalid_argument("VectorImageUtils< T, VImageDimension, TSpace >::resize -> invalid factor = 0");
-  }
-#endif
-
-  unsigned int szXold = imIn->getSizeX();
-  unsigned int szYold = imIn->getSizeY();
-  unsigned int szZold = imIn->getSizeZ();
-
-  unsigned int szXnew = (unsigned int)std::floor((T)szXold * factX);
-  unsigned int szYnew = (unsigned int)std::floor((T)szYold * factY);
-  unsigned int szZnew = (unsigned int)std::floor((T)szZold * factZ);
-
-  VectorImageUtils< T, VImageDimension, TSpace >::resize(imIn, szXnew, szYnew, szZnew, imOut);
 
 }
 
 //
-// resize - szX, szY, szZ
+// resize3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::resize(VectorImageType* imIn, unsigned int szXnew, unsigned int szYnew, unsigned int szZnew, VectorImageType* imOut, bool blur = true) 
+void VectorImageUtils< T, VImageDimension, TSpace >::resize3D( const VectorImageType* imIn, VectorImageType* imOut) 
 {
 
   unsigned int szXold = imIn->getSizeX();
   unsigned int szYold = imIn->getSizeY();
   unsigned int szZold = imIn->getSizeZ();
+
+  unsigned int szXnew = imOut->getSizeX();
+  unsigned int szYnew = imOut->getSizeY();
+  unsigned int szZnew = imOut->getSizeZ();
+
   unsigned int dim = imIn->getDim();
 
   T fx = (T)(szXold)/(szXnew);
@@ -678,32 +514,12 @@ void VectorImageUtils< T, VImageDimension, TSpace >::resize(VectorImageType* imI
       }
     }
 
-  // if doing any form of downsampeling, blur the image first
-  if (fx > 1 || fy > 1 || fz > 1) 
-    {
-
-    // blur the input image (for now just using 5x5 gaussian w/ sigma= 2)
-    VectorImageType* blurredIn = new VectorImageType(imIn);
-    if (blur) 
-      {
-      VectorImageUtils< T, VImageDimension, TSpace >::gaussianFilter(blurredIn, sqrt((fx+fy+fz)/3), 5, blurredIn);
-      }
-
-    // interpolate
-    VectorImageUtils< T, VImageDimension, TSpace >::interpolate(blurredIn, pos, imOut);
-
-    delete blurredIn;
-    } 
-  else 
-    {
-    
-    // interpolate
-    VectorImageUtils< T, VImageDimension, TSpace >::interpolate(imIn, pos, imOut);
-    }
+  // interpolate
+  VectorImageUtils< T, VImageDimension, TSpace >::interpolate(imIn, pos, imOut);
 
   // clean up
   delete pos;
-  
+
 }
 
 //

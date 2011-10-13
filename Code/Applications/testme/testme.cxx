@@ -28,6 +28,8 @@
 
 #include "CStationaryEvolver.h"
 
+#include "CResamplerLinear.h"
+
 #define DIMENSION 2
 
 int main(int argc, char **argv)
@@ -135,6 +137,8 @@ int main(int argc, char **argv)
   lddmm.SetImageManagerPointer( &imageManager );
 
 */
+
+  CALATK::CResamplerLinear< double, DIMENSION > resampler;
 
   return EXIT_SUCCESS;
   // return EXIT_FAILURE;

@@ -28,8 +28,6 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel2D( Vec
   T dx = pVecImageGraft->getDX();
   T dy = pVecImageGraft->getDY();
 
-  T pi = (T)CALATK::PI;
-
   T k1Eff = 0;
   T k2Eff = 0;
 
@@ -58,8 +56,6 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel3D( Vec
   T dx = pVecImageGraft->getDX();
   T dy = pVecImageGraft->getDY();
   T dz = pVecImageGraft->getDZ();
-
-  T pi = (T)CALATK::PI;
 
   T k1Eff = 0;
   T k2Eff = 0;

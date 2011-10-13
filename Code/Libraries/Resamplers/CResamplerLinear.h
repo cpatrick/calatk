@@ -12,11 +12,11 @@ class CResamplerLinear : public CResampler< T, VImageDimension >
 public:
 
   /** Some useful typedefs */
-  typedef CResample< T, VImageDimension > Superclass;
+  typedef CResampler< T, VImageDimension > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
 
-  void CResamplerLinear();
-  virtual void ~CResamplerLinear();
+  CResamplerLinear();
+  virtual ~CResamplerLinear();
 
   void Downsample( const VectorImageType* ptrImIn, VectorImageType* ptrImOut );
   void Upsample( const VectorImageType* ptrImIn, VectorImageType* ptrImOut );

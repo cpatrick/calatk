@@ -18,7 +18,6 @@ public:
   
   /** some typedefs */
 
-  typedef VectorField< T, VImageDimension > VectorFieldType;
   typedef VectorImage< T, VImageDimension > VectorImageType;
 
   CKernel();
@@ -28,8 +27,8 @@ public:
    * Creating a kernel. For example to be used to compute velocity norms
    */
 
-  virtual void ConvolveWithKernel( VectorFieldType* ) = 0;
-  virtual void ConvolveWithInverseKernel( VectorFieldType* ) = 0;
+  virtual void ConvolveWithKernel( VectorImageType* ) = 0;
+  virtual void ConvolveWithInverseKernel( VectorImageType* ) = 0;
 
   virtual const VectorImageType *GetKernel() const
   {

@@ -34,62 +34,35 @@ public:
    *
    * @param in - the input image
    */
-  static T maxAll(VectorImageType* in);
+  static T maxAll( const VectorImageType* in);
 
   /**
    * Method that returns the min of the data in the image
    *
    * @param in - the input image
    */
-  static T minAll(VectorImageType* in);
+  static T minAll( const VectorImageType* in);
 
   /**
    * Method that returns the absolute max of the data in the image
    *
    * @param in - the input image
    */
-  static T absMaxAll(VectorImageType* in);
+  static T absMaxAll( const VectorImageType* in);
 
   /**
    * Method that returns the sum of everything in the image
    *
    * @param in - the input image
    */
-  static T sumAll(VectorImageType* in);
+  static T sumAll( const VectorImageType* in);
 
   /**
    * Method that modifies the image so that all values are absolute values
    *
    * @param in - the input image
    */
-  static void abs(VectorImageType* in);
-
-  /**
-   * Function that computes the deconvolution matrix
-   *
-   * @param I0 - input image.  Used to get size only
-   * @param alpha - alpha lddm parameter
-   * @param gamma - gamma lddm parameter
-   */
-  static VectorImageType* deconvolutionMatrix(VectorImageType* I0, T alpha, T gamma);
-
-  /**
-   * Function that computes the deconvolution matrix in 2D
-   *
-   * @param I0 - input image.  Used to get size only
-   * @param alpha - alpha lddm parameter
-   * @param gamma - gamma lddm parameter
-   */
-  static VectorImageType* deconvolutionMatrix2D(VectorImageType* I0, T alpha, T gamma);
-
-  /**
-   * Function that computes the deconvolution matrix in 3D
-   *
-   * @param I0 - input image.  Used to get size only
-   * @param alpha - alpha lddm parameter
-   * @param gamma - gamma lddm parameter
-   */
-  static VectorImageType* deconvolutionMatrix3D(VectorImageType* I0, T alpha, T gamma);
+  static void abs( VectorImageType* in);
 
   /**
    * Function that gets the flow timestep based on the current velocity field.
@@ -129,7 +102,7 @@ public:
    * @param yPos - the desired y position
    * @param d - the dimension to work on
    */
-  static T interpolatePos(const VectorImageType* const imIn, T xPos, T yPos, unsigned int d);
+  static T interpolatePos( const VectorImageType* imIn, T xPos, T yPos, unsigned int d);
 
   /**
    * Method that performs interpolation on a single point in 3D
@@ -140,7 +113,7 @@ public:
    * @param zPos - the desired z position
    * @param d - the dimension to work on
    */
-  static T interpolatePos(const VectorImageType* const imIn, T xPos, T yPos, T zPos, unsigned int d);
+  static T interpolatePos( const VectorImageType* imIn, T xPos, T yPos, T zPos, unsigned int d);
 
   /**
    * Method that interpolates data from an input image to a given coordinate frame
@@ -150,7 +123,7 @@ public:
    *     one for z position)
    * @param imOut - return parameter for resized image
    */
-  static void interpolate(VectorImageType* imIn, VectorImageType* pos, VectorImageType* imOut);
+  static void interpolate( const VectorImageType* imIn, const VectorImageType* pos, VectorImageType* imOut);
 
   /**
    * 2D Method that interpolates data from an input image to a given coordinate frame
@@ -160,7 +133,7 @@ public:
    *     one for z position)
    * @param imOut - return parameter for resized image
    */
-  static void interpolate2D(VectorImageType* imIn, VectorImageType* pos, VectorImageType* imOut);
+  static void interpolate2D( const VectorImageType* imIn, const VectorImageType* pos, VectorImageType* imOut);
 
   /**
    * 3D Method that interpolates data from an input image to a given coordinate frame
@@ -170,62 +143,31 @@ public:
    *     one for z position)
    * @param imOut - return parameter for resized image
    */
-  static void interpolate3D(VectorImageType* imIn, VectorImageType* pos, VectorImageType* imOut);
+  static void interpolate3D( const VectorImageType* imIn, const VectorImageType* pos, VectorImageType* imOut);
 
   /**
    * Method to resize the array in both dimensions by a given factor
    *
    * @param im - the image to be resized
-   * @param fact - the factor by which to resize
-   * @param imOut - return parameter for resized image
+   * @param imOut - return parameter for resized image (image is resize to fit the size of the output image)
    */
-  static void resize(VectorImageType* im, T fact, VectorImageType* imOut);
+  static void resize( const VectorImageType* im, VectorImageType* imOut);
 
   /**
-   * 2D Method to resize the array by independant factors in the x, and y
-   * dimensions
+   * 2D Method to resize the array 
    *
    * @param im - the image to be resized
-   * @param factX - the factor by which to resize in the x dimension
-   * @param factY - the factor by which to resize in the y dimension
    * @param imOut - return parameter for resized image
    */
-  static void resize(VectorImageType* im, T factX, T factY, VectorImageType* imOut);
+  static void resize2D( const VectorImageType* im, VectorImageType* imOut);
 
   /**
-   * 2D Method to resize the array to a specific size
+   * 3D Method to resize the array
    *
    * @param im - the image to be resized
-   * @param szXnew - the new size for the x dimension
-   * @param szYnew - the new size for the y dimension
-   * @param imOut - return parameter for resized image
-   * @param blur - bluring switch (turn off for maps)
-   */
-  static void resize(VectorImageType* im, unsigned int szXnew, unsigned int szYnew, VectorImageType* imOut, bool blur);
-
-  /**
-   * 3D Method to resize the array by independant factors in the x, y, and z
-   * dimensions
-   *
-   * @param im - the image to be resized
-   * @param factX - the factor by which to resize in the x dimension
-   * @param factY - the factor by which to resize in the y dimension
-   * @param factZ - the factor by which to resize in the z dimension
    * @param imOut - return parameter for resized image
    */
-  static void resize(VectorImageType* im, T factX, T factY, T factZ, VectorImageType* imOut);
-
-  /**
-   * 3D Method to resize the array to a specific size
-   *
-   * @param im - the image to be resized
-   * @param szXnew - the new size for the x dimension
-   * @param szYnew - the new size for the y dimension
-   * @param szZnew - the new size for the z dimension
-   * @param imOut - return parameter for resized image
-   * @param blur - bluring switch (turn off for maps)
-   */
-  static void resize(VectorImageType* im, unsigned int szXnew, unsigned int szYnew, unsigned int szZnew, VectorImageType* imOut, bool blur);
+  static void resize3D( const VectorImageType* im, VectorImageType* imOut);
 
   /**
    * Method that applies a gaussian filter to the image (currently done the slow way)

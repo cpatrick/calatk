@@ -28,10 +28,9 @@ public:
 protected:
 
   CGaussianKernel< T, VImageDimension > m_GaussianKernel;
+  T m_Sigma;
 
 private:
-
-  T m_Sigma;
 
 };
 
