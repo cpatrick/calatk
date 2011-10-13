@@ -100,120 +100,104 @@ void VectorImageUtils< T, VImageDimension, TSpace >::abs( VectorImageType* in)
 }
 
 //
-// getMinFlowTimestep 2D
+// AllocateMemoryForScaledVectorImage
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImageUtils< T, VImageDimension, TSpace >::getMinFlowTimestep2D(VectorImageType** v, unsigned int nt) 
-{
-  unsigned int szX = v[0]->getSizeX();
-  unsigned int szY = v[0]->getSizeY();
-
-  T dx = 1/(T)(szX-1);
-  T dy = 1/(T)(szY-1);
-
-  T minTimestep = 1;
-
-  for (unsigned int i = 0; i < nt; ++i) 
-    {
-    T vMax = VectorImageUtils< T, VImageDimension, TSpace >::absMaxAll(v[i]);
-    T timestep = 1;
-    if (vMax != 0) 
-      {
-      if (dx < dy) 
-        {
-        timestep = 0.25/vMax * dx;
-        } 
-      else 
-        {
-        timestep = 0.25/vMax * dy;
-        }
-      }
-    if (timestep < minTimestep) 
-      {
-      minTimestep = timestep;
-      }
-    }
-
-  return minTimestep;
-}
-
-//
-// getMinFlowTimestep 3D
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImageUtils< T, VImageDimension, TSpace >::getMinFlowTimestep3D(VectorImageType** v, unsigned int nt) 
+typename VectorImageUtils< T, VImageDimension, TSpace >::VectorImageType*
+VectorImageUtils< T, VImageDimension, TSpace >::AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, T dScale )
 {
 
-  if ( VImageDimension != 3 )
-    {
-    throw std::runtime_error( "convertToITK3D only for 3D images." );
-    }
+  assert( dScale>0 );
 
-  unsigned int szX = v[0]->getSizeX();
-  unsigned int szY = v[0]->getSizeY();
-  unsigned int szZ = v[0]->getSizeZ();
+  // will only be approximate scale (up to the same integer)
+  unsigned int szxOrig = imGraft->getSizeX();
+  unsigned int szyOrig = imGraft->getSizeY();
+  unsigned int szzOrig = imGraft->getSizeZ();
 
-  T dx = 1/(T)szX;
-  T dy = 1/(T)szY;
-  T dz = 1/(T)szZ;
-
-  T minTimestep = 1;
-
-  for (unsigned int i = 0; i < nt; i++) 
-    {
-    T vMax = VectorImageUtils< T, VImageDimension, TSpace >::absMaxAll( v[i] );
-    T timestep = 1;
-    if (vMax != 0) 
-      {
-      if (dx < dy && dx < dz) 
-        {
-        timestep = 0.25/vMax * dx;
-        } 
-      else if(dy < dz) 
-        {
-        timestep = 0.25/vMax * dy;
-        } 
-      else 
-        {
-        timestep = 0.25/vMax *dz;
-        }
-      }
-    if (timestep < minTimestep) 
-      {
-      minTimestep = timestep;
-      }
-    }
-
-  return minTimestep;
-}
-
-//
-// getMinFlowTimestep 
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImageUtils< T, VImageDimension, TSpace >::getMinFlowTimestep(VectorImageType** v, unsigned int nt) 
-{
-
-  T timestep = 0;
+  unsigned int szxDesired = 0;
+  unsigned int szyDesired = 0;
+  unsigned int szzDesired = 0;
 
   switch ( VImageDimension )
     {
-    case 1:
-      throw std::runtime_error( "Unsupported dimension for the time step computation" );
-      break;
     case 2:
-      return VectorImageUtils< T, VImageDimension, TSpace >::getMinFlowTimeStep2D( v, nt );
+      szxDesired = (unsigned int)ceil( dScale*szxOrig );
+      szyDesired = (unsigned int)ceil( dScale*szyOrig );
+      return AllocateMemoryForScaledVectorImage( imGraft, szxDesired, szyDesired );
       break;
     case 3:
-      return VectorImageUtils< T, VImageDimension, TSpace >::getMinFlowTimeStep3D( v, nt );
+      szxDesired = (unsigned int)ceil( dScale*szxOrig );
+      szyDesired = (unsigned int)ceil( dScale*szyOrig );
+      szzDesired = (unsigned int)ceil( dScale*szzOrig );
+      return AllocateMemoryForScaledVectorImage( imGraft, szxDesired, szyDesired, szzDesired );
       break;
     default:
-      throw std::runtime_error( "Unsupported dimension for the time step computation" );
+      std::runtime_error("Unsupported dimension for memory allocation.");
     }
-
-  return timestep; // should only get here if one could not be computed
-
+  
+  return NULL;
 }
+
+//
+// AllocateMemoryForScaledVectorImage
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+typename VectorImageUtils< T, VImageDimension, TSpace >::VectorImageType*
+VectorImageUtils< T, VImageDimension, TSpace >::AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, unsigned int szx, unsigned int szy )
+{
+  unsigned int dim = imGraft->getDim();
+  unsigned int szxOrig = imGraft->getSizeX();
+  unsigned int szyOrig = imGraft->getSizeY();
+
+  T sfOrig = imGraft->getSpaceFactor();
+  T dxOrig = imGraft->getDX();
+  T dyOrig = imGraft->getDY();
+
+  T invScaleX = (T)szxOrig/(T)szx;
+  T invScaleY = (T)szyOrig/(T)szy;
+
+  VectorImageType* pNewIm = new VectorImageType( szx, szy, dim );
+  pNewIm->setSpaceFactor( sfOrig );
+  pNewIm->setDX( dxOrig*invScaleX );
+  pNewIm->setDY( dyOrig*invScaleY );
+  pNewIm->setOrigin( imGraft->getOrigin() );
+  pNewIm->setDircetion( imGraft->getDirection() );
+
+  return pNewIm;
+}
+
+//
+// AllocateMemoryForScaledVectorImage
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+typename VectorImageUtils< T, VImageDimension, TSpace >::VectorImageType*
+VectorImageUtils< T, VImageDimension, TSpace >::AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, unsigned int szx, unsigned int szy, unsigned int szz )
+{
+  unsigned int dim = imGraft->getDim();
+  unsigned int szxOrig = imGraft->getSizeX();
+  unsigned int szyOrig = imGraft->getSizeY();
+  unsigned int szzOrig = imGraft->getSizeZ();
+
+  T sfOrig = imGraft->getSpaceFactor();
+  T dxOrig = imGraft->getDX();
+  T dyOrig = imGraft->getDY();
+  T dzOrig = imGraft->getDZ();
+
+  T invScaleX = (T)szxOrig/(T)szx;
+  T invScaleY = (T)szyOrig/(T)szy;
+  T invScaleZ = (T)szzOrig/(T)szz;
+
+  VectorImageType* pNewIm = new VectorImageType( szx, szy, szz, dim );
+  pNewIm->setSpaceFactor( sfOrig );
+  pNewIm->setDX( dxOrig*invScaleX );
+  pNewIm->setDY( dyOrig*invScaleY );
+  pNewIm->setDZ( dzOrig*invScaleZ );
+  pNewIm->setOrigin( imGraft->getOrigin() );
+  pNewIm->setDircetion( imGraft->getDirection() );
+
+  return pNewIm;
+}
+
 
 //
 // interpolatePos 2D

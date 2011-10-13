@@ -65,34 +65,17 @@ public:
   static void abs( VectorImageType* in);
 
   /**
-   * Function that gets the flow timestep based on the current velocity field.
-   * This is used to make sure the algorithm doesn't get trapped and grind to
-   * a halt.
+   * Method that allocates memory for an image which is spatially scaled with respect to a given reference image.
+   * To be used in conjunction with upsampling and downsampling image filters.
    *
-   * @param v - the current estimate of v
-   * @param nt - the number of entries in v
+   * @param imGraft - image to get the dimensions of
+   * @param dScale - scaling factor for the image
    */
-  static T getMinFlowTimestep(VectorImageType** v, unsigned int nt);
+  VectorImageType* AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, T dScale );
 
-  /**
-   * Function that gets the flow timestep based on the current velocity field.
-   * This is used to make sure the algorithm doesn't get trapped and grind to
-   * a halt.
-   *
-   * @param v - the current estimate of v
-   * @param nt - the number of entries in v
-   */
-  static T getMinFlowTimestep2D(VectorImageType** v, unsigned int nt);
-
-  /**
-   * Function that gets the flow timestep based on the current velocity field.
-   * This is used to make sure the algorithm doesn't get trapped and grind to
-   * a halt.
-   *
-   * @param v - the current estimate of v
-   * @param nt - the number of entries in v
-   */
-  static T getMinFlowTimestep3D(VectorImageType** v, unsigned int nt);
+  VectorImageType* AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, unsigned int szx, unsigned int szy );
+  
+  VectorImageType* AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, unsigned int szx, unsigned int szy, unsigned int szz );
 
   /**
    * Method that performs interpolation on a single point in 2D
