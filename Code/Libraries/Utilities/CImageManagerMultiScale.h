@@ -26,11 +26,15 @@ public:
   typedef CImageManagerFullScale< T, VImageDimension, TSpace > Superclass;
   typedef CResampler< T, VImageDimension > ResamplerType;
 
+  typedef typename Superclass::VectorImageType VectorImageType;
+
   CImageManagerMultiScale();
   ~CImageManagerMultiScale();
 
   void AddScale( T dScale, unsigned int uiScaleIndx );
   void RemoveScale( unsigned int uiScaleIndx );
+
+
 
   unsigned int GetNumberOfScales();
 
