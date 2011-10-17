@@ -154,13 +154,16 @@ void CImageManagerMultiScale< T, VImageDimension, TSpace >::GetImage( SImageInfo
     {
     // create all the scales
     unsigned int uiNrOfScales = this->GetNumberOfScales();
-    for ( unsigned int iI=0; iI<uiNrOfScales; ++iI )
+    for ( unsigned int iI=0; iI<uiNrOfScales-1; ++iI )
       {
       if ( m_ScaleWasSet[ iI ] )
         {
         std::cout << "Computing scale " << m_ScaleVector[iI] << " of: " << pCurrentImInfo->sImageFileName << std::endl;
         assert( m_ScaleVector[iI]<0 || m_ScaleVector[iI]>0 );
         VectorImageType* ptrResampledImage = VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( pCurrentImInfo->pImOrig, m_ScaleVector[ iI ] );
+
+        if ( m_ptrResampler == NULL ) SetDefaultResamplerPointer();
+
         m_ptrResampler->Downsample( pCurrentImInfo->pImOrig, ptrResampledImage );
         pCurrentImInfo->pImsOfAllScales.push_back( ptrResampledImage );
         }

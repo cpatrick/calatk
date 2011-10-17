@@ -4,11 +4,33 @@
 template <class T, unsigned int VImageDimension, class TState>
 CSolverMultiScale< T, VImageDimension, TState>::CSolverMultiScale()
 {
+  m_ptrSolver = NULL;
+  m_bSetDefaultSingleScaleSolver = false;
 }
 
 template <class T, unsigned int VImageDimension, class TState>
 CSolverMultiScale< T, VImageDimension, TState>::~CSolverMultiScale()
 {
+  DeleteDefaultSingleScaleSolver();
+}
+
+template <class T, unsigned int VImageDimension, class TState>
+void CSolverMultiScale< T, VImageDimension, TState>::SetDefaultSingleScaleSolver()
+{
+  DeleteDefaultSingleScaleSolver();
+  m_ptrSolver = new CSolverLineSearch< T, VImageDimension, TState>;
+  m_bSetDefaultSingleScaleSolver = true;
+}
+
+template <class T, unsigned int VImageDimension, class TState>
+void CSolverMultiScale< T, VImageDimension, TState>::DeleteDefaultSingleScaleSolver()
+{
+  if ( m_bSetDefaultSingleScaleSolver )
+    {
+    if ( m_ptrSolver != NULL ) delete m_ptrSolver;
+    m_ptrSolver = NULL;
+    m_bSetDefaultSingleScaleSolver = NULL;
+    }
 }
 
 template <class T, unsigned int VImageDimension, class TState>
@@ -27,6 +49,7 @@ CSolverMultiScale< T, VImageDimension, TState>::GetImageManagerPointer() const
 template <class T, unsigned int VImageDimension, class TState>
 void CSolverMultiScale< T, VImageDimension, TState>::SetSingleScaleSolverPointer( const SolverType* ptrSolver )
 {
+  DeleteDefaultSingleScaleSolver();
   m_ptrSolver = ptrSolver;
 }
 
@@ -42,6 +65,9 @@ bool CSolverMultiScale< T, VImageDimension, TState>::Solve()
 {
   // get the objective function which should be minimized and holds the data
   ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();
+
+ TODO: Set individual solvers to use objective function
+
 
   // get it's image manager
   ImageManagerType* ptrImageManager = pObj->GetImageManager();

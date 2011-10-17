@@ -2,6 +2,7 @@
 #define C_SOLVER_MULTISCALE_H
 
 #include "CSolver.h"
+#include "CSolverLineSearch.h"
 #include "CImageManager.h"
 
 namespace CALATK
@@ -31,9 +32,15 @@ public:
 
 protected:
 
+  void SetDefaultSingleScaleSolver();
+  void DeleteDefaultSingleScaleSolver();
+
   SolverType* m_ptrSolver;
 
 private:
+
+  bool m_bSetDefaultSingleScaleSolver;
+
 };
 
 #include "CSolverMultiScale.txx"
