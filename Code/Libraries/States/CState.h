@@ -1,5 +1,5 @@
-#ifndef C_STATE
-#define C_STATE
+#ifndef C_STATE_H
+#define C_STATE_H
 
 /**
  * Base class for a state. So far does not do much other than declaring certain operators private
@@ -10,7 +10,7 @@
 namespace CALATK
 {
 
-template <class T>
+template <class T, unsigned int VImageDimension, class TResampler >
 class CState
 {
 public:

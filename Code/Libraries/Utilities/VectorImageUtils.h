@@ -71,11 +71,11 @@ public:
    * @param imGraft - image to get the dimensions of
    * @param dScale - scaling factor for the image
    */
-  VectorImageType* AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, T dScale );
+  static VectorImageType* AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, T dScale );
 
-  VectorImageType* AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, unsigned int szx, unsigned int szy );
+  static VectorImageType* AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, unsigned int szx, unsigned int szy );
   
-  VectorImageType* AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, unsigned int szx, unsigned int szy, unsigned int szz );
+  static VectorImageType* AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, unsigned int szx, unsigned int szy, unsigned int szz );
 
   /**
    * Method that performs interpolation on a single point in 2D

@@ -3,7 +3,7 @@
 
 #include "CImageManagerFullScale.h"
 #include "CResampler.h"
-#include "CResamplerGaussian.h"
+#include "CResamplerLinear.h"
 #include <vector>
 #include <algorithm>
 
@@ -17,7 +17,7 @@ namespace CALATK
 {
 
 template <class T, unsigned int VImageDimension=3, class TSpace = T >
-class CImageManagerMultiScale : CImageManagerFullScale< T, VImageDimension, TSpace >
+class CImageManagerMultiScale : public CImageManagerFullScale< T, VImageDimension, TSpace >
 {
 public:
 
@@ -25,6 +25,8 @@ public:
 
   typedef CImageManagerFullScale< T, VImageDimension, TSpace > Superclass;
   typedef CResampler< T, VImageDimension > ResamplerType;
+  
+  typedef typename Superclass::SImageInformation SImageInformation;
 
   typedef typename Superclass::VectorImageType VectorImageType;
 
@@ -33,8 +35,6 @@ public:
 
   void AddScale( T dScale, unsigned int uiScaleIndx );
   void RemoveScale( unsigned int uiScaleIndx );
-
-
 
   unsigned int GetNumberOfScales();
 
@@ -48,6 +48,11 @@ public:
 
   void SetResamplerPointer( ResamplerType* ptrResampler );
   const ResamplerType* GetResamplerPointer() const;
+
+  virtual bool SupportsMultiScaling()
+  {
+    return true;
+  }
 
 protected:
 

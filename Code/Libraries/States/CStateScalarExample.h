@@ -7,7 +7,7 @@ namespace CALATK
 {
 
 template <class T>
-class CStateScalarExample : public CState< T >
+class CStateScalarExample : public CState< T, 0, T >
 {
 
 public:

@@ -32,6 +32,22 @@ CImageManager< T, VImageDimension, TSpace >::~CImageManager()
         // should already be done by the derived class which loads the images and takes care of the memory management
         if ( (*iter)->pImOrig != NULL ) delete (*iter)->pImOrig;
         if ( (*iter)->pTransform != NULL ) delete (*iter)->pTransform;
+
+        if ( !( (*iter)->pImsOfAllScales.empty() ) )
+          {
+          typename std::vector< VectorImageType* >::iterator iterImagesAtScales;
+          for ( iterImagesAtScales = (*iter)->pImsOfAllScales.begin(); iterImagesAtScales != (*iter)->pImsOfAllScales.end(); ++iterImagesAtScales )
+            {
+            if ( *iterImagesAtScales != NULL )
+              {
+              delete *iterImagesAtScales;
+              *iterImagesAtScales = NULL;
+              }
+            }
+          }
+
+        //
+
         delete *iter;
         }
       // now get rid of the multiset itself
@@ -375,6 +391,29 @@ void CImageManager< T, VImageDimension, TSpace>::GetImagesWithSubjectIndex( Subj
     SImageInformation* pCurrentImInfo = *iter;
     this->GetImage( pCurrentImInfo );
     }
+}
+
+//
+// Returns one image which can be used to allocate memory for example for upsampling in multi-scale implementations
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+const typename CImageManager< T, VImageDimension, TSpace>::VectorImageType *
+CImageManager< T, VImageDimension, TSpace>::GetGraftImagePointer() const
+{
+  std::vector< unsigned int > vecSubjectIndices;
+  this->GetAvailableSubjectIndices( vecSubjectIndices );
+
+  assert( vecSubjectIndices.size()>0 );
+
+  std::vector< T > vecTimeIndices;
+  this->GetTimePointsForSubjectIndex( vecTimeIndices, vecSubjectIndices[0] );
+
+  assert( vecTimeIndices.size()>0 );
+
+  SImageInformation *pImInfo;
+  this->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
+
+  return pImInfo->pIm;
 }
 
 //

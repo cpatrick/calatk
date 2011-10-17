@@ -8,7 +8,8 @@
 #include "COneStepEvolverSemiLagrangianAdvection.h"
 #include "CStationaryEvolver.h"
 #include "CAlgorithm.h"
-#include "CImageManagerFullScale.h"
+//#include "CImageManagerFullScale.h"
+#include "CImageManagerMultiScale.h"
 #include "CSolverLineSearch.h"
 
 namespace CALATK

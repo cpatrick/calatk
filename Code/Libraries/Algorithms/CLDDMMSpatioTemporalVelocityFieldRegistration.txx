@@ -36,7 +36,8 @@ void CLDDMMSpatioTemporalVelocityFieldRegistration< T, VImageDimension, TState >
 template < class T, unsigned int VImageDimension, class TState >
 void CLDDMMSpatioTemporalVelocityFieldRegistration< T, VImageDimension, TState >::SetDefaultImageManagerPointer()
 {
-  this->m_ptrImageManager = new CImageManagerFullScale< T, VImageDimension >;
+  //this->m_ptrImageManager = new CImageManagerFullScale< T, VImageDimension >;
+  this->m_ptrImageManager = new CImageManagerMultiScale< T, VImageDimension >;
 }
 
 template < class T, unsigned int VImageDimension, class TState >

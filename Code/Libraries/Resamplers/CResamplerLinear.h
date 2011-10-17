@@ -2,6 +2,7 @@
 #define C_RESAMPLER_LINEAR_H
 
 #include "CResampler.h"
+#include "VectorImageUtils.h"
 
 namespace CALATK
 {

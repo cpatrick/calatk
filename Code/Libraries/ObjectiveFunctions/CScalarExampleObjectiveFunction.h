@@ -38,11 +38,7 @@ public:
     gradient.SetValue( 2*(state.GetValue()-2) );
   }
 
-  void InitializeDataStructures()
-  {
-  }
-
-  void InitializeDataStructuresFromState( TState *p )
+  void InitializeState( TState *p )
   {
     state.SetValue( p->GetValue() );
   }

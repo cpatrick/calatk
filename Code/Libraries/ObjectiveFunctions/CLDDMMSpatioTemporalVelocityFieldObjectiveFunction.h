@@ -42,8 +42,7 @@ public:
   void GetImage( VectorImageType* ptrIm, T dTime );
 
   void InitializeState();
-  void InitializeDataStructures();
-  void InitializeDataStructuresFromState( TState* pState );
+  void InitializeState( TState* pState );
 
   SetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );
   GetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );
@@ -58,6 +57,9 @@ protected:
     std::vector< VectorFieldPointerType > vecMeasurementTransforms;
     VectorImagePointerType ptrEstimatedImage;
   };
+
+  void InitializeDataStructures();
+  void InitializeDataStructuresFromState( TState* pState );
 
   void DeleteData();
   void CreateTimeDiscretization();

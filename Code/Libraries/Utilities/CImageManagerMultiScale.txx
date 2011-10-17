@@ -14,8 +14,7 @@ template <class T, unsigned int VImageDimension, class TSpace >
 CImageManagerMultiScale< T, VImageDimension, TSpace >::~CImageManagerMultiScale()
 {
   DeleteDefaultResampler();
-  // TODO : delete the downsampled data
-
+  // Upsampled images will be deleted by the base class if they have been allocated
 }
 
 template <class T, unsigned int VImageDimension, class TSpace >
@@ -41,7 +40,7 @@ template <class T, unsigned int VImageDimension, class TSpace >
 void CImageManagerMultiScale< T, VImageDimension, TSpace >::SetDefaultResamplerPointer()
 {
   DeleteDefaultResampler();
-  m_ptrResampler = new CResamplerGaussian< T, VImageDimension >;
+  m_ptrResampler = new CResamplerLinear< T, VImageDimension >;
   m_bSetDefaultResampler = true;
 }
 
@@ -55,7 +54,7 @@ void CImageManagerMultiScale< T, VImageDimension, TSpace >::AddScale( T dScale, 
     return;
     }
 
-  if ( uiScaleIndex < 1 )
+  if ( uiScaleIndx < 1 )
     {
     std::runtime_error("Negative scale index is not allowed. Zero scale index is reserved for the original image." );
     return;
@@ -64,7 +63,7 @@ void CImageManagerMultiScale< T, VImageDimension, TSpace >::AddScale( T dScale, 
   if ( m_ScaleVector.size() <= uiScaleIndx-1 )
     {
     // increase size of vector
-    for ( int iI=0; iI < uiScaleIndx-m_ScaleVector.size(); ++iI )
+    for ( int iI=0; iI < (int)(uiScaleIndx-m_ScaleVector.size()); ++iI )
       {
       m_ScaleVector.push_back( 0 );
       m_ScaleWasSet.push_back( false );
@@ -73,8 +72,8 @@ void CImageManagerMultiScale< T, VImageDimension, TSpace >::AddScale( T dScale, 
 
   assert( m_ScaleVector.size() >= uiScaleIndx );
   // now we know that we can access the element
-  m_ScaleVector[ uiScaleIndex-1 ] = dScale;
-  m_ScaleWasSet[ uiScaleIndex-1 ] = true;
+  m_ScaleVector[ uiScaleIndx-1 ] = dScale;
+  m_ScaleWasSet[ uiScaleIndx-1 ] = true;
 }
 
 template <class T, unsigned int VImageDimension, class TSpace >
@@ -87,7 +86,7 @@ void CImageManagerMultiScale< T, VImageDimension, TSpace >::RemoveScale( unsigne
     return;
     }
 
-  if ( !( uiScaleIndex < 1 || uiScaleIndex >= m_ScaleVector.size() ) )
+  if ( !( uiScaleIndx < 1 || uiScaleIndx >= m_ScaleVector.size() ) )
     {
     // valid range, otherwise don't do anything
     m_ScaleVector[ uiScaleIndx-1 ] = 0;

@@ -6,6 +6,7 @@
 #include <iostream>
 #include "CLDDMMSpatioTemporalVelocityFieldRegistration.h"
 #include "VectorImageUtils.h"
+#include "CImageManagerMultiScale.h"
 
 #include "LDDMMCLP.h"
 
@@ -18,15 +19,21 @@ int main(int argc, char **argv)
 
   typedef CALATK::CLDDMMSpatioTemporalVelocityFieldRegistration< TFLOAT, DIMENSION > regType;
   typedef CALATK::VectorImageUtils< TFLOAT, DIMENSION > VectorImageUtilsType;
+  typedef CALATK::CImageManagerMultiScale< TFLOAT, DIMENSION > ImageManagerMultiScaleType;
 
   regType lddmm;
-  regType::ptrImageManagerType ptrImageManager = lddmm.GetImageManagerPointer();
+
+  //regType::ptrImageManagerType ptrImageManager = lddmm.GetImageManagerPointer();
+  ImageManagerMultiScaleType* ptrImageManager = (ImageManagerMultiScaleType*)lddmm.GetImageManagerPointer();
 
   //ptrImageManager->AddImage( source, 0.0, 0 );
   //ptrImageManager->AddImage( target, 1.0, 0 );
 
   ptrImageManager->AddImage( "I0_short.nhdr", 0.0, 0 );
   ptrImageManager->AddImage( "I1_short.nhdr", 1.0, 0 );
+
+  ptrImageManager->AddScale( 0.5, 1 );
+  ptrImageManager->AddScale( 0.25, 2 );
 
   ptrImageManager->print( std::cout );
 

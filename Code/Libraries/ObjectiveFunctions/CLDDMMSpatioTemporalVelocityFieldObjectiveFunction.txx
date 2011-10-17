@@ -594,4 +594,11 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
   InitializeDataStructures();
 }
 
+template <class T, unsigned int VImageDimension, class TState >
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::InitializeState( TState* pState )
+{
+  // TODO: Set all the velocities to zero and the initial image to the first image of the time series
+  InitializeDataStructuresFromState( pState );
+}
+
 #endif

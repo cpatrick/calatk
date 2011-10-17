@@ -20,10 +20,11 @@ public:
   CSolver();
   virtual ~CSolver();
 
-  void SetObjectiveFunctionPointer( ptrObjectiveFunctionType pObjectiveFunction );
+  virtual void SetObjectiveFunctionPointer( ptrObjectiveFunctionType pObjectiveFunction );
   ptrObjectiveFunctionType GetObjectiveFunctionPointer();
 
-  virtual bool Solve() = 0;
+  virtual bool Solve();
+  virtual bool SolvePreInitialized() = 0;
 
 protected:
 

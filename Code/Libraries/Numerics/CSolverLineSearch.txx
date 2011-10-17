@@ -50,13 +50,10 @@ CSolverLineSearch<T, VImageDimension, TState>::~CSolverLineSearch()
 // minimizes the objective function
 //
 template <class T, unsigned int VImageDimension, class TState >
-bool CSolverLineSearch<T, VImageDimension, TState>::Solve()
+bool CSolverLineSearch<T, VImageDimension, TState>::SolvePreInitialized()
 {
   ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();
-
-  // Initialize the objective function
-  pObj->InitializeState();
-
+  
   unsigned int uiNrOfIterationsWithImmediateDecrease = 0;
   unsigned int uiNrOfIterationsWithoutImmediateDecrease = 0;
 

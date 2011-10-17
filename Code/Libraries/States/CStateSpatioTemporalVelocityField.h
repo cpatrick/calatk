@@ -1,19 +1,24 @@
 #ifndef C_STATE_SPATIOTEMPORAL_VELOCITY_FIELD_H
 #define C_STATE_SPATIOTEMPORAL_VELOCITY_FIELD_H
 
-#include "CState.h"
+#include "CStateImageDomain.h"
 #include "VectorField.h"
+#include "CResamplerLinear.h"
 
 namespace CALATK
 {
 
-template <class T, unsigned int VImageDimension=3 >
-class CStateSpatioTemporalVelocityField : public CState< T >
+template <class T, unsigned int VImageDimension=3, class TResampler=CResamplerLinear<T, VImageDimension> >
+class CStateSpatioTemporalVelocityField : public CStateImageDomain< T, VImageDimension, TResampler >
 {
 public:
 
   /** some useful typedefs */
 
+  typedef CStateImageDomain< T, VImageDimension, TResampler > Superclass;
+  typedef typename Superclass::TState TState;
+  typedef typename Superclass::VectorImageType VectorImageType;
+  
   typedef VectorField< T, VImageDimension > VectorFieldType;
   typedef VectorFieldType* VectorFieldPointerType;
   typedef std::vector< VectorFieldPointerType >* VectorPointerToVectorFieldPointerType;
@@ -39,6 +44,11 @@ public:
    * Destructor, this class will involve dynamic memory allocation, so needs a destructor
    */
   ~CStateSpatioTemporalVelocityField();
+
+  /*
+   * Allow for upsampling of the state
+   */
+  TState* CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ); 
 
   // declare operators to be able to do some computations with this state, which are needed in the numerical solvers
 

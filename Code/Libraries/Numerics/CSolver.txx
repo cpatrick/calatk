@@ -35,6 +35,20 @@ CSolver< T, VImageDimension, TState >::GetObjectiveFunctionPointer()
   return m_pObjectiveFunction;
 }
 
+//
+// Calls the objective function initialization and then the pre-initialized solver
+//
+template <class T, unsigned int VImageDimension, class TState >
+bool CSolver< T, VImageDimension, TState >::Solve()
+{
+  ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();
 
+  // Initialize the objective function
+  pObj->InitializeState();
+  
+  // now that everything is initialized, we can solve the problem
+  return SolvePreInitialized();
+
+}
 
 #endif

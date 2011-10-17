@@ -150,18 +150,18 @@ VectorImageUtils< T, VImageDimension, TSpace >::AllocateMemoryForScaledVectorIma
   unsigned int szyOrig = imGraft->getSizeY();
 
   T sfOrig = imGraft->getSpaceFactor();
-  T dxOrig = imGraft->getDX();
-  T dyOrig = imGraft->getDY();
+  T dxOrig = imGraft->getSpaceX();
+  T dyOrig = imGraft->getSpaceY();
 
   T invScaleX = (T)szxOrig/(T)szx;
   T invScaleY = (T)szyOrig/(T)szy;
 
   VectorImageType* pNewIm = new VectorImageType( szx, szy, dim );
   pNewIm->setSpaceFactor( sfOrig );
-  pNewIm->setDX( dxOrig*invScaleX );
-  pNewIm->setDY( dyOrig*invScaleY );
+  pNewIm->setSpaceX( dxOrig*invScaleX );
+  pNewIm->setSpaceY( dyOrig*invScaleY );
   pNewIm->setOrigin( imGraft->getOrigin() );
-  pNewIm->setDircetion( imGraft->getDirection() );
+  pNewIm->setDirection( imGraft->getDirection() );
 
   return pNewIm;
 }
@@ -179,9 +179,9 @@ VectorImageUtils< T, VImageDimension, TSpace >::AllocateMemoryForScaledVectorIma
   unsigned int szzOrig = imGraft->getSizeZ();
 
   T sfOrig = imGraft->getSpaceFactor();
-  T dxOrig = imGraft->getDX();
-  T dyOrig = imGraft->getDY();
-  T dzOrig = imGraft->getDZ();
+  T dxOrig = imGraft->getSpaceX();
+  T dyOrig = imGraft->getSpaceY();
+  T dzOrig = imGraft->getSpaceZ();
 
   T invScaleX = (T)szxOrig/(T)szx;
   T invScaleY = (T)szyOrig/(T)szy;
@@ -189,11 +189,11 @@ VectorImageUtils< T, VImageDimension, TSpace >::AllocateMemoryForScaledVectorIma
 
   VectorImageType* pNewIm = new VectorImageType( szx, szy, szz, dim );
   pNewIm->setSpaceFactor( sfOrig );
-  pNewIm->setDX( dxOrig*invScaleX );
-  pNewIm->setDY( dyOrig*invScaleY );
-  pNewIm->setDZ( dzOrig*invScaleZ );
+  pNewIm->setSpaceX( dxOrig*invScaleX );
+  pNewIm->setSpaceY( dyOrig*invScaleY );
+  pNewIm->setSpaceZ( dzOrig*invScaleZ );
   pNewIm->setOrigin( imGraft->getOrigin() );
-  pNewIm->setDircetion( imGraft->getDirection() );
+  pNewIm->setDirection( imGraft->getDirection() );
 
   return pNewIm;
 }

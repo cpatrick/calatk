@@ -27,7 +27,7 @@ public:
 /**
  * Destructor
  */
-  ~CSolverLineSearch();
+  virtual ~CSolverLineSearch();
 
   SetMacro( dInitialStepSize, T );
   GetMacro( dInitialStepSize, T );
@@ -59,7 +59,7 @@ public:
 /**
  * Performs the line search
  */
-  bool Solve();
+  bool SolvePreInitialized();
 
 protected:
 

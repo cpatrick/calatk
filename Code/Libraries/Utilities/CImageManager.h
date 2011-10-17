@@ -6,6 +6,7 @@
 #include <string>
 #include <map>
 #include <set>
+#include <vector>
 
 /**
  * CImageManager.h - base class to deal with a set of images
@@ -164,10 +165,21 @@ public:
   
   void GetPointerToSubjectImageInformationByIndex( SImageInformation*& pImInfo, unsigned int uiSubjectIndex, unsigned int uiTimeIndex );
 
+  /**
+   * Convenience method which returns a pointer to the first stored image. 
+   * This can be used for example to initialize data sizes for upsampling
+   */
+  const VectorImageType* GetGraftImagePointer() const;
+
   /** 
    * Prints the state
    */
   void print( std::ostream& output );
+
+  virtual bool SupportsMultiScaling()
+  {
+    return false;
+  }
 
 protected:
 

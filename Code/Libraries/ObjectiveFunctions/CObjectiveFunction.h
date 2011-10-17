@@ -41,15 +41,14 @@ public:
   virtual void GetImage( VectorImageType* ptrIm, T dTime ) = 0;
 
   virtual void InitializeState() = 0;
-  virtual void InitializeDataStructures() = 0;
-  virtual void InitializeDataStructuresFromState( TState* ) = 0;
+  virtual void InitializeState( TState* ) = 0;
 
   void SetImageManagerPointer( ptrImageManagerType ptrImageManager )
   {
     m_ptrImageManager = ptrImageManager;
   };
 
-  ptrImageManagerType GetImageManagerPointer()
+  ptrImageManagerType GetImageManagerPointer() const
   {
     return m_ptrImageManager;
   };
@@ -59,7 +58,7 @@ public:
     m_pState = pState;
   };
 
-  ptrStateType GetStatePointer()
+  ptrStateType GetStatePointer() const
   {
     return m_pState;
   };
@@ -69,7 +68,7 @@ public:
     m_pGradient = pGradient;
   };
 
-  ptrStateType GetGradientPointer()
+  ptrStateType GetGradientPointer() const
   {
     return m_pGradient;
   };
@@ -79,7 +78,7 @@ public:
     m_pMetric = pMetric;
   };
 
-  ptrMetricType GetMetricPointer()
+  ptrMetricType GetMetricPointer() const
   {
     return m_pMetric;
   };
