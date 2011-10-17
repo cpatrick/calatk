@@ -398,7 +398,7 @@ void CImageManager< T, VImageDimension, TSpace>::GetImagesWithSubjectIndex( Subj
 //
 template <class T, unsigned int VImageDimension, class TSpace >
 const typename CImageManager< T, VImageDimension, TSpace>::VectorImageType *
-CImageManager< T, VImageDimension, TSpace>::GetGraftImagePointer() const
+CImageManager< T, VImageDimension, TSpace>::GetGraftImagePointer()
 {
   std::vector< unsigned int > vecSubjectIndices;
   this->GetAvailableSubjectIndices( vecSubjectIndices );
@@ -406,7 +406,7 @@ CImageManager< T, VImageDimension, TSpace>::GetGraftImagePointer() const
   assert( vecSubjectIndices.size()>0 );
 
   std::vector< T > vecTimeIndices;
-  this->GetTimePointsForSubjectIndex( vecTimeIndices, vecSubjectIndices[0] );
+  this->GetTimepointsForSubjectIndex( vecTimeIndices, vecSubjectIndices[0] );
 
   assert( vecTimeIndices.size()>0 );
 

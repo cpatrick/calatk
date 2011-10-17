@@ -19,12 +19,12 @@ public:
 
   /** Some useful typedefs */
   typedef VectorImage< T, VImageDimension > VectorImageType;
-  typedef CState< T, VImageDimension, TResampler > TState;
+  typedef CStateImageDomain< T, VImageDimension, TResampler > TState;
 
   CStateImageDomain() {};
   virtual ~CStateImageDomain() {};
 
-  virtual TState* CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) = 0;
+  virtual TState* CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const = 0;
 
 protected:
 private:

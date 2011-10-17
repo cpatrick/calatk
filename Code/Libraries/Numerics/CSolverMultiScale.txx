@@ -34,19 +34,6 @@ void CSolverMultiScale< T, VImageDimension, TState>::DeleteDefaultSingleScaleSol
 }
 
 template <class T, unsigned int VImageDimension, class TState>
-void CSolverMultiScale< T, VImageDimension, TState>::SetImageManagerPointer( const ImageManagerType* ptrImageManager )
-{
-  m_ptrImageManger = ptrImageManager;
-}
-
-template <class T, unsigned int VImageDimension, class TState>
-const typename CSolverMultiScale< T, VImageDimension, TState>::ImageManagerType*
-CSolverMultiScale< T, VImageDimension, TState>::GetImageManagerPointer() const
-{
-  return m_ptrImageManger;
-}
-
-template <class T, unsigned int VImageDimension, class TState>
 void CSolverMultiScale< T, VImageDimension, TState>::SetSingleScaleSolverPointer( const SolverType* ptrSolver )
 {
   DeleteDefaultSingleScaleSolver();
@@ -61,20 +48,37 @@ CSolverMultiScale< T, VImageDimension, TState>::GetSingleScaleSolverPointer() co
 }
 
 template <class T, unsigned int VImageDimension, class TState>
+bool CSolverMultiScale< T, VImageDimension, TState>::SolvePreInitialized()
+{
+  // there is not pre-initialization here necessary (because this is the multi-scale solver), so just call solve
+  return Solve();
+}
+
+template <class T, unsigned int VImageDimension, class TState>
 bool CSolverMultiScale< T, VImageDimension, TState>::Solve()
 {
+  bool bReducedEnergy = false;
+
   // get the objective function which should be minimized and holds the data
   ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();
 
- TODO: Set individual solvers to use objective function
+  assert( pObj != NULL );
 
+  if ( m_ptrSolver == NULL )
+    {
+    SetDefaultSingleScaleSolver();
+    }
+
+  assert( m_ptrSolver != NULL );
+
+  this->m_ptrSolver->SetObjectiveFunctionPointer( this->GetObjectiveFunctionPointer() );
 
   // get it's image manager
-  ImageManagerType* ptrImageManager = pObj->GetImageManager();
+  ImageManagerMultiScaleType* ptrImageManager = dynamic_cast< ImageManagerMultiScaleType* >( pObj->GetImageManagerPointer() );
 
-  if ( !ptrImageManger->SupportsMultiScaling() )
+  if ( !ptrImageManager->SupportsMultiScaling() )
     {
-    throw std::runtime_error( "Image manager needs to support multi-scaling to use the multi-scale solver.")
+    throw std::runtime_error( "Image manager needs to support multi-scaling to use the multi-scale solver.");
     }
 
   // find all the scales from the image manager
@@ -91,22 +95,36 @@ bool CSolverMultiScale< T, VImageDimension, TState>::Solve()
 
     if ( !bHasBeenInitialized )
       {
-      pObj->InitializeState();
+      std::cout << "Initializing multi-scale solution." << std::endl;
+      bReducedEnergy = m_ptrSolver->Solve();
+      bHasBeenInitialized = true;
       }
     else
       {
       // has solution from previous iteration
       // get state, upsample it and then use if for initialization
       const TState* pCurrentState = pObj->GetStatePointer();
-      TState* pUpsampledState = pCurrentState->CreateUpsampledStateAndAllocateMemory( ptrImageManager->GetGraftImagePointer() );
-      
-      pObj->InitializeState( pUpsampledState );
-      }
 
-    m_ptrSolver->Solve();
+      std::cout << "Upsampling state for multi-scale solver." << std::endl;
+
+      // state before upsampling
+
+      VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( pCurrentState->GetVectorPointerToVectorFieldPointer(), CreateNumberedFileName( "stateBeforeUpsampling", iI, ".nrrd" ) );
+
+      TState* pUpsampledState = dynamic_cast< TState* >( pCurrentState->CreateUpsampledStateAndAllocateMemory( ptrImageManager->GetGraftImagePointer() ) );
+      
+    // state after upsampling
+
+    VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( pUpsampledState->GetVectorPointerToVectorFieldPointer(), CreateNumberedFileName( "stateAfterUpsampling", iI, ".nrrd" ) );
+
+      pObj->InitializeState( pUpsampledState );
+      bReducedEnergy = m_ptrSolver->SolvePreInitialized();
+      }
 
     }
   
+  return bReducedEnergy;
+
 }
 
 #endif

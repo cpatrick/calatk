@@ -16,7 +16,8 @@ public:
   /** some useful typedefs */
 
   typedef CStateImageDomain< T, VImageDimension, TResampler > Superclass;
-  typedef typename Superclass::TState TState;
+  typedef Superclass SuperclassTState;
+  typedef CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler > TState;
   typedef typename Superclass::VectorImageType VectorImageType;
   
   typedef VectorField< T, VImageDimension > VectorFieldType;
@@ -48,7 +49,7 @@ public:
   /*
    * Allow for upsampling of the state
    */
-  TState* CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ); 
+  SuperclassTState* CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const; 
 
   // declare operators to be able to do some computations with this state, which are needed in the numerical solvers
 

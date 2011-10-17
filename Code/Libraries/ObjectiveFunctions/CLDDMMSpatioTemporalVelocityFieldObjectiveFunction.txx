@@ -28,6 +28,8 @@ template <class T, unsigned int VImageDimension, class TState >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::DeleteData()
 {
   
+  this->m_ptrKernel->DeallocateMemory();
+
   SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapIn );
   SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapOut );
   SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapTmp );

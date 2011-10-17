@@ -11,6 +11,7 @@
 //#include "CImageManagerFullScale.h"
 #include "CImageManagerMultiScale.h"
 #include "CSolverLineSearch.h"
+#include "CSolverMultiScale.h"
 
 namespace CALATK
 {

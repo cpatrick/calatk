@@ -24,7 +24,7 @@ int main(int argc, char **argv)
   regType lddmm;
 
   //regType::ptrImageManagerType ptrImageManager = lddmm.GetImageManagerPointer();
-  ImageManagerMultiScaleType* ptrImageManager = (ImageManagerMultiScaleType*)lddmm.GetImageManagerPointer();
+  ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm.GetImageManagerPointer() );
 
   //ptrImageManager->AddImage( source, 0.0, 0 );
   //ptrImageManager->AddImage( target, 1.0, 0 );

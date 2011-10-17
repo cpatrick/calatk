@@ -53,21 +53,21 @@ CAlgorithm< T, VImageDimension, TState >::~CAlgorithm()
       }
     }
 
-  if ( m_bSetDefaultKernel )
-    {
-    if ( m_ptrKernel != NULL ) 
-      {
-      delete m_ptrKernel;
-      m_ptrKernel = NULL;
-      }
-    }
-
   if ( m_bSetDefaultObjectiveFunction )
     {
     if ( m_ptrObjectiveFunction != NULL ) 
       {
       delete m_ptrObjectiveFunction;
       m_ptrObjectiveFunction = NULL;
+      }
+    }
+
+  if ( m_bSetDefaultKernel )
+    {
+    if ( m_ptrKernel != NULL ) 
+      {
+      delete m_ptrKernel;
+      m_ptrKernel = NULL;
       }
     }
 

@@ -4,7 +4,7 @@
 template <class T, unsigned int VImageDimension >
 CResampler< T, VImageDimension >::CResampler()
 {
-  m_Sigma = 1;
+  m_Sigma = 0.1;
   m_GaussianKernel.SetSigma( m_Sigma );
 }
 

@@ -14,18 +14,33 @@ CKernel< T, VImageDimension >::CKernel()
 template <class T, unsigned int VImageDimension >
 CKernel< T, VImageDimension >::~CKernel()
 {
+  DeallocateMemory();
+}
 
-  if ( m_ptrL != NULL ) 
+template <class T, unsigned int VImageDimension >
+void CKernel< T, VImageDimension >::DeallocateMemory()
+{
+  DeallocateMemoryForKernelAndInverseKernel();
+}
+
+
+template <class T, unsigned int VImageDimension >
+void CKernel< T, VImageDimension >::DeallocateMemoryForKernelAndInverseKernel()
+{
+  if ( this->m_ptrL != NULL )
     {
-    delete m_ptrL;
-    m_ptrL = NULL;
+    delete this->m_ptrL;
+    this->m_ptrL = NULL;
     }
 
-  if ( m_ptrLInv != NULL ) 
+  if ( this->m_ptrLInv != NULL )
     {
-    delete m_ptrLInv;
-    m_ptrLInv = NULL;
+    delete this->m_ptrLInv;
+    this->m_ptrLInv = NULL;
     }
+
+  this->m_MemoryWasAllocated = false;
+  this->m_KernelsNeedToBeComputed = true;
 
 }
 

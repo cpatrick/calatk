@@ -11,6 +11,7 @@
 
 #include <math.h>
 #include <iostream>
+#include <iomanip>
 #include <iterator>
 
 #include "calatkConfigure.h"
@@ -39,6 +40,8 @@ const double PI = 4.0*atan(1.0);
   #define MAX(x,y) ((x)>(y)?(x):(y))
   #define MIN(x,y) ((x)<(y)?(x):(y))
 #endif
+
+std::string CreateNumberedFileName( std::string strPrefix, unsigned int uiNr, std::string postFix );
 
 /** ND simulated templated typdefs */
 
@@ -105,7 +108,7 @@ struct ITKAffineTransform
 template <class T, unsigned int VImageDimension>
 struct ITKResampleFilter
 {
-  typedef itk::ResampleImageFilter< typename ITKImage<T,VImageDimension>::Type, typename ITKImage<T,VImageDimension>::Type > Type;
+  typedef itk::ResampleImageFilter< typename ITKImage<T,VImageDimension>::Type, typename ITKImage<T,VImageDimension>::Type, T > Type;
 };
 
 template <class T, unsigned int VImageDimension>

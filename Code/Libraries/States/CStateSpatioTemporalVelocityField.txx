@@ -91,8 +91,8 @@ CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::~CStateSpa
 // Upsampling
 //
 template <class T, unsigned int VImageDimension, class TResampler >
-typename CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler>::TState* 
-CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler >::CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage )
+typename CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler>::SuperclassTState* 
+CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler >::CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const
 {
   // create an upsampled version of the state with the dimensions of the graft image
   std::vector<VectorFieldPointerType>* ptrVecUpsampledStateData = new std::vector<VectorFieldPointerType>;
@@ -107,7 +107,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler >::CreateUpsam
     ptrVecUpsampledStateData->push_back( ptrResampledVectorField );
     }
 
-  TState* pUpsampledState = new CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler>( ptrVecUpsampledStateData ); 
+  TState* pUpsampledState = new TState( ptrVecUpsampledStateData ); 
 
   return pUpsampledState;
 

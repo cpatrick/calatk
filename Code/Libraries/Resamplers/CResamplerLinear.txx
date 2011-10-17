@@ -24,7 +24,11 @@ void CResamplerLinear< T, VImageDimension >::Downsample( const VectorImageType* 
   this->m_GaussianKernel.ConvolveWithKernel( imBlurred );
 
   // now downsample it
-  VectorImageUtils< T, VImageDimension >::resize( imBlurred, ptrImOut );
+
+  std::cout << "CResamplerLinear: FIXME. Put the blurring back in." << std::endl;
+
+  //VectorImageUtils< T, VImageDimension >::resize( imBlurred, ptrImOut );
+  VectorImageUtils< T, VImageDimension >::resize( ptrImIn, ptrImOut );
 
   delete imBlurred;
 

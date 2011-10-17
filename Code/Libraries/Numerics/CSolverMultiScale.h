@@ -3,7 +3,7 @@
 
 #include "CSolver.h"
 #include "CSolverLineSearch.h"
-#include "CImageManager.h"
+#include "CImageManagerMultiScale.h"
 
 namespace CALATK
 {
@@ -14,10 +14,10 @@ class CSolverMultiScale : public CSolver< T, VImageDimension, TState >
 public:
   
   typedef CSolver< T, VImageDimension, TState > SolverType;
-  typedef CImageManager< T, VImageDimension > ImageManagerType;
+  typedef CImageManagerMultiScale< T, VImageDimension > ImageManagerMultiScaleType;
   typedef typename SolverType::ptrObjectiveFunctionType ptrObjectiveFunctionType;
 
-  CSolverMultiScale()
+  CSolverMultiScale();
   virtual ~CSolverMultiScale();
 
   // TODO: Make it such that we can have different solvers for the different scales
@@ -28,6 +28,7 @@ public:
 
   // the objective function has an image manager associated with it
 
+  virtual bool SolvePreInitialized();
   virtual bool Solve();
 
 protected:

@@ -62,6 +62,8 @@ public:
   void ConvolveWithKernel( VectorImageType* pVecImage );
   void ConvolveWithInverseKernel( VectorImageType* pVecImage );
 
+  virtual void DeallocateMemory();
+
 protected:
 
   /** 

@@ -40,9 +40,12 @@ public:
     return m_ptrLInv;
   }
 
+  virtual void DeallocateMemory();
+
 protected:
 
   virtual void AllocateMemoryForKernelAndInverseKernel( VectorImageType* );
+  virtual void DeallocateMemoryForKernelAndInverseKernel();
   virtual void ComputeKernelAndInverseKernel( VectorImageType* ) = 0;
   // just to force that the variable is set
   virtual void ConfirmMemoryWasAllocated() = 0;

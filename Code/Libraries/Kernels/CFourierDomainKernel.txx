@@ -36,6 +36,17 @@ void CFourierDomainKernel< T, VImageDimension >::DeleteData()
     delete fftwData3D;
     fftwData3D = NULL;
     }
+
+   this->m_MemoryWasAllocated = false;
+   this->m_KernelsNeedToBeComputed = true;
+
+}
+
+template <class T, unsigned int VImageDimension >
+void CFourierDomainKernel< T, VImageDimension >::DeallocateMemory()
+{
+  Superclass::DeallocateMemory();
+  DeleteData();
 }
 
 template <class T, unsigned int VImageDimension >
