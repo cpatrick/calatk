@@ -100,39 +100,6 @@ public:
   static void applyMap(VectorFieldType* map, VectorImageType* imIn, VectorImageType* imOut);
   
   /**
-   * 2D Function that applys some fraction of a map to an image
-   *
-   * @param map - the input map
-   * @param imIn - the image to be pulled
-   * @param mapTime - the amount of time to pull the image for
-   * @param totalTime - the total time the input map pulls for
-   * @param imOut - return parameter for the resulting image
-   */
-  static void applyMapFraction2D(VectorFieldType* map, VectorImageType* imIn, T mapTime, T totalTime, VectorImageType* imOut);
-
-  /**
-   * 3D Function that applys some fraction of a map to an image
-   *
-   * @param map - the input map
-   * @param imIn - the image to be pulled
-   * @param mapTime - the amount of time to pull the image for
-   * @param totalTime - the total time the input map pulls for
-   * @param imOut - return parameter for the resulting image
-   */
-  static void applyMapFraction3D(VectorFieldType* map, VectorImageType* imIn, T mapTime, T totalTime, VectorImageType* imOut);
-
-  /**
-   * 2D/3D Function that applys some fraction of a map to an image
-   *
-   * @param map - the input map
-   * @param imIn - the image to be pulled
-   * @param mapTime - the amount of time to pull the image for
-   * @param totalTime - the total time the input map pulls for
-   * @param imOut - return parameter for the resulting image
-   */
-  static void applyMapFraction(VectorFieldType* map, VectorImageType* imIn, T mapTime, T totalTime, VectorImageType* imOut);
-  
-  /**
    * 2D Function that computes the determinant of the jacobian for a vector field.
    *
    * @param fld - the vector field to be processed
@@ -211,37 +178,6 @@ public:
    */
   static void multiplyVectorByImageDimensionInPlace(VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldInOut );
 
-  /**
-   * 2D Function that converts a map on the image dimension = 1 scale to a map 
-   * on the pixel size = 1 scale.  This is to be used for interfacing with
-   * DTIProcess
-   *
-   * @param inMap - the input map to be scaled
-   * @param outMap - the output scaled map
-   */
-  static void convertMapToPixelScale2D(VectorFieldType* inMap, VectorFieldType* outMap);
-
-  /**
-   * 3D Function that converts a map on the image dimension = 1 scale to a map 
-   * on the pixel size = 1 scale.  This is to be used for interfacing with
-   * DTIProcess
-   *
-   * @param inMap - the input map to be scaled
-   * @param outMap - the output scaled map
-   */
-  static void convertMapToPixelScale3D(VectorFieldType* inMap, VectorFieldType* outMap);
-
-  /**
-   * 2D/3D Function that converts a map on the image dimension = 1 scale to a map 
-   * on the pixel size = 1 scale.  This is to be used for interfacing with
-   * DTIProcess
-   *
-   * @param inMap - the input map to be scaled
-   * @param outMap - the output scaled map
-   */
-  static void convertMapToPixelScale(VectorFieldType* inMap, VectorFieldType* outMap);
-  
-  
   /***************************
    * ITK Interface Functions *
    ***************************/

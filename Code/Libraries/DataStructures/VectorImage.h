@@ -102,13 +102,6 @@ public:
   T getElementVolume() const;
 
   /**
-   * Method to set the space factor
-   *
-   * @param spaceFactor - the new space factor
-   */
-  void setSpaceFactor(TSpace spaceFactor);
-  
-  /**
    * Method to set the original x spacing
    *
    * @param spaceX - the spacing in the x dimension
@@ -154,26 +147,6 @@ public:
    */
   TSpace getSpaceZ() const;
   
-  /**
-   * Method to get the space factor
-   */
-  TSpace getSpaceFactor() const;
-  
-  /**
-   * Method to get the original x spacing
-   */
-  TSpace getDX() const;
-  
-  /**
-   * Method to get the original y spacing
-   */
-  TSpace getDY() const;
-  
-  /**
-   * Method to get the original z spacing
-   */
-  TSpace getDZ() const;
-
   /**
    * Computes the squared norm of a vector image;  takes proper accound of spacing
    *
@@ -227,9 +200,6 @@ protected:
   /******************
    * Protected Data *
    ******************/
-
-  /** The factor by which the original spacing is scaled */
-  TSpace __spaceFactor;
 
   /** The original pixel spacing for the x dimension from the image file */
   TSpace __spaceX;

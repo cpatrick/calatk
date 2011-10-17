@@ -149,7 +149,6 @@ VectorImageUtils< T, VImageDimension, TSpace >::AllocateMemoryForScaledVectorIma
   unsigned int szxOrig = imGraft->getSizeX();
   unsigned int szyOrig = imGraft->getSizeY();
 
-  T sfOrig = imGraft->getSpaceFactor();
   T dxOrig = imGraft->getSpaceX();
   T dyOrig = imGraft->getSpaceY();
 
@@ -157,7 +156,6 @@ VectorImageUtils< T, VImageDimension, TSpace >::AllocateMemoryForScaledVectorIma
   T invScaleY = (T)szyOrig/(T)szy;
 
   VectorImageType* pNewIm = new VectorImageType( szx, szy, dim );
-  pNewIm->setSpaceFactor( sfOrig );
   pNewIm->setSpaceX( dxOrig*invScaleX );
   pNewIm->setSpaceY( dyOrig*invScaleY );
   pNewIm->setOrigin( imGraft->getOrigin() );
@@ -178,7 +176,6 @@ VectorImageUtils< T, VImageDimension, TSpace >::AllocateMemoryForScaledVectorIma
   unsigned int szyOrig = imGraft->getSizeY();
   unsigned int szzOrig = imGraft->getSizeZ();
 
-  T sfOrig = imGraft->getSpaceFactor();
   T dxOrig = imGraft->getSpaceX();
   T dyOrig = imGraft->getSpaceY();
   T dzOrig = imGraft->getSpaceZ();
@@ -188,7 +185,6 @@ VectorImageUtils< T, VImageDimension, TSpace >::AllocateMemoryForScaledVectorIma
   T invScaleZ = (T)szzOrig/(T)szz;
 
   VectorImageType* pNewIm = new VectorImageType( szx, szy, szz, dim );
-  pNewIm->setSpaceFactor( sfOrig );
   pNewIm->setSpaceX( dxOrig*invScaleX );
   pNewIm->setSpaceY( dyOrig*invScaleY );
   pNewIm->setSpaceZ( dzOrig*invScaleZ );
@@ -203,7 +199,7 @@ VectorImageUtils< T, VImageDimension, TSpace >::AllocateMemoryForScaledVectorIma
 // interpolatePos 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImageUtils< T, VImageDimension, TSpace >::interpolatePos( const VectorImageType* imIn, T xPos, T yPos, unsigned int d) 
+T VectorImageUtils< T, VImageDimension, TSpace >::interpolatePosGridCoordinates( const VectorImageType* imIn, T xPos, T yPos, unsigned int d) 
 {
 
   unsigned int szXold = imIn->getSizeX();
@@ -236,7 +232,7 @@ T VectorImageUtils< T, VImageDimension, TSpace >::interpolatePos( const VectorIm
 // interpolatePos 3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImageUtils< T, VImageDimension, TSpace >::interpolatePos( const VectorImageType* imIn, T xPos, T yPos, T zPos, unsigned int d) 
+T VectorImageUtils< T, VImageDimension, TSpace >::interpolatePosGridCoordinates( const VectorImageType* imIn, T xPos, T yPos, T zPos, unsigned int d) 
 {
 
   unsigned int szXold = imIn->getSizeX();
@@ -294,6 +290,10 @@ void VectorImageUtils< T, VImageDimension, TSpace >::interpolate3D( const Vector
   unsigned int szYnew = pos->getSizeY();
   unsigned int szZnew = pos->getSizeZ();
 
+  T dx = imIn->getSpaceX();
+  T dy = imIn->getSpaceY();
+  T dz = imIn->getSpaceZ();
+
 #ifdef DEBUG
   if (pos->getDim() != 3) {
     throw std::invalid_argument("VectorImageTypeUtils::resize -> invalid pos image");
@@ -310,13 +310,14 @@ void VectorImageUtils< T, VImageDimension, TSpace >::interpolate3D( const Vector
         for (unsigned int d = 0; d < dim; ++d) 
           {
 
-          // interpolate the coordinates
-          T xPos = pos->getValue(x,y,z,0);
-          T yPos = pos->getValue(x,y,z,1);
-          T zPos = pos->getValue(x,y,z,2);
+          // interpolate the coordinates from the grid coordinates assuming origin 0
+          // TODO: Add support for origin different than 0 here
+          T xPos = pos->getValue(x,y,z,0)/dx;
+          T yPos = pos->getValue(x,y,z,1)/dy;
+          T zPos = pos->getValue(x,y,z,2)/dz;
 
           // set the new value
-          T val = VectorImageUtils< T, VImageDimension, TSpace >::interpolatePos(imIn, xPos, yPos, zPos, d);
+          T val = VectorImageUtils< T, VImageDimension, TSpace >::interpolatePosGridCoordinates(imIn, xPos, yPos, zPos, d);
           imOut->setValue(x,y,z,d, val);
           }
         }
@@ -335,6 +336,9 @@ void VectorImageUtils< T, VImageDimension, TSpace >::interpolate2D( const Vector
   
   unsigned int szXnew = pos->getSizeX();
   unsigned int szYnew = pos->getSizeY();
+
+  T dx = imIn->getSpaceX();
+  T dy = imIn->getSpaceY();
   
 #ifdef DEBUG
   if (pos->getDim() != 2) 
@@ -350,12 +354,14 @@ void VectorImageUtils< T, VImageDimension, TSpace >::interpolate2D( const Vector
       {
       for (unsigned int d = 0; d < dim; ++d) 
         {
-        // interpolate the coordinates
-        T xPos = pos->getValue(x,y,0);
-        T yPos = pos->getValue(x,y,1);
+        // interpolate the coordinates from the grid coordinates assuming origin 0
+        // TODO: Add support for origin different than 0 here
+        
+        T xPos = pos->getValue(x,y,0)/dx;
+        T yPos = pos->getValue(x,y,1)/dy;
         
         // set the new value
-        T val = VectorImageUtils< T, VImageDimension, TSpace >::interpolatePos(imIn, xPos, yPos, d);
+        T val = VectorImageUtils< T, VImageDimension, TSpace >::interpolatePosGridCoordinates(imIn, xPos, yPos, d);
         imOut->setValue(x,y,d, val);
         }
       }
@@ -417,14 +423,11 @@ template <class T, unsigned int VImageDimension, class TSpace >
 void VectorImageUtils< T, VImageDimension, TSpace >::resize2D( const VectorImageType* imIn, VectorImageType* imOut) 
 {
 
-  unsigned int szXold = imIn->getSizeX();
-  unsigned int szYold = imIn->getSizeY();
-
   unsigned int szXnew = imOut->getSizeX();
   unsigned int szYnew = imOut->getSizeY();
 
-  T fx = (T)(szXold)/(szXnew);
-  T fy = (T)(szYold)/(szYnew);
+  T dx = imOut->getSpaceX();
+  T dy = imOut->getSpaceY();
 
   assert( szXnew>0 );
   assert( szYnew>0 );
@@ -441,8 +444,8 @@ void VectorImageUtils< T, VImageDimension, TSpace >::resize2D( const VectorImage
       for (unsigned int d = 0; d < dim; ++d) 
         {
         // perform the interpolation
-        pos->setValue(x,y,0, (T)x*fx);
-        pos->setValue(x,y,1, (T)y*fy);
+        pos->setValue(x,y,0, (T)x*dx);
+        pos->setValue(x,y,1, (T)y*dy);
         }
       }
     }
@@ -462,19 +465,15 @@ template <class T, unsigned int VImageDimension, class TSpace >
 void VectorImageUtils< T, VImageDimension, TSpace >::resize3D( const VectorImageType* imIn, VectorImageType* imOut) 
 {
 
-  unsigned int szXold = imIn->getSizeX();
-  unsigned int szYold = imIn->getSizeY();
-  unsigned int szZold = imIn->getSizeZ();
-
   unsigned int szXnew = imOut->getSizeX();
   unsigned int szYnew = imOut->getSizeY();
   unsigned int szZnew = imOut->getSizeZ();
 
   unsigned int dim = imIn->getDim();
 
-  T fx = (T)(szXold)/(szXnew);
-  T fy = (T)(szYold)/(szYnew);
-  T fz = (T)(szZold)/(szZnew);
+  T dx = imOut->getSpaceX();
+  T dy = imOut->getSpaceY();
+  T dz = imOut->getSpaceZ();
 
   VectorImageType* pos = new VectorImageType(szXnew, szYnew, szZnew, 3);
 
@@ -489,9 +488,9 @@ void VectorImageUtils< T, VImageDimension, TSpace >::resize3D( const VectorImage
           {
 
           // perform the interpolation
-          pos->setValue(x,y,z,0, (T)x*fx);
-          pos->setValue(x,y,z,1, (T)y*fy);
-          pos->setValue(x,y,z,2, (T)z*fz);
+          pos->setValue(x,y,z,0, (T)x*dx);
+          pos->setValue(x,y,z,1, (T)y*dy);
+          pos->setValue(x,y,z,2, (T)z*dz);
      
           }
         }
@@ -505,232 +504,6 @@ void VectorImageUtils< T, VImageDimension, TSpace >::resize3D( const VectorImage
   delete pos;
 
 }
-
-//
-// gaussianFilter 2D
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::gaussianFilter2D(VectorImageType* imIn, T sigma, unsigned int size, VectorImageType* imOut) 
-{
-
-#ifdef DEBUG
-  if ((T)size/2 - (unsigned int)(T)size/2) != 0) 
-  {
-    throw std::invalid_argument("VectorImageUtils::gaussianFilter -> must specify odd filter size");
-  }
-#endif
-  
-  // set up the gaussian filter
-  VectorImageType* filt = new VectorImageType(size, size, 1);
-  T pi = 3.1415926535897;
-  int r = (unsigned int)((T)(size-1)/2);
-
-  for (int y = -r; y < (int)size-r; ++y) 
-    {
-    for (int x = -r; x < (int)size-r; ++x) 
-      {
-      T val = 1/(2*pi*pow(sigma,2))*exp(-1*(pow((T)x,2) + pow((T)y,2))/(2*pow(sigma,2)) );
-      filt->setValue((unsigned int)(x+r),(unsigned int)(y+r),0, val);
-      }
-    }
-
-  //
-  // filter the image (doing this the slow way for now)
-  //
-  int szX = imIn->getSizeX();
-  int szY = imIn->getSizeY();
-  
-  VectorImageType* imResult = new VectorImageType(imIn);
-
-  for (int y = 0; y < szY; ++y) 
-    {
-    for (int x = 0; x < szX; ++x) 
-      {
-      for (unsigned int d = 0; d < imIn->getDim(); ++d) 
-        {
-        T val = 0;
-
-        for (int yy = -r; yy < (int)size-r; ++yy) 
-          {
-          for (int xx = -r; xx < (int)size-r; ++xx) 
-            {
-            
-            // handle border cases
-            int xPos = x+xx;
-            int yPos = y+yy;
-            if (xPos < 0) 
-              {
-              xPos = 0;
-              } 
-            else if (xPos > szX-1) 
-              {
-              xPos = szX-1;
-              }
-            if (yPos < 0) 
-              {
-              yPos = 0;
-              } 
-            else if (yPos > szY-1) 
-              {
-              yPos = szY-1;
-              }
-            
-            // add the value
-            val += (filt->getValue((unsigned int)(xx+r), (unsigned int)(yy+r), 0) * imIn->getValue((unsigned int)(xPos), (unsigned int)(yPos), d));
-            }
-          }
-
-        imResult->setValue((unsigned int)x, (unsigned int)y, d, val);
-        
-        }
-      }
-    }
-  
-  imOut->copy(imResult);
-  
-  // clean up
-  delete imResult;
-  delete filt;
-
-}
-
-//
-// gaussianFilter 3D
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::gaussianFilter3D(VectorImageType* imIn, T sigma, unsigned int size, VectorImageType* imOut) 
-{
-
-  if ( VImageDimension != 3 )
-    {
-    throw std::runtime_error( "gaussianFilter3D only for 3D images." );
-    }
-
-#ifdef DEBUG
-  if ((T)size/2 - (unsigned int)(T)size/2) != 0) {
-    throw std::invalid_argument("VectorImageUtils< T, VImageDimension, TSpace >::gaussianFilter -> must specify odd filter size");
-  }
-#endif
-
-  // set up the gaussian filter
-  VectorImageType* filt = new VectorImageType(size, size, size, 1);
-  T pi = 3.1415926535897;
-  int r = (unsigned int)((T)(size-1)/2);
-
-  for (int z = -r; z < (int)size-r; ++z) 
-    {
-    for (int y = -r; y < (int)size-r; ++y) 
-      {
-      for (int x = -r; x < (int)size-r; ++x) 
-        {
-        T val = 1/pow((T)(2*pi*pow(sigma,2)),(T)1.5)*exp(-1*(pow((T)x,2) + pow((T)y,2) + pow((T)z,2))/(2*pow(sigma,2)) );
-        //float val = pow(sigma,2);
-        filt->setValue((unsigned int)(x+r),(unsigned int)(y+r), (unsigned int)(z+r), 0, val);
-        }
-      }
-    }
-
-  //
-  // filter the image (doing this the slow way for now)
-  //
-  int szX = imIn->getSizeX();
-  int szY = imIn->getSizeY();
-  int szZ = imIn->getSizeZ();
-
-  VectorImageType* imResult = new VectorImageType(imIn);
-
-  for (int z = 0; z < szZ; ++z) 
-    {
-    for (int y = 0; y < szY; ++y) 
-      {
-      for (int x = 0; x < szX; ++x) 
-        {
-        for (unsigned int d = 0; d < imIn->getDim(); ++d) 
-          {
-          T val = 0;
-
-          for (int zz = -r; zz < (int)size-r; ++zz) 
-            {
-            for (int yy = -r; yy < (int)size-r; ++yy) 
-              {
-              for (int xx = -r; xx < (int)size-r; ++xx) 
-                {
-                
-                // handle border cases
-                int xPos = x+xx;
-                int yPos = y+yy;
-                int zPos = z+zz;
-                if (xPos < 0) 
-                  {
-                  xPos = 0;
-                  } 
-                else if (xPos > szX-1) 
-                  {
-                  xPos = szX-1;
-                  }
-                if (yPos < 0) 
-                  {
-                  yPos = 0;
-                  } 
-                else if (yPos > szY-1) 
-                  {
-                  yPos = szY-1;
-                  }
-                if (zPos < 0) 
-                  {
-                  zPos = 0;
-                  } else if (zPos > szZ-1) 
-                  {
-                  zPos = szZ-1;
-                  }
-
-                // add the value
-                val += (filt->getValue((unsigned int)(xx+r), (unsigned int)(yy+r), (unsigned int)(zz+r), 0) * imIn->getValue((unsigned int)(xPos), (unsigned int)(yPos), (unsigned int)(zPos), d));
-                
-                }
-              }
-            }
-          
-          imResult->setValue((unsigned int)x, (unsigned int)y, (unsigned int)z, d, val);
-          
-        }
-      }
-    }
-  }
-
-  imOut->copy(imResult);
-
-  // clean up
-  delete imResult;
-  delete filt;
-
-}
-
-
-//
-// gaussianFilter 
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::gaussianFilter(VectorImageType* imIn, T sigma, unsigned int size, VectorImageType* imOut) 
-{
-  
-  switch ( VImageDimension )
-    {
-    case 1:
-      throw std::runtime_error( "Unsupported dimension for Gaussian filter" );
-      break;
-    case 2:
-      VectorImageUtils< T, VImageDimension, TSpace >::gaussianFilter2D( imIn, sigma, size, imOut );
-      break;
-    case 3:
-      VectorImageUtils< T, VImageDimension, TSpace >::gaussianFilter3D( imIn, sigma, size, imOut );
-      break;
-    default:
-      throw std::runtime_error( "Unsupported dimension for Gaussian filter" );
-    }
-
-}
-
 
 //
 // normalize
@@ -787,7 +560,10 @@ void VectorImageUtils< T, VImageDimension, TSpace >::meanPixelwise(std::vector<V
 // apply ITK affine 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::applyAffineITK(typename ITKAffineTransform<T,2>::Type::Pointer itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue, T originX, T originY) {
+void VectorImageUtils< T, VImageDimension, TSpace >::applyAffineITK(typename ITKAffineTransform<T,2>::Type::Pointer itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue, T originX, T originY) 
+{
+
+  // TODO: Check that this method works appropriately
 
   unsigned int dim = imIn->getDim();
 

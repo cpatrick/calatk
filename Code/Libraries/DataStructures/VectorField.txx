@@ -49,8 +49,6 @@ VectorField< T, VImageDimension, TSpace >::VectorField( const VectorImageType* s
   this->__dataPtr = NULL;
   this->__allocate();
   
-  this->__spaceFactor = source->getSpaceFactor();
-  
   this->__spaceX = source->getSpaceX();
   this->__spaceY = source->getSpaceY();
   this->__spaceZ = source->getSpaceZ();

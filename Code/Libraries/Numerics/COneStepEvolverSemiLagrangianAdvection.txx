@@ -39,8 +39,8 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::Perform
   }
 #endif
   
-  T dt_div_dx = dt/In->getDX();
-  T dt_div_dy = dt/In->getDY();
+  T dt_div_dx = dt/In->getSpaceX();
+  T dt_div_dy = dt/In->getSpaceY();
   
   //
   // do the first order accurate flow
@@ -53,14 +53,14 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::Perform
     for (int x = 0; x < szX; ++x) 
       {
         
-      // get desired coordinates
+      // get the grid coordinates
       T xPos = x - v->getX(x,y)*dt_div_dx;
       T yPos = y - v->getY(x,y)*dt_div_dy;
       
       for (int d = 0; d < dim; d++) 
         {
         // set the new value
-        Inp1->setValue(x,y,d, VectorImageUtils< T, VImageDimension >::interpolatePos(In, xPos, yPos, d) );
+        Inp1->setValue(x,y,d, VectorImageUtils< T, VImageDimension >::interpolatePosGridCoordinates(In, xPos, yPos, d) );
         }
       }
     }
@@ -97,9 +97,9 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::Perform
   }
 #endif
   
-  T dt_div_dx = dt/In->getDX();
-  T dt_div_dy = dt/In->getDY();
-  T dt_div_dz = dt/In->getDZ();
+  T dt_div_dx = dt/In->getSpaceX();
+  T dt_div_dy = dt/In->getSpaceY();
+  T dt_div_dz = dt/In->getSpaceZ();
   
   //
   // do the first order accurate flow
@@ -114,7 +114,7 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::Perform
       for (int x = 0; x < szX; ++x) 
         {
         
-        // get desired coordinates
+        // get desired coordinates in grid coordinates
         T xPos = x - v->getX(x,y,z)*dt_div_dx;
         T yPos = y - v->getY(x,y,z)*dt_div_dy;
         T zPos = z - v->getZ(x,y,z)*dt_div_dz;
@@ -122,7 +122,7 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::Perform
         for (int d = 0; d < dim; d++) 
           {
           // set the new value
-          Inp1->setValue(x,y,z,d, VectorImageUtils< T, VImageDimension >::interpolatePos(In, xPos, yPos, zPos, d) );
+          Inp1->setValue(x,y,z,d, VectorImageUtils< T, VImageDimension >::interpolatePosGridCoordinates(In, xPos, yPos, zPos, d) );
           }
         }
       }
@@ -156,19 +156,19 @@ T COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::ComputeMax
 
   if ( vMax==0 ) vMax = 1; // if everything is zero use a default value
 
-  T dtx = v->getDX()/vMax;
+  T dtx = v->getSpaceX()/vMax;
 
   T dty = std::numeric_limits< T >::infinity();
   T dtz = std::numeric_limits< T >::infinity();
 
   if ( VImageDimension>1 )
     {
-    dty = v->getDY()/vMax;
+    dty = v->getSpaceY()/vMax;
     }
 
   if ( VImageDimension>2 )
     {
-    dtz = v->getDZ()/vMax;
+    dtz = v->getSpaceZ()/vMax;
     }
 
   T minDT = std::min( dtx, dty );

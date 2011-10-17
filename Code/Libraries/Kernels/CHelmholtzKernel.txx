@@ -33,8 +33,8 @@ void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel2D( Ve
   unsigned int szX = pVecImageGraft->getSizeX();
   unsigned int szY = pVecImageGraft->getSizeY();
 
-  T dx = pVecImageGraft->getDX();
-  T dy = pVecImageGraft->getDY();
+  T dx = pVecImageGraft->getSpaceX();
+  T dy = pVecImageGraft->getSpaceY();
 
   T pi = (T)CALATK::PI;
 
@@ -65,9 +65,9 @@ void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel3D( Ve
   unsigned int szY = pVecImageGraft->getSizeY();
   unsigned int szZ = pVecImageGraft->getSizeZ();
 
-  T dx = pVecImageGraft->getDX();
-  T dy = pVecImageGraft->getDY();
-  T dz = pVecImageGraft->getDZ();
+  T dx = pVecImageGraft->getSpaceX();
+  T dy = pVecImageGraft->getSpaceY();
+  T dz = pVecImageGraft->getSpaceZ();
 
   T pi = (T)CALATK::PI;
 

@@ -74,11 +74,13 @@ template <class T, unsigned int VImageDimension, class TSpace >
 void VectorFieldUtils< T, VImageDimension, TSpace>::identityMap2D(VectorFieldType* fld)
 {
 
+  // assumes origin (0,0), pixel centered
+
   unsigned int szX = fld->getSizeX();
   unsigned int szY = fld->getSizeY();
 
-  T dx = 1/(T)(szX-1);
-  T dy = 1/(T)(szY-1);
+  T dx = fld->getSpaceX();
+  T dy = fld->getSpaceY();
 
   T xCur = 0;
   T yCur = 0;
@@ -114,9 +116,9 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::identityMap3D(VectorFieldTyp
   unsigned int szY = fld->getSizeY();
   unsigned int szZ = fld->getSizeZ();
   
-  T dx = 1/(T)(szX-1);
-  T dy = 1/(T)(szY-1);
-  T dz = 1/(T)(szZ-1);
+  T dx = fld->getSpaceX();
+  T dy = fld->getSpaceY();
+  T dz = fld->getSpaceZ();
   
   T xCur = 0;
   T yCur = 0;
@@ -176,35 +178,20 @@ template <class T, unsigned int VImageDimension, class TSpace >
 void VectorFieldUtils< T, VImageDimension, TSpace>::applyMap2D(VectorFieldType* map, VectorImageType* imIn, VectorImageType* imOut) 
 {
 
+#ifdef DEBUG
   unsigned int szX = imIn->getSizeX();
   unsigned int szY = imIn->getSizeY();
 
-#ifdef DEBUG
   // make sure map and image are the same size
   if (map->getSizeX() != szX || map->getSizeY() != szY ||
   imOut->getSizeX() != szX || imOut->getSizeY() != szY) {
   throw std::invalid_argument("VectorFieldUtils::applyMap -> Dimension mismatch");
   }
 #endif
-
-  // set up positions
-  VectorImageType* pos = new VectorImageType(map);
-  for (unsigned int y = 0; y < szY; ++y) 
-    {
-    for (unsigned int x = 0; x < szX; ++x) 
-      {
-
-      pos->setValue(x,y,0, pos->getValue(x,y,0)*(szX-1));
-      pos->setValue(x,y,1, pos->getValue(x,y,1)*(szY-1));
-      
-      }
-    }
   
   // interpolate
-  VectorImageUtils< T, VImageDimension, TSpace>::interpolate(imIn, pos, imOut);
+  VectorImageUtils< T, VImageDimension, TSpace>::interpolate(imIn, map, imOut);
 
-  // clean up
-  delete pos;
 }
 
 //
@@ -214,11 +201,11 @@ template <class T, unsigned int VImageDimension, class TSpace >
 void VectorFieldUtils< T, VImageDimension, TSpace>::applyMap3D(VectorFieldType* map, VectorImageType* imIn, VectorImageType* imOut) 
 {
 
+#ifdef DEBUG
   unsigned int szX = imIn->getSizeX();
   unsigned int szY = imIn->getSizeY();
   unsigned int szZ = imIn->getSizeZ();
-  
-#ifdef DEBUG
+
   // make sure map and image are the same size
   if (map->getSizeX() != szX || map->getSizeY() != szY || map->getSizeZ() != szZ ||
   imOut->getSizeX() != szX || imOut->getSizeY() != szY || imOut->getSizeZ() != szZ) {
@@ -226,28 +213,9 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::applyMap3D(VectorFieldType* 
   }
 #endif
   
-  // set up positions
-  VectorImageType* pos = new VectorImageType(szX, szY, szZ, 3);
-  for (unsigned int z = 0; z < szZ; ++z) 
-    {
-    for (unsigned int y = 0; y < szY; ++y) 
-      {
-      for (unsigned int x = 0; x < szX; ++x) 
-        {
-        
-        pos->setValue(x,y,z,0, map->getX(x,y,z)*(szX-1));
-        pos->setValue(x,y,z,1, map->getY(x,y,z)*(szY-1));
-        pos->setValue(x,y,z,2, map->getZ(x,y,z)*(szZ-1));
-        
-      }
-    }
-  }
-  
   // interpolate
-  VectorImageUtils< T, VImageDimension, TSpace >::interpolate(imIn, pos, imOut);
-  
-  // clean up
-  delete pos;
+  VectorImageUtils< T, VImageDimension, TSpace >::interpolate(imIn, map, imOut);
+
 }
 
 //
@@ -270,104 +238,6 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::applyMap(VectorFieldType* ma
 }
 
 //
-// applyMapFraction, 2D
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorFieldUtils< T, VImageDimension, TSpace>::applyMapFraction2D(VectorFieldType* map, VectorImageType* imIn, T mapTime, T totalTime, VectorImageType* imOut) 
-{
-
-  // collect image info
-  unsigned int szX = imIn->getSizeX();
-  unsigned int szY = imIn->getSizeY();
-
-  // set up the temporary identity (and negative identity) map
-  VectorFieldType* idTemp = new VectorFieldType(szX, szY);
-  VectorFieldUtils< T, VImageDimension, TSpace>::identityMap(idTemp);
-  idTemp->multConst(-1);
-
-  // multiply the displacement by the appropriate fraction
-  VectorFieldType* mapPart = new VectorFieldType(map);
-  mapPart->addImage(idTemp);
-  T frac = mapTime/totalTime;
-  for (unsigned int y = 0; y < szY; ++y) 
-    {
-    for (unsigned int x = 0; x < szX; ++x) 
-      {
-      mapPart->setX(x,y, mapPart->getX(x,y)*frac);
-      mapPart->setY(x,y, mapPart->getY(x,y)*frac);
-      }
-    }
-  VectorFieldUtils< T, VImageDimension, TSpace>::identityMap(idTemp);
-  mapPart->addImage(idTemp);
-  delete idTemp;
-  
-  // apply the map
-  VectorFieldUtils< T, VImageDimension, TSpace>::applyMap(mapPart, imIn, imOut);
-  delete mapPart;
-}
-
-//
-// applyMapFraction, 3D
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorFieldUtils< T, VImageDimension, TSpace>::applyMapFraction3D(VectorFieldType* map, VectorImageType* imIn, T mapTime, T totalTime, VectorImageType* imOut) 
-{
-  
-  // collect image info
-  unsigned int szX = imIn->getSizeX();
-  unsigned int szY = imIn->getSizeY();
-  unsigned int szZ = imIn->getSizeZ();
-  
-  // set up the temporary identity (and negative identity) map
-  VectorFieldType* idTemp = new VectorFieldType(szX, szY, szZ);
-  VectorFieldUtils< T, VImageDimension, TSpace>::identityMap(idTemp);
-  idTemp->multConst(-1);
-  
-  // multiply the displacement by the appropriate fraction
-  VectorFieldType* mapPart = new VectorFieldType(map);
-  mapPart->addImage(idTemp);
-  T frac = mapTime/totalTime;
-  for (unsigned int z = 0; z < szZ; z++) 
-    {
-    for (unsigned int y = 0; y < szY; y++) 
-      {
-      for (unsigned int x = 0; x < szX; x++) 
-        {
-        mapPart->setX(x,y,z, mapPart->getX(x,y,z)*frac);
-        mapPart->setY(x,y,z, mapPart->getY(x,y,z)*frac);
-        mapPart->setZ(x,y,z, mapPart->getZ(x,y,z)*frac);
-        }
-      }
-    }
-  VectorFieldUtils< T, VImageDimension, TSpace>::identityMap(idTemp);
-  mapPart->addImage(idTemp);
-  delete idTemp;
-  
-  // apply the map
-  VectorFieldUtils< T, VImageDimension, TSpace>::applyMap(mapPart, imIn, imOut);
-  delete mapPart;
-}
-
-//
-// applyMapFraction, 2D/3D
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorFieldUtils< T, VImageDimension, TSpace>::applyMapFraction(VectorFieldType* map, VectorImageType* imIn, T mapTime, T totalTime, VectorImageType* imOut) 
-{
-  switch ( VImageDimension )
-    {
-    case 2:
-      applyMapFraction2D( map, imIn, mapTime, totalTime, imOut );
-      break;
-    case 3:
-      applyMapFraction3D( map, imIn, mapTime, totalTime, imOut );
-      break;
-    default:
-      throw std::runtime_error("Dimension not supported for fractional map application.");
-    }
-}
-
-//
 // computeDeterminantOfJacobian, 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
@@ -378,16 +248,8 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian
   unsigned int szX = fld->getSizeX();
   unsigned int szY = fld->getSizeY();
 
-  // NOTE: This is the correct way to calculate dx,dy because
-  //   szX = number of pixels in the x dimension
-  //   let m = total world distance in x
-  //   and spaceX = the world spacing in x
-  //   => szX = m/spaceX
-  //   => szX-1 = (m-spaceX)/spaceX
-  //   => 1/(szX-1) = spaceX/(m-spaceX)
-
-  T dx = 1/(T)(szX-1);
-  T dy = 1/(T)(szY-1);
+  T dx = fld->getSpaceX();
+  T dy = fld->getSpaceY();
 
   VectorImageType* D = imOut;
 
@@ -467,10 +329,9 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian
   unsigned int szY = fld->getSizeY();
   unsigned int szZ = fld->getSizeZ();
   
-  // NOTE: This is the correct way to calculate dx,dy,dz
-  T dx = 1/(T)(szX-1);
-  T dy = 1/(T)(szY-1);
-  T dz = 1/(T)(szZ-1);
+  T dx = fld->getSpaceX();
+  T dy = fld->getSpaceY();
+  T dz = fld->getSpaceZ();
 
   VectorImageType* D = imOut;
   
@@ -605,8 +466,9 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::computeCentralGradient2D( Ve
 
   unsigned int szX = imIn->getSizeX();
   unsigned int szY = imIn->getSizeY();
-  TSpace dx = imIn->getDX();
-  TSpace dy = imIn->getDY();
+
+  TSpace dx = imIn->getSpaceX();
+  TSpace dy = imIn->getSpaceY();
 
   for (unsigned int x = 0; x < szX; ++x) 
     {   
@@ -668,9 +530,10 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::computeCentralGradient3D( Ve
   unsigned int szX = imIn->getSizeX();
   unsigned int szY = imIn->getSizeY();
   unsigned int szZ = imIn->getSizeZ();
-  TSpace dx = imIn->getDX();
-  TSpace dy = imIn->getDY();
-  TSpace dz = imIn->getDZ();
+
+  TSpace dx = imIn->getSpaceX();
+  TSpace dy = imIn->getSpaceY();
+  TSpace dz = imIn->getSpaceZ();
 
   for (unsigned int x = 0; x < szX; ++x) 
     {    
@@ -826,79 +689,6 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensi
     }
 }
 
-//
-// convertMapToPixelScale, 2D
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorFieldUtils< T, VImageDimension, TSpace>::convertMapToPixelScale2D(VectorFieldType* inMap, VectorFieldType* outMap) 
-{
-
-  unsigned int szX = inMap->getSizeX();
-  unsigned int szY = inMap->getSizeY();
-
-  for (unsigned int y = 0; y < szY; ++y) 
-    {
-    for (unsigned int x = 0; x < szX; ++x) 
-      {
-      
-      outMap->setX(x,y, inMap->getX(x,y)*(T)szX);
-      outMap->setY(x,y, inMap->getY(x,y)*(T)szY);
-      
-      }
-    }
-
-}
-
-
-//
-// convertMapToPixelScale, 3D
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorFieldUtils< T, VImageDimension, TSpace>::convertMapToPixelScale3D(VectorFieldType* inMap, VectorFieldType* outMap) 
-{
-  
-  unsigned int szX = inMap->getSizeX();
-  unsigned int szY = inMap->getSizeY();
-  unsigned int szZ = inMap->getSizeZ();
-  
-  for (unsigned int z = 0; z < szZ; ++z) 
-    {
-    for (unsigned int y = 0; y < szY; ++y) 
-      {
-      for (unsigned int x = 0; x < szX; ++x) 
-        {
-        
-        outMap->setX(x,y,z, inMap->getX(x,y,z)*(T)(szX-1));
-        outMap->setY(x,y,z, inMap->getY(x,y,z)*(T)(szY-1));
-        outMap->setZ(x,y,z, inMap->getZ(x,y,z)*(T)(szZ-1));
-        
-        }
-      }
-    }
-  
-}
-
-//
-//  convertMapToPixelScale
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorFieldUtils< T, VImageDimension, TSpace>::convertMapToPixelScale(VectorFieldType* inMap, VectorFieldType* outMap) 
-{
-  switch ( VImageDimension )
-    {
-    case 2:
-      convertMapToPixelScale2D( inMap, outMap); 
-      break;
-    case 3:
-      convertMapToPixelScale3D( inMap, outMap); 
-      break;
-    default:
-      throw std::runtime_error("Dimension not supported for computation of convertMapToPixelScale.");
-    }
-}
-
-
-
 /////////////////////////////
 // ITK Interface Functions //
 /////////////////////////////
@@ -912,10 +702,6 @@ typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils<
 
   unsigned int szX = inMap->getSizeX();
   unsigned int szY = inMap->getSizeY();
-
-  // first convert the map to be on the right scale
-  VectorFieldType* tempMap = new VectorFieldType(inMap);
-  VectorFieldUtils< T, VImageDimension, TSpace>::convertMapToPixelScale(inMap, tempMap);
 
   // initialize the ITK field
   typename ITKDeformationField<T,VImageDimension>::Type::Pointer outField = typename ITKDeformationField<T,VImageDimension>::Type::New();
@@ -954,8 +740,8 @@ typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils<
       idx[1] = y;
 
       typename ITKDeformationPixel<T,VImageDimension>::Type px;
-      px[0] = tempMap->getX(x,y);
-      px[1] = tempMap->getY(x,y);
+      px[0] = inMap->getX(x,y);
+      px[1] = inMap->getY(x,y);
       
       outField->SetPixel(idx, px);
       }
@@ -967,9 +753,6 @@ typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils<
   converter->SetInput(outField);
   converter->Update();
   outField = converter->GetOutput();
-
-  // clean up
-  delete tempMap;
 
   // Copy origin and direction
   outField->SetOrigin(VectorImageUtils< T, VImageDimension, TSpace>::convertITKVectorOrigin(inMap->getOrigin()));
@@ -990,10 +773,6 @@ typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils<
   unsigned int szX = inMap->getSizeX();
   unsigned int szY = inMap->getSizeY();
   unsigned int szZ = inMap->getSizeZ();
-  
-  // first convert the map to be on the right scale
-  VectorFieldType* tempMap = new VectorFieldType(inMap);
-  VectorFieldUtils< T, VImageDimension, TSpace>::convertMapToPixelScale(inMap, tempMap);
   
   // initialize the ITK field
   typename ITKDeformationField<T,VImageDimension>::Type::Pointer outField = ITKDeformationField<T,VImageDimension>::Type::New();
@@ -1038,9 +817,9 @@ typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils<
         idx[2] = z;
         
         typename ITKDeformationPixel<T,VImageDimension>::Type px;
-        px[0] = tempMap->getX(x,y,z);
-        px[1] = tempMap->getY(x,y,z);
-        px[2] = tempMap->getZ(x,y,z);
+        px[0] = inMap->getX(x,y,z);
+        px[1] = inMap->getY(x,y,z);
+        px[2] = inMap->getZ(x,y,z);
         
         outField->SetPixel(idx, px);
         }
@@ -1054,9 +833,6 @@ typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils<
   converter->SetInput(outField);
   converter->Update();
   outField = converter->GetOutput();
-  
-  // clean up
-  delete tempMap;
   
   // Copy origin and direction
   outField->SetOrigin(VectorImageUtils<T,VImageDimension,TSpace>::convertITKVectorOrigin(inMap->getOrigin()));
@@ -1093,6 +869,8 @@ template <class T, unsigned int VImageDimension, class TSpace >
 void VectorFieldUtils< T, VImageDimension, TSpace>::affineITKtoMap( typename ITKAffineTransform<T,2>::Type::Pointer itkAffine, VectorFieldType* mapOut) 
 {
 
+  // TODO: Check that this is correctly implemented
+
   // set up the identity
   VectorFieldType* id = new VectorFieldType(mapOut);
   VectorFieldUtils< T, VImageDimension, TSpace>::identityMap(id);
@@ -1107,6 +885,7 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::affineITKtoMap( typename ITK
   // look for pixels that need fixing
   unsigned int szX = mapOut->getSizeX();
   unsigned int szY = mapOut->getSizeY();
+
   for (unsigned int y = 0; y < szY; ++y) 
     {
     for (unsigned int x = 0; x < szX; ++x) 
@@ -1173,6 +952,8 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::affineITKtoMap( typename ITK
 template <class T, unsigned int VImageDimension, class TSpace >
 void VectorFieldUtils< T, VImageDimension, TSpace>::affineITKtoMap( typename ITKAffineTransform<T,3>::Type::Pointer itkAffine, VectorFieldType* mapOut) 
 {
+
+  // TODO: Check that this is correctly implemented
   
   // Note: need to deal with corners that have no info after transformation.
   // The idea is to transform the ID map and then fix the corners that are
@@ -1284,6 +1065,8 @@ template <class T, unsigned int VImageDimension, class TSpace >
 std::vector<T> VectorFieldUtils< T, VImageDimension, TSpace>::transformPointITK( typename ITKAffineTransform<T,2>::Type::Pointer itkAffine, std::vector<T> coorVector) 
 {
 
+  // TODO: Check that this is correctly implemented
+
   // Get the matrix from itkAffine
   typename ITKAffineTransform<T,VImageDimension>::Type::MatrixType matrix = itkAffine->GetMatrix();
   double m00 = matrix[0][0];
@@ -1316,6 +1099,8 @@ std::vector<T> VectorFieldUtils< T, VImageDimension, TSpace>::transformPointITK(
 template <class T, unsigned int VImageDimension, class TSpace >
 std::vector<T> VectorFieldUtils< T, VImageDimension, TSpace>::transformPointITK( typename ITKAffineTransform<T,3>::Type::Pointer itkAffine, std::vector<T> coorVector) 
 {
+
+  // TODO: Check that this is correctly implemented
   
   // Get the matrix from itkAffine
   typename ITKAffineTransform<T,VImageDimension>::Type::MatrixType matrix = itkAffine->GetMatrix();

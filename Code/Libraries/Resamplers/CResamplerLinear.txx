@@ -25,10 +25,7 @@ void CResamplerLinear< T, VImageDimension >::Downsample( const VectorImageType* 
 
   // now downsample it
 
-  std::cout << "CResamplerLinear: FIXME. Put the blurring back in." << std::endl;
-
-  //VectorImageUtils< T, VImageDimension >::resize( imBlurred, ptrImOut );
-  VectorImageUtils< T, VImageDimension >::resize( ptrImIn, ptrImOut );
+  VectorImageUtils< T, VImageDimension >::resize( imBlurred, ptrImOut );
 
   delete imBlurred;
 

@@ -78,17 +78,17 @@ public:
   static VectorImageType* AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, unsigned int szx, unsigned int szy, unsigned int szz );
 
   /**
-   * Method that performs interpolation on a single point in 2D
+   * Method that performs interpolation on a single point in 2D, using IJ coordinates
    *
    * @param imIn - the source image
    * @param xPos - the desired x position
    * @param yPos - the desired y position
    * @param d - the dimension to work on
    */
-  static T interpolatePos( const VectorImageType* imIn, T xPos, T yPos, unsigned int d);
+  static T interpolatePosGridCoordinates( const VectorImageType* imIn, T xPos, T yPos, unsigned int d);
 
   /**
-   * Method that performs interpolation on a single point in 3D
+   * Method that performs interpolation on a single point in 3D, using IJK coordinates
    *
    * @param imIn - the source image
    * @param xPos - the desired x position
@@ -96,10 +96,10 @@ public:
    * @param zPos - the desired z position
    * @param d - the dimension to work on
    */
-  static T interpolatePos( const VectorImageType* imIn, T xPos, T yPos, T zPos, unsigned int d);
+  static T interpolatePosGridCoordinates( const VectorImageType* imIn, T xPos, T yPos, T zPos, unsigned int d);
 
   /**
-   * Method that interpolates data from an input image to a given coordinate frame
+   * Method that interpolates data from an input image to a given coordinate frame using world coordinates
    *
    * @param imIn - the source image
    * @param pos - an image with 3 vector dimensions. (one for x positions, one for y positions,
@@ -109,7 +109,7 @@ public:
   static void interpolate( const VectorImageType* imIn, const VectorImageType* pos, VectorImageType* imOut);
 
   /**
-   * 2D Method that interpolates data from an input image to a given coordinate frame
+   * 2D Method that interpolates data from an input image to a given coordinate frame using world coordinates
    *
    * @param imIn - the source image
    * @param pos - an image with 3 vector dimensions. (one for x positions, one for y positions,
@@ -119,7 +119,7 @@ public:
   static void interpolate2D( const VectorImageType* imIn, const VectorImageType* pos, VectorImageType* imOut);
 
   /**
-   * 3D Method that interpolates data from an input image to a given coordinate frame
+   * 3D Method that interpolates data from an input image to a given coordinate frame using world coordinates
    *
    * @param imIn - the source image
    * @param pos - an image with 3 vector dimensions. (one for x positions, one for y positions,
@@ -151,36 +151,6 @@ public:
    * @param imOut - return parameter for resized image
    */
   static void resize3D( const VectorImageType* im, VectorImageType* imOut);
-
-  /**
-   * Method that applies a gaussian filter to the image (currently done the slow way)
-   *
-   * @param imIn - the image to be filtered
-   * @param sigma - standard deviation
-   * @param size - size of the window in pixels (must be odd)
-   * @param imOut - the outputImage
-   */
-  static void gaussianFilter(VectorImageType* imIn, T sigma, unsigned int size, VectorImageType* imOut);
-
-  /**
-   * 2D Method that applies a gaussian filter to the image (currently done the slow way)
-   *
-   * @param imIn - the image to be filtered
-   * @param sigma - standard deviation
-   * @param size - size of the window in pixels (must be odd)
-   * @param imOut - the outputImage
-   */
-  static void gaussianFilter2D(VectorImageType* imIn, T sigma, unsigned int size, VectorImageType* imOut);
-
-  /**
-   * 3D Method that applies a gaussian filter to the image (currently done the slow way)
-   *
-   * @param imIn - the image to be filtered
-   * @param sigma - standard deviation
-   * @param size - size of the window in pixels (must be odd)
-   * @param imOut - the outputImage
-   */
-  static void gaussianFilter3D(VectorImageType* imIn, T sigma, unsigned int size, VectorImageType* imOut);
 
   /**
    * Method that normalizes an image in place

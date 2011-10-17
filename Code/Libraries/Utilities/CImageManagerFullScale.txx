@@ -49,7 +49,6 @@ void CImageManagerFullScale< T, VImageDimension, TSpace>::GetImage( SImageInform
       VectorFieldType* mapTrans;
       unsigned int szX, szY, szZ;
       TSpace spX, spY, spZ;
-      TSpace spFactor;
       
       switch ( VImageDimension )
         {
@@ -58,11 +57,9 @@ void CImageManagerFullScale< T, VImageDimension, TSpace>::GetImage( SImageInform
           szY = pCurrentImInfo->pIm->getSizeY();
           spX = pCurrentImInfo->pIm->getSpaceX();
           spY = pCurrentImInfo->pIm->getSpaceY();
-          spFactor = pCurrentImInfo->pIm->getSpaceFactor();
           mapTrans = new VectorFieldType( szX, szY );
           mapTrans->setSpaceX( spX );
           mapTrans->setSpaceY( spY );
-          mapTrans->setSpaceFactor( spFactor );
           break;
         case 3:
           szX = pCurrentImInfo->pIm->getSizeX();
@@ -71,12 +68,10 @@ void CImageManagerFullScale< T, VImageDimension, TSpace>::GetImage( SImageInform
           spX = pCurrentImInfo->pIm->getSpaceX();
           spY = pCurrentImInfo->pIm->getSpaceY();
           spZ = pCurrentImInfo->pIm->getSpaceZ();
-          spFactor = pCurrentImInfo->pIm->getSpaceFactor();
           mapTrans = new VectorFieldType( szX, szY, szZ );
           mapTrans->setSpaceX( spX );
           mapTrans->setSpaceY( spY );
           mapTrans->setSpaceZ( spZ );
-          mapTrans->setSpaceFactor( spFactor );
           break;
         default:
           throw std::runtime_error( "Dimension not supported for transform" );

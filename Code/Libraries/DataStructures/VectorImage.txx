@@ -13,7 +13,6 @@ VectorImage< T, VImageDimension, TSpace >::VectorImage()
   Superclass::__dim = 0;
   Superclass::__length = 0;
   Superclass::__dataPtr = 0;
-  __spaceFactor = 1;
   __spaceX = 0;
   __spaceY = 0;
   __spaceZ = 0;
@@ -29,7 +28,6 @@ VectorImage< T, VImageDimension, TSpace >::VectorImage( unsigned int dim)
   : VectorArray<T,VImageDimension>::VectorArray( dim )
 {
   // all the other data is filled in by the constructor of the superclass
-  __spaceFactor = 1;  // FIXME: there was a default spacing of 0.01 here. Make sure what this is needed for
   __spaceX = 0.0;
   __spaceY = 0.0;
   __spaceZ = 0.0;
@@ -45,7 +43,6 @@ VectorImage< T, VImageDimension, TSpace >::VectorImage(unsigned int sizeX, unsig
   : VectorArray<T,VImageDimension>::VectorArray( sizeX, dim )
 {
   // all the other data is filled in by the constructor of the superclass
-  __spaceFactor = 1;  // FIXME: there was a default spacing of 0.01 here. Make sure what this is needed for
   __spaceX = 1.0;
   __spaceY = 0.0;
   __spaceZ = 0.0;
@@ -61,7 +58,6 @@ VectorImage< T, VImageDimension, TSpace >::VectorImage(unsigned int sizeX, unsig
   : VectorArray<T,VImageDimension>::VectorArray( sizeX, sizeY, dim )
 {
   // all the other data is filled in by the constructor of the superclass
-  __spaceFactor = 1;  // FIXME: there was a default spacing of 0.01 here. Make sure what this is needed for
   __spaceX = 1.0;
   __spaceY = 1.0;
   __spaceZ = 0.0;
@@ -77,7 +73,6 @@ VectorImage< T, VImageDimension, TSpace >::VectorImage(unsigned int sizeX, unsig
   : VectorArray<T,VImageDimension>::VectorArray( sizeX, sizeY, sizeZ, dim )
 {
   // all the other data is filled in by the constructor of the superclass
-  __spaceFactor = 1;  // FIXME: there was a default spacing of 0.01 here. Make sure what this is needed for
   __spaceX = 1.0;
   __spaceY = 1.0;
   __spaceZ = 1.0;
@@ -92,7 +87,6 @@ template <class T, unsigned int VImageDimension, class TSpace >
 VectorImage< T, VImageDimension, TSpace >::VectorImage( const VectorImage* source) 
   : VectorArray<T,VImageDimension>::VectorArray( source )
 {
-  __spaceFactor = source->getSpaceFactor();
   __spaceX = source->getSpaceX();
   __spaceY = source->getSpaceY();
   __spaceZ = source->getSpaceZ();
@@ -122,21 +116,12 @@ template <class T, unsigned int VImageDimension, class TSpace >
 void VectorImage< T, VImageDimension, TSpace >::copy(VectorImage* source) 
 {
   VectorArray<T,VImageDimension>::copy( source );
-  __spaceFactor = source->getSpaceFactor();
   __spaceX = source->getSpaceX();
   __spaceY = source->getSpaceY();
   __spaceZ = source->getSpaceZ();
   __origin = source->getOrigin();
   __direction = source->getDirection();
 
-}
-
-//
-// setSpaceFactor
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImage< T, VImageDimension, TSpace >::setSpaceFactor(TSpace spaceFactor) {
-  __spaceFactor = spaceFactor;
 }
 
 //
@@ -181,33 +166,6 @@ void VectorImage< T, VImageDimension, TSpace >::setDirection( typename ITKVector
 }
 
 //
-// getDX
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-TSpace VectorImage< T, VImageDimension, TSpace >::getDX() const 
-{
-  return __spaceX * __spaceFactor;
-}
-
-//
-// getDY
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-TSpace VectorImage< T, VImageDimension, TSpace >::getDY() const 
-{
-  return __spaceY * __spaceFactor;
-}
-
-//
-// getDZ
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-TSpace VectorImage< T, VImageDimension, TSpace >::getDZ() const
-{
-  return __spaceZ * __spaceFactor;
-}
-
-//
 // getElementVolume
 //
 template <class T, unsigned int VImageDimension, class TSpace >
@@ -216,13 +174,13 @@ T VectorImage< T, VImageDimension, TSpace >::getElementVolume() const
   switch ( VImageDimension )
     {
     case 1:
-      return this->getDX();
+      return this->getSpaceX();
       break;
     case 2:
-      return this->getDX()*this->getDY();
+      return this->getSpaceX()*this->getSpaceY();
       break;
     case 3:
-      return this->getDX()*this->getDY()*this->getDZ();
+      return this->getSpaceX()*this->getSpaceY()*this->getSpaceZ();
       break;
     default:
       throw std::runtime_error( "Unsupported dimension of image element." );
@@ -264,15 +222,6 @@ T VectorImage< T, VImageDimension, TSpace>::computeInnerProduct( const VectorIma
   dInnerProduct *= this->getElementVolume();
 
   return dInnerProduct;
-}
-
-//
-// getSpaceFactor
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-TSpace VectorImage< T, VImageDimension, TSpace >::getSpaceFactor() const
-{
-  return __spaceFactor;
 }
 
 //
