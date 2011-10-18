@@ -17,7 +17,6 @@ void CResamplerLinear< T, VImageDimension >::Downsample( const VectorImageType* 
   // create a new image, which will be blurred
   VectorImageType *imBlurred = new VectorImageType( ptrImIn );
   
-  // set the standard deviation
   this->m_GaussianKernel.SetSigma( this->m_Sigma );
 
   // blur it

@@ -32,8 +32,8 @@ int main(int argc, char **argv)
   ptrImageManager->AddImage( "I0_short.nhdr", 0.0, 0 );
   ptrImageManager->AddImage( "I1_short.nhdr", 1.0, 0 );
 
-  ptrImageManager->AddScale( 0.5, 1 );
-  ptrImageManager->AddScale( 0.25, 2 );
+  ptrImageManager->AddScale( 0.75, 1 );
+  ptrImageManager->AddScale( 0.5, 2 );
 
   ptrImageManager->print( std::cout );
 

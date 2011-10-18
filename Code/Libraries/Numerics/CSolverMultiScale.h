@@ -4,6 +4,8 @@
 #include "CSolver.h"
 #include "CSolverLineSearch.h"
 #include "CImageManagerMultiScale.h"
+#include "VectorImage.h"
+#include "VectorImageUtils.h"
 
 namespace CALATK
 {
@@ -14,6 +16,8 @@ class CSolverMultiScale : public CSolver< T, VImageDimension, TState >
 public:
   
   typedef CSolver< T, VImageDimension, TState > SolverType;
+  typedef VectorImage< T, VImageDimension > VectorImageType;
+  typedef VectorImageUtils< T, VImageDimension > VectorImageUtilsType;
   typedef CImageManagerMultiScale< T, VImageDimension > ImageManagerMultiScaleType;
   typedef typename SolverType::ptrObjectiveFunctionType ptrObjectiveFunctionType;
 

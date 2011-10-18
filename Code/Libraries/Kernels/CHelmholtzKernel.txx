@@ -38,18 +38,18 @@ void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel2D( Ve
 
   T pi = (T)CALATK::PI;
 
-  T k1Eff = 0;
-  T k2Eff = 0;
+  T f1Eff = 0;
+  T f2Eff = 0;
 
   for (unsigned int y = 0; y < szY; ++y) 
     {
-    k2Eff = GetKFromIndex( y, szY, dy );
+    f2Eff = GetFFromIndex( y, szY, dy );
     for (unsigned int x = 0; x < szX; ++x) 
       {
-      k1Eff = GetKFromIndex( x, szX, dx );
+      f1Eff = GetFFromIndex( x, szX, dx );
       T val = m_Gamma + 2*m_Alpha*( 
-        (1 - std::cos(2*pi*k1Eff*dx))/(dx*dx) + 
-        (1 - std::cos(2*pi*k2Eff*dy))/(dy*dy) );
+        (1 - std::cos(2*pi*f1Eff*dx))/(dx*dx) + 
+        (1 - std::cos(2*pi*f2Eff*dy))/(dy*dy) );
       this->m_ptrL->setValue(x,y,0, val*val );
       this->m_ptrLInv->setValue(x,y,0,1.0/(val*val) );
       }
@@ -71,23 +71,23 @@ void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel3D( Ve
 
   T pi = (T)CALATK::PI;
 
-  T k1Eff = 0;
-  T k2Eff = 0;
-  T k3Eff = 0;
+  T f1Eff = 0;
+  T f2Eff = 0;
+  T f3Eff = 0;
 
   for (unsigned int z = 0; z < szZ; ++z) 
     {
-    k3Eff = GetKFromIndex( z, szZ, dz );
+    f3Eff = GetFFromIndex( z, szZ, dz );
     for (unsigned int y = 0; y < szY; ++y) 
       {
-      k2Eff = GetKFromIndex( y, szY, dy );
+      f2Eff = GetFFromIndex( y, szY, dy );
       for (unsigned int x = 0; x < szX; ++x) 
         {
-        k1Eff = GetKFromIndex( x, szX, dx );
+        f1Eff = GetFFromIndex( x, szX, dx );
         T val = m_Gamma + 2*m_Alpha*( 
-          (1 - std::cos(2*pi*k1Eff*dx))/(dx*dx) + 
-          (1 - std::cos(2*pi*k2Eff*dy))/(dy*dy) + 
-          (1 - std::cos(2*pi*k3Eff*dz))/(dz*dz) );
+          (1 - std::cos(2*pi*f1Eff*dx))/(dx*dx) + 
+          (1 - std::cos(2*pi*f2Eff*dy))/(dy*dy) + 
+          (1 - std::cos(2*pi*f3Eff*dz))/(dz*dz) );
         this->m_ptrL->setValue(x,y,z,0, (val*val) );
         this->m_ptrLInv->setValue(x,y,z,0,1.0/(val*val) );
         }

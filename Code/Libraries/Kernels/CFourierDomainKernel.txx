@@ -106,11 +106,11 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures( Vect
 }
 
 template <class T, unsigned int VImageDimension >
-T CFourierDomainKernel< T, VImageDimension >::GetKFromIndex( unsigned int iI, unsigned int iM, T dx )
+T CFourierDomainKernel< T, VImageDimension >::GetFFromIndex( unsigned int iI, unsigned int iM, T dx )
 {
-  // results in an angular frequency w; f = 2*pi*w
+  // results in the frequency f = w/(2*pi)
 
-  T w;
+  T f;
   T LM = iM*dx;
 
   // offset to deal with even and odd index lengths
@@ -125,16 +125,16 @@ T CFourierDomainKernel< T, VImageDimension >::GetKFromIndex( unsigned int iI, un
     MOff = 1;
     }
 
-  if ( iI >= (iM+MOff)/LM )
+  if ( iI >= (iM+MOff)/2 )
     {
-    w = ( iI-iM )/LM;
+    f = ( (int)iI-(int)iM )/LM;
     }
   else
     {
-    w = iI/LM;
+    f = iI/LM;
     }
 
-  return w;
+  return f;
 }
 
 template <class T, unsigned int VImageDimension >

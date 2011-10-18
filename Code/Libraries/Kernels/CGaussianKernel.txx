@@ -28,16 +28,18 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel2D( Vec
   T dx = pVecImageGraft->getSpaceX();
   T dy = pVecImageGraft->getSpaceY();
 
-  T k1Eff = 0;
-  T k2Eff = 0;
+  T pi = (T)CALATK::PI;
+
+  T f1Eff = 0;
+  T f2Eff = 0;
 
   for (unsigned int y = 0; y < szY; ++y) 
     {
-    k2Eff = GetKFromIndex( y, szY, dy );
+    f2Eff = GetFFromIndex( y, szY, dy );
     for (unsigned int x = 0; x < szX; ++x) 
       {
-      k1Eff = GetKFromIndex( x, szX, dx );
-      T val = exp( -m_Sigma*m_Sigma*( k1Eff*k1Eff + k2Eff*k2Eff )/2 );
+      f1Eff = GetFFromIndex( x, szX, dx );
+      T val = exp( -m_Sigma*m_Sigma*( 4*pi*pi*(f1Eff*f1Eff + f2Eff*f2Eff )/2 ) );
       this->m_ptrL->setValue(x,y,0, val );
       this->m_ptrLInv->setValue(x,y,0,1.0/(val) );
       }
@@ -57,20 +59,22 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel3D( Vec
   T dy = pVecImageGraft->getSpaceY();
   T dz = pVecImageGraft->getSpaceZ();
 
-  T k1Eff = 0;
-  T k2Eff = 0;
-  T k3Eff = 0;
+  T pi = (T)CALATK::PI;
+
+  T f1Eff = 0;
+  T f2Eff = 0;
+  T f3Eff = 0;
 
   for (unsigned int z = 0; z < szZ; ++z) 
     {
-    k3Eff = GetKFromIndex( z, szZ, dz );
+    f3Eff = GetFFromIndex( z, szZ, dz );
     for (unsigned int y = 0; y < szY; ++y) 
       {
-      k2Eff = GetKFromIndex( y, szY, dy );
+      f2Eff = GetFFromIndex( y, szY, dy );
       for (unsigned int x = 0; x < szX; ++x) 
         {
-        k1Eff = GetKFromIndex( x, szX, dx );
-        T val = exp( -m_Sigma*m_Sigma*( k1Eff*k1Eff + k2Eff*k2Eff + k3Eff*k3Eff)/2 );
+        f1Eff = GetFFromIndex( x, szX, dx );
+        T val = exp( -m_Sigma*m_Sigma*( 4*pi*pi*( f1Eff*f1Eff + f2Eff*f2Eff + f3Eff*f3Eff)/2 ) );
         this->m_ptrL->setValue(x,y,z,0, val );
         this->m_ptrLInv->setValue(x,y,z,0,1.0/(val) );
         }

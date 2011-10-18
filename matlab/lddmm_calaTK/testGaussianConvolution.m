@@ -17,7 +17,7 @@ if ( 0 )
   
 end
 
-if ( 1 )
+if ( 0 )
   
   M = rand( [50 50 50] );
   G = gaussianConvolutionMatrix3D( 50, 50, 50, 1, 0.1, 0.1, 5 );
@@ -27,4 +27,22 @@ if ( 1 )
   sum( M(:) )
   sum( imR(:) )
   
+end
+
+if ( 1 )
+    
+    M = nrrdLoad('../../TestingData/I0_short.nhdr' );
+    %M = zeros( 51, 51 );
+    %M(:,26) = 1;
+    
+    G = gaussianConvolutionMatrix( size(M,1), size(M,2), 0.02, 0.02, 0.05 );
+    
+    imF = real( ifft2( fft2( M ).*G ) );
+    
+    figure
+    imagesc( M ), colorbar
+    
+    figure
+    imagesc( imF ), colorbar
+    
 end

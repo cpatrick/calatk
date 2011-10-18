@@ -37,6 +37,8 @@
 int main(int argc, char **argv)
 {
   typedef CALATK::VectorImageUtils< TFLOAT, DIMENSION > VectorImageUtilsType;
+  typedef CALATK::VectorImage< TFLOAT, DIMENSION > VectorImageType;
+
   typedef CALATK::CImageManagerMultiScale< TFLOAT, DIMENSION > ImageManagerMultiScaleType;
   typedef CALATK::CImageManagerMultiScale< TFLOAT, DIMENSION >::SImageInformation SImageInformation;
   
@@ -60,6 +62,18 @@ int main(int argc, char **argv)
   imageManager.SelectScale( 2 );
   imageManager.GetPointerToSubjectImageInformationByIndex( pImInfo, 0, 0 );
   VectorImageUtilsType::writeFileITK( pImInfo->pIm, "im-scale-2.nrrd" );
+
+  VectorImageType* pIm = VectorImageUtilsType::readFileITK( "I0_short.nhdr" );
+  VectorImageType* pImBlurred = new VectorImageType( pIm );
+
+  typedef CALATK::CGaussianKernel< TFLOAT, DIMENSION > GaussianKernelType;
+  GaussianKernelType gaussianKernel;
+
+  gaussianKernel.SetSigma( 0.1 );
+  gaussianKernel.ConvolveWithKernel( pImBlurred );
+
+  VectorImageUtilsType::writeFileITK( pImBlurred, "imBlurred.nrrd" );
+  VectorImageUtilsType::writeFileITK( gaussianKernel.GetKernel(), "imKernel.nrrd" );
 
   return EXIT_SUCCESS;
 }

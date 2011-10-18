@@ -551,7 +551,7 @@ T CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState
 
     }
 
-  T dVelocitySquareNorm = dEnergy;
+  //T dVelocitySquareNorm = dEnergy;
 
   // now add the contributions of the data terms
   
@@ -576,7 +576,7 @@ T CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState
 
   dEnergy += dImageNorm;
 
-  std::cout << "E = " << dEnergy << "; dV = " << dVelocitySquareNorm << "; dI = " << dImageNorm << std::endl;
+  //std::cout << "E = " << dEnergy << "; dV = " << dVelocitySquareNorm << "; dI = " << dImageNorm << std::endl;
 
   // write out the velocity, the image and the adjoint (everything basically)
 

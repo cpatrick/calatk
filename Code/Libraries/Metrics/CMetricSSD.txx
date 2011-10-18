@@ -26,8 +26,6 @@ T CMetricSSD< T, VImageDimension >::GetMetric( VectorImageType* pI0, VectorImage
   // needs to be a proper integral so multiply by volume of element
   dMetric *= pI0->getElementVolume();
 
-  std::cout << "Element volume = " << pI0->getElementVolume() << std::endl;
-
   return dMetric;
 
 }

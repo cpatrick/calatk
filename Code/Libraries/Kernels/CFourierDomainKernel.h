@@ -67,10 +67,10 @@ public:
 protected:
 
   /** 
-   * Converts from a linear index to the angular frequency omega 
+   * Converts from a linear index to the frequency f
    * Properly handles even and odd index lengths (to be used with the FFT)
    */
-  static T GetKFromIndex( unsigned int iI, unsigned int iM, T dx );
+  static T GetFFromIndex( unsigned int iI, unsigned int iM, T dx );
   
   void ConfirmKernelsWereComputed();
   void ConfirmMemoryWasAllocated();

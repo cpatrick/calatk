@@ -1,6 +1,6 @@
 function k = getKFromIndex( iI, M, dx )
 
-% gives the omegas (not frequency, f = 2*pi*omega)
+% gives the frequency
 
 LM = M*dx;
 
