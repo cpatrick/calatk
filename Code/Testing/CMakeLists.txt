@@ -3,6 +3,9 @@
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
 set(test_temp_dir ${CALATK_BINARY_DIR}/Testing/Temporary)
 set(test_input_dir ${CALATK_SOURCE_DIR}/TestingData)
+set(test_bin_dir ${CALATK_BINARY_DIR}/Code/Testing)
+
+SET(ALGORITHMS_TESTS_FILTERING ${test_bin_dir}/testDriverFiltering)
 
 #
 # Define a function for adding a test with an optional set of lbraries to link against
@@ -48,12 +51,53 @@ FUNCTION(add_ctest_test testName)
   ENDIF(BUILD_TESTING AND compile_${testName})
 ENDFUNCTION(add_ctest_test)
 
+#
+# Define a function that adds a ctest test with image comparison only if the executable is turned on
+#
+FUNCTION(add_ctest_test_image_compare testName testDriver imIn imOut imBaseline)
+  IF(BUILD_TESTING AND compile_${testName})
+    add_test(${testName} ${testDriver}
+      --compare ${test_input_dir}/Baseline/${imBaseline}
+                ${test_temp_dir}/${imOut}
+      ${testName}
+      ${test_input_dir}/${imIn}
+      ${test_temp_dir}/${imOut}
+      ${ARGN}
+      )
+  ENDIF(BUILD_TESTING AND compile_${testName})
+ENDFUNCTION(add_ctest_test_image_compare)
+
 #------------------------------------------------------------------------------
 # New tests, added during the redevelopment of FRAT -> CALATK
 #
 
-add_test_executable(imageDataStructureTest CALATK ITKCommon ITKIO)
-add_ctest_test(imageDataStructureTest ${test_temp_dir})
+# Set up source code files for all the tests which are processed by the testDriver
+
+SET(testDriverFiltering_SRCS
+calatkGaussianBlurringTest.cxx
+)
+
+ADD_EXECUTABLE(testDriverFiltering testDriverFiltering.cxx ${testDriverFiltering_SRCS})
+TARGET_LINK_LIBRARIES(testDriverFiltering CALATK ITKCommon ITKIO)
+
+add_ctest_test_image_compare(calatkGaussianBlurringTest ${ALGORITHMS_TESTS_FILTERING} I0_short.nhdr I0_blurred.nrrd I0-blurred-sig01-baseline.nrrd)
+
+# Set up all the test which go through the standard (non-test-driver) testing mechanism
+
+add_test_executable(calatkImageDataStructureTest CALATK ITKCommon ITKIO)
+add_ctest_test(calatkImageDataStructureTest ${test_temp_dir})
+
+
+
+
+#add_ctest_test(writeFileITKTest
+#  # 2D input
+#  ${test_input_dir}/2Dsample.mha
+#  # 3D input
+#  ${test_input_dir}/3Dsample.mha
+#  # output dir
+#  ${test_temp_dir}
+
 
 #------------------------------------------------------------------------------
 # Add test executables without ctest tests

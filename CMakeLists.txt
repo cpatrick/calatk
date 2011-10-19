@@ -86,6 +86,7 @@ SET(CALATK_INCLUDE_DIRS
   ${CMAKE_SOURCE_DIR}/Code/Libraries/States
   ${CMAKE_SOURCE_DIR}/Code/Libraries/Resamplers
   ${CMAKE_SOURCE_DIR}/Code/Libraries/ObjectiveFunctions
+  ${CMAKE_SOURCE_DIR}/Code/External/ITKTestingCommands
 #  ${CMAKE_SOURCE_DIR}/Code/Libraries/Utilities/thrpool/src
 #  ${CMAKE_SOURCE_DIR}/Code/Applications/LDDMM
 #  ${CMAKE_SOURCE_DIR}/Code/Applications/TimeSeries
