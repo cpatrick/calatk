@@ -4,6 +4,7 @@
 #include <stdexcept>
 
 #include "COneStepEvolver.h"
+#include "VectorFieldUtils.h"
 
 /**
  * COneStepEvolverSemiLagrangianAdvection.h -- implementation of a one-step advection 

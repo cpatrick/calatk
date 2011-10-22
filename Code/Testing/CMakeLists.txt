@@ -6,6 +6,7 @@ set(test_input_dir ${CALATK_SOURCE_DIR}/TestingData)
 set(test_bin_dir ${CALATK_BINARY_DIR}/Code/Testing)
 
 SET(ALGORITHMS_TESTS_FILTERING ${test_bin_dir}/testDriverFiltering)
+SET(ALGORITHMS_TESTS_FILTERING ${test_bin_dir}/testDriverPDESolver)
 
 #
 # Define a function for adding a test with an optional set of lbraries to link against
@@ -77,10 +78,23 @@ SET(testDriverFiltering_SRCS
 calatkGaussianBlurringTest.cxx
 )
 
+SET(testDriverPDESolver_SRCS
+calatkAdvectionTest.cxx
+)
+
 ADD_EXECUTABLE(testDriverFiltering testDriverFiltering.cxx ${testDriverFiltering_SRCS})
 TARGET_LINK_LIBRARIES(testDriverFiltering CALATK ITKCommon ITKIO)
 
 add_ctest_test_image_compare(calatkGaussianBlurringTest ${ALGORITHMS_TESTS_FILTERING} I0_short.nhdr I0_blurred.nrrd I0-blurred-sig01-baseline.nrrd)
+
+ADD_EXECUTABLE(testDriverPDESolver testDriverPDESolver.cxx ${testDriverPDESolver_SRCS})
+TARGET_LINK_LIBRARIES(testDriverPDESolver CALATK ITKCommon ITKIO)
+
+add_ctest_test_image_compare(calatkAdvectionTest ${ALGORITHMS_TESTS_PDESOLVER} I0_short.nhdr I0_advected.nrrd I0-advected-baseline-x.nrrd 1 0 0.25)
+
+add_ctest_test_image_compare(calatkAdvectionTest ${ALGORITHMS_TESTS_PDESOLVER} I0_short.nhdr I0_advected.nrrd I0-advected-baseline-y.nrrd 0 1 0.25)
+
+add_ctest_test_image_compare(calatkAdvectionTest ${ALGORITHMS_TESTS_PDESOLVER} I0_short.nhdr I0_advected.nrrd I0-advected-baseline-diagonal.nrrd 1 1 0.25)
 
 # Set up all the test which go through the standard (non-test-driver) testing mechanism
 
