@@ -557,6 +557,73 @@ void VectorImageUtils< T, VImageDimension, TSpace >::meanPixelwise(std::vector<V
 }
 
 //
+// multiplyVectorByImageDimensionInPlace, 2D
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+void VectorImageUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensionInPlace2D( VectorImageType* imIn, unsigned int dim, VectorImageType* imOut )
+{
+  unsigned int szX = imIn->getSizeX();
+  unsigned int szY = imIn->getSizeY();
+  unsigned int outDim = imOut->getDim();
+
+  for ( unsigned int x=0; x<szX; ++x )
+    {
+    for ( unsigned int y=0; y<szY; ++y )
+      {
+      for ( unsigned int d=0; d<outDim; ++d )
+        {
+        imOut->setValue( x, y, d, imOut->getValue( x, y, d )*imIn->getValue( x, y, dim ) );
+        }
+      }
+    }
+}
+
+//
+// multiplyVectorByImageDimensionInPlace, 3D
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+void VectorImageUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensionInPlace3D( VectorImageType* imIn, unsigned int dim, VectorImageType* imOut )
+{
+  unsigned int szX = imIn->getSizeX();
+  unsigned int szY = imIn->getSizeY();
+  unsigned int szZ = imIn->getSizeZ();
+  unsigned int outDim = imOut->getDim();
+
+  for ( unsigned int x=0; x<szX; ++x )
+    {
+    for ( unsigned int y=0; y<szY; ++y )
+      {
+      for ( unsigned int z=0; z<szZ; ++z )
+        {
+        for ( unsigned int d=0; d<outDim; ++d )
+          {
+          imOut->setValue( x, y, z, d, imOut->getValue( x, y, z, d )*imIn->getValue( x, y, z, dim ) );
+          }
+        }
+      }
+    }
+}
+
+//
+// multiplyVectorByImageDimensionInPlace, 2D/3D
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+void VectorImageUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensionInPlace( VectorImageType* imIn, unsigned int dim, VectorImageType* imOut )
+{
+  switch ( VImageDimension )
+    {
+    case 2:
+      multiplyVectorByImageDimensionInPlace2D( imIn, dim, imOut );
+      break;
+    case 3:
+      multiplyVectorByImageDimensionInPlace3D( imIn, dim, imOut );
+      break;
+    default:
+      throw std::runtime_error("Dimension not supported for multiplication of vector image with individual dimension of a vector image.");
+    }
+}
+
+//
 // apply ITK affine 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >

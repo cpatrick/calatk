@@ -29,7 +29,16 @@ public:
    * @params pI0 - pointer to image 0 which is the one influenced by the transform
    * @params pI1 - pointer to image 1 (to be compared with image 0), which is the image to be compared to
    */
-  virtual T GetMetric( VectorImageType* pI0, VectorImageType* pI1 ) = 0;
+  virtual T GetMetric( const VectorImageType* pI0, const VectorImageType* pI1 ) const = 0;
+
+  /**
+   * Get value of the similarity metric with respect to two images, but do not sum it over all space but return the local
+   * values. For SSD of scalar images this would amount to computing the sum of squared intensity differences at every point in space
+   *
+   * @params pI0 - pointer to image 0 which is the one influenced by the transform
+   * @params pI1 - pointer to image 1 (to be compared with image 0), which is the image to be compared to
+   */
+  virtual void GetLocalizedMetric( VectorImageType* pLocalizedMetric, const VectorImageType* pI0, const VectorImageType* pI1 ) = 0;
   
   /**
    * Get adjoint difference implied by an image difference.
@@ -43,7 +52,7 @@ public:
    * @params pIEstimated - pointer to image 0 which is the one influenced by the transform
    * @params pIMeasured - pointer to image 1 (to be compared with image 0), which is the image to be compared to
    */
-  virtual void GetAdjointMatchingDifferenceImage( VectorImageType* pAdjointDifference, VectorImageType* pIEstimated, VectorImageType* pIMeasured ) = 0;
+  virtual void GetAdjointMatchingDifferenceImage( VectorImageType* pAdjointDifference, const VectorImageType* pIEstimated, const VectorImageType* pIMeasured ) = 0;
 
   virtual ~CMetric()
   {

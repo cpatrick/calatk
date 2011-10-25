@@ -627,68 +627,6 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::computeCentralGradient( Vect
     }
 }
 
-//
-// multiplyVectorByImageDimensionInPlace, 2D
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorFieldUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensionInPlace2D( VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldInOut )
-{
-  unsigned int szX = imIn->getSizeX();
-  unsigned int szY = imIn->getSizeY();
-
-  for ( unsigned int x=0; x<szX; ++x )
-    {
-    for ( unsigned int y=0; y<szY; ++y )
-      {
-      fieldInOut->setX( x, y, fieldInOut->getX( x, y )*imIn->getValue( x, y, dim ) );
-      fieldInOut->setY( x, y, fieldInOut->getY( x, y )*imIn->getValue( x, y, dim ) );
-      }
-    }
-}
-
-//
-// multiplyVectorByImageDimensionInPlace, 3D
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorFieldUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensionInPlace3D( VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldInOut )
-{
-  unsigned int szX = imIn->getSizeX();
-  unsigned int szY = imIn->getSizeY();
-  unsigned int szZ = imIn->getSizeZ();
-
-  for ( unsigned int x=0; x<szX; ++x )
-    {
-    for ( unsigned int y=0; y<szY; ++y )
-      {
-      for ( unsigned int z=0; z<szZ; ++z )
-        {
-        fieldInOut->setX( x, y, z, fieldInOut->getX( x, y, z )*imIn->getValue( x, y, z, dim ) );
-        fieldInOut->setY( x, y, z, fieldInOut->getY( x, y, z )*imIn->getValue( x, y, z, dim ) );
-        fieldInOut->setZ( x, y, z, fieldInOut->getZ( x, y, z )*imIn->getValue( x, y, z, dim ) );
-        }
-      }
-    }
-}
-
-//
-// multiplyVectorByImageDimensionInPlace, 2D/3D
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorFieldUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensionInPlace( VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldInOut )
-{
-  switch ( VImageDimension )
-    {
-    case 2:
-      multiplyVectorByImageDimensionInPlace2D( imIn, dim, fieldInOut );
-      break;
-    case 3:
-      multiplyVectorByImageDimensionInPlace3D( imIn, dim, fieldInOut );
-      break;
-    default:
-      throw std::runtime_error("Dimension not supported for multiplication of vector image with individual dimension of a vector image.");
-    }
-}
-
 /////////////////////////////
 // ITK Interface Functions //
 /////////////////////////////

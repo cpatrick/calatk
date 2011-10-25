@@ -1,10 +1,7 @@
-- Create an image-based subclass of CMetric
 - Allow for independent metrics for every measurement point in CObjectiveFunction (this will allow for example to do registration based formulations, which can strore intermediate values whenever they are called). But also allow just to specify one which is then used for all datapoints
 - Add a virtual member function for metric gradient (with respect to image, because we work with the adjoint formulations here)
-- Allow for proper intializations for the objective functions (based on an externally defined state), e.g., needed to support efficient multi-scaling
-- Should we make the time-discretization information part of the state? (probably not)
-- Implement multi-scale
 - Implement command line and config file parsing
 - Implement kernel factory
 - Add concept checking to make sure the classes are only instantiated for appropriate states and floating point types.
-- Come up with a general method to handle the fftw plans 
+
+- Check that all the cellwise multiplications and such properly deal with vector-valued images.

@@ -87,13 +87,6 @@ SET(CALATK_INCLUDE_DIRS
   ${CMAKE_SOURCE_DIR}/Code/Libraries/Resamplers
   ${CMAKE_SOURCE_DIR}/Code/Libraries/ObjectiveFunctions
   ${CMAKE_SOURCE_DIR}/Code/External/ITKTestingCommands
-#  ${CMAKE_SOURCE_DIR}/Code/Libraries/Utilities/thrpool/src
-#  ${CMAKE_SOURCE_DIR}/Code/Applications/LDDMM
-#  ${CMAKE_SOURCE_DIR}/Code/Applications/TimeSeries
-#  ${CMAKE_SOURCE_DIR}/Code/Applications/LongitudinalAtlasBuilder
-#  ${CMAKE_SOURCE_DIR}/Code/Applications/AtlasBuilder
-#  ${CMAKE_SOURCE_DIR}/Code/Applications/CALATKUtils
-  # Common config file
   ${CMAKE_BINARY_DIR}
   # Casey's Code
   ${CMAKE_SOURCE_DIR}/Utilities/DTIProcess/Library

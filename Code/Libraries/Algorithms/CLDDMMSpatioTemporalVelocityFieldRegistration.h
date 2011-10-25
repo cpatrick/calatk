@@ -1,5 +1,5 @@
-#ifndef C_LDDMM_SPATIO_TEMPORAL_VELOCITY_FIELD_H
-#define C_LDDMM_SPATIO_TEMPORAL_VELOCITY_FIELD_H
+#ifndef C_LDDMM_SPATIO_TEMPORAL_VELOCITY_FIELD_REGISTRATION_H
+#define C_LDDMM_SPATIO_TEMPORAL_VELOCITY_FIELD_REGISTRATION_H
 
 #include "CStateSpatioTemporalVelocityField.h"
 #include "CLDDMMSpatioTemporalVelocityFieldObjectiveFunction.h"
@@ -36,16 +36,12 @@ public:
   CLDDMMSpatioTemporalVelocityFieldRegistration();
   ~CLDDMMSpatioTemporalVelocityFieldRegistration();
 
-  const VectorFieldType* GetMap( T dTime );
-  const VectorImageType* GetImage( T dTime );
-
 protected:
 
   void SetDefaultMetricPointer();
   void SetDefaultImageManagerPointer();
   void SetDefaultKernelPointer();
   void SetDefaultEvolverPointer();
-  void SetDefaultObjectiveFunctionPointer();
   void SetDefaultSolverPointer();
 
 private:

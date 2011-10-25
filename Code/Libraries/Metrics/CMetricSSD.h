@@ -21,9 +21,12 @@ public:
   CMetricSSD();
   ~CMetricSSD();
 
-  T GetMetric( VectorImageType* pI0, VectorImageType* pI1 );
-  void GetAdjointMatchingDifferenceImage( VectorImageType* pAdjointDifference, VectorImageType* pIEstimated, VectorImageType* pIMeasured );
+  T GetMetric( const VectorImageType* pI0, const VectorImageType* pI1 ) const;
+  void GetLocalizedMetric( VectorImageType* pLocalizedMetric, const VectorImageType* pI0, const VectorImageType* pI1 );
+  void GetAdjointMatchingDifferenceImage( VectorImageType* pAdjointDifference, const VectorImageType* pIEstimated, const VectorImageType* pIMeasured );
 protected:
+  void GetLocalizedMetric2D( VectorImageType* pLocalizedMetric, const VectorImageType* pI0, const VectorImageType* pI1 );
+  void GetLocalizedMetric3D( VectorImageType* pLocalizedMetric, const VectorImageType* pI0, const VectorImageType* pI1 );
 private:
 };
 

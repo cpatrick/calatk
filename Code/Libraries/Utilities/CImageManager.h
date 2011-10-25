@@ -169,7 +169,7 @@ public:
    * Convenience method which returns a pointer to the first stored image. 
    * This can be used for example to initialize data sizes for upsampling
    */
-  const VectorImageType* GetGraftImagePointer();
+  const VectorImageType* GetGraftImagePointer( unsigned int uiSubjectIndex = 0 );
 
   /** 
    * Prints the state
