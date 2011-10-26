@@ -47,11 +47,15 @@ int main(int argc, char **argv)
   const regType::VectorImageType* ptrIm = new regType::VectorImageType( lddmm.GetImage( 1.0 ) );
   const regType::VectorImageType* ptrT1 = new regType::VectorImageType( lddmm.GetImageT( 1.0 ) );
   const regType::VectorImageType* ptrT2 = new regType::VectorImageType( lddmm.GetImageT( 2.0 ) );
-  const regType::VectorFieldType* ptrMap = new regType::VectorFieldType( lddmm.GetMap( 1.0 ) );
+  const regType::VectorFieldType* ptrMap0 = new regType::VectorFieldType( lddmm.GetMap( 0.0 ) );
+  const regType::VectorFieldType* ptrMap1 = new regType::VectorFieldType( lddmm.GetMap( 1.0 ) );
+  const regType::VectorFieldType* ptrMap2 = new regType::VectorFieldType( lddmm.GetMap( 2.0 ) );
   const regType::VectorFieldType* ptrMapFT = new regType::VectorFieldType( lddmm.GetMapFromTo( 1.0, 2.0 ) );
 
   VectorImageUtilsType::writeFileITK( ptrIm, "res-imOut.nrrd" );
-  VectorImageUtilsType::writeFileITK( ptrMap, "res-mapOut.nrrd" );
+  VectorImageUtilsType::writeFileITK( ptrMap0, "res-map0Out.nrrd" );
+  VectorImageUtilsType::writeFileITK( ptrMap1, "res-map1Out.nrrd" );
+  VectorImageUtilsType::writeFileITK( ptrMap2, "res-map2Out.nrrd" );
   VectorImageUtilsType::writeFileITK( ptrMapFT, "res-map12.nrrd" );
 
   VectorImageUtilsType::writeFileITK( ptrT1, "res-T1.nrrd" );
@@ -60,7 +64,9 @@ int main(int argc, char **argv)
   delete ptrIm;
   delete ptrT1;
   delete ptrT2;
-  delete ptrMap;
+  delete ptrMap0;
+  delete ptrMap1;
+  delete ptrMap2;
   delete ptrMapFT;
 
   return EXIT_SUCCESS;

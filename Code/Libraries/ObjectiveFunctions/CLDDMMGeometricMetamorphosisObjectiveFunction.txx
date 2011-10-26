@@ -232,6 +232,10 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >
   GetMap( m_ptrMapTmp, dTime );
   // now compute the image by interpolation
   LDDMMUtils< T, VImageDimension >::applyMap( m_ptrMapTmp, ptrI0, ptrIm );
+
+  std::cout << "DEBUG: remove" << std::endl;
+  VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( this->m_pState->GetVectorPointerToVectorFieldPointer(), "vs.nrrd" );
+
 }
 
 template <class T, unsigned int VImageDimension, class TState >

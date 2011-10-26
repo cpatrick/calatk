@@ -70,8 +70,8 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
           }
 
         // now it should be small enough, so enter the image information here
-        T deltaT = iter->dTime - dLastTimePoint;
-        assert( deltaT <= dDesiredTimeStep + dTolerance );
+        //T deltaT = iter->dTime - dLastTimePoint;
+        assert(  iter->dTime - dLastTimePoint <= dDesiredTimeStep + dTolerance );
 
         STimePoint currentTimePoint = *iter;
         currentTimePoint.bIsMeasurementPoint = true;
@@ -249,6 +249,8 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
 template <class T, unsigned int VImageDimension, class TState >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo )
 {
+  
+  std::cout << "Computing map from " << dTimeFrom << " to " << dTimeTo << std::endl;
 
   if ( dTimeFrom < m_vecTimeDiscretization[0].dTime || dTimeTo > m_vecTimeDiscretization.back().dTime )
     {
@@ -279,10 +281,12 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
       if ( dCurrentTime + this->m_vecTimeIncrements[ iI ] > dTimeFrom )
         {
         // evolve for an increment
+        std::cout << "partially evolve for " << dTimeFrom - dCurrentTime << std::endl;
         this->m_ptrEvolver->SolveForward( this->m_pState->GetVectorFieldPointer( iI ), ptrMapIn, ptrMapOut, ptrMapTmp, dTimeFrom-dCurrentTime );
         // for next step, copy
         ptrMapIn->copy( ptrMapOut );
         uiStart = iI+1;
+        dCurrentTime += this->m_vecTimeIncrements[ iI ];
         break;
         }
       else
@@ -290,8 +294,14 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
         // just skip ahead
         dCurrentTime += this->m_vecTimeIncrements[ iI ];
         }
+      if ( dCurrentTime >= dTimeFrom )
+        {
+        break;
+        }
       }
     }
+
+  std::cout << "fast forwarded to " << dCurrentTime << std::endl;
 
   // now we can move ahead
 
@@ -299,11 +309,15 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
     {
     if ( dCurrentTime + this->m_vecTimeIncrements[ iI ] < dTimeTo )
       {
+      std::cout << "evolved for " << this->m_vecTimeIncrements[ iI ] << std::endl;
       this->m_ptrEvolver->SolveForward( this->m_pState->GetVectorFieldPointer( iI ), ptrMapIn, ptrMapOut, ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
+      dCurrentTime += this->m_vecTimeIncrements[ iI ];
       }
     else
       {
+      std::cout << "finally partially evolved for " << dTimeTo-dCurrentTime << std::endl;
       this->m_ptrEvolver->SolveForward( this->m_pState->GetVectorFieldPointer( iI ), ptrMapIn, ptrMapOut, ptrMapTmp, dTimeTo-dCurrentTime );
+      dCurrentTime = dTimeTo;
       break;
       }
     // for next step, copy

@@ -362,9 +362,7 @@ void CImageManager< T, VImageDimension, TSpace>::GetPointerToSubjectImageInforma
   SubjectInformationType* pSubjectInfo;
   this->GetImagesWithSubjectIndex( pSubjectInfo, uiSubjectIndex );
 
-  unsigned int uiNrOfImages = pSubjectInfo->size();
-
-  assert( uiNrOfImages>uiTimeIndex );
+  assert( pSubjectInfo->size()>uiTimeIndex );
 
   // get information from the first image to figure out the dimensions
   this->GetPointerToSubjectImageInformationBySubjectInformationAndIndex( pImInfo, pSubjectInfo, uiTimeIndex );
