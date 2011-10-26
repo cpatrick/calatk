@@ -12,22 +12,6 @@ CLDDMMGrowthModelRegistration< T, VImageDimension, TState >::~CLDDMMGrowthModelR
 }
 
 template < class T, unsigned int VImageDimension, class TState >
-const typename CLDDMMGrowthModelRegistration< T, VImageDimension, TState >::VectorFieldType* 
-CLDDMMGrowthModelRegistration< T, VImageDimension, TState >::GetMap( T dTime )
-{
-  this->m_ptrObjectiveFunction->GetMap( this->m_ptrMap, dTime );
-  return this->m_ptrMap;
-}
-
-template < class T, unsigned int VImageDimension, class TState >
-const typename CLDDMMGrowthModelRegistration< T, VImageDimension, TState >::VectorImageType* 
-CLDDMMGrowthModelRegistration< T, VImageDimension, TState >::GetImage( T dTime )
-{
-  this->m_ptrObjectiveFunction->GetImage( this->m_ptrIm, dTime );
-  return this->m_ptrIm;
-}
-
-template < class T, unsigned int VImageDimension, class TState >
 void CLDDMMGrowthModelRegistration< T, VImageDimension, TState >::SetDefaultObjectiveFunctionPointer()
 {
   // make sure that all we need has already been allocated

@@ -37,6 +37,9 @@ public:
   /* Gets the map at a specific time, assuming that the map for the initial image is the identity */
   virtual void GetMap( VectorFieldType* ptrMap, T dTime ) = 0;
 
+  /* Gets the map between specific time points */
+  virtual void GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo ) = 0;
+
   /* Gets the image at a specific time point */
   virtual void GetImage( VectorImageType* ptrIm, T dTime ) = 0;
 

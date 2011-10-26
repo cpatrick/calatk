@@ -18,6 +18,7 @@ public:
   CLDDMMGeometricMetamorphosisObjectiveFunction();
   virtual ~CLDDMMGeometricMetamorphosisObjectiveFunction();
 
+  void GetImageT( VectorImageType* ptrIm, T dTime );
   void GetImage( VectorImageType* ptrIm, T dTime );
 
   T GetCurrentEnergy();

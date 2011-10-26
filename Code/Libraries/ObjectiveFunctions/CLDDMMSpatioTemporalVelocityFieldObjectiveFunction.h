@@ -36,6 +36,7 @@ public:
   void InitializeState( TState* pState );
 
   void GetMap( VectorFieldType* ptrMap, T dTime );
+  void GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo );
 
   SetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );
   GetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );

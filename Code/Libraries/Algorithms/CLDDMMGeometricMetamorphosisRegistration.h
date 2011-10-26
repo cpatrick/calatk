@@ -20,8 +20,7 @@ public:
   CLDDMMGeometricMetamorphosisRegistration();
   ~CLDDMMGeometricMetamorphosisRegistration();
 
-  const VectorFieldType* GetMap( T dTime );
-  const VectorImageType* GetImage( T dTime );
+  const VectorImageType* GetImageT( T dTime );
 
 protected:
 

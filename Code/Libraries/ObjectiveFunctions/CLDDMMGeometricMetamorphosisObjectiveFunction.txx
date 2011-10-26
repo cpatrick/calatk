@@ -6,7 +6,7 @@ CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::CLD
 {
   m_Sigma1Sqr = 0.01;
   m_Sigma2Sqr = 0.01;
-  m_W = 0.5;
+  m_W = 0.1;
 
   // mask image at different time-points
   ptrT0 = NULL;
@@ -229,7 +229,17 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >
 template <class T, unsigned int VImageDimension, class TState >
 void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::GetImage( VectorImageType* ptrIm, T dTime )
 {
-  std::cerr << "Warning: not yet implemented." << std::endl;
+  GetMap( m_ptrMapTmp, dTime );
+  // now compute the image by interpolation
+  LDDMMUtils< T, VImageDimension >::applyMap( m_ptrMapTmp, ptrI0, ptrIm );
+}
+
+template <class T, unsigned int VImageDimension, class TState >
+void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::GetImageT( VectorImageType* ptrIm, T dTime )
+{
+  GetMap( m_ptrMapTmp, dTime );
+  // now compute the image by interpolation
+  LDDMMUtils< T, VImageDimension >::applyMap( m_ptrMapTmp, ptrT0, ptrIm );
 }
 
 template <class T, unsigned int VImageDimension, class TState >
@@ -282,6 +292,8 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >
   STimePoint timePoint2;
   timePoint2.bIsMeasurementPoint = true;
   timePoint2.dTime = 2;
+
+  vecTimePointData.push_back( timePoint2 );
 
 }
 
@@ -500,9 +512,9 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >
 
     // add 2*(1-w)v 
     VectorFieldType* ptrCurrentVelocity = this->m_pState->GetVectorFieldPointer( iI );
-    ptrCurrentGradient->copy( ptrCurrentVelocity );
-    ptrCurrentGradient->multConst( 2*(1-m_W) );
-    ptrCurrentGradient->addCellwise( ptrCurrentGradient );
+    m_ptrTmpGradient->copy( ptrCurrentVelocity );
+    m_ptrTmpGradient->multConst( 2*(1-m_W) );
+    ptrCurrentGradient->addCellwise( m_ptrTmpGradient );
 
     }
 
@@ -523,11 +535,23 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >
 
     // add 2*w*v 
     VectorFieldType* ptrCurrentVelocity = this->m_pState->GetVectorFieldPointer( iI );
-    ptrCurrentGradient->copy( ptrCurrentVelocity );
-    ptrCurrentGradient->multConst( 2*m_W );
-    ptrCurrentGradient->addCellwise( ptrCurrentGradient );
+    m_ptrTmpGradient->copy( ptrCurrentVelocity );
+    m_ptrTmpGradient->multConst( 2*m_W );
+    ptrCurrentGradient->addCellwise( m_ptrTmpGradient );
 
     }
+
+  /*VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( m_ptrI, "I_AfterComputation.nrrd" );
+  VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( m_ptrT, "T_AfterComputation.nrrd" );
+
+  VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( m_ptrLambda, "lam_AfterComputation.nrrd" );
+  VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( m_ptrLambdaT, "lamT_AfterComputation.nrrd" );
+
+  VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( this->m_pState->GetVectorPointerToVectorFieldPointer(), "stateAfterComputation.nrrd" );
+
+  VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( this->m_pGradient->GetVectorPointerToVectorFieldPointer(), "gradientAfterComputation.nrrd" );
+
+  exit( -1 );*/
 
 }
 
@@ -605,6 +629,8 @@ T CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::G
   dImageNorm += dCurrentImageMetric;
 
   dEnergy += dImageNorm;
+
+  std::cout << "geomet energy = " << dEnergy << std::endl;
 
   return dEnergy;
 

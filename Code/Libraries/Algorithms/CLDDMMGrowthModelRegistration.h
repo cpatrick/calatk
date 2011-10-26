@@ -20,9 +20,6 @@ public:
   CLDDMMGrowthModelRegistration();
   ~CLDDMMGrowthModelRegistration();
 
-  const VectorFieldType* GetMap( T dTime );
-  const VectorImageType* GetImage( T dTime );
-
 protected:
 
   void SetDefaultObjectiveFunctionPointer();

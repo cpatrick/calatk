@@ -36,6 +36,10 @@ public:
   CLDDMMSpatioTemporalVelocityFieldRegistration();
   ~CLDDMMSpatioTemporalVelocityFieldRegistration();
 
+  const VectorFieldType* GetMap( T dTime );
+  const VectorFieldType* GetMapFromTo( T dTimeFrom, T dTimeTo );
+  const VectorImageType* GetImage( T dTime );
+
 protected:
 
   void SetDefaultMetricPointer();

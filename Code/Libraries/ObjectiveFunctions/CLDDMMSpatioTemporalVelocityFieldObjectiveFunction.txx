@@ -242,7 +242,19 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
 template <class T, unsigned int VImageDimension, class TState >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::GetMap( VectorFieldType* ptrMap, T dTime )
 {
-  T dCurrentTime = m_vecTimeDiscretization[0].dTime;
+  T dTimeFrom = m_vecTimeDiscretization[0].dTime;
+  GetMapFromTo( ptrMap, dTimeFrom, dTime );
+}
+
+template <class T, unsigned int VImageDimension, class TState >
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo )
+{
+
+  if ( dTimeFrom < m_vecTimeDiscretization[0].dTime || dTimeTo > m_vecTimeDiscretization.back().dTime )
+    {
+    throw std::runtime_error("Requested map outside of valid time range.");
+    return;
+    }
 
   VectorFieldType* ptrMapOut = ptrMap;
 
@@ -250,17 +262,48 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
   VectorFieldType* ptrMapIn = new VectorFieldType( ptrMap );
   VectorFieldType* ptrMapTmp = new VectorFieldType( ptrMap );
 
-  // get the map at a certain time point
+  // get the map between two time points
   LDDMMUtils< T, VImageDimension >::identityMap( ptrMapIn );
-  for ( unsigned int iI = 0; iI < m_vecTimeDiscretization.size()-1; ++iI )
+
+
+  T dCurrentTime = m_vecTimeDiscretization[0].dTime;
+  unsigned int uiStart = 0;
+
+  // we may need to fast forward to the beginning time point
+
+  if ( dCurrentTime < dTimeFrom )
     {
-    if ( dCurrentTime + this->m_vecTimeIncrements[ iI ] < dTime )
+
+    for ( unsigned int iI = 0; iI < m_vecTimeDiscretization.size()-1; ++iI )
+      {
+      if ( dCurrentTime + this->m_vecTimeIncrements[ iI ] > dTimeFrom )
+        {
+        // evolve for an increment
+        this->m_ptrEvolver->SolveForward( this->m_pState->GetVectorFieldPointer( iI ), ptrMapIn, ptrMapOut, ptrMapTmp, dTimeFrom-dCurrentTime );
+        // for next step, copy
+        ptrMapIn->copy( ptrMapOut );
+        uiStart = iI+1;
+        break;
+        }
+      else
+        {
+        // just skip ahead
+        dCurrentTime += this->m_vecTimeIncrements[ iI ];
+        }
+      }
+    }
+
+  // now we can move ahead
+
+  for ( unsigned int iI = uiStart; iI < m_vecTimeDiscretization.size()-1; ++iI )
+    {
+    if ( dCurrentTime + this->m_vecTimeIncrements[ iI ] < dTimeTo )
       {
       this->m_ptrEvolver->SolveForward( this->m_pState->GetVectorFieldPointer( iI ), ptrMapIn, ptrMapOut, ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
       }
     else
       {
-      this->m_ptrEvolver->SolveForward( this->m_pState->GetVectorFieldPointer( iI ), ptrMapIn, ptrMapOut, ptrMapTmp, dTime-dCurrentTime );
+      this->m_ptrEvolver->SolveForward( this->m_pState->GetVectorFieldPointer( iI ), ptrMapIn, ptrMapOut, ptrMapTmp, dTimeTo-dCurrentTime );
       break;
       }
     // for next step, copy

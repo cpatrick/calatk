@@ -64,6 +64,7 @@ public:
   virtual void Solve();
 
   virtual const VectorFieldType* GetMap( T dTime ) = 0;
+  virtual const VectorFieldType* GetMapFromTo( T dTimeFrom, T dTimeTo ) = 0;
   virtual const VectorImageType* GetImage( T dTime ) = 0;
 
 protected:

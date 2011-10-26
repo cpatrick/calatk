@@ -12,18 +12,10 @@ CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::~CLDDMMG
 }
 
 template < class T, unsigned int VImageDimension, class TState >
-const typename CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::VectorFieldType* 
-CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::GetMap( T dTime )
-{
-  this->m_ptrObjectiveFunction->GetMap( this->m_ptrMap, dTime );
-  return this->m_ptrMap;
-}
-
-template < class T, unsigned int VImageDimension, class TState >
 const typename CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::VectorImageType* 
-CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::GetImage( T dTime )
+CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::GetImageT( T dTime )
 {
-  this->m_ptrObjectiveFunction->GetImage( this->m_ptrIm, dTime );
+  dynamic_cast< CLDDMMGeometricMetamorphosisObjectiveFunction<T, VImageDimension, TState>* >(this->m_ptrObjectiveFunction)->GetImageT( this->m_ptrIm, dTime );
   return this->m_ptrIm;
 }
 

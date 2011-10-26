@@ -44,6 +44,30 @@ void CLDDMMSpatioTemporalVelocityFieldRegistration< T, VImageDimension, TState >
   this->m_ptrSolver = new CSolverMultiScale< T, VImageDimension, TState >;
 }
 
+template < class T, unsigned int VImageDimension, class TState >
+const typename CLDDMMSpatioTemporalVelocityFieldRegistration< T, VImageDimension, TState >::VectorFieldType* 
+CLDDMMSpatioTemporalVelocityFieldRegistration< T, VImageDimension, TState >::GetMap( T dTime )
+{
+  this->m_ptrObjectiveFunction->GetMap( this->m_ptrMap, dTime );
+  return this->m_ptrMap;
+}
+
+template < class T, unsigned int VImageDimension, class TState >
+const typename CLDDMMSpatioTemporalVelocityFieldRegistration< T, VImageDimension, TState >::VectorFieldType* 
+CLDDMMSpatioTemporalVelocityFieldRegistration< T, VImageDimension, TState >::GetMapFromTo( T dTimeFrom, T dTimeTo )
+{
+  this->m_ptrObjectiveFunction->GetMapFromTo( this->m_ptrMap, dTimeFrom, dTimeTo );
+  return this->m_ptrMap;
+}
+
+template < class T, unsigned int VImageDimension, class TState >
+const typename CLDDMMSpatioTemporalVelocityFieldRegistration< T, VImageDimension, TState >::VectorImageType* 
+CLDDMMSpatioTemporalVelocityFieldRegistration< T, VImageDimension, TState >::GetImage( T dTime )
+{
+  this->m_ptrObjectiveFunction->GetImage( this->m_ptrIm, dTime );
+  return this->m_ptrIm;
+}
+
 
 
 #endif
