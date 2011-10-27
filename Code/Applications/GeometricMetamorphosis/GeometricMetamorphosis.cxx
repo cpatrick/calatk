@@ -26,7 +26,9 @@ int main(int argc, char **argv)
   //regType::ptrImageManagerType ptrImageManager = lddmm.GetImageManagerPointer();
   ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm.GetImageManagerPointer() );
 
-  std::string relativeDataPath = "2DCasesForTumors/run1";
+  std::string runCaseType = "run4";
+
+  std::string relativeDataPath = "2DCasesForTumors/" + runCaseType;
 
   ptrImageManager->AddImage( relativeDataPath + "/" + "I0.nhdr", 0.0, 0 );
   ptrImageManager->AddImage( relativeDataPath + "/" + "I1.nhdr", 1.0, 0 );
@@ -52,14 +54,14 @@ int main(int argc, char **argv)
   const regType::VectorFieldType* ptrMap2 = new regType::VectorFieldType( lddmm.GetMap( 2.0 ) );
   const regType::VectorFieldType* ptrMapFT = new regType::VectorFieldType( lddmm.GetMapFromTo( 1.0, 2.0 ) );
 
-  VectorImageUtilsType::writeFileITK( ptrIm, "res-imOut.nrrd" );
-  VectorImageUtilsType::writeFileITK( ptrMap0, "res-map0Out.nrrd" );
-  VectorImageUtilsType::writeFileITK( ptrMap1, "res-map1Out.nrrd" );
-  VectorImageUtilsType::writeFileITK( ptrMap2, "res-map2Out.nrrd" );
-  VectorImageUtilsType::writeFileITK( ptrMapFT, "res-map12.nrrd" );
+  VectorImageUtilsType::writeFileITK( ptrIm, runCaseType + "-res-imOut.nrrd" );
+  VectorImageUtilsType::writeFileITK( ptrMap0, runCaseType + "-res-map0Out.nrrd" );
+  VectorImageUtilsType::writeFileITK( ptrMap1, runCaseType + "-res-map1Out.nrrd" );
+  VectorImageUtilsType::writeFileITK( ptrMap2, runCaseType + "-res-map2Out.nrrd" );
+  VectorImageUtilsType::writeFileITK( ptrMapFT, runCaseType + "-res-map12.nrrd" );
 
-  VectorImageUtilsType::writeFileITK( ptrT1, "res-T1.nrrd" );
-  VectorImageUtilsType::writeFileITK( ptrT2, "res-T2.nrrd" );
+  VectorImageUtilsType::writeFileITK( ptrT1, runCaseType + "-res-T1.nrrd" );
+  VectorImageUtilsType::writeFileITK( ptrT2, runCaseType + "-res-T2.nrrd" );
 
   delete ptrIm;
   delete ptrT1;

@@ -293,6 +293,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
         {
         // just skip ahead
         dCurrentTime += this->m_vecTimeIncrements[ iI ];
+        uiStart = iI + 1;
         }
       if ( dCurrentTime >= dTimeFrom )
         {
@@ -302,6 +303,9 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
     }
 
   std::cout << "fast forwarded to " << dCurrentTime << std::endl;
+  std::cout << "starting from index " << uiStart << std::endl;
+
+  VectorImageUtils< T, VImageDimension>::writeFileITK( ptrMapIn, "beforeEvolution.nrrd" );
 
   // now we can move ahead
 

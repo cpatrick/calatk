@@ -31,7 +31,7 @@ CSolverLineSearch<T, VImageDimension, TState>::CSolverLineSearch()
   m_dMinAllowedStepSize = 1e-6;
 
   // maximal number of iterations
-  m_uiMaxNumberOfIterations = 10000;
+  m_uiMaxNumberOfIterations = 1000;
 
   // maximal number of tries in one backtracking line search
   m_uiMaxNumberOfTries = 10;

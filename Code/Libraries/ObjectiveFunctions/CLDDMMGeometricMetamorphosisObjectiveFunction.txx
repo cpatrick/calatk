@@ -6,7 +6,7 @@ CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::CLD
 {
   m_Sigma1Sqr = 0.01;
   m_Sigma2Sqr = 0.01;
-  m_W = 0.1;
+  m_W = 0.5;
 
   // mask image at different time-points
   ptrT0 = NULL;
