@@ -2,15 +2,21 @@ clear all
 close all
 
 addpath ../../external/tight_subplot
-addpath ~/private/research/programming/matlab/exportfig
+addpath ../../external/exportfig
 
 %runType = 'run1';
 %runType = 'run2';
 %runType = 'run3';
 runType = 'run4';
 
-origPath = strcat( '/home/mn/private/research/programming/git/mnCALATK/TestingData/2DCasesForTumors/', runType, '/' );
-resPath = '/playpen/builds-release/mnCALATK/bin/';
+%origDataPath = '/home/mn/private/research/programming/git/mnCALATK/TestingData/2DCasesForTumors/';
+origDataPath = '/Users/mn/programming/mnCALATK/TestingData/2DCasesForTumors/';
+
+%resPath = '/playpen/builds-release/mnCALATK/bin/';
+resPath = '/Users/mn/programming/mnCALATK-build-release/bin/';
+
+origPath = strcat( origDataPath, runType, '/' );
+
 
 % load the original images
 

@@ -4,7 +4,7 @@
 template <class T, unsigned int VImageDimension >
 CHelmholtzKernel< T, VImageDimension >::CHelmholtzKernel()
 {
-  m_Alpha = 0.025;
+  m_Alpha = 0.05;
   m_Gamma = 1;
 }
 

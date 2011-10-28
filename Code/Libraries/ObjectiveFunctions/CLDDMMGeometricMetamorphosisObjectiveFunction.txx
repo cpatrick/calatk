@@ -64,12 +64,28 @@ CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::CLD
   pMaskInfo0 = NULL;
   pMaskInfo1 = NULL;
 
+  // kernel pointer
+  m_ptrMaskKernel = NULL;
+
 }
 
 template <class T, unsigned int VImageDimension, class TState >
 CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::~CLDDMMGeometricMetamorphosisObjectiveFunction()
 {
   DeleteAuxiliaryStructures();
+}
+
+template <class T, unsigned int VImageDimension, class TState >
+void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::SetMaskKernelPointer( ptrKernelType pKernel )
+{
+  m_ptrMaskKernel = pKernel;
+}
+
+template <class T, unsigned int VImageDimension, class TState >
+CKernel< T, VImageDimension >*
+CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::GetMaskKernelPointer()
+{
+  return m_ptrMaskKernel;
 }
 
 template <class T, unsigned int VImageDimension, class TState >
@@ -535,7 +551,7 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >
     VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( (*m_ptrLambdaT)[ iI ], 0, m_ptrTmpGradient );
     ptrCurrentGradient->addCellwise( m_ptrTmpGradient );
 
-    this->m_ptrKernel->ConvolveWithInverseKernel( ptrCurrentGradient );
+    this->m_ptrMaskKernel->ConvolveWithInverseKernel( ptrCurrentGradient );
 
     // add 2*w*v 
     VectorFieldType* ptrCurrentVelocity = this->m_pState->GetVectorFieldPointer( iI );
@@ -575,7 +591,14 @@ T CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::G
     m_ptrTmpVelocityField->copy( this->m_pState->GetVectorFieldPointer( iI ) );
 
     // convolve it with the kernel, L^\dagger L v
-    this->m_ptrKernel->ConvolveWithKernel( m_ptrTmpVelocityField );
+    if ( iI < m_uiTimeIndexOfTimePoint1 )
+      {
+      this->m_ptrKernel->ConvolveWithKernel( m_ptrTmpVelocityField );
+      }
+    else
+      {
+      this->m_ptrMaskKernel->ConvolveWithKernel( m_ptrTmpVelocityField );
+      }
 
     // now multiply it with v and (1-w)
     T dCurrentEnergy = this->m_vecTimeIncrements[ iI ]*m_ptrTmpVelocityField->computeInnerProduct( this->m_pState->GetVectorFieldPointer( iI ) );

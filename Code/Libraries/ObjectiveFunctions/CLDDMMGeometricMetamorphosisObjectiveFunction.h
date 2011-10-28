@@ -1,6 +1,9 @@
 #ifndef C_LDDMM_GEOMETRIC_METAMORPHOSIS_OBJECTIVE_FUNCTION_H
 #define C_LDDMM_GEOMETRIC_METAMORPHOSIS_OBJECTIVE_FUNCTION_H
 
+#include "CLDDMMSpatioTemporalVelocityFieldObjectiveFunction.h"
+#include "CKernel.h"
+
 namespace CALATK
 {
 
@@ -14,6 +17,7 @@ public:
   typedef CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
+  typedef CKernel< T, VImageDimension >* ptrKernelType;
 
   CLDDMMGeometricMetamorphosisObjectiveFunction();
   virtual ~CLDDMMGeometricMetamorphosisObjectiveFunction();
@@ -32,6 +36,9 @@ public:
 
   SetMacro( W, T );
   GetMacro( W, T );
+
+  void SetMaskKernelPointer( ptrKernelType pKernel );
+  ptrKernelType GetMaskKernelPointer();
 
 protected:
 
@@ -109,6 +116,8 @@ private:
   T m_Sigma2Sqr; // 1/m_Sigma2Sqr is the multiplier for the data attachment term, for the foreground deformation
 
   T m_W; // is the weighting between the foreground and the background velocity fields.
+
+  ptrKernelType m_ptrMaskKernel;
 
 };
 

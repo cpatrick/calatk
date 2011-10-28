@@ -5,6 +5,7 @@ template <class T, unsigned int VImageDimension, class TState >
 CVelocityFieldObjectiveFunction< T, VImageDimension, TState >::CVelocityFieldObjectiveFunction()
 {
   m_ptrEvolver = NULL;
+  m_ptrKernel = NULL;
 }
 
 template <class T, unsigned int VImageDimension, class TState >

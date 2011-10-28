@@ -3,6 +3,7 @@
 
 #include "CLDDMMSpatioTemporalVelocityFieldRegistration.h"
 #include "CLDDMMGeometricMetamorphosisObjectiveFunction.h"
+#include "CKernel.h"
 
 namespace CALATK
 {
@@ -16,17 +17,25 @@ public:
   typedef CLDDMMSpatioTemporalVelocityFieldRegistration< T, VImageDimension, TState > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
+  typedef CKernel< T, VImageDimension >* ptrKernelType;
 
   CLDDMMGeometricMetamorphosisRegistration();
   ~CLDDMMGeometricMetamorphosisRegistration();
 
   const VectorImageType* GetImageT( T dTime );
 
+  void SetMaskKernelPointer( ptrKernelType ptrKernel );
+  ptrKernelType GetMaskKernelPointer();
+
 protected:
 
+  void SetDefaultsIfNeeded();
   void SetDefaultObjectiveFunctionPointer();
+  void SetDefaultMaskKernelPointer();
 
 private:
+  ptrKernelType m_ptrMaskKernel;
+  bool m_bSetDefaultMaskKernel;
 };
 
 #include "CLDDMMGeometricMetamorphosisRegistration.txx"
