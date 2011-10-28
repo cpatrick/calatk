@@ -46,6 +46,11 @@ public:
   virtual void InitializeState() = 0;
   virtual void InitializeState( TState* ) = 0;
 
+  /* Can get called to create an output of a current state (input is iteration number) */
+  virtual void OutputStateInformation( unsigned int uiIter )
+  {
+  };
+
   void SetImageManagerPointer( ptrImageManagerType ptrImageManager )
   {
     m_ptrImageManager = ptrImageManager;

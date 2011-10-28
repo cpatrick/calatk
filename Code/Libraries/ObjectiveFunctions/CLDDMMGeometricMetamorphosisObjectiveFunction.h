@@ -40,6 +40,8 @@ public:
   void SetMaskKernelPointer( ptrKernelType pKernel );
   ptrKernelType GetMaskKernelPointer();
 
+  void OutputStateInformation( unsigned int uiIter );
+
 protected:
 
  /** Some useful protected typedefs */
@@ -81,8 +83,8 @@ private:
   VectorImagePointerType ptrI0;
   VectorImagePointerType ptrI1;
   VectorImagePointerType ptrEstI1;
-  VectorImagePointerType ptrEstIT1;
-  VectorImagePointerType ptrEstIT2;
+  VectorImagePointerType ptrEstT1;
+  VectorImagePointerType ptrEstT2;
 
   VectorFieldPointerType m_ptrMapIn; // map for the numerical solution
   VectorFieldPointerType m_ptrMapOut; // map for the numerical solution
@@ -90,7 +92,7 @@ private:
 
   // temporary storage memory managed by this class
   VectorImagePointerType m_ptrT2M1;
-  VectorImagePointerType m_ptrIT1M1;
+  VectorImagePointerType m_ptrEstT1M1;
 
   VectorPointerToVectorImagePointerType m_ptrI;
   VectorPointerToVectorImagePointerType m_ptrT;

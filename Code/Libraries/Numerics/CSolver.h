@@ -2,6 +2,7 @@
 #define C_SOLVER_H
 
 #include "CObjectiveFunction.h"
+#include "CALATKCommon.h"
 
 /** 
  * Base class for the registration solvers.
@@ -26,11 +27,17 @@ public:
   virtual bool Solve();
   virtual bool SolvePreInitialized() = 0;
 
+  GetMacro(OutputStateInformation,bool);
+  SetMacro(OutputStateInformation,bool);
+  
 protected:
 
   ptrObjectiveFunctionType m_pObjectiveFunction;
 
 private:
+
+  bool m_OutputStateInformation;
+
 };
 
 #include "CSolver.txx"

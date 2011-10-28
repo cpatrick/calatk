@@ -18,12 +18,12 @@ CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::CLD
 
   // estimates at different time-points (subjected to the velocity field)
   ptrEstI1 = NULL;
-  ptrEstIT1 = NULL;
-  ptrEstIT2 = NULL;
+  ptrEstT1 = NULL;
+  ptrEstT2 = NULL;
 
   // storage difference images to control the image composition
   m_ptrT2M1 = NULL;
-  m_ptrIT1M1 = NULL;
+  m_ptrEstT1M1 = NULL;
 
   // storage for images and masks at all the timepoints
   m_ptrI = NULL;
@@ -105,8 +105,8 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >
   ptrI0 = NULL;
   ptrI1 = NULL;
   ptrEstI1 = NULL;
-  ptrEstIT1 = NULL;
-  ptrEstIT2 = NULL;
+  ptrEstT1 = NULL;
+  ptrEstT2 = NULL;
   
   // now delete the data structures that were allocated by geomet
 
@@ -115,7 +115,7 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >
   SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapTmp );
 
   SaveDelete< VectorImagePointerType >::Pointer( m_ptrT2M1 );
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrIT1M1 );
+  SaveDelete< VectorImagePointerType >::Pointer( m_ptrEstT1M1 );
 
   SaveDelete< VectorImagePointerType >::PointerVector( m_ptrI );
   SaveDelete< VectorImagePointerType >::PointerVector( m_ptrT );
@@ -203,7 +203,7 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >
 
   // storage difference images to control the image composition
   m_ptrT2M1 = new VectorImageType( pGraftT );
-  m_ptrIT1M1 = new VectorImageType( pGraftIm );
+  m_ptrEstT1M1 = new VectorImageType( pGraftIm );
 
   // temporary storage to compute maps
   m_ptrMapIn = new VectorFieldType( pGraftIm );
@@ -237,8 +237,8 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >
 
   // estimates at different time-points (subjected to the velocity field)
   ptrEstI1 = (*m_ptrI)[ m_uiTimeIndexOfTimePoint1 ];
-  ptrEstIT1 = (*m_ptrT)[ m_uiTimeIndexOfTimePoint1 ];
-  ptrEstIT2 = (*m_ptrT)[ this->m_vecTimeDiscretization.size()-1 ];
+  ptrEstT1 = (*m_ptrT)[ m_uiTimeIndexOfTimePoint1 ];
+  ptrEstT2 = (*m_ptrT)[ this->m_vecTimeDiscretization.size()-1 ];
 
 }
 
@@ -385,7 +385,7 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >
 
   // first set the final condition for lambda T
 
-  this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifferenceT, ptrEstIT2, ptrT2 );
+  this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifferenceT, ptrEstT2, ptrT2 );
   m_ptrCurrentAdjointDifferenceT->multConst( 1.0/m_Sigma2Sqr );
   m_ptrCurrentLambdaTEnd->addCellwise( m_ptrCurrentAdjointDifferenceT );
 
@@ -428,8 +428,8 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >
   m_ptrT2M1->copy( ptrT2 );
   m_ptrT2M1->addConst( -1 );
 
-  m_ptrIT1M1->copy( ptrEstIT1 );
-  m_ptrIT1M1->addConst( -1 );
+  m_ptrEstT1M1->copy( ptrEstT1 );
+  m_ptrEstT1M1->addConst( -1 );
 
   // now add the jump to currentlambdaTEnd
   // \lambda^\tau(1-) = \lambda^\tau(1+) -2/sigma1^2(I(1)-I_1)^2*(T2-1)^2(I^tau(1)-1)
@@ -439,7 +439,7 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >
   // now multiply it with (T2-1)^2 and (IT(1)-1) to get the final desired result for \lambda(1)
   VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrT2M1, 0, m_ptrCurrentAdjointDifferenceT );
   VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrT2M1, 0, m_ptrCurrentAdjointDifferenceT );
-  VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrIT1M1, 0, m_ptrCurrentAdjointDifferenceT );
+  VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrEstT1M1, 0, m_ptrCurrentAdjointDifferenceT );
 
   // add this to the currentLambdaTEnd to get the lambdaT with jump
   m_ptrCurrentLambdaTEnd->addCellwise( m_ptrCurrentAdjointDifferenceT );
@@ -452,8 +452,8 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >
   // now multiply it with (T2-1)^2 and (IT(1)-1)^2 to get the final desired result for \lambda(1)
   VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrT2M1, 0, m_ptrCurrentAdjointDifference );
   VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrT2M1, 0, m_ptrCurrentAdjointDifference );
-  VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrIT1M1, 0, m_ptrCurrentAdjointDifference );
-  VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrIT1M1, 0, m_ptrCurrentAdjointDifference );
+  VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrEstT1M1, 0, m_ptrCurrentAdjointDifference );
+  VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrEstT1M1, 0, m_ptrCurrentAdjointDifference );
 
   // copy this to curentLambdaEnd to get the initial condition 
   m_ptrCurrentLambdaEnd->addCellwise( m_ptrCurrentAdjointDifference );
@@ -625,24 +625,24 @@ T CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::G
 
   T dImageNorm = 0;
 
-  // ptrI1, ptrT2, ptrEstI1, ptrEstIT1, ptrEstIT2
+  // ptrI1, ptrT2, ptrEstI1, ptrEstT1, ptrEstT2
 
   // compute the mask contributions: (T2-1) and (IT(1)-1)
   m_ptrT2M1->copy( ptrT2 );
   m_ptrT2M1->addConst( -1 );
 
-  m_ptrIT1M1->copy( ptrEstIT1 );
-  m_ptrIT1M1->addConst( -1 );
+  m_ptrEstT1M1->copy( ptrEstT1 );
+  m_ptrEstT1M1->addConst( -1 );
 
   // multiply I1 and I(1) with it to get the "masked" images, on which we can compute the image similarity term
 
   m_ptrI1Comp->copy( ptrI1 );
   VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrT2M1, 0, m_ptrI1Comp );
-  VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrIT1M1, 0, m_ptrI1Comp );
+  VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrEstT1M1, 0, m_ptrI1Comp );
 
   m_ptrEstI1Comp->copy( ptrEstI1 );
   VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrT2M1, 0, m_ptrEstI1Comp );
-  VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrIT1M1, 0, m_ptrEstI1Comp );
+  VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrEstT1M1, 0, m_ptrEstI1Comp );
 
   // foreground part
 
@@ -651,7 +651,7 @@ T CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::G
   dImageNorm += dCurrentImageMetric;
 
   // and background part
-  dCurrentImageMetric = 1.0/m_Sigma2Sqr*this->m_pMetric->GetMetric( ptrEstIT2, ptrT2 );
+  dCurrentImageMetric = 1.0/m_Sigma2Sqr*this->m_pMetric->GetMetric( ptrEstT2, ptrT2 );
 
   dImageNorm += dCurrentImageMetric;
 
@@ -663,6 +663,14 @@ T CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::G
 
 }
 
-
+template <class T, unsigned int VImageDimension, class TState >
+void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::OutputStateInformation( unsigned int uiIter )
+{
+  ComputeImagesForward();
+  std::string sGeometrRes = "geometRes-";
+  VectorImageUtils< T, VImageDimension >::writeFileITK( ptrEstT1, CreateNumberedFileName( sGeometrRes, uiIter, "Est-T1.nrrd" ) );
+  VectorImageUtils< T, VImageDimension >::writeFileITK( ptrEstT2, CreateNumberedFileName( sGeometrRes, uiIter, "Est-T2.nrrd" ) );
+  VectorImageUtils< T, VImageDimension >::writeFileITK( ptrEstI1, CreateNumberedFileName( sGeometrRes, uiIter, "Est-I1.nrrd" ) );
+}
 
 #endif

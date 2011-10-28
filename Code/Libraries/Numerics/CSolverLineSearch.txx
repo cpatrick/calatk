@@ -67,6 +67,12 @@ bool CSolverLineSearch<T, VImageDimension, TState>::SolvePreInitialized()
   // creating new temp state
   pTempState = new TState( *pObj->GetStatePointer() );
 
+  // output the initial state if desired
+  if ( this->m_OutputStateInformation )
+    {
+    *pObj->OutputStateInformation( 0 );
+    }
+
   for ( unsigned int uiIter = 0; uiIter<m_uiMaxNumberOfIterations; ++uiIter )
     {
     bool bDecreasedEnergy = LineSearchWithBacktracking( dDesiredStepSize, dAlpha, dResultingEnergy );
@@ -75,6 +81,13 @@ bool CSolverLineSearch<T, VImageDimension, TState>::SolvePreInitialized()
 
     if ( bDecreasedEnergy )
       {
+
+      // output the state if desired
+      if ( this->m_OutputStateInformation )
+        {
+        *pObj->OutputStateInformation( uiIter + 1 );
+        }
+
       if ( dDesiredStepSize == dAlpha ) // could be decreased immediately
         {
         uiNrOfIterationsWithImmediateDecrease++;
