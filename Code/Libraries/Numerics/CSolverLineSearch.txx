@@ -31,7 +31,7 @@ CSolverLineSearch<T, VImageDimension, TState>::CSolverLineSearch()
   m_dMinAllowedStepSize = 1e-6;
 
   // maximal number of iterations
-  m_uiMaxNumberOfIterations = 1000;
+  m_uiMaxNumberOfIterations = 50;
 
   // maximal number of tries in one backtracking line search
   m_uiMaxNumberOfTries = 10;
@@ -67,10 +67,12 @@ bool CSolverLineSearch<T, VImageDimension, TState>::SolvePreInitialized()
   // creating new temp state
   pTempState = new TState( *pObj->GetStatePointer() );
 
+  std::string sStatePrefix = "S" + CreateIntegerString( (int)this->GetExternalSolverState() ) + "-";
+
   // output the initial state if desired
   if ( this->m_OutputStateInformation )
     {
-    *pObj->OutputStateInformation( 0 );
+    pObj->OutputStateInformation( 0,  sStatePrefix );
     }
 
   for ( unsigned int uiIter = 0; uiIter<m_uiMaxNumberOfIterations; ++uiIter )
@@ -85,7 +87,7 @@ bool CSolverLineSearch<T, VImageDimension, TState>::SolvePreInitialized()
       // output the state if desired
       if ( this->m_OutputStateInformation )
         {
-        *pObj->OutputStateInformation( uiIter + 1 );
+        pObj->OutputStateInformation( uiIter + 1, sStatePrefix );
         }
 
       if ( dDesiredStepSize == dAlpha ) // could be decreased immediately

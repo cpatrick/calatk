@@ -6,6 +6,7 @@
 #include "CResamplerLinear.h"
 #include <vector>
 #include <algorithm>
+#include "CALATKCommon.h"
 
 
 /**
@@ -54,6 +55,9 @@ public:
     return true;
   }
 
+  SetMacro( Sigma, T );
+  GetMacro( Sigma, T );
+
 protected:
 
   void SetDefaultResamplerPointer();
@@ -72,6 +76,8 @@ private:
   bool m_bImagesWereRead;
 
   ResamplerType* m_ptrResampler;
+
+  T m_Sigma;
 
 };
 

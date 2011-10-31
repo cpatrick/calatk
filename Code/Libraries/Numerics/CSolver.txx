@@ -7,7 +7,9 @@
 template <class T, unsigned int VImageDimension, class TState >
 CSolver< T, VImageDimension, TState >::CSolver()
 {
-  m_OutputStateInformation = false;
+  //m_OutputStateInformation = false;
+  m_OutputStateInformation = true;
+  m_ExternalSolverState = 0;
 }
 
 //

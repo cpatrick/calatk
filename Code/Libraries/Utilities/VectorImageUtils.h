@@ -178,7 +178,7 @@ public:
    * @params imIn - input vector image
    * @params imOut - image which will be multiplied
    */
-  static void multiplyVectorByImageDimensionInPlace2D(VectorImageType* imIn, unsigned int dim, VectorImageType* imOut );
+  static void multiplyVectorByImageDimensionInPlace2D(const VectorImageType* imIn, unsigned int dim, VectorImageType* imOut );
 
   /**
    * 3D function to multiply a vector image by a scalar image (specified by a dimension of a vectorimage)
@@ -187,7 +187,7 @@ public:
    * @params imIn - input vector image
    * @params imOut - image which will be multiplied
    */
-  static void multiplyVectorByImageDimensionInPlace3D(VectorImageType* imIn, unsigned int dim, VectorImageType* imOut );
+  static void multiplyVectorByImageDimensionInPlace3D(const VectorImageType* imIn, unsigned int dim, VectorImageType* imOut );
 
   /**
    * 2D/3D function to multiply a vector image by a scalar image (specified by a dimension of a vectorimage)
@@ -197,7 +197,7 @@ public:
    * @params dim - dimension of the input vector image that should be multiplied by
    * @params imOut - image which will be multiplied
    */
-  static void multiplyVectorByImageDimensionInPlace(VectorImageType* imIn, unsigned int dim, VectorImageType* imOut );
+  static void multiplyVectorByImageDimensionInPlace(const VectorImageType* imIn, unsigned int dim, VectorImageType* imOut );
 
   /**
    * Method that applies an ITK affine transformation to a 2D VectorImageType

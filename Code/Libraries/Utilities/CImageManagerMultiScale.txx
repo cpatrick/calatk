@@ -8,6 +8,12 @@ CImageManagerMultiScale< T, VImageDimension, TSpace >::CImageManagerMultiScale()
   m_bImagesWereRead = false;
   m_bSetDefaultResampler = false;
   m_ptrResampler = NULL;
+
+  m_Sigma = 0.05;
+
+  // add default scale, the original blurred image at the original resolution
+  AddScale( 1.0, 0 );
+
 }
 
 template <class T, unsigned int VImageDimension, class TSpace >
@@ -54,26 +60,26 @@ void CImageManagerMultiScale< T, VImageDimension, TSpace >::AddScale( T dScale, 
     return;
     }
 
-  if ( uiScaleIndx < 1 )
+  if ( uiScaleIndx < 0 )
     {
-    std::runtime_error("Negative scale index is not allowed. Zero scale index is reserved for the original image." );
+    std::runtime_error("Negative scale index is not allowed." );
     return;
     }
 
-  if ( m_ScaleVector.size() <= uiScaleIndx-1 )
+  if ( (int)m_ScaleVector.size() <= (int)uiScaleIndx )
     {
     // increase size of vector
-    for ( int iI=0; iI < (int)(uiScaleIndx-m_ScaleVector.size()); ++iI )
+    for ( int iI=0; iI <= (int)(uiScaleIndx-m_ScaleVector.size()); ++iI )
       {
       m_ScaleVector.push_back( 0 );
       m_ScaleWasSet.push_back( false );
       }
     }
 
-  assert( m_ScaleVector.size() >= uiScaleIndx );
+  assert( m_ScaleVector.size() >= uiScaleIndx+1 );
   // now we know that we can access the element
-  m_ScaleVector[ uiScaleIndx-1 ] = dScale;
-  m_ScaleWasSet[ uiScaleIndx-1 ] = true;
+  m_ScaleVector[ uiScaleIndx ] = dScale;
+  m_ScaleWasSet[ uiScaleIndx ] = true;
 }
 
 template <class T, unsigned int VImageDimension, class TSpace >
@@ -86,14 +92,14 @@ void CImageManagerMultiScale< T, VImageDimension, TSpace >::RemoveScale( unsigne
     return;
     }
 
-  if ( !( uiScaleIndx < 1 || uiScaleIndx >= m_ScaleVector.size() ) )
+  if ( !( uiScaleIndx < 0 || uiScaleIndx >= m_ScaleVector.size() ) )
     {
     // valid range, otherwise don't do anything
-    m_ScaleVector[ uiScaleIndx-1 ] = 0;
-    m_ScaleWasSet[ uiScaleIndx-1 ] = false;
+    m_ScaleVector[ uiScaleIndx ] = 0;
+    m_ScaleWasSet[ uiScaleIndx ] = false;
 
     // if it is the last element, just pop it
-    if ( uiScaleIndx == m_ScaleVector.size() )
+    if ( uiScaleIndx == m_ScaleVector.size()-1 )
       {
       m_ScaleVector.pop_back();
       m_ScaleWasSet.pop_back();
@@ -104,15 +110,15 @@ void CImageManagerMultiScale< T, VImageDimension, TSpace >::RemoveScale( unsigne
 template <class T, unsigned int VImageDimension, class TSpace >
 unsigned int CImageManagerMultiScale< T, VImageDimension, TSpace >::GetNumberOfScales()
 {
-  // multi-scale levels plus the original image
-  return ( m_ScaleVector.size() + 1 );
+  // multi-scale levels which contains the image at the original resolution
+  return m_ScaleVector.size();
 }
 
 template <class T, unsigned int VImageDimension, class TSpace >
 void CImageManagerMultiScale< T, VImageDimension, TSpace >::SelectScale( unsigned int uiScaleIndx )
 {
-  assert( uiScaleIndx>=0 && uiScaleIndx<=m_ScaleVector.size() );
-  if ( !( uiScaleIndx>=0 && uiScaleIndx<=m_ScaleVector.size() ) )
+  assert( uiScaleIndx>=0 && uiScaleIndx<m_ScaleVector.size() );
+  if ( !( uiScaleIndx>=0 && uiScaleIndx<m_ScaleVector.size() ) )
     {
     throw std::runtime_error("Scale selection index out of range.");
     }
@@ -124,17 +130,7 @@ void CImageManagerMultiScale< T, VImageDimension, TSpace >::SelectScale( unsigne
 template <class T, unsigned int VImageDimension, class TSpace >
 void CImageManagerMultiScale< T, VImageDimension, TSpace >::SetScale( SImageInformation* pCurrentImInfo )
 {
-  // set the image to the current scale (assuming that all the scales have been computed)
-  if ( m_uiCurrentlySelectedScale == 0 )
-    {
-    // this is the original image
-    pCurrentImInfo->pIm = pCurrentImInfo->pImOrig;
-    }
-  else
-    {
-    // set it to the selected scale, subtract one, because 0 is the original image
-    pCurrentImInfo->pIm = pCurrentImInfo->pImsOfAllScales[ m_uiCurrentlySelectedScale - 1 ];
-    }
+  pCurrentImInfo->pIm = pCurrentImInfo->pImsOfAllScales[ m_uiCurrentlySelectedScale ];
 }
 
 template <class T, unsigned int VImageDimension, class TSpace >
@@ -154,16 +150,17 @@ void CImageManagerMultiScale< T, VImageDimension, TSpace >::GetImage( SImageInfo
     {
     // create all the scales
     unsigned int uiNrOfScales = this->GetNumberOfScales();
-    for ( unsigned int iI=0; iI<uiNrOfScales-1; ++iI )
+    for ( unsigned int iI=0; iI<uiNrOfScales; ++iI )
       {
       if ( m_ScaleWasSet[ iI ] )
         {
         std::cout << "Computing scale " << m_ScaleVector[iI] << " of: " << pCurrentImInfo->sImageFileName << std::endl;
-        assert( m_ScaleVector[iI]<0 || m_ScaleVector[iI]>0 );
+        assert( m_ScaleVector[iI]>0 );
         VectorImageType* ptrResampledImage = VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( pCurrentImInfo->pImOrig, m_ScaleVector[ iI ] );
 
         if ( m_ptrResampler == NULL ) SetDefaultResamplerPointer();
 
+        m_ptrResampler->SetSigma( m_Sigma/m_ScaleVector[ iI ] );
         m_ptrResampler->Downsample( pCurrentImInfo->pImOrig, ptrResampledImage );
         pCurrentImInfo->pImsOfAllScales.push_back( ptrResampledImage );
         }

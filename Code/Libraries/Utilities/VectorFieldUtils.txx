@@ -175,7 +175,7 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::identityMap(VectorFieldType*
 // applyMap, 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorFieldUtils< T, VImageDimension, TSpace>::applyMap2D(VectorFieldType* map, VectorImageType* imIn, VectorImageType* imOut) 
+void VectorFieldUtils< T, VImageDimension, TSpace>::applyMap2D( const VectorFieldType* map, const VectorImageType* imIn, VectorImageType* imOut) 
 {
 
 #ifdef DEBUG
@@ -198,7 +198,7 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::applyMap2D(VectorFieldType* 
 // applyMap, 3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorFieldUtils< T, VImageDimension, TSpace>::applyMap3D(VectorFieldType* map, VectorImageType* imIn, VectorImageType* imOut) 
+void VectorFieldUtils< T, VImageDimension, TSpace>::applyMap3D( const VectorFieldType* map, const VectorImageType* imIn, VectorImageType* imOut) 
 {
 
 #ifdef DEBUG
@@ -222,7 +222,7 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::applyMap3D(VectorFieldType* 
 // applyMap, 2D/3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorFieldUtils< T, VImageDimension, TSpace>::applyMap(VectorFieldType* map, VectorImageType* imIn, VectorImageType* imOut) 
+void VectorFieldUtils< T, VImageDimension, TSpace>::applyMap( const VectorFieldType* map, const VectorImageType* imIn, VectorImageType* imOut) 
 {
   switch ( VImageDimension )
     {
@@ -241,7 +241,7 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::applyMap(VectorFieldType* ma
 // computeDeterminantOfJacobian, 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian2D(VectorFieldType* fld, VectorImageType* imOut) 
+void VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian2D( const VectorFieldType* fld, VectorImageType* imOut) 
 {
 
   // set up for the loop
@@ -321,7 +321,7 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian
 // computeDeterminantOfJacobian, 3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian3D(VectorFieldType* fld, VectorImageType *imOut ) 
+void VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian3D( const VectorFieldType* fld, VectorImageType *imOut ) 
 {
   
   // set up for the loop  
@@ -442,7 +442,7 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian
 // computeDeterminantOfJacobian, 2D/3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian(VectorFieldType* fld, VectorImageType* imOut ) 
+void VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian( const VectorFieldType* fld, VectorImageType* imOut ) 
 {
   switch ( VImageDimension )
     {
@@ -461,7 +461,7 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian
 // computeCentralGradient, 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorFieldUtils< T, VImageDimension, TSpace>::computeCentralGradient2D( VectorImageType* imIn, unsigned int d, VectorFieldType* fieldOut )
+void VectorFieldUtils< T, VImageDimension, TSpace>::computeCentralGradient2D( const VectorImageType* imIn, unsigned int d, VectorFieldType* fieldOut )
 {
 
   unsigned int szX = imIn->getSizeX();
@@ -524,7 +524,7 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::computeCentralGradient2D( Ve
 // computeCentralGradient, 3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorFieldUtils< T, VImageDimension, TSpace>::computeCentralGradient3D( VectorImageType* imIn, unsigned int d, VectorFieldType* fieldOut )
+void VectorFieldUtils< T, VImageDimension, TSpace>::computeCentralGradient3D( const VectorImageType* imIn, unsigned int d, VectorFieldType* fieldOut )
 {
 
   unsigned int szX = imIn->getSizeX();
@@ -612,7 +612,7 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::computeCentralGradient3D( Ve
 // computeCentralGradient, 2D/3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorFieldUtils< T, VImageDimension, TSpace>::computeCentralGradient( VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldOut )
+void VectorFieldUtils< T, VImageDimension, TSpace>::computeCentralGradient( const VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldOut )
 {
   switch ( VImageDimension )
     {

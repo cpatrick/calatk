@@ -47,7 +47,7 @@ public:
   virtual void InitializeState( TState* ) = 0;
 
   /* Can get called to create an output of a current state (input is iteration number) */
-  virtual void OutputStateInformation( unsigned int uiIter )
+  virtual void OutputStateInformation( unsigned int uiIter, std::string outputPrefix="" )
   {
   };
 

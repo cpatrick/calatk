@@ -90,6 +90,11 @@ public:
   unsigned int AddImage( std::string filename, T timepoint, unsigned int uiSubjectIndex );
 
   /**
+     Returns the image at full resolution (as loaded), based on the imageid.
+   */
+  const VectorImageType* GetOriginalImageById( unsigned int uiId ); 
+
+  /**
    * Registers the filename of an image transform for a given image
    *
    * @param filename - filename of the image

@@ -1,13 +1,9 @@
-clear all
-close all
+function [] = displayGeometResults( runNr )
 
 addpath ../../external/tight_subplot
 addpath ../../external/exportfig
 
-%runType = 'run1';
-%runType = 'run2';
-%runType = 'run3';
-runType = 'run4';
+runType = sprintf('run%d', runNr );
 
 %origDataPath = '/home/mn/private/research/programming/git/mnCALATK/TestingData/2DCasesForTumors/';
 origDataPath = '/Users/mn/programming/mnCALATK/TestingData/2DCasesForTumors/';
@@ -28,9 +24,9 @@ T2 = nrrdLoad( strcat( origPath, 'T1.nhdr' ) );
 
 % load the results
 
-rT1 = nrrdLoad( strcat( resPath, runType, '-res-T1.nrrd' ) );
-rT2 = nrrdLoad( strcat( resPath, runType, '-res-T2.nrrd' ) );
-rI1 = nrrdLoad( strcat( resPath, runType, '-res-imOut.nrrd' ) );
+rT1 = nrrdLoad( strcat( resPath, runType, '-res-orig-EstT1.nrrd' ) );
+rT2 = nrrdLoad( strcat( resPath, runType, '-res-orig-EstT2.nrrd' ) );
+rI1 = nrrdLoad( strcat( resPath, runType, '-res-orig-EstI1.nrrd' ) );
 
 % load the resulting maps
 

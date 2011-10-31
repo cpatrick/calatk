@@ -30,13 +30,19 @@ public:
   GetMacro(OutputStateInformation,bool);
   SetMacro(OutputStateInformation,bool);
   
+  GetMacro(ExternalSolverState,unsigned int);
+  SetMacro(ExternalSolverState,unsigned int);
+
 protected:
 
   ptrObjectiveFunctionType m_pObjectiveFunction;
+  bool m_OutputStateInformation;
 
 private:
 
-  bool m_OutputStateInformation;
+  // can be set externally, so the solver can create different outputs
+  // for example for a multi-scale pyramid
+  unsigned int m_ExternalSolverState;
 
 };
 

@@ -50,7 +50,7 @@ public:
    * @param imIn - the image to be pulled
    * @param imOut - return variable for the resulting image
    */
-  static void applyMap(VectorFieldType* map, VectorImageType* imIn, VectorImageType* imOut);
+  static void applyMap( const VectorFieldType* map, const VectorImageType* imIn, VectorImageType* imOut);
   
   /**
    * Function that computes the determinant of the jacobian for a vector field. (2D/3D)
@@ -58,7 +58,7 @@ public:
    * @param fld - the vector field to be processed
    * @param imOut - image that will hold the determinant of Jacobian
    */
-  static void computeDeterminantOfJacobian(VectorFieldType* fld, VectorImageType* imOut);
+  static void computeDeterminantOfJacobian(const VectorFieldType* fld, VectorImageType* imOut);
   
   /**
    * Function that computes the deconvolution matrix (2D/3D)

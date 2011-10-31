@@ -26,7 +26,7 @@ void LDDMMUtils< T, VImageDimension, TSpace>::identityMap(VectorFieldType* fld)
 // applyMap
 //
 template < class T, unsigned int VImageDimension, class TSpace >
-void LDDMMUtils< T, VImageDimension, TSpace>::applyMap(VectorFieldType* map, VectorImageType* imIn, VectorImageType* imOut) {
+void LDDMMUtils< T, VImageDimension, TSpace>::applyMap( const VectorFieldType* map, const VectorImageType* imIn, VectorImageType* imOut) {
 
   VectorFieldUtils< T, VImageDimension, TSpace>::applyMap(map, imIn, imOut);
 
@@ -36,7 +36,7 @@ void LDDMMUtils< T, VImageDimension, TSpace>::applyMap(VectorFieldType* map, Vec
 // computeDeterminantOfJacobian
 //
 template < class T, unsigned int VImageDimension, class TSpace >
-void LDDMMUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian(VectorFieldType* fld, VectorImageType* imOut) 
+void LDDMMUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian( const VectorFieldType* fld, VectorImageType* imOut) 
 {
   
   VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian( fld, imOut );

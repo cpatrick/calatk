@@ -560,7 +560,7 @@ void VectorImageUtils< T, VImageDimension, TSpace >::meanPixelwise(std::vector<V
 // multiplyVectorByImageDimensionInPlace, 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensionInPlace2D( VectorImageType* imIn, unsigned int dim, VectorImageType* imOut )
+void VectorImageUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensionInPlace2D( const VectorImageType* imIn, unsigned int dim, VectorImageType* imOut )
 {
   unsigned int szX = imIn->getSizeX();
   unsigned int szY = imIn->getSizeY();
@@ -582,7 +582,7 @@ void VectorImageUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensi
 // multiplyVectorByImageDimensionInPlace, 3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensionInPlace3D( VectorImageType* imIn, unsigned int dim, VectorImageType* imOut )
+void VectorImageUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensionInPlace3D( const VectorImageType* imIn, unsigned int dim, VectorImageType* imOut )
 {
   unsigned int szX = imIn->getSizeX();
   unsigned int szY = imIn->getSizeY();
@@ -608,7 +608,7 @@ void VectorImageUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensi
 // multiplyVectorByImageDimensionInPlace, 2D/3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensionInPlace( VectorImageType* imIn, unsigned int dim, VectorImageType* imOut )
+void VectorImageUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensionInPlace( const VectorImageType* imIn, unsigned int dim, VectorImageType* imOut )
 {
   switch ( VImageDimension )
     {
@@ -1603,6 +1603,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK2D(const Vector
     typename ITKCharImageWriter2D::Pointer imageWriter = ITKCharImageWriter2D::New();
     imageWriter->SetFileName(filename.c_str());
     imageWriter->SetInput(itkImage);
+    imageWriter->UseCompressionOn();
     
     // Try to write the image out
     try 
@@ -1702,7 +1703,8 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK2D(const Vector
     typename ColorWriterType::Pointer colorImageWriter = ColorWriterType::New();
     colorImageWriter->SetFileName(filename.c_str());
     colorImageWriter->SetInput(outImage);
-    
+    colorImageWriter->UseCompressionOn();
+
     // Try to write the image out
     try 
       {
@@ -1759,6 +1761,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK2D(const Vector
   typename ITKImageWriter<T,VImageDimension>::Type::Pointer writer = ITKImageWriter<T,VImageDimension>::Type::New();
   writer->SetInput(scalarIm);
   writer->SetFileName(filename);
+  writer->UseCompressionOn();
   try {
   writer->Update();
   } 
@@ -1785,6 +1788,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK2D(const Vector
     typename ITKVectorImageWriter<T,VImageDimension>::Type::Pointer vectorImageWriter = ITKVectorImageWriter<T,VImageDimension>::Type::New();
     vectorImageWriter->SetFileName(filename.c_str());
     vectorImageWriter->SetInput(itkImage);
+    vectorImageWriter->UseCompressionOn();
 
     // Try to write the image out
     try 
@@ -1824,6 +1828,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK3D( const Vecto
     typename ITKImageWriter<T,VImageDimension>::Type::Pointer writer = ITKImageWriter<T,VImageDimension>::Type::New();
     writer->SetFileName(filename.c_str());
     writer->SetInput(itkImage);
+    writer->UseCompressionOn();
 
     // Try to write the image out
     try 
@@ -1852,7 +1857,8 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK3D( const Vecto
     typename ITKVectorImageWriter<T,VImageDimension>::Type::Pointer writer = ITKVectorImageWriter<T,VImageDimension>::Type::New();
     writer->SetFileName(filename.c_str());
     writer->SetInput(itkImage);
-    
+    writer->UseCompressionOn();
+
     // Try to write the image out
     try 
       {
@@ -1960,7 +1966,8 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
     typename ITKTimeImageWriter2D::Pointer imageWriter = ITKTimeImageWriter2D::New();
     imageWriter->SetFileName(filename.c_str());
     imageWriter->SetInput(itkImage);
-    
+    imageWriter->UseCompressionOn();
+
     // Try to write the image out
     try 
       {
@@ -2044,7 +2051,8 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
     typename ITKTimeImageWriter2D::Pointer imageWriter = ITKTimeImageWriter2D::New();
     imageWriter->SetFileName(filename.c_str());
     imageWriter->SetInput(itkImage);
-    
+    imageWriter->UseCompressionOn();
+
     // Try to write the image out
     try
       {
@@ -2141,7 +2149,8 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
     typename ITKTimeImageWriter3D::Pointer imageWriter = ITKTimeImageWriter3D::New();
     imageWriter->SetFileName(filename.c_str());
     imageWriter->SetInput(itkImage);
-    
+    imageWriter->UseCompressionOn();
+
     // Try to write the image out
     try 
       {
@@ -2233,7 +2242,8 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
     typename ITKTimeImageWriter3D::Pointer imageWriter = ITKTimeImageWriter3D::New();
     imageWriter->SetFileName(filename.c_str());
     imageWriter->SetInput(itkImage);
-    
+    imageWriter->UseCompressionOn();
+
     // Try to write the image out
     try 
       {

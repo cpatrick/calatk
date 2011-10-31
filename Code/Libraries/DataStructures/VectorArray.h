@@ -173,7 +173,7 @@ public:
    *
    * @param source - the source array to copy
    */
-  void copy(VectorArray<T,VImageDimension>* source);
+  void copy(const VectorArray<T,VImageDimension>* source);
 
 
   /**

@@ -7,6 +7,9 @@
 template <class T, unsigned int VImageDimension, class TSpace >
 CImageManagerFullScale< T, VImageDimension, TSpace >::CImageManagerFullScale()
 {
+  m_BlurImage = false;
+  m_Sigma = 0.05;
+  m_GaussianKernel.SetSigma( m_Sigma );
 }
 
 //
@@ -32,6 +35,13 @@ void CImageManagerFullScale< T, VImageDimension, TSpace>::GetImage( SImageInform
       // load it
       std::cout << "Loading " << pCurrentImInfo->sImageFileName << " ... ";
       pCurrentImInfo->pIm = VectorImageUtils< T, VImageDimension, TSpace>::readFileITK( pCurrentImInfo->sImageFileName );
+
+      if ( m_BlurImage )
+        {
+        std::cout << "WARNING: blurring the original image" << std::endl;
+        this->m_GaussianKernel.ConvolveWithKernel( pCurrentImInfo->pIm );
+        }
+
       pCurrentImInfo->pImOrig = pCurrentImInfo->pIm;
       std::cout << "done." << std::endl;
       }

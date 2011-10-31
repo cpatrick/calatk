@@ -40,7 +40,7 @@ public:
   void SetMaskKernelPointer( ptrKernelType pKernel );
   ptrKernelType GetMaskKernelPointer();
 
-  void OutputStateInformation( unsigned int uiIter );
+  void OutputStateInformation( unsigned int uiIter, std::string outputPrefix="" );
 
 protected:
 
@@ -58,6 +58,8 @@ protected:
 
   void ComputeImagesForward();
   void ComputeAdjointBackward();
+  void ComputeInvertedMask( const VectorImageType* ptrImIn, VectorImageType* ptrImOut);
+  void ComputeCompositedImage( const VectorImageType* ptrImIn, const VectorImageType* ptrInvMask1, const VectorImageType* ptrInvMask2, VectorImageType* ptrImComp );
 
   void DetermineTimePointData( std::vector< STimePoint >& vecTimePointData );
 

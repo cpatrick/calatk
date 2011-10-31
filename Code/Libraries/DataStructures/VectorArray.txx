@@ -481,7 +481,7 @@ void VectorArray< T, VImageDimension >::setConst(T c) {
 // copy
 //
 template <class T, unsigned int VImageDimension>
-void VectorArray<T, VImageDimension>::copy(VectorArray<T, VImageDimension>* source) {
+void VectorArray<T, VImageDimension>::copy(const VectorArray<T, VImageDimension>* source) {
 
 #ifdef DEBUG
   // throw exception if there is no data

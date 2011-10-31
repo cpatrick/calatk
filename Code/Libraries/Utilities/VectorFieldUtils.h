@@ -79,7 +79,7 @@ public:
    * @param imIn - the image to be pulled
    * @param imOut - return variable for the resulting image
    */
-  static void applyMap2D(VectorFieldType* map, VectorImageType* imIn, VectorImageType* imOut);
+  static void applyMap2D( const VectorFieldType* map, const VectorImageType* imIn, VectorImageType* imOut);
 
   /**
    * 3D Function that applys a map to an image
@@ -88,7 +88,7 @@ public:
    * @param imIn - the image to be pulled
    * @param imOut - return variable for the resulting image
    */
-  static void applyMap3D(VectorFieldType* map, VectorImageType* imIn, VectorImageType* imOut);
+  static void applyMap3D( const VectorFieldType* map, const VectorImageType* imIn, VectorImageType* imOut);
 
   /**
    * 2D/3D Function that applys a map to an image
@@ -97,7 +97,7 @@ public:
    * @param imIn - the image to be pulled
    * @param imOut - return variable for the resulting image
    */
-  static void applyMap(VectorFieldType* map, VectorImageType* imIn, VectorImageType* imOut);
+  static void applyMap( const VectorFieldType* map, const VectorImageType* imIn, VectorImageType* imOut);
   
   /**
    * 2D Function that computes the determinant of the jacobian for a vector field.
@@ -105,7 +105,7 @@ public:
    * @param fld - the vector field to be processed
    * @param imOut - image that will hold the determinant of Jacobian
    */
-  static void computeDeterminantOfJacobian2D(VectorFieldType* fld, VectorImageType* imOut);
+  static void computeDeterminantOfJacobian2D( const VectorFieldType* fld, VectorImageType* imOut);
 
   /**
    * 3D Function that computes the determinant of the jacobian for a vector field.
@@ -113,7 +113,7 @@ public:
    * @param fld - the vector field to be processed
    * @param imOut - image that will hold the determinant of Jacobian
    */
-  static void computeDeterminantOfJacobian3D(VectorFieldType* fld, VectorImageType* imOut);
+  static void computeDeterminantOfJacobian3D( const VectorFieldType* fld, VectorImageType* imOut);
 
   /**
    * 2D/3D Function that computes the determinant of the jacobian for a vector field.
@@ -121,7 +121,7 @@ public:
    * @param fld - the vector field to be processed
    * @param imOut - image that will hold the determinant of Jacobian
    */
-  static void computeDeterminantOfJacobian(VectorFieldType* fld, VectorImageType* imOut );
+  static void computeDeterminantOfJacobian( const VectorFieldType* fld, VectorImageType* imOut );
 
   /**
    * 2D function computing the gradient of an individual dimension of an image using central differences
@@ -130,7 +130,7 @@ public:
    * @params dim - image dimension (for vector-valued image) for which the gradient should be calculated
    * @params fieldOut - gradient output field
    */
-  static void computeCentralGradient2D(VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldOut );
+  static void computeCentralGradient2D( const VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldOut );
 
   /**
    * 3D function computing the gradient of an individual dimension of an image using central differences
@@ -139,7 +139,7 @@ public:
    * @params dim - image dimension (for vector-valued image) for which the gradient should be calculated
    * @params fieldOut - gradient output field
    */
-  static void computeCentralGradient3D(VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldOut );
+  static void computeCentralGradient3D( const VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldOut );
 
   /**
    * 2D/3D function computing the gradient of an individual dimension of an image using central differences
@@ -148,7 +148,7 @@ public:
    * @params dim - image dimension (for vector-valued image) for which the gradient should be calculated
    * @params fieldOut - gradient output field
    */
-  static void computeCentralGradient(VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldOut );
+  static void computeCentralGradient( const VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldOut );
 
   /***************************
    * ITK Interface Functions *

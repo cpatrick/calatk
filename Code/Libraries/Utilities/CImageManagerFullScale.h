@@ -4,6 +4,7 @@
 #include "CALATKCommon.h"
 #include <stdexcept>
 #include "VectorFieldUtils.h"
+#include "CGaussianKernel.h"
 
 /**
  * CImageManagerFullScale.h - Image manager which can be used to process images at full resolution.
@@ -49,8 +50,19 @@ public:
    */
   virtual void GetImage( SImageInformation* pCurrentImInfo );
 
+  SetMacro( Sigma, T );
+  GetMacro( Sigma, T );
+
+  SetMacro( BlurImage, T );
+  GetMacro( BlurImage, T );
+
 protected:
 private:
+
+  CGaussianKernel< T, VImageDimension > m_GaussianKernel;
+  T m_Sigma;
+  bool m_BlurImage;
+
 };
 
 #include "CImageManagerFullScale.txx"

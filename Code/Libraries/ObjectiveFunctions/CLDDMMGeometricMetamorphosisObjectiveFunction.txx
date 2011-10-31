@@ -137,6 +137,11 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >
   SaveDelete< VectorImagePointerType >::Pointer( m_ptrI1Comp );
   SaveDelete< VectorImagePointerType >::Pointer( m_ptrEstI1Comp );
 
+  if ( m_ptrMaskKernel != NULL )
+    {
+    m_ptrMaskKernel->DeallocateMemory();
+    }
+
 }
 
 template <class T, unsigned int VImageDimension, class TState >
@@ -373,6 +378,22 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >
 }
 
 template <class T, unsigned int VImageDimension, class TState >
+void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::ComputeInvertedMask( const VectorImageType* ptrImIn, VectorImageType* ptrImOut )
+{
+  ptrImOut->copy( ptrImIn );
+  ptrImOut->addConst( -1 );
+}
+
+
+template <class T, unsigned int VImageDimension, class TState >
+void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::ComputeCompositedImage( const VectorImageType* ptrImIn, const VectorImageType* ptrInvMask1, const VectorImageType* ptrInvMask2, VectorImageType* ptrImComp )
+{
+  ptrImComp->copy( ptrImIn );
+  VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrInvMask1, 0, ptrImComp );
+  VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrInvMask2, 0, ptrImComp );
+}
+
+template <class T, unsigned int VImageDimension, class TState >
 void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::ComputeAdjointBackward()
 {
 
@@ -425,11 +446,8 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >
   m_ptrCurrentLambdaTEnd->copy( (*m_ptrLambdaT)[ m_uiTimeIndexOfTimePoint1 ] );
 
   // compute the mask contributions: (T2-1) and (IT(1)-1)
-  m_ptrT2M1->copy( ptrT2 );
-  m_ptrT2M1->addConst( -1 );
-
-  m_ptrEstT1M1->copy( ptrEstT1 );
-  m_ptrEstT1M1->addConst( -1 );
+  ComputeInvertedMask( ptrT2, m_ptrT2M1 );
+  ComputeInvertedMask( ptrEstT1, m_ptrEstT1M1 );
 
   // now add the jump to currentlambdaTEnd
   // \lambda^\tau(1-) = \lambda^\tau(1+) -2/sigma1^2(I(1)-I_1)^2*(T2-1)^2(I^tau(1)-1)
@@ -561,18 +579,6 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >
 
     }
 
-  /*VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( m_ptrI, "I_AfterComputation.nrrd" );
-  VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( m_ptrT, "T_AfterComputation.nrrd" );
-
-  VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( m_ptrLambda, "lam_AfterComputation.nrrd" );
-  VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( m_ptrLambdaT, "lamT_AfterComputation.nrrd" );
-
-  VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( this->m_pState->GetVectorPointerToVectorFieldPointer(), "stateAfterComputation.nrrd" );
-
-  VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( this->m_pGradient->GetVectorPointerToVectorFieldPointer(), "gradientAfterComputation.nrrd" );
-
-  exit( -1 );*/
-
 }
 
 template <class T, unsigned int VImageDimension, class TState >
@@ -628,21 +634,12 @@ T CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::G
   // ptrI1, ptrT2, ptrEstI1, ptrEstT1, ptrEstT2
 
   // compute the mask contributions: (T2-1) and (IT(1)-1)
-  m_ptrT2M1->copy( ptrT2 );
-  m_ptrT2M1->addConst( -1 );
-
-  m_ptrEstT1M1->copy( ptrEstT1 );
-  m_ptrEstT1M1->addConst( -1 );
+  ComputeInvertedMask( ptrT2, m_ptrT2M1 );
+  ComputeInvertedMask( ptrEstT1, m_ptrEstT1M1 );
 
   // multiply I1 and I(1) with it to get the "masked" images, on which we can compute the image similarity term
-
-  m_ptrI1Comp->copy( ptrI1 );
-  VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrT2M1, 0, m_ptrI1Comp );
-  VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrEstT1M1, 0, m_ptrI1Comp );
-
-  m_ptrEstI1Comp->copy( ptrEstI1 );
-  VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrT2M1, 0, m_ptrEstI1Comp );
-  VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrEstT1M1, 0, m_ptrEstI1Comp );
+  ComputeCompositedImage( ptrI1, m_ptrEstT1M1, m_ptrT2M1, m_ptrI1Comp );
+  ComputeCompositedImage( ptrEstI1, m_ptrEstT1M1, m_ptrT2M1, m_ptrEstI1Comp );
 
   // foreground part
 
@@ -664,13 +661,27 @@ T CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::G
 }
 
 template <class T, unsigned int VImageDimension, class TState >
-void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::OutputStateInformation( unsigned int uiIter )
+void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::OutputStateInformation( unsigned int uiIter, std::string outputPrefix )
 {
   ComputeImagesForward();
   std::string sGeometrRes = "geometRes-";
-  VectorImageUtils< T, VImageDimension >::writeFileITK( ptrEstT1, CreateNumberedFileName( sGeometrRes, uiIter, "Est-T1.nrrd" ) );
-  VectorImageUtils< T, VImageDimension >::writeFileITK( ptrEstT2, CreateNumberedFileName( sGeometrRes, uiIter, "Est-T2.nrrd" ) );
-  VectorImageUtils< T, VImageDimension >::writeFileITK( ptrEstI1, CreateNumberedFileName( sGeometrRes, uiIter, "Est-I1.nrrd" ) );
+  VectorImageUtils< T, VImageDimension >::writeFileITK( ptrEstT1, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-Est-T1.nrrd" ) );
+  VectorImageUtils< T, VImageDimension >::writeFileITK( ptrEstT2, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-Est-T2.nrrd" ) );
+  VectorImageUtils< T, VImageDimension >::writeFileITK( ptrEstI1, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-Est-I1.nrrd" ) );
+
+  // compute the mask contributions: (T2-1) and (IT(1)-1)
+  ComputeInvertedMask( ptrT2, m_ptrT2M1 );
+  ComputeInvertedMask( ptrEstT1, m_ptrEstT1M1 );
+
+  // multiply I1 and I(1) with it to get the "masked" images, on which we can compute the image similarity term
+  ComputeCompositedImage( ptrI1, m_ptrEstT1M1, m_ptrT2M1, m_ptrI1Comp );
+  ComputeCompositedImage( ptrEstI1, m_ptrEstT1M1, m_ptrT2M1, m_ptrEstI1Comp );
+
+  VectorImageUtils< T, VImageDimension >::writeFileITK( m_ptrI1Comp, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-I1-comp.nrrd" ) );
+  VectorImageUtils< T, VImageDimension >::writeFileITK( m_ptrEstI1Comp, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-Est-I1-comp.nrrd" ) );
+
+  VectorImageUtils< T, VImageDimension >::writeFileITK( ptrI1, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-I1-saved-orig.nrrd" ) );
+
 }
 
 #endif

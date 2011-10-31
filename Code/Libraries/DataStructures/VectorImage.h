@@ -94,7 +94,7 @@ public:
    *
    * @param source - the source image to copy from
    */
-  void copy(VectorImage* source);
+  void copy(const VectorImage* source);
   
   /** 
    * Method which returns the physical size of a volume element

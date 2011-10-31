@@ -86,26 +86,21 @@ bool CSolverMultiScale< T, VImageDimension, TState>::Solve()
 
   assert( uiNrOfScales>0 );
 
+  std::string sSolutionPrefix = "MS-Sol-";
+
   bool bHasBeenInitialized = false;
 
   // loop over all scales, starting at the lowest
   for ( int iI=(int)uiNrOfScales-1; iI>=0; --iI )
     {
     ptrImageManager->SelectScale( (unsigned int)iI );
+    m_ptrSolver->SetExternalSolverState( (unsigned int)iI );
 
     if ( !bHasBeenInitialized )
       {
       std::cout << "Initializing multi-scale solution." << std::endl;
       bReducedEnergy = m_ptrSolver->Solve();
       bHasBeenInitialized = true;
-
-      // CONTINUE HERE
-      // write out the image and the map
-      /*typedef CLDDMMSpatioTemporalVelocityFieldObjectiveFunction<T,VImageDimension,TState> OType;
-      const VectorImageType* ptrIm = dynamic_cast<OType*>(m_ptrSolver->GetObjectiveFunctionPointer())->GetImage( 1.0 );
-      const VectorImageType* ptrMap = m_ptrSolver->GetObjectiveFunctionPointer()->GetMap( 1.0 );
-      VectorImageUtilsType::writeFileITK( ptrIm, CreateNumberedFileName( "sol-im-", iI, ".nrrd" ) );
-      VectorImageUtilsType::writeFileITK( ptrMap, CreateNumberedFileName( "sol-map-", iI, ".nrrd" ) );*/
 
       }
     else
@@ -122,20 +117,19 @@ bool CSolverMultiScale< T, VImageDimension, TState>::Solve()
 
       TState* pUpsampledState = dynamic_cast< TState* >( pCurrentState->CreateUpsampledStateAndAllocateMemory( ptrImageManager->GetGraftImagePointer() ) );
       
-    // state after upsampling
+      // state after upsampling
 
-    VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( pUpsampledState->GetVectorPointerToVectorFieldPointer(), CreateNumberedFileName( "stateAfterUpsampling", iI, ".nrrd" ) );
-
+      VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( pUpsampledState->GetVectorPointerToVectorFieldPointer(), CreateNumberedFileName( "stateAfterUpsampling", iI, ".nrrd" ) );
+      
       pObj->InitializeState( pUpsampledState );
       bReducedEnergy = m_ptrSolver->SolvePreInitialized();
 
-      // CONTINUE HERE
-      // write out the image and the map
-      /*const VectorImageType* ptrIm = m_ptrSolver->GetObjectiveFunctionPointer()->GetImage( 1.0 );
-      const VectorImageType* ptrMap = m_ptrSolver->GetObjectiveFunctionPointer()->GetMap( 1.0 );
-      VectorImageUtilsType::writeFileITK( ptrIm, CreateNumberedFileName( "sol-im-", iI, ".nrrd" ) );
-      VectorImageUtilsType::writeFileITK( ptrMap, CreateNumberedFileName( "sol-map-", iI, ".nrrd" ) );*/
+      }
 
+    // output the solution at this level
+    if ( this->m_OutputStateInformation )
+      {
+      pObj->OutputStateInformation( iI, sSolutionPrefix );
       }
 
     }

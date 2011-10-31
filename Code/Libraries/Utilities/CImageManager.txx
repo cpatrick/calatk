@@ -136,6 +136,30 @@ bool CImageManager< T, VImageDimension, TSpace>::getCurrentIteratorForId( Subjec
 }
 
 //
+// gets the original image based on the global id
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+const VectorImage< T, VImageDimension, TSpace >*
+CImageManager< T, VImageDimension, TSpace >::GetOriginalImageById( unsigned int uiId )
+{
+  bool bFound;
+  typename SubjectInformationType::iterator iterSet;
+  SubjectInformationType* pInfo;
+
+  bFound = getCurrentIteratorForId( pInfo, iterSet, uiId );
+
+  if ( bFound )
+    {
+    return (*iterSet)->pImOrig;
+    }
+  else
+    {
+    return NULL;
+    }
+
+}
+
+//
 // Add an image transform
 //
 template <class T, unsigned int VImageDimension, class TSpace >

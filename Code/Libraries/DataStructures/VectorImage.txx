@@ -113,7 +113,7 @@ VectorImage< T, VImageDimension, TSpace >::~VectorImage() {
 // copy
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImage< T, VImageDimension, TSpace >::copy(VectorImage* source) 
+void VectorImage< T, VImageDimension, TSpace >::copy(const VectorImage* source) 
 {
   VectorArray<T,VImageDimension>::copy( source );
   __spaceX = source->getSpaceX();

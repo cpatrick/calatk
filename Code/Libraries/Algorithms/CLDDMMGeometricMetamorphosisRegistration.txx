@@ -15,6 +15,10 @@ CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::~CLDDMMG
     {
     delete m_ptrMaskKernel;
     m_ptrMaskKernel = NULL;
+    // unregister it from the objective function
+    typedef CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState > CLDDMMType;
+    CLDDMMType* plddmm = dynamic_cast< CLDDMMType *>( this->m_ptrObjectiveFunction );
+    plddmm->SetMaskKernelPointer( this->m_ptrMaskKernel );    
     }
 }
 
@@ -43,7 +47,7 @@ void CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::Set
   this->m_ptrMaskKernel = ptrHH;
 
   // multiply alpha by 0.25 to make the mask more fluid as default behavior
-  ptrHH->SetAlpha( 0.25*ptrHH->GetAlpha() );
+  ptrHH->SetAlpha( 0.2*ptrHH->GetAlpha() );
 }
 
 template < class T, unsigned int VImageDimension, class TState >
