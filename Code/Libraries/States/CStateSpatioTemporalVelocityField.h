@@ -78,6 +78,8 @@ public:
   void SetSize( unsigned int iS );
   unsigned int GetSize();
 
+  T SquaredNorm();
+
 protected:
 
   void ClearDataStructure();

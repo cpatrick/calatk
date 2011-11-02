@@ -9,6 +9,8 @@
  * Implements a generic line search algorithm
  */
 
+// TODO: Make this a generic line search. This one is a line search for a gradient descent
+
 namespace CALATK
 {
 template <class T, unsigned int VImageDimension, class TState >
@@ -29,32 +31,34 @@ public:
  */
   virtual ~CSolverLineSearch();
 
-  SetMacro( dInitialStepSize, T );
-  GetMacro( dInitialStepSize, T );
+  SetMacro( InitialStepSize, T );
+  GetMacro( InitialStepSize, T );
 
-  SetMacro( dAdjustStepSizeUpFactor, T );
-  GetMacro( dAdjustStepSizeUpFactor, T );
+  SetMacro( AdjustStepSizeUpFactor, T );
+  GetMacro( AdjustStepSizeUpFactor, T );
 
-  SetMacro( dAdjustStepSizeDownFactor, T );
-  GetMacro( dAdjustStepSizeDownFactor, T );
+  SetMacro( AdjustStepSizeDownFactor, T );
+  GetMacro( AdjustStepSizeDownFactor, T );
 
-  SetMacro( dReductionFactor, T );
-  GetMacro( dReductionFactor, T );
+  SetMacro( ReductionFactor, T );
+  GetMacro( ReductionFactor, T );
 
-  SetMacro( dMinAllowedStepSize, T );
-  GetMacro( dMinAllowedStepSize, T );
+  SetMacro( MinAllowedStepSize, T );
+  GetMacro( MinAllowedStepSize, T );
 
-  SetMacro( uiMaxNumberOfIterations, unsigned int );
-  GetMacro( uiMaxNumberOfIterations, unsigned int );
+  SetMacro( MaxNumberOfIterations, unsigned int );
+  GetMacro( MaxNumberOfIterations, unsigned int );
 
-  SetMacro( uiMaxNumberOfTries, unsigned int );
-  GetMacro( uiMaxNumberOfTries, unsigned int );
+  SetMacro( MaxNumberOfTries, unsigned int );
+  GetMacro( MaxNumberOfTries, unsigned int );
 
-  SetMacro( uiAdjustStepSizeUpNumber, unsigned int );
-  GetMacro( uiAdjustStepSizeUpNumber, unsigned int );
+  SetMacro( AdjustStepSizeUpNumber, unsigned int );
+  GetMacro( AdjustStepSizeUpNumber, unsigned int );
 
-  SetMacro( uiAdjustStepSizeDownNumber, unsigned int );
-  GetMacro( uiAdjustStepSizeDownNumber, unsigned int );
+  SetMacro( AdjustStepSizeDownNumber, unsigned int );
+  GetMacro( AdjustStepSizeDownNumber, unsigned int );
+
+  SetMacro( DecreaseConstant, T );
 
 /**
  * Performs the line search
@@ -65,19 +69,21 @@ protected:
 
   bool LineSearchWithBacktracking( T dDesiredStepSize, T& dAlpha, T& dResultingEnergy );
 
-  T m_dInitialStepSize;
+  T m_InitialStepSize;
   
-  T m_dAdjustStepSizeUpFactor;
-  T m_dAdjustStepSizeDownFactor;
-  T m_dReductionFactor;
+  T m_AdjustStepSizeUpFactor;
+  T m_AdjustStepSizeDownFactor;
+  T m_ReductionFactor;
 
-  T m_dMinAllowedStepSize;
+  T m_MinAllowedStepSize;
+  
+  T m_DecreaseConstant;
 
-  unsigned int m_uiMaxNumberOfIterations;
-  unsigned int m_uiMaxNumberOfTries;
+  unsigned int m_MaxNumberOfIterations;
+  unsigned int m_MaxNumberOfTries;
 
-  unsigned int m_uiAdjustStepSizeUpNumber;
-  unsigned int m_uiAdjustStepSizeDownNumber;
+  unsigned int m_AdjustStepSizeUpNumber;
+  unsigned int m_AdjustStepSizeDownNumber;
   
 
 private:

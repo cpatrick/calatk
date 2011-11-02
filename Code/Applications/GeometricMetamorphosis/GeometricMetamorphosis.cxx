@@ -28,12 +28,12 @@ int main(int argc, char **argv)
   //regType::ptrImageManagerType ptrImageManager = lddmm.GetImageManagerPointer();
   ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm.GetImageManagerPointer() );
 
-  std::string runCaseType = "run4";
+  std::string runCaseType = "run3";
 
   std::string relativeDataPath = "2DCasesForTumors/" + runCaseType;
 
-  unsigned int uiI0 = ptrImageManager->AddImage( relativeDataPath + "/" + "I0-test.nhdr", 0.0, 0 );
-  unsigned int uiI1 = ptrImageManager->AddImage( relativeDataPath + "/" + "I1-test.nhdr", 1.0, 0 );
+  unsigned int uiI0 = ptrImageManager->AddImage( relativeDataPath + "/" + "I0-dark.nhdr", 0.0, 0 );
+  unsigned int uiI1 = ptrImageManager->AddImage( relativeDataPath + "/" + "I1-dark.nhdr", 1.0, 0 );
 
   // this needs to be replaced by two true mask images, once we have them
   unsigned int uiT0 = ptrImageManager->AddImage( relativeDataPath + "/" + "T0.nhdr", 0.0, 1 );

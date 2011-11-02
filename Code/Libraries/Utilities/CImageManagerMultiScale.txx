@@ -9,7 +9,7 @@ CImageManagerMultiScale< T, VImageDimension, TSpace >::CImageManagerMultiScale()
   m_bSetDefaultResampler = false;
   m_ptrResampler = NULL;
 
-  m_Sigma = 0.05;
+  m_Sigma = 0.02;
 
   // add default scale, the original blurred image at the original resolution
   AddScale( 1.0, 0 );

@@ -305,8 +305,6 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
   std::cout << "fast forwarded to " << dCurrentTime << std::endl;
   std::cout << "starting from index " << uiStart << std::endl;
 
-  VectorImageUtils< T, VImageDimension>::writeFileITK( ptrMapIn, "beforeEvolution.nrrd" );
-
   // now we can move ahead
 
   for ( unsigned int iI = uiStart; iI < m_vecTimeDiscretization.size()-1; ++iI )

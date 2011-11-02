@@ -157,15 +157,6 @@ CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::GetVectorP
   return &m_vecPtrSTVelocityField;
 }
 
-/*
-template <class T, unsigned int VImageDimension, class TResampler >
-typename CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::VectorPointerToVectorFieldPointerType
-CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::GetVectorPointerToVectorFieldPointer()
-{
-  return &m_vecPtrSTVelocityField;
-}
-*/
-
 //
 // sets a vector field as an element of the spatio temporal velocity field data structure
 //
@@ -305,6 +296,22 @@ CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::operator*(
 {
   CStateSpatioTemporalVelocityField r = *this;
   return r*= p;
+}
+
+//
+// computes the squared norm of the state
+//
+template <class T, unsigned int VImageDimension, class TResampler >
+T CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler >::SquaredNorm()
+{
+  T dSquaredNorm = 0;
+  for ( unsigned int iI=0; iI<m_vecPtrSTVelocityField.size(); ++iI )
+    {
+    dSquaredNorm += m_vecPtrSTVelocityField[ iI ]->computeSquareNorm();
+    }
+
+  return dSquaredNorm;
+
 }
 
 #endif

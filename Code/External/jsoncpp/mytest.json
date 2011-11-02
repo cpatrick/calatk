@@ -1,0 +1,47 @@
+{
+    // selecting a particular solver (or some general global settings)
+    "solver": "lineSearch",
+
+    // array of settings for the multi-scale image pyramid at different levels
+    "multiscaleSettings": [
+        {
+        "blurSigma": 3,
+        "downsamplingFactor": 1
+        },
+        {
+        "blurSigma": 3,
+        "downsamplingFactor": 0.5
+        },
+        {
+        "blurSigma": 3,
+        "downsamplingFactor": 0.25
+        }
+    ],
+
+    // settings for the solver at different levels
+    "solverSettings": [
+        {
+        "tolerance": 1e-3,
+        "nrOfIterations": 25
+        },
+        {
+        "tolerance": 1e-3,
+        "nrOfIterations": 50
+        },
+        {
+        "tolerance": 1e-3,
+        "nrOfIterations": 100
+        }
+    ],
+
+    // setting for the objective function
+    // (if there is only one entry it should be used for all scales, but
+    // we should also be able to specify scale-specific settings)
+    "objectiveFunctionSettings": [
+    	{
+        "name": "CLDDMMGrowthModelObjectiveFunction",
+        "Gamma": 1,
+        "Alpha": 0.01
+	}
+    ]
+}

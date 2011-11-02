@@ -10,31 +10,34 @@ CSolverLineSearch<T, VImageDimension, TState>::CSolverLineSearch()
   // default setting for the parameters
 
   // intial step size of the solver
-  m_dInitialStepSize = 0.001;
+  m_InitialStepSize = 0.001;
 
   // factor the step size is increase by if solutions do not require a reduction
-  m_dAdjustStepSizeUpFactor = 2;
+  m_AdjustStepSizeUpFactor = 2;
 
   // factor the step size is decreased by if soltutions required a reduction
-  m_dAdjustStepSizeDownFactor = 0.5;
+  m_AdjustStepSizeDownFactor = 0.5;
 
   // reduction factor for backtracking line search
-  m_dReductionFactor = 0.5;
+  m_ReductionFactor = 0.5;
 
   // number of steps which did not require a reduction after which the desired step size is increased
-  m_uiAdjustStepSizeUpNumber = 2;
+  m_AdjustStepSizeUpNumber = 2;
 
   // number of steps which did require a reduction after whicht the desired step size is decreased
-  m_uiAdjustStepSizeDownNumber = 5;
+  m_AdjustStepSizeDownNumber = 2;
 
   // minimum allowed step size before the solver terminates
-  m_dMinAllowedStepSize = 1e-6;
+  m_MinAllowedStepSize = 1e-6;
 
   // maximal number of iterations
-  m_uiMaxNumberOfIterations = 50;
+  m_MaxNumberOfIterations = 50;
 
   // maximal number of tries in one backtracking line search
-  m_uiMaxNumberOfTries = 10;
+  m_MaxNumberOfTries = 10;
+
+  // constant for the sufficient decrease condition
+  m_DecreaseConstant = 1e-2;
 
 }
 
@@ -60,7 +63,7 @@ bool CSolverLineSearch<T, VImageDimension, TState>::SolvePreInitialized()
   T dInitialEnergy = pObj->GetCurrentEnergy();
   std::cout << "Initial energy = " << dInitialEnergy << std::endl;
 
-  T dDesiredStepSize = m_dInitialStepSize;
+  T dDesiredStepSize = m_InitialStepSize;
   T dAlpha;
   T dResultingEnergy;
 
@@ -75,13 +78,13 @@ bool CSolverLineSearch<T, VImageDimension, TState>::SolvePreInitialized()
     pObj->OutputStateInformation( 0,  sStatePrefix );
     }
 
-  for ( unsigned int uiIter = 0; uiIter<m_uiMaxNumberOfIterations; ++uiIter )
+  for ( unsigned int uiIter = 0; uiIter<m_MaxNumberOfIterations; ++uiIter )
     {
-    bool bDecreasedEnergy = LineSearchWithBacktracking( dDesiredStepSize, dAlpha, dResultingEnergy );
+    bool bSufficientlyDecreasedEnergy = LineSearchWithBacktracking( dDesiredStepSize, dAlpha, dResultingEnergy );
 
     std::cout << "iter = " << uiIter << ": alpha = " << dAlpha << "; energy = " << dResultingEnergy << std::endl;
 
-    if ( bDecreasedEnergy )
+    if ( bSufficientlyDecreasedEnergy )
       {
 
       // output the state if desired
@@ -101,16 +104,18 @@ bool CSolverLineSearch<T, VImageDimension, TState>::SolvePreInitialized()
         uiNrOfIterationsWithoutImmediateDecrease++;
         }
 
-      if ( uiNrOfIterationsWithImmediateDecrease >= m_uiAdjustStepSizeUpNumber )
+      if ( uiNrOfIterationsWithImmediateDecrease >= m_AdjustStepSizeUpNumber )
         {
-        dDesiredStepSize *= m_dAdjustStepSizeUpFactor;
+        std::cout << "Adjusting step size up" << std::endl;
+        dDesiredStepSize *= m_AdjustStepSizeUpFactor;
         uiNrOfIterationsWithImmediateDecrease = 0;
         uiNrOfIterationsWithoutImmediateDecrease = 0;
         }
       
-      if ( uiNrOfIterationsWithoutImmediateDecrease >= m_uiAdjustStepSizeDownNumber )
+      if ( uiNrOfIterationsWithoutImmediateDecrease >= m_AdjustStepSizeDownNumber )
         {
-        dDesiredStepSize *= m_dAdjustStepSizeDownFactor;
+        std::cout << "Adjusting step size down" << std::endl;
+        dDesiredStepSize *= m_AdjustStepSizeDownFactor;
         uiNrOfIterationsWithImmediateDecrease = 0;
         uiNrOfIterationsWithoutImmediateDecrease = 0;
         }
@@ -119,7 +124,7 @@ bool CSolverLineSearch<T, VImageDimension, TState>::SolvePreInitialized()
     else // could not decrease energy 
       {
       // terminate if smallest step size has been tried
-      if ( dAlpha == m_dMinAllowedStepSize )
+      if ( dAlpha == m_MinAllowedStepSize )
         {
         std::cout << "Smallest allowable step size did not yield an energy reduction. Stopping iterations." << std::endl;
         break;
@@ -127,7 +132,7 @@ bool CSolverLineSearch<T, VImageDimension, TState>::SolvePreInitialized()
       else
         {
         uiNrOfIterationsWithImmediateDecrease = 0;
-        uiNrOfIterationsWithoutImmediateDecrease = 0;
+        uiNrOfIterationsWithoutImmediateDecrease++;
         // set the desired step size to the last tried one
         std::cout << "Could not decrease energy. Trying again with smaller step size." << std::endl;
         dDesiredStepSize = dAlpha;
@@ -163,6 +168,9 @@ bool CSolverLineSearch<T, VImageDimension, TState>::LineSearchWithBacktracking( 
   T dInitialEnergy = pObj->GetCurrentEnergy();
   T dComputedEnergy = std::numeric_limits< T >::infinity();
 
+  T dAdjustedEnergy = std::numeric_limits< T >::infinity();
+
+
   // save the current state
   *pTempState = *pObj->GetStatePointer();
   
@@ -174,6 +182,11 @@ bool CSolverLineSearch<T, VImageDimension, TState>::LineSearchWithBacktracking( 
 
   // get current gradient
   TState *pCurrentGradient = pObj->GetGradientPointer();
+
+  // compute the norm of the gradient (required for line search with gradient descent)
+  T dSquaredNorm = pCurrentGradient->SquaredNorm();
+
+  std::cout << "dSquaredNorm = " << dSquaredNorm << std::endl;
 
   // now see if we can reduce the energy by backtracking
   // FIXME: Add sufficient decrease condition: for now just see if it is decreasing
@@ -195,26 +208,31 @@ bool CSolverLineSearch<T, VImageDimension, TState>::LineSearchWithBacktracking( 
     // here comes a more memory efficient version 
     // (should need no new reallocation of memory, but simply overwrites *pState all the time)
 
-    //VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( pState->GetVectorPointerToVectorFieldPointer(), "stateBefore.nrrd" );
-    //VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( pCurrentGradient->GetVectorPointerToVectorFieldPointer(), "gradientBefore.nrrd" );
-
     *pState = *pCurrentGradient;
     *pState *= -dAlpha;
     *pState += *pTempState;
 
-    //VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( pState->GetVectorPointerToVectorFieldPointer(), "stateAfter.nrrd" );
-
     // recompute the energy
     dComputedEnergy = pObj->GetCurrentEnergy();
 
+    std::cout << "initE = " << dInitialEnergy << std::endl;
+    std::cout << "dc = " << m_DecreaseConstant << std::endl;
+    std::cout << "alpha = " << dAlpha << std::endl;
+    std::cout << "sqNorm = " << dSquaredNorm << std::endl;
+
+    dAdjustedEnergy = dInitialEnergy - m_DecreaseConstant*dAlpha*dSquaredNorm;
+
+    std::cout << "computed energy = " << dComputedEnergy << "; dAdjustedEnergy = " << dAdjustedEnergy << std::endl;
+
+
     //std::cout << "dComputedEnergy = " << dComputedEnergy << std::endl;
 
-    if ( dComputedEnergy >= dInitialEnergy )
+    if ( dComputedEnergy >= dAdjustedEnergy )
       {
-      dAlpha *= m_dReductionFactor;
-      if ( dAlpha < m_dMinAllowedStepSize )
+      dAlpha *= m_ReductionFactor;
+      if ( dAlpha < m_MinAllowedStepSize )
         {
-        dAlpha = m_dMinAllowedStepSize;
+        dAlpha = m_MinAllowedStepSize;
         bHitLowerStepSizeBound = true;
         }
       }
@@ -222,9 +240,9 @@ bool CSolverLineSearch<T, VImageDimension, TState>::LineSearchWithBacktracking( 
     uiIter++;
 
     } 
-  while ( ( dComputedEnergy >= dInitialEnergy ) && ( uiIter <= m_uiMaxNumberOfTries ) && ( !bTerminate ) );
+  while ( ( dComputedEnergy >= dAdjustedEnergy ) && ( uiIter <= m_MaxNumberOfTries ) && ( !bTerminate ) );
 
-  if ( dComputedEnergy >= dInitialEnergy )
+  if ( dComputedEnergy > dAdjustedEnergy )
     {
     // could not reduce the energy, so keep the original one
     *pState = *pTempState;

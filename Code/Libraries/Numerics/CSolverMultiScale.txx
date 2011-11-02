@@ -111,15 +111,7 @@ bool CSolverMultiScale< T, VImageDimension, TState>::Solve()
 
       std::cout << "Upsampling state for multi-scale solver." << std::endl;
 
-      // state before upsampling
-
-      VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( pCurrentState->GetVectorPointerToVectorFieldPointer(), CreateNumberedFileName( "stateBeforeUpsampling", iI, ".nrrd" ) );
-
       TState* pUpsampledState = dynamic_cast< TState* >( pCurrentState->CreateUpsampledStateAndAllocateMemory( ptrImageManager->GetGraftImagePointer() ) );
-      
-      // state after upsampling
-
-      VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( pUpsampledState->GetVectorPointerToVectorFieldPointer(), CreateNumberedFileName( "stateAfterUpsampling", iI, ".nrrd" ) );
       
       pObj->InitializeState( pUpsampledState );
       bReducedEnergy = m_ptrSolver->SolvePreInitialized();

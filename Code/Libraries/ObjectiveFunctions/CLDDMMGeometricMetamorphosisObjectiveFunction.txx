@@ -253,10 +253,6 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >
   GetMap( m_ptrMapTmp, dTime );
   // now compute the image by interpolation
   LDDMMUtils< T, VImageDimension >::applyMap( m_ptrMapTmp, ptrI0, ptrIm );
-
-  std::cout << "DEBUG: remove" << std::endl;
-  VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( this->m_pState->GetVectorPointerToVectorFieldPointer(), "vs.nrrd" );
-
 }
 
 template <class T, unsigned int VImageDimension, class TState >
@@ -681,6 +677,7 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >
   VectorImageUtils< T, VImageDimension >::writeFileITK( m_ptrEstI1Comp, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-Est-I1-comp.nrrd" ) );
 
   VectorImageUtils< T, VImageDimension >::writeFileITK( ptrI1, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-I1-saved-orig.nrrd" ) );
+  VectorImageUtils< T, VImageDimension >::writeFileITK( ptrT2, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-T2-saved-orig.nrrd" ) );
 
 }
 

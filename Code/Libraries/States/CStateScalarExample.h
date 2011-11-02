@@ -83,6 +83,11 @@ public:
     return val;
   }
 
+  inline T SquaredNorm()
+  {
+    return val*val;
+  }
+
   private:
 
   T val;

@@ -1,12 +1,18 @@
 function [] = showComposedImageEvolution( pathName, prefixNr )
 
+%Est-I1-comp
+%I1-comp
+%Est-T1
+%T2-saved-orig
 
 prefix = sprintf('S%04d-', prefixNr );
 
-dIs = dir( strcat( pathName, '/', prefix, 'geometRes-*-I1-comp.nrrd') );
+dIs = dir( strcat( pathName, '/', prefix, 'geometRes-*.nrrd') );
 
 I1s = [];
 I1Ests = [];
+T2s = [];
+T1Ests = [];
 
 for iI=1:length( dIs )
     
@@ -16,12 +22,16 @@ for iI=1:length( dIs )
     
     fprintf(' done.\n' );
     
-    if ~isempty( strfind( dIs( iI ).name, 'Est' ) )
-        % is the estimated composited image
-        I1s{end+1} = imC;
-    else
-        % it is the composited original image
-        I1Ests{end+1} = imC;
+    if ~isempty( strfind( dIs( iI ).name, 'Est-I1-comp' ) )
+      % is the estimated composited image
+      I1Ests{end+1} = imC;
+    elseif ~isempty( strfind( dIs( iI ).name, 'I1-comp' ) )
+      % it is the composited original image
+      I1s{end+1} = imC;
+    elseif ~isempty( strfind( dIs( iI ).name, 'Est-T1' ) )
+      T1Ests{end+1} = imC;
+    elseif ~isempty( strfind( dIs( iI ).name, 'T2-saved-orig' ) )
+      T2s{end+1} = imC;
     end
     
 end
@@ -36,25 +46,48 @@ stopVisualization = false;
 while ~stopVisualization
     
     clf
-    subplot(1,3,1)
-    imagesc( I1s{cIndx} )
+
+    subplot(2,3,1)
+    imagesc( I1s{cIndx}, [0 1] )
     colormap(gray)
     axis image
     axis off
     title('I1-comp')
     
-    subplot(1,3,2)
-    imagesc( I1Ests{cIndx} )
+    subplot(2,3,2)
+    imagesc( I1Ests{cIndx}, [0 1] )
     colormap(gray)
     axis image
     axis off
     title('I1-Est-comp')
     
-    subplot(1,3,3)
-    imagesc( I1s{cIndx}-I1Ests{cIndx})
+    subplot(2,3,3)
+    cDiff = I1s{cIndx}-I1Ests{cIndx};    
+    imagesc( cDiff );
     axis image
     axis off
-    title('diff')
+    title(sprintf('diff; minV=%f, maxV=%f, SSD=%f', min(cDiff(:)), max(cDiff(:)), sum( cDiff(:).^2 ) ) )
+    
+    subplot(2,3,4)
+    imagesc( 1-T1Ests{cIndx}, [0 1] )
+    colormap(gray)
+    axis image
+    axis off
+    title('T1-est')
+    
+    subplot(2,3,5)
+    imagesc( 1-T2s{cIndx}, [0 1] )
+    colormap(gray)
+    axis image
+    axis off
+    title('T2')
+    
+    subplot(2,3,6)
+    compM = (1-T2s{cIndx}).*(1-T1Ests{cIndx});    
+    imagesc( compM, [0 1] );
+    axis image
+    axis off
+    title('compM - T');
     
     set( gcf, 'name', sprintf('Iteration %d', cIndx ) );
     

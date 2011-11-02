@@ -4,10 +4,10 @@ NRRD0004
 type: float
 dimension: 3
 space: left-posterior-superior
-sizes: 200 244 1
+sizes: 198 242 1
 space directions: (0.01,0,0) (0,0.01,0) (0,0,0.01)
 kinds: domain domain domain
 endian: little
 encoding: gzip
 space origin: (0,0,0)
-data file: I1-test.raw.gz
+data file: I1-dark.raw.gz

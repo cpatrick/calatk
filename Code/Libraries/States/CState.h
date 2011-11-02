@@ -29,6 +29,8 @@ private:
   CState operator-(const CState &p ) const { }
   CState operator*(const T &p ) const { }
 
+  virtual T SquaredNorm() = 0;
+
 };
 
 } // end namespace
