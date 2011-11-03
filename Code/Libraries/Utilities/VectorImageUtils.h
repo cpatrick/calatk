@@ -237,6 +237,10 @@ public:
    * @param im - the input image
    */
   static typename ITKCharImage2D::Pointer convertToITKChar( const VectorImage<T,2,TSpace>* im);
+  static typename ITKCharImage2D::Pointer convertToITKChar( const VectorImage<T,3,TSpace>* im)
+  {
+    throw std::runtime_error( "Not implemented." );
+  }
 
   /**
    * 2D Method that takes a VectorImageType and returns an ITK image.  The returned

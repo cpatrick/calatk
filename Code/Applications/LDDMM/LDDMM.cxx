@@ -23,15 +23,12 @@ int main(int argc, char **argv)
 
   regType lddmm;
 
-  //regType::ptrImageManagerType ptrImageManager = lddmm.GetImageManagerPointer();
   ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm.GetImageManagerPointer() );
 
-  //ptrImageManager->AddImage( source, 0.0, 0 );
-  //ptrImageManager->AddImage( target, 1.0, 0 );
+  ptrImageManager->AddImage( sourceImage, 0.0, 0 );
+  ptrImageManager->AddImage( targetImage, 1.0, 0 );
 
-  ptrImageManager->AddImage( "I0_short.nhdr", 0.0, 0 );
-  ptrImageManager->AddImage( "I1_short.nhdr", 1.0, 0 );
-
+  // TODO: get this from the configuration file
   ptrImageManager->AddScale( 0.75, 1 );
   ptrImageManager->AddScale( 0.5, 2 );
 
@@ -42,8 +39,8 @@ int main(int argc, char **argv)
   const regType::VectorImageType* ptrIm = lddmm.GetImage( 1.0 );
   const regType::VectorFieldType* ptrMap = lddmm.GetMap( 1.0 );
 
-  VectorImageUtilsType::writeFileITK( ptrIm, "imOut.nrrd" );
-  VectorImageUtilsType::writeFileITK( ptrMap, "mapOut.nrrd" );
+  VectorImageUtilsType::writeFileITK( ptrIm, warpedSourceImage );
+  VectorImageUtilsType::writeFileITK( ptrMap, sourceToTargetMap );
 
   return EXIT_SUCCESS;
 }

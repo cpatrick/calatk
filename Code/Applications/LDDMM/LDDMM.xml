@@ -1,250 +1,60 @@
 <?xml version="1.0" encoding="utf-8"?>
 <executable>
+
+  <category>Registration</category>
+    <title>LDDMM Image-to-Image Registration</title>
+    <description>An implementation of LDDMM</description>
+    <version>1.0</version>
+    <documentation-url></documentation-url>
+    <license>Apache 2.0</license>
+    <contributor>The CALATK team</contributor>
+    <acknowledgements></acknowledgements>
+
   <parameters>
-     
-    <double>
-      <name>alpha_iter0</name>
-      <longflag>alpha_iter0</longflag>
-      <description>Smoothness operator setting for iteration 0</description>
-      <label>alpha_iter0</label>
-      <default>0.03</default>
-    </double>
+        <label>Input/Output</label>
+        <description>Input/Output Parameters</description>
 
-     <double>
-      <name>alpha_iter1</name>
-      <longflag>alpha_iter1</longflag>
-      <description>Smoothness operator setting for iteration 1</description>
-      <label>alpha_iter1</label>
-      <default>0.03</default>
-    </double>
+        <image>
+            <name>sourceImage</name>
+            <label>Source Image</label>
+	    <channel>input</channel>
+	    <index>0</index>
+            <default>None</default>
+            <description>Source image for the registration.</description>
+        </image>
 
-     <double>
-      <name>alpha_iter2</name>
-      <longflag>alpha_iter2</longflag>
-      <description>Smoothness operator setting for iteration 2</description>
-      <label>alpha_iter2</label>
-      <default>0.03</default>
-    </double>
+	<image>
+            <name>targetImage</name>
+            <label>Target Image</label>
+            <channel>output</channel>
+            <index>1</index>
+            <default>None</default>
+            <description>Target image for the registration.</description>
+        </image>
 
-    <integer>
-      <name>gamma_iter0</name>
-      <longflag>gamma_iter0</longflag>
-      <description>Smoothness operator setting for iteration 0</description>
-      <label>gamma_iter0</label>
-      <default>1</default>
-    </integer>
+	<image>
+	  <name>sourceToTargetMap</name>
+	  <label>Source to target map</label>
+	  <longflag>--map</longflag>
+	  <default>sourceToTargetMap.nrrd</default>
+	  <description>Resulting registration map from source to target in target space.</description>
+	</image>
 
-     <integer>
-      <name>gamma_iter1</name>
-      <longflag>gamma_iter1</longflag>
-      <description>Smoothness operator setting for iteration 1</description>
-      <label>gamma_iter1</label>
-      <default>1</default>
-    </integer>
+	<image>
+	  <name>warpedSourceImage</name>
+	  <label>Warped source image</label>
+	  <longflag>--wsource</longflag>
+	  <default>warpedSource.nrrd</default>
+	</image>
 
-     <integer>
-      <name>gamma_iter2</name>
-      <longflag>gamma_iter2</longflag>
-      <description>Smoothness operator setting for iteration 2</description>
-      <label>gamma_iter2</label>
-      <default>1</default>
-    </integer>
-
-    <double>
-      <name>dt</name>
-      <longflag>dt</longflag>
-      <description>Size of energy update time step</description>
-      <label>dt</label>
-      <default>0.0003</default>
-    </double>
-
-    <double>
-      <name>sigma_iter0</name>
-      <longflag>sigma_iter0</longflag>
-      <description>The weight of the image vs the regularization term for iteration 0</description>
-      <label>sigma_iter0</label>
-      <default>0.1</default>
-    </double>
-
-    <double>
-      <name>sigma_iter1</name>
-      <longflag>sigma_iter1</longflag>
-      <description>The weight of the image vs the regularization term for iteration 1</description>
-      <label>sigma_iter1</label>
-      <default>0.1</default>
-    </double>
-
-    <double>
-      <name>sigma_iter2</name>
-      <longflag>sigma_iter2</longflag>
-      <description>The weight of the image vs the regularization term for iteration 2</description>
-      <label>sigma_iter2</label>
-      <default>0.1</default>
-    </double>
-
-    <integer>
-      <name>nt</name>
-      <longflag>nt</longflag>
-      <description>Number of time discretization steps (per unit time)</description>
-      <label>nt</label>
-      <default>5</default>
-    </integer>
-
-    <integer>
-      <name>tTot</name>
-      <longflag>tTot</longflag>
-      <description>Total amount of time to flow for</description>
-      <label>tTot</label>
-      <default>1</default>
-    </integer>
-
-    <double>
-      <name>alphadt</name>
-      <longflag>alphadt</longflag>
-      <description>The factor by which to try adjusting the timestep while trying for a decrease each iteration</description>
-      <label>alphadt</label>
-      <default>0.5</default>
-    </double>
-
-    <integer>
-      <name>adjustFactor</name>
-      <longflag>adjustFactor</longflag>
-      <description>The factor by which to adjust the timestep when things are consistently going well or poorly from iteration to iteration</description>
-      <label>adjustFactor</label>
-      <default>2</default>
-    </integer>
-
-    <integer>
-      <name>adjustStepNum</name>
-      <longflag>adjustStepNum</longflag>
-      <description>The number of constant good or bad steps required before adjusting the timestep</description>
-      <label>adjustStepNum</label>
-      <default>10</default>
-    </integer>
-
-    <integer>
-      <name>maxReducTries</name>
-      <longflag>maxReducTries</longflag>
-      <description>The number reduction attempst allowed each iteration while searching for a decrease during each iteration</description>
-      <label>maxReducTries</label>
-      <default>10</default>
-    </integer>
-
-    <integer>
-      <name>quitCheckFreq</name>
-      <longflag>quitCheckFreq</longflag>
-      <description>The frequency with which to check to make sure the energy has decreased overall. If it hasn't, the algorithm quits</description>
-      <label>quitCheckFreq</label>
-      <default>25</default>
-    </integer>
-
-    <boolean>
-      <name>flowMap</name>
-      <longflag>flowMap</longflag>
-      <description>Flow using the map (true) or the image (false, default)</description>
-      <label>flowMap</label>
-      <default>false</default>
-    </boolean>
-
-    <boolean>
-      <name>verbose</name>
-      <longflag>verbose</longflag>
-      <description>Print status messages (true) or run silently (false, default)</description>
-      <label>verbose</label>
-      <default>false</default>
-    </boolean>
-
-    <boolean>
-      <name>useThreadedAdvection</name>
-      <longflag>useThreadedAdvection</longflag>
-      <description>Use the threaded version of the advection algorithm (true) or use the sequential version (false, default)</description>
-      <label>useThreadedAdvection</label>
-      <default>false</default>
-    </boolean>
-
-    <integer>
-      <name>numThreads</name>
-      <longflag>numThreads</longflag>
-      <description>The number of threads to use if using threaded advection</description>
-      <label>numThreads</label>
-      <default>4</default>
-    </integer>
-
-    <integer>
-      <name>iter0</name>
-      <longflag>iter0</longflag>
-      <description>The number of iterations for the first run</description>
-      <label>iter0</label>
-      <default>200</default>
-    </integer>
-
-    <integer>
-      <name>iter1</name>
-      <longflag>iter1</longflag>
-      <description>The number of iterations for the second run</description>
-      <label>iter1</label>
-      <default>100</default>
-    </integer>
-
-    <integer>
-      <name>iter2</name>
-      <longflag>iter2</longflag>
-      <description>The number of iterations for the third run</description>
-      <label>iter2</label>
-      <default>50</default>
-    </integer>
-
-    <integer>
-      <name>runType</name>
-      <longflag>runType</longflag>
-      <description>Run 2D version or 3D version (2D = 0, 3D =1)</description>
-      <label>runType</label>
-      <default>0</default>
-    </integer> 
-
-    <file>
-      <longflag>source</longflag>
-      <description>Source Image File</description>
-      <label>Source Image</label>
-    </file>
-
-    <file>
-      <longflag>target</longflag>
-      <description>Target Image File</description>
-      <label>Target Image</label>
-    </file>
-
-    <file>
-      <longflag>outputImage</longflag>
-      <description>Output Image File</description>
-      <label>Output Image</label>
-    </file>
-
-    <file>
-      <longflag>outputVelocity</longflag>
-      <description>Velocity Image File</description>
-      <label>Output Velocity</label>
-    </file>
-
-    <file>
-      <longflag>outputMap</longflag>
-      <description>Output Map File</description>
-      <label>Output Map</label>
-    </file>
-
-    <file>
-      <longflag>exampleFile</longflag>
-      <description>Example File</description>
-      <label>Example File</label>
-      <default>.txt</default>
-    </file>
-
-    <file>
-      <longflag>inputFile</longflag>
-      <description>Input File</description>
-      <label>Input File</label>
-      <default>.txt</default>
-    </file>
+	<file>
+	  <name>configFile</name>
+	  <longflag>--config</longflag>
+	  <label>Configuration file</label>
+	  <default>None</default>
+	  <description>JSON Configuration file.</description>
+	</file>
 
   </parameters>
+  
 </executable>

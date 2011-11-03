@@ -1696,8 +1696,11 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK2D(const Vector
     delete imNormalized;
 
     // Set origin and direction
-    outImage->SetOrigin(VectorImageUtilsType::convertITKVectorOrigin(im->getOrigin()));
-    outImage->SetDirection(VectorImageUtilsType::convertITKVectorDirection(im->getDirection()));
+
+    std::cout << "WARNING: needs to be put back in." << std::endl;
+
+    //outImage->SetOrigin(VectorImageUtilsType::convertITKVectorOrigin(im->getOrigin()));
+    //outImage->SetDirection(VectorImageUtilsType::convertITKVectorDirection(im->getDirection()));
     
     // Initialize ITK writer
     typename ColorWriterType::Pointer colorImageWriter = ColorWriterType::New();
