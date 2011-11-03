@@ -46,19 +46,28 @@ int DoIt( int argc, char** argv )
 
   lddmm.Solve();
 
+  const VectorImageType* ptrI0Orig = ptrImageManager->GetOriginalImageById( uiI0 );
+  const VectorImageType* ptrI1Orig = ptrImageManager->GetOriginalImageById( uiI1 );
+  const VectorImageType* ptrT0Orig = ptrImageManager->GetOriginalImageById( uiT0 );
+  const VectorImageType* ptrT1Orig = ptrImageManager->GetOriginalImageById( uiT1 );
+
   const VectorFieldType* ptrMap1 = new VectorFieldType( lddmm.GetMap( 1.0 ) );
-  const VectorImageType* ptrIm = new VectorImageType( lddmm.GetImage( 1.0 ) );
+
+  VectorImageType* ptrI0W1 = new VectorImageType( ptrI0Orig );
 
   VectorImageUtilsType::writeFileITK( ptrMap1, sourceToTargetMap );
   
+  // generating warped image (not always written out)
+  LDDMMUtilsType::applyMap( ptrMap1, ptrI0Orig, ptrI0W1 );
+
   if ( warpedSourceImage.compare("None")!=0 )
     {
-    VectorImageUtilsType::writeFileITK( ptrIm, warpedSourceImage );
+    VectorImageUtilsType::writeFileITK( ptrI0W1, warpedSourceImage );
     }
   
   if ( bWriteDetailedResults )
     {
-
+    const VectorImageType* ptrIm = new VectorImageType( lddmm.GetImage( 1.0 ) );
     const VectorImageType* ptrT1 = new VectorImageType( lddmm.GetImageT( 1.0 ) );
     const VectorImageType* ptrT2 = new VectorImageType( lddmm.GetImageT( 2.0 ) );
     const VectorFieldType* ptrMap0 = new VectorFieldType( lddmm.GetMap( 0.0 ) );
@@ -76,16 +85,10 @@ int DoIt( int argc, char** argv )
     VectorImageUtilsType::writeFileITK( ptrT2, sDetailedResultFilePrefix + "-res-T2.nrrd" );
     
     // apply the map to the original images and output
-    const VectorImageType* ptrI0Orig = ptrImageManager->GetOriginalImageById( uiI0 );
-    const VectorImageType* ptrI1Orig = ptrImageManager->GetOriginalImageById( uiI1 );
-    const VectorImageType* ptrT0Orig = ptrImageManager->GetOriginalImageById( uiT0 );
-    const VectorImageType* ptrT1Orig = ptrImageManager->GetOriginalImageById( uiT1 );
     
-    VectorImageType* ptrI0W1 = new VectorImageType( ptrI0Orig );
     VectorImageType* ptrT0W1 = new VectorImageType( ptrT0Orig );
     VectorImageType* ptrT0W2 = new VectorImageType( ptrT0Orig );
     
-    LDDMMUtilsType::applyMap( ptrMap1, ptrI0Orig, ptrI0W1 );
     LDDMMUtilsType::applyMap( ptrMap1, ptrT0Orig, ptrT0W1 );
     LDDMMUtilsType::applyMap( ptrMap2, ptrT0Orig, ptrT0W2 );
     
@@ -98,7 +101,7 @@ int DoIt( int argc, char** argv )
     VectorImageUtilsType::writeFileITK( ptrT0Orig, sDetailedResultFilePrefix + "-res-T0-orig.nrrd" );
     VectorImageUtilsType::writeFileITK( ptrT1Orig, sDetailedResultFilePrefix + "-res-T1-orig.nrrd" );
     
-    delete ptrI0W1;
+    delete ptrIm;
     delete ptrT0W1;
     delete ptrT0W2;
     delete ptrT1;
@@ -108,8 +111,8 @@ int DoIt( int argc, char** argv )
     delete ptrMapFT;
 
     }
-  
-  delete ptrIm;
+
+  delete ptrI0W1;  
   delete ptrMap1;
   
   return EXIT_SUCCESS;

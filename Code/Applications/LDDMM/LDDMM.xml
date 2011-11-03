@@ -19,7 +19,6 @@
             <label>Source Image</label>
 	    <channel>input</channel>
 	    <index>0</index>
-            <default>None</default>
             <description>Source image for the registration.</description>
         </image>
 
@@ -28,7 +27,6 @@
             <label>Target Image</label>
             <channel>input</channel>
             <index>1</index>
-            <default>None</default>
             <description>Target image for the registration.</description>
         </image>
 
@@ -37,7 +35,6 @@
 	  <label>Source to target map</label>
 	  <channel>output</channel>
 	  <index>2</index>
-	  <default>sourceToTargetMap.nrrd</default>
 	  <description>Resulting registration map from source to target in target space.</description>
 	</image>
 
@@ -45,7 +42,7 @@
 	  <name>warpedSourceImage</name>
 	  <label>Warped source image</label>
 	  <longflag>--wsource</longflag>
-	  <default>warpedSource.nrrd</default>
+	  <default>None</default>
 	</image>
 
 	<file>

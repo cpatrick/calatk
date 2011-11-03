@@ -20,12 +20,15 @@ int DoIt( int argc, char** argv )
   typedef CALATK::CLDDMMGrowthModelRegistration< TFLOAT, VImageDimension > regType;
   typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension > VectorImageUtilsType;
   typedef CALATK::CImageManagerMultiScale< TFLOAT, VImageDimension > ImageManagerMultiScaleType;
+  typedef CALATK::LDDMMUtils< TFLOAT, VImageDimension > LDDMMUtilsType;
+  typedef typename regType::VectorImageType VectorImageType;
+  typedef typename regType::VectorFieldType VectorFieldType;
 
   regType lddmm;
 
   ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm.GetImageManagerPointer() );
 
-  ptrImageManager->AddImage( sourceImage, 0.0, 0 );
+  unsigned int uiI0 = ptrImageManager->AddImage( sourceImage, 0.0, 0 );
   ptrImageManager->AddImage( targetImage, 1.0, 0 );
 
   // TODO: get this from the configuration file
@@ -36,11 +39,20 @@ int DoIt( int argc, char** argv )
 
   lddmm.Solve();
 
-  const typename regType::VectorImageType* ptrIm = lddmm.GetImage( 1.0 );
-  const typename regType::VectorFieldType* ptrMap = lddmm.GetMap( 1.0 );
+  const VectorFieldType* ptrMap1 = new VectorFieldType( lddmm.GetMap( 1.0 ) );
+  VectorImageUtilsType::writeFileITK( ptrMap1, sourceToTargetMap );
 
-  VectorImageUtilsType::writeFileITK( ptrIm, warpedSourceImage );
-  VectorImageUtilsType::writeFileITK( ptrMap, sourceToTargetMap );
+  if ( warpedSourceImage.compare("None") != 0 )
+    {
+    const VectorImageType* ptrI0Orig = ptrImageManager->GetOriginalImageById( uiI0 );
+    VectorImageType* ptrI0W1 = new VectorImageType( ptrI0Orig );
+    // generating warped image (not always written out)
+    LDDMMUtilsType::applyMap( ptrMap1, ptrI0Orig, ptrI0W1 );
+    VectorImageUtilsType::writeFileITK( ptrI0W1, warpedSourceImage );
+    delete ptrI0W1;
+    }
+
+  delete ptrMap1;
 
   return EXIT_SUCCESS;
 }

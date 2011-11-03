@@ -19,7 +19,6 @@
             <label>Source Image</label>
 	    <channel>input</channel>
 	    <index>0</index>
-            <default>None</default>
             <description>Source image for the registration.</description>
         </image>
 
@@ -28,7 +27,6 @@
             <label>Target Image</label>
             <channel>input</channel>
             <index>1</index>
-            <default>None</default>
             <description>Target image for the registration.</description>
         </image>
 
@@ -37,7 +35,6 @@
             <label>Source mask image</label>
 	    <channel>input</channel>
 	    <index>2</index>
-            <default>None</default>
             <description>Source mask image for the registration.</description>
         </image>
 
@@ -46,7 +43,6 @@
             <label>Target mask image</label>
             <channel>input</channel>
             <index>3</index>
-            <default>None</default>
             <description>Target mask image for the registration.</description>
         </image>
 
@@ -55,7 +51,6 @@
 	  <label>Source to target map</label>
 	  <channel>output</channel>
 	  <index>4</index>
-	  <default>sourceToTargetMap.nrrd</default>
 	  <description>Resulting registration map from source to target in target space.</description>
 	</image>
 
