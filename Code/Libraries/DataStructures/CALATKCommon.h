@@ -44,6 +44,11 @@ const double PI = 4.0*atan(1.0);
 std::string CreateIntegerString( int iNr, unsigned int uiW = 4 );
 std::string CreateNumberedFileName( std::string strPrefix, unsigned int uiNr, std::string postFix );
 
+
+/** Getting effective image dimensions (i.e., number of non-singleton dimensions), so that we can instantiate objects of the right dimension */
+
+unsigned int GetNonSingletonImageDimensionFromFile( std::string sourceImage );
+
 /** ND simulated templated typdefs */
 
 template <class T, unsigned int VImageDimension>

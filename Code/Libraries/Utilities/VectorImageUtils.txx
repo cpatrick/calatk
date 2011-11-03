@@ -1581,7 +1581,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTextFile(VectorImageTy
 // writeFileITK, 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK2D(const VectorImageType* im, std::string filename) 
+bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK(const VectorImageType2D* im, std::string filename) 
 {
   
   //
@@ -1670,7 +1670,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK2D(const Vector
     // normalize the image onto 0-255
     VectorImageType* imNormalized = new VectorImageType( im );
 
-    typedef VectorImageUtils<T,VImageDimension,TSpace> VectorImageUtilsType;
+    typedef VectorImageUtils<T,2,TSpace> VectorImageUtilsType;
 
     VectorImageUtilsType::normalize(imNormalized, 0, 255);
 
@@ -1699,8 +1699,8 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK2D(const Vector
 
     std::cout << "WARNING: needs to be put back in." << std::endl;
 
-    //outImage->SetOrigin(VectorImageUtilsType::convertITKVectorOrigin(im->getOrigin()));
-    //outImage->SetDirection(VectorImageUtilsType::convertITKVectorDirection(im->getDirection()));
+    outImage->SetOrigin(VectorImageUtilsType::convertITKVectorOrigin(im->getOrigin()));
+    outImage->SetDirection(VectorImageUtilsType::convertITKVectorDirection(im->getDirection()));
     
     // Initialize ITK writer
     typename ColorWriterType::Pointer colorImageWriter = ColorWriterType::New();
@@ -1814,7 +1814,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK2D(const Vector
 // writeFileITK, 3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK3D( const VectorImageType* im, std::string filename) 
+bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK( const VectorImageType3D* im, std::string filename) 
 {
 
   //
@@ -1876,28 +1876,6 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK3D( const Vecto
     }
   
   return true;
-}
-
-//
-// writeFileITK, 2D/3D
-//
-template <class T, unsigned int VImageDimension, class TSpace >
-bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK( const VectorImageType* im, std::string filename) 
-{
-  switch ( VImageDimension )
-    {
-    case 2:
-      return writeFileITK2D( im, filename );
-      break;
-    case 3:
-      return writeFileITK3D( im, filename );
-      break;
-    default:
-      throw std::runtime_error( "Image dimension not supported for writing" );
-    }
-
-  return EXIT_FAILURE;
-
 }
 
 //

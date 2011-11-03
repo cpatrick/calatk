@@ -28,6 +28,8 @@ class VectorImageUtils
 public:
 
   typedef VectorImage< T, VImageDimension, TSpace > VectorImageType;
+  typedef VectorImage< T, 2, TSpace > VectorImageType2D;
+  typedef VectorImage< T, 3, TSpace > VectorImageType3D;
 
   /**
    * Method that returns the max of the data in the image
@@ -414,7 +416,7 @@ public:
    * @param im - the image to write
    * @param filename - the name of the file to write to
    */
-  static bool writeFileITK2D(const VectorImageType* im, std::string filename);
+  static bool writeFileITK(const VectorImageType2D* im, std::string filename);
 
   /**
    * 3D Method that uses ITK to write the image out
@@ -422,15 +424,7 @@ public:
    * @param im - the image to write
    * @param filename - the name of the file to write to
    */
-  static bool writeFileITK3D(const VectorImageType* im, std::string filename);
-
-  /**
-   * 2D/3D Method that uses ITK to write the image out
-   *
-   * @param im - the image to write
-   * @param filename - the name of the file to write to
-   */
-  static bool writeFileITK(const VectorImageType* im, std::string filename);
+  static bool writeFileITK(const VectorImageType3D* im, std::string filename);
 
   /**
    * 2D Method that uses ITK to write the time dependant image set out

@@ -26,7 +26,7 @@
 	<image>
             <name>targetImage</name>
             <label>Target Image</label>
-            <channel>output</channel>
+            <channel>input</channel>
             <index>1</index>
             <default>None</default>
             <description>Target image for the registration.</description>
@@ -35,7 +35,8 @@
 	<image>
 	  <name>sourceToTargetMap</name>
 	  <label>Source to target map</label>
-	  <longflag>--map</longflag>
+	  <channel>output</channel>
+	  <index>2</index>
 	  <default>sourceToTargetMap.nrrd</default>
 	  <description>Resulting registration map from source to target in target space.</description>
 	</image>
