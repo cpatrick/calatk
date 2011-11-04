@@ -87,6 +87,7 @@ SET(CALATK_INCLUDE_DIRS
   ${CMAKE_SOURCE_DIR}/Code/Libraries/Resamplers
   ${CMAKE_SOURCE_DIR}/Code/Libraries/ObjectiveFunctions
   ${CMAKE_SOURCE_DIR}/Code/External/ITKTestingCommands
+  ${CMAKE_SOURCE_DIR}/Code/External/jsoncpp
   ${CMAKE_BINARY_DIR}
   # Casey's Code
   ${CMAKE_SOURCE_DIR}/Utilities/DTIProcess/Library

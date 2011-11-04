@@ -13,8 +13,8 @@
         "downsamplingFactor": 0.5
         },
         {
-        "blurSigma": 3,
-        "downsamplingFactor": 0.25
+        "blurSigma": 3
+//        "downsamplingFactor": 0.25
         }
     ],
 

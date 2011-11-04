@@ -101,7 +101,8 @@ add_ctest_test_image_compare(calatkAdvectionTest ${ALGORITHMS_TESTS_PDESOLVER} I
 add_test_executable(calatkImageDataStructureTest CALATK ITKCommon ITKIO)
 add_ctest_test(calatkImageDataStructureTest ${test_temp_dir})
 
-
+add_test_executable(calatkJSONTest CALATK)
+add_ctest_test(calatkJSONTest ${test_temp_dir})
 
 
 #add_ctest_test(writeFileITKTest
