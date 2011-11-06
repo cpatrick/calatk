@@ -50,7 +50,9 @@ public:
    */
   virtual void GetImage( SImageInformation* pCurrentImInfo );
 
-  SetMacro( Sigma, T );
+  void SetSigma( T dSigma );
+
+  SetJSONMacro( Sigma, T );
   GetMacro( Sigma, T );
 
   SetMacro( BlurImage, T );
@@ -62,6 +64,9 @@ private:
   CGaussianKernel< T, VImageDimension > m_GaussianKernel;
   T m_Sigma;
   bool m_BlurImage;
+
+  const T DefaultSigma;
+  const bool DefaultBlurImage;
 
 };
 

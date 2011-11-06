@@ -5,39 +5,49 @@
 // empty constructor
 //
 template <class T, unsigned int VImageDimension, class TState >
-CSolverLineSearch<T, VImageDimension, TState>::CSolverLineSearch()
+CSolverLineSearch<T, VImageDimension, TState>::CSolverLineSearch() 
+  : DefaultInitialStepSize( 0.001 ),
+    DefaultAdjustStepSizeUpFactor(2),
+    DefaultAdjustStepSizeDownFactor(0.5),
+    DefaultReductionFactor(0.5),
+    DefaultMinAllowedStepSize(1e-6),
+    DefaultDecreaseConstant(1e-2),
+    DefaultMaxNumberOfIterations(100),
+    DefaultMaxNumberOfTries(10),
+    DefaultAdjustStepSizeUpNumber(2),
+    DefaultAdjustStepSizeDownNumber(2)
 {
   // default setting for the parameters
 
   // intial step size of the solver
-  m_InitialStepSize = 0.001;
+  m_InitialStepSize = DefaultInitialStepSize;
 
   // factor the step size is increase by if solutions do not require a reduction
-  m_AdjustStepSizeUpFactor = 2;
+  m_AdjustStepSizeUpFactor = DefaultAdjustStepSizeUpFactor;
 
   // factor the step size is decreased by if soltutions required a reduction
-  m_AdjustStepSizeDownFactor = 0.5;
+  m_AdjustStepSizeDownFactor = DefaultAdjustStepSizeDownFactor;
 
   // reduction factor for backtracking line search
-  m_ReductionFactor = 0.5;
+  m_ReductionFactor = DefaultReductionFactor;
 
   // number of steps which did not require a reduction after which the desired step size is increased
-  m_AdjustStepSizeUpNumber = 2;
+  m_AdjustStepSizeUpNumber = DefaultAdjustStepSizeUpNumber;
 
   // number of steps which did require a reduction after whicht the desired step size is decreased
-  m_AdjustStepSizeDownNumber = 2;
+  m_AdjustStepSizeDownNumber = DefaultAdjustStepSizeDownNumber;
 
   // minimum allowed step size before the solver terminates
-  m_MinAllowedStepSize = 1e-6;
+  m_MinAllowedStepSize = DefaultMinAllowedStepSize;
 
   // maximal number of iterations
-  m_MaxNumberOfIterations = 50;
+  m_MaxNumberOfIterations = DefaultMaxNumberOfIterations;
 
   // maximal number of tries in one backtracking line search
-  m_MaxNumberOfTries = 10;
+  m_MaxNumberOfTries = DefaultMaxNumberOfTries;
 
   // constant for the sufficient decrease condition
-  m_DecreaseConstant = 1e-2;
+  m_DecreaseConstant = DefaultDecreaseConstant;
 
 }
 
@@ -47,6 +57,28 @@ CSolverLineSearch<T, VImageDimension, TState>::CSolverLineSearch()
 template <class T, unsigned int VImageDimension, class TState >
 CSolverLineSearch<T, VImageDimension, TState>::~CSolverLineSearch()
 {
+}
+
+//
+// auto configuration
+//
+template <class T, unsigned int VImageDimension, class TState >
+void CSolverLineSearch<T, VImageDimension, TState>::SetAutoConfiguration( const Json::Value& ConfValue )
+{
+  Superclass::SetAutoConfiguration( ConfValue );
+
+  Json::Value currentConfiguration = CALATK::JSONParameterUtils::SaveGetFromKey( ConfValue, "LineSearch", Json::nullValue, this->GetPrintConfiguration() );
+  
+  SetJSONInitialStepSize( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "InitialStepSize", DefaultInitialStepSize, this->GetPrintConfiguration() ).asDouble() );
+  SetJSONAdjustStepSizeUpFactor( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "AdjustStepSizeUpFactor", DefaultAdjustStepSizeUpFactor, this->GetPrintConfiguration() ).asDouble() );
+  SetJSONAdjustStepSizeDownFactor( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "AdjustStepSizeDownFactor", DefaultAdjustStepSizeDownFactor, this->GetPrintConfiguration() ).asDouble() );
+  SetJSONReductionFactor( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "ReductionFactor", DefaultReductionFactor, this->GetPrintConfiguration() ).asDouble() );
+  SetJSONMinAllowedStepSize( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "MinAllowedStepSize", DefaultMinAllowedStepSize, this->GetPrintConfiguration() ).asDouble() );
+  SetJSONDecreaseConstant( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "DecreaseConstant", DefaultDecreaseConstant, this->GetPrintConfiguration() ).asDouble() );
+  SetJSONMaxNumberOfIterations( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "MaxNumberOfIterations", DefaultMaxNumberOfIterations, this->GetPrintConfiguration() ).asUInt() );
+  SetJSONMaxNumberOfTries( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "MaxNumberOfTries", DefaultMaxNumberOfTries, this->GetPrintConfiguration() ).asUInt() );
+  SetJSONAdjustStepSizeUpNumber( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "AdjustStepSizeUpNumber", DefaultAdjustStepSizeUpNumber, this->GetPrintConfiguration() ).asUInt() );
+  SetJSONAdjustStepSizeDownNumber( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "AdjustStepSizeDownNumber", DefaultAdjustStepSizeDownNumber, this->GetPrintConfiguration() ).asUInt() );
 }
 
 //

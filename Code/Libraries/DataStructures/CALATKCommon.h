@@ -23,17 +23,46 @@ const double PI = 4.0*atan(1.0);
 
 /** Set built-in type.  Creates member Set"name"() (e.g., SetVisibility()); */
 #define SetMacro(name,type) \
-  virtual void Set##name (const type _arg) \
-  { \
-      this->m_##name = _arg; \
-  } 
+  virtual void Set##name (const type _arg)      \
+  {                                             \
+    this->m_##name = _arg;                      \
+  }                                                                     \
+  virtual void SetJSON##name(const type _arg)                           \
+  {                                                                     \
+    if ( this->Get##name() != this->GetDefault##name() )                \
+      {                                                                 \
+      std::cout << "Variable " << #name << " appears to have been set before. Ignoring new value." << std::endl; \
+      }                                                                 \
+    else                                                                \
+      {                                                                 \
+      this->Set##name( _arg );                                          \
+      }                                                                 \
+  }                                                                     \
+  
+#define SetJSONMacro(name,type)                                         \
+  virtual void SetJSON##name(const type _arg)                           \
+  {                                                                     \
+    if ( this->Get##name() != this->GetDefault##name() )                \
+      {                                                                 \
+      std::cout << "Variable " << #name << " appears to have been set before. Ignoring new value." << std::endl; \
+      }                                                                 \
+    else                                                                \
+      {                                                                 \
+      this->Set##name( _arg );                                          \
+      }                                                                 \
+  }      
+
 
 /** Get built-in type.  Creates member Get"name"() (e.g., GetVisibility()); */
 #define GetMacro(name,type) \
   virtual type Get##name () \
-  { \
-    return this->m_##name; \
-  }
+  {                         \
+    return this->m_##name;  \
+  }                                \
+  virtual type GetDefault##name () \
+  {                                \
+    return this->Default##name;    \
+  }                                \
 
 /** min and max macros */
 #ifndef MAX

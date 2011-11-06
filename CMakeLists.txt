@@ -78,6 +78,7 @@ endif()
 #
 SET(CALATK_INCLUDE_DIRS
   ${CMAKE_SOURCE_DIR}/Code/Libraries/Algorithms
+  ${CMAKE_SOURCE_DIR}/Code/Libraries/Base
   ${CMAKE_SOURCE_DIR}/Code/Libraries/DataStructures
   ${CMAKE_SOURCE_DIR}/Code/Libraries/Utilities
   ${CMAKE_SOURCE_DIR}/Code/Libraries/Numerics

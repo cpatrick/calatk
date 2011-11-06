@@ -8,6 +8,8 @@
 #include "VectorImageUtils.h"
 #include "CImageManagerMultiScale.h"
 
+#include "JSONParameterUtils.h"
+
 #include "LDDMMCLP.h"
 
 typedef double TFLOAT;
@@ -26,6 +28,14 @@ int DoIt( int argc, char** argv )
 
   regType lddmm;
 
+  Json::Value root;
+
+  if ( configFile.compare("NONE") != 0 )
+    {
+    bool parsingSuccessful = CALATK::JSONParameterUtils::ParseJSONFile( configFile, root );
+    if ( !parsingSuccessful ) return EXIT_FAILURE;
+    }
+
   ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm.GetImageManagerPointer() );
 
   unsigned int uiI0 = ptrImageManager->AddImage( sourceImage, 0.0, 0 );
@@ -36,6 +46,11 @@ int DoIt( int argc, char** argv )
   ptrImageManager->AddScale( 0.5, 2 );
 
   ptrImageManager->print( std::cout );
+
+  if ( !root.empty() )
+    {
+    lddmm.SetAutoConfiguration( root );
+    }
 
   lddmm.Solve();
 

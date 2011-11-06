@@ -5,12 +5,14 @@
 #include "CMetric.h"
 #include "CImageManager.h"
 #include "CKernel.h"
+#include "CProcessBase.h"
+#include "JSONParameterUtils.h"
 
 namespace CALATK
 {
 
 template <class T, unsigned int VImageDimension, class TState >
-class CObjectiveFunction
+class CObjectiveFunction : public CProcessBase
 {
 public:
 

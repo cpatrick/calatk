@@ -22,8 +22,6 @@ public:
   void Downsample( const VectorImageType* ptrImIn, VectorImageType* ptrImOut );
   void Upsample( const VectorImageType* ptrImIn, VectorImageType* ptrImOut );
 
-protected:
-private:
 };
 
 #include "CResamplerLinear.txx"

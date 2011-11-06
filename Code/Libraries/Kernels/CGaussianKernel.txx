@@ -3,13 +3,23 @@
 
 template <class T, unsigned int VImageDimension >
 CGaussianKernel< T, VImageDimension >::CGaussianKernel()
+  : DefaultSigma( 1 )
 {
-  m_Sigma = 1;
+  m_Sigma = DefaultSigma;
 }
 
 template <class T, unsigned int VImageDimension >
 CGaussianKernel< T, VImageDimension >::~CGaussianKernel()
 {
+}
+
+template <class T, unsigned int VImageDimension >
+void CGaussianKernel< T, VImageDimension >::SetAutoConfiguration( const Json::Value& ConfValue )
+{
+  Superclass::SetAutoConfiguration( ConfValue );
+  
+  Json::Value currentConfiguration = CALATK::JSONParameterUtils::SaveGetFromKey( ConfValue, "GaussianKernel", Json::nullValue, this->GetPrintConfiguration() );
+  SetJSONSigma( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "Sigma", DefaultSigma, this->GetPrintConfiguration() ).asDouble() );
 }
 
 template <class T, unsigned int VImageDimension >

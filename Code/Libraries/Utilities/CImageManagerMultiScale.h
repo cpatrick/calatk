@@ -78,6 +78,7 @@ private:
   ResamplerType* m_ptrResampler;
 
   T m_Sigma;
+  const T DefaultSigma;
 
 };
 

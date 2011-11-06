@@ -6,6 +6,9 @@
 #include "VectorImage.h"
 #include "VectorField.h"
 
+#include "CProcessBase.h"
+#include "JSONParameterUtils.h"
+
 #include "COneStepEvolver.h"
 
 /**
@@ -20,7 +23,7 @@ namespace CALATK
 {
 
 template <class T, unsigned int VImageDimension=3, class TSpace = T >
-class CEvolver 
+class CEvolver : public CProcessBase
 {
 
 public:

@@ -3,13 +3,14 @@
 
 template <class T, unsigned int VImageDimension, class TSpace >
 CImageManagerMultiScale< T, VImageDimension, TSpace >::CImageManagerMultiScale()
+  : DefaultSigma( 0.02 )
 {
   m_uiCurrentlySelectedScale = 0;
   m_bImagesWereRead = false;
   m_bSetDefaultResampler = false;
   m_ptrResampler = NULL;
 
-  m_Sigma = 0.02;
+  m_Sigma = DefaultSigma;
 
   // add default scale, the original blurred image at the original resolution
   AddScale( 1.0, 0 );

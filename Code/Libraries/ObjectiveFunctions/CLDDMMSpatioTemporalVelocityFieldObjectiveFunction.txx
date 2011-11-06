@@ -3,8 +3,9 @@
 
 template <class T, unsigned int VImageDimension, class TState >
 CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::CLDDMMSpatioTemporalVelocityFieldObjectiveFunction()
+  : DefaultNumberOfDiscretizationVolumesPerUnitTime( 10.0 )
 {
-  m_NumberOfDiscretizationVolumesPerUnitTime = 10;
+  m_NumberOfDiscretizationVolumesPerUnitTime = DefaultNumberOfDiscretizationVolumesPerUnitTime;
 }
 
 template <class T, unsigned int VImageDimension, class TState >
@@ -25,6 +26,15 @@ template <class T, unsigned int VImageDimension, class TState >
 CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::~CLDDMMSpatioTemporalVelocityFieldObjectiveFunction()
 {
   DeleteData();
+}
+
+template <class T, unsigned int VImageDimension, class TState >
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::SetAutoConfiguration( const Json::Value& ConfValue )
+{
+  Superclass::SetAutoConfiguration( ConfValue );
+
+  Json::Value currentConfiguration = CALATK::JSONParameterUtils::SaveGetFromKey( ConfValue, "SpatioTemporalVelocityField", Json::nullValue, this->GetPrintConfiguration() );
+  SetJSONNumberOfDiscretizationVolumesPerUnitTime( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "NumberOfDiscretizationVolumesPerUnitTime", DefaultNumberOfDiscretizationVolumesPerUnitTime, this->GetPrintConfiguration() ).asDouble() );
 }
 
 template <class T, unsigned int VImageDimension, class TState >

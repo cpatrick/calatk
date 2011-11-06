@@ -2,6 +2,8 @@
 #define C_KERNEL_H
 
 #include "VectorField.h"
+#include "CProcessBase.h"
+#include "JSONParameterUtils.h"
 
 namespace CALATK
 {
@@ -12,7 +14,7 @@ namespace CALATK
  */
 
 template <class T, unsigned int VImageDimension=3 >
-class CKernel
+class CKernel : public CProcessBase
 {
 public:
   

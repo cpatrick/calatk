@@ -41,6 +41,8 @@ public:
   SetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );
   GetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );
 
+  virtual void SetAutoConfiguration( const Json::Value& ConfValue );
+
 protected:
 
   struct STimePoint
@@ -75,6 +77,10 @@ protected:
 
   std::vector< STimePoint > m_vecTimeDiscretization;
   std::vector< T > m_vecTimeIncrements;
+
+private:
+
+  const T DefaultNumberOfDiscretizationVolumesPerUnitTime;
 
 };
 

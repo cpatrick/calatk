@@ -37,7 +37,11 @@ void CLDDMMGrowthModelRegistration< T, VImageDimension, TState >::SetDefaultObje
   plddmm->SetKernelPointer( this->m_ptrKernel );
   plddmm->SetMetricPointer( this->m_ptrMetric );
   plddmm->SetImageManagerPointer( this->m_ptrImageManager );
+
+  plddmm->SetAutoConfiguration( this->m_ConfValue );
+
   this->m_ptrObjectiveFunction = plddmm;
+
 
 }
 

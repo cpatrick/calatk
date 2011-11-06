@@ -95,8 +95,18 @@ CAlgorithm< T, VImageDimension, TState >::~CAlgorithm()
 }
 
 template <class T, unsigned int VImageDimension, class TState >
+void CAlgorithm< T, VImageDimension, TState >::SetAutoConfiguration( const Json::Value& ConfValue )
+{
+  Superclass::SetAutoConfiguration( ConfValue );
+  // here, we do not set immediately, because we only want to set the values for the defaults
+  // if something else gets passed in, the assumption is that it has already been properly configured
+  // the defaults will be auto-configured in their respective derived classes (in the setdefault methods)
+}
+
+template <class T, unsigned int VImageDimension, class TState >
 void CAlgorithm< T, VImageDimension, TState >::SetDefaultsIfNeeded()
 {
+
   if ( m_ptrMetric == NULL ) 
     {
     SetDefaultMetricPointer();

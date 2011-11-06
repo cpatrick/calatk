@@ -3,6 +3,8 @@
 
 #include "CObjectiveFunction.h"
 #include "CALATKCommon.h"
+#include "CProcessBase.h"
+#include "JSONParameterUtils.h"
 
 /** 
  * Base class for the registration solvers.
@@ -12,7 +14,7 @@ namespace CALATK
 {
 
 template <class T, unsigned int VImageDimension, class TState >
-class CSolver
+class CSolver : public CProcessBase
 {
 public:
 
@@ -43,6 +45,9 @@ private:
   // can be set externally, so the solver can create different outputs
   // for example for a multi-scale pyramid
   unsigned int m_ExternalSolverState;
+
+  const bool DefaultOutputStateInformation;
+  const unsigned int DefaultExternalSolverState;
 
 };
 

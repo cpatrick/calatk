@@ -28,6 +28,8 @@ public:
 
   void GetImage( VectorImageType* ptrIm, T dTime );
 
+  virtual void SetAutoConfiguration( const Json::Value& ConfValue );
+
 protected:
 
   /** Some useful protected typedefs */
@@ -68,6 +70,8 @@ private:
   VectorPointerToVectorImagePointerType m_ptrLambda; // adjoint
 
   T m_SigmaSqr; // 1/m_SigmaSqr is the multiplier for the data attachment term
+
+  const T DefaultSigmaSqr;
 
 };
 

@@ -3,6 +3,9 @@
 
 #include <stdexcept>
 
+#include "CProcessBase.h"
+#include "JSONParameterUtils.h"
+
 #include "VectorImage.h"
 #include "VectorField.h"
 
@@ -26,7 +29,8 @@ namespace CALATK
 {
 
 template <class T, unsigned int VImageDimension=3, class TSpace = T >
-class COneStepEvolver {
+class COneStepEvolver : public CProcessBase
+{
 
 public:
 
@@ -34,6 +38,8 @@ public:
   
   typedef VectorField< T, VImageDimension, TSpace > VectorFieldType;
   typedef VectorImage< T, VImageDimension, TSpace > VectorImageType;
+
+  typedef CProcessBase Superclass;
 
   /********************************
    * Constructors and Destructors *
@@ -61,27 +67,26 @@ public:
    */
   virtual void PerformStep( const VectorFieldType* v, const VectorImageType* In, VectorImageType* Inp1, T dt ) = 0;
 
-
   /**
    * Determines the number of desired threads for parallel implementations. 
    * Default is 1, i.e., no threading.
    *
    * @params uiThreads - number of threads
    */
-  void SetNumberOfThreads( unsigned uiThreads );
+  SetMacro( NumberOfThreads, unsigned int );
 
   /**
    * Returns the set number of desired threads for parallel implementations. 
    *
    */
-  unsigned int GetNumberOfThreads() const;
+  GetMacro( NumberOfThreads, unsigned int );
 
-
-protected:
+  virtual void SetAutoConfiguration( const Json::Value& ConfValue );
 
 private:
 
-  unsigned int m_uiNrOfThreads;
+  unsigned int m_NumberOfThreads;
+  unsigned int DefaultNumberOfThreads;
 
 };
 

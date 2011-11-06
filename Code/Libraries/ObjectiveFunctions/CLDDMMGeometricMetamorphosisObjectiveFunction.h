@@ -42,6 +42,8 @@ public:
 
   void OutputStateInformation( unsigned int uiIter, std::string outputPrefix="" );
 
+  virtual void SetAutoConfiguration( const Json::Value& ConfValue );
+
 protected:
 
  /** Some useful protected typedefs */
@@ -120,6 +122,10 @@ private:
   T m_Sigma2Sqr; // 1/m_Sigma2Sqr is the multiplier for the data attachment term, for the foreground deformation
 
   T m_W; // is the weighting between the foreground and the background velocity fields.
+
+  const T DefaultSigma1Sqr;
+  const T DefaultSigma2Sqr;
+  const T DefaultW;
 
   ptrKernelType m_ptrMaskKernel;
 

@@ -2,6 +2,8 @@
 #define C_METRIC_H
 
 #include "VectorImage.h"
+#include "CProcessBase.h"
+#include "JSONParameterUtils.h"
 
 /**
  * Base class for the metric
@@ -11,7 +13,7 @@ namespace CALATK
 {
 
 template <class T, unsigned int VImageDimension = 3 >
-class CMetric
+class CMetric : public CProcessBase
 {
 public:
 

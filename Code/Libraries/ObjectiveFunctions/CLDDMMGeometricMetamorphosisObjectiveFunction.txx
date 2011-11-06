@@ -3,10 +3,11 @@
 
 template <class T, unsigned int VImageDimension, class TState >
 CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::CLDDMMGeometricMetamorphosisObjectiveFunction()
+  : DefaultSigma1Sqr( 0.01 ), DefaultSigma2Sqr( 0.01 ), DefaultW( 0.5 )
 {
-  m_Sigma1Sqr = 0.01;
-  m_Sigma2Sqr = 0.01;
-  m_W = 0.5;
+  m_Sigma1Sqr = DefaultSigma1Sqr;
+  m_Sigma2Sqr = DefaultSigma2Sqr;
+  m_W = DefaultW;
 
   // mask image at different time-points
   ptrT0 = NULL;
@@ -73,6 +74,19 @@ template <class T, unsigned int VImageDimension, class TState >
 CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::~CLDDMMGeometricMetamorphosisObjectiveFunction()
 {
   DeleteAuxiliaryStructures();
+}
+
+template <class T, unsigned int VImageDimension, class TState >
+void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::SetAutoConfiguration( const Json::Value& ConfValue )
+{
+  Superclass::SetAutoConfiguration( ConfValue );
+  
+  Json::Value currentConfiguration = CALATK::JSONParameterUtils::SaveGetFromKey( ConfValue, "GeometricMetamorphosis", Json::nullValue, this->GetPrintConfiguration() );
+  
+  SetJSONSigma1Sqr( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "Sigma1Sqr", DefaultSigma1Sqr, this->GetPrintConfiguration() ).asDouble() );
+  SetJSONSigma2Sqr( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "Sigma2Sqr", DefaultSigma2Sqr, this->GetPrintConfiguration() ).asDouble() );
+  SetJSONW( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "W", DefaultW, this->GetPrintConfiguration() ).asDouble() );
+
 }
 
 template <class T, unsigned int VImageDimension, class TState >

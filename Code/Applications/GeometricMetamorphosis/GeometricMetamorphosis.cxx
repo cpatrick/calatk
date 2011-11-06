@@ -26,7 +26,14 @@ int DoIt( int argc, char** argv )
 
   regType lddmm;
 
-  //regType::ptrImageManagerType ptrImageManager = lddmm.GetImageManagerPointer();
+  Json::Value root;
+
+  if ( configFile.compare("NONE") != 0 )
+    {
+    bool parsingSuccessful = CALATK::JSONParameterUtils::ParseJSONFile( configFile, root );
+    if ( !parsingSuccessful ) return EXIT_FAILURE;
+    }
+
   ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm.GetImageManagerPointer() );
 
   std::string runCaseType = "run3";

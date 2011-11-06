@@ -5,16 +5,20 @@
 #include "CGaussianKernel.h"
 #include "CALATKCommon.h"
 
+#include "CProcessBase.h"
+#include "JSONParameterUtils.h"
+
 namespace CALATK
 {
 
 template <class T, unsigned int VImageDimension=3 >
-class CResampler
+class CResampler : public CProcessBase
 {
 public:
 
   /** Some useful typedefs */
   typedef VectorImage< T, VImageDimension > VectorImageType;
+  typedef CProcessBase Superclass;
 
   CResampler();
   virtual ~CResampler();
@@ -22,8 +26,11 @@ public:
   virtual void Downsample( const VectorImageType* ptrImIn, VectorImageType* ptrImOut ) = 0;
   virtual void Upsample( const VectorImageType* ptrImIn, VectorImageType* ptrImOut ) = 0;
 
-  SetMacro( Sigma, T );
+  virtual void SetSigma( T dSigma );
+  SetJSONMacro( Sigma, T );
   GetMacro( Sigma, T );
+
+  virtual void SetAutoConfiguration( const Json::Value& ConfValue );
 
 protected:
 
@@ -31,6 +38,8 @@ protected:
   T m_Sigma;
 
 private:
+
+  const T DefaultSigma;
 
 };
 

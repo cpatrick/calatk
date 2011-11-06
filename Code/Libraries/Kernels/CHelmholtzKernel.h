@@ -25,9 +25,13 @@ public:
 
   void SetAlpha( T dAlpha );
   void SetGamma( T dGamma );
+  SetJSONMacro( Alpha, T );
+  SetJSONMacro( Gamma, T );
 
   GetMacro( Alpha, T );
   GetMacro( Gamma, T );
+
+  virtual void SetAutoConfiguration( const Json::Value& ConfValue );
 
 protected:
 
@@ -42,6 +46,10 @@ private:
 
   T m_Alpha;
   T m_Gamma;
+
+  const T DefaultAlpha;
+  const T DefaultGamma;
+
 };
 
 #include "CHelmholtzKernel.txx"

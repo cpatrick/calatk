@@ -96,6 +96,9 @@ bool CSolverMultiScale< T, VImageDimension, TState>::Solve()
     ptrImageManager->SelectScale( (unsigned int)iI );
     m_ptrSolver->SetExternalSolverState( (unsigned int)iI );
 
+    std::cout << "FIXME: Multiscale: Check that this configuration works." << std::endl;
+    m_ptrSolver->SetAutoConfiguration( this->m_ConfValue[ "Multiscale" ][iI] );
+
     if ( !bHasBeenInitialized )
       {
       std::cout << "Initializing multi-scale solution." << std::endl;

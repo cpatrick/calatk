@@ -6,23 +6,20 @@
 //
 template <class T, unsigned int VImageDimension, class TSpace >
 COneStepEvolver<T, VImageDimension, TSpace>::COneStepEvolver()
+  : DefaultNumberOfThreads( 1 )
 {
-  m_uiNrOfThreads = 1; // default number of threads
+  m_NumberOfThreads = DefaultNumberOfThreads; // default number of threads
 }
 
-// returning the number of threads
 template <class T, unsigned int VImageDimension, class TSpace >
-unsigned int COneStepEvolver<T, VImageDimension, TSpace>::GetNumberOfThreads() const
+void COneStepEvolver<T, VImageDimension, TSpace>::SetAutoConfiguration( const Json::Value& ConfValue )
 {
-  return m_uiNrOfThreads;
+  Superclass::SetAutoConfiguration( ConfValue );
+  
+  Json::Value currentConfiguration = CALATK::JSONParameterUtils::SaveGetFromKey( ConfValue, "OneStepEvolver", Json::nullValue, this->GetPrintConfiguration() );
+  
+  SetJSONNumberOfThreads( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "NumberOfThreads", DefaultNumberOfThreads, this->GetPrintConfiguration() ).asUInt() );
+ 
 }
-
-// setting the number of threads
-template <class T, unsigned int VImageDimension, class TSpace >
-void COneStepEvolver<T, VImageDimension, TSpace>::SetNumberOfThreads( unsigned int uiNrOfThreads ) 
-{
-  m_uiNrOfThreads = uiNrOfThreads;
-}
-
 
 #endif

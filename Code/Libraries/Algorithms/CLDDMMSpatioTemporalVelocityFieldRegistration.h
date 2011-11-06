@@ -40,6 +40,8 @@ public:
   const VectorFieldType* GetMapFromTo( T dTimeFrom, T dTimeTo );
   const VectorImageType* GetImage( T dTime );
 
+  virtual void SetAutoConfiguration( const Json::Value& ConfValue );
+
 protected:
 
   void SetDefaultMetricPointer();

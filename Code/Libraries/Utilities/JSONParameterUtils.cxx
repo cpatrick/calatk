@@ -34,34 +34,44 @@ JSONParameterUtils::ReadFileContentIntoString( std::string sFileName )
   return outputString;
 }
 
-// 
-// Gets JSON value from key and prints a message if default values were used
 //
-Json::Value
-JSONParameterUtils::SaveGetFromKey( const Json::Value& value, std::string sKey, std::string sDefault, bool bPrint )
+// Parses a JSON file
+//
+bool 
+JSONParameterUtils::ParseJSONFile( std::string sFileName, Json::Value& root )
 {
-  if ( !value.isMember( sKey ) && bPrint )
-    {
-    std::cout << "Key = \"" << sKey << "\" : used default value = " << sDefault << std::endl;
-    }
+    Json::Reader reader;
+    std::string config_doc = JSONParameterUtils::ReadFileContentIntoString( sFileName );
+    bool parsingSuccessful = reader.parse( config_doc, root );
 
-  return value.get( sKey, sDefault );
-
+    if ( !parsingSuccessful )
+      {
+      // report to the user the failure and their locations in the document.
+      std::cout  << "Failed to parse configuration\n"
+                 << reader.getFormattedErrorMessages();
+      return EXIT_FAILURE;
+      }
+    return EXIT_SUCCESS;
 }
 
 // 
 // Gets JSON value from key and prints a message if default values were used
 //
 Json::Value
-JSONParameterUtils::SaveGetFromKey( const Json::Value& value, std::string sKey, double dDefault, bool bPrint )
+JSONParameterUtils::SaveGetFromKey( const Json::Value& value, std::string sKey, const Json::Value& vDefault, bool bPrint )
 {
-  if ( !value.isMember( sKey ) && bPrint )
+  Json::Value retValue = value;
+  if ( retValue.empty() )
     {
-    std::cout << "Key = \"" << sKey << "\" : used default value = " << dDefault << std::endl;
+    retValue[ sKey ] = vDefault;
+    std::cout << "Key = \"" << sKey << "\" : used default value = " << vDefault;
     }
 
-  return value.get( sKey, dDefault );
+  if ( !retValue.isMember( sKey ) && bPrint )
+    {
+    std::cout << "Key = \"" << sKey << "\" : used default value = " << vDefault;
+    }
+  return retValue.get( sKey, vDefault );
 }
-
 
 } // end namespace

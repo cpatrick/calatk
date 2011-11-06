@@ -6,10 +6,11 @@
 //
 template <class T, unsigned int VImageDimension, class TState >
 CSolver< T, VImageDimension, TState >::CSolver()
+  : DefaultOutputStateInformation( true ), DefaultExternalSolverState( 0 )
 {
   //m_OutputStateInformation = false;
-  m_OutputStateInformation = true;
-  m_ExternalSolverState = 0;
+  m_OutputStateInformation = DefaultOutputStateInformation;
+  m_ExternalSolverState = DefaultExternalSolverState;
 }
 
 //

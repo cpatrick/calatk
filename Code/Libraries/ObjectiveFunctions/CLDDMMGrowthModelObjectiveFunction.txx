@@ -3,8 +3,9 @@
 
 template <class T, unsigned int VImageDimension, class TState >
 CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::CLDDMMGrowthModelObjectiveFunction()
+  : DefaultSigmaSqr( 0.01 ) 
 {
-  m_SigmaSqr = 0.01;
+  m_SigmaSqr = DefaultSigmaSqr;
 
   m_ptrI = NULL;
   m_ptrLambda = NULL;
@@ -27,6 +28,16 @@ template <class T, unsigned int VImageDimension, class TState >
 CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::~CLDDMMGrowthModelObjectiveFunction()
 {
   DeleteAuxiliaryStructures();
+}
+
+template <class T, unsigned int VImageDimension, class TState >
+void CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::SetAutoConfiguration( const Json::Value& ConfValue )
+{
+  Superclass::SetAutoConfiguration( ConfValue );
+  
+  Json::Value currentConfiguration = CALATK::JSONParameterUtils::SaveGetFromKey( ConfValue, "GrowthModel", Json::nullValue, this->GetPrintConfiguration() );
+  SetJSONSigmaSqr( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "SigmaSqr", DefaultSigmaSqr, this->GetPrintConfiguration() ).asDouble() );
+
 }
 
 template <class T, unsigned int VImageDimension, class TState >

@@ -21,9 +21,9 @@ public:
    * @param sFileName - file name of the input file
    */
   static std::string ReadFileContentIntoString( std::string sFileName );
+  static bool ParseJSONFile( std::string sFileName, Json::Value& root );
   
-  static Json::Value SaveGetFromKey( const Json::Value& value, std::string sKey, std::string sDefault, bool bPrint = true );
-  static Json::Value SaveGetFromKey( const Json::Value& value, std::string sKey, double dDefault, bool bPrint = true );
+  static Json::Value SaveGetFromKey( const Json::Value& value, std::string sKey, const Json::Value& vDefault, bool bPrint = true );
 
 };
 

@@ -6,10 +6,10 @@
 //
 template <class T, unsigned int VImageDimension, class TSpace >
 CImageManagerFullScale< T, VImageDimension, TSpace >::CImageManagerFullScale()
+  : DefaultSigma( 0.05 ), DefaultBlurImage( false )
 {
-  m_BlurImage = false;
-  m_Sigma = 0.05;
-  m_GaussianKernel.SetSigma( m_Sigma );
+  m_BlurImage = DefaultBlurImage;
+  SetSigma( DefaultSigma );
 }
 
 //
@@ -19,6 +19,16 @@ template <class T, unsigned int VImageDimension, class TSpace >
 CImageManagerFullScale< T, VImageDimension, TSpace >::~CImageManagerFullScale()
 {
   // images deleted by base class destructor
+}
+
+//
+// SetSigma
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+void CImageManagerFullScale< T, VImageDimension, TSpace >::SetSigma( T dSigma )
+{
+  m_Sigma = dSigma;
+  m_GaussianKernel.SetSigma( m_Sigma );
 }
 
 //

@@ -2,6 +2,7 @@
 #define C_ALGORITHM_H
 
 #include "CALATKCommon.h"
+#include "CProcessBase.h"
 #include "CMetric.h"
 #include "CKernel.h"
 #include "CObjectiveFunction.h"
@@ -10,6 +11,9 @@
 #include "CSolver.h"
 #include "VectorImage.h"
 #include "VectorField.h"
+
+#include "CProcessBase.h"
+#include "JSONParameterUtils.h"
 
 namespace CALATK
 {
@@ -22,7 +26,7 @@ namespace CALATK
  */
 
 template <class T, unsigned int VImageDimension, class TState >
-class CAlgorithm
+class CAlgorithm : public CProcessBase
 {
 public:
 
@@ -37,6 +41,8 @@ public:
 
   typedef VectorImage< T, VImageDimension > VectorImageType;
   typedef VectorField< T, VImageDimension > VectorFieldType;
+
+  typedef CProcessBase Superclass;
 
   typedef typename CImageManager< T, VImageDimension >::SImageInformation SImageInformation;
 
@@ -66,6 +72,8 @@ public:
   virtual const VectorFieldType* GetMap( T dTime ) = 0;
   virtual const VectorFieldType* GetMapFromTo( T dTimeFrom, T dTimeTo ) = 0;
   virtual const VectorImageType* GetImage( T dTime ) = 0;
+
+  virtual void SetAutoConfiguration( const Json::Value& ConfValue );
 
 protected:
 
