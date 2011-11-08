@@ -1,3 +1,4 @@
+#include "CALATKCommon.h"
 #include <iostream>
 #include "JSONParameterUtils.h"
 #include <fstream>
