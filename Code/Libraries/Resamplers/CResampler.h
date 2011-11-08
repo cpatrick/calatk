@@ -30,7 +30,7 @@ public:
   SetJSONMacro( Sigma, T );
   GetMacro( Sigma, T );
 
-  virtual void SetAutoConfiguration( const Json::Value& ConfValue );
+  virtual void SetAutoConfiguration( Json::Value& ConfValue );
 
 protected:
 
@@ -40,6 +40,8 @@ protected:
 private:
 
   const T DefaultSigma;
+  
+  bool m_ExternallySetSigma;
 
 };
 

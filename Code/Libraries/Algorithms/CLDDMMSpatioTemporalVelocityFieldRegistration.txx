@@ -12,15 +12,6 @@ CLDDMMSpatioTemporalVelocityFieldRegistration< T, VImageDimension, TState >::~CL
 }
 
 template < class T, unsigned int VImageDimension, class TState >
-void CLDDMMSpatioTemporalVelocityFieldRegistration< T, VImageDimension, TState >::SetAutoConfiguration( const Json::Value& ConfValue )
-{
-  Superclass::SetAutoConfiguration( ConfValue );
-  // here, we do not set immediately, because we only want to set the values for the defaults
-  // if something else gets passed in, the assumption is that it has already been properly configured
-  // the defaults will be auto-configured in their respective derived classes (in the setdefault methods)
-}
-
-template < class T, unsigned int VImageDimension, class TState >
 void CLDDMMSpatioTemporalVelocityFieldRegistration< T, VImageDimension, TState >::SetDefaultMetricPointer()
 {
   this->m_ptrMetric = new CMetricSSD< T, VImageDimension >;
@@ -37,7 +28,7 @@ template < class T, unsigned int VImageDimension, class TState >
 void CLDDMMSpatioTemporalVelocityFieldRegistration< T, VImageDimension, TState >::SetDefaultKernelPointer()
 {
   this->m_ptrKernel = new CHelmholtzKernel< T, VImageDimension >;
-  this->m_ptrKernel->SetAutoConfiguration( this->m_ConfValue );
+  this->m_ptrKernel->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 
 template < class T, unsigned int VImageDimension, class TState >
@@ -45,7 +36,7 @@ void CLDDMMSpatioTemporalVelocityFieldRegistration< T, VImageDimension, TState >
 {
   this->m_ptrEvolver = new CStationaryEvolver< T, VImageDimension >;
   this->m_ptrEvolver->SetOneStepEvolverPointer( &oneStepDefaultEvolver );
-  this->m_ptrEvolver->SetAutoConfiguration( this->m_ConfValue );
+  this->m_ptrEvolver->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 
 template < class T, unsigned int VImageDimension, class TState >
@@ -53,7 +44,7 @@ void CLDDMMSpatioTemporalVelocityFieldRegistration< T, VImageDimension, TState >
 {
   //this->m_ptrSolver = new CSolverLineSearch< T, VImageDimension, TState >;
   this->m_ptrSolver = new CSolverMultiScale< T, VImageDimension, TState >;
-  this->m_ptrSolver->SetAutoConfiguration( this->m_ConfValue );
+  this->m_ptrSolver->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 
 template < class T, unsigned int VImageDimension, class TState >

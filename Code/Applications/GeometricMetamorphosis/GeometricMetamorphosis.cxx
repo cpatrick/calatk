@@ -26,12 +26,16 @@ int DoIt( int argc, char** argv )
 
   regType lddmm;
 
-  Json::Value root;
+  CALATK::CJSONConfiguration config;
 
-  if ( configFile.compare("NONE") != 0 )
+  if ( configFile.compare("None") != 0 )
     {
-    bool parsingSuccessful = CALATK::JSONParameterUtils::ParseJSONFile( configFile, root );
+    bool parsingSuccessful = config.ReadJSONFile( configFile );
     if ( !parsingSuccessful ) return EXIT_FAILURE;
+    }
+  else
+    {
+    config.InitializeEmptyRoot();
     }
 
   ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm.GetImageManagerPointer() );
@@ -43,15 +47,32 @@ int DoIt( int argc, char** argv )
 
   unsigned int uiT0 = ptrImageManager->AddImage( sourceMask, 0.0, 1 );
   unsigned int uiT1 = ptrImageManager->AddImage( targetMask, 1.0, 1 );
-
-  // try it single scale for testing
   
-  ptrImageManager->AddScale( 0.75, 1 );
-  ptrImageManager->AddScale( 0.5, 2 );
+  // by default there will be only one scale
+  // which will be overwritten if there is a configuration file available
+  
+  Json::Value& currentConfiguration = config.GetFromKey( "MultiscaleSettings", Json::nullValue );
+  
+  std::cout << "Detected " << currentConfiguration.size() << " scales." << std::endl;
+  // find the scales
+  for ( unsigned int iI=0; iI<currentConfiguration.size(); ++iI )
+    {
+    Json::Value& currentSettings = config.GetFromIndex( currentConfiguration, iI, Json::nullValue );
+    Json::Value& currentScaleSettings = config.GetFromKey( currentSettings, "Downsample", Json::nullValue );
+    TFLOAT dCurrentScale = config.GetFromKey( currentScaleSettings, "Scale", 1 ).asDouble();
+    ptrImageManager->AddScale( dCurrentScale, iI );
+    }  
+  lddmm.SetAutoConfiguration( *config.GetRootPointer() );
 
   ptrImageManager->print( std::cout );
 
   lddmm.Solve();
+
+  // write out the resulting JSON file if desired
+  if ( configFileOut.compare("None") != 0 )
+    {
+    config.WriteCurrentConfigurationToJSONFile( configFileOut );
+    }
 
   const VectorImageType* ptrI0Orig = ptrImageManager->GetOriginalImageById( uiI0 );
   const VectorImageType* ptrI1Orig = ptrImageManager->GetOriginalImageById( uiI1 );

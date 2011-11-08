@@ -12,10 +12,20 @@ CSolverLineSearch<T, VImageDimension, TState>::CSolverLineSearch()
     DefaultReductionFactor(0.5),
     DefaultMinAllowedStepSize(1e-6),
     DefaultDecreaseConstant(1e-2),
-    DefaultMaxNumberOfIterations(100),
+    DefaultMaxNumberOfIterations(10),
     DefaultMaxNumberOfTries(10),
     DefaultAdjustStepSizeUpNumber(2),
-    DefaultAdjustStepSizeDownNumber(2)
+    DefaultAdjustStepSizeDownNumber(2),
+    m_ExternallySetInitialStepSize( false ),
+    m_ExternallySetAdjustStepSizeUpFactor( false ),
+    m_ExternallySetAdjustStepSizeDownFactor( false ),
+    m_ExternallySetReductionFactor( false ),
+    m_ExternallySetMinAllowedStepSize( false ),
+    m_ExternallySetDecreaseConstant( false ),
+    m_ExternallySetMaxNumberOfIterations( false ),
+    m_ExternallySetMaxNumberOfTries( false ),
+    m_ExternallySetAdjustStepSizeUpNumber( false ),
+    m_ExternallySetAdjustStepSizeDownNumber( false )
 {
   // default setting for the parameters
 
@@ -63,22 +73,22 @@ CSolverLineSearch<T, VImageDimension, TState>::~CSolverLineSearch()
 // auto configuration
 //
 template <class T, unsigned int VImageDimension, class TState >
-void CSolverLineSearch<T, VImageDimension, TState>::SetAutoConfiguration( const Json::Value& ConfValue )
+void CSolverLineSearch<T, VImageDimension, TState>::SetAutoConfiguration( Json::Value& ConfValue )
 {
   Superclass::SetAutoConfiguration( ConfValue );
 
-  Json::Value currentConfiguration = CALATK::JSONParameterUtils::SaveGetFromKey( ConfValue, "LineSearch", Json::nullValue, this->GetPrintConfiguration() );
+  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "LineSearch", Json::nullValue );
   
-  SetJSONInitialStepSize( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "InitialStepSize", DefaultInitialStepSize, this->GetPrintConfiguration() ).asDouble() );
-  SetJSONAdjustStepSizeUpFactor( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "AdjustStepSizeUpFactor", DefaultAdjustStepSizeUpFactor, this->GetPrintConfiguration() ).asDouble() );
-  SetJSONAdjustStepSizeDownFactor( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "AdjustStepSizeDownFactor", DefaultAdjustStepSizeDownFactor, this->GetPrintConfiguration() ).asDouble() );
-  SetJSONReductionFactor( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "ReductionFactor", DefaultReductionFactor, this->GetPrintConfiguration() ).asDouble() );
-  SetJSONMinAllowedStepSize( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "MinAllowedStepSize", DefaultMinAllowedStepSize, this->GetPrintConfiguration() ).asDouble() );
-  SetJSONDecreaseConstant( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "DecreaseConstant", DefaultDecreaseConstant, this->GetPrintConfiguration() ).asDouble() );
-  SetJSONMaxNumberOfIterations( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "MaxNumberOfIterations", DefaultMaxNumberOfIterations, this->GetPrintConfiguration() ).asUInt() );
-  SetJSONMaxNumberOfTries( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "MaxNumberOfTries", DefaultMaxNumberOfTries, this->GetPrintConfiguration() ).asUInt() );
-  SetJSONAdjustStepSizeUpNumber( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "AdjustStepSizeUpNumber", DefaultAdjustStepSizeUpNumber, this->GetPrintConfiguration() ).asUInt() );
-  SetJSONAdjustStepSizeDownNumber( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "AdjustStepSizeDownNumber", DefaultAdjustStepSizeDownNumber, this->GetPrintConfiguration() ).asUInt() );
+  SetJSONInitialStepSize( this->m_jsonConfig.GetFromKey( currentConfiguration, "InitialStepSize", GetExternalOrDefaultInitialStepSize() ).asDouble() );
+  SetJSONAdjustStepSizeUpFactor( this->m_jsonConfig.GetFromKey( currentConfiguration, "AdjustStepSizeUpFactor", GetExternalOrDefaultAdjustStepSizeUpFactor() ).asDouble() );
+  SetJSONAdjustStepSizeDownFactor( this->m_jsonConfig.GetFromKey( currentConfiguration, "AdjustStepSizeDownFactor", GetExternalOrDefaultAdjustStepSizeDownFactor() ).asDouble() );
+  SetJSONReductionFactor( this->m_jsonConfig.GetFromKey( currentConfiguration, "ReductionFactor", GetExternalOrDefaultReductionFactor() ).asDouble() );
+  SetJSONMinAllowedStepSize( this->m_jsonConfig.GetFromKey( currentConfiguration, "MinAllowedStepSize", GetExternalOrDefaultMinAllowedStepSize() ).asDouble() );
+  SetJSONDecreaseConstant( this->m_jsonConfig.GetFromKey( currentConfiguration, "DecreaseConstant", GetExternalOrDefaultDecreaseConstant() ).asDouble() );
+  SetJSONMaxNumberOfIterations( this->m_jsonConfig.GetFromKey( currentConfiguration, "MaxNumberOfIterations", GetExternalOrDefaultMaxNumberOfIterations() ).asUInt() );
+  SetJSONMaxNumberOfTries( this->m_jsonConfig.GetFromKey( currentConfiguration, "MaxNumberOfTries", GetExternalOrDefaultMaxNumberOfTries() ).asUInt() );
+  SetJSONAdjustStepSizeUpNumber( this->m_jsonConfig.GetFromKey( currentConfiguration, "AdjustStepSizeUpNumber", GetExternalOrDefaultAdjustStepSizeUpNumber() ).asUInt() );
+  SetJSONAdjustStepSizeDownNumber( this->m_jsonConfig.GetFromKey( currentConfiguration, "AdjustStepSizeDownNumber", GetExternalOrDefaultAdjustStepSizeDownNumber() ).asUInt() );
 }
 
 //

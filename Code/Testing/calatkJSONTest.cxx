@@ -1,51 +1,47 @@
 #include <iostream>
 #include "JSONParameterUtils.h"
+#include <fstream>
 
 typedef float TFLOAT;
 
 int main( int argc, char* argv[] )
 {
 
-  if ( argc!=2 )
+  if ( argc!=3 )
     {
-    std::cout << "Usage calatkJSONTest fileName.json" << std::endl;
+    std::cout << "Usage calatkJSONTest fileName.json fileNameOut.json" << std::endl;
     return EXIT_FAILURE;
     }
 
   std::string config_file( argv[1] );
-  std::string config_doc = CALATK::JSONParameterUtils::ReadFileContentIntoString( config_file );
 
-  Json::Value root;   // will contains the root value after parsing.
-  Json::Reader reader;
-  bool parsingSuccessful = reader.parse( config_doc, root );
+  CALATK::CJSONConfiguration config;
+  bool parsingSuccessful = config.ReadJSONFile( config_file );
 
   if ( !parsingSuccessful )
     {
-    // report to the user the failure and their locations in the document.
-    std::cout  << "Failed to parse configuration\n"
-               << reader.getFormattedErrorMessages();
     return EXIT_FAILURE;
     }
 
-  std::string solver = root.get( "solver", "" ).asString();
+  Json::Value& valMultiScale = config.GetFromKey( "MultiscaleSettings", Json::nullValue );
 
-  std::cout << "Detected solver " << solver << std::endl;
+  std::cout << "Multiscale settings = " << std::endl;
+  std::cout << valMultiScale;
 
-  const Json::Value multiScaleSettings = root["multiscaleSettings"];
+  Json::Value& valObj = config.GetFromKey( "ObjectiveFunction", Json::nullValue );
   
-  std::cout << "Number of multiscale levels = " << multiScaleSettings.size() << std::endl;
+  valObj[0]["test"]=1;
+  valObj[1]["test"]=2;
 
-  for ( unsigned int iI=0; iI<multiScaleSettings.size(); ++iI )
-    {
-    std::cout << "Level = " << iI << std::endl;
+  config.WriteCurrentConfigurationToJSONFile( argv[2] );
 
-    Json::Value currentDownsamplerConfiguration = CALATK::JSONParameterUtils::SaveGetFromKey( multiScaleSettings[ iI ], "downsampler", Json::nullValue );
+  CALATK::CJSONConfiguration subConfig;
+  subConfig.SetRootReference( valObj );
+  
+  std::cout << "SubConfig = " << std::endl;
+  std::cout << *subConfig.GetRootPointer();
 
-    std::cout << "Sigma = " << CALATK::JSONParameterUtils::SaveGetFromKey( currentDownsamplerConfiguration, "blurSigma", 0 ).asDouble() << std::endl;
-    std::cout << "Factor = " << CALATK::JSONParameterUtils::SaveGetFromKey( currentDownsamplerConfiguration, "downsamplingFactor", 1 ).asDouble() << std::endl;
+  return EXIT_SUCCESS;
 
-    std::cout << std::endl;
-    }
-
-  return 0;
 }
+

@@ -42,7 +42,7 @@ public:
 
   void OutputStateInformation( unsigned int uiIter, std::string outputPrefix="" );
 
-  virtual void SetAutoConfiguration( const Json::Value& ConfValue );
+  virtual void SetAutoConfiguration( Json::Value& ConfValue );
 
 protected:
 
@@ -126,6 +126,10 @@ private:
   const T DefaultSigma1Sqr;
   const T DefaultSigma2Sqr;
   const T DefaultW;
+
+  bool m_ExternallySetSigma1Sqr;
+  bool m_ExternallySetSigma2Sqr;
+  bool m_ExternallySetW;
 
   ptrKernelType m_ptrMaskKernel;
 

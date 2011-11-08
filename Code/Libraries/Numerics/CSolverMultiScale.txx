@@ -90,14 +90,15 @@ bool CSolverMultiScale< T, VImageDimension, TState>::Solve()
 
   bool bHasBeenInitialized = false;
 
+  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "MultiscaleSettings", Json::nullValue );
+
   // loop over all scales, starting at the lowest
   for ( int iI=(int)uiNrOfScales-1; iI>=0; --iI )
     {
     ptrImageManager->SelectScale( (unsigned int)iI );
     m_ptrSolver->SetExternalSolverState( (unsigned int)iI );
-
-    std::cout << "FIXME: Multiscale: Check that this configuration works." << std::endl;
-    m_ptrSolver->SetAutoConfiguration( this->m_ConfValue[ "Multiscale" ][iI] );
+    
+    m_ptrSolver->SetAutoConfiguration( this->m_jsonConfig.GetFromIndex( currentConfiguration, iI, Json::nullValue ) );
 
     if ( !bHasBeenInitialized )
       {

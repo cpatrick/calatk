@@ -73,8 +73,6 @@ public:
   virtual const VectorFieldType* GetMapFromTo( T dTimeFrom, T dTimeTo ) = 0;
   virtual const VectorImageType* GetImage( T dTime ) = 0;
 
-  virtual void SetAutoConfiguration( const Json::Value& ConfValue );
-
 protected:
 
   virtual void SetDefaultsIfNeeded();

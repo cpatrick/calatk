@@ -3,7 +3,7 @@
 
 template <class T, unsigned int VImageDimension, class TSpace >
 CImageManagerMultiScale< T, VImageDimension, TSpace >::CImageManagerMultiScale()
-  : DefaultSigma( 0.02 )
+  : DefaultSigma( 0.02 ), m_ExternallySetSigma( false )
 {
   m_uiCurrentlySelectedScale = 0;
   m_bImagesWereRead = false;

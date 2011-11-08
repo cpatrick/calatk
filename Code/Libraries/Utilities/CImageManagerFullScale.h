@@ -68,6 +68,9 @@ private:
   const T DefaultSigma;
   const bool DefaultBlurImage;
 
+  bool m_ExternallySetSigma;
+  bool m_ExternallySetBlurImage;
+
 };
 
 #include "CImageManagerFullScale.txx"

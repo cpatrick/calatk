@@ -1,0 +1,49 @@
+// Example LDDMM, multiscale configuration file
+{
+    // array of settings for the multi-scale image pyramid at different levels
+    "MultiscaleSettings": [
+        {
+	    "Downsample" :
+	    {
+		"Sigma": 0.1,
+        	"Scale": 1
+            },
+	    "LineSearch" :
+	    {
+		"Tolerance": 1e-3,
+		"MaxNumberOfIterations": 25
+	    }  
+	    
+	},
+	{
+	    "Downsample" :
+	    {
+		"Sigma": 0.1,
+		"Scale": 0.75    
+	    },
+	    "LineSearch" :
+	    {
+		"Tolerance": 1e-3,
+		"MaxNumberOfIterations": 50
+	    }  
+	},
+	{
+	    "Downsample" :
+           {
+		"Sigma": 0.1,
+		"Scale": 0.5
+            },
+	    "LineSearch" :
+	    {
+		"Tolerance": 1e-3,
+		"MaxNumberOfIterations": 100
+	    }  
+	}
+    ],
+
+    "GrowthModel" :
+    {
+	"Gamma": 1,
+	"Alpha": 0.01    
+    }
+}

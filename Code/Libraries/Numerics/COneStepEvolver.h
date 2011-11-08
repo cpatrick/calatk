@@ -81,12 +81,14 @@ public:
    */
   GetMacro( NumberOfThreads, unsigned int );
 
-  virtual void SetAutoConfiguration( const Json::Value& ConfValue );
+  virtual void SetAutoConfiguration( Json::Value& ConfValue );
 
 private:
 
   unsigned int m_NumberOfThreads;
   unsigned int DefaultNumberOfThreads;
+
+  bool m_ExternallySetNumberOfThreads;
 
 };
 

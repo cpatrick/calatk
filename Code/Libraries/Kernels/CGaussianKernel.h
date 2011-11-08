@@ -28,7 +28,7 @@ public:
 
   GetMacro( Sigma, T );
 
-  virtual void SetAutoConfiguration( const Json::Value& ConfValue );
+  virtual void SetAutoConfiguration( Json::Value& ConfValue );
 
 protected:
 
@@ -44,6 +44,8 @@ private:
   T m_Sigma;
 
   const T DefaultSigma;
+
+  bool m_ExternallySetSigma;
 };
 
 #include "CGaussianKernel.txx"

@@ -1,0 +1,66 @@
+// Example geomet, multiscale configuration file
+{
+	"GeometricMetamorphosis" : 
+	{
+		"Sigma1Sqr" : 0.010,
+		"Sigma2Sqr" : 0.010,
+		"W" : 0.50
+	},
+	"HelmholtzKernel" : 
+	{
+		"Alpha" : 0.050,
+		"Gamma" : 1.0
+	},
+	"MaskKernel" : 
+	{
+		"HelmholtzKernel" : 
+		{
+			"Alpha" : 0.010,
+			"Gamma" : 1.0
+		}
+	},
+	"MultiscaleSettings" : 
+	[
+	  {
+	    "Downsample" :
+	    {
+		"Sigma": 0.1,
+        	"Scale": 1
+            },
+	    "LineSearch" :
+	    {
+		"Tolerance": 1e-3,
+		"MaxNumberOfIterations": 25
+	    }  
+	    
+	},
+	{
+	    "Downsample" :
+	    {
+		"Sigma": 0.1,
+		"Scale": 0.75    
+	    },
+	    "LineSearch" :
+	    {
+		"Tolerance": 1e-3,
+		"MaxNumberOfIterations": 50
+	    }  
+	},
+	{
+	    "Downsample" :
+           {
+		"Sigma": 0.1,
+		"Scale": 0.5
+            },
+	    "LineSearch" :
+	    {
+		"Tolerance": 1e-3,
+		"MaxNumberOfIterations": 100
+	    }  
+	}   	
+	],
+	"SpatioTemporalVelocityField" : 
+	{
+		"NumberOfDiscretizationVolumesPerUnitTime" : 10.0
+	}
+}

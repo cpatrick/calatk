@@ -3,7 +3,7 @@
 
 template <class T, unsigned int VImageDimension >
 CResampler< T, VImageDimension >::CResampler()
-  : DefaultSigma( 0.05 )
+  : DefaultSigma( 0.05 ), m_ExternallySetSigma( false )
 {
   SetSigma( DefaultSigma );
 }
@@ -14,13 +14,12 @@ CResampler< T, VImageDimension >::~CResampler()
 }
 
 template <class T, unsigned int VImageDimension >
-void CResampler< T, VImageDimension >::SetAutoConfiguration( const Json::Value& ConfValue )
+void CResampler< T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValue )
 {
   Superclass::SetAutoConfiguration( ConfValue );
+  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "Resampler", Json::nullValue );
 
-  Json::Value currentConfiguration = CALATK::JSONParameterUtils::SaveGetFromKey( ConfValue, "Resampler", Json::nullValue, this->GetPrintConfiguration() );
-  
-  SetJSONSigma( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "Sigma", DefaultSigma, this->GetPrintConfiguration() ).asDouble() );
+  SetJSONSigma( this->m_jsonConfig.GetFromKey( currentConfiguration, "Sigma", GetExternalOrDefaultSigma() ).asDouble() );
 }
 
 template <class T, unsigned int VImageDimension >

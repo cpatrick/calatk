@@ -3,7 +3,7 @@
 
 template <class T, unsigned int VImageDimension >
 CGaussianKernel< T, VImageDimension >::CGaussianKernel()
-  : DefaultSigma( 1 )
+  : DefaultSigma( 1 ), m_ExternallySetSigma( false )
 {
   m_Sigma = DefaultSigma;
 }
@@ -14,18 +14,19 @@ CGaussianKernel< T, VImageDimension >::~CGaussianKernel()
 }
 
 template <class T, unsigned int VImageDimension >
-void CGaussianKernel< T, VImageDimension >::SetAutoConfiguration( const Json::Value& ConfValue )
+void CGaussianKernel< T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValue )
 {
   Superclass::SetAutoConfiguration( ConfValue );
   
-  Json::Value currentConfiguration = CALATK::JSONParameterUtils::SaveGetFromKey( ConfValue, "GaussianKernel", Json::nullValue, this->GetPrintConfiguration() );
-  SetJSONSigma( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "Sigma", DefaultSigma, this->GetPrintConfiguration() ).asDouble() );
+  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "GaussianKernel", Json::nullValue );
+  SetJSONSigma( this->m_jsonConfig.GetFromKey( currentConfiguration, "Sigma", GetExternalOrDefaultSigma() ).asDouble() );
 }
 
 template <class T, unsigned int VImageDimension >
 void CGaussianKernel< T, VImageDimension >::SetSigma( T dSigma )
 {
   m_Sigma = dSigma;
+  m_ExternallySetSigma = true;
   ConfirmKernelsNeedToBeComputed();
 }
 

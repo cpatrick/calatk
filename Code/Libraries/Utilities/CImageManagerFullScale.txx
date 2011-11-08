@@ -6,7 +6,7 @@
 //
 template <class T, unsigned int VImageDimension, class TSpace >
 CImageManagerFullScale< T, VImageDimension, TSpace >::CImageManagerFullScale()
-  : DefaultSigma( 0.05 ), DefaultBlurImage( false )
+  : DefaultSigma( 0.05 ), DefaultBlurImage( false ), m_ExternallySetSigma( false ), m_ExternallySetBlurImage( false )
 {
   m_BlurImage = DefaultBlurImage;
   SetSigma( DefaultSigma );

@@ -3,7 +3,7 @@
 
 template <class T, unsigned int VImageDimension >
 CHelmholtzKernel< T, VImageDimension >::CHelmholtzKernel()
-  : DefaultAlpha( 0.05 ), DefaultGamma( 1 )
+  : DefaultAlpha( 0.05 ), DefaultGamma( 1 ), m_ExternallySetAlpha( false ), m_ExternallySetGamma( false )
 {
   m_Alpha = DefaultAlpha;
   m_Gamma = DefaultGamma;
@@ -15,19 +15,20 @@ CHelmholtzKernel< T, VImageDimension >::~CHelmholtzKernel()
 }
 
 template <class T, unsigned int VImageDimension >
-void CHelmholtzKernel< T, VImageDimension >::SetAutoConfiguration( const Json::Value& ConfValue )
+void CHelmholtzKernel< T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValue )
 {
   Superclass::SetAutoConfiguration( ConfValue );
-  
-  Json::Value currentConfiguration = CALATK::JSONParameterUtils::SaveGetFromKey( ConfValue, "HelmholtzKernel", Json::nullValue, this->GetPrintConfiguration() );
-  SetJSONAlpha( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "Alpha", DefaultAlpha, this->GetPrintConfiguration() ).asDouble() );
-  SetJSONGamma( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "Gamma", DefaultGamma, this->GetPrintConfiguration() ).asDouble() );
+  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "HelmholtzKernel", Json::nullValue );
+
+  SetJSONAlpha( this->m_jsonConfig.GetFromKey( currentConfiguration, "Alpha", GetExternalOrDefaultAlpha() ).asDouble() );
+  SetJSONGamma( this->m_jsonConfig.GetFromKey( currentConfiguration, "Gamma", GetExternalOrDefaultGamma() ).asDouble() );
 }
 
 template <class T, unsigned int VImageDimension >
 void CHelmholtzKernel< T, VImageDimension >::SetAlpha( T dAlpha )
 {
   m_Alpha = dAlpha;
+  m_ExternallySetAlpha = true;
   ConfirmKernelsNeedToBeComputed();
 }
 
@@ -35,6 +36,7 @@ template <class T, unsigned int VImageDimension >
 void CHelmholtzKernel< T, VImageDimension >::SetGamma( T dGamma )
 {
   m_Gamma = dGamma;
+  m_ExternallySetGamma = true;
   ConfirmKernelsNeedToBeComputed();
 }
 

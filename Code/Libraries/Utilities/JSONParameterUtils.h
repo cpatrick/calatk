@@ -12,19 +12,41 @@
 namespace CALATK
 {
 
-class JSONParameterUtils
+class CJSONConfiguration
 {
 public:
-  /** 
-   * Method that reads a text file content into a string, which can then be passed to a JSON parser.
-   *
-   * @param sFileName - file name of the input file
-   */
-  static std::string ReadFileContentIntoString( std::string sFileName );
-  static bool ParseJSONFile( std::string sFileName, Json::Value& root );
-  
-  static Json::Value SaveGetFromKey( const Json::Value& value, std::string sKey, const Json::Value& vDefault, bool bPrint = true );
+  CJSONConfiguration();
+  ~CJSONConfiguration();
 
+  void SetRootReference( Json::Value& vRoot );
+  Json::Value* GetRootPointer();
+
+  void InitializeEmptyRoot();
+  bool ReadJSONFile( std::string sFileName );
+  bool WriteCurrentConfigurationToJSONFile( std::string sFileName );
+
+  Json::Value& GetFromKey( std::string sKey, Json::Value vDefault );
+  Json::Value& GetFromKey( Json::Value& vSubTree, std::string sKey, Json::Value vDefault, bool bUseIndent = true );
+  Json::Value& GetFromIndex( Json::Value& vSubTree, Json::ArrayIndex ind, bool bUseIndent = true );
+
+  void PrintSettingsOn();
+  void PrintSettingsOff();
+  bool GetPrintSettings();
+
+  void SetIndent( unsigned int uiIndent );
+  unsigned int GetIndent();
+
+protected:
+  std::string ReadFileContentIntoString( std::string sFileName );
+private:
+  // intentionally not implemented
+  CJSONConfiguration( const CJSONConfiguration & );
+  CJSONConfiguration& operator=( const CJSONConfiguration & );
+
+  unsigned int m_Indent;
+  bool m_IsMasterNode;
+  bool m_PrintSettings;
+  Json::Value* m_ptrRoot;
 };
 
 } // end namespace

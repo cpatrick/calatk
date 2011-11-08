@@ -22,33 +22,44 @@ namespace CALATK
 const double PI = 4.0*atan(1.0);
 
 /** Set built-in type.  Creates member Set"name"() (e.g., SetVisibility()); */
-#define SetMacro(name,type) \
+#define SetMacro(name,type)                     \
   virtual void Set##name (const type _arg)      \
   {                                             \
-    this->m_##name = _arg;                      \
+    this->m_##name = _arg;                                              \
+    this->m_ExternallySet##name = true;                                 \
+  }                                                                     \
+  virtual void SetToDefault##name ()                                    \
+  {                                                                     \
+    this->m_##name = this->Default##name;                               \
+    this->m_ExternallySet##name = false;                                \
   }                                                                     \
   virtual void SetJSON##name(const type _arg)                           \
   {                                                                     \
-    if ( this->Get##name() != this->GetDefault##name() )                \
+    if ( this->GetExternallySet##name() )                               \
       {                                                                 \
       std::cout << "Variable " << #name << " appears to have been set before. Ignoring new value." << std::endl; \
       }                                                                 \
     else                                                                \
       {                                                                 \
-      this->Set##name( _arg );                                          \
+      this->m_##name = _arg;                                            \
       }                                                                 \
   }                                                                     \
   
 #define SetJSONMacro(name,type)                                         \
+  virtual void SetToDefault##name ()                                    \
+  {                                                                     \
+    this->m_##name = this->Default##name;                               \
+    this->m_ExternallySet##name = false;                                \
+  }                                                                     \
   virtual void SetJSON##name(const type _arg)                           \
   {                                                                     \
-    if ( this->Get##name() != this->GetDefault##name() )                \
+    if ( this->GetExternallySet##name() )                               \
       {                                                                 \
       std::cout << "Variable " << #name << " appears to have been set before. Ignoring new value." << std::endl; \
       }                                                                 \
     else                                                                \
       {                                                                 \
-      this->Set##name( _arg );                                          \
+      this->m_##name = _arg;                                            \
       }                                                                 \
   }      
 
@@ -63,6 +74,21 @@ const double PI = 4.0*atan(1.0);
   {                                \
     return this->Default##name;    \
   }                                \
+  virtual type GetExternalOrDefault##name () \
+  {                                          \
+  if ( this->m_ExternallySet##name )         \
+    {                                        \
+    return this->m_##name;                   \
+    }                                        \
+  else                                       \
+    {                                        \
+  return this->Default##name;                \
+    }                                        \
+  }                                          \
+  virtual bool GetExternallySet##name () \
+  {                                      \
+  return this->m_ExternallySet##name;    \
+  }                                      \
 
 /** min and max macros */
 #ifndef MAX

@@ -58,11 +58,22 @@ public:
   };
 
 
+  /** Sorting */
+
+
+  struct CompareMethod
+  {
+    bool operator()(SImageInformation* const & a, SImageInformation* const & b) const
+    {
+      return a->timepoint < b->timepoint;
+    }
+  };
+
   /********************************
    * Typedefs *
    ********************************/
   
-  typedef std::multiset< SImageInformation* > SubjectInformationType;
+  typedef std::multiset< SImageInformation*, CompareMethod > SubjectInformationType;
   typedef std::map< unsigned int, SubjectInformationType* > SubjectCollectionInformationMapType;
 
   /********************************

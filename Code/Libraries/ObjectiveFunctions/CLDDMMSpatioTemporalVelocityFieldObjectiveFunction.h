@@ -41,7 +41,7 @@ public:
   SetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );
   GetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );
 
-  virtual void SetAutoConfiguration( const Json::Value& ConfValue );
+  virtual void SetAutoConfiguration( Json::Value& ConfValue );
 
 protected:
 
@@ -81,6 +81,7 @@ protected:
 private:
 
   const T DefaultNumberOfDiscretizationVolumesPerUnitTime;
+  bool m_ExternallySetNumberOfDiscretizationVolumesPerUnitTime;
 
 };
 

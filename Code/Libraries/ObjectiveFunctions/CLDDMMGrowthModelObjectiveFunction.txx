@@ -3,7 +3,7 @@
 
 template <class T, unsigned int VImageDimension, class TState >
 CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::CLDDMMGrowthModelObjectiveFunction()
-  : DefaultSigmaSqr( 0.01 ) 
+  : DefaultSigmaSqr( 0.01 ), m_ExternallySetSigmaSqr( false )
 {
   m_SigmaSqr = DefaultSigmaSqr;
 
@@ -31,12 +31,12 @@ CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::~CLDDMMGrowthM
 }
 
 template <class T, unsigned int VImageDimension, class TState >
-void CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::SetAutoConfiguration( const Json::Value& ConfValue )
+void CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::SetAutoConfiguration( Json::Value& ConfValue )
 {
   Superclass::SetAutoConfiguration( ConfValue );
-  
-  Json::Value currentConfiguration = CALATK::JSONParameterUtils::SaveGetFromKey( ConfValue, "GrowthModel", Json::nullValue, this->GetPrintConfiguration() );
-  SetJSONSigmaSqr( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "SigmaSqr", DefaultSigmaSqr, this->GetPrintConfiguration() ).asDouble() );
+  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "GrowthModel", Json::nullValue );
+
+  SetJSONSigmaSqr( this->m_jsonConfig.GetFromKey( currentConfiguration, "SigmaSqr", GetExternalOrDefaultSigmaSqr() ).asDouble() );
 
 }
 
@@ -151,6 +151,8 @@ void CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::Determine
   // make sure we have at least two timepoints
   this->m_ptrImageManager->GetTimepointsForSubjectIndex( vecMeasurementTimepoints, vecSubjectIndices[ 0 ] );
   assert( vecMeasurementTimepoints.size() > 1 );
+
+  std::cout << "Measurement timepoints = " << vecMeasurementTimepoints << std::endl;
 
   // get the full time-course information for the subject
   SubjectInformationType* pSubjectInfo;

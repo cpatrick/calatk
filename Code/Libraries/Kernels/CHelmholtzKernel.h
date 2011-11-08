@@ -31,7 +31,7 @@ public:
   GetMacro( Alpha, T );
   GetMacro( Gamma, T );
 
-  virtual void SetAutoConfiguration( const Json::Value& ConfValue );
+  virtual void SetAutoConfiguration( Json::Value& ConfValue );
 
 protected:
 
@@ -49,6 +49,9 @@ private:
 
   const T DefaultAlpha;
   const T DefaultGamma;
+
+  bool m_ExternallySetAlpha;
+  bool m_ExternallySetGamma;
 
 };
 

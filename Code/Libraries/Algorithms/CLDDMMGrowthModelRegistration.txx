@@ -38,7 +38,7 @@ void CLDDMMGrowthModelRegistration< T, VImageDimension, TState >::SetDefaultObje
   plddmm->SetMetricPointer( this->m_ptrMetric );
   plddmm->SetImageManagerPointer( this->m_ptrImageManager );
 
-  plddmm->SetAutoConfiguration( this->m_ConfValue );
+  plddmm->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 
   this->m_ptrObjectiveFunction = plddmm;
 

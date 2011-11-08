@@ -79,6 +79,7 @@ private:
 
   T m_Sigma;
   const T DefaultSigma;
+  bool m_ExternallySetSigma;
 
 };
 

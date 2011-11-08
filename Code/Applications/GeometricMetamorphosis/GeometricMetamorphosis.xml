@@ -83,6 +83,14 @@
 	  <description>JSON Configuration file.</description>
 	</file>
 
+	<file>
+	  <name>configFileOut</name>
+	  <longflag>--configOut</longflag>
+	  <label>Resulting configuration file</label>
+	  <default>None</default>
+	  <description>JSON Configuration file which describes the full parameterization of the algorithm run..</description>
+	</file>
+
   </parameters>
   
 </executable>

@@ -49,6 +49,9 @@ private:
   const bool DefaultOutputStateInformation;
   const unsigned int DefaultExternalSolverState;
 
+  bool m_ExternallySetOutputStateInformation;
+  bool m_ExternallySetExternalSolverState;
+
 };
 
 #include "CSolver.txx"

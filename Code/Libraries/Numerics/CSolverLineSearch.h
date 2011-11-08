@@ -61,7 +61,7 @@ public:
   SetMacro( DecreaseConstant, T );
   GetMacro( DecreaseConstant, T );
 
-  virtual void SetAutoConfiguration( const Json::Value& ConfValue );
+  virtual void SetAutoConfiguration( Json::Value& ConfValue );
 
 /**
  * Performs the line search
@@ -101,6 +101,17 @@ private:
   const unsigned int DefaultMaxNumberOfTries;
   const unsigned int DefaultAdjustStepSizeUpNumber;
   const unsigned int DefaultAdjustStepSizeDownNumber;
+
+  bool m_ExternallySetInitialStepSize;
+  bool m_ExternallySetAdjustStepSizeUpFactor;
+  bool m_ExternallySetAdjustStepSizeDownFactor;
+  bool m_ExternallySetReductionFactor;
+  bool m_ExternallySetMinAllowedStepSize;
+  bool m_ExternallySetDecreaseConstant;
+  bool m_ExternallySetMaxNumberOfIterations;
+  bool m_ExternallySetMaxNumberOfTries;
+  bool m_ExternallySetAdjustStepSizeUpNumber;
+  bool m_ExternallySetAdjustStepSizeDownNumber;
 
   TState *pTempState;
 

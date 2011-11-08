@@ -3,7 +3,7 @@
 
 template <class T, unsigned int VImageDimension, class TState >
 CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::CLDDMMGeometricMetamorphosisObjectiveFunction()
-  : DefaultSigma1Sqr( 0.01 ), DefaultSigma2Sqr( 0.01 ), DefaultW( 0.5 )
+  : DefaultSigma1Sqr( 0.01 ), DefaultSigma2Sqr( 0.01 ), DefaultW( 0.5 ), m_ExternallySetSigma1Sqr( false ), m_ExternallySetSigma2Sqr( false ), m_ExternallySetW( false )
 {
   m_Sigma1Sqr = DefaultSigma1Sqr;
   m_Sigma2Sqr = DefaultSigma2Sqr;
@@ -77,15 +77,14 @@ CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::~CL
 }
 
 template <class T, unsigned int VImageDimension, class TState >
-void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::SetAutoConfiguration( const Json::Value& ConfValue )
+void CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState >::SetAutoConfiguration( Json::Value& ConfValue )
 {
   Superclass::SetAutoConfiguration( ConfValue );
+  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "GeometricMetamorphosis", Json::nullValue );
   
-  Json::Value currentConfiguration = CALATK::JSONParameterUtils::SaveGetFromKey( ConfValue, "GeometricMetamorphosis", Json::nullValue, this->GetPrintConfiguration() );
-  
-  SetJSONSigma1Sqr( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "Sigma1Sqr", DefaultSigma1Sqr, this->GetPrintConfiguration() ).asDouble() );
-  SetJSONSigma2Sqr( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "Sigma2Sqr", DefaultSigma2Sqr, this->GetPrintConfiguration() ).asDouble() );
-  SetJSONW( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "W", DefaultW, this->GetPrintConfiguration() ).asDouble() );
+  SetJSONSigma1Sqr( this->m_jsonConfig.GetFromKey( currentConfiguration, "Sigma1Sqr", GetExternalOrDefaultSigma1Sqr() ).asDouble() );
+  SetJSONSigma2Sqr( this->m_jsonConfig.GetFromKey( currentConfiguration, "Sigma2Sqr", GetExternalOrDefaultSigma2Sqr() ).asDouble() );
+  SetJSONW( this->m_jsonConfig.GetFromKey( currentConfiguration, "W", GetExternalOrDefaultW() ).asDouble() );
 
 }
 

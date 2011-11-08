@@ -47,11 +47,11 @@ void CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::Set
   this->m_ptrMaskKernel = ptrHH;
 
   // multiply alpha by 0.25 to make the mask more fluid as default behavior
-  ptrHH->SetAlpha( 0.2*ptrHH->GetAlpha() );
+  //ptrHH->SetAlpha( 0.2*ptrHH->GetAlpha() );
+  //std::cout << "WARNING: Check that this works properly and does not overwrite the previously set value if no other value is specified." << std::endl;
 
-  std::cout << "WARNING: Check that this works properly and does not overwrite the previously set value if no other value is specified." << std::endl;
-  ptrHH->SetAutoConfiguration( this->m_ConfValue[ "MaskKernel" ] );
-
+  ptrHH->SetAutoConfiguration( this->m_jsonConfig.GetFromKey( "MaskKernel", Json::nullValue ) );
+  
 }
 
 template < class T, unsigned int VImageDimension, class TState >
@@ -107,7 +107,7 @@ void CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::Set
   plddmm->SetMetricPointer( this->m_ptrMetric );
   plddmm->SetImageManagerPointer( this->m_ptrImageManager );
 
-  plddmm->SetAutoConfiguration( this->m_ConfValue );
+  plddmm->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
   
   this->m_ptrObjectiveFunction = plddmm;
 

@@ -3,7 +3,7 @@
 
 template <class T, unsigned int VImageDimension, class TState >
 CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::CLDDMMSpatioTemporalVelocityFieldObjectiveFunction()
-  : DefaultNumberOfDiscretizationVolumesPerUnitTime( 10.0 )
+  : DefaultNumberOfDiscretizationVolumesPerUnitTime( 10.0 ), m_ExternallySetNumberOfDiscretizationVolumesPerUnitTime( false )
 {
   m_NumberOfDiscretizationVolumesPerUnitTime = DefaultNumberOfDiscretizationVolumesPerUnitTime;
 }
@@ -29,12 +29,12 @@ CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >
 }
 
 template <class T, unsigned int VImageDimension, class TState >
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::SetAutoConfiguration( const Json::Value& ConfValue )
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::SetAutoConfiguration( Json::Value& ConfValue )
 {
   Superclass::SetAutoConfiguration( ConfValue );
+  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "SpatioTemporalVelocityField", Json::nullValue );
 
-  Json::Value currentConfiguration = CALATK::JSONParameterUtils::SaveGetFromKey( ConfValue, "SpatioTemporalVelocityField", Json::nullValue, this->GetPrintConfiguration() );
-  SetJSONNumberOfDiscretizationVolumesPerUnitTime( CALATK::JSONParameterUtils::SaveGetFromKey( currentConfiguration, "NumberOfDiscretizationVolumesPerUnitTime", DefaultNumberOfDiscretizationVolumesPerUnitTime, this->GetPrintConfiguration() ).asDouble() );
+  SetJSONNumberOfDiscretizationVolumesPerUnitTime( this->m_jsonConfig.GetFromKey( currentConfiguration, "NumberOfDiscretizationVolumesPerUnitTime", GetExternalOrDefaultNumberOfDiscretizationVolumesPerUnitTime() ).asDouble() );
 }
 
 template <class T, unsigned int VImageDimension, class TState >
@@ -56,6 +56,8 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
 
   for ( iter = vecTimePointData.begin(); iter != vecTimePointData.end(); ++iter )
     {
+
+    std::cout << "Time point = " << iter->dTime << std::endl;
 
     if ( vecTimeDiscretization.empty() )
       {
