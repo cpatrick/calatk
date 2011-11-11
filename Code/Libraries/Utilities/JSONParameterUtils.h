@@ -12,17 +12,53 @@
 namespace CALATK
 {
 
+/**
+ * @brief Implements ways to extract information from a JSON data description.
+ * This can be used to keep track of paramters and to read in configuration files.
+ *
+ */
 class CJSONConfiguration
 {
 public:
   CJSONConfiguration();
   ~CJSONConfiguration();
 
+  /**
+   * @brief Sets the JSON configuration root by passing a JSON reference.
+   *
+   * @param vRoot The root of the JSON configuration
+   */
   void SetRootReference( Json::Value& vRoot );
+
+  /**
+   * @brief Returns the root pointer.
+   *
+   * @return Pointer to the root
+   */
   Json::Value* GetRootPointer();
 
+  /**
+   * @brief Intialize the root to an empty JSON decription. This is a useful initialization
+   * for example when the JSON description is to be populated from scratch externally
+   * (as when creating a JSON description of all possible parameters).
+   *
+   */
   void InitializeEmptyRoot();
+
+  /**
+   * @brief Reads a given JSON file and initializes the root node to point to the parsed content of this file.
+   *
+   * @param sFileName Input filename
+   * @return bool Returns true if file could be read and false otherwise.
+   */
   bool ReadJSONFile( std::string sFileName );
+
+  /**
+   * @brief Writes the JSON description (relative to the root) to a file.
+   *
+   * @param sFileName File to write to
+   * @return bool Returns true if the writing was successful and false otherwise.
+   */
   bool WriteCurrentConfigurationToJSONFile( std::string sFileName );
 
   Json::Value& GetFromKey( std::string sKey, Json::Value vDefault );
