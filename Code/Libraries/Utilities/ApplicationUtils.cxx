@@ -1,6 +1,15 @@
 
 #include "ApplicationUtils.h"
 
+#include <direct.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+
+#ifdef _MSC_VER
+#define getcwd(x,y) _getcwd(x,y)  // VC++ uses _isnan() instead of isnan()
+#endif
+
 namespace CALATK
 {
 
@@ -9,9 +18,6 @@ namespace CALATK
  *
  */
 
-#ifdef _MSC_VER
-#define getcwd(x,y) _getcwd(x,y)  // VC++ uses _isnan() instead of isnan()
-#endif
 
 //
 // Split a string by a delimiting character
@@ -157,9 +163,6 @@ bool ApplicationUtils::getNextGoodLine(std::ifstream* reader, std::string* out) 
 //
 // getCWD
 //
-#if FRAT_SYSTEM_WINDOWS
-#include <direct.h>
-#endif
 std::string ApplicationUtils::getCWD() {
   
   const unsigned int maxSize = 4096;
