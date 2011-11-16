@@ -164,6 +164,7 @@ template <class T, unsigned int VImageDimension>
 struct ITKAffineTransform
 {
   typedef itk::AffineTransform< T, VImageDimension > Type;
+  typedef typename Type::Pointer Pointer;
 };
 
 template <class T, unsigned int VImageDimension>

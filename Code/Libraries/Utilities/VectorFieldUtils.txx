@@ -804,7 +804,7 @@ typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils<
 // ITK affine transform to displacement map, 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorFieldUtils< T, VImageDimension, TSpace>::affineITKtoMap( typename ITKAffineTransform<T,2>::Type::Pointer itkAffine, VectorFieldType* mapOut) 
+void VectorFieldUtils< T, VImageDimension, TSpace>::affineITKtoMap( typename ITKAffineTransform<T,2>::Pointer itkAffine, VectorFieldType* mapOut) 
 {
 
   // TODO: Check that this is correctly implemented
@@ -888,8 +888,9 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::affineITKtoMap( typename ITK
 // ITK affine transform to displacement map, 3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-void VectorFieldUtils< T, VImageDimension, TSpace>::affineITKtoMap( typename ITKAffineTransform<T,3>::Type::Pointer itkAffine, VectorFieldType* mapOut) 
+void VectorFieldUtils< T, VImageDimension, TSpace>::affineITKtoMap( typename ITKAffineTransform<T,3>::Pointer itkAffine, VectorFieldType* mapOut) 
 {
+
 
   // TODO: Check that this is correctly implemented
   
@@ -996,11 +997,12 @@ void VectorFieldUtils< T, VImageDimension, TSpace>::affineITKtoMap( typename ITK
     
 }
 
+
 //
 // transform point, 2D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-std::vector<T> VectorFieldUtils< T, VImageDimension, TSpace>::transformPointITK( typename ITKAffineTransform<T,2>::Type::Pointer itkAffine, std::vector<T> coorVector) 
+std::vector<T> VectorFieldUtils< T, VImageDimension, TSpace>::transformPointITK( typename ITKAffineTransform<T,2>::Pointer itkAffine, std::vector<T> coorVector) 
 {
 
   // TODO: Check that this is correctly implemented
@@ -1035,7 +1037,7 @@ std::vector<T> VectorFieldUtils< T, VImageDimension, TSpace>::transformPointITK(
 // transform point, 3D
 //
 template <class T, unsigned int VImageDimension, class TSpace >
-std::vector<T> VectorFieldUtils< T, VImageDimension, TSpace>::transformPointITK( typename ITKAffineTransform<T,3>::Type::Pointer itkAffine, std::vector<T> coorVector) 
+std::vector<T> VectorFieldUtils< T, VImageDimension, TSpace>::transformPointITK( typename ITKAffineTransform<T,3>::Pointer itkAffine, std::vector<T> coorVector) 
 {
 
   // TODO: Check that this is correctly implemented
@@ -1071,6 +1073,7 @@ std::vector<T> VectorFieldUtils< T, VImageDimension, TSpace>::transformPointITK(
   return out;
   
 }
+
 
 template <class T, unsigned int VImageDimension, class TSpace >
 bool VectorFieldUtils< T, VImageDimension, TSpace>::writeTimeDependantImagesITK( const std::vector< VectorFieldType* >* ims, std::string filename )
