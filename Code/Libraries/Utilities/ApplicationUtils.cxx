@@ -1,12 +1,13 @@
 
 #include "ApplicationUtils.h"
 
-#include <direct.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 
 
 #ifdef _MSC_VER
+#include <direct.h>
 #define getcwd(x,y) _getcwd(x,y)  // VC++ uses _isnan() instead of isnan()
 #endif
 
