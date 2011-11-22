@@ -53,7 +53,7 @@ void CJSONConfiguration::SetRootReference( Json::Value& vRoot )
     {
     if ( m_IsMasterNode )
       {
-      std::cerr << "Trying to overwrite the root note. FORBIDDEN." << std::endl;
+      std::cerr << "Trying to overwrite the root node. FORBIDDEN." << std::endl;
       }
     else
       {
