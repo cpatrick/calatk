@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+
+  <category>Utilities.Registration</category>
+    <title>applyMap</title>
+    <description>Applies a map to transform a source image to target space.</description>
+    <version>1.0</version>
+    <documentation-url></documentation-url>
+    <license>Apache 2.0</license>
+    <contributor>The CALATK team</contributor>
+    <acknowledgements></acknowledgements>
+
+  <parameters>
+        <label>Input/Output</label>
+        <description>Input/Output Parameters</description>
+
+	<image>
+	  <name>sourceToTargetMap</name>
+	  <label>Source to target map</label>
+	  <channel>input</channel>
+	  <index>0</index>
+	  <description>Registration map from source to target in target space.</description>
+	</image>
+
+        <image>
+            <name>sourceImage</name>
+            <label>Source Image</label>
+	    <channel>input</channel>
+	    <index>1</index>
+            <description>Source image.</description>
+        </image>
+
+	<image>
+            <name>targetImage</name>
+            <label>Target Image</label>
+            <channel>output</channel>
+            <index>2</index>
+            <description>Warped source image (subject to the map).</description>
+        </image>
+
+  </parameters>
+  
+</executable>
