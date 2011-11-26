@@ -1206,13 +1206,12 @@ VectorImageUtils< T, VImageDimension, TSpace >::convertFromITK2D( typename ITKVe
       {
       for (unsigned int d = 0; d < dim; ++d) 
         {
-        
-        typename ITKVectorImage<T,VImageDimension>::Type::IndexType px;
-        px[0] = x;
-        px[1] = y;
-        px[2] = d;
-
-        outImage->setValue(x,y,d, itkIm->GetPixel(px));
+        typename ITKVectorImage<T,VImageDimension>::Type::IndexType idx;
+        idx[0] = x;
+        idx[1] = y;
+        idx[2] = d;
+        T dCurrentElement = itkIm->GetPixel( idx );
+        outImage->setValue(x,y,d, dCurrentElement );
         }
       }
     }
