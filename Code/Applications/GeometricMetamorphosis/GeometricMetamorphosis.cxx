@@ -156,7 +156,8 @@ int main(int argc, char **argv)
 
   if ( uiSourceImageDimension != uiTargetImageDimension )
     {
-    std::cerr << "Source image dimension.";
+    std::cerr << "Source image dimension is different than target image dimension." << std::endl;
+    return EXIT_FAILURE;
     }
 
   std::cout << "Image dimension = " << uiSourceImageDimension << std::endl;

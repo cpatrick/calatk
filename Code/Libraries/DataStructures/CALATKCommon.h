@@ -37,7 +37,7 @@ const double PI = 4.0*atan(1.0);
   {                                                                     \
     if ( this->GetExternallySet##name() )                               \
       {                                                                 \
-      std::cout << "Variable " << #name << " appears to have been set before. Ignoring new value." << std::endl; \
+      std::cout << "Variable " << #name << " appears to have been set before to " << this->m_##name << ". Ignoring new value." << std::endl; \
       }                                                                 \
     else                                                                \
       {                                                                 \
@@ -55,7 +55,7 @@ const double PI = 4.0*atan(1.0);
   {                                                                     \
     if ( this->GetExternallySet##name() )                               \
       {                                                                 \
-      std::cout << "Variable " << #name << " appears to have been set before. Ignoring new value." << std::endl; \
+      std::cout << "Variable " << #name << " appears to have been set before to " << this->m_##name << ". Ignoring new value." << std::endl; \
       }                                                                 \
     else                                                                \
       {                                                                 \
