@@ -1,6 +1,6 @@
-function [gradX, gradY] = computeAdjointMatchingGradient( I, lam, vx, vy, A, nt, defaults, vMask )
+function [gradX, gradY] = computeAdjointMatchingGradient( I, lam, vx, vy, A, nt, options, vMask )
 
-[gradIX, gradIY] = computeGradient( I );
+[gradIX, gradIY] = computeGradient( I, options.dx, options.dy );
 
 gradX = zeros(size(vx));
 gradY = zeros(size(vy));
@@ -19,14 +19,11 @@ for i=1:nt
   valTmpYK = real( ifft2( fft2( valTmpY )./(A.^2) ) );
   
       % bound velocity fields
-    if(defaults.clampVelocity)
+    if(options.clampVelocity)
         valTmpXK = valTmpXK .* vMask;
         valTmpYK = valTmpYK .* vMask;
     end
 
-    %gradX(:,:,i) = 2*vx(:,:,i)+valTmpXK;
-    %gradY(:,:,i) = 2*vy(:,:,i)+valTmpYK;
-    
     gradX(:,:,i) = vx(:,:,i)+valTmpXK;
     gradY(:,:,i) = vy(:,:,i)+valTmpYK;
 

@@ -1,10 +1,7 @@
-function [gradX,gradY] = computeGradient( J0 )
+function [gradX,gradY] = computeGradient( J0, dx, dy )
 
 iXS = size( J0,1);
 iYS = size( J0,2);
-
-dx = 1/iXS;
-dy = 1/iYS;
 
 % all central differences
 

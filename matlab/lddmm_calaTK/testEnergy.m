@@ -16,6 +16,12 @@ lvConv = nrrdLoad( 'lastVConvolved.nrrd' );
 
 K = nrrdLoad( 'kernel.nrrd' );
 
-[energy, imEnergy, velEnergy, velNorms ] = computeEnergy( vx, vy, I(:,:,end), I1, A, 0.1, 10, 0.1 )
+options = [];
+options.nt = 10;
+options.sigma = 0.01;
+options.dx = 0.01;
+options.dy = 0.01;
+
+[energy, imEnergy, velEnergy, velNorms ] = computeEnergy( vx, vy, I(:,:,end), I1, A, 0.1, options )
 
 

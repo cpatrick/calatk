@@ -57,7 +57,7 @@ CImageManager< T, VImageDimension, TSpace >::~CImageManager()
 }
 
 //
-// Adds an individual image
+// Adds an individual image by specifying a string
 //
 template <class T, unsigned int VImageDimension, class TSpace >
 unsigned int CImageManager< T, VImageDimension, TSpace>::AddImage( std::string filename, T timepoint, unsigned int uiSubjectIndex )
@@ -92,6 +92,45 @@ unsigned int CImageManager< T, VImageDimension, TSpace>::AddImage( std::string f
   m_MapIdToSubjectId[ pCurrentImageInformation->uiId ] = uiSubjectIndex;
 
   return pCurrentImageInformation->uiId;
+
+}
+
+
+//
+// Adds an individual image by specifying an actual image
+//
+template <class T, unsigned int VImageDimension, class TSpace >
+unsigned int CImageManager< T, VImageDimension, TSpace>::AddImage( VectorImageType* pIm, T timepoint, unsigned int uiSubjectIndex )
+{
+    // first check if an image from this subject has already been added
+    typename SubjectCollectionInformationMapType::iterator iter = m_SubjectCollectionMapImageInformation.find( uiSubjectIndex );
+
+    // if subject is not already stored we need to create a new multiset that will store its contents
+    if ( iter == m_SubjectCollectionMapImageInformation.end() )
+      {
+      SubjectInformationType* pMS = new SubjectInformationType;
+      m_SubjectCollectionMapImageInformation[ uiSubjectIndex ] = pMS;
+      }
+
+    // now that we know that the multiset for the subject has been initialized
+    // we can create the element and enter it into the structure
+
+    SImageInformation* pCurrentImageInformation = new SImageInformation;
+    pCurrentImageInformation->sImageFileName = "";
+    pCurrentImageInformation->sImageTransformationFileName = "";
+    pCurrentImageInformation->pIm = pIm;
+    pCurrentImageInformation->pImOrig = pIm;
+    pCurrentImageInformation->pTransform = NULL;
+    pCurrentImageInformation->timepoint = timepoint;
+    pCurrentImageInformation->uiId = m_uiCurrentRunningId++;
+    pCurrentImageInformation->uiSubjectId = uiSubjectIndex;
+
+    m_SubjectCollectionMapImageInformation[ uiSubjectIndex ]->insert( pCurrentImageInformation );
+
+    // keep track of which subject an id came from
+    m_MapIdToSubjectId[ pCurrentImageInformation->uiId ] = uiSubjectIndex;
+
+    return pCurrentImageInformation->uiId;
 
 }
 

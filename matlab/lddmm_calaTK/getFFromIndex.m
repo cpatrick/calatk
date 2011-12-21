@@ -1,4 +1,4 @@
-function k = getKFromIndex( iI, M, dx )
+function k = getFFromIndex( iI, M, dx )
 
 % gives the frequency
 

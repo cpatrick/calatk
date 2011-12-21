@@ -69,6 +69,19 @@ if ( scenario == 3 )
   I0 = double( nrrdLoad('../../TestingData/I0_short.nhdr') );
   I1 = double( nrrdLoad('../../TestingData/I1_short.nhdr') );
 
+  optionsOrig.dx = 0.02;
+  optionsOrig.dy = 0.02;
+  
+  % tests that everyhting is invariant with respect to a scaling of the spacing
+  fac = 10; 
+  
+  options.dx = optionsOrig.dx*fac;
+  options.dy = optionsOrig.dy*fac;
+  
+  options.sigma = 0.1;
+  options.alpha = (0.025*fac*fac)/fac;
+  options.gamma = 1/fac;
+  
   vMask = ones( size( I0 ) );
 
   doSmoothing = false;
@@ -98,9 +111,7 @@ defaults.alpha = 0.025;                          % smoothness operator setting. 
 defaults.gamma = 1;                             % smoothness operator setting
 defaults.nt = 10;                               % number of discretization steps (per unit time)
 %defaults.normalizeFlowFieldInterval = -1;       % do not do anything by default
-defaults.secondOrderAccurate = 0;               % 
 %defaults.updateTemplate = 0;                    %
-defaults.flowMap = 1;                           % flow map to avoid multiple interpolation
 %defaults.padImages = 1;                        %
 %defaults.backgroundValue = 0;                  %
 
@@ -120,6 +131,9 @@ defaults.displayProgressFrequency = 10;         % text output frequency
 defaults.displayImageProgress = 0;              % show graphical output
 defaults.displayImageProgressFrequency = 10;     % graphical output frequency
 
+% spacings
+defaults.dx = 0.01;
+defaults.dy = 0.01;
 
 % velocity clamping
 defaults.clampVelocity = 0;                     % clamp velocity field
@@ -144,7 +158,7 @@ options
 
 % ---- Initial Conditions ---- %
 
-tinc = 1.0/defaults.nt;          % time step in between temporal slices
+tinc = 1.0/options.nt;          % time step in between temporal slices
 
 % image sizes
 iXS = size(I0,1);
@@ -152,7 +166,7 @@ iYS = size(I0,2);
 
 % variable structure
 vars                    = [];
-vars.A                  = deconvolutionMatrix(iXS,iYS,defaults.alpha,defaults.gamma);
+vars.A                  = deconvolutionMatrix(iXS,iYS,options.alpha,options.gamma,options.dx, options.dy );
 vars.I0                 = I0;
 vars.I1                 = I1;
 
@@ -167,45 +181,33 @@ for iI=1:defaults.nt+1
     vars.I(:,:,iI) = I0;
 end
 
-% set up the forward and backward motion maps if necessary
-if(options.flowMap)
-    vars.pt0x = zeros( iXS, iYS, options.nt+1 );   % backward map, x-component
-    vars.pt0y = zeros( iXS, iYS, options.nt+1 );   % backward map, y-component
+% set up the forward and backward motion maps
+vars.pt0x = zeros( iXS, iYS, options.nt+1 );   % backward map, x-component
+vars.pt0y = zeros( iXS, iYS, options.nt+1 );   % backward map, y-component
 
-    vars.ptTx = zeros( iXS, iYS, options.nt+1);    % forward map, x-component
-    vars.ptTy = zeros( iXS, iYS, options.nt+1);    % forward map, y-component
-    
-    for i=1:options.nt+1
-      % set the boundary condition for the backward map
-      [vars.pt0x( :, :, i ), vars.pt0y( :, :, i) ] = identityMap( iXS, iYS );
-      % set the boundary condition for the forward map
-      [vars.ptTx( :, :, i ), vars.ptTy( :, :, i) ] = identityMap( iXS, iYS );
-    end
+vars.ptTx = zeros( iXS, iYS, options.nt+1);    % forward map, x-component
+vars.ptTy = zeros( iXS, iYS, options.nt+1);    % forward map, y-component
+
+for i=1:options.nt+1
+  % set the boundary condition for the backward map
+  [vars.pt0x( :, :, i ), vars.pt0y( :, :, i) ] = identityMap( iXS, iYS, options.dx, options.dy );
+  % set the boundary condition for the forward map
+  [vars.ptTx( :, :, i ), vars.ptTy( :, :, i) ] = identityMap( iXS, iYS, options.dx, options.dy );
 end
-
 
 % ---- Initialization ---- %
 
 % initialize for adaptive time step (do the first flow to compute initial energy)
 % flow the images forward
-if(options.flowMap)
-    [vars.pt0x,vars.pt0y,vars.I] = flowMapAndImageForward( vars.I0, vars.pt0x, vars.pt0y, vars.vx, vars.vy, tinc, options.nt, options.secondOrderAccurate );
-else
-    vars.I = flowImagesForward( vars.I, vars.vx, vars.vy, tinc, options.nt, options.secondOrderAccurate );
-end
+[vars.pt0x,vars.pt0y,vars.I] = flowMapAndImageForward( vars.I0, vars.pt0x, vars.pt0y, vars.vx, vars.vy, tinc, options.nt, options.dx, options.dy );
 
 % determine the discrepancy
 % this is the initial condition for the adjoint
 vars.lam(:,:,end) = -2/(options.sigma^2)*(vars.I(:,:,end)-vars.I1);  % IS THIS CORRECT? (seems to work, but check that this is not an artifact of incorrect backward integration ...
 
-% now flow the adjoint backward
-if (options.flowMap)
-    [vars.ptTx,vars.ptTy,vars.lam] = flowMapAndAdjointBackward( vars.lam(:,:,end), vars.ptTx, vars.ptTy, vars.vx, vars.vy, tinc, options.nt, options.secondOrderAccurate );
-else
-    vars.lam = flowImagesBackward( vars.lam, vars.vx, vars.vy, tinc, options.nt, options.secondOrderAccurate );   
-end
+[vars.ptTx,vars.ptTy,vars.lam] = flowMapAndAdjointBackward( vars.lam(:,:,end), vars.ptTx, vars.ptTy, vars.vx, vars.vy, tinc, options.nt, options.dx, options.dy );
 
-[currentEnergy, imageMatchEnergy, velEnergy] = computeEnergy( vars.vx, vars.vy, vars.I(:,:,end), vars.I1, vars.A, tinc, options.nt, options.sigma );
+[currentEnergy, imageMatchEnergy, velEnergy] = computeEnergy( vars.vx, vars.vy, vars.I(:,:,end), vars.I1, vars.A, tinc, options );
 fprintf('Initial: E = %f, imageE = %f, velE = %f\n', currentEnergy, imageMatchEnergy, velEnergy );
 
 lastEnergy = currentEnergy;
@@ -289,11 +291,7 @@ for iter=0:options.iterations-1
         end
         
         % flow the images forward
-        if (options.flowMap)
-            [vars.pt0x,vars.pt0y,vars.I] = flowMapAndImageForward( vars.I0, vars.pt0x, vars.pt0y, vars.vx, vars.vy, tinc, options.nt, options.secondOrderAccurate );
-        else      
-            vars.I = flowImagesForward( vars.I, vars.vx, vars.vy, tinc, options.nt, options.secondOrderAccurate );
-        end
+        [vars.pt0x,vars.pt0y,vars.I] = flowMapAndImageForward( vars.I0, vars.pt0x, vars.pt0y, vars.vx, vars.vy, tinc, options.nt, options.dx, options.dy );
         
         % determine the discrepancy
         % this is the initial condition for the adjoint
@@ -301,14 +299,10 @@ for iter=0:options.iterations-1
         
         
         % now flow the adjoint backward
-        if (options.flowMap)
-            [vars.ptTx,vars.ptTy,vars.lam] = flowMapAndAdjointBackward( vars.lam(:,:,end), vars.ptTx, vars.ptTy, vars.vx, vars.vy, tinc, options.nt, options.secondOrderAccurate );
-        else
-            vars.lam = flowImagesBackward( vars.lam, vars.vx, vars.vy, tinc, options.nt, options.secondOrderAccurate );
-        end
+        [vars.ptTx,vars.ptTy,vars.lam] = flowMapAndAdjointBackward( vars.lam(:,:,end), vars.ptTx, vars.ptTy, vars.vx, vars.vy, tinc, options.nt, options.dx, options.dy );
         
         % compute the current trial energy
-        [currentTrialEnergy,imageMatchEnergy,velEnergy] = computeEnergy( vars.vx, vars.vy, vars.I(:,:,end), vars.I1, vars.A, tinc, options.nt, options.sigma );
+        [currentTrialEnergy,imageMatchEnergy,velEnergy] = computeEnergy( vars.vx, vars.vy, vars.I(:,:,end), vars.I1, vars.A, tinc, options );
         
         if( currentTrialEnergy<currentEnergy )
             keepTrying = 0;
@@ -363,10 +357,10 @@ for iter=0:options.iterations-1
         ptx = zeros(iXS, iYS, options.nt+1);
         pty = zeros(iXS, iYS, options.nt+1);
         for i=1:options.nt+1
-            [ptx( :, :, i ), pty( :, :, i) ] = identityMap( iXS, iYS );
+            [ptx( :, :, i ), pty( :, :, i) ] = identityMap( iXS, iYS, options.dx, options.dy );
         end
 
-        [ptx, pty] = flowMapAndImageForward(I0, ptx, pty, vars.vx, vars.vy, tinc, options.nt, 0);
+        [ptx, pty] = flowMapAndImageForward(I0, ptx, pty, vars.vx, vars.vy, tinc, options.nt, options.dx, options.dy );
 
         figure(h);
         subplot2(2,3,1,'margin',[0.01 0.01]); imagesc(vars.vx(:,:,end), [0 1]);     axis image; axis off; title('vx');
@@ -409,10 +403,10 @@ else
     ptx = zeros(iXS, iYS, options.nt+1);
     pty = zeros(iXS, iYS, options.nt+1);
     for i=1:options.nt+1
-        [ptx( :, :, i ), pty( :, :, i) ] = identityMap( iXS, iYS );
+        [ptx( :, :, i ), pty( :, :, i) ] = identityMap( iXS, iYS, options.dx, options.dy );
     end
 
-    [ptx, pty] = flowMapAndImageForward(I0, ptx, pty, vars.vx, vars.vy, tinc, options.nt, 0);
+    [ptx, pty] = flowMapAndImageForward(I0, ptx, pty, vars.vx, vars.vy, tinc, options.nt, options.dx, options.dy );
     imagesc(vars.I(:,:,end), [0 1]); hold on;
 %    contour( ptx(:,:,end), 10, 'r' ); contour( pty(:,:,end), 10, 'r' );     
     contour( ptx(:,:,end), 25, 'r' ); contour( pty(:,:,end), 25, 'r' );     
@@ -431,4 +425,5 @@ imagesc( vars.I1 )
 axis image
 colormap( gray )
 title( 'I1' );
+
 

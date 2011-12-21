@@ -100,6 +100,17 @@ public:
    */
   unsigned int AddImage( std::string filename, T timepoint, unsigned int uiSubjectIndex );
 
+
+  /**
+   * @brief Registers an image with a given timepoint and subject id (for longitudinal studies)
+   *
+   * @param pIm - pointer to image
+   * @param timepoint - time associated with image
+   * @param uiSubjectIndex - subject index
+   * @return unsigned int - returns the id of the registered file
+   */
+  unsigned int AddImage( VectorImageType* pIm, T timepoint, unsigned int uiSubjectIndex );
+
   /**
      Returns the image at full resolution (as loaded), based on the imageid.
    */
