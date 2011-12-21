@@ -4,11 +4,11 @@ function [] = fftFrequencyTest( M, N, dx, dy )
 
 for k1=0:M-1
     
-  k1Eff = getKFromIndex( k1, M, dx );
+  k1Eff = getFFromIndex( k1, M, dx );
        
   for k2=0:N-1
         
-    k2Eff = getKFromIndex( k2, N, dy );
+    k2Eff = getFFromIndex( k2, N, dy );
 
     A1( k1+1, k2+1 ) = k1Eff;
     A2( k1+1, k2+1 ) = k2Eff;

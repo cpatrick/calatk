@@ -1,12 +1,9 @@
-function ret = ownFlow( vx, vy, phi, flowtime )
+function ret = ownFlow( vx, vy, phi, flowtime, dx, dy )
 
 % determine maximum speed
 
 iXS = size( phi, 1 );
 iYS = size( phi, 2 );
-
-dx = 1/(iXS);
-dy = 1/(iYS);
 
 vxmax = max(abs(vx(:)));
 vymax = max(abs(vy(:)));

@@ -104,6 +104,8 @@ add_ctest_test(calatkImageDataStructureTest ${test_temp_dir})
 add_test_executable(calatkJSONTest CALATK)
 add_ctest_test(calatkJSONTest ${test_temp_dir})
 
+add_test_executable(calatkRegularizationSpacingTest CALATK)
+add_ctest_test(calatkRegularizationSpacingTest ${test_temp_dir})
 
 #add_ctest_test(writeFileITKTest
 #  # 2D input

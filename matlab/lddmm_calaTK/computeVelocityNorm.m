@@ -1,9 +1,9 @@
-function vn = computeVelocityNorm( vx, vy, A )
+function vn = computeVelocityNorm( vx, vy, A, dx, dy )
 
 ovxi = real( ifft2( fft2( vx ).*A.^2 ) );
 ovyi = real( ifft2( fft2( vy ).*A.^2 ) );
 
-area = size(vx,1)*size(vx,2);
+areaElement = dx*dy;
 
-vn =  sqrt( sum( sum( ovxi.*vx + ovyi.*vy ) )/area );
+vn =  sqrt( sum( sum( ovxi.*vx + ovyi.*vy ) )*areaElement );
 

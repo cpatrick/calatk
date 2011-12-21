@@ -1,13 +1,10 @@
-function ret = computeDeterminantOfJacobian( px, py )
+function ret = computeDeterminantOfJacobian( px, py, dx, dy )
 
 ret = ones(size(px));
 nt = size(px,3);
 
 iXS = size(px,1);
 iYS = size(px,2);
-
-dx = 1/iXS;
-dy = 1/iYS;
 
 for i=1:nt    % last one is one by definition, because the map is the identity map 
   % compute derivatives
