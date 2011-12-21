@@ -21,6 +21,8 @@ CAlgorithm< T, VImageDimension, TState >::CAlgorithm()
   m_bSetDefaultSolver = false;
   m_bSetDefaultImageManager = false;
 
+  this->m_jsonConfig.InitializeEmptyRoot();
+
 }
 
 template <class T, unsigned int VImageDimension, class TState >
@@ -185,6 +187,7 @@ template <class T, unsigned int VImageDimension, class TState >
 void CAlgorithm< T, VImageDimension, TState >::SetKernelPointer( ptrKernelType ptrKernel )
 {
   m_ptrKernel = ptrKernel;
+  this->m_ptrKernel->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 
 template <class T, unsigned int VImageDimension, class TState >
@@ -203,6 +206,7 @@ template <class T, unsigned int VImageDimension, class TState >
 void CAlgorithm< T, VImageDimension, TState >::SetEvolverPointer( ptrEvolverType ptrEvolver )
 {
   m_ptrEvolver = ptrEvolver;
+  this->m_ptrEvolver->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 
 template <class T, unsigned int VImageDimension, class TState >
@@ -221,6 +225,7 @@ template <class T, unsigned int VImageDimension, class TState >
 void CAlgorithm< T, VImageDimension, TState >::SetObjectiveFunctionPointer( ptrObjectiveFunctionType ptrObjectiveFunction )
 {
   m_ptrObjectiveFunction = ptrObjectiveFunction;
+  this->m_ptrObjectiveFunction->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 
 template <class T, unsigned int VImageDimension, class TState >
@@ -239,6 +244,7 @@ template <class T, unsigned int VImageDimension, class TState >
 void CAlgorithm< T, VImageDimension, TState >::SetMetricPointer( ptrMetricType ptrMetric )
 {
   m_ptrMetric = ptrMetric;
+  this->m_ptrMetric->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 
 template <class T, unsigned int VImageDimension, class TState >
@@ -257,6 +263,7 @@ template <class T, unsigned int VImageDimension, class TState >
 void CAlgorithm< T, VImageDimension, TState >::SetSolverPointer( ptrSolverType ptrSolver )
 {
   m_ptrSolver = ptrSolver;
+  this->m_ptrSolver->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 
 template <class T, unsigned int VImageDimension, class TState >

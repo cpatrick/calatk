@@ -20,7 +20,7 @@ public:
   CProcessBase()
     : DefaultPrintConfiguration( true ), m_ExternallySetPrintConfiguration( false )
   {
-    m_PrintConfiguration = DefaultPrintConfiguration;
+      m_PrintConfiguration = DefaultPrintConfiguration;
   }
 
   virtual void SetAutoConfiguration( Json::Value& ConfValue )

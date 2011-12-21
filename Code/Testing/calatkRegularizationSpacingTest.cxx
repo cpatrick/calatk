@@ -11,16 +11,10 @@
 #include <stdlib.h>
 
 typedef double TFLOAT;
-const unsigned int VImageDimension = 2;
 
-int main( int argc, char* argv[] )
+template < unsigned int VImageDimension >
+int DoIt( int argc, char* argv[] )
 {
-
-    if ( argc != 6 )
-    {
-        std::cerr << "Usage: " << argv[0] << " <source image> <target image> <spacing factor> <resulting warped source image> <resulting target map>" << std::endl;
-        return EXIT_FAILURE;
-    }
 
     std::string sourceImage( argv[1] );
     std::string targetImage( argv[2] );
@@ -34,8 +28,8 @@ int main( int argc, char* argv[] )
 
     typedef CALATK::CLDDMMGrowthModelRegistration< TFLOAT, VImageDimension > regType;
     typedef CALATK::CImageManagerMultiScale< TFLOAT, VImageDimension > ImageManagerMultiScaleType;
-    typedef regType::VectorImageType VectorImageType;
-    typedef regType::VectorFieldType VectorFieldType;
+    typedef typename regType::VectorImageType VectorImageType;
+    typedef typename regType::VectorFieldType VectorFieldType;
     typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension > VectorImageUtilsType;
     typedef CALATK::LDDMMUtils< TFLOAT, VImageDimension > LDDMMUtilsType;
 
@@ -52,11 +46,16 @@ int main( int argc, char* argv[] )
     pIm1->setSpaceX( spacingFactor*pIm1->getSpaceX() );
     pIm1->setSpaceY( spacingFactor*pIm1->getSpaceY() );
 
+    if ( VImageDimension==3 )
+    {
+        pIm0->setSpaceZ( spacingFactor*pIm0->getSpaceZ() );
+        pIm1->setSpaceZ( spacingFactor*pIm1->getSpaceZ() );
+    }
 
     ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm.GetImageManagerPointer() );
 
     unsigned int uiI0 = ptrImageManager->AddImage( pIm0, 0.0, 0 );
-    unsigned int uiI1 = ptrImageManager->AddImage( pIm1, 1.0, 0 );
+    ptrImageManager->AddImage( pIm1, 1.0, 0 );
 
     CALATK::CHelmholtzKernel< TFLOAT, VImageDimension > kernel;
     kernel.SetAlpha( (0.05*spacingFactor*spacingFactor)/spacingFactor );
@@ -82,4 +81,39 @@ int main( int argc, char* argv[] )
 
     return EXIT_SUCCESS;
 
+}
+
+int main( int argc, char **argv )
+{
+
+    if ( argc != 6 )
+    {
+        std::cerr << "Usage: " << argv[0] << " <source image> <target image> <spacing factor> <resulting warped source image> <resulting target map>" << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    unsigned int uiSourceImageDimension = CALATK::GetNonSingletonImageDimensionFromFile( argv[1] );
+    unsigned int uiTargetImageDimension = CALATK::GetNonSingletonImageDimensionFromFile( argv[2] );
+
+    if ( uiSourceImageDimension != uiTargetImageDimension )
+        {
+        std::cerr << "Source image dimension is different from target image dimension." << std::endl;
+        return EXIT_FAILURE;
+       }
+
+    std::cout << "Image dimension = " << uiSourceImageDimension << std::endl;
+
+    switch ( uiSourceImageDimension )
+      {
+      case 2:
+        return DoIt<2>( argc, argv );
+        break;
+      case 3:
+        return DoIt<3>( argc, argv );
+        break;
+      default:
+        std::cerr << "Unsupported image dimension = " << uiSourceImageDimension << std::endl;
+      }
+
+    return EXIT_FAILURE;
 }

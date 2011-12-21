@@ -52,14 +52,11 @@ void CJSONConfiguration::SetRootReference( Json::Value& vRoot )
   if ( m_ptrRoot != NULL )
     {
     if ( m_IsMasterNode )
-      {
-      std::cerr << "Trying to overwrite the root node. FORBIDDEN." << std::endl;
-      }
-    else
-      {
-      // we can just overwrite it, because everything is ruled by the master root node
-      m_ptrRoot = &vRoot;
-      }
+        {
+        std::cerr << "Writing the root node." << std::endl;
+        }
+        // we can just overwrite it, because everything is ruled by the master root node
+        m_ptrRoot = &vRoot;
     }
   else
     {
@@ -96,15 +93,19 @@ Json::Value* CJSONConfiguration::GetRootPointer()
 
 void CJSONConfiguration::InitializeEmptyRoot()
 {
-  if ( m_ptrRoot == NULL )
+    // if a root already exists, kill it and create a new one
+    if ( m_ptrRoot != NULL )
     {
-    m_ptrRoot = new Json::Value( Json::nullValue );
-    m_IsMasterNode = true;
+        delete m_ptrRoot;
+        m_ptrRoot = NULL;
     }
-  else
+
+    if ( m_ptrRoot == NULL )
     {
-    std::cerr << "Error initializing root node. Is already initialized." << std::endl;
+        m_ptrRoot = new Json::Value( Json::nullValue );
+        m_IsMasterNode = true;
     }
+
 }
 
 Json::Value& CJSONConfiguration::GetFromKey( std::string sKey, Json::Value vDefault )
