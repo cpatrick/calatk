@@ -23,8 +23,8 @@
 //
 // empty constructor
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-VectorImage< T, VImageDimension, TSpace >::VectorImage()
+template <class T, unsigned int VImageDimension >
+VectorImage< T, VImageDimension >::VectorImage()
 {
   Superclass::__sizeX = 0;
   Superclass::__sizeY = 0;
@@ -42,8 +42,8 @@ VectorImage< T, VImageDimension, TSpace >::VectorImage()
 //
 // 0D size and dim constructor
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-VectorImage< T, VImageDimension, TSpace >::VectorImage( unsigned int dim) 
+template <class T, unsigned int VImageDimension >
+VectorImage< T, VImageDimension >::VectorImage( unsigned int dim)
   : VectorArray<T,VImageDimension>::VectorArray( dim )
 {
   // all the other data is filled in by the constructor of the superclass
@@ -57,8 +57,8 @@ VectorImage< T, VImageDimension, TSpace >::VectorImage( unsigned int dim)
 //
 // 1D size and dim constructor
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-VectorImage< T, VImageDimension, TSpace >::VectorImage(unsigned int sizeX, unsigned int dim) 
+template <class T, unsigned int VImageDimension >
+VectorImage< T, VImageDimension >::VectorImage(unsigned int sizeX, unsigned int dim)
   : VectorArray<T,VImageDimension>::VectorArray( sizeX, dim )
 {
   // all the other data is filled in by the constructor of the superclass
@@ -72,8 +72,8 @@ VectorImage< T, VImageDimension, TSpace >::VectorImage(unsigned int sizeX, unsig
 //
 // 2D size and dim constructor
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-VectorImage< T, VImageDimension, TSpace >::VectorImage(unsigned int sizeX, unsigned int sizeY, unsigned int dim) 
+template <class T, unsigned int VImageDimension >
+VectorImage< T, VImageDimension >::VectorImage(unsigned int sizeX, unsigned int sizeY, unsigned int dim)
   : VectorArray<T,VImageDimension>::VectorArray( sizeX, sizeY, dim )
 {
   // all the other data is filled in by the constructor of the superclass
@@ -87,8 +87,8 @@ VectorImage< T, VImageDimension, TSpace >::VectorImage(unsigned int sizeX, unsig
 //
 // 3D size and dim constructor
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-VectorImage< T, VImageDimension, TSpace >::VectorImage(unsigned int sizeX, unsigned int sizeY, unsigned int sizeZ, unsigned int dim) 
+template <class T, unsigned int VImageDimension >
+VectorImage< T, VImageDimension >::VectorImage(unsigned int sizeX, unsigned int sizeY, unsigned int sizeZ, unsigned int dim)
   : VectorArray<T,VImageDimension>::VectorArray( sizeX, sizeY, sizeZ, dim )
 {
   // all the other data is filled in by the constructor of the superclass
@@ -102,8 +102,8 @@ VectorImage< T, VImageDimension, TSpace >::VectorImage(unsigned int sizeX, unsig
 //
 // copy constructor
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-VectorImage< T, VImageDimension, TSpace >::VectorImage( const VectorImage* source) 
+template <class T, unsigned int VImageDimension >
+VectorImage< T, VImageDimension >::VectorImage( const VectorImage* source)
   : VectorArray<T,VImageDimension>::VectorArray( source )
 {
   __spaceX = source->getSpaceX();
@@ -117,8 +117,8 @@ VectorImage< T, VImageDimension, TSpace >::VectorImage( const VectorImage* sourc
 //
 // destructor
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-VectorImage< T, VImageDimension, TSpace >::~VectorImage() {
+template <class T, unsigned int VImageDimension >
+VectorImage< T, VImageDimension >::~VectorImage() {
 
   Superclass::__deallocate();
 }
@@ -131,8 +131,8 @@ VectorImage< T, VImageDimension, TSpace >::~VectorImage() {
 //
 // copy
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImage< T, VImageDimension, TSpace >::copy(const VectorImage* source) 
+template <class T, unsigned int VImageDimension >
+void VectorImage< T, VImageDimension >::copy(const VectorImage* source)
 {
   VectorArray<T,VImageDimension>::copy( source );
   __spaceX = source->getSpaceX();
@@ -146,40 +146,40 @@ void VectorImage< T, VImageDimension, TSpace >::copy(const VectorImage* source)
 //
 // setSpaceX
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImage< T, VImageDimension, TSpace >::setSpaceX(TSpace spaceX) {
+template <class T, unsigned int VImageDimension >
+void VectorImage< T, VImageDimension >::setSpaceX(T spaceX) {
   __spaceX = spaceX;
 }
 
 //
 // setSpaceY
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImage< T, VImageDimension, TSpace >::setSpaceY(TSpace spaceY) {
+template <class T, unsigned int VImageDimension >
+void VectorImage< T, VImageDimension >::setSpaceY(T spaceY) {
   __spaceY = spaceY;
 }
 
 //
 // setSpaceZ
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImage< T, VImageDimension, TSpace >::setSpaceZ(TSpace spaceZ) {
+template <class T, unsigned int VImageDimension >
+void VectorImage< T, VImageDimension >::setSpaceZ(T spaceZ) {
   __spaceZ = spaceZ;
 }
 
 //
 // setOrigin
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImage< T, VImageDimension, TSpace >::setOrigin( typename ITKVectorImage< T, VImageDimension >::Type::PointType origin) {
+template <class T, unsigned int VImageDimension >
+void VectorImage< T, VImageDimension >::setOrigin( typename ITKVectorImage< T, VImageDimension >::Type::PointType origin) {
   __origin = origin;
 }
 
 //
 // setDirection
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImage< T, VImageDimension, TSpace >::setDirection( typename ITKVectorImage< T, VImageDimension>::Type::DirectionType direction) 
+template <class T, unsigned int VImageDimension >
+void VectorImage< T, VImageDimension >::setDirection( typename ITKVectorImage< T, VImageDimension>::Type::DirectionType direction)
 {
   __direction = direction;
 }
@@ -187,8 +187,8 @@ void VectorImage< T, VImageDimension, TSpace >::setDirection( typename ITKVector
 //
 // getElementVolume
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImage< T, VImageDimension, TSpace >::getElementVolume() const
+template <class T, unsigned int VImageDimension >
+T VectorImage< T, VImageDimension >::getElementVolume() const
 {
   switch ( VImageDimension )
     {
@@ -210,8 +210,8 @@ T VectorImage< T, VImageDimension, TSpace >::getElementVolume() const
 //
 // computeSquareNorm
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImage< T, VImageDimension, TSpace>::computeSquareNorm()
+template <class T, unsigned int VImageDimension >
+T VectorImage< T, VImageDimension>::computeSquareNorm()
 {
   // now square over all elements
   T dSquareNorm = 0;
@@ -229,8 +229,8 @@ T VectorImage< T, VImageDimension, TSpace>::computeSquareNorm()
 //
 // computeInnerProduct
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImage< T, VImageDimension, TSpace>::computeInnerProduct( const VectorImage* im ) const
+template <class T, unsigned int VImageDimension >
+T VectorImage< T, VImageDimension>::computeInnerProduct( const VectorImage* im ) const
 {
   // now square over all elements
   T dInnerProduct = 0;
@@ -246,8 +246,8 @@ T VectorImage< T, VImageDimension, TSpace>::computeInnerProduct( const VectorIma
 //
 // getSpaceX
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-TSpace VectorImage< T, VImageDimension, TSpace >::getSpaceX() const
+template <class T, unsigned int VImageDimension >
+T VectorImage< T, VImageDimension >::getSpaceX() const
 {
   return __spaceX;
 }
@@ -255,8 +255,8 @@ TSpace VectorImage< T, VImageDimension, TSpace >::getSpaceX() const
 //
 // getSpaceY
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-TSpace VectorImage< T, VImageDimension, TSpace >::getSpaceY() const
+template <class T, unsigned int VImageDimension >
+T VectorImage< T, VImageDimension >::getSpaceY() const
 {
   return __spaceY;
 }
@@ -264,8 +264,8 @@ TSpace VectorImage< T, VImageDimension, TSpace >::getSpaceY() const
 //
 // getSpaceZ
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-TSpace VectorImage< T, VImageDimension, TSpace >::getSpaceZ() const
+template <class T, unsigned int VImageDimension >
+T VectorImage< T, VImageDimension >::getSpaceZ() const
 {
   return __spaceZ;
 }
@@ -273,8 +273,8 @@ TSpace VectorImage< T, VImageDimension, TSpace >::getSpaceZ() const
 //
 // getOrigin
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-typename ITKVectorImage< T, VImageDimension>::Type::PointType VectorImage< T, VImageDimension, TSpace >::getOrigin() const
+template <class T, unsigned int VImageDimension >
+typename ITKVectorImage< T, VImageDimension>::Type::PointType VectorImage< T, VImageDimension >::getOrigin() const
 {
   return __origin;
 }
@@ -282,8 +282,8 @@ typename ITKVectorImage< T, VImageDimension>::Type::PointType VectorImage< T, VI
 //
 // getDirection
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-typename ITKVectorImage< T, VImageDimension>::Type::DirectionType VectorImage< T, VImageDimension, TSpace >::getDirection() const
+template <class T, unsigned int VImageDimension >
+typename ITKVectorImage< T, VImageDimension>::Type::DirectionType VectorImage< T, VImageDimension >::getDirection() const
 {
   return __direction;
 }
@@ -292,8 +292,8 @@ typename ITKVectorImage< T, VImageDimension>::Type::DirectionType VectorImage< T
 //
 // print
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImage< T, VImageDimension, TSpace >::print(std::ostream& output) {
+template <class T, unsigned int VImageDimension >
+void VectorImage< T, VImageDimension >::print(std::ostream& output) {
 
   switch ( VImageDimension )
     {
@@ -315,24 +315,24 @@ void VectorImage< T, VImageDimension, TSpace >::print(std::ostream& output) {
 
 }
 
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImage< T, VImageDimension, TSpace >::print0D(std::ostream& output) {
+template <class T, unsigned int VImageDimension >
+void VectorImage< T, VImageDimension >::print0D(std::ostream& output) {
 
   // FIXME
   throw std::runtime_error("Not yet implemented");
 
 }
 
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImage< T, VImageDimension, TSpace >::print1D(std::ostream& output) {
+template <class T, unsigned int VImageDimension >
+void VectorImage< T, VImageDimension >::print1D(std::ostream& output) {
 
   // FIXME
   throw std::runtime_error("Not yet implemented");
 
 }
 
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImage< T, VImageDimension, TSpace >::print2D(std::ostream& output) {
+template <class T, unsigned int VImageDimension >
+void VectorImage< T, VImageDimension >::print2D(std::ostream& output) {
 
   // FIXME
   throw std::runtime_error("Not yet implemented");
@@ -340,8 +340,8 @@ void VectorImage< T, VImageDimension, TSpace >::print2D(std::ostream& output) {
 }
 
 // outputs a 3D vector image
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImage< T, VImageDimension, TSpace >::print3D(std::ostream& output) {
+template <class T, unsigned int VImageDimension >
+void VectorImage< T, VImageDimension >::print3D(std::ostream& output) {
 
   for (unsigned int z = 0; z < Superclass::__sizeZ; z++) {
   

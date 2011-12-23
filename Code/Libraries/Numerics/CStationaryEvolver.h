@@ -29,14 +29,14 @@
 namespace CALATK
 {
 
-template <class T, unsigned int VImageDimension=3, class TSpace = T >
-class CStationaryEvolver : public CEvolver< T, VImageDimension, TSpace > {
+template <class T, unsigned int VImageDimension=3 >
+class CStationaryEvolver : public CEvolver< T, VImageDimension > {
 
 public:
 
   /** Some useful typedefs */
 
-  typedef CEvolver< T, VImageDimension, TSpace > Superclass;
+  typedef CEvolver< T, VImageDimension > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 

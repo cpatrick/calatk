@@ -23,8 +23,8 @@
 //
 // empty constructor
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-CImageManager< T, VImageDimension, TSpace >::CImageManager()
+template <class T, unsigned int VImageDimension >
+CImageManager< T, VImageDimension >::CImageManager()
 {
   // id for dataset, gets incremented every time a new dataset is added
   // can be used as a unique identifier. Needed since we allow for multiple datasets at the same time point 
@@ -35,8 +35,8 @@ CImageManager< T, VImageDimension, TSpace >::CImageManager()
 //
 // destructor
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-CImageManager< T, VImageDimension, TSpace >::~CImageManager()
+template <class T, unsigned int VImageDimension >
+CImageManager< T, VImageDimension >::~CImageManager()
 {
   // cleans up the map
   typename SubjectCollectionInformationMapType::iterator iterSubject;
@@ -78,8 +78,8 @@ CImageManager< T, VImageDimension, TSpace >::~CImageManager()
 //
 // Adds an individual image by specifying a string
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-unsigned int CImageManager< T, VImageDimension, TSpace>::AddImage( std::string filename, T timepoint, unsigned int uiSubjectIndex )
+template <class T, unsigned int VImageDimension >
+unsigned int CImageManager< T, VImageDimension>::AddImage( std::string filename, T timepoint, unsigned int uiSubjectIndex )
 {
 
   // first check if an image from this subject has already been added
@@ -118,8 +118,8 @@ unsigned int CImageManager< T, VImageDimension, TSpace>::AddImage( std::string f
 //
 // Adds an individual image by specifying an actual image
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-unsigned int CImageManager< T, VImageDimension, TSpace>::AddImage( VectorImageType* pIm, T timepoint, unsigned int uiSubjectIndex )
+template <class T, unsigned int VImageDimension >
+unsigned int CImageManager< T, VImageDimension>::AddImage( VectorImageType* pIm, T timepoint, unsigned int uiSubjectIndex )
 {
     // first check if an image from this subject has already been added
     typename SubjectCollectionInformationMapType::iterator iter = m_SubjectCollectionMapImageInformation.find( uiSubjectIndex );
@@ -156,8 +156,8 @@ unsigned int CImageManager< T, VImageDimension, TSpace>::AddImage( VectorImageTy
 //
 // Auxiliary function to get a multiset iterator from the dataset id
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-bool CImageManager< T, VImageDimension, TSpace>::getCurrentIteratorForId( SubjectInformationType*& pInfo, typename SubjectInformationType::iterator& iterRet, unsigned int uiId )
+template <class T, unsigned int VImageDimension >
+bool CImageManager< T, VImageDimension>::getCurrentIteratorForId( SubjectInformationType*& pInfo, typename SubjectInformationType::iterator& iterRet, unsigned int uiId )
 {
   pInfo = NULL; // default return value
 
@@ -196,9 +196,9 @@ bool CImageManager< T, VImageDimension, TSpace>::getCurrentIteratorForId( Subjec
 //
 // gets the original image based on the global id
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-const VectorImage< T, VImageDimension, TSpace >*
-CImageManager< T, VImageDimension, TSpace >::GetOriginalImageById( unsigned int uiId )
+template <class T, unsigned int VImageDimension >
+const VectorImage< T, VImageDimension >*
+CImageManager< T, VImageDimension >::GetOriginalImageById( unsigned int uiId )
 {
   bool bFound;
   typename SubjectInformationType::iterator iterSet;
@@ -220,8 +220,8 @@ CImageManager< T, VImageDimension, TSpace >::GetOriginalImageById( unsigned int 
 //
 // Add an image transform
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-bool CImageManager< T, VImageDimension, TSpace>::AddImageTransform( std::string filename, unsigned int uiId )
+template <class T, unsigned int VImageDimension >
+bool CImageManager< T, VImageDimension>::AddImageTransform( std::string filename, unsigned int uiId )
 {
 
   bool bFound;
@@ -248,8 +248,8 @@ bool CImageManager< T, VImageDimension, TSpace>::AddImageTransform( std::string 
 //
 // Register image and transform 
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-unsigned int CImageManager< T, VImageDimension, TSpace>::AddImageAndTransform( std::string filename, std::string transformFilename, T timepoint, unsigned int uiSubjectIndex )
+template <class T, unsigned int VImageDimension >
+unsigned int CImageManager< T, VImageDimension>::AddImageAndTransform( std::string filename, std::string transformFilename, T timepoint, unsigned int uiSubjectIndex )
 {
 
   // first check if an image from this subject has already been added
@@ -287,8 +287,8 @@ unsigned int CImageManager< T, VImageDimension, TSpace>::AddImageAndTransform( s
 //
 // Remove image and transform 
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-bool CImageManager< T, VImageDimension, TSpace>::RemoveImage( unsigned int uiId )
+template <class T, unsigned int VImageDimension >
+bool CImageManager< T, VImageDimension>::RemoveImage( unsigned int uiId )
 {
   bool bFound;
   typename SubjectInformationType::iterator iterSet;
@@ -318,8 +318,8 @@ bool CImageManager< T, VImageDimension, TSpace>::RemoveImage( unsigned int uiId 
 //
 // Remove image and transform 
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-bool CImageManager< T, VImageDimension, TSpace>::RemoveTransform( unsigned int uiId )
+template <class T, unsigned int VImageDimension >
+bool CImageManager< T, VImageDimension>::RemoveTransform( unsigned int uiId )
 {
   bool bFound;
   typename SubjectInformationType::iterator iterSet;
@@ -353,8 +353,8 @@ bool CImageManager< T, VImageDimension, TSpace>::RemoveTransform( unsigned int u
 //
 // Returns the time points for a particular subject index
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void CImageManager< T, VImageDimension, TSpace>::GetTimepointsForSubjectIndex( std::vector< T >& timepoints,  unsigned int uiSubjectIndex )
+template <class T, unsigned int VImageDimension >
+void CImageManager< T, VImageDimension>::GetTimepointsForSubjectIndex( std::vector< T >& timepoints,  unsigned int uiSubjectIndex )
 {
   // first check if an image from this subject has already been registered
   typename SubjectCollectionInformationMapType::iterator iter = m_SubjectCollectionMapImageInformation.find( uiSubjectIndex );
@@ -377,8 +377,8 @@ void CImageManager< T, VImageDimension, TSpace>::GetTimepointsForSubjectIndex( s
 //
 // get available subject ids
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void CImageManager< T, VImageDimension, TSpace>::GetAvailableSubjectIndices( std::vector< unsigned int >& vecAvailableSubjectIds )
+template <class T, unsigned int VImageDimension >
+void CImageManager< T, VImageDimension>::GetAvailableSubjectIndices( std::vector< unsigned int >& vecAvailableSubjectIds )
 {
   vecAvailableSubjectIds.clear();
   
@@ -393,8 +393,8 @@ void CImageManager< T, VImageDimension, TSpace>::GetAvailableSubjectIndices( std
 //
 // get number of available subject ids
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-unsigned int CImageManager< T, VImageDimension, TSpace>::GetNumberOfAvailableSubjectIndices()
+template <class T, unsigned int VImageDimension >
+unsigned int CImageManager< T, VImageDimension>::GetNumberOfAvailableSubjectIndices()
 {
   return m_SubjectCollectionMapImageInformation.size();
 }
@@ -402,8 +402,8 @@ unsigned int CImageManager< T, VImageDimension, TSpace>::GetNumberOfAvailableSub
 //
 // Allows access of image information in a time series by index
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void CImageManager< T, VImageDimension, TSpace>::GetPointerToSubjectImageInformationBySubjectInformationAndIndex( SImageInformation*& pImInfo, SubjectInformationType* pInfo, unsigned int uiTimeIndex )
+template <class T, unsigned int VImageDimension >
+void CImageManager< T, VImageDimension>::GetPointerToSubjectImageInformationBySubjectInformationAndIndex( SImageInformation*& pImInfo, SubjectInformationType* pInfo, unsigned int uiTimeIndex )
 {
   // TODO: There may be a quicker method to do this. For now we just assume that there are not 
   // a lot of elements, so we can just do a linear search
@@ -438,8 +438,8 @@ void CImageManager< T, VImageDimension, TSpace>::GetPointerToSubjectImageInforma
 //
 // Allows access of image information in a time series by index
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void CImageManager< T, VImageDimension, TSpace>::GetPointerToSubjectImageInformationByIndex( SImageInformation*& pImInfo, unsigned int uiSubjectIndex, unsigned int uiTimeIndex )
+template <class T, unsigned int VImageDimension >
+void CImageManager< T, VImageDimension>::GetPointerToSubjectImageInformationByIndex( SImageInformation*& pImInfo, unsigned int uiSubjectIndex, unsigned int uiTimeIndex )
 {
   SubjectInformationType* pSubjectInfo;
   this->GetImagesWithSubjectIndex( pSubjectInfo, uiSubjectIndex );
@@ -454,8 +454,8 @@ void CImageManager< T, VImageDimension, TSpace>::GetPointerToSubjectImageInforma
 //
 // Returns the set of images for a particular subject index
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void CImageManager< T, VImageDimension, TSpace>::GetImagesWithSubjectIndex( SubjectInformationType*& pImInfo, unsigned int uiSubjectIndex )
+template <class T, unsigned int VImageDimension >
+void CImageManager< T, VImageDimension>::GetImagesWithSubjectIndex( SubjectInformationType*& pImInfo, unsigned int uiSubjectIndex )
 {
   // we actually load the images and the transforms
   // if they have been specified but are not in memory yet
@@ -476,9 +476,9 @@ void CImageManager< T, VImageDimension, TSpace>::GetImagesWithSubjectIndex( Subj
 //
 // Returns one image which can be used to allocate memory for example for upsampling in multi-scale implementations
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-const typename CImageManager< T, VImageDimension, TSpace>::VectorImageType *
-CImageManager< T, VImageDimension, TSpace>::GetGraftImagePointer( unsigned int uiSubjectIndex )
+template <class T, unsigned int VImageDimension >
+const typename CImageManager< T, VImageDimension>::VectorImageType *
+CImageManager< T, VImageDimension>::GetGraftImagePointer( unsigned int uiSubjectIndex )
 {
   std::vector< unsigned int > vecSubjectIndices;
   this->GetAvailableSubjectIndices( vecSubjectIndices );
@@ -499,8 +499,8 @@ CImageManager< T, VImageDimension, TSpace>::GetGraftImagePointer( unsigned int u
 //
 // Prints the filenames and timepoints
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void CImageManager< T, VImageDimension, TSpace>::print( std::ostream& output )
+template <class T, unsigned int VImageDimension >
+void CImageManager< T, VImageDimension>::print( std::ostream& output )
 {
   typename SubjectCollectionInformationMapType::iterator iterSubjects;
 

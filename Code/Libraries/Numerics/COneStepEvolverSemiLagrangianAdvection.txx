@@ -23,16 +23,16 @@
 //
 // empty constructor
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::COneStepEvolverSemiLagrangianAdvection()
+template <class T, unsigned int VImageDimension >
+COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::COneStepEvolverSemiLagrangianAdvection()
 {
 }
 
 //
 // Performs a step for a 2D image
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::PerformStep2D(  const VectorFieldType* v, const VectorImageType* In, VectorImageType* Inp1, T dt )
+template <class T, unsigned int VImageDimension >
+void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::PerformStep2D(  const VectorFieldType* v, const VectorImageType* In, VectorImageType* Inp1, T dt )
 {
 
   //
@@ -88,8 +88,8 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::Perform
 //
 // Performs a step for a 3D image
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::PerformStep3D(  const VectorFieldType* v, const VectorImageType* In, VectorImageType* Inp1, T dt )
+template <class T, unsigned int VImageDimension >
+void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::PerformStep3D(  const VectorFieldType* v, const VectorImageType* In, VectorImageType* Inp1, T dt )
 {
 
   //
@@ -149,8 +149,8 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::Perform
 }
 
 
-template <class T, unsigned int VImageDimension, class TSpace >
-void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::PerformStep(  const VectorFieldType* v, const VectorImageType* In, VectorImageType* Inp1, T dt )
+template <class T, unsigned int VImageDimension >
+void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::PerformStep(  const VectorFieldType* v, const VectorImageType* In, VectorImageType* Inp1, T dt )
 {
   switch ( VImageDimension )
     {
@@ -165,8 +165,8 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::Perform
     }
 }
 
-template <class T, unsigned int VImageDimension, class TSpace >
-T COneStepEvolverSemiLagrangianAdvection<T, VImageDimension, TSpace>::ComputeMaximalUpdateStep( const VectorFieldType* v ) const
+template <class T, unsigned int VImageDimension >
+T COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::ComputeMaximalUpdateStep( const VectorFieldType* v ) const
 {
 
   // TODO: fixme: improve this. Handle anisotropic spacing and introduce a factor which allows for larger steps for the semi-lagrangian scheme

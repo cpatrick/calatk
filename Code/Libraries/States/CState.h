@@ -29,10 +29,16 @@
 namespace CALATK
 {
 
-template <class T, unsigned int VImageDimension, class TResampler >
+template <class T, unsigned int DIM, class TResamplerType >
 class CState
 {
 public:
+
+  /** Useful typedefs and constants */
+  typedef T TFloat;
+  typedef TResamplerType TResampler;
+  static const unsigned int VImageDimension = DIM;
+
   // default empty constuctor
   CState() { }
 protected:

@@ -41,6 +41,9 @@ public:
 
 protected:
 
+  /**
+    * Sets the objective function if not objective function was specified externally.
+    */
   void SetDefaultObjectiveFunctionPointer();
 
 private:

@@ -40,15 +40,15 @@
 namespace CALATK
 {
 
-template <class T, unsigned int VImageDimension=3, class TSpace = T >
+template <class T, unsigned int VImageDimension=3 >
 class VectorImageUtils 
 {
 
 public:
 
-  typedef VectorImage< T, VImageDimension, TSpace > VectorImageType;
-  typedef VectorImage< T, 2, TSpace > VectorImageType2D;
-  typedef VectorImage< T, 3, TSpace > VectorImageType3D;
+  typedef VectorImage< T, VImageDimension > VectorImageType;
+  typedef VectorImage< T, 2 > VectorImageType2D;
+  typedef VectorImage< T, 3 > VectorImageType3D;
 
   /**
    * Method that returns the max of the data in the image
@@ -257,8 +257,8 @@ public:
    *
    * @param im - the input image
    */
-  static typename ITKCharImage2D::Pointer convertToITKChar( const VectorImage<T,2,TSpace>* im);
-  static typename ITKCharImage2D::Pointer convertToITKChar( const VectorImage<T,3,TSpace>* im)
+  static typename ITKCharImage2D::Pointer convertToITKChar( const VectorImage<T,2>* im);
+  static typename ITKCharImage2D::Pointer convertToITKChar( const VectorImage<T,3>* im)
   {
     throw std::runtime_error( "Not implemented." );
   }

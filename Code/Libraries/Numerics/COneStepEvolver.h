@@ -47,7 +47,7 @@
 namespace CALATK
 {
 
-template <class T, unsigned int VImageDimension=3, class TSpace = T >
+template <class T, unsigned int VImageDimension=3 >
 class COneStepEvolver : public CProcessBase
 {
 
@@ -55,8 +55,8 @@ public:
 
   /** Some useful typedefs */
   
-  typedef VectorField< T, VImageDimension, TSpace > VectorFieldType;
-  typedef VectorImage< T, VImageDimension, TSpace > VectorImageType;
+  typedef VectorField< T, VImageDimension > VectorFieldType;
+  typedef VectorImage< T, VImageDimension > VectorImageType;
 
   typedef CProcessBase Superclass;
 

@@ -23,8 +23,8 @@
 //
 // empty constructor
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-CImageManagerFullScale< T, VImageDimension, TSpace >::CImageManagerFullScale()
+template <class T, unsigned int VImageDimension >
+CImageManagerFullScale< T, VImageDimension >::CImageManagerFullScale()
   : DefaultSigma( 0.05 ), DefaultBlurImage( false ), m_ExternallySetSigma( false ), m_ExternallySetBlurImage( false )
 {
   m_BlurImage = DefaultBlurImage;
@@ -34,8 +34,8 @@ CImageManagerFullScale< T, VImageDimension, TSpace >::CImageManagerFullScale()
 //
 // destructor
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-CImageManagerFullScale< T, VImageDimension, TSpace >::~CImageManagerFullScale()
+template <class T, unsigned int VImageDimension >
+CImageManagerFullScale< T, VImageDimension >::~CImageManagerFullScale()
 {
   // images deleted by base class destructor
 }
@@ -43,8 +43,8 @@ CImageManagerFullScale< T, VImageDimension, TSpace >::~CImageManagerFullScale()
 //
 // SetSigma
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void CImageManagerFullScale< T, VImageDimension, TSpace >::SetSigma( T dSigma )
+template <class T, unsigned int VImageDimension >
+void CImageManagerFullScale< T, VImageDimension >::SetSigma( T dSigma )
 {
   m_Sigma = dSigma;
   m_GaussianKernel.SetSigma( m_Sigma );
@@ -53,8 +53,8 @@ void CImageManagerFullScale< T, VImageDimension, TSpace >::SetSigma( T dSigma )
 //
 // Loads image and potentially transform for a given image information structure
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void CImageManagerFullScale< T, VImageDimension, TSpace>::GetImage( SImageInformation* pCurrentImInfo )
+template <class T, unsigned int VImageDimension >
+void CImageManagerFullScale< T, VImageDimension>::GetImage( SImageInformation* pCurrentImInfo )
 {
   // do we need to load the image?
   if ( pCurrentImInfo->pIm == NULL )
@@ -63,7 +63,7 @@ void CImageManagerFullScale< T, VImageDimension, TSpace>::GetImage( SImageInform
       {
       // load it
       std::cout << "Loading " << pCurrentImInfo->sImageFileName << " ... ";
-      pCurrentImInfo->pIm = VectorImageUtils< T, VImageDimension, TSpace>::readFileITK( pCurrentImInfo->sImageFileName );
+      pCurrentImInfo->pIm = VectorImageUtils< T, VImageDimension>::readFileITK( pCurrentImInfo->sImageFileName );
 
       if ( m_BlurImage )
         {
@@ -87,7 +87,7 @@ void CImageManagerFullScale< T, VImageDimension, TSpace>::GetImage( SImageInform
       
       VectorFieldType* mapTrans;
       unsigned int szX, szY, szZ;
-      TSpace spX, spY, spZ;
+      T spX, spY, spZ;
       
       switch ( VImageDimension )
         {
@@ -117,11 +117,11 @@ void CImageManagerFullScale< T, VImageDimension, TSpace>::GetImage( SImageInform
         }
       
       
-      VectorFieldUtils<T, VImageDimension, TSpace>::identityMap( mapTrans );
+      VectorFieldUtils<T, VImageDimension>::identityMap( mapTrans );
       
       std::cout << "Initializing affine map for source image" << std::endl;
-      typename ITKAffineTransform<T,VImageDimension>::Type::Pointer aTrans = VectorImageUtils< T, VImageDimension, TSpace>::readAffineTransformITK( pCurrentImInfo->sImageTransformationFileName );
-      VectorFieldUtils< T, VImageDimension, TSpace>::affineITKtoMap( aTrans, mapTrans );
+      typename ITKAffineTransform<T,VImageDimension>::Type::Pointer aTrans = VectorImageUtils< T, VImageDimension>::readAffineTransformITK( pCurrentImInfo->sImageTransformationFileName );
+      VectorFieldUtils< T, VImageDimension>::affineITKtoMap( aTrans, mapTrans );
       
       pCurrentImInfo->pTransform = mapTrans;
       

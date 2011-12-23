@@ -20,8 +20,8 @@
 #ifndef C_IMAGE_MANAGER_MULTI_SCALE_TXX
 #define C_IMAGE_MANAGER_MULTI_SCALE_TXX
 
-template <class T, unsigned int VImageDimension, class TSpace >
-CImageManagerMultiScale< T, VImageDimension, TSpace >::CImageManagerMultiScale()
+template <class T, unsigned int VImageDimension >
+CImageManagerMultiScale< T, VImageDimension >::CImageManagerMultiScale()
   : DefaultSigma( 0.02 ), m_ExternallySetSigma( false )
 {
   m_uiCurrentlySelectedScale = 0;
@@ -36,15 +36,15 @@ CImageManagerMultiScale< T, VImageDimension, TSpace >::CImageManagerMultiScale()
 
 }
 
-template <class T, unsigned int VImageDimension, class TSpace >
-CImageManagerMultiScale< T, VImageDimension, TSpace >::~CImageManagerMultiScale()
+template <class T, unsigned int VImageDimension >
+CImageManagerMultiScale< T, VImageDimension >::~CImageManagerMultiScale()
 {
   DeleteDefaultResampler();
   // Upsampled images will be deleted by the base class if they have been allocated
 }
 
-template <class T, unsigned int VImageDimension, class TSpace >
-void CImageManagerMultiScale< T, VImageDimension, TSpace >::DeleteDefaultResampler()
+template <class T, unsigned int VImageDimension >
+void CImageManagerMultiScale< T, VImageDimension >::DeleteDefaultResampler()
 {
   if ( m_bSetDefaultResampler )
     {
@@ -54,24 +54,24 @@ void CImageManagerMultiScale< T, VImageDimension, TSpace >::DeleteDefaultResampl
     }
 }
 
-template <class T, unsigned int VImageDimension, class TSpace >
-void CImageManagerMultiScale< T, VImageDimension, TSpace >::SetResamplerPointer( ResamplerType* ptrResampler )
+template <class T, unsigned int VImageDimension >
+void CImageManagerMultiScale< T, VImageDimension >::SetResamplerPointer( ResamplerType* ptrResampler )
 {
   DeleteDefaultResampler();  
   this->m_ptrResampler = ptrResampler;
 }
 
 
-template <class T, unsigned int VImageDimension, class TSpace >
-void CImageManagerMultiScale< T, VImageDimension, TSpace >::SetDefaultResamplerPointer()
+template <class T, unsigned int VImageDimension >
+void CImageManagerMultiScale< T, VImageDimension >::SetDefaultResamplerPointer()
 {
   DeleteDefaultResampler();
   m_ptrResampler = new CResamplerLinear< T, VImageDimension >;
   m_bSetDefaultResampler = true;
 }
 
-template <class T, unsigned int VImageDimension, class TSpace >
-void CImageManagerMultiScale< T, VImageDimension, TSpace >::AddScale( T dScale, unsigned int uiScaleIndx )
+template <class T, unsigned int VImageDimension >
+void CImageManagerMultiScale< T, VImageDimension >::AddScale( T dScale, unsigned int uiScaleIndx )
 {
 
   if ( m_bImagesWereRead )
@@ -102,8 +102,8 @@ void CImageManagerMultiScale< T, VImageDimension, TSpace >::AddScale( T dScale, 
   m_ScaleWasSet[ uiScaleIndx ] = true;
 }
 
-template <class T, unsigned int VImageDimension, class TSpace >
-void CImageManagerMultiScale< T, VImageDimension, TSpace >::RemoveScale( unsigned int uiScaleIndx )
+template <class T, unsigned int VImageDimension >
+void CImageManagerMultiScale< T, VImageDimension >::RemoveScale( unsigned int uiScaleIndx )
 {
 
   if ( m_bImagesWereRead )
@@ -127,15 +127,15 @@ void CImageManagerMultiScale< T, VImageDimension, TSpace >::RemoveScale( unsigne
     }
 }
 
-template <class T, unsigned int VImageDimension, class TSpace >
-unsigned int CImageManagerMultiScale< T, VImageDimension, TSpace >::GetNumberOfScales()
+template <class T, unsigned int VImageDimension >
+unsigned int CImageManagerMultiScale< T, VImageDimension >::GetNumberOfScales()
 {
   // multi-scale levels which contains the image at the original resolution
   return m_ScaleVector.size();
 }
 
-template <class T, unsigned int VImageDimension, class TSpace >
-void CImageManagerMultiScale< T, VImageDimension, TSpace >::SelectScale( unsigned int uiScaleIndx )
+template <class T, unsigned int VImageDimension >
+void CImageManagerMultiScale< T, VImageDimension >::SelectScale( unsigned int uiScaleIndx )
 {
   assert( uiScaleIndx>=0 && uiScaleIndx<m_ScaleVector.size() );
   if ( !( uiScaleIndx>=0 && uiScaleIndx<m_ScaleVector.size() ) )
@@ -147,14 +147,14 @@ void CImageManagerMultiScale< T, VImageDimension, TSpace >::SelectScale( unsigne
 
 }
 
-template <class T, unsigned int VImageDimension, class TSpace >
-void CImageManagerMultiScale< T, VImageDimension, TSpace >::SetScale( SImageInformation* pCurrentImInfo )
+template <class T, unsigned int VImageDimension >
+void CImageManagerMultiScale< T, VImageDimension >::SetScale( SImageInformation* pCurrentImInfo )
 {
   pCurrentImInfo->pIm = pCurrentImInfo->pImsOfAllScales[ m_uiCurrentlySelectedScale ];
 }
 
-template <class T, unsigned int VImageDimension, class TSpace >
-void CImageManagerMultiScale< T, VImageDimension, TSpace >::GetImage( SImageInformation* pCurrentImInfo )
+template <class T, unsigned int VImageDimension >
+void CImageManagerMultiScale< T, VImageDimension >::GetImage( SImageInformation* pCurrentImInfo )
 {
   // get the image consistent with the scale, if image has not been loaded, load it and create the spatial pyramid
   // if any scales were altered since last time calling this, we need to reload also

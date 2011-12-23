@@ -28,7 +28,7 @@ namespace CALATK
   * between an image and the atlas image. Templated over the state of these registrations.
   */
 template <class TState>
-class CStateAtlas : public CStateImageDomain< typename TState::T, typename TState::VImageDimension, typename TState::TResampler >
+class CStateAtlas : public CStateImageDomain< typename TState::TFloat, typename TState::VImageDimension, typename TState::TResampler >
 {
  public:
   /** some useful typedefs */

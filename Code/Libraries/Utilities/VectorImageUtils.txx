@@ -23,8 +23,8 @@
 //
 // maxAll
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImageUtils< T, VImageDimension, TSpace >::maxAll( const VectorImageType* in) 
+template <class T, unsigned int VImageDimension >
+T VectorImageUtils< T, VImageDimension >::maxAll( const VectorImageType* in)
 {
   unsigned int len = in->getLength();
 
@@ -45,8 +45,8 @@ T VectorImageUtils< T, VImageDimension, TSpace >::maxAll( const VectorImageType*
 //
 // minAll
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImageUtils< T, VImageDimension, TSpace >::minAll( const VectorImageType* in) 
+template <class T, unsigned int VImageDimension >
+T VectorImageUtils< T, VImageDimension >::minAll( const VectorImageType* in)
 {
   unsigned int len = in->getLength();
 
@@ -67,8 +67,8 @@ T VectorImageUtils< T, VImageDimension, TSpace >::minAll( const VectorImageType*
 //
 // absMaxAll
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImageUtils< T, VImageDimension, TSpace >::absMaxAll( const VectorImageType* in) 
+template <class T, unsigned int VImageDimension >
+T VectorImageUtils< T, VImageDimension >::absMaxAll( const VectorImageType* in)
 {
   unsigned int len = in->getLength();
 
@@ -89,8 +89,8 @@ T VectorImageUtils< T, VImageDimension, TSpace >::absMaxAll( const VectorImageTy
 //
 // sumAll
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImageUtils< T, VImageDimension, TSpace >::sumAll( const VectorImageType* in) 
+template <class T, unsigned int VImageDimension >
+T VectorImageUtils< T, VImageDimension >::sumAll( const VectorImageType* in)
 {
   unsigned int len = in->getLength();
 
@@ -107,8 +107,8 @@ T VectorImageUtils< T, VImageDimension, TSpace >::sumAll( const VectorImageType*
 //
 // abs
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::abs( VectorImageType* in) 
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension >::abs( VectorImageType* in)
 {
   unsigned int len = in->getLength();
 
@@ -121,9 +121,9 @@ void VectorImageUtils< T, VImageDimension, TSpace >::abs( VectorImageType* in)
 //
 // AllocateMemoryForScaledVectorImage
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-typename VectorImageUtils< T, VImageDimension, TSpace >::VectorImageType*
-VectorImageUtils< T, VImageDimension, TSpace >::AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, T dScale )
+template <class T, unsigned int VImageDimension >
+typename VectorImageUtils< T, VImageDimension >::VectorImageType*
+VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, T dScale )
 {
 
   assert( dScale>0 );
@@ -160,9 +160,9 @@ VectorImageUtils< T, VImageDimension, TSpace >::AllocateMemoryForScaledVectorIma
 //
 // AllocateMemoryForScaledVectorImage
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-typename VectorImageUtils< T, VImageDimension, TSpace >::VectorImageType*
-VectorImageUtils< T, VImageDimension, TSpace >::AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, unsigned int szx, unsigned int szy )
+template <class T, unsigned int VImageDimension >
+typename VectorImageUtils< T, VImageDimension >::VectorImageType*
+VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, unsigned int szx, unsigned int szy )
 {
   unsigned int dim = imGraft->getDim();
   unsigned int szxOrig = imGraft->getSizeX();
@@ -186,9 +186,9 @@ VectorImageUtils< T, VImageDimension, TSpace >::AllocateMemoryForScaledVectorIma
 //
 // AllocateMemoryForScaledVectorImage
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-typename VectorImageUtils< T, VImageDimension, TSpace >::VectorImageType*
-VectorImageUtils< T, VImageDimension, TSpace >::AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, unsigned int szx, unsigned int szy, unsigned int szz )
+template <class T, unsigned int VImageDimension >
+typename VectorImageUtils< T, VImageDimension >::VectorImageType*
+VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, unsigned int szx, unsigned int szy, unsigned int szz )
 {
   unsigned int dim = imGraft->getDim();
   unsigned int szxOrig = imGraft->getSizeX();
@@ -217,8 +217,8 @@ VectorImageUtils< T, VImageDimension, TSpace >::AllocateMemoryForScaledVectorIma
 //
 // interpolatePos 2D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImageUtils< T, VImageDimension, TSpace >::interpolatePosGridCoordinates( const VectorImageType* imIn, T xPos, T yPos, unsigned int d) 
+template <class T, unsigned int VImageDimension >
+T VectorImageUtils< T, VImageDimension >::interpolatePosGridCoordinates( const VectorImageType* imIn, T xPos, T yPos, unsigned int d)
 {
 
   unsigned int szXold = imIn->getSizeX();
@@ -250,8 +250,8 @@ T VectorImageUtils< T, VImageDimension, TSpace >::interpolatePosGridCoordinates(
 //
 // interpolatePos 3D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-T VectorImageUtils< T, VImageDimension, TSpace >::interpolatePosGridCoordinates( const VectorImageType* imIn, T xPos, T yPos, T zPos, unsigned int d) 
+template <class T, unsigned int VImageDimension >
+T VectorImageUtils< T, VImageDimension >::interpolatePosGridCoordinates( const VectorImageType* imIn, T xPos, T yPos, T zPos, unsigned int d)
 {
 
   unsigned int szXold = imIn->getSizeX();
@@ -294,8 +294,8 @@ T VectorImageUtils< T, VImageDimension, TSpace >::interpolatePosGridCoordinates(
 //
 // interpolate 3D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::interpolate3D( const VectorImageType* imIn, const VectorImageType* pos, VectorImageType* imOut) 
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension >::interpolate3D( const VectorImageType* imIn, const VectorImageType* pos, VectorImageType* imOut)
 {
 
   if ( VImageDimension != 3 )
@@ -336,7 +336,7 @@ void VectorImageUtils< T, VImageDimension, TSpace >::interpolate3D( const Vector
           T zPos = pos->getValue(x,y,z,2)/dz;
 
           // set the new value
-          T val = VectorImageUtils< T, VImageDimension, TSpace >::interpolatePosGridCoordinates(imIn, xPos, yPos, zPos, d);
+          T val = VectorImageUtils< T, VImageDimension >::interpolatePosGridCoordinates(imIn, xPos, yPos, zPos, d);
           imOut->setValue(x,y,z,d, val);
           }
         }
@@ -347,8 +347,8 @@ void VectorImageUtils< T, VImageDimension, TSpace >::interpolate3D( const Vector
 //
 // interpolate 2D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::interpolate2D( const VectorImageType* imIn, const VectorImageType* pos, VectorImageType* imOut) 
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension >::interpolate2D( const VectorImageType* imIn, const VectorImageType* pos, VectorImageType* imOut)
 {
 
   unsigned int dim = imIn->getDim();
@@ -380,7 +380,7 @@ void VectorImageUtils< T, VImageDimension, TSpace >::interpolate2D( const Vector
         T yPos = pos->getValue(x,y,1)/dy;
         
         // set the new value
-        T val = VectorImageUtils< T, VImageDimension, TSpace >::interpolatePosGridCoordinates(imIn, xPos, yPos, d);
+        T val = VectorImageUtils< T, VImageDimension >::interpolatePosGridCoordinates(imIn, xPos, yPos, d);
         imOut->setValue(x,y,d, val);
         }
       }
@@ -390,8 +390,8 @@ void VectorImageUtils< T, VImageDimension, TSpace >::interpolate2D( const Vector
 //
 // interpolate 
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::interpolate( const VectorImageType* imIn, const VectorImageType* pos, VectorImageType* imOut) 
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension >::interpolate( const VectorImageType* imIn, const VectorImageType* pos, VectorImageType* imOut)
 {
 
   switch ( VImageDimension )
@@ -400,10 +400,10 @@ void VectorImageUtils< T, VImageDimension, TSpace >::interpolate( const VectorIm
       throw std::runtime_error( "Unsupported dimension for interpolation" );
       break;
     case 2:
-      VectorImageUtils< T, VImageDimension, TSpace >::interpolate2D( imIn, pos, imOut );
+      VectorImageUtils< T, VImageDimension >::interpolate2D( imIn, pos, imOut );
       break;
     case 3:
-      VectorImageUtils< T, VImageDimension, TSpace >::interpolate3D( imIn, pos, imOut );
+      VectorImageUtils< T, VImageDimension >::interpolate3D( imIn, pos, imOut );
       break;
     default:
       throw std::runtime_error( "Unsupported dimension for interpolation" );
@@ -414,8 +414,8 @@ void VectorImageUtils< T, VImageDimension, TSpace >::interpolate( const VectorIm
 //
 // resize 
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::resize( const VectorImageType* imIn, VectorImageType* imOut) 
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension >::resize( const VectorImageType* imIn, VectorImageType* imOut)
 {
 
   switch ( VImageDimension )
@@ -424,10 +424,10 @@ void VectorImageUtils< T, VImageDimension, TSpace >::resize( const VectorImageTy
       throw std::runtime_error( "Unsupported dimension for resizing" );
       break;
     case 2:
-      VectorImageUtils< T, VImageDimension, TSpace >::resize2D(imIn, imOut);
+      VectorImageUtils< T, VImageDimension >::resize2D(imIn, imOut);
       break;
     case 3:
-      VectorImageUtils< T, VImageDimension, TSpace >::resize3D(imIn, imOut);
+      VectorImageUtils< T, VImageDimension >::resize3D(imIn, imOut);
       break;
     default:
       throw std::runtime_error( "Unsupported dimension for resizeing" );
@@ -438,8 +438,8 @@ void VectorImageUtils< T, VImageDimension, TSpace >::resize( const VectorImageTy
 //
 // resize2D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::resize2D( const VectorImageType* imIn, VectorImageType* imOut) 
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension >::resize2D( const VectorImageType* imIn, VectorImageType* imOut)
 {
 
   unsigned int szXnew = imOut->getSizeX();
@@ -470,7 +470,7 @@ void VectorImageUtils< T, VImageDimension, TSpace >::resize2D( const VectorImage
     }
 
   // interpolate
-  VectorImageUtils< T, VImageDimension, TSpace >::interpolate(imIn, pos, imOut);
+  VectorImageUtils< T, VImageDimension >::interpolate(imIn, pos, imOut);
   
   // clean up
   delete pos;
@@ -480,8 +480,8 @@ void VectorImageUtils< T, VImageDimension, TSpace >::resize2D( const VectorImage
 //
 // resize3D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::resize3D( const VectorImageType* imIn, VectorImageType* imOut) 
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension >::resize3D( const VectorImageType* imIn, VectorImageType* imOut)
 {
 
   unsigned int szXnew = imOut->getSizeX();
@@ -517,7 +517,7 @@ void VectorImageUtils< T, VImageDimension, TSpace >::resize3D( const VectorImage
     }
 
   // interpolate
-  VectorImageUtils< T, VImageDimension, TSpace >::interpolate(imIn, pos, imOut);
+  VectorImageUtils< T, VImageDimension >::interpolate(imIn, pos, imOut);
 
   // clean up
   delete pos;
@@ -527,11 +527,11 @@ void VectorImageUtils< T, VImageDimension, TSpace >::resize3D( const VectorImage
 //
 // normalize
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::normalize(VectorImageType* imInOut, T min, T max) {
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension >::normalize(VectorImageType* imInOut, T min, T max) {
 
-  T minC = VectorImageUtils< T, VImageDimension, TSpace >::minAll(imInOut);
-  T maxC = VectorImageUtils< T, VImageDimension, TSpace >::maxAll(imInOut);
+  T minC = VectorImageUtils< T, VImageDimension >::minAll(imInOut);
+  T maxC = VectorImageUtils< T, VImageDimension >::maxAll(imInOut);
 
   T minDiff = min - minC;
   imInOut->addConst(minDiff);
@@ -544,8 +544,8 @@ void VectorImageUtils< T, VImageDimension, TSpace >::normalize(VectorImageType* 
 //
 // meanPixelwise
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::meanPixelwise(std::vector<VectorImageType*> imList, unsigned int numIms, VectorImageType* imOut) 
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension >::meanPixelwise(std::vector<VectorImageType*> imList, unsigned int numIms, VectorImageType* imOut)
 {
   unsigned len = imOut->getLength();
   
@@ -558,7 +558,7 @@ void VectorImageUtils< T, VImageDimension, TSpace >::meanPixelwise(std::vector<V
   // make sure things are the right size
   for (unsigned int i = 0; i < numIms) {
   if (imList[i]->getSizeX() != szX || imList[i]->getSizeY() != szY || imList[i]->getSizeZ() != szZ || imList[i]->getDim() != dim) {
-    throw std::invalid_argument("VectorImageUtils< T, VImageDimension, TSpace >::meanPixelwise -> output image size does not match");
+    throw std::invalid_argument("VectorImageUtils< T, VImageDimension >::meanPixelwise -> output image size does not match");
   }
   }
 #endif
@@ -578,8 +578,8 @@ void VectorImageUtils< T, VImageDimension, TSpace >::meanPixelwise(std::vector<V
 //
 // multiplyVectorByImageDimensionInPlace, 2D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensionInPlace2D( const VectorImageType* imIn, unsigned int dim, VectorImageType* imOut )
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension>::multiplyVectorByImageDimensionInPlace2D( const VectorImageType* imIn, unsigned int dim, VectorImageType* imOut )
 {
   unsigned int szX = imIn->getSizeX();
   unsigned int szY = imIn->getSizeY();
@@ -600,8 +600,8 @@ void VectorImageUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensi
 //
 // multiplyVectorByImageDimensionInPlace, 3D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensionInPlace3D( const VectorImageType* imIn, unsigned int dim, VectorImageType* imOut )
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension>::multiplyVectorByImageDimensionInPlace3D( const VectorImageType* imIn, unsigned int dim, VectorImageType* imOut )
 {
   unsigned int szX = imIn->getSizeX();
   unsigned int szY = imIn->getSizeY();
@@ -626,8 +626,8 @@ void VectorImageUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensi
 //
 // multiplyVectorByImageDimensionInPlace, 2D/3D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensionInPlace( const VectorImageType* imIn, unsigned int dim, VectorImageType* imOut )
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension>::multiplyVectorByImageDimensionInPlace( const VectorImageType* imIn, unsigned int dim, VectorImageType* imOut )
 {
   switch ( VImageDimension )
     {
@@ -645,8 +645,8 @@ void VectorImageUtils< T, VImageDimension, TSpace>::multiplyVectorByImageDimensi
 //
 // apply ITK affine 2D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::applyAffineITK(typename ITKAffineTransform<T,2>::Type::Pointer itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue, T originX, T originY) 
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension >::applyAffineITK(typename ITKAffineTransform<T,2>::Type::Pointer itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue, T originX, T originY)
 {
 
   // TODO: Check that this method works appropriately
@@ -662,7 +662,7 @@ void VectorImageUtils< T, VImageDimension, TSpace >::applyAffineITK(typename ITK
 #endif
 
   // convert the first dim for setup
-  typename ITKImage<T,VImageDimension>::Type::Pointer itkIm = VectorImageUtils< T, VImageDimension, TSpace>::convertDimToITK(imIn, 0);
+  typename ITKImage<T,VImageDimension>::Type::Pointer itkIm = VectorImageUtils< T, VImageDimension>::convertDimToITK(imIn, 0);
   typename ITKImage<T,VImageDimension>::Type::PointType origin;
   origin[0] = originX;
   origin[1] = originY;
@@ -681,7 +681,7 @@ void VectorImageUtils< T, VImageDimension, TSpace >::applyAffineITK(typename ITK
     {
     
     // convert to an itk image
-    typename ITKImage<T,VImageDimension>::Type::Pointer itkDim = VectorImageUtils< T, VImageDimension, TSpace>::convertDimToITK(imIn, d);
+    typename ITKImage<T,VImageDimension>::Type::Pointer itkDim = VectorImageUtils< T, VImageDimension>::convertDimToITK(imIn, d);
     itkDim->SetOrigin(origin);
 
     // apply the affine transform
@@ -690,7 +690,7 @@ void VectorImageUtils< T, VImageDimension, TSpace >::applyAffineITK(typename ITK
 
     // copy the data into the output
     typename ITKImage<T,VImageDimension>::Type::Pointer itkDimTrans = resampler->GetOutput();
-    VectorImageUtils< T, VImageDimension, TSpace>::convertDimFromITK(itkDimTrans, d, imOut);
+    VectorImageUtils< T, VImageDimension>::convertDimFromITK(itkDimTrans, d, imOut);
   }
 
 }
@@ -698,8 +698,8 @@ void VectorImageUtils< T, VImageDimension, TSpace >::applyAffineITK(typename ITK
 //
 // apply ITK affine 3D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::applyAffineITK(typename ITKAffineTransform<T,3>::Type::Pointer itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue, T originX, T originY, T originZ ) {
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension >::applyAffineITK(typename ITKAffineTransform<T,3>::Type::Pointer itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue, T originX, T originY, T originZ ) {
 
   unsigned int dim = imIn->getDim();
 
@@ -708,12 +708,12 @@ void VectorImageUtils< T, VImageDimension, TSpace >::applyAffineITK(typename ITK
   unsigned int szY = imIn->getSizeY();
   unsigned int szZ = imIn->getSizeZ();
   if (imOut->getSizeX() != szX || imOut->getSizeY() != szY || imOut->getSizeZ() != szZ || imOut->getDim() != dim) {
-  throw std::invalid_argument("VectorImageUtils< T, VImageDimension, TSpace >::applyAffineITK -> output image size does not match");
+  throw std::invalid_argument("VectorImageUtils< T, VImageDimension >::applyAffineITK -> output image size does not match");
   }
 #endif
 
   // convert the first dim for setup
-  typename ITKImage<T,VImageDimension>::Type::Pointer itkIm = VectorImageUtils< T, VImageDimension, TSpace >::convertDimToITK(imIn, 0);
+  typename ITKImage<T,VImageDimension>::Type::Pointer itkIm = VectorImageUtils< T, VImageDimension >::convertDimToITK(imIn, 0);
   typename ITKImage<T,VImageDimension>::Type::PointType origin;
   origin[0] = originX;
   origin[1] = originY;
@@ -735,7 +735,7 @@ void VectorImageUtils< T, VImageDimension, TSpace >::applyAffineITK(typename ITK
     {
 
     // convert to an itk image
-    typename ITKImage<T,VImageDimension>::Type::Pointer itkDim = VectorImageUtils< T, VImageDimension, TSpace >::convertDimToITK(imIn, d);
+    typename ITKImage<T,VImageDimension>::Type::Pointer itkDim = VectorImageUtils< T, VImageDimension >::convertDimToITK(imIn, d);
     itkDim->SetOrigin(origin);
 
     // apply the affine transform
@@ -744,7 +744,7 @@ void VectorImageUtils< T, VImageDimension, TSpace >::applyAffineITK(typename ITK
 
     // copy the data into the output
     typename ITKImage<T,VImageDimension>::Type::Pointer itkDimTrans = resampler->GetOutput();
-    VectorImageUtils< T, VImageDimension, TSpace >::convertDimFromITK(itkDimTrans, d, imOut);
+    VectorImageUtils< T, VImageDimension >::convertDimFromITK(itkDimTrans, d, imOut);
   }
 
 }
@@ -757,8 +757,8 @@ void VectorImageUtils< T, VImageDimension, TSpace >::applyAffineITK(typename ITK
 //
 // to ITK (int)
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-typename ITKCharImage2D::Pointer VectorImageUtils< T, VImageDimension, TSpace>::convertToITKChar( const VectorImage<T,2,TSpace>* im) 
+template <class T, unsigned int VImageDimension >
+typename ITKCharImage2D::Pointer VectorImageUtils< T, VImageDimension>::convertToITKChar( const VectorImage<T,2>* im)
 {
 
   unsigned int szX = im->getSizeX();
@@ -800,7 +800,7 @@ typename ITKCharImage2D::Pointer VectorImageUtils< T, VImageDimension, TSpace>::
 
   // normalize the image onto 0-255
   VectorImage<T,2>* imCopy = new VectorImage<T,2>(im);
-  typedef VectorImageUtils<T,2,TSpace> VectorImageUtilsType;
+  typedef VectorImageUtils<T,2> VectorImageUtilsType;
 
   VectorImageUtilsType::normalize(imCopy, 0, 255);
 
@@ -832,8 +832,8 @@ typename ITKCharImage2D::Pointer VectorImageUtils< T, VImageDimension, TSpace>::
 //
 // to ITK 2D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-typename ITKVectorImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension, TSpace >::convertToITK2D( const VectorImageType* im) 
+template <class T, unsigned int VImageDimension >
+typename ITKVectorImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension >::convertToITK2D( const VectorImageType* im)
 {
 
   if ( VImageDimension != 2 )
@@ -905,8 +905,8 @@ typename ITKVectorImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, V
 //
 // to ITK 3D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-typename ITKVectorImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension, TSpace >::convertToITK3D( const VectorImageType* im) 
+template <class T, unsigned int VImageDimension >
+typename ITKVectorImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension >::convertToITK3D( const VectorImageType* im)
 {
 
   if ( VImageDimension != 3 )
@@ -986,8 +986,8 @@ typename ITKVectorImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, V
 //
 // to ITK 2D/3D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-typename ITKVectorImage<T, VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension, TSpace >::convertToITK( const VectorImageType* im) 
+template <class T, unsigned int VImageDimension >
+typename ITKVectorImage<T, VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension >::convertToITK( const VectorImageType* im)
 {
   
   typename ITKVectorImage<T, VImageDimension>::Type::Pointer defaultRet = NULL;
@@ -998,10 +998,10 @@ typename ITKVectorImage<T, VImageDimension>::Type::Pointer VectorImageUtils< T, 
       throw std::runtime_error( "Unsupported dimension for convertITK" );
       break;
     case 2:
-      return VectorImageUtils< T, VImageDimension, TSpace >::convertToITK2D( im );
+      return VectorImageUtils< T, VImageDimension >::convertToITK2D( im );
       break;
     case 3:
-      return VectorImageUtils< T, VImageDimension, TSpace >::convertToITK3D( im );
+      return VectorImageUtils< T, VImageDimension >::convertToITK3D( im );
       break;
     default:
       throw std::runtime_error( "Unsupported dimension for convertITK" );
@@ -1014,8 +1014,8 @@ typename ITKVectorImage<T, VImageDimension>::Type::Pointer VectorImageUtils< T, 
 //
 // to ITK (dim), 2D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-typename ITKImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension, TSpace >::convertDimToITK2D( const VectorImageType* im, unsigned int dimIn) 
+template <class T, unsigned int VImageDimension >
+typename ITKImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension >::convertDimToITK2D( const VectorImageType* im, unsigned int dimIn)
 {
 
   unsigned int szX = im->getSizeX();
@@ -1087,8 +1087,8 @@ typename ITKImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageD
 //
 // to ITK (dim), 3D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-typename ITKImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension, TSpace >::convertDimToITK3D( const VectorImageType* im, unsigned int dimIn)
+template <class T, unsigned int VImageDimension >
+typename ITKImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension >::convertDimToITK3D( const VectorImageType* im, unsigned int dimIn)
 {
 
   unsigned int szX = im->getSizeX();
@@ -1099,7 +1099,7 @@ typename ITKImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageD
   unsigned int dim = im->getDim();
   if (dimIn > dim) 
     {
-    std::cerr << "VectorImageUtils< T, VImageDimension, TSpace >::convertDimToITK -> Warning: invalid dim.  Using dim = " << dim-1 << "." << std::endl;
+    std::cerr << "VectorImageUtils< T, VImageDimension >::convertDimToITK -> Warning: invalid dim.  Using dim = " << dim-1 << "." << std::endl;
     dimIn = dim-1;
     }
 #endif
@@ -1169,8 +1169,8 @@ typename ITKImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageD
 //
 // to ITK (dim) 2D/3D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-typename ITKImage<T, VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension, TSpace >::convertDimToITK( const VectorImageType* im, unsigned int dim) 
+template <class T, unsigned int VImageDimension >
+typename ITKImage<T, VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension >::convertDimToITK( const VectorImageType* im, unsigned int dim)
 {
   
   typename ITKImage<T, VImageDimension>::Type::Pointer defaultRet = NULL;
@@ -1181,10 +1181,10 @@ typename ITKImage<T, VImageDimension>::Type::Pointer VectorImageUtils< T, VImage
       throw std::runtime_error( "Unsupported dimension for convertITK" );
       break;
     case 2:
-      return VectorImageUtils< T, VImageDimension, TSpace >::convertDimToITK2D( im, dim );
+      return VectorImageUtils< T, VImageDimension >::convertDimToITK2D( im, dim );
       break;
     case 3:
-      return VectorImageUtils< T, VImageDimension, TSpace >::convertDimToITK3D( im, dim );
+      return VectorImageUtils< T, VImageDimension >::convertDimToITK3D( im, dim );
       break;
     default:
       throw std::runtime_error( "Unsupported dimension for convertITK" );
@@ -1197,9 +1197,9 @@ typename ITKImage<T, VImageDimension>::Type::Pointer VectorImageUtils< T, VImage
 //
 // from ITK, 2D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-typename VectorImageUtils< T, VImageDimension, TSpace >::VectorImageType* 
-VectorImageUtils< T, VImageDimension, TSpace >::convertFromITK2D( typename ITKVectorImage<T,VImageDimension>::Type::Pointer itkIm) 
+template <class T, unsigned int VImageDimension >
+typename VectorImageUtils< T, VImageDimension >::VectorImageType*
+VectorImageUtils< T, VImageDimension >::convertFromITK2D( typename ITKVectorImage<T,VImageDimension>::Type::Pointer itkIm)
 {
   
   if ( VImageDimension!= 2 )
@@ -1246,9 +1246,9 @@ VectorImageUtils< T, VImageDimension, TSpace >::convertFromITK2D( typename ITKVe
 //
 // from ITK, 3D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-typename VectorImageUtils< T, VImageDimension, TSpace>::VectorImageType*
-VectorImageUtils< T, VImageDimension, TSpace >::convertFromITK3D( typename ITKVectorImage<T,VImageDimension>::Type::Pointer itkIm) 
+template <class T, unsigned int VImageDimension >
+typename VectorImageUtils< T, VImageDimension>::VectorImageType*
+VectorImageUtils< T, VImageDimension >::convertFromITK3D( typename ITKVectorImage<T,VImageDimension>::Type::Pointer itkIm)
 {
 
   if ( VImageDimension!= 3 )
@@ -1300,9 +1300,9 @@ VectorImageUtils< T, VImageDimension, TSpace >::convertFromITK3D( typename ITKVe
 //
 // from ITK  2D/3D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-typename VectorImageUtils< T, VImageDimension, TSpace >::VectorImageType* 
-VectorImageUtils< T, VImageDimension, TSpace >::convertFromITK( typename ITKVectorImage<T,VImageDimension>::Type::Pointer itkIm) 
+template <class T, unsigned int VImageDimension >
+typename VectorImageUtils< T, VImageDimension >::VectorImageType*
+VectorImageUtils< T, VImageDimension >::convertFromITK( typename ITKVectorImage<T,VImageDimension>::Type::Pointer itkIm)
 {
   
   VectorImageType* defaultRet = NULL;
@@ -1313,10 +1313,10 @@ VectorImageUtils< T, VImageDimension, TSpace >::convertFromITK( typename ITKVect
       throw std::runtime_error( "Unsupported dimension for convertITK" );
       break;
     case 2:
-      return VectorImageUtils< T, VImageDimension, TSpace >::convertFromITK2D( itkIm );
+      return VectorImageUtils< T, VImageDimension >::convertFromITK2D( itkIm );
       break;
     case 3:
-      return VectorImageUtils< T, VImageDimension, TSpace >::convertFromITK3D( itkIm );
+      return VectorImageUtils< T, VImageDimension >::convertFromITK3D( itkIm );
       break;
     default:
       throw std::runtime_error( "Unsupported dimension for convertITK" );
@@ -1329,8 +1329,8 @@ VectorImageUtils< T, VImageDimension, TSpace >::convertFromITK( typename ITKVect
 //
 // from ITK (dim), 2D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::convertDimFromITK2D( typename ITKImage<T,VImageDimension>::Type::Pointer itkIm, unsigned int dimIn, VectorImageType* imOut) 
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension >::convertDimFromITK2D( typename ITKImage<T,VImageDimension>::Type::Pointer itkIm, unsigned int dimIn, VectorImageType* imOut)
 {
 
   unsigned int szX = imOut->getSizeX();
@@ -1374,8 +1374,8 @@ void VectorImageUtils< T, VImageDimension, TSpace >::convertDimFromITK2D( typena
 //
 // from ITK (dim), 3D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::convertDimFromITK3D( typename ITKImage<T,VImageDimension>::Type::Pointer itkIm, unsigned int dimIn, VectorImageType* imOut)
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension >::convertDimFromITK3D( typename ITKImage<T,VImageDimension>::Type::Pointer itkIm, unsigned int dimIn, VectorImageType* imOut)
 {
 
   unsigned int szX = imOut->getSizeX();
@@ -1385,12 +1385,12 @@ void VectorImageUtils< T, VImageDimension, TSpace >::convertDimFromITK3D( typena
 #ifdef DEBUG
   unsigned int dim = imOut->getDim();
   if (dimIn > dim) {
-    std::cerr << "VectorImageUtils< T, VImageDimension, TSpace >::convertDimToITK -> Warning: invalid dim.  Using dim = " << dim-1 << "." << std::endl;
+    std::cerr << "VectorImageUtils< T, VImageDimension >::convertDimToITK -> Warning: invalid dim.  Using dim = " << dim-1 << "." << std::endl;
     dimIn = dim-1;
   }
   typename ITKVectorImage<T,VImageDimension>::Type::SizeType size = region.GetSize();
   if (size[0] != szX || size[1] != szY || size[2] != szZ) {
-    throw std::invalid_argument("VectorImageUtils< T, VImageDimension, TSpace >::convertDimFromITK -> size mismatch");
+    throw std::invalid_argument("VectorImageUtils< T, VImageDimension >::convertDimFromITK -> size mismatch");
   }
 #endif
 
@@ -1426,8 +1426,8 @@ void VectorImageUtils< T, VImageDimension, TSpace >::convertDimFromITK3D( typena
 //
 // from ITK (dim)  2D/3D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-void VectorImageUtils< T, VImageDimension, TSpace >::convertDimFromITK( typename ITKImage<T,VImageDimension>::Type::Pointer itkIm, unsigned int dim, VectorImageType* imOut) 
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension >::convertDimFromITK( typename ITKImage<T,VImageDimension>::Type::Pointer itkIm, unsigned int dim, VectorImageType* imOut)
 {
   
   switch ( VImageDimension )
@@ -1436,10 +1436,10 @@ void VectorImageUtils< T, VImageDimension, TSpace >::convertDimFromITK( typename
       throw std::runtime_error( "Unsupported dimension for convertITK" );
       break;
     case 2:
-      return VectorImageUtils< T, VImageDimension, TSpace >::convertDimFromITK2D( itkIm, dim, imOut );
+      return VectorImageUtils< T, VImageDimension >::convertDimFromITK2D( itkIm, dim, imOut );
       break;
     case 3:
-      return VectorImageUtils< T, VImageDimension, TSpace >::convertDimFromITK3D( itkIm, dim, imOut );
+      return VectorImageUtils< T, VImageDimension >::convertDimFromITK3D( itkIm, dim, imOut );
       break;
     default:
       throw std::runtime_error( "Unsupported dimension for convertITK" );
@@ -1451,8 +1451,8 @@ void VectorImageUtils< T, VImageDimension, TSpace >::convertDimFromITK( typename
 //
 // convertITKVectorOrigin
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-typename ITKImage<T,VImageDimension>::Type::PointType VectorImageUtils< T, VImageDimension, TSpace >::convertITKVectorOrigin( typename ITKVectorImage<T,VImageDimension>::Type::PointType originIn) 
+template <class T, unsigned int VImageDimension >
+typename ITKImage<T,VImageDimension>::Type::PointType VectorImageUtils< T, VImageDimension >::convertITKVectorOrigin( typename ITKVectorImage<T,VImageDimension>::Type::PointType originIn)
 {
   typename ITKImage<T,VImageDimension>::Type::PointType out;
   for (unsigned int i = 0; i < out.Size(); ++i) 
@@ -1465,9 +1465,9 @@ typename ITKImage<T,VImageDimension>::Type::PointType VectorImageUtils< T, VImag
 //
 // convertITKVectorDirection
 //
-template <class T, unsigned int VImageDimension, class TSpace >
+template <class T, unsigned int VImageDimension >
 typename ITKImage<T,VImageDimension>::Type::DirectionType
-VectorImageUtils< T, VImageDimension, TSpace >::
+VectorImageUtils< T, VImageDimension >::
 convertITKVectorDirection( typename ITKVectorImage<T,VImageDimension>::Type::DirectionType directionIn) {
   typename ITKImage< T, VImageDimension>::Type::DirectionType out;
   for (unsigned int r = 0; r < ITKImage< T, VImageDimension>::Type::DirectionType::RowDimensions; ++r) 
@@ -1483,8 +1483,8 @@ convertITKVectorDirection( typename ITKVectorImage<T,VImageDimension>::Type::Dir
 //
 // convertITKOriginToVector
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-typename ITKVectorImage<T,VImageDimension>::Type::PointType VectorImageUtils< T, VImageDimension, TSpace >::convertITKOriginToVector( typename ITKImage<T,VImageDimension>::Type::PointType originIn) 
+template <class T, unsigned int VImageDimension >
+typename ITKVectorImage<T,VImageDimension>::Type::PointType VectorImageUtils< T, VImageDimension >::convertITKOriginToVector( typename ITKImage<T,VImageDimension>::Type::PointType originIn)
 {
   typename ITKVectorImage< T, VImageDimension>::Type::PointType out;
   out.Fill(0);
@@ -1498,9 +1498,9 @@ typename ITKVectorImage<T,VImageDimension>::Type::PointType VectorImageUtils< T,
 //
 // convertITKDirectionToVector
 //
-template <class T, unsigned int VImageDimension, class TSpace >
+template <class T, unsigned int VImageDimension >
 typename ITKVectorImage<T,VImageDimension>::Type::DirectionType
-VectorImageUtils< T, VImageDimension, TSpace >::
+VectorImageUtils< T, VImageDimension >::
 convertITKDirectionToVector( typename ITKImage<T,VImageDimension>::Type::DirectionType directionIn) 
 {
   typename ITKVectorImage<T,VImageDimension>::Type::DirectionType out;
@@ -1523,8 +1523,8 @@ convertITKDirectionToVector( typename ITKImage<T,VImageDimension>::Type::Directi
 //
 // writeCommaSeparated
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-bool VectorImageUtils< T, VImageDimension, TSpace >::writeTextFile(VectorImageType* im, std::string filename) {
+template <class T, unsigned int VImageDimension >
+bool VectorImageUtils< T, VImageDimension >::writeTextFile(VectorImageType* im, std::string filename) {
 
 
   std::ofstream writer;
@@ -1598,8 +1598,8 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTextFile(VectorImageTy
 //
 // writeFileITK, 2D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK(const VectorImageType2D* im, std::string filename) 
+template <class T, unsigned int VImageDimension >
+bool VectorImageUtils< T, VImageDimension >::writeFileITK(const VectorImageType2D* im, std::string filename)
 {
   
   //
@@ -1688,7 +1688,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK(const VectorIm
     // normalize the image onto 0-255
     VectorImageType* imNormalized = new VectorImageType( im );
 
-    typedef VectorImageUtils<T,2,TSpace> VectorImageUtilsType;
+    typedef VectorImageUtils<T,2> VectorImageUtilsType;
 
     VectorImageUtilsType::normalize(imNormalized, 0, 255);
 
@@ -1803,7 +1803,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK(const VectorIm
 
     // Initialize ITK image
     typename ITKVectorImage<T,VImageDimension>::Type::Pointer itkImage;
-    itkImage = VectorImageUtils<T,VImageDimension,TSpace>::convertToITK(im);
+    itkImage = VectorImageUtils<T,VImageDimension>::convertToITK(im);
 
     // Initialize ITK writer
     typename ITKVectorImageWriter<T,VImageDimension>::Type::Pointer vectorImageWriter = ITKVectorImageWriter<T,VImageDimension>::Type::New();
@@ -1831,8 +1831,8 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK(const VectorIm
 //
 // writeFileITK, 3D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK( const VectorImageType3D* im, std::string filename) 
+template <class T, unsigned int VImageDimension >
+bool VectorImageUtils< T, VImageDimension >::writeFileITK( const VectorImageType3D* im, std::string filename)
 {
 
   //
@@ -1843,7 +1843,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK( const VectorI
     
     // Initialize ITK image
     typename ITKImage<T,VImageDimension>::Type::Pointer itkImage;
-    itkImage = VectorImageUtils< T, VImageDimension, TSpace >::convertDimToITK(im, 0);
+    itkImage = VectorImageUtils< T, VImageDimension >::convertDimToITK(im, 0);
 
     // Initialize ITK writer
     typename ITKImageWriter<T,VImageDimension>::Type::Pointer writer = ITKImageWriter<T,VImageDimension>::Type::New();
@@ -1858,7 +1858,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK( const VectorI
       } 
     catch( itk::ExceptionObject & err ) 
       {
-      std::cerr << "VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK -> Writing Failed" << std::endl;
+      std::cerr << "VectorImageUtils< T, VImageDimension >::writeFileITK -> Writing Failed" << std::endl;
       std::cerr << err << std::endl;
       return false;
       }
@@ -1872,7 +1872,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK( const VectorI
     
     // Initialize ITK image
     typename ITKVectorImage<T,VImageDimension>::Type::Pointer itkImage;
-    itkImage = VectorImageUtils< T, VImageDimension, TSpace >::convertToITK(im);
+    itkImage = VectorImageUtils< T, VImageDimension >::convertToITK(im);
 
     // Initialize ITK writer
     typename ITKVectorImageWriter<T,VImageDimension>::Type::Pointer writer = ITKVectorImageWriter<T,VImageDimension>::Type::New();
@@ -1887,7 +1887,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK( const VectorI
       } 
     catch( itk::ExceptionObject & err ) 
       {
-      std::cerr << "VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK -> Writing Failed" << std::endl;
+      std::cerr << "VectorImageUtils< T, VImageDimension >::writeFileITK -> Writing Failed" << std::endl;
       std::cerr << err << std::endl;
       return false;
       }
@@ -1899,8 +1899,8 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeFileITK( const VectorI
 //
 // writeTimeDependantImagesITK, 2D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK2D( const std::vector< VectorImageType* >* ims, std::string filename) 
+template <class T, unsigned int VImageDimension >
+bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK2D( const std::vector< VectorImageType* >* ims, std::string filename)
 {
   // see if we're dealing with one or more dimensions
   if ( (*ims)[0]->getDim() == 1) 
@@ -2073,8 +2073,8 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
 //
 // writeTimeDependentImagesITK, 3D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK3D( const std::vector< VectorImageType*> * ims, std::string filename) 
+template <class T, unsigned int VImageDimension >
+bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK3D( const std::vector< VectorImageType*> * ims, std::string filename)
 {
 
   // see if we're dealing with one or two dimensions
@@ -2157,7 +2157,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
       } 
     catch( itk::ExceptionObject & err ) 
       {
-      std::cerr << "VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK -> Writing Failed" << std::endl;
+      std::cerr << "VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK -> Writing Failed" << std::endl;
       std::cerr << err << std::endl;
       return false;
       }
@@ -2250,7 +2250,7 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
       } 
     catch( itk::ExceptionObject & err ) 
       {
-      std::cerr << "VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK -> Writing Failed" << std::endl;
+      std::cerr << "VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK -> Writing Failed" << std::endl;
       std::cerr << err << std::endl;
       return false;
       }
@@ -2264,8 +2264,8 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
 //
 // writeTimeDependentImagesITK, 2D/3D
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK( const std::vector< VectorImageType*>* ims, std::string filename) 
+template <class T, unsigned int VImageDimension >
+bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( const std::vector< VectorImageType*>* ims, std::string filename)
 {
   switch ( VImageDimension )
     {
@@ -2284,9 +2284,9 @@ bool VectorImageUtils< T, VImageDimension, TSpace >::writeTimeDependantImagesITK
 //
 // readFileITK
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-typename VectorImageUtils< T, VImageDimension, TSpace >::VectorImageType* 
-VectorImageUtils< T, VImageDimension, TSpace >::readFileITK(std::string filename) 
+template <class T, unsigned int VImageDimension >
+typename VectorImageUtils< T, VImageDimension >::VectorImageType*
+VectorImageUtils< T, VImageDimension >::readFileITK(std::string filename)
 {
 
   // Initialize ITK reader
@@ -2305,20 +2305,20 @@ VectorImageUtils< T, VImageDimension, TSpace >::readFileITK(std::string filename
     } 
   catch( itk::ExceptionObject & err ) 
     {
-    std::cerr << "VectorImageUtils< T, VImageDimension, TSpace >::readFileITK -> Reading Failed" << std::endl;
+    std::cerr << "VectorImageUtils< T, VImageDimension >::readFileITK -> Reading Failed" << std::endl;
     std::cerr << err << std::endl;
     return false;
     }
 
   // Convert to VectorImageType and return
-  return VectorImageUtils< T, VImageDimension, TSpace >::convertFromITK(itkImage);
+  return VectorImageUtils< T, VImageDimension >::convertFromITK(itkImage);
 }
 
 //
 // read Affine ITK
 //
-template <class T, unsigned int VImageDimension, class TSpace >
-typename ITKAffineTransform<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension, TSpace >::readAffineTransformITK(std::string filename) {
+template <class T, unsigned int VImageDimension >
+typename ITKAffineTransform<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension >::readAffineTransformITK(std::string filename) {
 
   // initialize the reader
   itk::TransformFileReader::Pointer reader = itk::TransformFileReader::New();

@@ -42,14 +42,14 @@ namespace CALATK
  * algorithm to make calls independed of whether 2D or 3D images are used.
  */
 
-template < class T, unsigned int VImageDimension = 3, class TSpace = T >
+template < class T, unsigned int VImageDimension = 3 >
 class LDDMMUtils 
 {
 
 public:
 
-  typedef VectorImage< T, VImageDimension, TSpace > VectorImageType;
-  typedef VectorField< T, VImageDimension, TSpace > VectorFieldType;
+  typedef VectorImage< T, VImageDimension > VectorImageType;
+  typedef VectorField< T, VImageDimension > VectorFieldType;
   
   /*********************
    * Wrapper Functions *

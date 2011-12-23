@@ -20,26 +20,26 @@
 #ifndef C_EVOLVER_TXX
 #define C_EVOLVER_TXX
 
-template <class T, unsigned int VImageDimension, class TSpace >
-CEvolver< T, VImageDimension, TSpace >::CEvolver()
+template <class T, unsigned int VImageDimension >
+CEvolver< T, VImageDimension >::CEvolver()
 {
   m_ptrOneStepEvolver = NULL;
 }
 
-template <class T, unsigned int VImageDimension, class TSpace >
-CEvolver< T, VImageDimension, TSpace >::~CEvolver()
+template <class T, unsigned int VImageDimension >
+CEvolver< T, VImageDimension >::~CEvolver()
 {
 }
 
-template <class T, unsigned int VImageDimension, class TSpace >
-void CEvolver< T, VImageDimension, TSpace >::SetOneStepEvolverPointer( ptrOneStepEvolverType pOneStepEvolver )
+template <class T, unsigned int VImageDimension >
+void CEvolver< T, VImageDimension >::SetOneStepEvolverPointer( ptrOneStepEvolverType pOneStepEvolver )
 {
   m_ptrOneStepEvolver = pOneStepEvolver;
 }
 
-template <class T, unsigned int VImageDimension, class TSpace >
-COneStepEvolver< T, VImageDimension, TSpace >*
-CEvolver< T, VImageDimension, TSpace >::GetOneStepEvolverPointer()
+template <class T, unsigned int VImageDimension >
+COneStepEvolver< T, VImageDimension >*
+CEvolver< T, VImageDimension >::GetOneStepEvolverPointer()
 {
   return m_ptrOneStepEvolver;
 }

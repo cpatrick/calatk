@@ -36,14 +36,14 @@
 namespace CALATK
 {
 
-template <class T, unsigned int VImageDimension=3, class TSpace = T >
-class CImageManagerMultiScale : public CImageManagerFullScale< T, VImageDimension, TSpace >
+template <class T, unsigned int VImageDimension=3 >
+class CImageManagerMultiScale : public CImageManagerFullScale< T, VImageDimension >
 {
 public:
 
   /** Some useful typedefs */
 
-  typedef CImageManagerFullScale< T, VImageDimension, TSpace > Superclass;
+  typedef CImageManagerFullScale< T, VImageDimension > Superclass;
   typedef CResampler< T, VImageDimension > ResamplerType;
   
   typedef typename Superclass::SImageInformation SImageInformation;

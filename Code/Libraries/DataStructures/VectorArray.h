@@ -38,7 +38,8 @@ namespace CALATK
 {
 
 template <class T, unsigned int VImageDimension=3>
-class VectorArray {
+class VectorArray
+{
 
 public:
   

@@ -38,14 +38,15 @@
 namespace CALATK
 {
 
-template <class T, unsigned int VImageDimension, class TSpace = T >
-class VectorField: public VectorImage< T, VImageDimension, TSpace > {
+template <class T, unsigned int VImageDimension >
+class VectorField: public VectorImage< T, VImageDimension >
+{
 
 public:
 
   // standard typedef
 
-  typedef VectorImage< T, VImageDimension, TSpace > VectorImageType;
+  typedef VectorImage< T, VImageDimension > VectorImageType;
   typedef VectorImageType Superclass;
 
   /********************************

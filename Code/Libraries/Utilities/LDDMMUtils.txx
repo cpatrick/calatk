@@ -35,40 +35,40 @@
 //
 // identityMap 
 //
-template < class T, unsigned int VImageDimension, class TSpace >
-void LDDMMUtils< T, VImageDimension, TSpace>::identityMap(VectorFieldType* fld)
+template < class T, unsigned int VImageDimension >
+void LDDMMUtils< T, VImageDimension >::identityMap(VectorFieldType* fld)
 {
-  VectorFieldUtils<T, VImageDimension, TSpace>::identityMap(fld);
+  VectorFieldUtils<T, VImageDimension >::identityMap(fld);
 }
 
 //
 // applyMap
 //
-template < class T, unsigned int VImageDimension, class TSpace >
-void LDDMMUtils< T, VImageDimension, TSpace>::applyMap( const VectorFieldType* map, const VectorImageType* imIn, VectorImageType* imOut) {
+template < class T, unsigned int VImageDimension >
+void LDDMMUtils< T, VImageDimension >::applyMap( const VectorFieldType* map, const VectorImageType* imIn, VectorImageType* imOut) {
 
-  VectorFieldUtils< T, VImageDimension, TSpace>::applyMap(map, imIn, imOut);
+  VectorFieldUtils< T, VImageDimension >::applyMap(map, imIn, imOut);
 
 }
 
 //
 // computeDeterminantOfJacobian
 //
-template < class T, unsigned int VImageDimension, class TSpace >
-void LDDMMUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian( const VectorFieldType* fld, VectorImageType* imOut) 
+template < class T, unsigned int VImageDimension >
+void LDDMMUtils< T, VImageDimension >::computeDeterminantOfJacobian( const VectorFieldType* fld, VectorImageType* imOut)
 {
   
-  VectorFieldUtils< T, VImageDimension, TSpace>::computeDeterminantOfJacobian( fld, imOut );
+  VectorFieldUtils< T, VImageDimension >::computeDeterminantOfJacobian( fld, imOut );
   
 }
 
 //
 // deconvolutionMatrix
 //
-template < class T, unsigned int VImageDimension, class TSpace >
-typename LDDMMUtils< T, VImageDimension, TSpace >::VectorImageType* LDDMMUtils< T, VImageDimension, TSpace>::deconvolutionMatrix(VectorImageType* I0, T alpha, T gamma) {
+template < class T, unsigned int VImageDimension >
+typename LDDMMUtils< T, VImageDimension  >::VectorImageType* LDDMMUtils< T, VImageDimension >::deconvolutionMatrix(VectorImageType* I0, T alpha, T gamma) {
 
-  return VectorImageUtils< T, VImageDimension, TSpace>::deconvolutionMatrix(I0, alpha, gamma);
+  return VectorImageUtils< T, VImageDimension >::deconvolutionMatrix(I0, alpha, gamma);
 
 }
 

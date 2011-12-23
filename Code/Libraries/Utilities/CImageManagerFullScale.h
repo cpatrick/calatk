@@ -38,12 +38,12 @@
 namespace CALATK
 {
 
-template <class T, unsigned int VImageDimension=3, class TSpace = T >
-class CImageManagerFullScale : public CImageManager< T, VImageDimension, TSpace >
+template <class T, unsigned int VImageDimension=3 >
+class CImageManagerFullScale : public CImageManager< T, VImageDimension >
 {
 public:
 
-  typedef CImageManager< T, VImageDimension, TSpace> Superclass;
+  typedef CImageManager< T, VImageDimension > Superclass;
   typedef typename Superclass::SImageInformation SImageInformation;
   typedef typename Superclass::VectorFieldType VectorFieldType;
   typedef typename Superclass::SubjectInformationType SubjectInformationType;

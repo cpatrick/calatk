@@ -36,12 +36,12 @@
 namespace CALATK
 {
 
-template <class T, unsigned int VImageDimension=3, class TSpace = T >
-class COneStepEvolverSemiLagrangianAdvection : public COneStepEvolver< T, VImageDimension, TSpace > {
+template <class T, unsigned int VImageDimension=3 >
+class COneStepEvolverSemiLagrangianAdvection : public COneStepEvolver< T, VImageDimension > {
 
 public:
 
-  typedef COneStepEvolver< T, VImageDimension, TSpace > Superclass;
+  typedef COneStepEvolver< T, VImageDimension > Superclass;
   typedef typename Superclass::VectorFieldType VectorFieldType;
   typedef typename Superclass::VectorImageType VectorImageType;
 

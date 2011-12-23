@@ -20,18 +20,18 @@
 #ifndef C_STATIONARY_EVOLVER_TXX
 #define C_STATIONARY_EVOLVER_TXX
 
-template <class T, unsigned int VImageDimension, class TSpace >
-CStationaryEvolver< T, VImageDimension, TSpace >::CStationaryEvolver()
+template <class T, unsigned int VImageDimension >
+CStationaryEvolver< T, VImageDimension >::CStationaryEvolver()
 {
 }
 
-template <class T, unsigned int VImageDimension, class TSpace >
-CStationaryEvolver< T, VImageDimension, TSpace >::~CStationaryEvolver()
+template <class T, unsigned int VImageDimension >
+CStationaryEvolver< T, VImageDimension >::~CStationaryEvolver()
 {
 }
 
-template <class T, unsigned int VImageDimension, class TSpace >
-void CStationaryEvolver< T, VImageDimension, TSpace >::SolveForward( VectorFieldType* pV, VectorImageType* pImIn, VectorImageType* pImOut, VectorImageType* pImTmp, T dT )
+template <class T, unsigned int VImageDimension >
+void CStationaryEvolver< T, VImageDimension >::SolveForward( VectorFieldType* pV, VectorImageType* pImIn, VectorImageType* pImOut, VectorImageType* pImTmp, T dT )
 {
   // FIXME: What should the multiplier be here, 1, 0.25?
   T dMaxTimeStep = this->m_ptrOneStepEvolver->ComputeMaximalUpdateStep( pV );
