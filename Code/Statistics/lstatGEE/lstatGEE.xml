@@ -1,0 +1,158 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+
+    <category>Statistics</category>
+    <title>Diffusion tensor longitudinal statistics</title>
+    <description>Uses a general estimation equation approach to estimate a longitudinal model for diffusion tensor images.</description>
+    <version>1.0</version>
+    <documentation-url></documentation-url>
+    <license></license>
+    <contributor>Hongtu Zhu and Marc Niethammer</contributor>
+    <acknowledgements></acknowledgements>
+
+    <parameters>
+        <label>Input/Output</label>
+        <description>Input/Output Parameters</description>
+
+        <image>
+            <name>covarianceOutputVolume</name>
+            <label>Covariance image</label>
+	    <longflag>--cov</longflag>
+            <default>None</default>
+            <description>Covariance image output.</description>
+        </image>
+
+        <image>
+            <name>rawPValueOutputVolume</name>
+            <label>raw p-value image</label>
+	    <longflag>--rawp</longflag>
+            <default>None</default>
+            <description>Raw p-value image output.</description>
+        </image>
+
+        <image>
+            <name>RSPvalueOutputVolume</name>
+            <label>RSPvalue image</label>
+	    <longflag>--rsp</longflag>
+            <default>None</default>
+            <description>RSPvalue image output.</description>
+        </image>
+
+        <image>
+            <name>SCOREvalueOutputVolume</name>
+            <label>SCOREvalue image</label>
+	    <longflag>--score</longflag>
+            <default>None</default>
+            <description>SCOREvalue image output.</description>
+        </image>
+
+        <image>
+            <name>WALDvalueOutputVolume</name>
+            <label>WALDvalue image</label>
+	    <longflag>--wald</longflag>
+            <default>None</default>
+            <description>WALDvalue image output.</description>
+        </image>
+
+        <image>
+            <name>maskInputVolume</name>
+            <label>mask image</label>
+            <flag>m</flag>
+            <longflag>--mask</longflag>
+            <channel>input</channel>
+            <default>None</default>
+            <description>Mask image.</description>
+        </image>
+
+        <image>
+            <name>BETAOutputVolume</name>
+            <label>BETA image name</label>
+	    <channel>output</channel>
+	    <index>0</index>
+            <default>None</default>
+            <description>BETA image name.</description>
+        </image>
+
+        <string>
+            <name>sDesignMatrix</name>
+            <longflag>--designMatrix</longflag>
+            <default>None</default>
+            <description>When specified points to an external definition of the design matrix. In this case, the files and time-points are still read from the case file, but the design matrix is not auto-generated.</description>
+        </string>
+
+        <string>
+            <name>sCaseFile</name>
+            <flag>c</flag>
+            <longflag>--caseFile</longflag>
+            <label>Case file</label>
+            <default>None</default>
+            <description>Case file which contains all tensor filenames time-points and covariates.</description>
+        </string>
+
+        <string>
+            <name>sConstraintMatrix</name>
+            <label>Constraint matrix</label>
+            <longflag>--constraint</longflag>
+            <default>None</default>
+            <description>Constraint matrix file name.</description>
+        </string>
+
+	<string>
+	    <name>sPathPrefix</name>
+	    <label>Path prefix</label>
+	    <longflag>--path</longflag>
+	    <default>None</default>
+	    <description>Path prefix for the files in the caselist. If not specified assumes that either an absolute path is given or the files reside in the current directory.</description>
+	</string>
+
+     </parameters>
+
+     <parameters>
+        <label>Options</label>
+        <description>Optional settings</description>
+
+        <boolean>
+            <name>bVERBOSE</name>
+            <flag>v</flag>
+            <longflag>--verbose</longflag>
+            <label>Verbose output</label>
+            <default>false</default>
+            <description>Enables verbose output.</description>
+        </boolean>
+
+        <boolean>
+            <name>bNoLogTransform</name>
+            <longflag>--noLog</longflag>
+            <label>Disable data log transform</label>
+            <default>false</default>
+            <description>Disables data log transform (should *not* be disabled for DWI data).</description>
+        </boolean>
+
+        <boolean>
+            <name>bNoTimePointScaling</name>
+            <longflag>--noTimeScale</longflag>
+            <label>Disable time scaling</label>
+            <default>false</default>
+            <description>Disables the time scaling. If enabled (ie., not disabled) timepoints are divided by the largest timepoint.</description>
+        </boolean>
+
+        <boolean>
+            <name>bCovaryWithGroup</name>
+            <longflag>--covGroup</longflag>
+            <label>Covary with group.</label>
+            <default>false</default>
+            <description>Covary with group. Ignored if externally defined design matrix is used.</description>
+        </boolean>
+
+        <boolean>
+            <name>bCovaryWithGender</name>
+            <longflag>--covGender</longflag>
+            <label>Covary with gender.</label>
+            <default>false</default>
+            <description>Covary with gender. Ignored if externally defined design matrix is used.</description>
+        </boolean>
+
+    </parameters>
+
+</executable>
+

@@ -35,6 +35,7 @@ public:
   /** Some useful typedefs */
 
   typedef CObjectiveFunction< T, VImageDimension, TState > ObjectiveFunctionType;
+  typedef typename TState::TIndividualState TIndividualState;
 
   CAtlasObjectiveFunction();
   virtual ~CAtlasObjectiveFunction();
@@ -47,14 +48,24 @@ public:
    *
    * @param pObj - pointer to the objective function
    * @param dWeight - weight in the atlas building
-   * @param uiId - id of the image
    */
-  void SetObjectiveFunctionPointerAndWeight( const ObjectiveFunctionType* pObj, T dWeight, unsigned int uiId );
+  void SetObjectiveFunctionPointerAndWeight( const ObjectiveFunctionType* pObj, T dWeight );
+
+  /**
+   * @brief Deletes the data structures used to store the pointers to the objective functions
+   * and the weights. The data the pointers point to is *not* deallocated (this is the duty of
+   * whoever created the pointers). Allows to start assigning the atlas building information from scratch.
+   *
+   */
+  void ClearObjectiveFunctionPointersAndWeights();
 
 protected:
 
   void DeleteAuxiliaryStructures();
   void CreateAuxiliaryStructures();
+
+  void InitializeState();
+  void InitializeState( TStateAtlas *pState );
 
 private:
   // intentionally not implemented
@@ -62,7 +73,7 @@ private:
   CAtlasObjectiveFunction& operator=( const CAtlasObjectiveFunction & );
 
   std::vector< T > vecWeights; ///< Contains the weights for each subject to atlas registration
-
+  std::vector< ObjectiveFunctionType* > vecObjectiveFunctionPtrs;
 };
 
 #include "CAtlasObjectiveFunction.txx"
