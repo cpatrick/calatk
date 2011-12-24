@@ -23,8 +23,8 @@
 //
 // empty constructor
 //
-template <class T, unsigned int VImageDimension, class TState >
-CObjectiveFunction<T, VImageDimension, TState >::CObjectiveFunction()
+template < class TState >
+CObjectiveFunction< TState >::CObjectiveFunction()
 {
   m_pState = NULL;
   m_pGradient = NULL;
@@ -35,16 +35,16 @@ CObjectiveFunction<T, VImageDimension, TState >::CObjectiveFunction()
 //
 // destructor
 //
-template <class T, unsigned int VImageDimension, class TState >
-CObjectiveFunction<T, VImageDimension, TState >::~CObjectiveFunction()
+template < class TState >
+CObjectiveFunction< TState >::~CObjectiveFunction()
 {
 }
 
 //
 // gradient function
 //
-template <class T, unsigned int VImageDimension, class TState >
-void CObjectiveFunction<T, VImageDimension, TState >::ComputeGradient()
+template < class TState >
+void CObjectiveFunction< TState >::ComputeGradient()
 {
   if ( m_pGradient == NULL )
     {

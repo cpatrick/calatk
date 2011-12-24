@@ -20,8 +20,8 @@
 #ifndef C_LDDMM_GROWTH_MODEL_OBJECTIVE_FUNCTION_TXX
 #define C_LDDMM_GROWTH_MODEL_OBJECTIVE_FUNCTION_TXX
 
-template <class T, unsigned int VImageDimension, class TState >
-CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::CLDDMMGrowthModelObjectiveFunction()
+template < class TState >
+CLDDMMGrowthModelObjectiveFunction< TState >::CLDDMMGrowthModelObjectiveFunction()
   : DefaultSigmaSqr( 0.01 ), m_ExternallySetSigmaSqr( false )
 {
   m_SigmaSqr = DefaultSigmaSqr;
@@ -43,14 +43,14 @@ CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::CLDDMMGrowthMo
 }
 
 
-template <class T, unsigned int VImageDimension, class TState >
-CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::~CLDDMMGrowthModelObjectiveFunction()
+template < class TState >
+CLDDMMGrowthModelObjectiveFunction< TState >::~CLDDMMGrowthModelObjectiveFunction()
 {
   DeleteAuxiliaryStructures();
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::SetAutoConfiguration( Json::Value& ConfValue )
+template < class TState >
+void CLDDMMGrowthModelObjectiveFunction< TState >::SetAutoConfiguration( Json::Value& ConfValue )
 {
   Superclass::SetAutoConfiguration( ConfValue );
   Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "GrowthModel", Json::nullValue );
@@ -59,8 +59,8 @@ void CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::SetAutoCo
 
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::DeleteAuxiliaryStructures()
+template < class TState >
+void CLDDMMGrowthModelObjectiveFunction< TState >::DeleteAuxiliaryStructures()
 {
   SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapIn );
   SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapOut );
@@ -78,8 +78,8 @@ void CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::DeleteAux
   SaveDelete< VectorImagePointerType >::PointerVector( m_ptrLambda );
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::CreateAuxiliaryStructures()
+template < class TState >
+void CLDDMMGrowthModelObjectiveFunction< TState >::CreateAuxiliaryStructures()
 {
 
   // get the subject ids
@@ -141,17 +141,17 @@ void CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::CreateAux
 
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::GetImage( VectorImageType* ptrIm, T dTime )
+template < class TState >
+void CLDDMMGrowthModelObjectiveFunction< TState >::GetImage( VectorImageType* ptrIm, T dTime )
 {
   // TODO: account for appearance changes, based on closeby images
   GetMap( m_ptrMapTmp, dTime );
   // now compute the image by interpolation
-  LDDMMUtils< T, VImageDimension >::applyMap( m_ptrMapTmp, m_ptrI0, ptrIm );
+  LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapTmp, m_ptrI0, ptrIm );
 }
 
-template  <class T, unsigned int VImageDimension, class TState >
-void CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::DetermineTimePointData( std::vector< STimePoint >& vecTimePointData )
+template  < class TState >
+void CLDDMMGrowthModelObjectiveFunction< TState >::DetermineTimePointData( std::vector< STimePoint >& vecTimePointData )
 {
 
   // get the subject ids
@@ -222,10 +222,10 @@ void CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::Determine
 
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::ComputeImagesForward()
+template < class TState >
+void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeImagesForward()
 {
-  LDDMMUtils< T, VImageDimension >::identityMap( m_ptrMapIn );
+  LDDMMUtils< T, TState::VImageDimension >::identityMap( m_ptrMapIn );
   // FIXME: This is just to make things easier and to support estimating the initial image (todo) later 
   (*m_ptrI)[ 0 ]->copy( m_ptrI0 );
   
@@ -238,13 +238,13 @@ void CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::ComputeIm
     m_ptrMapIn->copy( m_ptrMapOut );
 
     // now compute the image by interpolation
-    LDDMMUtils< T, VImageDimension >::applyMap( m_ptrMapIn, m_ptrI0, (*m_ptrI)[ iI+1 ] );
+    LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapIn, m_ptrI0, (*m_ptrI)[ iI+1 ] );
     
     }
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::ComputeAdjointBackward()
+template < class TState >
+void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeAdjointBackward()
 {
   // create the final condition
 
@@ -266,7 +266,7 @@ void CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::ComputeAd
   (*m_ptrLambda)[ uiNrOfTimePoints-1 ]->copy( m_ptrCurrentLambdaEnd );
 
   // reset the map to flow backwards
-  LDDMMUtils<T,VImageDimension>::identityMap( m_ptrMapIn );
+  LDDMMUtils< T, TState::VImageDimension>::identityMap( m_ptrMapIn );
 
   for ( int iI = (int)this->m_vecTimeDiscretization.size()-1-1; iI >= 0; --iI )
     {
@@ -278,10 +278,10 @@ void CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::ComputeAd
     this->m_ptrEvolver->SolveForward( m_ptrTmpVelocityField, m_ptrMapIn, m_ptrMapOut, m_ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
     
     // now compute the adjoint by interpolation and exploiting the determinant of the Jacobian
-    LDDMMUtils<T,VImageDimension>::applyMap( m_ptrMapOut, m_ptrCurrentLambdaEnd, (*m_ptrLambda)[ iI ] );
+    LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapOut, m_ptrCurrentLambdaEnd, (*m_ptrLambda)[ iI ] );
     
     // compute det jacobian
-    LDDMMUtils<T,VImageDimension>::computeDeterminantOfJacobian( m_ptrMapOut, m_ptrDeterminantOfJacobian );
+    LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( m_ptrMapOut, m_ptrDeterminantOfJacobian );
     // multiply by the determinant of the Jacobian
     (*m_ptrLambda)[iI]->multCellwise( m_ptrDeterminantOfJacobian );
 
@@ -294,7 +294,7 @@ void CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::ComputeAd
       // reset the current adjoint to the adjoint at current time point
       m_ptrCurrentLambdaEnd->copy( (*m_ptrLambda)[ iI ] );
       // reset the map to flow backwards, because we update the current adjoint
-      LDDMMUtils<T,VImageDimension>::identityMap( m_ptrMapIn );
+      LDDMMUtils< T, TState::VImageDimension >::identityMap( m_ptrMapIn );
       
       // account for all possible jumps of the adjoint at this time-point
       uiNrOfMeasuredImagesAtTimePoint = this->m_vecTimeDiscretization[ iI ].vecMeasurementImages.size();
@@ -308,8 +308,8 @@ void CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::ComputeAd
     }
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::ComputeGradient()
+template < class TState >
+void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeGradient()
 {
 
   ComputeImagesForward();
@@ -332,8 +332,8 @@ void CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::ComputeGr
 
     for ( unsigned int iD = 0; iD<dim; ++iD )
       {
-      VectorFieldUtils< T, VImageDimension >::computeCentralGradient( (*m_ptrI)[ iI ], iD, m_ptrTmpGradient );
-      VectorImageUtils< T, VImageDimension >::multiplyVectorByImageDimensionInPlace( (*m_ptrLambda)[ iI ], iD, m_ptrTmpGradient );
+      VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( (*m_ptrI)[ iI ], iD, m_ptrTmpGradient );
+      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( (*m_ptrLambda)[ iI ], iD, m_ptrTmpGradient );
       ptrCurrentGradient->addCellwise( m_ptrTmpGradient );
       }
 
@@ -353,8 +353,8 @@ void CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::ComputeGr
 
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-T CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState >::GetCurrentEnergy()
+template < class TState >
+typename TState::TFloat CLDDMMGrowthModelObjectiveFunction< TState >::GetCurrentEnergy()
 {
 
   T dEnergy = 0;

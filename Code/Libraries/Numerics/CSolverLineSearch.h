@@ -32,12 +32,13 @@
 
 namespace CALATK
 {
-template <class T, unsigned int VImageDimension, class TState >
-class CSolverLineSearch : public CSolver< T, VImageDimension, TState >
+template < class TState >
+class CSolverLineSearch : public CSolver< TState >
 {
 public:
 
-  typedef CSolver< T, VImageDimension, TState > Superclass;
+  typedef typename TState::TFloat T;
+  typedef CSolver< TState > Superclass;
   typedef typename Superclass::ptrObjectiveFunctionType ptrObjectiveFunctionType;
 
 /**

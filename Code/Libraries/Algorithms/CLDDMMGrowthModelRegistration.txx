@@ -50,7 +50,7 @@ void CLDDMMGrowthModelRegistration< T, VImageDimension, TState >::SetDefaultObje
     throw std::runtime_error( "Image manager needs to be defined before default objective function can be created." );
     }
 
-  typedef CLDDMMGrowthModelObjectiveFunction< T, VImageDimension, TState > CLDDMMType;
+  typedef CLDDMMGrowthModelObjectiveFunction< TState > CLDDMMType;
   CLDDMMType* plddmm = new CLDDMMType;
   plddmm->SetEvolverPointer( this->m_ptrEvolver );
   plddmm->SetKernelPointer( this->m_ptrKernel );

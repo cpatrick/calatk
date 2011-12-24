@@ -27,14 +27,18 @@
 namespace CALATK
 {
 
-template <class T, unsigned int VImageDimension, class TState >
-class CLDDMMSpatioTemporalVelocityFieldObjectiveFunction : public CVelocityFieldObjectiveFunction< T, VImageDimension, TState >
+template < class TState >
+class CLDDMMSpatioTemporalVelocityFieldObjectiveFunction
+    : public CVelocityFieldObjectiveFunction<  TState >
 {
 public:
   
   /** some useful typedefs */
 
-  typedef CVelocityFieldObjectiveFunction< T, VImageDimension, TState > Superclass;
+  typedef CVelocityFieldObjectiveFunction< TState > Superclass;
+
+  typedef typename TState::TFloat T;
+
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 
@@ -44,7 +48,7 @@ public:
   typedef VectorImageType* VectorImagePointerType;
   typedef std::vector< VectorImagePointerType >* VectorPointerToVectorImagePointerType;
 
-  typedef CImageManager< T, VImageDimension > ImageManagerType;
+  typedef CImageManager< T, TState::VImageDimension > ImageManagerType;
   typedef typename ImageManagerType::SImageInformation SImageInformation;
   typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
 

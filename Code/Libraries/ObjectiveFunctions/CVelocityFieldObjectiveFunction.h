@@ -27,17 +27,18 @@
 namespace CALATK
 {
 
-template <class T, unsigned int VImageDimension, class TState >
-class CVelocityFieldObjectiveFunction : public CObjectiveFunction< T, VImageDimension, TState >
+template < class TState >
+class CVelocityFieldObjectiveFunction : public CObjectiveFunction< TState >
 {
 public:
 
   /** some useful typedefs */
+  typedef CObjectiveFunction< TState > Superclass;
+  typedef typename TState::TFloat T;
 
-  typedef CEvolver< T, VImageDimension >* ptrEvolverType;
-  typedef CKernel< T, VImageDimension >* ptrKernelType;
+  typedef CEvolver< T, TState::VImageDimension >* ptrEvolverType;
+  typedef CKernel< T, TState::VImageDimension >* ptrKernelType;
 
-  typedef CObjectiveFunction< T, VImageDimension, TState > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 

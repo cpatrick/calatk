@@ -20,15 +20,15 @@
 #ifndef C_LDDMM_SPATIO_TEMPORAL_VELOCITY_FIELD_OBJECTIVE_FUNCTION_TXX
 #define C_LDDMM_SPATIO_TEMPORAL_VELOCITY_FIELD_OBJECTIVE_FUNCTION_TXX
 
-template <class T, unsigned int VImageDimension, class TState >
-CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::CLDDMMSpatioTemporalVelocityFieldObjectiveFunction()
+template < class TState >
+CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CLDDMMSpatioTemporalVelocityFieldObjectiveFunction()
   : DefaultNumberOfDiscretizationVolumesPerUnitTime( 10.0 ), m_ExternallySetNumberOfDiscretizationVolumesPerUnitTime( false )
 {
   m_NumberOfDiscretizationVolumesPerUnitTime = DefaultNumberOfDiscretizationVolumesPerUnitTime;
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::DeleteData()
+template < class TState >
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::DeleteData()
 {
   
   this->m_ptrKernel->DeallocateMemory();
@@ -41,14 +41,14 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
 
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::~CLDDMMSpatioTemporalVelocityFieldObjectiveFunction()
+template < class TState >
+CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::~CLDDMMSpatioTemporalVelocityFieldObjectiveFunction()
 {
   DeleteData();
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::SetAutoConfiguration( Json::Value& ConfValue )
+template < class TState >
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::SetAutoConfiguration( Json::Value& ConfValue )
 {
   Superclass::SetAutoConfiguration( ConfValue );
   Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "SpatioTemporalVelocityField", Json::nullValue );
@@ -56,8 +56,8 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
   SetJSONNumberOfDiscretizationVolumesPerUnitTime( this->m_jsonConfig.GetFromKey( currentConfiguration, "NumberOfDiscretizationVolumesPerUnitTime", GetExternalOrDefaultNumberOfDiscretizationVolumesPerUnitTime() ).asDouble() );
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::CreateTimeDiscretization( const std::vector< STimePoint >& vecTimePointData, std::vector< STimePoint >& vecTimeDiscretization, std::vector< T >& vecTimeIncrements, T dNumberOfDiscretizationVolumesPerUnitTime )
+template < class TState >
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateTimeDiscretization( const std::vector< STimePoint >& vecTimePointData, std::vector< STimePoint >& vecTimeDiscretization, std::vector< T >& vecTimeIncrements, T dNumberOfDiscretizationVolumesPerUnitTime )
 {
 
   vecTimeDiscretization.clear();
@@ -132,8 +132,8 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
 
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::CreateTimeDiscretization()
+template < class TState >
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateTimeDiscretization()
 {
 
   if ( this->m_ptrImageManager == NULL )
@@ -151,8 +151,8 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
 
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::CreateNewStateStructures()
+template < class TState >
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateNewStateStructures()
 {
 
   // Images and adjoints will be saved at all time-points
@@ -180,8 +180,8 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
     
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::CreateNewGradientStructures()
+template < class TState >
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateNewGradientStructures()
 {
   assert( this->m_pGradient == NULL );
   assert( m_vecTimeDiscretization.size() > 1 );
@@ -205,8 +205,8 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
 
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::ShallowCopyStateStructures( TState* pState )
+template < class TState >
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::ShallowCopyStateStructures( TState* pState )
 {
 
   assert( this->m_pState == NULL );
@@ -225,8 +225,8 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
 
 }
 
-template <class T, unsigned int VImageDimension, class TState >                        
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::InitializeDataStructuresFromState( TState* pState )
+template < class TState >
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::InitializeDataStructuresFromState( TState* pState )
 {
 
   DeleteAuxiliaryStructures();
@@ -246,8 +246,8 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
 
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::InitializeDataStructures()
+template < class TState >
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::InitializeDataStructures()
 {
 
   DeleteAuxiliaryStructures();
@@ -270,15 +270,15 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
 
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::GetMap( VectorFieldType* ptrMap, T dTime )
+template < class TState >
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::GetMap( VectorFieldType* ptrMap, T dTime )
 {
   T dTimeFrom = m_vecTimeDiscretization[0].dTime;
   GetMapFromTo( ptrMap, dTimeFrom, dTime );
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo )
+template < class TState >
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo )
 {
   
   std::cout << "Computing map from " << dTimeFrom << " to " << dTimeTo << std::endl;
@@ -296,7 +296,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
   VectorFieldType* ptrMapTmp = new VectorFieldType( ptrMap );
 
   // get the map between two time points
-  LDDMMUtils< T, VImageDimension >::identityMap( ptrMapIn );
+  LDDMMUtils< T, TState::VImageDimension >::identityMap( ptrMapIn );
 
 
   T dCurrentTime = m_vecTimeDiscretization[0].dTime;
@@ -363,15 +363,15 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TSt
 
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::InitializeState()
+template < class TState >
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::InitializeState()
 {
   // TODO: Set all the velocities to zero and the initial image to the first image of the time series
   InitializeDataStructures();
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >::InitializeState( TState* pState )
+template < class TState >
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::InitializeState( TState* pState )
 {
   // TODO: Set all the velocities to zero and the initial image to the first image of the time series
   InitializeDataStructuresFromState( pState );

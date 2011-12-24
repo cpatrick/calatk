@@ -30,21 +30,23 @@
 namespace CALATK
 {
 
-template <class T, unsigned int VImageDimension, class TState >
+template < class TState >
 class CObjectiveFunction : public CProcessBase
 {
 public:
 
   /** some useful typedefs */
   
+  typedef typename TState::TFloat T;
+
   typedef TState* ptrStateType;
 
-  typedef CMetric< T, VImageDimension >* ptrMetricType;
-  typedef CKernel< T, VImageDimension >* ptrKernelType;
-  typedef CImageManager< T, VImageDimension >* ptrImageManagerType;
+  typedef CMetric< T, TState::VImageDimension >* ptrMetricType;
+  typedef CKernel< T, TState::VImageDimension >* ptrKernelType;
+  typedef CImageManager< T, TState::VImageDimension >* ptrImageManagerType;
 
-  typedef VectorImage< T, VImageDimension > VectorImageType;
-  typedef VectorField< T, VImageDimension > VectorFieldType;
+  typedef VectorImage< T, TState::VImageDimension > VectorImageType;
+  typedef VectorField< T, TState::VImageDimension > VectorFieldType;
 
   CObjectiveFunction();
   virtual ~CObjectiveFunction();

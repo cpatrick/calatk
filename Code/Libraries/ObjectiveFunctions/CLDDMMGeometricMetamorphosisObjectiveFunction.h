@@ -26,17 +26,21 @@
 namespace CALATK
 {
 
-template <class T, unsigned int VImageDimension, class TState >
-class CLDDMMGeometricMetamorphosisObjectiveFunction : public CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState >
+template < class TState >
+class CLDDMMGeometricMetamorphosisObjectiveFunction
+    : public CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >
 {
 public:
 
   /** Some useful typedefs */
 
-  typedef CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< T, VImageDimension, TState > Superclass;
+  typedef CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState > Superclass;
+
+  typedef typename TState::TFloat T;
+
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
-  typedef CKernel< T, VImageDimension >* ptrKernelType;
+  typedef CKernel< T, TState::VImageDimension >* ptrKernelType;
 
   CLDDMMGeometricMetamorphosisObjectiveFunction();
   virtual ~CLDDMMGeometricMetamorphosisObjectiveFunction();

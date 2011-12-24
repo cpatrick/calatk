@@ -27,14 +27,17 @@
 namespace CALATK
 {
 
-template <class T, unsigned int VImageDimension, class TState>
-class CAtlasObjectiveFunction : public CObjectiveFunction< T, VImageDimension, TState >
+template < class TState>
+class CAtlasObjectiveFunction
+    : public CObjectiveFunction< TState >
 {
 public:
 
   /** Some useful typedefs */
 
-  typedef CObjectiveFunction< T, VImageDimension, TState > ObjectiveFunctionType;
+  typedef CObjectiveFunction< TState > ObjectiveFunctionType;
+
+  typedef typename TState::TFloat T;
   typedef typename TState::TIndividualState TIndividualState;
 
   CAtlasObjectiveFunction();

@@ -32,12 +32,14 @@
 namespace CALATK
 {
 
-template <class T, unsigned int VImageDimension, class TState >
+template < class TState >
 class CSolver : public CProcessBase
 {
 public:
 
-  typedef CObjectiveFunction< T, VImageDimension, TState>* ptrObjectiveFunctionType;
+  typedef typename TState::TFloat T;
+
+  typedef CObjectiveFunction< TState>* ptrObjectiveFunctionType;
 
   CSolver();
   virtual ~CSolver();

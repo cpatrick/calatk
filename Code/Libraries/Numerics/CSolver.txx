@@ -23,8 +23,8 @@
 //
 // empty constructor
 //
-template <class T, unsigned int VImageDimension, class TState >
-CSolver< T, VImageDimension, TState >::CSolver()
+template < class TState >
+CSolver< TState >::CSolver()
   : DefaultOutputStateInformation( true ), DefaultExternalSolverState( 0 ), m_ExternallySetOutputStateInformation( false ), m_ExternallySetExternalSolverState( false )
 {
   //m_OutputStateInformation = false;
@@ -35,15 +35,15 @@ CSolver< T, VImageDimension, TState >::CSolver()
 //
 // destructor
 //
-template <class T, unsigned int VImageDimension, class TState >
-CSolver< T, VImageDimension, TState >::~CSolver()
+template < class TState >
+CSolver< TState >::~CSolver()
 {
 }
 
 //
 // setting the objective function pointer
-template <class T, unsigned int VImageDimension, class TState >
-void CSolver< T, VImageDimension, TState >::SetObjectiveFunctionPointer( ptrObjectiveFunctionType pObj )
+template < class TState >
+void CSolver< TState >::SetObjectiveFunctionPointer( ptrObjectiveFunctionType pObj )
 {
   m_pObjectiveFunction = pObj;
 }
@@ -51,9 +51,9 @@ void CSolver< T, VImageDimension, TState >::SetObjectiveFunctionPointer( ptrObje
 //
 // returning the objective function pointer
 //
-template <class T, unsigned int VImageDimension, class TState >
-typename CSolver< T, VImageDimension, TState >::ptrObjectiveFunctionType 
-CSolver< T, VImageDimension, TState >::GetObjectiveFunctionPointer()
+template < class TState >
+typename CSolver< TState >::ptrObjectiveFunctionType
+CSolver< TState >::GetObjectiveFunctionPointer()
 {
   return m_pObjectiveFunction;
 }
@@ -61,8 +61,8 @@ CSolver< T, VImageDimension, TState >::GetObjectiveFunctionPointer()
 //
 // Calls the objective function initialization and then the pre-initialized solver
 //
-template <class T, unsigned int VImageDimension, class TState >
-bool CSolver< T, VImageDimension, TState >::Solve()
+template < class TState >
+bool CSolver< TState >::Solve()
 {
   ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();
 

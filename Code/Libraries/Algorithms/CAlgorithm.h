@@ -53,10 +53,10 @@ public:
 
   typedef CEvolver< T, VImageDimension >* ptrEvolverType;
   typedef CKernel< T, VImageDimension >* ptrKernelType;
-  typedef CObjectiveFunction< T, VImageDimension, TState >* ptrObjectiveFunctionType;
+  typedef CObjectiveFunction< TState >* ptrObjectiveFunctionType;
   typedef CMetric< T, VImageDimension >* ptrMetricType;
-  typedef CImageManager< T, VImageDimension>* ptrImageManagerType;
-  typedef CSolver< T, VImageDimension, TState>* ptrSolverType;
+  typedef CImageManager< T, VImageDimension >* ptrImageManagerType;
+  typedef CSolver< TState >* ptrSolverType;
 
   typedef VectorImage< T, VImageDimension > VectorImageType;
   typedef VectorField< T, VImageDimension > VectorFieldType;

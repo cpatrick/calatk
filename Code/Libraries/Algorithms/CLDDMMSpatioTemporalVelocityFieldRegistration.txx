@@ -62,7 +62,7 @@ template < class T, unsigned int VImageDimension, class TState >
 void CLDDMMSpatioTemporalVelocityFieldRegistration< T, VImageDimension, TState >::SetDefaultSolverPointer()
 {
   //this->m_ptrSolver = new CSolverLineSearch< T, VImageDimension, TState >;
-  this->m_ptrSolver = new CSolverMultiScale< T, VImageDimension, TState >;
+  this->m_ptrSolver = new CSolverMultiScale< TState >;
   this->m_ptrSolver->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 

@@ -35,7 +35,7 @@ CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::~CLDDMMG
     delete m_ptrMaskKernel;
     m_ptrMaskKernel = NULL;
     // unregister it from the objective function
-    typedef CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState > CLDDMMType;
+    typedef CLDDMMGeometricMetamorphosisObjectiveFunction< TState > CLDDMMType;
     CLDDMMType* plddmm = dynamic_cast< CLDDMMType *>( this->m_ptrObjectiveFunction );
     plddmm->SetMaskKernelPointer( this->m_ptrMaskKernel );    
     }
@@ -77,7 +77,7 @@ template < class T, unsigned int VImageDimension, class TState >
 const typename CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::VectorImageType* 
 CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::GetImageT( T dTime )
 {
-  dynamic_cast< CLDDMMGeometricMetamorphosisObjectiveFunction<T, VImageDimension, TState>* >(this->m_ptrObjectiveFunction)->GetImageT( this->m_ptrIm, dTime );
+  dynamic_cast< CLDDMMGeometricMetamorphosisObjectiveFunction< TState>* >(this->m_ptrObjectiveFunction)->GetImageT( this->m_ptrIm, dTime );
   return this->m_ptrIm;
 }
 
@@ -118,7 +118,7 @@ void CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::Set
     throw std::runtime_error( "Image manager needs to be defined before default objective function can be created." );
     }
 
-  typedef CLDDMMGeometricMetamorphosisObjectiveFunction< T, VImageDimension, TState > CLDDMMType;
+  typedef CLDDMMGeometricMetamorphosisObjectiveFunction< TState > CLDDMMType;
   CLDDMMType* plddmm = new CLDDMMType;
   plddmm->SetEvolverPointer( this->m_ptrEvolver );
   plddmm->SetKernelPointer( this->m_ptrKernel );

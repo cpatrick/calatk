@@ -20,35 +20,35 @@
 #ifndef C_VELOCITY_FIELD_OBJECTIVE_FUNCTION_TXX
 #define C_VELOCITY_FIELD_OBJECTIVE_FUNCTION_TXX
 
-template <class T, unsigned int VImageDimension, class TState >
-CVelocityFieldObjectiveFunction< T, VImageDimension, TState >::CVelocityFieldObjectiveFunction()
+template < class TState >
+CVelocityFieldObjectiveFunction< TState >::CVelocityFieldObjectiveFunction()
 {
   m_ptrEvolver = NULL;
   m_ptrKernel = NULL;
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CVelocityFieldObjectiveFunction< T, VImageDimension, TState >::SetEvolverPointer( ptrEvolverType pEvolver )
+template < class TState >
+void CVelocityFieldObjectiveFunction< TState >::SetEvolverPointer( ptrEvolverType pEvolver )
 {
   m_ptrEvolver = pEvolver;
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-CEvolver< T, VImageDimension >*
-CVelocityFieldObjectiveFunction< T, VImageDimension, TState >::GetEvolverPointer()
+template < class TState >
+CEvolver< typename TState::TFloat, TState::VImageDimension >*
+CVelocityFieldObjectiveFunction< TState >::GetEvolverPointer()
 {
   return m_ptrEvolver;
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CVelocityFieldObjectiveFunction< T, VImageDimension, TState >::SetKernelPointer( ptrKernelType pKernel )
+template < class TState >
+void CVelocityFieldObjectiveFunction< TState >::SetKernelPointer( ptrKernelType pKernel )
 {
   m_ptrKernel = pKernel;
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-CKernel< T, VImageDimension >*
-CVelocityFieldObjectiveFunction< T, VImageDimension, TState >::GetKernelPointer()
+template < class TState >
+CKernel< typename TState::TFloat, TState::VImageDimension >*
+CVelocityFieldObjectiveFunction< TState >::GetKernelPointer()
 {
   return m_ptrKernel;
 }

@@ -29,12 +29,15 @@
 namespace CALATK
 {
 
-template <class T, unsigned int VImageDimension, class TState >
-class CSolverMultiScale : public CSolver< T, VImageDimension, TState >
+template < class TState >
+class CSolverMultiScale : public CSolver< TState >
 {
 public:
   
-  typedef CSolver< T, VImageDimension, TState > SolverType;
+  typedef typename TState::TFloat T;
+  static const unsigned int VImageDimension = TState::VImageDimension;
+
+  typedef CSolver< TState > SolverType;
   typedef VectorImage< T, VImageDimension > VectorImageType;
   typedef VectorImageUtils< T, VImageDimension > VectorImageUtilsType;
   typedef CImageManagerMultiScale< T, VImageDimension > ImageManagerMultiScaleType;
