@@ -38,7 +38,11 @@ int DoIt( int argc, char** argv )
 {
   PARSE_ARGS;
 
-  typedef CALATK::CLDDMMGrowthModelRegistration< TFLOAT, VImageDimension > regType;
+  // define the type of state
+  typedef CALATK::CStateSpatioTemporalVelocityField< TFLOAT, VImageDimension > TState;
+  // defint the registration method based on this state
+  typedef CALATK::CLDDMMGrowthModelRegistration< TState > regType;
+
   typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension > VectorImageUtilsType;
   typedef CALATK::CImageManagerMultiScale< TFLOAT, VImageDimension > ImageManagerMultiScaleType;
   typedef CALATK::LDDMMUtils< TFLOAT, VImageDimension > LDDMMUtilsType;

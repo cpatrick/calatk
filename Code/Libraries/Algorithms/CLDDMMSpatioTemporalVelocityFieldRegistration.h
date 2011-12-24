@@ -34,15 +34,23 @@
 
 namespace CALATK
 {
-
-template <class T=double, unsigned int VImageDimension = 3, class TState = CStateSpatioTemporalVelocityField< T, VImageDimension > >
-class CLDDMMSpatioTemporalVelocityFieldRegistration : public CAlgorithm< T, VImageDimension, TState >
+/**
+  * A reasonable default value for the state is
+  * TState = CStateSpatioTemporalVelocityField< T, VImageDimension >
+  *
+  */
+template < class TState >
+class CLDDMMSpatioTemporalVelocityFieldRegistration
+    : public CAlgorithm< TState >
 {
 public:
 
   /** some useful typedefs */
 
-  typedef CAlgorithm< T, VImageDimension, TState > Superclass;
+  typedef CAlgorithm< TState > Superclass;
+
+  typedef typename TState::TFloat T;
+
   typedef typename Superclass::ptrEvolverType ptrEvolverType;
   typedef typename Superclass::ptrKernelType ptrKernelType;
   typedef typename Superclass::ptrObjectiveFunctionType ptrObjectiveFunctionType;
@@ -70,7 +78,7 @@ protected:
 private:
 
   // default one step evolver
-  COneStepEvolverSemiLagrangianAdvection< T, VImageDimension > oneStepDefaultEvolver;
+  COneStepEvolverSemiLagrangianAdvection< T, TState::VImageDimension > oneStepDefaultEvolver;
 
 };
 

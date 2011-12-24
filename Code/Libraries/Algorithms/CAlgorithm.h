@@ -44,26 +44,28 @@ namespace CALATK
  *
  */
 
-template <class T, unsigned int VImageDimension, class TState >
+template < class TState >
 class CAlgorithm : public CProcessBase
 {
 public:
 
   /** some useful typedefs */
 
-  typedef CEvolver< T, VImageDimension >* ptrEvolverType;
-  typedef CKernel< T, VImageDimension >* ptrKernelType;
+  typedef typename TState::TFloat T;
+
+  typedef CEvolver< T, TState::VImageDimension >* ptrEvolverType;
+  typedef CKernel< T, TState::VImageDimension >* ptrKernelType;
   typedef CObjectiveFunction< TState >* ptrObjectiveFunctionType;
-  typedef CMetric< T, VImageDimension >* ptrMetricType;
-  typedef CImageManager< T, VImageDimension >* ptrImageManagerType;
+  typedef CMetric< T, TState::VImageDimension >* ptrMetricType;
+  typedef CImageManager< T, TState::VImageDimension >* ptrImageManagerType;
   typedef CSolver< TState >* ptrSolverType;
 
-  typedef VectorImage< T, VImageDimension > VectorImageType;
-  typedef VectorField< T, VImageDimension > VectorFieldType;
+  typedef VectorImage< T, TState::VImageDimension > VectorImageType;
+  typedef VectorField< T, TState::VImageDimension > VectorFieldType;
 
   typedef CProcessBase Superclass;
 
-  typedef typename CImageManager< T, VImageDimension >::SImageInformation SImageInformation;
+  typedef typename CImageManager< T, TState::VImageDimension >::SImageInformation SImageInformation;
 
   CAlgorithm();
   virtual ~CAlgorithm();

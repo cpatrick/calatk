@@ -26,13 +26,19 @@
 namespace CALATK
 {
 
-template <class T=double, unsigned int VImageDimension = 3, class TState = CStateSpatioTemporalVelocityField< T, VImageDimension > >
-class CLDDMMGrowthModelRegistration : public CLDDMMSpatioTemporalVelocityFieldRegistration< T, VImageDimension, TState >
+/**
+  * A reasonable default value for the state is
+  * TState = CStateSpatioTemporalVelocityField< T, VImageDimension >
+  *
+  */
+template < class TState >
+class CLDDMMGrowthModelRegistration
+    : public CLDDMMSpatioTemporalVelocityFieldRegistration< TState >
 {
 public:
 
   /** some useful typedefs */
-  typedef CLDDMMSpatioTemporalVelocityFieldRegistration< T, VImageDimension, TState > Superclass;
+  typedef CLDDMMSpatioTemporalVelocityFieldRegistration< TState > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 

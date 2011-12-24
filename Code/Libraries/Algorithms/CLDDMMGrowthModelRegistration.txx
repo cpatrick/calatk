@@ -20,18 +20,18 @@
 #ifndef C_LDDMM_GROWTH_MODEL_REGISTRATION_TXX
 #define C_LDDMM_GROWTH_MODEL_REGISTRATION_TXX
 
-template < class T, unsigned int VImageDimension, class TState >
-CLDDMMGrowthModelRegistration< T, VImageDimension, TState >::CLDDMMGrowthModelRegistration()
+template < class TState >
+CLDDMMGrowthModelRegistration< TState >::CLDDMMGrowthModelRegistration()
 {
 }
 
-template < class T, unsigned int VImageDimension, class TState >
-CLDDMMGrowthModelRegistration< T, VImageDimension, TState >::~CLDDMMGrowthModelRegistration()
+template < class TState >
+CLDDMMGrowthModelRegistration< TState >::~CLDDMMGrowthModelRegistration()
 {
 }
 
-template < class T, unsigned int VImageDimension, class TState >
-void CLDDMMGrowthModelRegistration< T, VImageDimension, TState >::SetDefaultObjectiveFunctionPointer()
+template < class TState >
+void CLDDMMGrowthModelRegistration< TState >::SetDefaultObjectiveFunctionPointer()
 {
   // make sure that all we need has already been allocated
 

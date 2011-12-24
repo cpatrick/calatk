@@ -36,7 +36,12 @@ template < unsigned int VImageDimension >
 int DoIt( int argc, char** argv )
 {
   PARSE_ARGS;
-  typedef CALATK::CLDDMMGeometricMetamorphosisRegistration< TFLOAT, VImageDimension > regType;
+
+  // define the type of state
+  typedef CALATK::CStateSpatioTemporalVelocityField< TFLOAT, VImageDimension > TState;
+  // define the registration method based on this state
+  typedef CALATK::CLDDMMGeometricMetamorphosisRegistration< TState > regType;
+
   typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension > VectorImageUtilsType;
   typedef CALATK::CImageManagerMultiScale< TFLOAT, VImageDimension > ImageManagerMultiScaleType;
   typedef CALATK::LDDMMUtils< TFLOAT, VImageDimension > LDDMMUtilsType;

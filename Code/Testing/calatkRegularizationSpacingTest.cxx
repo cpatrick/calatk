@@ -45,7 +45,11 @@ int DoIt( int argc, char* argv[] )
     std::string warpedSourceImage( argv[4] );
     std::string sourceToTargetMap( argv[5] );
 
-    typedef CALATK::CLDDMMGrowthModelRegistration< TFLOAT, VImageDimension > regType;
+    // define the type of state
+    typedef CALATK::CStateSpatioTemporalVelocityField< TFLOAT, VImageDimension > TState;
+    // define the registration method based on this state
+    typedef CALATK::CLDDMMGrowthModelRegistration< TState > regType;
+
     typedef CALATK::CImageManagerMultiScale< TFLOAT, VImageDimension > ImageManagerMultiScaleType;
     typedef typename regType::VectorImageType VectorImageType;
     typedef typename regType::VectorFieldType VectorFieldType;

@@ -24,15 +24,21 @@
 
 namespace CALATK
 {
-template < class T=double, unsigned int VImageDimension = 3,
-           class TIndividualState = CStateSpatioTemporalVelocityField< T, VImageDimension >,
+
+/**
+  * A reasonable default value for the state is
+  * TIndividualState = CStateSpatioTemporalVelocityField< T, VImageDimension >
+  *
+  */
+
+template < class TIndividualState,
            class TState = CStateAtlas< TIndividualState > >
-class CAtlasBuilder : public CLDDMMSpatioTemporalVelocityFieldRegistration< T, VImageDimension, TState >
+class CAtlasBuilder : public CLDDMMSpatioTemporalVelocityFieldRegistration< TState >
 {
 public:
 
   /** some useful typedefs */
-  typedef CLDDMMSpatioTemporalVelocityFieldRegistration< T, VImageDimension, TState > Superclass;
+  typedef CLDDMMSpatioTemporalVelocityFieldRegistration< TState > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 

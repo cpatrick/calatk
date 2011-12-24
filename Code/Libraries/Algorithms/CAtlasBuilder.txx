@@ -20,18 +20,18 @@
 #ifndef C_ATLAS_BUILDER_TXX
 #define C_ATLAS_BUILDER_TXX
 
-template < class T, unsigned int VImageDimension, class TIndividualState, class TState >
-CAtlasBuilder< T, VImageDimension, TIndividualState, TState >::CAtlasBuilder()
+template < class TIndividualState, class TState >
+CAtlasBuilder< TIndividualState, TState >::CAtlasBuilder()
 {
 }
 
-template < class T, unsigned int VImageDimension, class TIndividualState, class TState >
-CAtlasBuilder< T, VImageDimension, TIndividualState, TState >::~CAtlasBuilder()
+template < class TIndividualState, class TState >
+CAtlasBuilder< TIndividualState, TState >::~CAtlasBuilder()
 {
 }
 
-template < class T, unsigned int VImageDimension, class TIndividualState, class TState >
-void CAtlasBuilder< T, VImageDimension, TIndividualState, TState >::SetDefaultObjectiveFunctionPointer()
+template < class TIndividualState, class TState >
+void CAtlasBuilder< TIndividualState, TState >::SetDefaultObjectiveFunctionPointer()
 {
 }
 

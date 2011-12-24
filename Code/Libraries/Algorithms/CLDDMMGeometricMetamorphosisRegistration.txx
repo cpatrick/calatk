@@ -20,15 +20,15 @@
 #ifndef C_LDDMM_GEOMETRIC_METAMORPHOSIS_TXX
 #define C_LDDMM_GEOMETRIC_METAMORPHOSIS_TXX
 
-template < class T, unsigned int VImageDimension, class TState >
-CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::CLDDMMGeometricMetamorphosisRegistration()
+template < class TState >
+CLDDMMGeometricMetamorphosisRegistration< TState >::CLDDMMGeometricMetamorphosisRegistration()
 {
   m_ptrMaskKernel = NULL;
   m_bSetDefaultMaskKernel = false;
 }
 
-template < class T, unsigned int VImageDimension, class TState >
-CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::~CLDDMMGeometricMetamorphosisRegistration()
+template < class TState >
+CLDDMMGeometricMetamorphosisRegistration< TState >::~CLDDMMGeometricMetamorphosisRegistration()
 {
   if ( m_bSetDefaultMaskKernel )
     {
@@ -41,15 +41,15 @@ CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::~CLDDMMG
     }
 }
 
-template < class T, unsigned int VImageDimension, class TState >
-void CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::SetMaskKernelPointer( ptrKernelType ptrKernel )
+template < class TState >
+void CLDDMMGeometricMetamorphosisRegistration< TState >::SetMaskKernelPointer( ptrKernelType ptrKernel )
 {
   m_ptrMaskKernel = ptrKernel;
 }
 
-template < class T, unsigned int VImageDimension, class TState >
-CKernel< T, VImageDimension >*
-CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::GetMaskKernelPointer()
+template < class TState >
+CKernel< typename TState::TFloat, TState::VImageDimension >*
+CLDDMMGeometricMetamorphosisRegistration< TState >::GetMaskKernelPointer()
 {
   if ( m_ptrMaskKernel == NULL )
     {
@@ -59,10 +59,10 @@ CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::GetMaskK
   return m_ptrMaskKernel;
 }
 
-template < class T, unsigned int VImageDimension, class TState >
-void CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::SetDefaultMaskKernelPointer()
+template < class TState >
+void CLDDMMGeometricMetamorphosisRegistration< TState >::SetDefaultMaskKernelPointer()
 {
-  CHelmholtzKernel< T, VImageDimension >* ptrHH = new CHelmholtzKernel< T, VImageDimension >;
+  CHelmholtzKernel< T, TState::VImageDimension >* ptrHH = new CHelmholtzKernel< T, TState::VImageDimension >;
   this->m_ptrMaskKernel = ptrHH;
 
   // multiply alpha by 0.25 to make the mask more fluid as default behavior
@@ -73,16 +73,16 @@ void CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::Set
   
 }
 
-template < class T, unsigned int VImageDimension, class TState >
-const typename CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::VectorImageType* 
-CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::GetImageT( T dTime )
+template < class TState >
+const typename CLDDMMGeometricMetamorphosisRegistration< TState >::VectorImageType*
+CLDDMMGeometricMetamorphosisRegistration< TState >::GetImageT( T dTime )
 {
   dynamic_cast< CLDDMMGeometricMetamorphosisObjectiveFunction< TState>* >(this->m_ptrObjectiveFunction)->GetImageT( this->m_ptrIm, dTime );
   return this->m_ptrIm;
 }
 
-template < class T, unsigned int VImageDimension, class TState >
-void CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::SetDefaultsIfNeeded()
+template < class TState >
+void CLDDMMGeometricMetamorphosisRegistration< TState >::SetDefaultsIfNeeded()
 {
   std::cout << "Called the default mask kernel function" << std::endl;
   if ( m_ptrMaskKernel == NULL )
@@ -93,8 +93,8 @@ void CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::Set
   Superclass::SetDefaultsIfNeeded();
 }
 
-template < class T, unsigned int VImageDimension, class TState >
-void CLDDMMGeometricMetamorphosisRegistration< T, VImageDimension, TState >::SetDefaultObjectiveFunctionPointer()
+template < class TState >
+void CLDDMMGeometricMetamorphosisRegistration< TState >::SetDefaultObjectiveFunctionPointer()
 {
   // make sure that all we need has already been allocated
 
