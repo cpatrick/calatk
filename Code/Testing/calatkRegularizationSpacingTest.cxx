@@ -1,4 +1,23 @@
 /**
+*
+*  Copyright 2011 by the CALATK development team
+*
+*   Licensed under the Apache License, Version 2.0 (the "License");
+*   you may not use this file except in compliance with the License.
+*   You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+*   Unless required by applicable law or agreed to in writing, software
+*   distributed under the License is distributed on an "AS IS" BASIS,
+*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*   See the License for the specific language governing permissions and
+*   limitations under the License.
+*
+*
+*/
+
+/**
   * Tests the behavior of regularization for different settings of spacing for a 2D image.
   */
 
@@ -26,7 +45,11 @@ int DoIt( int argc, char* argv[] )
     std::string warpedSourceImage( argv[4] );
     std::string sourceToTargetMap( argv[5] );
 
-    typedef CALATK::CLDDMMGrowthModelRegistration< TFLOAT, VImageDimension > regType;
+    // define the type of state
+    typedef CALATK::CStateSpatioTemporalVelocityField< TFLOAT, VImageDimension > TState;
+    // define the registration method based on this state
+    typedef CALATK::CLDDMMGrowthModelRegistration< TState > regType;
+
     typedef CALATK::CImageManagerMultiScale< TFLOAT, VImageDimension > ImageManagerMultiScaleType;
     typedef typename regType::VectorImageType VectorImageType;
     typedef typename regType::VectorFieldType VectorFieldType;

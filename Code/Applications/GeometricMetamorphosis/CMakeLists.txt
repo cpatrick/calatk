@@ -2,4 +2,4 @@
 # Add the Geometric Metamorphosis application
 #
 SET(libraries ${FFTW_LIB} ITKCommon ITKIO itksys)
-add_clp_application(GeometricMetamorphosis GeometricMetamorphosis ${FFTW_LIB} ${libraries})
+add_clp_application(GeometricMetamorphosis GeometricMetamorphosis ${libraries})

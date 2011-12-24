@@ -1,3 +1,22 @@
+/**
+*
+*  Copyright 2011 by the CALATK development team
+*
+*   Licensed under the Apache License, Version 2.0 (the "License");
+*   you may not use this file except in compliance with the License.
+*   You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+*   Unless required by applicable law or agreed to in writing, software
+*   distributed under the License is distributed on an "AS IS" BASIS,
+*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*   See the License for the specific language governing permissions and
+*   limitations under the License.
+*
+*
+*/
+
 #ifndef C_LDDMM_SPATIO_TEMPORAL_VELOCITY_FIELD_REGISTRATION_H
 #define C_LDDMM_SPATIO_TEMPORAL_VELOCITY_FIELD_REGISTRATION_H
 
@@ -15,15 +34,23 @@
 
 namespace CALATK
 {
-
-template <class T=double, unsigned int VImageDimension = 3, class TState = CStateSpatioTemporalVelocityField< T, VImageDimension > >
-class CLDDMMSpatioTemporalVelocityFieldRegistration : public CAlgorithm< T, VImageDimension, TState >
+/**
+  * A reasonable default value for the state is
+  * TState = CStateSpatioTemporalVelocityField< T, VImageDimension >
+  *
+  */
+template < class TState >
+class CLDDMMSpatioTemporalVelocityFieldRegistration
+    : public CAlgorithm< TState >
 {
 public:
 
   /** some useful typedefs */
 
-  typedef CAlgorithm< T, VImageDimension, TState > Superclass;
+  typedef CAlgorithm< TState > Superclass;
+
+  typedef typename TState::TFloat T;
+
   typedef typename Superclass::ptrEvolverType ptrEvolverType;
   typedef typename Superclass::ptrKernelType ptrKernelType;
   typedef typename Superclass::ptrObjectiveFunctionType ptrObjectiveFunctionType;
@@ -51,7 +78,7 @@ protected:
 private:
 
   // default one step evolver
-  COneStepEvolverSemiLagrangianAdvection< T, VImageDimension > oneStepDefaultEvolver;
+  COneStepEvolverSemiLagrangianAdvection< T, TState::VImageDimension > oneStepDefaultEvolver;
 
 };
 

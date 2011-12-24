@@ -1,3 +1,22 @@
+/**
+*
+*  Copyright 2011 by the CALATK development team
+*
+*   Licensed under the Apache License, Version 2.0 (the "License");
+*   you may not use this file except in compliance with the License.
+*   You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+*   Unless required by applicable law or agreed to in writing, software
+*   distributed under the License is distributed on an "AS IS" BASIS,
+*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*   See the License for the specific language governing permissions and
+*   limitations under the License.
+*
+*
+*/
+
 #ifndef VECTOR_IMAGE_H
 #define VECTOR_IMAGE_H
 
@@ -19,8 +38,9 @@
 namespace CALATK
 {
 
-template <class T, unsigned int VImageDimension=3, class TSpace = T >
-class VectorImage : public VectorArray<T,VImageDimension> {
+template <class T, unsigned int VImageDimension=3 >
+class VectorImage : public VectorArray<T,VImageDimension>
+{
 
 public:
 
@@ -106,21 +126,21 @@ public:
    *
    * @param spaceX - the spacing in the x dimension
    */
-  void setSpaceX(TSpace spaceX);
+  void setSpaceX(T spaceX);
   
   /**
    * Method to set the original y spacing
    *
    * @param spaceY - the spacing in the y dimension
    */
-  void setSpaceY(TSpace spaceY);
+  void setSpaceY(T spaceY);
   
   /**
    * Method to set the z spacing
    *
    * @param spaceZ - the original spacing in the z dimension
    */
-  void setSpaceZ(TSpace spaceZ);
+  void setSpaceZ(T spaceZ);
   
   /**
    * Method to set the origin
@@ -135,17 +155,17 @@ public:
   /**
    * Method to get the x spacing
    */
-  TSpace getSpaceX() const;
+  T getSpaceX() const;
   
   /**
    * Method to get the y spacing
    */
-  TSpace getSpaceY() const;
+  T getSpaceY() const;
   
   /**
    * Method to get the z spacing
    */
-  TSpace getSpaceZ() const;
+  T getSpaceZ() const;
   
   /**
    * Computes the squared norm of a vector image;  takes proper accound of spacing
@@ -202,11 +222,11 @@ protected:
    ******************/
 
   /** The original pixel spacing for the x dimension from the image file */
-  TSpace __spaceX;
+  T __spaceX;
   /** The original pixel spacing for the y dimension from the image file */
-  TSpace __spaceY;
+  T __spaceY;
   /** The original pixel spacing for the z dimension from the image file */
-  TSpace __spaceZ;
+  T __spaceZ;
 
   /** ITK Image meta-data */
   typename ITKVectorImage< T, VImageDimension >::Type::PointType __origin;

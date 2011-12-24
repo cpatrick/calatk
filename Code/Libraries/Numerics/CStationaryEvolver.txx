@@ -1,18 +1,37 @@
+/**
+*
+*  Copyright 2011 by the CALATK development team
+*
+*   Licensed under the Apache License, Version 2.0 (the "License");
+*   you may not use this file except in compliance with the License.
+*   You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+*   Unless required by applicable law or agreed to in writing, software
+*   distributed under the License is distributed on an "AS IS" BASIS,
+*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*   See the License for the specific language governing permissions and
+*   limitations under the License.
+*
+*
+*/
+
 #ifndef C_STATIONARY_EVOLVER_TXX
 #define C_STATIONARY_EVOLVER_TXX
 
-template <class T, unsigned int VImageDimension, class TSpace >
-CStationaryEvolver< T, VImageDimension, TSpace >::CStationaryEvolver()
+template <class T, unsigned int VImageDimension >
+CStationaryEvolver< T, VImageDimension >::CStationaryEvolver()
 {
 }
 
-template <class T, unsigned int VImageDimension, class TSpace >
-CStationaryEvolver< T, VImageDimension, TSpace >::~CStationaryEvolver()
+template <class T, unsigned int VImageDimension >
+CStationaryEvolver< T, VImageDimension >::~CStationaryEvolver()
 {
 }
 
-template <class T, unsigned int VImageDimension, class TSpace >
-void CStationaryEvolver< T, VImageDimension, TSpace >::SolveForward( VectorFieldType* pV, VectorImageType* pImIn, VectorImageType* pImOut, VectorImageType* pImTmp, T dT )
+template <class T, unsigned int VImageDimension >
+void CStationaryEvolver< T, VImageDimension >::SolveForward( VectorFieldType* pV, VectorImageType* pImIn, VectorImageType* pImOut, VectorImageType* pImTmp, T dT )
 {
   // FIXME: What should the multiplier be here, 1, 0.25?
   T dMaxTimeStep = this->m_ptrOneStepEvolver->ComputeMaximalUpdateStep( pV );

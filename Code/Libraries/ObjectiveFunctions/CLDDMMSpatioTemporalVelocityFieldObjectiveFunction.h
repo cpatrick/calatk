@@ -1,3 +1,22 @@
+/**
+*
+*  Copyright 2011 by the CALATK development team
+*
+*   Licensed under the Apache License, Version 2.0 (the "License");
+*   you may not use this file except in compliance with the License.
+*   You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+*   Unless required by applicable law or agreed to in writing, software
+*   distributed under the License is distributed on an "AS IS" BASIS,
+*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*   See the License for the specific language governing permissions and
+*   limitations under the License.
+*
+*
+*/
+
 #ifndef C_LDDMM_SPATIO_TEMPORAL_VELOCITY_FIELD_OBJECTIVE_FUNCTION_H
 #define C_LDDMM_SPATIO_TEMPORAL_VELOCITY_FIELD_OBJECTIVE_FUNCTION_H
 
@@ -8,14 +27,18 @@
 namespace CALATK
 {
 
-template <class T, unsigned int VImageDimension, class TState >
-class CLDDMMSpatioTemporalVelocityFieldObjectiveFunction : public CVelocityFieldObjectiveFunction< T, VImageDimension, TState >
+template < class TState >
+class CLDDMMSpatioTemporalVelocityFieldObjectiveFunction
+    : public CVelocityFieldObjectiveFunction<  TState >
 {
 public:
   
   /** some useful typedefs */
 
-  typedef CVelocityFieldObjectiveFunction< T, VImageDimension, TState > Superclass;
+  typedef CVelocityFieldObjectiveFunction< TState > Superclass;
+
+  typedef typename TState::TFloat T;
+
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 
@@ -25,7 +48,7 @@ public:
   typedef VectorImageType* VectorImagePointerType;
   typedef std::vector< VectorImagePointerType >* VectorPointerToVectorImagePointerType;
 
-  typedef CImageManager< T, VImageDimension > ImageManagerType;
+  typedef CImageManager< T, TState::VImageDimension > ImageManagerType;
   typedef typename ImageManagerType::SImageInformation SImageInformation;
   typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
 

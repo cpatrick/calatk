@@ -1,8 +1,27 @@
+/**
+*
+*  Copyright 2011 by the CALATK development team
+*
+*   Licensed under the Apache License, Version 2.0 (the "License");
+*   you may not use this file except in compliance with the License.
+*   You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+*   Unless required by applicable law or agreed to in writing, software
+*   distributed under the License is distributed on an "AS IS" BASIS,
+*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*   See the License for the specific language governing permissions and
+*   limitations under the License.
+*
+*
+*/
+
 #ifndef C_ALGORITHM_TXX
 #define C_ALGORITHM_TXX
 
-template <class T, unsigned int VImageDimension, class TState >
-CAlgorithm< T, VImageDimension, TState >::CAlgorithm()
+template < class TState >
+CAlgorithm< TState >::CAlgorithm()
 {
   m_ptrMetric = NULL;
   m_ptrImageManager = NULL;
@@ -25,8 +44,8 @@ CAlgorithm< T, VImageDimension, TState >::CAlgorithm()
 
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-CAlgorithm< T, VImageDimension, TState >::~CAlgorithm()
+template < class TState >
+CAlgorithm< TState >::~CAlgorithm()
 {
   if ( m_bSetDefaultMetric )
     {
@@ -96,8 +115,8 @@ CAlgorithm< T, VImageDimension, TState >::~CAlgorithm()
 
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CAlgorithm< T, VImageDimension, TState >::SetDefaultsIfNeeded()
+template < class TState >
+void CAlgorithm< TState >::SetDefaultsIfNeeded()
 {
 
   if ( m_ptrMetric == NULL ) 
@@ -153,8 +172,8 @@ void CAlgorithm< T, VImageDimension, TState >::SetDefaultsIfNeeded()
 
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CAlgorithm< T, VImageDimension, TState >::Solve()
+template < class TState >
+void CAlgorithm< TState >::Solve()
 {
   // image manager needs to be specified, so that data can be assigned
   assert( m_ptrImageManager != NULL );
@@ -165,15 +184,15 @@ void CAlgorithm< T, VImageDimension, TState >::Solve()
 
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CAlgorithm< T, VImageDimension, TState >::SetImageManagerPointer( ptrImageManagerType ptrImageManager )
+template < class TState >
+void CAlgorithm< TState >::SetImageManagerPointer( ptrImageManagerType ptrImageManager )
 {
   m_ptrImageManager = ptrImageManager;
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-typename CAlgorithm< T, VImageDimension, TState >::ptrImageManagerType
-CAlgorithm< T, VImageDimension, TState >::GetImageManagerPointer()
+template < class TState >
+typename CAlgorithm< TState >::ptrImageManagerType
+CAlgorithm< TState >::GetImageManagerPointer()
 {
   if ( m_ptrImageManager == NULL )
     {
@@ -183,16 +202,16 @@ CAlgorithm< T, VImageDimension, TState >::GetImageManagerPointer()
   return m_ptrImageManager;
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CAlgorithm< T, VImageDimension, TState >::SetKernelPointer( ptrKernelType ptrKernel )
+template < class TState >
+void CAlgorithm< TState >::SetKernelPointer( ptrKernelType ptrKernel )
 {
   m_ptrKernel = ptrKernel;
   this->m_ptrKernel->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-typename CAlgorithm< T, VImageDimension, TState >::ptrKernelType
-CAlgorithm< T, VImageDimension, TState >::GetKernelPointer()
+template < class TState >
+typename CAlgorithm< TState >::ptrKernelType
+CAlgorithm< TState >::GetKernelPointer()
 {
   if ( m_ptrKernel == NULL )
     {
@@ -202,16 +221,16 @@ CAlgorithm< T, VImageDimension, TState >::GetKernelPointer()
   return m_ptrKernel;
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CAlgorithm< T, VImageDimension, TState >::SetEvolverPointer( ptrEvolverType ptrEvolver )
+template < class TState >
+void CAlgorithm< TState >::SetEvolverPointer( ptrEvolverType ptrEvolver )
 {
   m_ptrEvolver = ptrEvolver;
   this->m_ptrEvolver->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-typename CAlgorithm< T, VImageDimension, TState >::ptrEvolverType
-CAlgorithm< T, VImageDimension, TState >::GetEvolverPointer()
+template < class TState >
+typename CAlgorithm< TState >::ptrEvolverType
+CAlgorithm< TState >::GetEvolverPointer()
 {
   if ( m_ptrEvolver == NULL )
     {
@@ -221,16 +240,16 @@ CAlgorithm< T, VImageDimension, TState >::GetEvolverPointer()
   return m_ptrEvolver;
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CAlgorithm< T, VImageDimension, TState >::SetObjectiveFunctionPointer( ptrObjectiveFunctionType ptrObjectiveFunction )
+template < class TState >
+void CAlgorithm< TState >::SetObjectiveFunctionPointer( ptrObjectiveFunctionType ptrObjectiveFunction )
 {
   m_ptrObjectiveFunction = ptrObjectiveFunction;
   this->m_ptrObjectiveFunction->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-typename CAlgorithm< T, VImageDimension, TState >::ptrObjectiveFunctionType
-CAlgorithm< T, VImageDimension, TState >::GetObjectiveFunctionPointer()
+template < class TState >
+typename CAlgorithm< TState >::ptrObjectiveFunctionType
+CAlgorithm< TState >::GetObjectiveFunctionPointer()
 {
   if ( m_ptrObjectiveFunction == NULL )
     {
@@ -240,16 +259,16 @@ CAlgorithm< T, VImageDimension, TState >::GetObjectiveFunctionPointer()
   return m_ptrObjectiveFunction;
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CAlgorithm< T, VImageDimension, TState >::SetMetricPointer( ptrMetricType ptrMetric )
+template < class TState >
+void CAlgorithm< TState >::SetMetricPointer( ptrMetricType ptrMetric )
 {
   m_ptrMetric = ptrMetric;
   this->m_ptrMetric->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-typename CAlgorithm< T, VImageDimension, TState >::ptrMetricType
-CAlgorithm< T, VImageDimension, TState >::GetMetricPointer()
+template < class TState >
+typename CAlgorithm< TState >::ptrMetricType
+CAlgorithm< TState >::GetMetricPointer()
 {
   if ( m_ptrMetric == NULL )
     {
@@ -259,16 +278,16 @@ CAlgorithm< T, VImageDimension, TState >::GetMetricPointer()
   return m_ptrMetric;
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-void CAlgorithm< T, VImageDimension, TState >::SetSolverPointer( ptrSolverType ptrSolver )
+template < class TState >
+void CAlgorithm< TState >::SetSolverPointer( ptrSolverType ptrSolver )
 {
   m_ptrSolver = ptrSolver;
   this->m_ptrSolver->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 
-template <class T, unsigned int VImageDimension, class TState >
-typename CAlgorithm< T, VImageDimension, TState >::ptrSolverType
-CAlgorithm< T, VImageDimension, TState >::GetSolverPointer()
+template < class TState >
+typename CAlgorithm< TState >::ptrSolverType
+CAlgorithm< TState >::GetSolverPointer()
 {
   if ( m_ptrSolver == NULL )
     {

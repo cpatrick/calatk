@@ -1,29 +1,48 @@
+/**
+*
+*  Copyright 2011 by the CALATK development team
+*
+*   Licensed under the Apache License, Version 2.0 (the "License");
+*   you may not use this file except in compliance with the License.
+*   You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+*   Unless required by applicable law or agreed to in writing, software
+*   distributed under the License is distributed on an "AS IS" BASIS,
+*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*   See the License for the specific language governing permissions and
+*   limitations under the License.
+*
+*
+*/
+
 #ifndef C_SOLVER_MULTI_SCALE_TXX
 #define C_SOLVER_MULTI_SCALE_TXX
 
-template <class T, unsigned int VImageDimension, class TState>
-CSolverMultiScale< T, VImageDimension, TState>::CSolverMultiScale()
+template < class TState >
+CSolverMultiScale< TState >::CSolverMultiScale()
 {
   m_ptrSolver = NULL;
   m_bSetDefaultSingleScaleSolver = false;
 }
 
-template <class T, unsigned int VImageDimension, class TState>
-CSolverMultiScale< T, VImageDimension, TState>::~CSolverMultiScale()
+template < class TState >
+CSolverMultiScale< TState >::~CSolverMultiScale()
 {
   DeleteDefaultSingleScaleSolver();
 }
 
-template <class T, unsigned int VImageDimension, class TState>
-void CSolverMultiScale< T, VImageDimension, TState>::SetDefaultSingleScaleSolver()
+template < class TState >
+void CSolverMultiScale< TState >::SetDefaultSingleScaleSolver()
 {
   DeleteDefaultSingleScaleSolver();
-  m_ptrSolver = new CSolverLineSearch< T, VImageDimension, TState>;
+  m_ptrSolver = new CSolverLineSearch< TState >;
   m_bSetDefaultSingleScaleSolver = true;
 }
 
-template <class T, unsigned int VImageDimension, class TState>
-void CSolverMultiScale< T, VImageDimension, TState>::DeleteDefaultSingleScaleSolver()
+template < class TState >
+void CSolverMultiScale< TState >::DeleteDefaultSingleScaleSolver()
 {
   if ( m_bSetDefaultSingleScaleSolver )
     {
@@ -33,29 +52,29 @@ void CSolverMultiScale< T, VImageDimension, TState>::DeleteDefaultSingleScaleSol
     }
 }
 
-template <class T, unsigned int VImageDimension, class TState>
-void CSolverMultiScale< T, VImageDimension, TState>::SetSingleScaleSolverPointer( const SolverType* ptrSolver )
+template < class TState >
+void CSolverMultiScale< TState >::SetSingleScaleSolverPointer( const SolverType* ptrSolver )
 {
   DeleteDefaultSingleScaleSolver();
   m_ptrSolver = ptrSolver;
 }
 
-template <class T, unsigned int VImageDimension, class TState>
-const typename CSolverMultiScale< T, VImageDimension, TState>::SolverType*
-CSolverMultiScale< T, VImageDimension, TState>::GetSingleScaleSolverPointer() const
+template < class TState >
+const typename CSolverMultiScale< TState >::SolverType*
+CSolverMultiScale< TState >::GetSingleScaleSolverPointer() const
 {
   return m_ptrSolver;
 }
 
-template <class T, unsigned int VImageDimension, class TState>
-bool CSolverMultiScale< T, VImageDimension, TState>::SolvePreInitialized()
+template < class TState >
+bool CSolverMultiScale< TState >::SolvePreInitialized()
 {
   // there is not pre-initialization here necessary (because this is the multi-scale solver), so just call solve
   return Solve();
 }
 
-template <class T, unsigned int VImageDimension, class TState>
-bool CSolverMultiScale< T, VImageDimension, TState>::Solve()
+template < class TState >
+bool CSolverMultiScale< TState >::Solve()
 {
   bool bReducedEnergy = false;
 

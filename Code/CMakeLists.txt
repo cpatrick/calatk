@@ -90,6 +90,9 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Applications)
 # Add utilities
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Utilities)
 
+# Add the statistical code
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Statistics)
+
 # Add external utilities
 #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/External)
 

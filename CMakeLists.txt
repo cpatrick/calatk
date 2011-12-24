@@ -71,7 +71,24 @@ else()
   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp" CACHE INTERNAL "Add custom c++ flag for openMP")
 endif()
 
- 
+#
+# Allow for boost support for some of the libraries (this is optional)
+# 
+OPTION(USE_BOOST "Use boost." OFF)
+IF(USE_BOOST)
+	FIND_PATH(BOOST_INCLUDE_DIR boost/config.hpp)
+	FIND_PATH(BOOST_LIBRARY_DIR boost_date_time-vc71-mt.lib)
+	
+	LINK_DIRECTORIES(${BOOST_LIBRARY_DIR})
+	INCLUDE_DIRECTORIES(${BOOST_INCLUDE_DIR})
+
+	# Win32 has automatic linking of boost libraries so only add boost
+	# libaries on unix
+	IF(NOT WIN32 OR CYGWIN)
+	  SET(BOOST_LIBRARIES boost_program_options)
+	ENDIF(NOT WIN32 OR CYGWIN)
+	SET(CMAKE_CXX_FLAGS "-DUSE_BOOST")
+ENDIF(USE_BOOST)
 
 #
 # Include directories
