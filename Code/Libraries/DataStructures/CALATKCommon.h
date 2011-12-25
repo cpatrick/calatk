@@ -109,6 +109,40 @@ const double PI = 4.0*atan(1.0);
   return this->m_ExternallySet##name;    \
   }                                      \
 
+/** multi-dimensional macro */
+#define DoItND(type,ImageDimension,argc,argv) \
+  switch ( ImageDimension ) \
+  {    \
+  case 2: \
+    return DoIt<type,2>( argc, argv ); \
+    break; \
+  case 3: \
+    return DoIt<type,3>( argc, argv ); \
+    break; \
+  default: \
+    std::cerr << "Unsupported image dimension = " << ImageDimension << std::endl; \
+  } \
+
+/** multi-dimensional datatype macro */
+#define DoItNDWithType(sFloatingPointType,ImageDimension,argc,argv) \
+    std::cout << "Using command-line specified floating point type" << std::endl; \
+    std::for_each( sFloatingPointType.begin(), sFloatingPointType.end(), ::tolower); \
+    if ( sFloatingPointType.compare( "float" )==0 ) \
+    { \
+      std::cout << "Using float datatype for all computations" << std::endl; \
+      DoItND( float, uiImageDimension, argc, argv ); \
+    } \
+    else if ( sFloatingPointType.compare( "double" )==0 ) \
+    { \
+      std::cout << "Using double datatype for all computations" << std::endl; \
+      DoItND( double, uiImageDimension, argc, argv ); \
+    } \
+    else \
+    { \
+      std::cerr << "Unsupported requested datatype " << sFloatingPointType << ". ABORT." << std::endl; \
+      return EXIT_FAILURE; \
+    } \
+
 /** min and max macros */
 #ifndef MAX
   #define MAX(x,y) ((x)>(y)?(x):(y))

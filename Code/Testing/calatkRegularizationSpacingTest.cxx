@@ -25,6 +25,7 @@
 #include "CImageManagerMultiScale.h"
 #include "VectorImageUtils.h"
 #include "CHelmholtzKernel.h"
+#include "JSONParameterUtils.h"
 
 #include <string>
 #include <stdlib.h>
@@ -56,7 +57,12 @@ int DoIt( int argc, char* argv[] )
     typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension > VectorImageUtilsType;
     typedef CALATK::LDDMMUtils< TFLOAT, VImageDimension > LDDMMUtilsType;
 
+    CALATK::CJSONConfiguration config;
+    config.InitializeEmptyRoot();
+
     regType lddmm;
+
+    lddmm.SetAutoConfiguration( *config.GetRootPointer() );
 
     // if registered externally, those images get automatically deallocated by the image manager
     VectorImageType *pIm0 = VectorImageUtilsType::readFileITK( sourceImage );

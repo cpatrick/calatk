@@ -40,8 +40,6 @@ CAlgorithm< TState >::CAlgorithm()
   m_bSetDefaultSolver = false;
   m_bSetDefaultImageManager = false;
 
-  this->m_jsonConfig.InitializeEmptyRoot();
-
 }
 
 template < class TState >

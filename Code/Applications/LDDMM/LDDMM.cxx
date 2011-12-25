@@ -23,6 +23,7 @@
  */
 
 #include <iostream>
+#include "CALATKCommon.h"
 #include "CLDDMMGrowthModelRegistration.h"
 #include "VectorImageUtils.h"
 #include "CImageManagerMultiScale.h"
@@ -31,9 +32,7 @@
 
 #include "LDDMMCLP.h"
 
-typedef double TFLOAT;
-
-template < unsigned int VImageDimension >
+template < class TFLOAT, unsigned int VImageDimension >
 int DoIt( int argc, char** argv )
 {
   PARSE_ARGS;
@@ -128,17 +127,18 @@ int main(int argc, char **argv)
 
   std::cout << "Image dimension = " << uiSourceImageDimension << std::endl;
 
-  switch ( uiSourceImageDimension )
-    {
-    case 2:
-      return DoIt<2>( argc, argv );
-      break;
-    case 3:
-      return DoIt<3>( argc, argv );
-      break;
-    default:
-      std::cerr << "Unsupported image dimension = " << uiSourceImageDimension << std::endl;
-    }
+  unsigned int uiImageDimension = uiSourceImageDimension;
+  if ( iDimension!= 0 && iDimension>0 )
+  {
+    std::cout << "Using externally specified image dimension: dim = " << iDimension << std::endl;
+    uiImageDimension = (unsigned int)iDimension;
+  }
+
+#ifdef FLOATING_POINT_CHOICE
+  DoItNDWithType( sFloatingPointType, uiImageDimension, argc, argv );
+#else
+  DoItND( float, uiImageDimension, argc, argv );
+#endif
 
   return EXIT_FAILURE;
 
