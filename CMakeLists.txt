@@ -91,6 +91,14 @@ IF(USE_BOOST)
 ENDIF(USE_BOOST)
 
 #
+# Allow to choose the floating point type
+#
+OPTION(CHOOSE_FLOATING_POINT_TYPE "Choose floating point type on command line." ON)
+IF(CHOOSE_FLOATING_POINT_TYPE)
+    SET(CMAKE_CXX_FLAGS "-DFLOATING_POINT_CHOICE")
+ENDIF(CHOOSE_FLOATING_POINT_TYPE)
+
+#
 # Include directories
 #
 SET(CALATK_INCLUDE_DIRS
