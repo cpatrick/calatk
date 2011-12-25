@@ -107,6 +107,13 @@ bool CJSONConfiguration::WriteCurrentConfigurationToJSONFile( std::string sFileN
 
 Json::Value* CJSONConfiguration::GetRootPointer()
 {
+  // if the root is NULL, generate an empty root node
+  if ( m_ptrRoot==NULL )
+  {
+    std::cout << "JSON: Created an empty root for a request for the root pointer." << std::endl;
+    InitializeEmptyRoot();
+  }
+
   return m_ptrRoot;
 }
 
