@@ -254,7 +254,8 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::CreateAuxiliaryStr
   m_ptrCurrentLambdaEnd = new VectorImageType( pGraftIm );
   m_ptrCurrentLambdaTEnd = new VectorImageType( pGraftT );
 
-  m_ptrDeterminantOfJacobian = new VectorImageType( pGraftT );
+  m_ptrDeterminantOfJacobian = new VectorImageType( pGraftT, 0.0, 1 );
+  assert( m_ptrDeterminantOfJacobian->getDim() == 1 );
 
   m_ptrTmpVelocityField = new VectorFieldType( pGraftIm );
   m_ptrTmpGradient = new VectorFieldType( pGraftIm );
@@ -461,7 +462,7 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeAdjointBack
     // compute det jacobian
     LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( m_ptrMapOut, m_ptrDeterminantOfJacobian );
     // multiply by the determinant of the Jacobian
-    (*m_ptrLambdaT)[iI]->multCellwise( m_ptrDeterminantOfJacobian );
+    (*m_ptrLambdaT)[iI]->multElementwise( m_ptrDeterminantOfJacobian );
 
     // for next step, copy
     m_ptrMapIn->copy( m_ptrMapOut );
@@ -525,8 +526,8 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeAdjointBack
     LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( m_ptrMapOut, m_ptrDeterminantOfJacobian );
     // multiply by the determinant of the Jacobian
     // TODO: Change the cellwise multiplication to support vector-valued adjoints
-    (*m_ptrLambdaT)[iI]->multCellwise( m_ptrDeterminantOfJacobian );
-    (*m_ptrLambda)[iI]->multCellwise( m_ptrDeterminantOfJacobian );
+    (*m_ptrLambdaT)[iI]->multElementwise( m_ptrDeterminantOfJacobian );
+    (*m_ptrLambda)[iI]->multElementwise( m_ptrDeterminantOfJacobian );
 
     // for next step, copy
     m_ptrMapIn->copy( m_ptrMapOut );
@@ -574,7 +575,7 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeGradient()
     VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( (*m_ptrLambdaT)[ iI ], 0, m_ptrTmpGradient );
     ptrCurrentGradient->addCellwise( m_ptrTmpGradient );
 
-    this->m_ptrKernel->ConvolveWithInverseKernel( ptrCurrentGradient );
+    this->m_ptrKernel->ConvolveWithKernel( ptrCurrentGradient );
 
     // add 2*(1-w)v 
     VectorFieldType* ptrCurrentVelocity = this->m_pState->GetVectorFieldPointer( iI );
@@ -597,7 +598,7 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeGradient()
     VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( (*m_ptrLambdaT)[ iI ], 0, m_ptrTmpGradient );
     ptrCurrentGradient->addCellwise( m_ptrTmpGradient );
 
-    this->m_ptrMaskKernel->ConvolveWithInverseKernel( ptrCurrentGradient );
+    this->m_ptrMaskKernel->ConvolveWithKernel( ptrCurrentGradient );
 
     // add 2*w*v 
     VectorFieldType* ptrCurrentVelocity = this->m_pState->GetVectorFieldPointer( iI );
@@ -624,14 +625,14 @@ typename TState::TFloat CLDDMMGeometricMetamorphosisObjectiveFunction< TState >:
     // copy current velocity field (of the state)
     m_ptrTmpVelocityField->copy( this->m_pState->GetVectorFieldPointer( iI ) );
 
-    // convolve it with the kernel, L^\dagger L v
+    // convolve it with the inverse kernel, L^\dagger L v
     if ( iI < m_uiTimeIndexOfTimePoint1 )
       {
-      this->m_ptrKernel->ConvolveWithKernel( m_ptrTmpVelocityField );
+      this->m_ptrKernel->ConvolveWithInverseKernel( m_ptrTmpVelocityField );
       }
     else
       {
-      this->m_ptrMaskKernel->ConvolveWithKernel( m_ptrTmpVelocityField );
+      this->m_ptrMaskKernel->ConvolveWithInverseKernel( m_ptrTmpVelocityField );
       }
 
     // now multiply it with v and (1-w)

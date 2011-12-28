@@ -40,6 +40,8 @@ public:
   /** some typedefs */
 
   typedef VectorImage< T, VImageDimension > VectorImageType;
+  typedef VectorImage< T, 2 > VectorImageType2D;
+  typedef VectorImage< T, 3 > VectorImageType3D;
 
   CKernel();
   virtual ~CKernel();

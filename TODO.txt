@@ -1,3 +1,5 @@
 - For the kernels etc., make the constructors private and provide a new method so that they cannot be created on the stack, since the registration functions take over memory allocation.
 
 - Start using smart pointers.
+
+- Check the STimePoint datastructure. Are there really sensible use-cases that would need possibly multiple estimated images for each time point? (geomet maybe)? Or should this be replaced by simply one estimated image?

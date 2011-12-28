@@ -17,41 +17,41 @@
 *
 */
 
-#ifndef C_LDDMM_SPATIO_TEMPORAL_VELOCITY_FIELD_REGISTRATION_TXX
-#define C_LDDMM_SPATIO_TEMPORAL_VELOCITY_FIELD_REGISTRATION_TXX
+#ifndef C_LDDMM_VELOCITY_FIELD_REGISTRATION_TXX
+#define C_LDDMM_VELOCITY_FIELD_REGISTRATION_TXX
 
 template < class TState >
-CLDDMMSpatioTemporalVelocityFieldRegistration< TState >::CLDDMMSpatioTemporalVelocityFieldRegistration()
+CLDDMMVelocityFieldRegistration< TState >::CLDDMMVelocityFieldRegistration()
 {
 }
 
 template < class TState >
-CLDDMMSpatioTemporalVelocityFieldRegistration< TState >::~CLDDMMSpatioTemporalVelocityFieldRegistration()
+CLDDMMVelocityFieldRegistration< TState >::~CLDDMMVelocityFieldRegistration()
 {
 }
 
 template < class TState >
-void CLDDMMSpatioTemporalVelocityFieldRegistration< TState >::SetDefaultMetricPointer()
+void CLDDMMVelocityFieldRegistration< TState >::SetDefaultMetricPointer()
 {
   this->m_ptrMetric = new CMetricSSD< T, TState::VImageDimension >;
 }
 
 template < class TState >
-void CLDDMMSpatioTemporalVelocityFieldRegistration< TState >::SetDefaultImageManagerPointer()
+void CLDDMMVelocityFieldRegistration< TState >::SetDefaultImageManagerPointer()
 {
   //this->m_ptrImageManager = new CImageManagerFullScale< T, VImageDimension >;
   this->m_ptrImageManager = new CImageManagerMultiScale< T, TState::VImageDimension >;
 }
 
 template < class TState >
-void CLDDMMSpatioTemporalVelocityFieldRegistration< TState >::SetDefaultKernelPointer()
+void CLDDMMVelocityFieldRegistration< TState >::SetDefaultKernelPointer()
 {
   this->m_ptrKernel = new CHelmholtzKernel< T, TState::VImageDimension >;
   this->m_ptrKernel->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 
 template < class TState >
-void CLDDMMSpatioTemporalVelocityFieldRegistration< TState >::SetDefaultEvolverPointer()
+void CLDDMMVelocityFieldRegistration< TState >::SetDefaultEvolverPointer()
 {
   this->m_ptrEvolver = new CStationaryEvolver< T, TState::VImageDimension >;
   this->m_ptrEvolver->SetOneStepEvolverPointer( &oneStepDefaultEvolver );
@@ -59,7 +59,7 @@ void CLDDMMSpatioTemporalVelocityFieldRegistration< TState >::SetDefaultEvolverP
 }
 
 template < class TState >
-void CLDDMMSpatioTemporalVelocityFieldRegistration< TState >::SetDefaultSolverPointer()
+void CLDDMMVelocityFieldRegistration< TState >::SetDefaultSolverPointer()
 {
   //this->m_ptrSolver = new CSolverLineSearch< TState >;
   this->m_ptrSolver = new CSolverMultiScale< TState >;
@@ -67,24 +67,24 @@ void CLDDMMSpatioTemporalVelocityFieldRegistration< TState >::SetDefaultSolverPo
 }
 
 template < class TState >
-const typename CLDDMMSpatioTemporalVelocityFieldRegistration< TState >::VectorFieldType*
-CLDDMMSpatioTemporalVelocityFieldRegistration< TState >::GetMap( T dTime )
+const typename CLDDMMVelocityFieldRegistration< TState >::VectorFieldType*
+CLDDMMVelocityFieldRegistration< TState >::GetMap( T dTime )
 {
   this->m_ptrObjectiveFunction->GetMap( this->m_ptrMap, dTime );
   return this->m_ptrMap;
 }
 
 template < class TState >
-const typename CLDDMMSpatioTemporalVelocityFieldRegistration< TState >::VectorFieldType*
-CLDDMMSpatioTemporalVelocityFieldRegistration< TState >::GetMapFromTo( T dTimeFrom, T dTimeTo )
+const typename CLDDMMVelocityFieldRegistration< TState >::VectorFieldType*
+CLDDMMVelocityFieldRegistration< TState >::GetMapFromTo( T dTimeFrom, T dTimeTo )
 {
   this->m_ptrObjectiveFunction->GetMapFromTo( this->m_ptrMap, dTimeFrom, dTimeTo );
   return this->m_ptrMap;
 }
 
 template < class TState >
-const typename CLDDMMSpatioTemporalVelocityFieldRegistration< TState >::VectorImageType*
-CLDDMMSpatioTemporalVelocityFieldRegistration< TState >::GetImage( T dTime )
+const typename CLDDMMVelocityFieldRegistration< TState >::VectorImageType*
+CLDDMMVelocityFieldRegistration< TState >::GetImage( T dTime )
 {
   this->m_ptrObjectiveFunction->GetImage( this->m_ptrIm, dTime );
   return this->m_ptrIm;

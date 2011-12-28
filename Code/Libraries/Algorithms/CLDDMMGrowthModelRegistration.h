@@ -20,7 +20,7 @@
 #ifndef C_LDDMM_GROWTH_MODEL_REGISTRATION_H
 #define C_LDDMM_GROWTH_MODEL_REGISTRATION_H
 
-#include "CLDDMMSpatioTemporalVelocityFieldRegistration.h"
+#include "CLDDMMVelocityFieldRegistration.h"
 #include "CLDDMMGrowthModelObjectiveFunction.h"
 
 namespace CALATK
@@ -33,12 +33,12 @@ namespace CALATK
   */
 template < class TState >
 class CLDDMMGrowthModelRegistration
-    : public CLDDMMSpatioTemporalVelocityFieldRegistration< TState >
+    : public CLDDMMVelocityFieldRegistration< TState >
 {
 public:
 
   /** some useful typedefs */
-  typedef CLDDMMSpatioTemporalVelocityFieldRegistration< TState > Superclass;
+  typedef CLDDMMVelocityFieldRegistration< TState > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 

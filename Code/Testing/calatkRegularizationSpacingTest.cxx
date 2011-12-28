@@ -22,6 +22,7 @@
   */
 
 #include "CLDDMMGrowthModelRegistration.h"
+#include "CStateSpatioTemporalVelocityField.h"
 #include "CImageManagerMultiScale.h"
 #include "VectorImageUtils.h"
 #include "CHelmholtzKernel.h"

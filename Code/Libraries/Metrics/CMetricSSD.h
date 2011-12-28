@@ -36,16 +36,20 @@ public:
 
   typedef CMetric< T, VImageDimension > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
+  typedef typename Superclass::VectorImageType2D VectorImageType2D;
+  typedef typename Superclass::VectorImageType3D VectorImageType3D;
 
   CMetricSSD();
   ~CMetricSSD();
 
   T GetMetric( const VectorImageType* pI0, const VectorImageType* pI1 ) const;
-  void GetLocalizedMetric( VectorImageType* pLocalizedMetric, const VectorImageType* pI0, const VectorImageType* pI1 );
+
+  void GetLocalizedMetric( VectorImageType2D* pLocalizedMetric, const VectorImageType2D* pI0, const VectorImageType2D* pI1 );
+  void GetLocalizedMetric( VectorImageType3D* pLocalizedMetric, const VectorImageType3D* pI0, const VectorImageType3D* pI1 );
+
   void GetAdjointMatchingDifferenceImage( VectorImageType* pAdjointDifference, const VectorImageType* pIEstimated, const VectorImageType* pIMeasured );
 protected:
-  void GetLocalizedMetric2D( VectorImageType* pLocalizedMetric, const VectorImageType* pI0, const VectorImageType* pI1 );
-  void GetLocalizedMetric3D( VectorImageType* pLocalizedMetric, const VectorImageType* pI0, const VectorImageType* pI1 );
+
 private:
 };
 

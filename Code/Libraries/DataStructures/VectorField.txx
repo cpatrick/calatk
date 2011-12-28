@@ -51,14 +51,14 @@ VectorField< T, VImageDimension >::VectorField(unsigned int sizeX, unsigned int 
 // copy constructor
 //
 template <class T, unsigned int VImageDimension >
-VectorField< T, VImageDimension >::VectorField( const VectorField* source)
+VectorField< T, VImageDimension >::VectorField( const VectorField* source )
   : VectorImage<T, VImageDimension >::VectorImage(source) {}
 
 //
 // copy constructor from vector image
 //
 template <class T, unsigned int VImageDimension >
-VectorField< T, VImageDimension >::VectorField( const VectorImageType* source)
+VectorField< T, VImageDimension >::VectorField( const VectorImageType* source, T dVal )
 {
   this->__sizeX = source->getSizeX();
   this->__sizeY = source->getSizeY();
@@ -78,7 +78,7 @@ VectorField< T, VImageDimension >::VectorField( const VectorImageType* source)
    // initialize everthing with zero, vector image is just used to get the dimensions and spacings
   for (unsigned int uiIndx = 0; uiIndx < this->__length; ++uiIndx )
     {
-    this->__dataPtr[ uiIndx ] = 0;
+    this->__dataPtr[ uiIndx ] = dVal;
     }
 
 }

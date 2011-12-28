@@ -1,0 +1,270 @@
+#ifndef C_STATE_INITIAL_IMAGE_MOMENTUM_TXX
+#define C_STATE_INITIAL_IMAGE_MOMENTUM_TXX
+
+//
+// empty constructor
+//
+template<class T, unsigned int VImageDimension, class TResampler>
+CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMomentum()
+  : m_ptrInitialImage( NULL ), m_ptrInitialMomentum( NULL )
+{
+}
+
+//
+// copy constructor
+//
+template<class T, unsigned int VImageDimension, class TResampler>
+CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMomentum( const CStateInitialImageMomentum & c)
+  : m_ptrInitialImage( NULL ), m_ptrInitialMomentum( NULL )
+{
+  if (this != &c)
+    {
+        VectorImagePointerType ptrImage = c.GetPointerToInitialImage();
+        VectorImagePointerType ptrMomentum = c.GetPointerToInitialMomentum();
+        CopyDataStructure( ptrImage, ptrMomentum );
+    }
+}
+
+//
+// constructor which takes an image and a momentum (also an image) as input
+//
+template <class T, unsigned int VImageDimension, class TResampler>
+CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMomentum( VectorImagePointerType pInitialImage, VectorImagePointerType pInitialMomentum )
+  : m_ptrInitialImage( NULL ), m_ptrInitialMomentum( NULL )
+{
+  // here the memory allocation is performed externally
+
+  m_ptrInitialImage = pInitialImage;
+  m_ptrInitialMomentum = pInitialMomentum;
+
+}
+
+//
+// copy data structure
+//
+template <class T, unsigned int VImageDimension, class TResampler>
+void CStateInitialImageMomentum <T, VImageDimension, TResampler>::CopyDataStructure( ConstVectorImagePointerType ptrImage, ConstVectorImagePointerType ptrMomentum )
+{
+    ClearDataStructure();
+
+    if ( ptrImage != NULL)
+    {
+        m_ptrInitialImage = new VectorImageType( ptrImage );
+    }
+
+    if (ptrMomentum != NULL)
+    {
+        m_ptrInitialMomentum = new VectorImageType( ptrMomentum );
+    }
+}
+
+//
+// destructor
+//
+template <class T, unsigned int VImageDimension, class TResampler>
+CStateInitialImageMomentum <T, VImageDimension, TResampler>::~CStateInitialImageMomentum()
+{
+    ClearDataStructure();
+}
+
+//
+// clear data structure
+//
+template <class T, unsigned int VImageDimension, class TResampler>
+void CStateInitialImageMomentum<T, VImageDimension, TResampler>::ClearDataStructure()
+{
+    if ( m_ptrInitialImage != NULL)
+    {
+        delete m_ptrInitialImage;
+        m_ptrInitialImage = NULL;
+    }
+
+    if (m_ptrInitialImage !=NULL)
+    {
+        delete m_ptrInitialMomentum;
+        m_ptrInitialMomentum = NULL;
+    }
+
+}
+
+//
+// Upsampling
+//
+template <class T, unsigned int VImageDimension, class TResampler >
+typename CStateInitialImageMomentum<T, VImageDimension, TResampler>::SuperclassTState*
+CStateInitialImageMomentum<T, VImageDimension, TResampler>::CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const
+{
+    // create an upsampled version of the state with the dimensions of the graft image
+    VectorImagePointerType ptrInitialImage = new VectorImageType( pGraftImage );
+    VectorImagePointerType ptrInitialMomentum = new VectorImageType( pGraftImage );
+
+    TResampler resampler;
+
+    resampler.Upsample(m_ptrInitialImage, ptrInitialImage);
+    resampler.Upsample(m_ptrInitialMomentum, ptrInitialMomentum);
+
+    TState* pUpsampledState = new TState( ptrInitialImage, ptrInitialMomentum );
+
+    return pUpsampledState;
+}
+//
+// get the pointer to Initial Image
+//
+template <class T, unsigned int VImageDimension, class TResampler>
+typename CStateInitialImageMomentum< T, VImageDimension, TResampler>::VectorImagePointerType
+CStateInitialImageMomentum<T, VImageDimension, TResampler>::GetPointerToInitialImage() const
+{
+    return m_ptrInitialImage;
+}
+
+//
+// get the pointer to Initial Momentum
+//
+template <class T, unsigned int VImageDimension, class TResampler>
+typename CStateInitialImageMomentum< T, VImageDimension, TResampler>::VectorImagePointerType
+CStateInitialImageMomentum<T, VImageDimension, TResampler>::GetPointerToInitialMomentum() const
+{
+    return m_ptrInitialMomentum;
+}
+
+//
+// set the pointer to Initial Image
+//
+template <class T, unsigned int VImageDimension, class TResampler>
+void CStateInitialImageMomentum<T, VImageDimension, TResampler>::SetPointerToInitialImage( ConstVectorImagePointerType ptrImage)
+{
+    m_ptrInitialImage =  ptrImage;
+}
+
+
+//
+// set the pointer to Initial Momentum
+//
+template <class T, unsigned int VImageDimension, class TResampler>
+void CStateInitialImageMomentum<T, VImageDimension, TResampler>::SetPointerToInitialMomentum( ConstVectorImagePointerType ptrMomentum)
+{
+    m_ptrInitialMomentum =  ptrMomentum;
+}
+
+///////////////////
+// the operators //
+///////////////////
+
+//
+// operator=
+//
+template <class T, unsigned int VImageDimension, class TResampler>
+CStateInitialImageMomentum<T, VImageDimension, TResampler> &
+CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator=( const CStateInitialImageMomentum & p )
+{
+    if (this!=&p)
+    {
+        VectorImagePointerType ptrImage = p.GetPointerToInitialImage();
+        VectorImagePointerType ptrMomentum = p.GetPointerToInitialMomentum();
+
+        m_ptrInitialImage->copy(ptrImage);
+        m_ptrInitialMomentum->copy(ptrMomentum);
+
+        return *this;
+    }
+    else
+    {
+        return *this;
+    }
+}
+
+//
+// operator +=
+//
+template <class T, unsigned int VImageDimension, class TResampler>
+CStateInitialImageMomentum<T, VImageDimension, TResampler> &
+CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator+=( const CStateInitialImageMomentum & p )
+{
+    VectorImagePointerType ptrImage = p.GetPointerToInitialImage();
+    VectorImagePointerType ptrMomentum = p.GetPointerToInitialMomentum();
+
+    m_ptrInitialImage->addCellwise(ptrImage);
+    m_ptrInitialMomentum->addCellwise(ptrMomentum);
+
+    return *this;
+}
+
+//
+// operator -=
+//
+template <class T, unsigned int VImageDimension, class TResampler>
+CStateInitialImageMomentum<T, VImageDimension, TResampler> &
+CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator-=( const CStateInitialImageMomentum & p )
+{
+    VectorImagePointerType ptrImage = p.GetPointerToInitialImage();
+    VectorImagePointerType ptrMomentum = p.GetPointerToInitialMomentum();
+
+    m_ptrInitialImage->subtractCellwise(ptrImage);
+    m_ptrInitialMomentum->subtractCellwise(ptrMomentum);
+
+    return *this;
+}
+
+//
+// operator *=
+//
+template <class T, unsigned int VImageDimension, class TResampler>
+CStateInitialImageMomentum<T, VImageDimension, TResampler> &
+CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator*=( const T & p )
+{
+    m_ptrInitialImage->multConst(p);
+    m_ptrInitialMomentum->multConst(p);
+
+    return *this;
+}
+
+//
+// operator +
+//
+template <class T, unsigned int VImageDimension, class TResampler>
+CStateInitialImageMomentum<T, VImageDimension, TResampler>
+CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator+( const CStateInitialImageMomentum & p ) const
+{
+    CStateInitialImageMomentum r = *this;
+    return r += p;
+}
+
+//
+// operator -
+//
+template <class T, unsigned int VImageDimension, class TResampler>
+CStateInitialImageMomentum<T, VImageDimension, TResampler>
+CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator-( const CStateInitialImageMomentum & p ) const
+{
+    CStateInitialImageMomentum r = *this;
+    return r -= p;
+}
+
+//
+// operator *
+//
+template <class T, unsigned int VImageDimension, class TResampler>
+CStateInitialImageMomentum<T, VImageDimension, TResampler>
+CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator*( const T & p ) const
+{
+    CStateInitialImageMomentum r = *this;
+    return r *= p;
+}
+
+//
+// computes the squared norm of the state
+//
+template <class T, unsigned int VImageDimension, class TResampler >
+T CStateInitialImageMomentum< T, VImageDimension, TResampler >::SquaredNorm()
+{
+  T dSquaredNorm = 0;
+//  TODO: Is this the correct squared norm?
+
+  dSquaredNorm += m_ptrInitialImage->computeSquareNorm();
+  dSquaredNorm += m_ptrInitialMomentum->computeSquareNorm();
+
+  return dSquaredNorm;
+
+}
+#endif
+

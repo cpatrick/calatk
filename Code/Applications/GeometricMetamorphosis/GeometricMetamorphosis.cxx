@@ -24,6 +24,7 @@
 
 #include <iostream>
 #include "CALATKCommon.h"
+#include "CStateSpatioTemporalVelocityField.h"
 #include "CLDDMMGeometricMetamorphosisRegistration.h"
 #include "VectorImageUtils.h"
 #include "CImageManagerMultiScale.h"

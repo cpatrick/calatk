@@ -20,6 +20,8 @@
 #ifndef LDDMM_UTILS_H
 #define LDDMM_UTILS_H
 
+#include "CALATKCommon.h"
+#include "CImageManager.h"
 #include "VectorImage.h"
 #include "VectorField.h"
 #include "VectorImageUtils.h"
@@ -50,7 +52,12 @@ public:
 
   typedef VectorImage< T, VImageDimension > VectorImageType;
   typedef VectorField< T, VImageDimension > VectorFieldType;
-  
+  typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;
+  typedef CImageManager< T, VImageDimension > ImageManagerType;
+  typedef typename ImageManagerType::SImageInformation SImageInformation;
+  typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
+
+
   /*********************
    * Wrapper Functions *
    *********************/
@@ -80,13 +87,24 @@ public:
   static void computeDeterminantOfJacobian(const VectorFieldType* fld, VectorImageType* imOut);
   
   /**
-   * Function that computes the deconvolution matrix (2D/3D)
-   *
-   * @param I0 - input image.  Used to get size only
-   * @param alpha - alpha lddm parameter
-   * @param gamma - gamma lddm parameter
-   */
-  static VectorImageType* deconvolutionMatrix(VectorImageType* I0, T alpha, T gamma);
+    * Function that creates a time discretization given a set of measurement timepoints
+    *
+    * @param vecTimePointData - vector which holds the timepoints of the measurements
+    * @param vecTimeDiscretization - return vector containing the computed time discretization
+    * @param vecTimeIncrements - return vector containing the time increments of the discretization
+    * @param dNumberOfDiscretizationVolumesPerUnitTime - number of desired time discretization steps per unit time
+    */
+  static void CreateTimeDiscretization( const std::vector< STimePoint >& vecTimePointData, std::vector< STimePoint >& vecTimeDiscretization, std::vector< T >& vecTimeIncrements, T dNumberOfDiscretizationVolumesPerUnitTime );
+
+  /**
+    * Function that teases out the timepoints for a particular subject from an image manager
+    * and returns a vector of this time point information which can be used to compute a time-discretization for LDDMM
+    *
+    * @param pImageMangager - pointer to the image manager
+    * @param uiSubjectIndex - index of subject of which the timepoints should be extracted
+    * @param vecTimePointData - resulting vector of timepoint data
+    */
+  static void DetermineTimeSeriesTimePointData( ImageManagerType* pImageManager, unsigned int uiSubjectIndex, std::vector< STimePoint >& vecTimePointData );
 
 };
 

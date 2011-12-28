@@ -91,13 +91,45 @@ public:
   VectorArray(unsigned int sizeX, unsigned int sizeY, unsigned int sizeZ, unsigned int dim);
 
   /**
-   * Copy constructor that takes an existing VectorArray3D and makes
+   * Copy constructor that takes an existing VectorArray and makes
    * a duplicate one.
    *
    * @param source - the source array to copy from
    */
-  VectorArray( const VectorArray<T,VImageDimension>* source);
+  VectorArray( const VectorArray<T,VImageDimension>* source );
+
+  /**
+   * Copy constructor that takes an existing VectorArray and makes
+   * another array of the same size initialized with a constant value.
+   *
+   * @param source - the source array to copy the dimensionality from
+   * @param dVal - constant value to initialize with
+   */
+  VectorArray( const VectorArray<T,VImageDimension>* source, T dVal );
+
+  /**
+    * Copy constructor that takes an existing 2D vector array and makes a
+    * vector array with the same size with a given number of dimensions
+    * and initialized with a given value
+    *
+    * @param source - the source array to copy from
+    * @param dVal - constant value to initialize with
+    * @param uiNumDim - the number of dimensions to copy
+    */
+  VectorArray( const VectorArray<T,2>* source, T dVal, unsigned int uiNumDim );
   
+  /**
+    * Copy constructor that takes an existing 3D vector array and makes a
+    * vector array with the same size with a given number of dimensions
+    * and initialized with a given value
+    *
+    * @param source - the source array to copy from
+    * @param dVal - constant value to initialize with
+    * @param uiNumDim - the number of dimensions to copy
+    */
+  VectorArray( const VectorArray<T,3>* source, T dVal, unsigned int uiNumDim );
+
+
   /**
    * Destructor that frees up all memory
    */
@@ -218,11 +250,23 @@ public:
   void multCellwise(VectorArray* im);
 
   /**
+    * Method that multiplies each vector element with a scalar value from a scalar input array
+    * @param im - the scalar array to multiply by
+    */
+  void multElementwise(VectorArray* im);
+
+  /**
    * Method that adds the elements of the array to those of the input array (cellwise)
    *
    * @param im - the first array
    */
   void addCellwise(VectorArray* im);
+
+  /**
+    * Method that adds to each vector element a scalar value from a scalar input array
+    * @param im - the scalar array to add
+    */
+  void addElementwise(VectorArray* im);
 
   /**
    * Method that adds the elements of the array to those of the input array (cellwise)
@@ -233,12 +277,26 @@ public:
   void addCellwiseMultiple(VectorArray* im, T val);
 
   /**
+   * Method that adds to each vector element a saclar value from a scalar input array
+   * and multiplies at the same time by a constant
+   * @param im - the first array
+   * @param val - constant multiplier
+   */
+  void addElementwiseMultiple(VectorArray* im, T val);
+
+  /**
    * Method that subtracts the elements the of the input from the array  (cellwise)
    *
    * @param im - the first array
    */
   void subtractCellwise(VectorArray* im);
 
+  /**
+   * Method that subtracts from each vector element a sclar value from a scalar input array
+   *
+   * @param im - the first array
+   */
+  void subtractElementwise(VectorArray* im);
 
   /**
    * Method that adds a constant to the current image

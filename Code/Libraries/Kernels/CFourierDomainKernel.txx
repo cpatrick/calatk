@@ -157,7 +157,7 @@ T CFourierDomainKernel< T, VImageDimension >::GetFFromIndex( unsigned int iI, un
 }
 
 template <class T, unsigned int VImageDimension >
-void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain2D( VectorImageType* pVecImage, VectorImageType* pL )
+void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( VectorImageType2D* pVecImage, VectorImageType2D* pL )
 {
 
   assert( pL->getDim() == 1 );
@@ -230,7 +230,7 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain2D( Vect
 }
 
 template <class T, unsigned int VImageDimension >
-void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain3D( VectorImageType* pVecImage, VectorImageType* pL )
+void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( VectorImageType3D* pVecImage, VectorImageType3D* pL )
 {
 
   assert( pL->getDim() == 1 );
@@ -311,22 +311,6 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain3D( Vect
 
     } // end loop over dimension
 
-}
-
-template <class T, unsigned int VImageDimension >
-void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( VectorImageType* pVecImage, VectorImageType* pL )
-{
-  switch ( VImageDimension )
-    {
-    case 2:
-      ConvolveInFourierDomain2D( pVecImage, pL );
-      break;
-    case 3:
-      ConvolveInFourierDomain3D( pVecImage, pL );
-      break;
-    default:
-      throw std::runtime_error("Cannot convolve image of such a dimension." );
-    }
 }
 
 template <class T, unsigned int VImageDimension >

@@ -56,81 +56,6 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::SetAutoConfig
   SetJSONNumberOfDiscretizationVolumesPerUnitTime( this->m_jsonConfig.GetFromKey( currentConfiguration, "NumberOfDiscretizationVolumesPerUnitTime", GetExternalOrDefaultNumberOfDiscretizationVolumesPerUnitTime() ).asDouble() );
 }
 
-template < class TState >
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateTimeDiscretization( const std::vector< STimePoint >& vecTimePointData, std::vector< STimePoint >& vecTimeDiscretization, std::vector< T >& vecTimeIncrements, T dNumberOfDiscretizationVolumesPerUnitTime )
-{
-
-  vecTimeDiscretization.clear();
-  vecTimeIncrements.clear();
-
-  const T dTolerance = 1e-10; // discretization tolerance, so we don't end up with a time-step of this size
-
-  T dDesiredTimeStep = 1.0/dNumberOfDiscretizationVolumesPerUnitTime;
-
-  // go through all the timepoints and enter them into the vecTimeDiscretization structure
-
-  typename std::vector< STimePoint >::const_iterator iter;
- 
-  T dLastTimePoint = 0;  
-
-  for ( iter = vecTimePointData.begin(); iter != vecTimePointData.end(); ++iter )
-    {
-
-    std::cout << "Time point = " << iter->dTime << std::endl;
-
-    if ( vecTimeDiscretization.empty() )
-      {
-      // this is the first value so let's enter it
-      STimePoint currentTimePoint = *iter;
-      currentTimePoint.bIsMeasurementPoint = true;
-      vecTimeDiscretization.push_back( currentTimePoint );
-      dLastTimePoint = currentTimePoint.dTime;
-      }
-    else
-      {
-      // this is a different timepoint. Need to create discretization in between if too far away from last time point
-
-      while ( iter->dTime - dLastTimePoint > dDesiredTimeStep + dTolerance )
-          {
-          dLastTimePoint += dDesiredTimeStep;
-          STimePoint timePoint;
-          timePoint.bIsMeasurementPoint = false;
-          timePoint.dTime = dLastTimePoint;
-          
-          vecTimeDiscretization.push_back( timePoint );
-          }
-
-        // now it should be small enough, so enter the image information here
-        //T deltaT = iter->dTime - dLastTimePoint;
-        assert(  iter->dTime - dLastTimePoint <= dDesiredTimeStep + dTolerance );
-
-        STimePoint currentTimePoint = *iter;
-        currentTimePoint.bIsMeasurementPoint = true;
-        vecTimeDiscretization.push_back( currentTimePoint );
-
-        dLastTimePoint = currentTimePoint.dTime;
-
-      } // end of else (not the first measurement)
-    
-    } // end loop over all the subject data
-
-  // go through the time discretization and determine the time-increments
-  
-  typename std::vector< STimePoint >::iterator iterTimeDiscretization;
-  iterTimeDiscretization = vecTimeDiscretization.begin();
-  
-  T dTimeNM1 = iterTimeDiscretization->dTime;
-
-  for ( ++iterTimeDiscretization; iterTimeDiscretization != vecTimeDiscretization.end(); ++iterTimeDiscretization )
-    {
-    T dTimeN = iterTimeDiscretization->dTime;
-    vecTimeIncrements.push_back( dTimeN - dTimeNM1 );
-    dTimeNM1 = dTimeN;
-    }
-
-  std::cout << "vecTimeIncrements = " << vecTimeIncrements << std::endl;
-
-}
 
 template < class TState >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateTimeDiscretization()
@@ -145,7 +70,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateTimeDis
   std::vector< STimePoint > vecTimePointData;
   this->DetermineTimePointData( vecTimePointData );
 
-  CreateTimeDiscretization( vecTimePointData, m_vecTimeDiscretization, m_vecTimeIncrements, m_NumberOfDiscretizationVolumesPerUnitTime );
+  CALATK::LDDMMUtils< T, TState::VImageDimension >::CreateTimeDiscretization( vecTimePointData, m_vecTimeDiscretization, m_vecTimeIncrements, m_NumberOfDiscretizationVolumesPerUnitTime );
 
   // the time discretization vector has all the N timepoint. There will be N-1 vector fields in between
 

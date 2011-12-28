@@ -20,7 +20,7 @@
 #ifndef C_LDDMM_GEOMETRIC_METAMORPHOSIS_REGISTRATION_H
 #define C_LDDMM_GEOMETRIC_METAMORPHOSIS_REGISTRATION_H
 
-#include "CLDDMMSpatioTemporalVelocityFieldRegistration.h"
+#include "CLDDMMVelocityFieldRegistration.h"
 #include "CLDDMMGeometricMetamorphosisObjectiveFunction.h"
 #include "CKernel.h"
 
@@ -34,7 +34,7 @@ namespace CALATK
   */
 template < class TState >
 class CLDDMMGeometricMetamorphosisRegistration
-    : public CLDDMMSpatioTemporalVelocityFieldRegistration< TState >
+    : public CLDDMMVelocityFieldRegistration< TState >
 {
 public:
 
@@ -42,7 +42,7 @@ public:
 
   typedef typename TState::TFloat T;
 
-  typedef CLDDMMSpatioTemporalVelocityFieldRegistration< TState > Superclass;
+  typedef CLDDMMVelocityFieldRegistration< TState > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
   typedef CKernel< T, TState::VImageDimension >* ptrKernelType;

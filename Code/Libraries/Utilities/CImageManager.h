@@ -21,6 +21,8 @@
 #define C_IMAGE_MANAGER_H
 
 #include "CALATKCommon.h"
+#include "VectorImage.h"
+#include "VectorField.h"
 #include <stdexcept>
 #include <string>
 #include <map>

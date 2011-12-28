@@ -100,6 +100,26 @@ public:
   VectorImage( const VectorImage* source);
   
   /**
+   * Copy constructor that takes an existing VectorImage and makes
+   * another image of the same size initialized with a constant value.
+   *
+   * @param source - the source image to copy the dimensionality from
+   * @param dVal - constant value to initialize with
+   */
+  VectorImage( const VectorImage* source, T dVal );
+
+  /**
+    * Copy constructor that takes an existing vector image and makes a
+    * vector image with the same size with a given number of dimensions
+    * and initialized with a given value
+    *
+    * @param source - the source image to copy from
+    * @param dVal - constant value to initialize with
+    * @param uiNumDim - the number of dimensions to copy
+    */
+  VectorImage( const VectorImage* source, T dVal, unsigned int uiNumDim );
+
+  /**
    * Destructor that frees up all memory
    */
   virtual ~VectorImage();

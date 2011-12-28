@@ -50,7 +50,7 @@ T CMetricSSD< T, VImageDimension >::GetMetric( const VectorImageType* pI0, const
 }
 
 template <class T, unsigned int VImageDimension >
-void CMetricSSD< T, VImageDimension >::GetLocalizedMetric2D( VectorImageType* pLocalizedMetric, const VectorImageType* pI0, const VectorImageType* pI1 )
+void CMetricSSD< T, VImageDimension >::GetLocalizedMetric( VectorImageType2D* pLocalizedMetric, const VectorImageType2D* pI0, const VectorImageType2D* pI1 )
 {
   assert( pI0->getLength() == pI1->getLength() );
   assert( pI0->getDim() == pI1->getDim() );
@@ -80,7 +80,7 @@ void CMetricSSD< T, VImageDimension >::GetLocalizedMetric2D( VectorImageType* pL
 
 
 template <class T, unsigned int VImageDimension >
-void CMetricSSD< T, VImageDimension >::GetLocalizedMetric3D( VectorImageType* pLocalizedMetric, const VectorImageType* pI0, const VectorImageType* pI1 )
+void CMetricSSD< T, VImageDimension >::GetLocalizedMetric( VectorImageType3D* pLocalizedMetric, const VectorImageType3D* pI0, const VectorImageType3D* pI1 )
 {
   assert( pI0->getLength() == pI1->getLength() );
   assert( pI0->getDim() == pI1->getDim() );
@@ -115,22 +115,6 @@ void CMetricSSD< T, VImageDimension >::GetLocalizedMetric3D( VectorImageType* pL
 }
 
 template <class T, unsigned int VImageDimension >
-void CMetricSSD< T, VImageDimension >::GetLocalizedMetric( VectorImageType* pLocalizedMetric, const VectorImageType* pI0, const VectorImageType* pI1 )
-{
-  switch ( VImageDimension )
-    {
-    case 2:
-      GetLocalizedMetric2D( pLocalizedMetric, pI0, pI1 );
-      break;
-    case 3:
-      GetLocalizedMetric3D( pLocalizedMetric, pI0, pI1 );
-      break;
-    default:
-      throw std::runtime_error( "Unsupported dimension for GetLocalizedMetric" );
-    }
-}
-
-template <class T, unsigned int VImageDimension >
 void CMetricSSD< T, VImageDimension >::GetAdjointMatchingDifferenceImage( VectorImageType* pAdjointDifference, const VectorImageType* pIEstimated, const VectorImageType* pIMeasured )
 {
   assert( pIEstimated->getLength() == pIMeasured->getLength() );
@@ -143,7 +127,6 @@ void CMetricSSD< T, VImageDimension >::GetAdjointMatchingDifferenceImage( Vector
     T dAdjointDifferenceValue = 2*( pIMeasured->getValue( uiI ) - pIEstimated->getValue( uiI ) );
     pAdjointDifference->setValue( uiI, dAdjointDifferenceValue );
     }
-
 
 }
 

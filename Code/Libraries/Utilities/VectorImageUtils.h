@@ -120,16 +120,6 @@ public:
   static T interpolatePosGridCoordinates( const VectorImageType* imIn, T xPos, T yPos, T zPos, unsigned int d);
 
   /**
-   * Method that interpolates data from an input image to a given coordinate frame using world coordinates
-   *
-   * @param imIn - the source image
-   * @param pos - an image with 3 vector dimensions. (one for x positions, one for y positions,
-   *     one for z position)
-   * @param imOut - return parameter for resized image
-   */
-  static void interpolate( const VectorImageType* imIn, const VectorImageType* pos, VectorImageType* imOut);
-
-  /**
    * 2D Method that interpolates data from an input image to a given coordinate frame using world coordinates
    *
    * @param imIn - the source image
@@ -137,7 +127,7 @@ public:
    *     one for z position)
    * @param imOut - return parameter for resized image
    */
-  static void interpolate2D( const VectorImageType* imIn, const VectorImageType* pos, VectorImageType* imOut);
+  static void interpolate( const VectorImageType2D* imIn, const VectorImageType2D* pos, VectorImageType2D* imOut);
 
   /**
    * 3D Method that interpolates data from an input image to a given coordinate frame using world coordinates
@@ -147,31 +137,23 @@ public:
    *     one for z position)
    * @param imOut - return parameter for resized image
    */
-  static void interpolate3D( const VectorImageType* imIn, const VectorImageType* pos, VectorImageType* imOut);
+  static void interpolate( const VectorImageType3D* imIn, const VectorImageType3D* pos, VectorImageType3D* imOut);
 
   /**
-   * Method to resize the array in both dimensions by a given factor
-   *
-   * @param im - the image to be resized
-   * @param imOut - return parameter for resized image (image is resize to fit the size of the output image)
-   */
-  static void resize( const VectorImageType* im, VectorImageType* imOut);
-
-  /**
-   * 2D Method to resize the array 
+   * 2D Method to resize the array in both dimensions
    *
    * @param im - the image to be resized
    * @param imOut - return parameter for resized image
    */
-  static void resize2D( const VectorImageType* im, VectorImageType* imOut);
+  static void resize( const VectorImageType2D* im, VectorImageType2D* imOut);
 
   /**
-   * 3D Method to resize the array
+   * 3D Method to resize the array in all three dimensions
    *
    * @param im - the image to be resized
    * @param imOut - return parameter for resized image
    */
-  static void resize3D( const VectorImageType* im, VectorImageType* imOut);
+  static void resize( const VectorImageType3D* im, VectorImageType3D* imOut);
 
   /**
    * Method that normalizes an image in place
@@ -191,34 +173,61 @@ public:
    */
   static void meanPixelwise(std::vector<VectorImageType*> imList, unsigned int numIms, VectorImageType* imOut);
 
-
   /**
    * 2D function to multiply a vector image by a scalar image (specified by a dimension of a vectorimage)
    * All the dimensions of the vector image will be multiplied by the scalar image!!
    *
-   * @params imIn - input vector image
-   * @params imOut - image which will be multiplied
+   * @param imIn - input vector image
+   * @param dim - dimension of the input vector image which will be used for multiplication
+   * @param imOut - image which will be multiplied
    */
-  static void multiplyVectorByImageDimensionInPlace2D(const VectorImageType* imIn, unsigned int dim, VectorImageType* imOut );
+  static void multiplyVectorByImageDimensionInPlace(const VectorImageType2D* imIn, unsigned int dim, VectorImageType2D* imOut );
 
   /**
    * 3D function to multiply a vector image by a scalar image (specified by a dimension of a vectorimage)
    * All the dimensions of the vector image will be multiplied by the scalar image!!
    *
-   * @params imIn - input vector image
-   * @params imOut - image which will be multiplied
+   * @param imIn - input vector image
+   * @param dim - dimension of the input vector image which will be used for multiplication
+   * @param imOut - image which will be multiplied
    */
-  static void multiplyVectorByImageDimensionInPlace3D(const VectorImageType* imIn, unsigned int dim, VectorImageType* imOut );
+  static void multiplyVectorByImageDimensionInPlace(const VectorImageType3D* imIn, unsigned int dim, VectorImageType3D* imOut );
 
   /**
-   * 2D/3D function to multiply a vector image by a scalar image (specified by a dimension of a vectorimage)
-   * All the dimensions of the vector image will be multiplied by the scalar image!!
+    * 2D function which computes the element-wise inner product for vector-valued images
+    *
+    * @param im1 - first vector-valued input image
+    * @param im2 - second vector-valued input image
+    * @param imOut - output image, holding the result
+    */
+  static void multiplyVectorByVectorInnerProductElementwise(const VectorImageType2D* im1, const VectorImageType2D* im2, VectorImageType2D* imOut );
+
+  /**
+    * 3D function which computes the element-wise inner product for vector-valued images
+    *
+    * @param im1 - first vector-valued input image
+    * @param im2 - second vector-valued input image
+    * @param imOut - output image, holding the result
+    */
+  static void multiplyVectorByVectorInnerProductElementwise(const VectorImageType3D* im1, const VectorImageType3D* im2, VectorImageType3D* imOut );
+
+  /**
+   * 2D function to add a scalar image to a vector image (for a specific dimension of the vector image)
    *
-   * @params imIn - input vector image
-   * @params dim - dimension of the input vector image that should be multiplied by
-   * @params imOut - image which will be multiplied
+   * @param imIn - input scalar image
+   * @param imOut - image to which which will be added
+   * @param dim - dimension to which will be added
+ */
+  static void addScalarImageToVectorImageAtDimensionInPlace( const VectorImageType2D* imIn, VectorImageType2D* imOut, unsigned int dim );
+
+  /**
+   * 3D function to add a scalar image to a vector image (for a specific dimension of the vector image)
+   *
+   * @param imIn - input scalar image
+   * @param imOut - image to which which will be added
+   * @param dim - dimension to which will be added
    */
-  static void multiplyVectorByImageDimensionInPlace(const VectorImageType* imIn, unsigned int dim, VectorImageType* imOut );
+  static void addScalarImageToVectorImageAtDimensionInPlace( const VectorImageType3D* imIn, VectorImageType3D* imOut, unsigned int dim );
 
   /**
    * Method that applies an ITK affine transformation to a 2D VectorImageType
@@ -271,7 +280,7 @@ public:
    *
    * @param im - the input image
    */
-  static typename ITKVectorImage<T,VImageDimension>::Type::Pointer convertToITK2D( const VectorImageType* im);
+  static typename ITKVectorImage<T,VImageDimension>::Type::Pointer convertToITK( const VectorImageType2D* im);
 
   /**
    * 3D Method that takes a VectorImageType and returns an ITK image.  The returned
@@ -281,17 +290,7 @@ public:
    *
    * @param im - the input image
    */
-  static typename ITKVectorImage<T,VImageDimension>::Type::Pointer convertToITK3D( const VectorImageType* im);
-
-  /**
-   * Method that takes a VectorImageType and returns an ITK image.  The returned
-   * image is actually a 4 dimensional image with the first dimension used to
-   * store the x dimension, the second for the y dimension, the third for the z,
-   * dimension and the fourth for the vector dimension.
-   *
-   * @param im - the input image
-   */
-  static typename ITKVectorImage<T, VImageDimension>::Type::Pointer convertToITK( const VectorImageType* im);
+  static typename ITKVectorImage<T,VImageDimension>::Type::Pointer convertToITK( const VectorImageType3D* im);
 
   /**
    * 2D Method that converts a single dimension of a VectorImageType to an ITK
@@ -300,7 +299,7 @@ public:
    * @param im - the image to convert
    * @param dim - the dimension to use
    */
-  static typename ITKImage<T,VImageDimension>::Type::Pointer convertDimToITK2D( const VectorImageType* im, unsigned int dim);
+  static typename ITKImage<T,VImageDimension>::Type::Pointer convertDimToITK( const VectorImageType2D* im, unsigned int dim );
 
   /**
    * 3D Method that converts a single dimension of a VectorImageType to an ITK
@@ -309,16 +308,7 @@ public:
    * @param im - the image to convert
    * @param dim - the dimension to use
    */
-  static typename ITKImage<T,VImageDimension>::Type::Pointer convertDimToITK3D( const VectorImageType* im, unsigned int dim);
-
-  /**
-   * Method that converts a single dimension of a VectorImageType to an ITK
-   * non-vector image.
-   *
-   * @param im - the image to convert
-   * @param dim - the dimension to use
-   */
-  static typename ITKImage<T,VImageDimension>::Type::Pointer convertDimToITK( const VectorImageType* im, unsigned int dim);
+  static typename ITKImage<T,VImageDimension>::Type::Pointer convertDimToITK( const VectorImageType3D* im, unsigned int dim);
 
   /**
    * Method that takes an itk::Image<T, 4> and returns a VectorImageType.
@@ -328,17 +318,7 @@ public:
    *
    * @param itkIm - the input image
    */
-  static VectorImageType* convertFromITK2D( typename ITKVectorImage<T,VImageDimension>::Type::Pointer itkIm);
-
-  /**
-   * Method that takes an itk::Image<T, 4> and returns a VectorImageType.
-   * The input image should be formatted such that the first dimension is the
-   * x dimension, the second is the y dimension, the third is the z dimension,
-   * and the fourth is the vector dimension.
-   *gg
-   * @param itkIm - the input image
-   */
-  static VectorImageType* convertFromITK3D( typename ITKVectorImage<T,VImageDimension>::Type::Pointer itkIm);
+  static VectorImageType* convertFromITK( typename ITKVectorImage<T,2>::Type::Pointer itkIm);
 
   /**
    * Method that takes an itk::Image<T, 4> and returns a VectorImageType.
@@ -348,7 +328,7 @@ public:
    *
    * @param itkIm - the input image
    */
-  static VectorImageType* convertFromITK( typename ITKVectorImage<T,VImageDimension>::Type::Pointer itkIm);
+  static VectorImageType* convertFromITK( typename ITKVectorImage<T,3>::Type::Pointer itkIm);
 
   /**
    * 2D Method that converts a non-vector ITK image into a single dimension
@@ -358,7 +338,7 @@ public:
    * @param dim - the dimension in which to place the converted image
    * @param imOut - the VectorImageType to be updated
    */
-  static void convertDimFromITK2D( typename ITKImage<T,VImageDimension>::Type::Pointer itkIm, unsigned int dim, VectorImageType* imOut);
+  static void convertDimFromITK( typename ITKImage<T,2>::Type::Pointer itkIm, unsigned int dim, VectorImageType2D* imOut);
 
   /**
    * 3D Method that converts a non-vector ITK image into a single dimension
@@ -368,17 +348,7 @@ public:
    * @param dim - the dimension in which to place the converted image
    * @param imOut - the VectorImageType to be updated
    */
-  static void convertDimFromITK3D( typename ITKImage<T,VImageDimension>::Type::Pointer itkIm, unsigned int dim, VectorImageType* imOut);
-
-  /**
-   * Method that converts a non-vector ITK image into a single dimension
-   * of a VectorImageType.
-   *
-   * @param itkIm - the ITK image
-   * @param dim - the dimension in which to place the converted image
-   * @param imOut - the VectorImageType to be updated
-   */
-  static void convertDimFromITK( typename ITKImage<T,VImageDimension>::Type::Pointer itkIm, unsigned int dim, VectorImageType* imOut);
+  static void convertDimFromITK( typename ITKImage<T,3>::Type::Pointer itkIm, unsigned int dim, VectorImageType3D* imOut);
 
   /**
    * Method that converts an ITKVectorImage3D's origin (which has 4 dimensions)

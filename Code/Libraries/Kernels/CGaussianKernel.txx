@@ -50,7 +50,7 @@ void CGaussianKernel< T, VImageDimension >::SetSigma( T dSigma )
 }
 
 template <class T, unsigned int VImageDimension >
-void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel2D( VectorImageType* pVecImageGraft )
+void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType2D* pVecImageGraft )
 {
   unsigned int szX = pVecImageGraft->getSizeX();
   unsigned int szY = pVecImageGraft->getSizeY();
@@ -78,7 +78,7 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel2D( Vec
 }
 
 template <class T, unsigned int VImageDimension >
-void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel3D( VectorImageType* pVecImageGraft )
+void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType3D* pVecImageGraft )
 {
 
   unsigned int szX = pVecImageGraft->getSizeX();
@@ -109,23 +109,6 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel3D( Vec
         this->m_ptrLInv->setValue(x,y,z,0,1.0/(val) );
         }
       }
-    }
-}
-
-
-template <class T, unsigned int VImageDimension >
-void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType* pVecImageGraft )
-{
-  switch ( VImageDimension )
-    {
-    case 2:
-      ComputeKernelAndInverseKernel2D( pVecImageGraft );
-      break;
-    case 3:
-      ComputeKernelAndInverseKernel3D( pVecImageGraft );
-      break;
-    default:
-      throw std::runtime_error("Cannot create kernel of desired dimension.");
     }
 }
 

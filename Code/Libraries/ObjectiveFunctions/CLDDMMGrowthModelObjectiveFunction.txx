@@ -129,9 +129,8 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::CreateAuxiliaryStructures()
   m_ptrCurrentAdjointDifference = new VectorImageType( pGraftIm );
 
   // storage for the determinant of Jacobian
-  // TODO: Fixme: fix initialization if a vector-valued image is used, needs to be a scalar-image
-  assert( pGraftIm->getDim() == 1 );
-  m_ptrDeterminantOfJacobian  = new VectorImageType( pGraftIm );
+  m_ptrDeterminantOfJacobian  = new VectorImageType( pGraftIm, 0.0, 1 );
+  assert( m_ptrDeterminantOfJacobian->getDim() == 1 );
 
   // storage for the negated velocity field
   m_ptrTmpVelocityField = new VectorFieldType( pGraftIm );
@@ -153,73 +152,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::GetImage( VectorImageType* pt
 template  < class TState >
 void CLDDMMGrowthModelObjectiveFunction< TState >::DetermineTimePointData( std::vector< STimePoint >& vecTimePointData )
 {
-
-  // get the subject ids
-  std::vector< unsigned int > vecSubjectIndices;
-  this->m_ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
-
-  unsigned int uiNumberOfDifferentSubjects = vecSubjectIndices.size();
-  
-  if ( uiNumberOfDifferentSubjects != 1 )
-    {
-    throw std::runtime_error( "CLDDMMSpatioTemporalVelocityFieldObjectiveFunction currently only supports one subject at a time." );
-    return;
-    }
-
-  std::vector< T > vecMeasurementTimepoints;
-  // make sure we have at least two timepoints
-  this->m_ptrImageManager->GetTimepointsForSubjectIndex( vecMeasurementTimepoints, vecSubjectIndices[ 0 ] );
-  assert( vecMeasurementTimepoints.size() > 1 );
-
-  std::cout << "Measurement timepoints = " << vecMeasurementTimepoints << std::endl;
-
-  // get the full time-course information for the subject
-  SubjectInformationType* pSubjectInfo;
-  this->m_ptrImageManager->GetImagesWithSubjectIndex( pSubjectInfo, vecSubjectIndices[ 0 ] );
-
-  // clear the time-point information vector
-
-  vecTimePointData.clear();
-
-  // now enter all the time-point information based on the subject information
-
-  // go through all the timepoints and enter them into the vecTimeDiscretization structure
-
-  typename SubjectInformationType::iterator iter;
- 
-  // TODO: just make the image manager return this type of data-structure by default
-
-  T dLastTimePoint = 0;
-  bool bFirstValue = true;
-
-  for ( iter = pSubjectInfo->begin(); iter != pSubjectInfo->end(); ++iter )
-    {
-
-    if ( !bFirstValue && ( dLastTimePoint == (*iter)->timepoint ) )
-      {
-      // if there is a multiple measurement
-      unsigned int uiLast = vecTimePointData.size()-1;
-      vecTimePointData[ uiLast ].vecMeasurementImages.push_back( (*iter)->pIm );
-      vecTimePointData[ uiLast ].vecMeasurementTransforms.push_back( (*iter)->pTransform );
-      }
-    else
-      {
-      // fill the time-point stucture
-      STimePoint timePoint;
-      timePoint.bIsMeasurementPoint = true; // all of them are measurements
-      timePoint.dTime = (*iter)->timepoint;
-      timePoint.vecMeasurementImages.push_back( (*iter)->pIm );
-      timePoint.vecMeasurementTransforms.push_back( (*iter)->pTransform );
-
-      vecTimePointData.push_back( timePoint );
-
-      }
-
-      dLastTimePoint = (*iter)->timepoint;
-      bFirstValue = false;
-
-    }
-
+  CALATK::LDDMMUtils< T, TState::VImageDimension >::DetermineTimeSeriesTimePointData( this->m_ptrImageManager, 0, vecTimePointData );
 }
 
 template < class TState >
@@ -283,7 +216,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeAdjointBackward()
     // compute det jacobian
     LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( m_ptrMapOut, m_ptrDeterminantOfJacobian );
     // multiply by the determinant of the Jacobian
-    (*m_ptrLambda)[iI]->multCellwise( m_ptrDeterminantOfJacobian );
+    (*m_ptrLambda)[iI]->multElementwise( m_ptrDeterminantOfJacobian );
 
     // for next step, copy
     m_ptrMapIn->copy( m_ptrMapOut );
@@ -339,7 +272,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeGradient()
 
     //VectorImageUtils< T, VImageDimension >::writeFileITK( ptrCurrentGradient, "curGradBeforeConv.nrrd" );
 
-    this->m_ptrKernel->ConvolveWithInverseKernel( ptrCurrentGradient );
+    this->m_ptrKernel->ConvolveWithKernel( ptrCurrentGradient );
 
     //VectorImageUtils< T, VImageDimension >::writeFileITK( ptrCurrentGradient, "curGradAfterConv.nrrd" );
 
@@ -359,14 +292,14 @@ typename TState::TFloat CLDDMMGrowthModelObjectiveFunction< TState >::GetCurrent
 
   T dEnergy = 0;
 
-  // computing the square velocity for this time step using the kernel (and not it's inverse)
+  // computing the square velocity for this time step using the inverse kernel measuring non-smoothness (and not it's inverse)
   for ( unsigned int iI=0; iI < this->m_vecTimeDiscretization.size()-1; ++iI )
     {
     // copy current velocity field (of the state)
     m_ptrTmpVelocityField->copy( this->m_pState->GetVectorFieldPointer( iI ) );
 
-    // convolve it with the kernel, L^\dagger L v
-    this->m_ptrKernel->ConvolveWithKernel( m_ptrTmpVelocityField );
+    // convolve it with the inverse kernel, L^\dagger L v
+    this->m_ptrKernel->ConvolveWithInverseKernel( m_ptrTmpVelocityField );
 
     // now multiply it with v
     T dCurrentEnergy = 0.5*this->m_vecTimeIncrements[ iI ]*m_ptrTmpVelocityField->computeInnerProduct( this->m_pState->GetVectorFieldPointer( iI ) );

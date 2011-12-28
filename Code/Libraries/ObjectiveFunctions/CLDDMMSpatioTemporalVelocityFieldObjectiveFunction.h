@@ -17,8 +17,8 @@
 *
 */
 
-#ifndef C_LDDMM_SPATIO_TEMPORAL_VELOCITY_FIELD_OBJECTIVE_FUNCTION_H
-#define C_LDDMM_SPATIO_TEMPORAL_VELOCITY_FIELD_OBJECTIVE_FUNCTION_H
+#ifndef C_LDDMM_VELOCITY_FIELD_OBJECTIVE_FUNCTION_H
+#define C_LDDMM_VELOCITY_FIELD_OBJECTIVE_FUNCTION_H
 
 #include "CVelocityFieldObjectiveFunction.h"
 #include "LDDMMUtils.h"
@@ -42,15 +42,6 @@ public:
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 
-  typedef VectorFieldType* VectorFieldPointerType;
-  typedef std::vector< VectorFieldPointerType >* VectorPointerToVectorFieldPointerType;
-
-  typedef VectorImageType* VectorImagePointerType;
-  typedef std::vector< VectorImagePointerType >* VectorPointerToVectorImagePointerType;
-
-  typedef CImageManager< T, TState::VImageDimension > ImageManagerType;
-  typedef typename ImageManagerType::SImageInformation SImageInformation;
-  typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
 
   CLDDMMSpatioTemporalVelocityFieldObjectiveFunction();
   virtual ~CLDDMMSpatioTemporalVelocityFieldObjectiveFunction();
@@ -68,22 +59,27 @@ public:
 
 protected:
 
-  struct STimePoint
-  {
-    bool bIsMeasurementPoint;
-    T dTime;
-    std::vector< VectorImagePointerType > vecMeasurementImages; // to support multiple images per time point
-    std::vector< VectorFieldPointerType > vecMeasurementTransforms;
-    std::vector< VectorImagePointerType > vecEstimatedImages;
-  };
+  /* Some useful protected datatypes */
+  typedef VectorFieldType* VectorFieldPointerType;
+  typedef std::vector< VectorFieldPointerType >* VectorPointerToVectorFieldPointerType;
+
+  typedef VectorImageType* VectorImagePointerType;
+  typedef std::vector< VectorImagePointerType >* VectorPointerToVectorImagePointerType;
+
+  typedef CImageManager< T, TState::VImageDimension > ImageManagerType;
+  typedef typename ImageManagerType::SImageInformation SImageInformation;
+  typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
+
+  typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;
 
   void InitializeDataStructures();
   void InitializeDataStructuresFromState( TState* pState );
 
-  void DeleteData();
-
+  // methods which delete and create possible auxiliary dynamic structures
   virtual void DeleteAuxiliaryStructures() = 0;
   virtual void CreateAuxiliaryStructures() = 0;
+
+  void DeleteData();
 
   virtual void DetermineTimePointData( std::vector< STimePoint >& vecTimePointData ) = 0;
 

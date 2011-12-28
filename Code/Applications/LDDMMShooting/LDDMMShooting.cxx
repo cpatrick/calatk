@@ -18,30 +18,28 @@
 */
 
 /**
- * Interface for LDDMM registration (including time series)
+ * Interface for Geodesic registration (including time series)
  *
  */
 
 #include <iostream>
 #include "CALATKCommon.h"
-#include "CStateSpatioTemporalVelocityField.h"
-#include "CLDDMMGrowthModelRegistration.h"
+#include "CLDDMMGeodesicShootingInitialImageMomentumRegistration.h"
 #include "VectorImageUtils.h"
 #include "CImageManagerMultiScale.h"
 
 #include "JSONParameterUtils.h"
 
-#include "LDDMMCLP.h"
+#include "LDDMMShootingCLP.h"
 
-template < class TFLOAT, unsigned int VImageDimension >
+template< class TFLOAT, unsigned int VImageDimension >
 int DoIt( int argc, char** argv )
 {
   PARSE_ARGS;
-
   // define the type of state
-  typedef CALATK::CStateSpatioTemporalVelocityField< TFLOAT, VImageDimension > TState;
-  // defint the registration method based on this state
-  typedef CALATK::CLDDMMGrowthModelRegistration< TState > regType;
+  typedef CALATK::CStateInitialImageMomentum< TFLOAT, VImageDimension > TState;
+  // define the registration method based on this state
+  typedef CALATK::CLDDMMGeodesicShootingInitialImageMomentumRegistration< TState > regType;
 
   typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension > VectorImageUtilsType;
   typedef CALATK::CImageManagerMultiScale< TFLOAT, VImageDimension > ImageManagerMultiScaleType;
@@ -81,11 +79,10 @@ int DoIt( int argc, char** argv )
     Json::Value& currentScaleSettings = config.GetFromKey( currentSettings, "Downsample", Json::nullValue );
     TFLOAT dCurrentScale = config.GetFromKey( currentScaleSettings, "Scale", 1 ).asDouble();
     ptrImageManager->AddScale( dCurrentScale, iI );
-    }  
+    }
   lddmm.SetAutoConfiguration( *config.GetRootPointer() );
 
   ptrImageManager->print( std::cout );
-
 
   lddmm.Solve();
 
@@ -112,6 +109,7 @@ int DoIt( int argc, char** argv )
 
   return EXIT_SUCCESS;
 }
+
 
 int main(int argc, char **argv)
 {
@@ -144,4 +142,3 @@ int main(int argc, char **argv)
   return EXIT_FAILURE;
 
 }
-

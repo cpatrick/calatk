@@ -115,6 +115,37 @@ VectorImage< T, VImageDimension >::VectorImage( const VectorImage* source)
 }
 
 //
+// copy constructor
+//
+template <class T, unsigned int VImageDimension >
+VectorImage< T, VImageDimension >::VectorImage( const VectorImage* source, T dVal )
+  : VectorArray<T,VImageDimension>::VectorArray( source, dVal )
+{
+  __spaceX = source->getSpaceX();
+  __spaceY = source->getSpaceY();
+  __spaceZ = source->getSpaceZ();
+  __origin = source->getOrigin();
+  __direction = source->getDirection();
+
+}
+
+//
+// copy constructor
+//
+template <class T, unsigned int VImageDimension >
+VectorImage< T, VImageDimension >::VectorImage( const VectorImage* source, T dVal, unsigned int uiNumDim )
+  : VectorArray<T,VImageDimension>::VectorArray( source, dVal, uiNumDim )
+{
+  __spaceX = source->getSpaceX();
+  __spaceY = source->getSpaceY();
+  __spaceZ = source->getSpaceZ();
+  __origin = source->getOrigin();
+  __direction = source->getDirection();
+
+}
+
+
+//
 // destructor
 //
 template <class T, unsigned int VImageDimension >
@@ -224,7 +255,6 @@ T VectorImage< T, VImageDimension>::computeSquareNorm()
 
   return dSquareNorm;
 }
-
 
 //
 // computeInnerProduct
