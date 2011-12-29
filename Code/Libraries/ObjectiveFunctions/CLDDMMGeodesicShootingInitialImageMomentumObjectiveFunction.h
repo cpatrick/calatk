@@ -97,6 +97,8 @@ private:
     VectorFieldPointerType m_ptrMapIn; // map for the numerical solution
     VectorFieldPointerType m_ptrMapOut; // map for the numerical solution
     VectorFieldPointerType m_ptrMapTmp; // map for the numerical solution
+    VectorFieldPointerType m_ptrMapIdentity; // stores the identity map
+    VectorFieldPointerType m_ptrMapIncremental; // stores the incremental map for the source terms of the adjoint PDEs
 
     VectorImagePointerType ptrInitialMomentum; // initial momentum
     VectorImagePointerType ptrInitialImage; // initial image
@@ -115,14 +117,17 @@ private:
     VectorFieldPointerType m_ptrTmpField;
     VectorFieldPointerType m_ptrTmpFieldConv;
     VectorImagePointerType m_ptrTmpScalarImage;
+    VectorImagePointerType m_ptrTmpImage;
+
     VectorImagePointerType m_ptrDI;
     VectorImagePointerType m_ptrDP;
 
     VectorPointerToVectorImagePointerType m_ptrI; // image
     VectorPointerToVectorImagePointerType m_ptrP; // momentum
-    VectorPointerToVectorImagePointerType m_ptrLambdaI; // adjoint 1
-    VectorPointerToVectorImagePointerType m_ptrLambdaP; // adjoint 2
-    VectorPointerToVectorFieldPointerType m_ptrLambdaV; // adjoint 3
+
+    VectorImagePointerType m_ptrCurrentLambdaI; // adjoint 1
+    VectorImagePointerType m_ptrCurrentLambdaP; // adjoint 2
+    VectorFieldPointerType m_ptrCurrentLambdaV; // adjoint 3
 
     VectorPointerToVectorFieldPointerType m_ptrVelocityField;
 
