@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -32,7 +32,7 @@ class CStateSpatioTemporalVelocityField : public CStateImageDomain< T, VImageDim
 {
 public:
 
-  /** some useful typedefs */
+  /* some useful typedefs */
 
   typedef CStateImageDomain< T, VImageDimension, TResampler > Superclass;
   typedef typename Superclass::TState SuperclassTState;

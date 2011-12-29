@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -41,7 +41,7 @@ class CImageManagerMultiScale : public CImageManagerFullScale< T, VImageDimensio
 {
 public:
 
-  /** Some useful typedefs */
+  /* Some useful typedefs */
 
   typedef CImageManagerFullScale< T, VImageDimension > Superclass;
   typedef CResampler< T, VImageDimension > ResamplerType;

@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -38,7 +38,7 @@ class CLDDMMGeometricMetamorphosisRegistration
 {
 public:
 
-  /** some useful typedefs */
+  /* some useful typedefs */
 
   typedef typename TState::TFloat T;
 

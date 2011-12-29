@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -70,7 +70,7 @@ class CFourierDomainKernel : public CKernel< T, VImageDimension >
 {
 public:
 
-  /** some typedefs */
+  /* some typedefs */
   
   typedef CKernel< T, VImageDimension > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;

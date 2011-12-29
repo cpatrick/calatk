@@ -36,6 +36,11 @@ FUNCTION(add_clp_application appName mainFile libraries)
 
   ADD_EXECUTABLE(${appName} ${CLP}.cxx)  
   TARGET_LINK_LIBRARIES( ${appName} CALATK ${libraries} ${ARGN} )
+ 
+  INSTALL( TARGETS ${appName} 
+    RUNTIME DESTINATION bin
+    LIBRARY DESTINATION lib
+    ARCHIVE DESTINATION lib/static)
       
     ENDIF(compile_${appName})
   
@@ -73,6 +78,11 @@ FUNCTION(add_application appName mainFile)
       # compile the program
       ADD_EXECUTABLE(${appName} ${mainFile}.cxx )
       TARGET_LINK_LIBRARIES(${appName} CALATK ${ARGN})
+
+      INSTALL( TARGETS ${appName} 
+	RUNTIME DESTINATION bin
+	LIBRARY DESTINATION lib
+	ARCHIVE DESTINATION lib/static)
       
     ENDIF(compile_${appName})
   

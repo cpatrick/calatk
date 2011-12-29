@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -34,7 +34,7 @@ class CState
 {
 public:
 
-  /** Useful typedefs and constants */
+  /* Useful typedefs and constants */
   typedef T TFloat;
   typedef TResamplerType TResampler;
   static const unsigned int VImageDimension = DIM;

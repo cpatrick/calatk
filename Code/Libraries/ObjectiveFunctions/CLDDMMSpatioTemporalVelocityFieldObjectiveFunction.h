@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -33,7 +33,7 @@ class CLDDMMSpatioTemporalVelocityFieldObjectiveFunction
 {
 public:
   
-  /** some useful typedefs */
+  /* some useful typedefs */
 
   typedef CVelocityFieldObjectiveFunction< TState > Superclass;
 

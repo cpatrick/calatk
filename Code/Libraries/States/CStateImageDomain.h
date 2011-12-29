@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -36,7 +36,7 @@ class CStateImageDomain : public CState< T, VImageDimension, TResampler >
 {
 public:
 
-  /** Some useful typedefs */
+  /* Some useful typedefs */
   typedef VectorImage< T, VImageDimension > VectorImageType;
   typedef CStateImageDomain< T, VImageDimension, TResampler > TState;
 

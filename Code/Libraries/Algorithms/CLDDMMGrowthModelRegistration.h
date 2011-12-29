@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -37,7 +37,7 @@ class CLDDMMGrowthModelRegistration
 {
 public:
 
-  /** some useful typedefs */
+  /* some useful typedefs */
   typedef CLDDMMVelocityFieldRegistration< TState > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;

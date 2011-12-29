@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -32,7 +32,7 @@ class CMetricSSD : public CMetric< T, VImageDimension >
 {
 public:
 
-  /** some typedefs */
+  /* some typedefs */
 
   typedef CMetric< T, VImageDimension > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;

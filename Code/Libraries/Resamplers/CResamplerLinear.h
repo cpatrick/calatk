@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -31,7 +31,7 @@ class CResamplerLinear : public CResampler< T, VImageDimension >
 {
 public:
 
-  /** Some useful typedefs */
+  /* Some useful typedefs */
   typedef CResampler< T, VImageDimension > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
 

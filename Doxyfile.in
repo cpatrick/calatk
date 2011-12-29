@@ -25,13 +25,13 @@ DOXYFILE_ENCODING    = UTF-8
 # The PROJECT_NAME tag is a single word (or a sequence of words surrounded 
 # by quotes) that should identify the project.
 
-PROJECT_NAME       = "Fluid Registration and Atlas Toolkit (FRAT)"
+PROJECT_NAME       = "Cross-sectional and Longitudinal Atlas Toolkit (CALATK)"
 
 # The PROJECT_NUMBER tag can be used to enter a project or revision number. 
 # This could be handy for archiving the generated documentation or 
 # if some version control system is used.
 
-PROJECT_NUMBER     = @FRAT_VERSION_MAJOR@.@FRAT_VERSION_MINOR@
+PROJECT_NUMBER     = @CALATK_VERSION_MAJOR@.@CALATK_VERSION_MINOR@
 
 # The OUTPUT_DIRECTORY tag is used to specify the (relative or absolute) 
 # base path where the generated documentation will be put. 
@@ -515,7 +515,7 @@ WARN_LOGFILE       =
 
 ########### SET PATH HERE -GH
 
-INPUT = "@CMAKE_SOURCE_DIR@/Code/Applications" "@CMAKE_SOURCE_DIR@/Code/Applications/LDDMM" "@CMAKE_SOURCE_DIR@/Code/Applications/TimeSeries" "@CMAKE_SOURCE_DIR@/Code/Applications/LongitudinalAtlasBuilder" "@CMAKE_SOURCE_DIR@/Code/Libraries/Algorithms" "@CMAKE_SOURCE_DIR@/Code/Libraries/DataStructures" "@CMAKE_SOURCE_DIR@/Code/Libraries/Utilities" "@CMAKE_SOURCE_DIR@/Code/Applications/AtlasBuilder" "@CMAKE_SOURCE_DIR@/Code/Applications/FRATUtils"
+INPUT = "@CMAKE_SOURCE_DIR@/Code/Applications" "@CMAKE_SOURCE_DIR@/Code/Applications/LDDMM" "@CMAKE_SOURCE_DIR@/Code/Applications/GeometricMetamorphosis" "@CMAKE_SOURCE_DIR@/Code/Applications/LDDMMShooting" "@CMAKE_SOURCE_DIR@/Code/Applications/AtlasBuilder" "@CMAKE_SOURCE_DIR@/Code/Libraries/Algorithms" "@CMAKE_SOURCE_DIR@/Code/Libraries/Base" "@CMAKE_SOURCE_DIR@/Code/Libraries/DataStructures" "@CMAKE_SOURCE_DIR@/Code/Libraries/Kernels" "@CMAKE_SOURCE_DIR@/Code/Libraries/Metrics" "@CMAKE_SOURCE_DIR@/Code/Libraries/Numerics" "@CMAKE_SOURCE_DIR@/Code/Libraries/ObjectiveFunctions" "@CMAKE_SOURCE_DIR@/Code/Libraries/Resamplers" "@CMAKE_SOURCE_DIR@/Code/Libraries/States" "@CMAKE_SOURCE_DIR@/Code/Libraries/Utilties" "@CMAKE_SOURCE_DIR@/Code/External/jsoncpp" "@CMAKE_SOURCE_DIR@/Code/Statistics/lstatGEE" "@CMAKE_SOURCE_DIR@/Code/Utilities"  
 
 # This tag can be used to specify the character encoding of the source files 
 # that doxygen parses. Internally doxygen uses the UTF-8 encoding, which is 

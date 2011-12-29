@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -47,7 +47,7 @@ class CEvolver : public CProcessBase
 
 public:
 
-  /** Some useful typedefs */
+  /* Some useful typedefs */
 
   typedef COneStepEvolver< T, VImageDimension >* ptrOneStepEvolverType;
   typedef VectorImage< T, VImageDimension > VectorImageType;

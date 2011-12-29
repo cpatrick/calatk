@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -216,7 +216,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeAdjointBackward()
     // compute det jacobian
     LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( m_ptrMapOut, m_ptrDeterminantOfJacobian );
     // multiply by the determinant of the Jacobian
-    (*m_ptrLambda)[iI]->multElementwise( m_ptrDeterminantOfJacobian );
+    (*m_ptrLambda)[ iI ]->multElementwise( m_ptrDeterminantOfJacobian );
 
     // for next step, copy
     m_ptrMapIn->copy( m_ptrMapOut );
@@ -226,6 +226,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeAdjointBackward()
       {
       // reset the current adjoint to the adjoint at current time point
       m_ptrCurrentLambdaEnd->copy( (*m_ptrLambda)[ iI ] );
+
       // reset the map to flow backwards, because we update the current adjoint
       LDDMMUtils< T, TState::VImageDimension >::identityMap( m_ptrMapIn );
       
@@ -233,7 +234,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeAdjointBackward()
       uiNrOfMeasuredImagesAtTimePoint = this->m_vecTimeDiscretization[ iI ].vecMeasurementImages.size();
       for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM ) 
         {
-        this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, this->m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecEstimatedImages[0] , this->m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecMeasurementImages[ iM ] );
+        this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, this->m_vecTimeDiscretization[ iI ].vecEstimatedImages[0] , this->m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ] );
         m_ptrCurrentAdjointDifference->multConst( 1.0/m_SigmaSqr );
         m_ptrCurrentLambdaEnd->addCellwise( m_ptrCurrentAdjointDifference );
         }

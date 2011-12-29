@@ -1,3 +1,22 @@
+/*
+*
+*  Copyright 2011 by the CALATK development team
+*
+*   Licensed under the Apache License, Version 2.0 (the "License");
+*   you may not use this file except in compliance with the License.
+*   You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+*   Unless required by applicable law or agreed to in writing, software
+*   distributed under the License is distributed on an "AS IS" BASIS,
+*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*   See the License for the specific language governing permissions and
+*   limitations under the License.
+*
+*
+*/
+
 #ifndef C_LDDMM_GEODESIC_SHOOTING_INITIAL_IMAGE_MOMENTUM_OBJECTIVE_FUNCTION_TXX
 #define C_LDDMM_GEODESIC_SHOOTING_INITIAL_IMAGE_MOMENTUM_OBJECTIVE_FUNCTION_TXX
 
@@ -40,6 +59,9 @@ CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::CLDDMMGeo
     m_ptrTmpFieldConv = NULL;
     m_ptrTmpScalarImage = NULL;
 
+    m_ptrDI = NULL;
+    m_ptrDP = NULL;
+
 }
 
 template< class TState >
@@ -68,6 +90,8 @@ void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::Dele
     SaveDelete< VectorFieldPointerType >::Pointer( m_ptrTmpField );
     SaveDelete< VectorFieldPointerType >::Pointer( m_ptrTmpFieldConv );
     SaveDelete< VectorImagePointerType >::Pointer( m_ptrTmpScalarImage );
+    SaveDelete< VectorImagePointerType >::Pointer( m_ptrDI );
+    SaveDelete< VectorImagePointerType >::Pointer( m_ptrDP );
 
     m_vecMeasurementTimepoints.clear();
     m_vecTimeDiscretization.clear();
@@ -199,13 +223,13 @@ void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState>::Creat
       // bookkeeping to simplify metric computations
       m_vecTimeDiscretization[ iI ].vecEstimatedImages.push_back( ptrCurrentVectorImage );
 
-      ptrCurrentVectorImage = new VectorImageType(pImInfo->pIm);
+      ptrCurrentVectorImage = new VectorImageType( pImInfo->pIm );
       m_ptrP->push_back( ptrCurrentVectorImage );
 
-      ptrCurrentVectorImage = new VectorImageType(pImInfo->pIm);
+      ptrCurrentVectorImage = new VectorImageType( pImInfo->pIm );
       m_ptrLambdaI->push_back( ptrCurrentVectorImage );
 
-      ptrCurrentVectorImage = new VectorImageType(pImInfo->pIm);
+      ptrCurrentVectorImage = new VectorImageType( pImInfo->pIm );
       m_ptrLambdaP->push_back( ptrCurrentVectorImage );
 
       }
@@ -221,6 +245,9 @@ void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState>::Creat
     m_ptrTmpFieldConv = new VectorFieldType( pImInfo->pIm );
 
     m_ptrTmpScalarImage = new VectorImageType( pImInfo->pIm, 0.0, 1 );
+
+    m_ptrDI = new VectorImageType( pImInfo->pIm );
+    m_ptrDP = new VectorImageType( pImInfo->pIm );
 
     // storage for the adjoint
 
@@ -441,7 +468,7 @@ void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState>::Compu
     * Compute the adjoint to the velocity
     * Computes
     \f[
-      \lambda^v = p\nabla^\lambda^p-\lambda^I\nabla I
+      \lambda^v = p\nabla\lambda^p-\lambda^I\nabla I
     \f]
     */
 
@@ -515,97 +542,108 @@ void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::Comp
     */
 
     unsigned int uiNrOfTimePoints = m_vecTimeDiscretization.size();
-    unsigned int uiNrOfMeasuredImagesAtTimePoint = 0;
+    unsigned int uiNrOfMeasuredImagesAtTimePoint;
     unsigned int dim=m_ptrMapIn->getDim();
 
     uiNrOfMeasuredImagesAtTimePoint = m_vecTimeDiscretization[ uiNrOfTimePoints - 1].vecMeasurementImages.size();
-    VectorImagePointerType di = new VectorImageType(m_ptrMapIn);
-    VectorImagePointerType dp = new VectorImageType(m_ptrMapIn);
-    VectorFieldPointerType tmpFieldI = new VectorFieldType(m_ptrMapIn);
-    VectorFieldPointerType tmpFieldP = new VectorFieldType(m_ptrMapIn);
-    VectorImagePointerType tmpImage = new VectorImageType(m_ptrMapIn);
 
     // set the final condition
 
     m_ptrCurrentLambdaPEnd->setConst( 0 );
     m_ptrCurrentLambdaIEnd->setConst( 0 );
 
+    // create the final condition for the image adjoint \lambda^I
+    // TODO: Check that this final condition has the correct sign
+
     for (unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; iM++)
     {
-
-      this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointIDifference, m_vecTimeDiscretization[uiNrOfTimePoints-1].vecEstimatedImages[ 0 ], m_vecTimeDiscretization[uiNrOfTimePoints - 1].vecMeasurementImages[iM] );
-        //m_ptrCurrentAdjointIDifference->multConst(m_vecTimeDiscretization[uiNrOfTimePoints-1].vecWeights[iM] );
-        m_ptrCurrentLambdaIEnd->addCellwise(m_ptrCurrentAdjointIDifference );
+      this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointIDifference, m_vecTimeDiscretization[ uiNrOfTimePoints-1].vecEstimatedImages[ 0 ], m_vecTimeDiscretization[ uiNrOfTimePoints - 1].vecMeasurementImages[iM] );
+      m_ptrCurrentAdjointIDifference->multConst( -m_vecTimeDiscretization[uiNrOfTimePoints-1].vecWeights[iM] );
+      m_ptrCurrentLambdaIEnd->addCellwise(m_ptrCurrentAdjointIDifference );
     }
 
-    (*m_ptrLambdaI)[uiNrOfTimePoints-1]->copy( m_ptrCurrentLambdaIEnd);
-    (*m_ptrLambdaP)[uiNrOfTimePoints-1]->copy( m_ptrCurrentLambdaPEnd);
+    // initialize the values for the adjoints
+
+    (*m_ptrLambdaI)[ uiNrOfTimePoints-1 ]->copy( m_ptrCurrentLambdaIEnd );
+    (*m_ptrLambdaP)[ uiNrOfTimePoints-1 ]->copy( m_ptrCurrentLambdaPEnd );
+
+    // initialize the map used to flow backwards
 
     LDDMMUtils< T, TState::VImageDimension>::identityMap( m_ptrMapIn );
+
+    // TODO: FIXME FROM HERE
 
     for ( int iI = (int)m_vecTimeDiscretization.size()-1-1; iI>=0; iI--)
     {
         std::cout << iI << std::endl;
 
-        ComputeVelocityAdjoint((*m_ptrI)[iI+1], (*m_ptrP)[iI+1], (*m_ptrLambdaI)[iI+1], (*m_ptrLambdaP)[iI+1], (*m_ptrLambdaV)[iI]);
-        (*m_ptrVelocityField)[iI]->multConst(-1);
+        // compute the adjoint velocity at time point i (using values at i+1)
+        ComputeVelocityAdjoint( (*m_ptrI)[ iI+1 ], (*m_ptrP)[ iI+1 ], (*m_ptrLambdaI)[ iI+1 ], (*m_ptrLambdaP)[ iI+1 ], (*m_ptrLambdaV)[ iI ]);
 
-        //update the map
-        this->m_ptrEvolver->SolveForward( (*m_ptrVelocityField)[iI], m_ptrMapIn, m_ptrMapOut, m_ptrMapTmp, this->m_vecTimeIncrements[iI] );
+        // use the velocity field computed in the forward direction, but negate it
+        m_ptrTmpField->copy( (*m_ptrVelocityField)[ iI ] );
+        m_ptrTmpField->multConst(-1);
 
-        //compute di=-div(p .* lambda_v) and dp=\nabla I .* lambda_v
+        // update the map
+        this->m_ptrEvolver->SolveForward( m_ptrTmpField, m_ptrMapIn, m_ptrMapOut, m_ptrMapTmp, this->m_vecTimeIncrements[iI] );
 
-        di->setConst(0);
-        dp->setConst(0);
+        // compute di=-div(p K*lambda_v) and dp= \nabla I^T ( K* lambda_v )
 
-        tmpFieldI->copy((*m_ptrLambdaV)[iI]);
+        m_ptrDI->setConst( 0 );
+        m_ptrDP->setConst( 0 );
+
+        //tmpFieldI->copy( (*m_ptrLambdaV)[iI] );
 
         for (unsigned int iD=0; iD<dim; iD++)
         {
-            VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient((*m_ptrI)[iI+1], iD, tmpFieldP);
+            //VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient((*m_ptrI)[iI+1], iD, tmpFieldP);
             // TODO: put back in
             //VectorFieldUtils< T, TState::VImageDimension >::multiplyVectorByVector((*m_ptrLambdaV)[iI],  tmpFieldP, iD, dp);
 
-            VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace((*m_ptrLambdaV)[iI], iD, tmpFieldI);
+            //VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace((*m_ptrLambdaV)[iI], iD, tmpFieldI);
             // TODO: put back in
             //VectorFieldUtils< T, TState::VImageDimension >::computeDivergence(tmpFieldI, iD, di);
 
         }
-        dp->multConst(-1);
 
-        di->multConst(m_vecTimeIncrements[iI]);
-        dp->multConst(m_vecTimeIncrements[iI]);
+        m_ptrDP->multConst(-1);
 
-        di->addCellwise((*m_ptrLambdaI)[iI+1]);
-        dp->addCellwise((*m_ptrLambdaP)[iI+1]);
+        m_ptrDI->multConst( m_vecTimeIncrements[iI] );
+        m_ptrDP->multConst( m_vecTimeIncrements[iI] );
 
-        LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapOut, di,  (*m_ptrLambdaI)[iI]);
-        LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapOut, dp,  (*m_ptrLambdaP)[iI]);
+        m_ptrDI->addCellwise( (*m_ptrLambdaI)[iI+1] );
+        m_ptrDP->addCellwise( (*m_ptrLambdaP)[iI+1] );
+
+        LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapOut, m_ptrDI,  (*m_ptrLambdaI)[ iI ] );
+        LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapOut, m_ptrDP,  (*m_ptrLambdaP)[ iI ] );
 
         LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( m_ptrMapOut, m_ptrDeterminantOfJacobian );
-        (*m_ptrLambdaI)[iI]->multCellwise(m_ptrDeterminantOfJacobian);
+        (*m_ptrLambdaI)[iI]->multCellwise( m_ptrDeterminantOfJacobian );
+
+        // for next step, copy
+        m_ptrMapIn->copy( m_ptrMapOut );
 
         // update if we need to jump at the current time-point
-        if (m_vecTimeDiscretization[iI].bIsMeasurementPoint)
+        if ( m_vecTimeDiscretization[ iI ].bIsMeasurementPoint )
         {
-            m_ptrCurrentLambdaIEnd->copy((*m_ptrLambdaI)[iI]);
-            uiNrOfMeasuredImagesAtTimePoint = m_vecTimeDiscretization[iI].vecMeasurementImages.size();
-            for (unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; iM++)
-            {
-              this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointIDifference, m_vecTimeDiscretization[uiNrOfTimePoints-1].vecEstimatedImages[ 0 ], m_vecTimeDiscretization[uiNrOfTimePoints - 1].vecMeasurementImages[iM]);
-              // TODO: put back in
-              //m_ptrCurrentAdjointIDifference->multConst(m_vecTimeDiscretization[uiNrOfTimePoints-1].weight[iM]);
-                m_ptrCurrentLambdaIEnd->addCellwise(m_ptrCurrentAdjointIDifference );
-            }
-            (*m_ptrLambdaI)[iI]->copy(m_ptrCurrentLambdaIEnd);
+          // reset the current adjoint to the adjoint at current time point
+          m_ptrCurrentLambdaIEnd->copy( (*m_ptrLambdaI)[iI] );
+
+          // reset the map to flow backwards, because we update the current adjoint
+          LDDMMUtils< T, TState::VImageDimension >::identityMap( m_ptrMapIn );
+
+          // account for all possible jumps of the adjoint at this time-point
+          uiNrOfMeasuredImagesAtTimePoint = m_vecTimeDiscretization[ iI ].vecMeasurementImages.size();
+          for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM )
+          {
+            this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointIDifference, m_vecTimeDiscretization[ iI ].vecEstimatedImages[ 0 ], m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ] );
+            m_ptrCurrentAdjointIDifference->multConst( m_vecTimeDiscretization[ iI].vecWeights[ iM ] );
+            m_ptrCurrentLambdaIEnd->addCellwise( m_ptrCurrentAdjointIDifference );
+          }
+          (*m_ptrLambdaI)[iI]->copy( m_ptrCurrentLambdaIEnd );
         }
 
     }
-    delete di;
-    delete dp;
-    delete tmpFieldI;
-    delete tmpFieldP;
-    delete tmpImage;
 }
 
 template < class TState >
@@ -622,7 +660,7 @@ void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState>::Compu
       \f]
       *
       \f[
-        \nabla_{p(t_0)}E = -\lamda^p(t_0) + 2\nabla I(t_0)^T K* ( p(t_0)\nabla I(t_0) )
+        \nabla_{p(t_0)}E = -\lambda^p(t_0) + 2\nabla I(t_0)^T K* ( p(t_0)\nabla I(t_0) )
       \f]
       */
 

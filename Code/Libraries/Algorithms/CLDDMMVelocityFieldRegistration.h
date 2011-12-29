@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -47,7 +47,7 @@ class CLDDMMVelocityFieldRegistration
 {
 public:
 
-  /** some useful typedefs */
+  /* some useful typedefs */
 
   typedef CAlgorithm< TState > Superclass;
 

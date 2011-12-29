@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -31,7 +31,7 @@ class CLDDMMGrowthModelObjectiveFunction
 {
 public:
 
-  /** some useful typedefs */
+  /* some useful typedefs */
 
   typedef CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState > Superclass;
 
