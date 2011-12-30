@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -32,10 +32,10 @@ class CStateSpatioTemporalVelocityField : public CStateImageDomain< T, VImageDim
 {
 public:
 
-  /** some useful typedefs */
+  /* some useful typedefs */
 
   typedef CStateImageDomain< T, VImageDimension, TResampler > Superclass;
-  typedef Superclass SuperclassTState;
+  typedef typename Superclass::TState SuperclassTState;
   typedef CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler > TState;
   typedef typename Superclass::VectorImageType VectorImageType;
   
@@ -77,17 +77,17 @@ public:
    */
   CStateSpatioTemporalVelocityField & operator=( const CStateSpatioTemporalVelocityField & p );
 
-  CStateSpatioTemporalVelocityField & operator+=(const CStateSpatioTemporalVelocityField & p );
+  CStateSpatioTemporalVelocityField & operator+=( const CStateSpatioTemporalVelocityField & p );
 
-  CStateSpatioTemporalVelocityField & operator-=(const CStateSpatioTemporalVelocityField & p );
+  CStateSpatioTemporalVelocityField & operator-=( const CStateSpatioTemporalVelocityField & p );
 
-  CStateSpatioTemporalVelocityField & operator*=(const T & p );
+  CStateSpatioTemporalVelocityField & operator*=( const T & p );
 
-  CStateSpatioTemporalVelocityField operator+(const CStateSpatioTemporalVelocityField & p ) const;
+  CStateSpatioTemporalVelocityField operator+( const CStateSpatioTemporalVelocityField & p ) const;
 
-  CStateSpatioTemporalVelocityField operator-(const CStateSpatioTemporalVelocityField & p ) const;
+  CStateSpatioTemporalVelocityField operator-( const CStateSpatioTemporalVelocityField & p ) const;
 
-  CStateSpatioTemporalVelocityField operator*(const T & p ) const;
+  CStateSpatioTemporalVelocityField operator*( const T & p ) const;
 
   ConstVectorPointerToVectorFieldPointerType GetVectorPointerToVectorFieldPointer() const;
 

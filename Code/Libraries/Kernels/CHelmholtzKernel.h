@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -38,6 +38,8 @@ public:
 
   typedef CFourierDomainKernel< T, VImageDimension > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
+  typedef typename Superclass::VectorImageType2D VectorImageType2D;
+  typedef typename Superclass::VectorImageType3D VectorImageType3D;
 
   CHelmholtzKernel();
   ~CHelmholtzKernel();
@@ -54,10 +56,8 @@ public:
 
 protected:
 
-  void ComputeKernelAndInverseKernel( VectorImageType* pVecImageGraft );
-
-  void ComputeKernelAndInverseKernel2D( VectorImageType* pVecImageGraft );
-  void ComputeKernelAndInverseKernel3D( VectorImageType* pVecImageGraft );
+  void ComputeKernelAndInverseKernel( VectorImageType2D* pVecImageGraft );
+  void ComputeKernelAndInverseKernel( VectorImageType3D* pVecImageGraft );
 
   void ConfirmKernelsNeedToBeComputed();
 

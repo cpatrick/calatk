@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -20,10 +20,13 @@
 #ifndef LDDMM_UTILS_H
 #define LDDMM_UTILS_H
 
+#include "CALATKCommon.h"
+#include "CImageManager.h"
 #include "VectorImage.h"
 #include "VectorField.h"
 #include "VectorImageUtils.h"
 #include "VectorFieldUtils.h"
+#include "CEvolver.h"
 
 #include <stdexcept>
 #include <cmath>
@@ -50,7 +53,15 @@ public:
 
   typedef VectorImage< T, VImageDimension > VectorImageType;
   typedef VectorField< T, VImageDimension > VectorFieldType;
-  
+
+  typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;
+  typedef CImageManager< T, VImageDimension > ImageManagerType;
+  typedef typename ImageManagerType::SImageInformation SImageInformation;
+  typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
+
+  typedef CEvolver< T, VImageDimension > EvolverType;
+
+
   /*********************
    * Wrapper Functions *
    *********************/
@@ -80,13 +91,44 @@ public:
   static void computeDeterminantOfJacobian(const VectorFieldType* fld, VectorImageType* imOut);
   
   /**
-   * Function that computes the deconvolution matrix (2D/3D)
-   *
-   * @param I0 - input image.  Used to get size only
-   * @param alpha - alpha lddm parameter
-   * @param gamma - gamma lddm parameter
-   */
-  static VectorImageType* deconvolutionMatrix(VectorImageType* I0, T alpha, T gamma);
+    * Function that creates a time discretization given a set of measurement timepoints
+    *
+    * @param vecTimePointData - vector which holds the timepoints of the measurements
+    * @param vecTimeDiscretization - return vector containing the computed time discretization
+    * @param vecTimeIncrements - return vector containing the time increments of the discretization
+    * @param dNumberOfDiscretizationVolumesPerUnitTime - number of desired time discretization steps per unit time
+    */
+  static void CreateTimeDiscretization( const std::vector< STimePoint >& vecTimePointData, std::vector< STimePoint >& vecTimeDiscretization, std::vector< T >& vecTimeIncrements, T dNumberOfDiscretizationVolumesPerUnitTime );
+
+  /**
+    * Function that teases out the timepoints for a particular subject from an image manager
+    * and returns a vector of this time point information which can be used to compute a time-discretization for LDDMM
+    *
+    * @param pImageMangager - pointer to the image manager
+    * @param uiSubjectIndex - index of subject of which the timepoints should be extracted
+    * @param vecTimePointData - resulting vector of timepoint data
+    */
+  static void DetermineTimeSeriesTimePointData( ImageManagerType* pImageManager, unsigned int uiSubjectIndex, std::vector< STimePoint >& vecTimePointData );
+
+  /**
+    * Function which computes a map between two time-points given a spatio-temporal velocity field.
+    * Here, the assumption is that dTimeFrom<dTimeTo.
+    *
+    * @return ptrMap - resulting map
+    * @param dTimeFrom - beginning time-point
+    * @param dTimeTo - ending time-point
+    * @param vecTimeDiscretization - vector which holds the temporal discretization information (t's)
+    * @param ptrSpatioTemporalVelocityField - pointer to the spatio-temporal velocity field
+    * @param ptrEvolver - pointer to the evolver which is used to advect the map (during the computations) to obtain the result
+    */
+  static void GetMapFromToFromSpatioTemporalVelocityField(
+      VectorFieldType* ptrMap,
+      T dTimeFrom,
+      T dTimeTo,
+      const std::vector< STimePoint >& vecTimeDiscretization,
+      const std::vector< VectorFieldType* >* ptrSpatioTemporalVelocityField,
+      EvolverType* ptrEvolver );
+
 
 };
 

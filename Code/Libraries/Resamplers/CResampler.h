@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -35,7 +35,7 @@ class CResampler : public CProcessBase
 {
 public:
 
-  /** Some useful typedefs */
+  /* Some useful typedefs */
   typedef VectorImage< T, VImageDimension > VectorImageType;
   typedef CProcessBase Superclass;
 

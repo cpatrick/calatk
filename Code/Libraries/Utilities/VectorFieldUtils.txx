@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -90,7 +90,7 @@ T VectorFieldUtils< T, VImageDimension >::absMaxAll( const VectorFieldType* in)
 // identityMap, 2D
 //
 template <class T, unsigned int VImageDimension >
-void VectorFieldUtils< T, VImageDimension >::identityMap2D(VectorFieldType* fld)
+void VectorFieldUtils< T, VImageDimension >::identityMap(VectorFieldType2D* fld)
 {
 
   // assumes origin (0,0), pixel centered
@@ -128,7 +128,7 @@ void VectorFieldUtils< T, VImageDimension >::identityMap2D(VectorFieldType* fld)
 // identityMap, 3D
 //
 template <class T, unsigned int VImageDimension >
-void VectorFieldUtils< T, VImageDimension >::identityMap3D(VectorFieldType* fld)
+void VectorFieldUtils< T, VImageDimension >::identityMap(VectorFieldType3D* fld)
 {
 
   unsigned int szX = fld->getSizeX();
@@ -172,29 +172,10 @@ void VectorFieldUtils< T, VImageDimension >::identityMap3D(VectorFieldType* fld)
 }
 
 //
-// identityMap, 2D/3D
-//
-template <class T, unsigned int VImageDimension >
-void VectorFieldUtils< T, VImageDimension >::identityMap(VectorFieldType* fld)
-{
-  switch ( VImageDimension )
-    {
-    case 2:
-      identityMap2D( fld );
-      break;
-    case 3:
-      identityMap3D( fld );
-      break;
-    default:
-      throw std::runtime_error("Dimension not supported for construction of identity map." );
-    }
-}
-
-//
 // applyMap, 2D
 //
 template <class T, unsigned int VImageDimension >
-void VectorFieldUtils< T, VImageDimension >::applyMap2D( const VectorFieldType* map, const VectorImageType* imIn, VectorImageType* imOut)
+void VectorFieldUtils< T, VImageDimension >::applyMap( const VectorFieldType2D* map, const VectorImageType2D* imIn, VectorImageType2D* imOut)
 {
 
 #ifdef DEBUG
@@ -217,7 +198,7 @@ void VectorFieldUtils< T, VImageDimension >::applyMap2D( const VectorFieldType* 
 // applyMap, 3D
 //
 template <class T, unsigned int VImageDimension >
-void VectorFieldUtils< T, VImageDimension >::applyMap3D( const VectorFieldType* map, const VectorImageType* imIn, VectorImageType* imOut)
+void VectorFieldUtils< T, VImageDimension >::applyMap( const VectorFieldType3D* map, const VectorImageType3D* imIn, VectorImageType3D* imOut)
 {
 
 #ifdef DEBUG
@@ -238,29 +219,10 @@ void VectorFieldUtils< T, VImageDimension >::applyMap3D( const VectorFieldType* 
 }
 
 //
-// applyMap, 2D/3D
-//
-template <class T, unsigned int VImageDimension >
-void VectorFieldUtils< T, VImageDimension >::applyMap( const VectorFieldType* map, const VectorImageType* imIn, VectorImageType* imOut)
-{
-  switch ( VImageDimension )
-    {
-    case 2:
-      applyMap2D( map, imIn, imOut );
-      break;
-    case 3:
-      applyMap3D( map, imIn, imOut );
-      break;
-    default:
-      throw std::runtime_error("Dimension not supported for map application.");
-    }
-}
-
-//
 // computeDeterminantOfJacobian, 2D
 //
 template <class T, unsigned int VImageDimension >
-void VectorFieldUtils< T, VImageDimension >::computeDeterminantOfJacobian2D( const VectorFieldType* fld, VectorImageType* imOut)
+void VectorFieldUtils< T, VImageDimension >::computeDeterminantOfJacobian( const VectorFieldType2D* fld, VectorImageType2D* imOut)
 {
 
   // set up for the loop
@@ -340,7 +302,7 @@ void VectorFieldUtils< T, VImageDimension >::computeDeterminantOfJacobian2D( con
 // computeDeterminantOfJacobian, 3D
 //
 template <class T, unsigned int VImageDimension >
-void VectorFieldUtils< T, VImageDimension >::computeDeterminantOfJacobian3D( const VectorFieldType* fld, VectorImageType *imOut )
+void VectorFieldUtils< T, VImageDimension >::computeDeterminantOfJacobian( const VectorFieldType3D* fld, VectorImageType3D *imOut )
 {
   
   // set up for the loop  
@@ -458,29 +420,170 @@ void VectorFieldUtils< T, VImageDimension >::computeDeterminantOfJacobian3D( con
 }
 
 //
-// computeDeterminantOfJacobian, 2D/3D
+// computeDivergence, 2D
 //
-template <class T, unsigned int VImageDimension >
-void VectorFieldUtils< T, VImageDimension >::computeDeterminantOfJacobian( const VectorFieldType* fld, VectorImageType* imOut )
+template < class T, unsigned int VImageDimension >
+void VectorFieldUtils< T, VImageDimension >::computeDivergence( const VectorFieldType2D* fld, VectorImageType2D* imOut )
 {
-  switch ( VImageDimension )
+
+  // set up for the loop
+  unsigned int szX = fld->getSizeX();
+  unsigned int szY = fld->getSizeY();
+
+  T dx = fld->getSpaceX();
+  T dy = fld->getSpaceY();
+
+  VectorImageType* D = imOut;
+
+  // compute the divergence for each pixel
+  for (unsigned int y = 0; y < szY; ++y)
+  {
+    for (unsigned int x = 0; x < szX; ++x)
     {
-    case 2:
-      computeDeterminantOfJacobian2D( fld, imOut );
-      break;
-    case 3:
-      computeDeterminantOfJacobian3D( fld, imOut );
-      break;
-    default:
-      throw std::runtime_error("Dimension not supported for computation of determinant of Jacobian.");
+
+      T fxDX, fyDY;
+
+      // X derivatives (handeling boundary cases)
+      if (szX == 1)
+        {
+        fxDX = 0;
+        }
+      else if (x == 0)
+        {
+        fxDX = (fld->getX(x+1,y) - fld->getX(x,y))/dx;
+        }
+      else if (x == szX-1)
+        {
+        fxDX = (fld->getX(x,y) - fld->getX(x-1,y))/dx;
+        }
+      else
+        {
+        fxDX = (fld->getX(x+1,y) - fld->getX(x-1,y))/(2*dx);
+        }
+
+      // Y derivatives (handeling boundary cases)
+      if (szY == 1)
+        {
+        fyDY = 0;
+        }
+      else if (y == 0)
+        {
+        fyDY = (fld->getY(x,y+1) - fld->getY(x,y))/dy;
+        }
+      else if (y == szY-1)
+        {
+        fyDY = (fld->getY(x,y) - fld->getY(x,y-1))/dy;
+        }
+      else
+        {
+        fyDY = (fld->getY(x,y+1) - fld->getY(x,y-1))/(2*dy);
+        }
+
+      // compute and save the divergence
+      D->setValue(x,y,0, fxDX + fyDY );
+
     }
+  }
+}
+
+//
+// computeDivergence, 3D
+//
+template < class T, unsigned int VImageDimension >
+void VectorFieldUtils< T, VImageDimension >::computeDivergence( const VectorFieldType3D* fld, VectorImageType3D* imOut )
+{
+
+  // set up for the loop
+  unsigned int szX = fld->getSizeX();
+  unsigned int szY = fld->getSizeY();
+  unsigned int szZ = fld->getSizeZ();
+
+  T dx = fld->getSpaceX();
+  T dy = fld->getSpaceY();
+  T dz = fld->getSpaceZ();
+
+  VectorImageType* D = imOut;
+
+  // compute D for each pixel
+  for (unsigned int z = 0; z < szZ; ++z)
+    {
+    for (unsigned int y = 0; y < szY; ++y)
+      {
+      for (unsigned int x = 0; x < szX; ++x)
+        {
+
+        T fxDX;
+        T fyDY;
+        T fzDZ;
+
+        // X derivatives (handeling boundary cases)
+        if (szX == 1)
+          {
+          fxDX = 0;
+          }
+        else if (x == 0)
+          {
+          fxDX = (fld->getX(x+1,y,z) - fld->getX(x,y,z))/dx;
+          }
+        else if (x == szX-1)
+          {
+          fxDX = (fld->getX(x,y,z) - fld->getX(x-1,y,z))/dx;
+          }
+        else
+          {
+          fxDX = (fld->getX(x+1,y,z) - fld->getX(x-1,y,z))/(2*dx);
+          }
+
+        // Y derivatives (handeling boundary cases)
+        if (szY == 1)
+          {
+          fyDY = 0;
+          }
+        else if (y == 0)
+          {
+          fyDY = (fld->getY(x,y+1,z) - fld->getY(x,y,z))/dy;
+          }
+        else if (y == szY-1)
+          {
+          fyDY = (fld->getY(x,y,z) - fld->getY(x,y-1,z))/dy;
+          }
+        else
+          {
+          fyDY = (fld->getY(x,y+1,z) - fld->getY(x,y-1,z))/(2*dy);
+          }
+
+        // Z derivatives (handeling boundary cases)
+        if (szZ == 1)
+          {
+          fzDZ = 0;
+          }
+        else if (z == 0)
+          {
+          fzDZ = (fld->getZ(x,y,z+1) - fld->getZ(x,y,z))/dz;
+          }
+        else if (z == szZ-1)
+          {
+          fzDZ = (fld->getZ(x,y,z) - fld->getZ(x,y,z-1))/dz;
+          }
+        else
+          {
+          fzDZ = (fld->getZ(x,y,z+1) - fld->getZ(x,y,z-1))/(2*dz);
+          }
+
+        // compute and the divergence
+        D->setValue(x,y,z,0, fxDX + fyDY + fzDZ );
+
+      }
+    }
+  }
+
 }
 
 //
 // computeCentralGradient, 2D
 //
 template <class T, unsigned int VImageDimension >
-void VectorFieldUtils< T, VImageDimension >::computeCentralGradient2D( const VectorImageType* imIn, unsigned int d, VectorFieldType* fieldOut )
+void VectorFieldUtils< T, VImageDimension >::computeCentralGradient( const VectorImageType2D* imIn, unsigned int d, VectorFieldType2D* fieldOut )
 {
 
   unsigned int szX = imIn->getSizeX();
@@ -543,7 +646,7 @@ void VectorFieldUtils< T, VImageDimension >::computeCentralGradient2D( const Vec
 // computeCentralGradient, 3D
 //
 template <class T, unsigned int VImageDimension >
-void VectorFieldUtils< T, VImageDimension >::computeCentralGradient3D( const VectorImageType* imIn, unsigned int d, VectorFieldType* fieldOut )
+void VectorFieldUtils< T, VImageDimension >::computeCentralGradient( const VectorImageType3D* imIn, unsigned int d, VectorFieldType3D* fieldOut )
 {
 
   unsigned int szX = imIn->getSizeX();
@@ -627,25 +730,6 @@ void VectorFieldUtils< T, VImageDimension >::computeCentralGradient3D( const Vec
 
 }
 
-//
-// computeCentralGradient, 2D/3D
-//
-template <class T, unsigned int VImageDimension >
-void VectorFieldUtils< T, VImageDimension >::computeCentralGradient( const VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldOut )
-{
-  switch ( VImageDimension )
-    {
-    case 2:
-      computeCentralGradient2D( imIn, dim, fieldOut );
-      break;
-    case 3:
-      computeCentralGradient3D( imIn, dim, fieldOut );
-      break;
-    default:
-      throw std::runtime_error("Dimension not supported for computation of gradient.");
-    }
-}
-
 /////////////////////////////
 // ITK Interface Functions //
 /////////////////////////////
@@ -654,7 +738,7 @@ void VectorFieldUtils< T, VImageDimension >::computeCentralGradient( const Vecto
 // map to ITK, 2D
 //
 template <class T, unsigned int VImageDimension >
-typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils< T, VImageDimension >::mapToITKDeformationField2D(VectorFieldType* inMap)
+typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils< T, VImageDimension >::mapToITKDeformationField(VectorFieldType2D* inMap)
 {
 
   unsigned int szX = inMap->getSizeX();
@@ -724,7 +808,7 @@ typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils<
 // map to ITK, 3D
 //
 template <class T, unsigned int VImageDimension >
-typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils< T, VImageDimension >::mapToITKDeformationField3D(VectorFieldType* inMap)
+typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils< T, VImageDimension >::mapToITKDeformationField(VectorFieldType3D* inMap)
 {
   
   unsigned int szX = inMap->getSizeX();
@@ -798,25 +882,6 @@ typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils<
   // return
   return outField;
   
-}
-
-//
-// map to ITK, 2D/3D
-//
-template <class T, unsigned int VImageDimension >
-typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils< T, VImageDimension >::mapToITKDeformationField(VectorFieldType* inMap)
-{
-  switch ( VImageDimension )
-    {
-    case 2:
-      mapToITKDeformationField2D( inMap);
-      break;
-    case 3:
-      mapToITKDeformationField3D( inMap);
-      break;
-    default:
-      throw std::runtime_error("Dimension not supported for computation of map to itk.");
-    }
 }
 
 //

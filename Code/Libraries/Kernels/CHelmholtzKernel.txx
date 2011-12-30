@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -60,7 +60,7 @@ void CHelmholtzKernel< T, VImageDimension >::SetGamma( T dGamma )
 }
 
 template <class T, unsigned int VImageDimension >
-void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel2D( VectorImageType* pVecImageGraft )
+void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType2D* pVecImageGraft )
 {
   unsigned int szX = pVecImageGraft->getSizeX();
   unsigned int szY = pVecImageGraft->getSizeY();
@@ -82,15 +82,15 @@ void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel2D( Ve
       T val = m_Gamma + 2*m_Alpha*( 
         (1 - std::cos(2*pi*f1Eff*dx))/(dx*dx) + 
         (1 - std::cos(2*pi*f2Eff*dy))/(dy*dy) );
-      this->m_ptrL->setValue(x,y,0, val*val );
-      this->m_ptrLInv->setValue(x,y,0,1.0/(val*val) );
+      this->m_ptrLInv->setValue(x,y,0, val*val );
+      this->m_ptrL->setValue(x,y,0,1.0/(val*val) );
       }
     }
 
 }
 
 template <class T, unsigned int VImageDimension >
-void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel3D( VectorImageType* pVecImageGraft )
+void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType3D* pVecImageGraft )
 {
 
   unsigned int szX = pVecImageGraft->getSizeX();
@@ -120,27 +120,10 @@ void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel3D( Ve
           (1 - std::cos(2*pi*f1Eff*dx))/(dx*dx) + 
           (1 - std::cos(2*pi*f2Eff*dy))/(dy*dy) + 
           (1 - std::cos(2*pi*f3Eff*dz))/(dz*dz) );
-        this->m_ptrL->setValue(x,y,z,0, (val*val) );
-        this->m_ptrLInv->setValue(x,y,z,0,1.0/(val*val) );
+        this->m_ptrLInv->setValue(x,y,z,0, (val*val) );
+        this->m_ptrL->setValue(x,y,z,0,1.0/(val*val) );
         }
       }
-    }
-}
-
-
-template <class T, unsigned int VImageDimension >
-void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType* pVecImageGraft )
-{
-  switch ( VImageDimension )
-    {
-    case 2:
-      ComputeKernelAndInverseKernel2D( pVecImageGraft );
-      break;
-    case 3:
-      ComputeKernelAndInverseKernel3D( pVecImageGraft );
-      break;
-    default:
-      throw std::runtime_error("Cannot create kernel of desired dimension.");
     }
 }
 

@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -35,7 +35,7 @@ class CObjectiveFunction : public CProcessBase
 {
 public:
 
-  /** some useful typedefs */
+  /* some useful typedefs */
   
   typedef typename TState::TFloat T;
 

@@ -1,4 +1,4 @@
-/**
+/*
  * Tests the image datastructures
  *
  */

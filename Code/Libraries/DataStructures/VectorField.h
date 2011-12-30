@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -88,15 +88,16 @@ public:
    *
    * @param source - the field array to copy from
    */
-  VectorField( const VectorField* source);
+  VectorField( const VectorField* source );
 
   /**
    * Copy constructor that takes an existing VectorImage
-   * and creates a zero vectorfield which has the same spacing, direction, etc. as the VectorImage
+   * and creates a vectorfield which has the same spacing, direction, etc. as the VectorImage
+   * The vector field will be set to a constant specified value (by default zero).
    *
    * @param source - the vector image to copy the information from
    */
-  VectorField( const VectorImageType* source);
+  VectorField( const VectorImageType* source, T dVal = 0 );
 
   /**
    * Destructor that frees up all memory

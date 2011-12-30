@@ -155,7 +155,26 @@ ENDIF(BUILD_DOCUMENTATION)
 
 # Set up for testing
 enable_testing()
-include(CTest)
+include (CTest)
+
+# Build a CPack driven installer package
+include (InstallRequiredSystemLibraries)
+set (CPACK_RESOURCE_FILE_LICENSE  
+     "${CMAKE_CURRENT_SOURCE_DIR}/LICENSEInstaller.txt")
+set (CPACK_RESOURCE_FILE_README
+     "${CMAKE_CURRENT_SOURCE_DIR}/README.txt")
+set (CPACK_RESOURCE_FILE_WELCOME
+     "${CMAKE_CURRENT_SOURCE_DIR}/WELCOME.txt")
+
+set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "Image Registration and Atlas-Building")
+set (CPACK_PACKAGE_VENDOR "The CALATK Team")
+
+set (CPACK_PACKAGE_VERSION_MAJOR "${CALATK_VERSION_MAJOR}")
+set (CPACK_PACKAGE_VERSION_MINOR "${CALATK_VERSION_MINOR}")
+set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "CALATK - Cross-sectional and longitudinal atlas-building toolkit")
+set (CPACK_PACKAGE_INSTALL_DIRECTORY "calatk-${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
+
+include (CPack)
 
 #
 # Go to Code

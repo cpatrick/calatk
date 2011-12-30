@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -32,7 +32,7 @@ class CLDDMMGeometricMetamorphosisObjectiveFunction
 {
 public:
 
-  /** Some useful typedefs */
+  /* Some useful typedefs */
 
   typedef CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState > Superclass;
 

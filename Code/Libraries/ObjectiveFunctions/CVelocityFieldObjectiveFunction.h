@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -32,7 +32,7 @@ class CVelocityFieldObjectiveFunction : public CObjectiveFunction< TState >
 {
 public:
 
-  /** some useful typedefs */
+  /* some useful typedefs */
   typedef CObjectiveFunction< TState > Superclass;
   typedef typename TState::TFloat T;
 

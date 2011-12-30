@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -70,10 +70,12 @@ class CFourierDomainKernel : public CKernel< T, VImageDimension >
 {
 public:
 
-  /** some typedefs */
+  /* some typedefs */
   
   typedef CKernel< T, VImageDimension > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
+  typedef typename Superclass::VectorImageType2D VectorImageType2D;
+  typedef typename Superclass::VectorImageType3D VectorImageType3D;
 
   CFourierDomainKernel();
   ~CFourierDomainKernel();
@@ -94,7 +96,8 @@ protected:
   void ConfirmKernelsWereComputed();
   void ConfirmMemoryWasAllocated();
 
-  void ConvolveInFourierDomain( VectorImageType* pVecImage, VectorImageType* pL );
+  void ConvolveInFourierDomain( VectorImageType2D* pVecImage, VectorImageType2D* pL );
+  void ConvolveInFourierDomain( VectorImageType3D* pVecImage, VectorImageType3D* pL );
 
   void AllocateFFTDataStructures( VectorImageType* pVecIm );
   void AllocateMemoryAndComputeKernelsIfNeeded( VectorImageType* pVecImage );
@@ -105,9 +108,6 @@ private:
   void AllocateFFTDataStructures3D( unsigned int szX, unsigned int szY, unsigned int szZ );
 
   void DeleteData();
-
-  void ConvolveInFourierDomain2D( VectorImageType* pVecImage, VectorImageType* pL );
-  void ConvolveInFourierDomain3D( VectorImageType* pVecImage, VectorImageType* pL );
 
   fftwData2DType* fftwData2D;
   fftwData3DType* fftwData3D;

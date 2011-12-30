@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -33,7 +33,7 @@ class CAtlasObjectiveFunction
 {
 public:
 
-  /** Some useful typedefs */
+  /* Some useful typedefs */
 
   typedef CObjectiveFunction< TState > ObjectiveFunctionType;
 

@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -37,9 +37,11 @@ class CKernel : public CProcessBase
 {
 public:
   
-  /** some typedefs */
+  /* some typedefs */
 
   typedef VectorImage< T, VImageDimension > VectorImageType;
+  typedef VectorImage< T, 2 > VectorImageType2D;
+  typedef VectorImage< T, 3 > VectorImageType3D;
 
   CKernel();
   virtual ~CKernel();

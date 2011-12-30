@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -31,7 +31,7 @@ template <class TState>
 class CStateAtlas : public CStateImageDomain< typename TState::TFloat, typename TState::VImageDimension, typename TState::TResampler >
 {
  public:
-  /** some useful typedefs */
+  /* some useful typedefs */
   typedef typename TState::T T;
   typedef typename TState TIndividualState;
   typedef typename TState::VImageDimension VImageDimension;

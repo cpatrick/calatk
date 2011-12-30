@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -115,6 +115,37 @@ VectorImage< T, VImageDimension >::VectorImage( const VectorImage* source)
 }
 
 //
+// copy constructor
+//
+template <class T, unsigned int VImageDimension >
+VectorImage< T, VImageDimension >::VectorImage( const VectorImage* source, T dVal )
+  : VectorArray<T,VImageDimension>::VectorArray( source, dVal )
+{
+  __spaceX = source->getSpaceX();
+  __spaceY = source->getSpaceY();
+  __spaceZ = source->getSpaceZ();
+  __origin = source->getOrigin();
+  __direction = source->getDirection();
+
+}
+
+//
+// copy constructor
+//
+template <class T, unsigned int VImageDimension >
+VectorImage< T, VImageDimension >::VectorImage( const VectorImage* source, T dVal, unsigned int uiNumDim )
+  : VectorArray<T,VImageDimension>::VectorArray( source, dVal, uiNumDim )
+{
+  __spaceX = source->getSpaceX();
+  __spaceY = source->getSpaceY();
+  __spaceZ = source->getSpaceZ();
+  __origin = source->getOrigin();
+  __direction = source->getDirection();
+
+}
+
+
+//
 // destructor
 //
 template <class T, unsigned int VImageDimension >
@@ -225,7 +256,6 @@ T VectorImage< T, VImageDimension>::computeSquareNorm()
   return dSquareNorm;
 }
 
-
 //
 // computeInnerProduct
 //
@@ -269,6 +299,51 @@ T VectorImage< T, VImageDimension >::getSpaceZ() const
 {
   return __spaceZ;
 }
+
+//
+// getLargestSpacing
+//
+template <class T, unsigned int VImageDimension >
+T VectorImage< T, VImageDimension >::getLargestSpacing() const
+{
+  T dLargestSpacing = this->getSpaceX();
+  if ( VImageDimension>1 )
+  {
+    dLargestSpacing = std::max( dLargestSpacing, this->getSpaceY() );
+  }
+  if ( VImageDimension>2 )
+  {
+    dLargestSpacing = std::max( dLargestSpacing, this->getSpaceZ() );
+  }
+  if ( VImageDimension>3 )
+  {
+    throw std::runtime_error( "Unsupported dimension of image element." );
+  }
+  return dLargestSpacing;
+}
+
+//
+// getSmallestSpacing
+//
+template <class T, unsigned int VImageDimension >
+T VectorImage< T, VImageDimension >::getSmallestSpacing() const
+{
+  T dSmallestSpacing = this->getSpaceX();
+  if ( VImageDimension>1 )
+  {
+    dSmallestSpacing = std::min( dSmallestSpacing, this->getSpaceY() );
+  }
+  if ( VImageDimension>2 )
+  {
+    dSmallestSpacing = std::min( dSmallestSpacing, this->getSpaceZ() );
+  }
+  if ( VImageDimension>3 )
+  {
+    throw std::runtime_error( "Unsupported dimension of image element." );
+  }
+  return dSmallestSpacing;
+}
+
 
 //
 // getOrigin

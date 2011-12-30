@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -22,10 +22,10 @@
   */
 
 #include "CLDDMMGrowthModelRegistration.h"
+#include "CStateSpatioTemporalVelocityField.h"
 #include "CImageManagerMultiScale.h"
 #include "VectorImageUtils.h"
 #include "CHelmholtzKernel.h"
-#include "JSONParameterUtils.h"
 
 #include <string>
 #include <stdlib.h>
@@ -57,12 +57,7 @@ int DoIt( int argc, char* argv[] )
     typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension > VectorImageUtilsType;
     typedef CALATK::LDDMMUtils< TFLOAT, VImageDimension > LDDMMUtilsType;
 
-    CALATK::CJSONConfiguration config;
-    config.InitializeEmptyRoot();
-
     regType lddmm;
-
-    lddmm.SetAutoConfiguration( *config.GetRootPointer() );
 
     // if registered externally, those images get automatically deallocated by the image manager
     VectorImageType *pIm0 = VectorImageUtilsType::readFileITK( sourceImage );
@@ -86,11 +81,13 @@ int DoIt( int argc, char* argv[] )
     unsigned int uiI0 = ptrImageManager->AddImage( pIm0, 0.0, 0 );
     ptrImageManager->AddImage( pIm1, 1.0, 0 );
 
-    CALATK::CHelmholtzKernel< TFLOAT, VImageDimension > kernel;
-    kernel.SetAlpha( (0.05*spacingFactor*spacingFactor)/spacingFactor );
-    kernel.SetGamma( 1.0/spacingFactor );
+    typedef CALATK::CHelmholtzKernel< TFLOAT, VImageDimension > KernelType;
+    KernelType*  pKernel = new KernelType;
+    pKernel->SetAlpha( (0.05*spacingFactor*spacingFactor)/spacingFactor );
+    pKernel->SetGamma( 1.0/spacingFactor );
 
-    lddmm.SetKernelPointer( &kernel );
+    // registration takes over the memory management, so need to pass a pointer to an object on the heap!
+    lddmm.SetKernelPointer( pKernel );
 
     lddmm.Solve();
 

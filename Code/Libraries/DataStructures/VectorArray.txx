@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -119,6 +119,98 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, VImageDimensi
     }
 
 }
+
+//
+// copy constructor
+//
+template <class T, unsigned int VImageDimension>
+VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, VImageDimension>* source, T dVal ) :
+  __sizeX(source->getSizeX()),
+  __sizeY(source->getSizeY()),
+  __sizeZ(source->getSizeZ()),
+  __dim(source->getDim()),
+  __length(__sizeX*__sizeY*__sizeZ*__dim),
+  __dataPtr(0)
+{
+  __allocate();
+
+  // copy the data, just based on linear indexing for efficiency
+  for (unsigned int uiIndx = 0; uiIndx < __length; ++uiIndx )
+    {
+    __dataPtr[ uiIndx ] = dVal;
+    }
+
+}
+
+//
+// copy constructor
+//
+template <class T, unsigned int VImageDimension>
+VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, 2>* source, T dVal, unsigned int uiNumDim ) :
+  __sizeX(source->getSizeX()),
+  __sizeY(source->getSizeY()),
+  __sizeZ(source->getSizeZ()),
+  __dim(uiNumDim),
+  __length(__sizeX*__sizeY*__sizeZ*uiNumDim),
+  __dataPtr(0)
+{
+  __allocate();
+
+  // copy the data, just for the first uiNumDim dimensions
+  assert( source->getDim()>=uiNumDim );
+
+  unsigned int szX = source->getSizeX();
+  unsigned int szY = source->getSizeY();
+
+  for ( unsigned int y = 0; y < szY; ++y )
+  {
+    for ( unsigned int x = 0; x < szX; ++x )
+    {
+      for ( unsigned int d = 0; d < uiNumDim; ++ d )
+      {
+        this->setValue(x, y, d, dVal );
+      }
+    }
+  }
+
+}
+
+//
+// copy constructor
+//
+template <class T, unsigned int VImageDimension>
+VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, 3>* source, T dVal, unsigned int uiNumDim ) :
+  __sizeX(source->getSizeX()),
+  __sizeY(source->getSizeY()),
+  __sizeZ(source->getSizeZ()),
+  __dim(uiNumDim),
+  __length(__sizeX*__sizeY*__sizeZ*uiNumDim),
+  __dataPtr(0)
+{
+  __allocate();
+
+  // copy the data, just for the first uiNumDim dimensions
+  assert( source->getDim()>=uiNumDim );
+
+  unsigned int szX = source->getSizeX();
+  unsigned int szY = source->getSizeY();
+  unsigned int szZ = source->getSizeZ();
+
+  for ( unsigned int z = 0; z < szZ; ++z )
+  {
+    for ( unsigned int y = 0; y < szY; ++y )
+    {
+      for ( unsigned int x = 0; x < szX; ++x )
+      {
+        for ( unsigned int d = 0; d < uiNumDim; ++ d )
+        {
+          this->setValue(x, y, d, dVal );
+        }
+      }
+    }
+  }
+}
+
 
 //
 // destructor
@@ -397,6 +489,36 @@ void VectorArray< T, VImageDimension >::multCellwise(VectorArray* im) {
 }
 
 //
+// multElementwise
+//
+template <class T, unsigned int VImageDimension >
+void VectorArray< T, VImageDimension >::multElementwise(VectorArray* im)
+{
+  assert( im->getDim()==1 ); // make sure that the elements of the image have only one dimension
+
+  unsigned int szX = __sizeX;
+  unsigned int szY = __sizeY;
+  unsigned int szZ = __sizeZ;
+  unsigned int dim = __dim;
+
+  for ( unsigned z = 0; z<szZ; ++z )
+  {
+    for ( unsigned y = 0; y<szY; ++y )
+    {
+      for ( unsigned x = 0; x<szX; ++x )
+      {
+        for ( unsigned d = 0; d<dim; ++d )
+        {
+          T val = this->getValue( x, y, z, d )*im->getValue( x, y, z, 0 );
+          this->setValue( x, y, z, d, val );
+        }
+      }
+    }
+  }
+
+}
+
+//
 // addCellwise
 //
 template <class T, unsigned int VImageDimension >
@@ -415,6 +537,37 @@ void VectorArray< T, VImageDimension >::addCellwise(VectorArray* im) {
     } 
 
 }
+
+//
+// addElementwise
+//
+template <class T, unsigned int VImageDimension >
+void VectorArray< T, VImageDimension >::addElementwise(VectorArray* im)
+{
+  assert( im->getDim()==1 ); // make sure that the elements of the image have only one dimension
+
+  unsigned int szX = __sizeX;
+  unsigned int szY = __sizeY;
+  unsigned int szZ = __sizeZ;
+  unsigned int dim = __dim;
+
+  for ( unsigned z = 0; z<szZ; ++z )
+  {
+    for ( unsigned y = 0; y<szY; ++y )
+    {
+      for ( unsigned x = 0; x<szX; ++x )
+      {
+        for ( unsigned d = 0; d<dim; ++d )
+        {
+          T val = this->getValue( x, y, z, d ) + im->getValue( x, y, z, 0 );
+          this->setValue( x, y, z, d, val );
+        }
+      }
+    }
+  }
+
+}
+
 
 //
 // addCellwiseMultiple
@@ -436,6 +589,38 @@ void VectorArray< T, VImageDimension >::addCellwiseMultiple(VectorArray* im, T v
 
 }
 
+
+//
+// addElementwiseMultiple
+//
+template <class T, unsigned int VImageDimension >
+void VectorArray< T, VImageDimension >::addElementwiseMultiple(VectorArray* im, T multVal)
+{
+  assert( im->getDim()==1 ); // make sure that the elements of the image have only one dimension
+
+  unsigned int szX = __sizeX;
+  unsigned int szY = __sizeY;
+  unsigned int szZ = __sizeZ;
+  unsigned int dim = __dim;
+
+  for ( unsigned z = 0; z<szZ; ++z )
+  {
+    for ( unsigned y = 0; y<szY; ++y )
+    {
+      for ( unsigned x = 0; x<szX; ++x )
+      {
+        for ( unsigned d = 0; d<dim; ++d )
+        {
+          T val = this->getValue( x, y, z, d ) + multVal*im->getValue( x, y, z, 0 );
+          this->setValue( x, y, z, d, val );
+        }
+      }
+    }
+  }
+
+}
+
+
 //
 // subtractCellwise
 //
@@ -455,6 +640,37 @@ void VectorArray< T, VImageDimension >::subtractCellwise(VectorArray* im) {
     } 
 
 }
+
+//
+// subtractElementwise
+//
+template <class T, unsigned int VImageDimension >
+void VectorArray< T, VImageDimension >::subtractElementwise(VectorArray* im)
+{
+  assert( im->getDim()==1 ); // make sure that the elements of the image have only one dimension
+
+  unsigned int szX = __sizeX;
+  unsigned int szY = __sizeY;
+  unsigned int szZ = __sizeZ;
+  unsigned int dim = __dim;
+
+  for ( unsigned z = 0; z<szZ; ++z )
+  {
+    for ( unsigned y = 0; y<szY; ++y )
+    {
+      for ( unsigned x = 0; x<szX; ++x )
+      {
+        for ( unsigned d = 0; d<dim; ++d )
+        {
+          T val = this->getValue( x, y, z, d )-im->getValue( x, y, z, 0 );
+          this->setValue( x, y, z, d, val );
+        }
+      }
+    }
+  }
+
+}
+
 
 //
 // addConst

@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -152,6 +152,17 @@ const double PI = 4.0*atan(1.0);
 std::string CreateIntegerString( int iNr, unsigned int uiW = 4 );
 std::string CreateNumberedFileName( std::string strPrefix, unsigned int uiNr, std::string postFix );
 
+template < class T, class VectorImageType, class VectorFieldType >
+class CTimePoint
+{
+public:
+  bool bIsMeasurementPoint;
+  T dTime;
+  std::vector< VectorImageType* > vecMeasurementImages; // to support multiple images per time point
+  std::vector< VectorFieldType* > vecMeasurementTransforms;
+  std::vector< VectorImageType* > vecEstimatedImages;
+  std::vector< T > vecWeights; // to support weighted measurements
+};
 
 /** Getting effective image dimensions (i.e., number of non-singleton dimensions), so that we can instantiate objects of the right dimension */
 

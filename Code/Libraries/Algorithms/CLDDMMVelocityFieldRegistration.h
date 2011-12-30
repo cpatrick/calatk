@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -17,10 +17,9 @@
 *
 */
 
-#ifndef C_LDDMM_SPATIO_TEMPORAL_VELOCITY_FIELD_REGISTRATION_H
-#define C_LDDMM_SPATIO_TEMPORAL_VELOCITY_FIELD_REGISTRATION_H
+#ifndef C_LDDMM_VELOCITY_FIELD_REGISTRATION_H
+#define C_LDDMM_VELOCITY_FIELD_REGISTRATION_H
 
-#include "CStateSpatioTemporalVelocityField.h"
 #include "CLDDMMSpatioTemporalVelocityFieldObjectiveFunction.h"
 #include "CHelmholtzKernel.h"
 #include "CMetricSSD.h"
@@ -38,14 +37,17 @@ namespace CALATK
   * A reasonable default value for the state is
   * TState = CStateSpatioTemporalVelocityField< T, VImageDimension >
   *
+  * or
+  *
+  * TState - CStateInitialImageMomentum< T, VImageDimension >
   */
 template < class TState >
-class CLDDMMSpatioTemporalVelocityFieldRegistration
+class CLDDMMVelocityFieldRegistration
     : public CAlgorithm< TState >
 {
 public:
 
-  /** some useful typedefs */
+  /* some useful typedefs */
 
   typedef CAlgorithm< TState > Superclass;
 
@@ -60,8 +62,8 @@ public:
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 
-  CLDDMMSpatioTemporalVelocityFieldRegistration();
-  ~CLDDMMSpatioTemporalVelocityFieldRegistration();
+  CLDDMMVelocityFieldRegistration();
+  ~CLDDMMVelocityFieldRegistration();
 
   const VectorFieldType* GetMap( T dTime );
   const VectorFieldType* GetMapFromTo( T dTimeFrom, T dTimeTo );
@@ -82,7 +84,7 @@ private:
 
 };
 
-#include "CLDDMMSpatioTemporalVelocityFieldRegistration.txx"
+#include "CLDDMMVelocityFieldRegistration.txx"
 
 } // end namespace
 

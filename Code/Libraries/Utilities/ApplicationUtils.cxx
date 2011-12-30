@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -182,6 +182,9 @@ bool ApplicationUtils::getNextGoodLine(std::ifstream* reader, std::string* out) 
 //
 // getCWD
 //
+#if CALATK_SYSTEM_WINDOWS
+#include <direct.h>
+#endif
 std::string ApplicationUtils::getCWD() {
   
   const unsigned int maxSize = 4096;
@@ -254,9 +257,9 @@ bool ApplicationUtils::makeDirIfNeeded(std::string& path) {
   std::string outpath = removeLastSlash(path);
   bool dirCreated;
   if (!dirExists(outpath)) {
-#if FRAT_SYSTEM_UNIX
+#if CALATK_SYSTEM_UNIX
     dirCreated = (mkdir(outpath.c_str(), 0755) == 0);
-#elif FRAT_SYSTEM_WINDOWS
+#elif CALATK_SYSTEM_WINDOWS
 	dirCreated = (_mkdir(outpath.c_str()) == 0);
 #else
     itkGenericExceptionMacro("Unkown Operating System. Cannot make directory");

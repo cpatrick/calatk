@@ -1,4 +1,4 @@
-/**
+/*
 *
 *  Copyright 2011 by the CALATK development team
 *
@@ -47,7 +47,11 @@ class VectorFieldUtils
 public:
 
   typedef VectorImage< T, VImageDimension > VectorImageType;
+  typedef VectorImage< T, 2 > VectorImageType2D;
+  typedef VectorImage< T, 3 > VectorImageType3D;
   typedef VectorField< T, VImageDimension > VectorFieldType;
+  typedef VectorField< T, 2 > VectorFieldType2D;
+  typedef VectorField< T, 3 > VectorFieldType3D;
 
   /**
    * Method that returns the max of the data in the image
@@ -75,22 +79,15 @@ public:
    *
    * @param fld - the vector field to be motified in place
    */
-  static void identityMap3D(VectorFieldType* fld);
+  static void identityMap(VectorFieldType3D* fld);
 
   /**
    * 2D Method that sets input vector field to the identity map
    *
    * @param fld - the vector field to be motified in place
    */
-  static void identityMap2D(VectorFieldType* fld);
+  static void identityMap(VectorFieldType2D* fld);
 
-  /**
-   * Method that sets input vector field to the identity map
-   *
-   * @param fld - the vector field to be motified in place
-   */
-  static void identityMap(VectorFieldType* fld);
-  
   /**
    * 2D Function that applys a map to an image
    *
@@ -98,7 +95,7 @@ public:
    * @param imIn - the image to be pulled
    * @param imOut - return variable for the resulting image
    */
-  static void applyMap2D( const VectorFieldType* map, const VectorImageType* imIn, VectorImageType* imOut);
+  static void applyMap( const VectorFieldType2D* map, const VectorImageType2D* imIn, VectorImageType2D* imOut);
 
   /**
    * 3D Function that applys a map to an image
@@ -107,24 +104,15 @@ public:
    * @param imIn - the image to be pulled
    * @param imOut - return variable for the resulting image
    */
-  static void applyMap3D( const VectorFieldType* map, const VectorImageType* imIn, VectorImageType* imOut);
+  static void applyMap( const VectorFieldType3D* map, const VectorImageType3D* imIn, VectorImageType3D* imOut);
 
-  /**
-   * 2D/3D Function that applys a map to an image
-   *
-   * @param map - the map to apply to im
-   * @param imIn - the image to be pulled
-   * @param imOut - return variable for the resulting image
-   */
-  static void applyMap( const VectorFieldType* map, const VectorImageType* imIn, VectorImageType* imOut);
-  
   /**
    * 2D Function that computes the determinant of the jacobian for a vector field.
    *
    * @param fld - the vector field to be processed
    * @param imOut - image that will hold the determinant of Jacobian
    */
-  static void computeDeterminantOfJacobian2D( const VectorFieldType* fld, VectorImageType* imOut);
+  static void computeDeterminantOfJacobian( const VectorFieldType2D* fld, VectorImageType2D* imOut);
 
   /**
    * 3D Function that computes the determinant of the jacobian for a vector field.
@@ -132,15 +120,23 @@ public:
    * @param fld - the vector field to be processed
    * @param imOut - image that will hold the determinant of Jacobian
    */
-  static void computeDeterminantOfJacobian3D( const VectorFieldType* fld, VectorImageType* imOut);
+  static void computeDeterminantOfJacobian( const VectorFieldType3D* fld, VectorImageType3D* imOut);
 
   /**
-   * 2D/3D Function that computes the determinant of the jacobian for a vector field.
-   *
-   * @param fld - the vector field to be processed
-   * @param imOut - image that will hold the determinant of Jacobian
-   */
-  static void computeDeterminantOfJacobian( const VectorFieldType* fld, VectorImageType* imOut );
+    * 2D Function to compute the divergence of a vector field
+    *
+    * @param fld - the vector field to be processed
+    * @param imOut - image that will hold the divergence of the vector field
+    */
+  static void computeDivergence( const VectorFieldType2D* fld, VectorImageType2D* imOut );
+
+  /**
+    * 3D Function to compute the divergence of a vector field
+    *
+    * @param fld - the vector field to be processed
+    * @param imOut - image that will hold the divergence of the vector field
+    */
+  static void computeDivergence( const VectorFieldType3D* fld, VectorImageType3D* imOut );
 
   /**
    * 2D function computing the gradient of an individual dimension of an image using central differences
@@ -149,7 +145,7 @@ public:
    * @params dim - image dimension (for vector-valued image) for which the gradient should be calculated
    * @params fieldOut - gradient output field
    */
-  static void computeCentralGradient2D( const VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldOut );
+  static void computeCentralGradient( const VectorImageType2D* imIn, unsigned int dim, VectorFieldType2D* fieldOut );
 
   /**
    * 3D function computing the gradient of an individual dimension of an image using central differences
@@ -158,16 +154,7 @@ public:
    * @params dim - image dimension (for vector-valued image) for which the gradient should be calculated
    * @params fieldOut - gradient output field
    */
-  static void computeCentralGradient3D( const VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldOut );
-
-  /**
-   * 2D/3D function computing the gradient of an individual dimension of an image using central differences
-   *
-   * @params imIn - input image
-   * @params dim - image dimension (for vector-valued image) for which the gradient should be calculated
-   * @params fieldOut - gradient output field
-   */
-  static void computeCentralGradient( const VectorImageType* imIn, unsigned int dim, VectorFieldType* fieldOut );
+  static void computeCentralGradient( const VectorImageType3D* imIn, unsigned int dim, VectorFieldType3D* fieldOut );
 
   /***************************
    * ITK Interface Functions *
@@ -179,7 +166,7 @@ public:
    * @param inMap - the input map
    * @return - the output ITK deformation field
    */
-  static typename ITKDeformationField<T,VImageDimension>::Type::Pointer mapToITKDeformationField2D(VectorFieldType* inMap);
+  static typename ITKDeformationField<T,VImageDimension>::Type::Pointer mapToITKDeformationField( VectorFieldType2D* inMap);
 
   /**
    * Function that converts a VectorFieldType map to an ITK deformation field
@@ -187,15 +174,7 @@ public:
    * @param inMap - the input map
    * @return - the output ITK deformation field
    */
-  static typename ITKDeformationField<T,VImageDimension>::Type::Pointer mapToITKDeformationField3D(VectorFieldType* inMap);
-  
-  /**
-   * 2D/3D Function that converts a VectorFieldType map to an ITK deformation field
-   *
-   * @param inMap - the input map
-   * @return - the output ITK deformation field
-   */
-  static typename ITKDeformationField<T,VImageDimension>::Type::Pointer mapToITKDeformationField(VectorFieldType* inMap);
+  static typename ITKDeformationField<T,VImageDimension>::Type::Pointer mapToITKDeformationField( VectorFieldType3D* inMap);
   
   /**
    * 2D Function that applies an ITKAffineTransform to an identity map, resulting
