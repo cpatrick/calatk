@@ -1,4 +1,7 @@
-
+#
+# Include everything to build generateclp
+#
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/External/SlicerExecutionModel)
 
 #
 # Include GenerateCLP

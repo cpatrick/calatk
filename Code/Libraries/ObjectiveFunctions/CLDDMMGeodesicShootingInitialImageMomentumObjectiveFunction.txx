@@ -22,9 +22,11 @@
 
 template < class TState >
 CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction()
-    : DefaultNumberOfDiscretizationVolumesPerUnitTime( 10.0 ), m_ExternallySetNumberOfDiscretizationVolumesPerUnitTime( false )
+    : DefaultNumberOfDiscretizationVolumesPerUnitTime( 10.0 ), m_ExternallySetNumberOfDiscretizationVolumesPerUnitTime( false ),
+      DefaultEstimateInitialImage( false ), m_ExternallySetEstimateInitialImage( false )
 {
     m_NumberOfDiscretizationVolumesPerUnitTime = DefaultNumberOfDiscretizationVolumesPerUnitTime;
+    m_EstimateInitialImage = DefaultEstimateInitialImage;
 
     // storage for the map
     m_ptrMapIn = NULL;

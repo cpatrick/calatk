@@ -58,6 +58,9 @@ public:
     SetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );
     GetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );
 
+    SetMacro( EstimateInitialImage, bool );
+    GetMacro( EstimateInitialImage, bool );
+
     void SetAutoConfiguration( Json::Value& ConfValue );
 
 protected:
@@ -132,9 +135,12 @@ private:
     VectorPointerToVectorFieldPointerType m_ptrVelocityField;
 
     T m_NumberOfDiscretizationVolumesPerUnitTime;
-
     const T DefaultNumberOfDiscretizationVolumesPerUnitTime;
     bool m_ExternallySetNumberOfDiscretizationVolumesPerUnitTime;
+
+    bool m_EstimateInitialImage;
+    const bool DefaultEstimateInitialImage;
+    bool m_ExternallySetEstimateInitialImage;
 
     std::vector< T > m_vecMeasurementTimepoints;
 
