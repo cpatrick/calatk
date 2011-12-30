@@ -215,4 +215,101 @@ void LDDMMUtils< T, VImageDimension >::DetermineTimeSeriesTimePointData( ImageMa
 
 }
 
+//
+// Computing the map between two timepoints
+//
+template < class T, unsigned int VImageDimension >
+void LDDMMUtils< T, VImageDimension >::GetMapFromToFromSpatioTemporalVelocityField(
+    VectorFieldType* ptrMap,
+    T dTimeFrom,
+    T dTimeTo,
+    const std::vector< STimePoint >& vecTimeDiscretization,
+    const std::vector< VectorFieldType* >* ptrSpatioTemporalVelocityField,
+    EvolverType* ptrEvolver )
+{
+  assert( dTimeTo >= dTimeFrom );
+  std::cout << "Computing map from " << dTimeFrom << " to " << dTimeTo << std::endl;
+
+  if ( dTimeFrom < vecTimeDiscretization[0].dTime || dTimeTo > vecTimeDiscretization.back().dTime )
+    {
+    throw std::runtime_error("Requested map outside of valid time range.");
+    return;
+    }
+
+  VectorFieldType* ptrMapOut = ptrMap;
+
+  // create two additional maps to hold the solution
+  VectorFieldType* ptrMapIn = new VectorFieldType( ptrMap );
+  VectorFieldType* ptrMapTmp = new VectorFieldType( ptrMap );
+
+  // get the map between two time points
+  LDDMMUtils< T, VImageDimension >::identityMap( ptrMapIn );
+
+
+  T dCurrentTime = vecTimeDiscretization[0].dTime;
+  unsigned int uiStart = 0;
+
+  // we may need to fast forward to the beginning time point
+
+  if ( dCurrentTime < dTimeFrom )
+    {
+
+    for ( unsigned int iI = 0; iI < vecTimeDiscretization.size()-1; ++iI )
+      {
+      T dCurrentDT = vecTimeDiscretization[ iI+1 ].dTime - vecTimeDiscretization[ iI ].dTime;
+      if ( dCurrentTime + dCurrentDT > dTimeFrom )
+        {
+        // evolve for an increment
+        std::cout << "partially evolve for " << dTimeFrom - dCurrentTime << std::endl;
+        ptrEvolver->SolveForward( (*ptrSpatioTemporalVelocityField)[ iI ], ptrMapIn, ptrMapOut, ptrMapTmp, dTimeFrom-dCurrentTime );
+        // for next step, copy
+        ptrMapIn->copy( ptrMapOut );
+        uiStart = iI+1;
+        dCurrentTime += dCurrentDT;
+        break;
+        }
+      else
+        {
+        // just skip ahead
+        dCurrentTime += dCurrentDT;
+        uiStart = iI + 1;
+        }
+      if ( dCurrentTime >= dTimeFrom )
+        {
+        break;
+        }
+      }
+    }
+
+  std::cout << "fast forwarded to " << dCurrentTime << std::endl;
+  std::cout << "starting from index " << uiStart << std::endl;
+
+  // now we can move ahead
+
+  for ( unsigned int iI = uiStart; iI < vecTimeDiscretization.size()-1; ++iI )
+    {
+    T dCurrentDT = vecTimeDiscretization[ iI+1 ].dTime - vecTimeDiscretization[ iI ].dTime;
+    if ( dCurrentTime + dCurrentDT < dTimeTo )
+      {
+      std::cout << "evolved for " << dCurrentDT << std::endl;
+      ptrEvolver->SolveForward( (*ptrSpatioTemporalVelocityField)[ iI ], ptrMapIn, ptrMapOut, ptrMapTmp, dCurrentDT );
+      dCurrentTime += dCurrentDT;
+      }
+    else
+      {
+      std::cout << "finally partially evolved for " << dTimeTo-dCurrentTime << std::endl;
+      ptrEvolver->SolveForward( (*ptrSpatioTemporalVelocityField)[ iI ], ptrMapIn, ptrMapOut, ptrMapTmp, dTimeTo-dCurrentTime );
+      dCurrentTime = dTimeTo;
+      break;
+      }
+    // for next step, copy
+    ptrMapIn->copy( ptrMapOut );
+    }
+
+  // get rid of the temporary memory
+  delete ptrMapIn;
+  delete ptrMapTmp;
+
+}
+
 #endif

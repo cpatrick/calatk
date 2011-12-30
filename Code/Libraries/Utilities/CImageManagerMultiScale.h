@@ -74,8 +74,13 @@ public:
     return true;
   }
 
+  // this is the image blurring for the multi-scale pyramid. It is specified in voxel units
   SetMacro( Sigma, T );
   GetMacro( Sigma, T );
+
+  // this variable determines if the highest resolution image should be blurred to compute the solution or not
+  SetMacro( BlurHighestResolutionImage, bool );
+  GetMacro( BlurHighestResolutionImage, bool );
 
 protected:
 
@@ -99,6 +104,10 @@ private:
   T m_Sigma;
   const T DefaultSigma;
   bool m_ExternallySetSigma;
+
+  bool m_BlurHighestResolutionImage;
+  const bool DefaultBlurHighestResolutionImage;
+  bool m_ExternallySetBlurHighestResolutionImage;
 
 };
 

@@ -26,6 +26,7 @@
 #include "VectorField.h"
 #include "VectorImageUtils.h"
 #include "VectorFieldUtils.h"
+#include "CEvolver.h"
 
 #include <stdexcept>
 #include <cmath>
@@ -52,10 +53,13 @@ public:
 
   typedef VectorImage< T, VImageDimension > VectorImageType;
   typedef VectorField< T, VImageDimension > VectorFieldType;
+
   typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;
   typedef CImageManager< T, VImageDimension > ImageManagerType;
   typedef typename ImageManagerType::SImageInformation SImageInformation;
   typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
+
+  typedef CEvolver< T, VImageDimension > EvolverType;
 
 
   /*********************
@@ -105,6 +109,26 @@ public:
     * @param vecTimePointData - resulting vector of timepoint data
     */
   static void DetermineTimeSeriesTimePointData( ImageManagerType* pImageManager, unsigned int uiSubjectIndex, std::vector< STimePoint >& vecTimePointData );
+
+  /**
+    * Function which computes a map between two time-points given a spatio-temporal velocity field.
+    * Here, the assumption is that dTimeFrom<dTimeTo.
+    *
+    * @return ptrMap - resulting map
+    * @param dTimeFrom - beginning time-point
+    * @param dTimeTo - ending time-point
+    * @param vecTimeDiscretization - vector which holds the temporal discretization information (t's)
+    * @param ptrSpatioTemporalVelocityField - pointer to the spatio-temporal velocity field
+    * @param ptrEvolver - pointer to the evolver which is used to advect the map (during the computations) to obtain the result
+    */
+  static void GetMapFromToFromSpatioTemporalVelocityField(
+      VectorFieldType* ptrMap,
+      T dTimeFrom,
+      T dTimeTo,
+      const std::vector< STimePoint >& vecTimeDiscretization,
+      const std::vector< VectorFieldType* >* ptrSpatioTemporalVelocityField,
+      EvolverType* ptrEvolver );
+
 
 };
 

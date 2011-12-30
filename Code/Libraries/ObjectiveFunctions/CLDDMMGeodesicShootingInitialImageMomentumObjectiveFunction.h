@@ -58,8 +58,14 @@ public:
     SetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );
     GetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );
 
+    /// Sigma square is the (here constant) weight for the dataterms, w = 1/sigmaSqr
+    SetMacro( SigmaSqr, T );
+    GetMacro( SigmaSqr, T );
+
     SetMacro( EstimateInitialImage, bool );
     GetMacro( EstimateInitialImage, bool );
+
+    void OutputStateInformation( unsigned int uiIter, std::string outputPrefix="" );
 
     void SetAutoConfiguration( Json::Value& ConfValue );
 
@@ -103,12 +109,6 @@ private:
     VectorFieldPointerType m_ptrMapIdentity; // stores the identity map
     VectorFieldPointerType m_ptrMapIncremental; // stores the incremental map for the source terms of the adjoint PDEs
 
-    VectorImagePointerType ptrInitialMomentum; // initial momentum
-    VectorImagePointerType ptrInitialImage; // initial image
-
-    VectorImagePointerType ptrI0Gradient; // gradient for initial image;
-    VectorImagePointerType ptrP0Gradient; // gradient for initial momentum;
-
     VectorImagePointerType m_ptrCurrentLambdaIEnd; // current value of the adjoint lambda_I, gets successively updated for multiple time points
     VectorImagePointerType m_ptrCurrentLambdaPEnd; // current value of the adjoint lambda_P
 
@@ -141,6 +141,10 @@ private:
     bool m_EstimateInitialImage;
     const bool DefaultEstimateInitialImage;
     bool m_ExternallySetEstimateInitialImage;
+
+    T m_SigmaSqr;
+    const T DefaultSigmaSqr;
+    bool m_ExternallySetSigmaSqr;
 
     std::vector< T > m_vecMeasurementTimepoints;
 

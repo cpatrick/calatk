@@ -188,6 +188,16 @@ public:
   T getSpaceZ() const;
   
   /**
+    * Method to get the largest spacing
+    */
+  T getLargestSpacing() const;
+
+  /**
+    * Method to get the smallest spacing
+    */
+  T getSmallestSpacing() const;
+
+  /**
    * Computes the squared norm of a vector image;  takes proper accound of spacing
    *
    */

@@ -301,6 +301,51 @@ T VectorImage< T, VImageDimension >::getSpaceZ() const
 }
 
 //
+// getLargestSpacing
+//
+template <class T, unsigned int VImageDimension >
+T VectorImage< T, VImageDimension >::getLargestSpacing() const
+{
+  T dLargestSpacing = this->getSpaceX();
+  if ( VImageDimension>1 )
+  {
+    dLargestSpacing = std::max( dLargestSpacing, this->getSpaceY() );
+  }
+  if ( VImageDimension>2 )
+  {
+    dLargestSpacing = std::max( dLargestSpacing, this->getSpaceZ() );
+  }
+  if ( VImageDimension>3 )
+  {
+    throw std::runtime_error( "Unsupported dimension of image element." );
+  }
+  return dLargestSpacing;
+}
+
+//
+// getSmallestSpacing
+//
+template <class T, unsigned int VImageDimension >
+T VectorImage< T, VImageDimension >::getSmallestSpacing() const
+{
+  T dSmallestSpacing = this->getSpaceX();
+  if ( VImageDimension>1 )
+  {
+    dSmallestSpacing = std::min( dSmallestSpacing, this->getSpaceY() );
+  }
+  if ( VImageDimension>2 )
+  {
+    dSmallestSpacing = std::min( dSmallestSpacing, this->getSpaceZ() );
+  }
+  if ( VImageDimension>3 )
+  {
+    throw std::runtime_error( "Unsupported dimension of image element." );
+  }
+  return dSmallestSpacing;
+}
+
+
+//
 // getOrigin
 //
 template <class T, unsigned int VImageDimension >

@@ -22,7 +22,8 @@
 
 template <class T, unsigned int VImageDimension >
 CImageManagerMultiScale< T, VImageDimension >::CImageManagerMultiScale()
-  : DefaultSigma( 0.02 ), m_ExternallySetSigma( false )
+  : DefaultSigma( 0.5 ), m_ExternallySetSigma( false ),
+    DefaultBlurHighestResolutionImage( false ), m_ExternallySetBlurHighestResolutionImage( false )
 {
   m_uiCurrentlySelectedScale = 0;
   m_bImagesWereRead = false;
@@ -30,6 +31,7 @@ CImageManagerMultiScale< T, VImageDimension >::CImageManagerMultiScale()
   m_ptrResampler = NULL;
 
   m_Sigma = DefaultSigma;
+  m_BlurHighestResolutionImage = DefaultBlurHighestResolutionImage;
 
   // add default scale, the original blurred image at the original resolution
   AddScale( 1.0, 0 );
@@ -173,17 +175,28 @@ void CImageManagerMultiScale< T, VImageDimension >::GetImage( SImageInformation*
     for ( unsigned int iI=0; iI<uiNrOfScales; ++iI )
       {
       if ( m_ScaleWasSet[ iI ] )
-        {
+      {
         std::cout << "Computing scale " << m_ScaleVector[iI] << " of: " << pCurrentImInfo->sImageFileName << std::endl;
         assert( m_ScaleVector[iI]>0 );
         VectorImageType* ptrResampledImage = VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( pCurrentImInfo->pImOrig, m_ScaleVector[ iI ] );
 
-        if ( m_ptrResampler == NULL ) SetDefaultResamplerPointer();
-
-        m_ptrResampler->SetSigma( m_Sigma/m_ScaleVector[ iI ] );
-        m_ptrResampler->Downsample( pCurrentImInfo->pImOrig, ptrResampledImage );
-        pCurrentImInfo->pImsOfAllScales.push_back( ptrResampledImage );
+        if ( iI==0 && !m_BlurHighestResolutionImage )
+        {
+          std::cout << "NOT blurring the image of the highest resolution" << std::endl;
+          ptrResampledImage->copy( pCurrentImInfo->pImOrig );
         }
+        else
+        {
+          if ( m_ptrResampler == NULL ) SetDefaultResamplerPointer();
+
+          // convert the voxel sigma to a pyhysical sigma based on the largest voxel extent
+          T dLargestSpacing = pCurrentImInfo->pImOrig->getLargestSpacing();
+
+          m_ptrResampler->SetSigma( dLargestSpacing*m_Sigma/m_ScaleVector[ iI ] );
+          m_ptrResampler->Downsample( pCurrentImInfo->pImOrig, ptrResampledImage );
+          }
+        pCurrentImInfo->pImsOfAllScales.push_back( ptrResampledImage );
+      }
       else
         {
         std::cout << "WARNING: scale " << iI << " was not set." << std::endl;

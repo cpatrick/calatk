@@ -33,19 +33,28 @@ CResamplerLinear< T, VImageDimension >::~CResamplerLinear()
 template <class T, unsigned int VImageDimension >
 void CResamplerLinear< T, VImageDimension >::Downsample( const VectorImageType* ptrImIn, VectorImageType* ptrImOut )
 {
-  // create a new image, which will be blurred
-  VectorImageType *imBlurred = new VectorImageType( ptrImIn );
-  
-  this->m_GaussianKernel.SetSigma( this->m_Sigma );
 
-  // blur it
-  this->m_GaussianKernel.ConvolveWithKernel( imBlurred );
+  if ( this->m_Sigma > 0 )
+  {
+    // create a new image, which will be blurred
+    VectorImageType *imBlurred = new VectorImageType( ptrImIn );
 
-  // now downsample it
+    this->m_GaussianKernel.SetSigma( this->m_Sigma );
 
-  VectorImageUtils< T, VImageDimension >::resize( imBlurred, ptrImOut );
+    // blur it
+    this->m_GaussianKernel.ConvolveWithKernel( imBlurred );
 
-  delete imBlurred;
+    // now downsample it
+
+    VectorImageUtils< T, VImageDimension >::resize( imBlurred, ptrImOut );
+
+    delete imBlurred;
+  }
+  else
+  {
+    // just copy the input to the output
+    ptrImOut->copy( ptrImIn );
+  }
 
 }
 

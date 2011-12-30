@@ -74,7 +74,12 @@ int DoIt( int argc, char** argv )
   
   // by default there will be only one scale
   // which will be overwritten if there is a configuration file available
-  
+
+  TFLOAT dSigma = config.GetFromKey( "MultiScaleSigmaInVoxels", 0.5 ).asDouble();
+  ptrImageManager->SetSigma( dSigma );
+  bool bBlurHighestResolutionImage = config.GetFromKey( "MultiScaleBlurHighestResolutionImage", false ).asBool();
+  ptrImageManager->SetBlurHighestResolutionImage( bBlurHighestResolutionImage );
+
   Json::Value& currentConfiguration = config.GetFromKey( "MultiscaleSettings", Json::nullValue );
   
   std::cout << "Detected " << currentConfiguration.size() << " scales." << std::endl;

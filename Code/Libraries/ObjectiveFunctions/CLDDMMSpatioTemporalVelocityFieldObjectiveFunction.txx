@@ -205,87 +205,13 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::GetMap( Vecto
 template < class TState >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo )
 {
-  
-  std::cout << "Computing map from " << dTimeFrom << " to " << dTimeTo << std::endl;
-
-  if ( dTimeFrom < m_vecTimeDiscretization[0].dTime || dTimeTo > m_vecTimeDiscretization.back().dTime )
-    {
-    throw std::runtime_error("Requested map outside of valid time range.");
-    return;
-    }
-
-  VectorFieldType* ptrMapOut = ptrMap;
-
-  // create two additional maps to hold the solution
-  VectorFieldType* ptrMapIn = new VectorFieldType( ptrMap );
-  VectorFieldType* ptrMapTmp = new VectorFieldType( ptrMap );
-
-  // get the map between two time points
-  LDDMMUtils< T, TState::VImageDimension >::identityMap( ptrMapIn );
-
-
-  T dCurrentTime = m_vecTimeDiscretization[0].dTime;
-  unsigned int uiStart = 0;
-
-  // we may need to fast forward to the beginning time point
-
-  if ( dCurrentTime < dTimeFrom )
-    {
-
-    for ( unsigned int iI = 0; iI < m_vecTimeDiscretization.size()-1; ++iI )
-      {
-      if ( dCurrentTime + this->m_vecTimeIncrements[ iI ] > dTimeFrom )
-        {
-        // evolve for an increment
-        std::cout << "partially evolve for " << dTimeFrom - dCurrentTime << std::endl;
-        this->m_ptrEvolver->SolveForward( this->m_pState->GetVectorFieldPointer( iI ), ptrMapIn, ptrMapOut, ptrMapTmp, dTimeFrom-dCurrentTime );
-        // for next step, copy
-        ptrMapIn->copy( ptrMapOut );
-        uiStart = iI+1;
-        dCurrentTime += this->m_vecTimeIncrements[ iI ];
-        break;
-        }
-      else
-        {
-        // just skip ahead
-        dCurrentTime += this->m_vecTimeIncrements[ iI ];
-        uiStart = iI + 1;
-        }
-      if ( dCurrentTime >= dTimeFrom )
-        {
-        break;
-        }
-      }
-    }
-
-  std::cout << "fast forwarded to " << dCurrentTime << std::endl;
-  std::cout << "starting from index " << uiStart << std::endl;
-
-  // now we can move ahead
-
-  for ( unsigned int iI = uiStart; iI < m_vecTimeDiscretization.size()-1; ++iI )
-    {
-    if ( dCurrentTime + this->m_vecTimeIncrements[ iI ] < dTimeTo )
-      {
-      std::cout << "evolved for " << this->m_vecTimeIncrements[ iI ] << std::endl;
-      this->m_ptrEvolver->SolveForward( this->m_pState->GetVectorFieldPointer( iI ), ptrMapIn, ptrMapOut, ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
-      dCurrentTime += this->m_vecTimeIncrements[ iI ];
-      }
-    else
-      {
-      std::cout << "finally partially evolved for " << dTimeTo-dCurrentTime << std::endl;
-      this->m_ptrEvolver->SolveForward( this->m_pState->GetVectorFieldPointer( iI ), ptrMapIn, ptrMapOut, ptrMapTmp, dTimeTo-dCurrentTime );
-      dCurrentTime = dTimeTo;
-      break;
-      }
-    // for next step, copy
-    ptrMapIn->copy( ptrMapOut );
-    }
-
-  // get rid of the temporary memory
-  delete ptrMapIn;
-  delete ptrMapTmp;
-
+  CALATK::LDDMMUtils< T, TState::VImageDimension >::GetMapFromToFromSpatioTemporalVelocityField(
+        ptrMap,
+        dTimeFrom,
+        dTimeTo,
+        m_vecTimeDiscretization,
+        this->m_pState->GetVectorPointerToVectorFieldPointer(),
+        this->m_ptrEvolver );
 }
 
 template < class TState >

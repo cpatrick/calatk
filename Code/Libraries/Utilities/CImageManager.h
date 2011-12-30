@@ -28,6 +28,7 @@
 #include <map>
 #include <set>
 #include <vector>
+#include "CProcessBase.h"
 
 namespace CALATK
 {
@@ -40,7 +41,7 @@ namespace CALATK
  *
  */
 template <class T, unsigned int VImageDimension=3 >
-class CImageManager
+class CImageManager : public CProcessBase
 {
 public:
 
