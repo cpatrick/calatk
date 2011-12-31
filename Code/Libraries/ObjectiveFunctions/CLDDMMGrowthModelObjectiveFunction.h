@@ -50,6 +50,7 @@ public:
   GetMacro( SigmaSqr, T );
 
   void GetImage( VectorImageType* ptrIm, T dTime );
+  void GetMomentum( VectorImageType* ptrMomentum, T dTime );
 
   virtual void SetAutoConfiguration( Json::Value& ConfValue );
 

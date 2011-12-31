@@ -289,6 +289,13 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetImage( VectorIm
 }
 
 template < class TState >
+void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetMomentum( VectorImageType* ptrMomentum, T dTime )
+{
+  std::cout << "Not yet implemented" << std::endl;
+  ptrMomentum->setConst( 0.0 );
+}
+
+template < class TState >
 void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetImageT( VectorImageType* ptrIm, T dTime )
 {
   GetMap( m_ptrMapTmp, dTime );

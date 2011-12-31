@@ -32,8 +32,15 @@ template < class TState >
 class CVelocityFieldObjectiveFunctionWithMomentum : public CVelocityFieldObjectiveFunction< TState >
 {
 public:
+  typedef CVelocityFieldObjectiveFunction< TState > Superclass;
+
+  typedef typename TState::TFloat T;
+
+  typedef typename Superclass::VectorImageType VectorImageType;
+  typedef typename Superclass::VectorFieldType VectorFieldType;
+
   /* Gets the momentum at a specifc time point */
-  virtual void GetMomentum( VectorImageType* ptrMomentum ) = 0;
+  virtual void GetMomentum( VectorImageType* ptrMomentum, T dTime ) = 0;
 };
 
 } // end namespace

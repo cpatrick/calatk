@@ -47,6 +47,7 @@ public:
 
   void GetImageT( VectorImageType* ptrIm, T dTime );
   void GetImage( VectorImageType* ptrIm, T dTime );
+  void GetMomentum( VectorImageType* ptrMomentum, T dTime );
 
   T GetCurrentEnergy();
   void ComputeGradient();

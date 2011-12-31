@@ -51,8 +51,10 @@ public:
     T GetCurrentEnergy();
     void ComputeGradient();
 
-    void GetMap( VectorFieldType* ptrMap, T dTime );
     void GetImage( VectorImageType* ptrIm, T dTime );
+    void GetMomentum( VectorImageType* ptrMomentum, T dTime );
+
+    void GetMap( VectorFieldType* ptrMap, T dTime );
     void GetMapFromTo(VectorFieldType *ptrMap, T dTimeFrom, T dTimeTo);
 
     SetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );

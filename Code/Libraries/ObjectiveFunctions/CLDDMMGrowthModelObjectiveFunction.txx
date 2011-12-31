@@ -149,6 +149,13 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::GetImage( VectorImageType* pt
   LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapTmp, m_ptrI0, ptrIm );
 }
 
+template < class TState >
+void CLDDMMGrowthModelObjectiveFunction< TState >::GetMomentum( VectorImageType* ptrMomentum, T dTime )
+{
+  std::cout << "Functionality not yet implementd" << std::endl;
+  ptrMomentum->setConst( 0.0 );
+}
+
 template  < class TState >
 void CLDDMMGrowthModelObjectiveFunction< TState >::DetermineTimePointData( std::vector< STimePoint >& vecTimePointData )
 {
