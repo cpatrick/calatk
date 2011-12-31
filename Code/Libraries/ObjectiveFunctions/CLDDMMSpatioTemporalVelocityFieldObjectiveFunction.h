@@ -20,7 +20,7 @@
 #ifndef C_LDDMM_VELOCITY_FIELD_OBJECTIVE_FUNCTION_H
 #define C_LDDMM_VELOCITY_FIELD_OBJECTIVE_FUNCTION_H
 
-#include "CVelocityFieldObjectiveFunction.h"
+#include "CVelocityFieldObjectiveFunctionWithMomentum.h"
 #include "LDDMMUtils.h"
 #include "CALATKCommon.h"
 
@@ -29,7 +29,7 @@ namespace CALATK
 
 template < class TState >
 class CLDDMMSpatioTemporalVelocityFieldObjectiveFunction
-    : public CVelocityFieldObjectiveFunction<  TState >
+    : public CVelocityFieldObjectiveFunctionWithMomentum<  TState >
 {
 public:
   

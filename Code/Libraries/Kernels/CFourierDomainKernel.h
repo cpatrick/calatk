@@ -29,36 +29,145 @@ namespace CALATK
 /**
  * fftwData2D
  *
- * A struct that holds the necessary fftw data structures for the LDDMM
- * fourier domain operations (2D)
+ * A class that holds the necessary fftw data structures for the LDDMM Fourier domain operations
  */
-struct fftwData2DType 
+
+template < class TFloat >
+class CFFTDataType
 {
-  /** Array of input doubles to be transformed */
-  double* in;
-  /** Array of output double-pairs to hold the result */
-  fftw_complex* out;
-  
-  /** FFTW plan object for the forward transformation */
-  fftw_plan fwd;
-  /** FFTW plan object for the backward transformation */
-  fftw_plan bck;
+public:
+  CFFTDataType() {};
+  ~CFFTDataType() {};
 };
 
-/**
- * fftwData3D
- *
- * A struct that holds the necessary fftw data structures for the LDDMM
- * fourier domain operations (3D)
- */
-struct fftwData3DType 
+template < >
+class CFFTDataType< float >
 {
+public:
+  /** generic typedef for the fftw complex type */
+  typedef fftwf_complex FFTComplexType;
+  typedef fftwf_plan FFTPlanType;
+
+  /** static function to excute the plan */
+  static void FFTExecute( fftwf_plan_s* fftplan )
+  {
+    fftwf_execute( fftplan );
+  };
+
+  /** static function to destroy the plan */
+  static void FFTDestroyPlan( fftwf_plan_s* fftplan )
+  {
+    fftwf_destroy_plan( fftplan );
+  };
+
+  /** static function to make the plan */
+  static FFTPlanType FFT_plan_dft_r2c_1d( int szX, float* in, FFTComplexType* out, unsigned int uiAction )
+  {
+    return fftwf_plan_dft_r2c_1d( szX, in, out, uiAction );
+  };
+
+  /** static function to make the plan */
+  static FFTPlanType FFT_plan_dft_r2c_2d( int szX, int szY, float* in, FFTComplexType* out, unsigned int uiAction )
+  {
+    return fftwf_plan_dft_r2c_2d( szX, szY, in, out, uiAction );
+  };
+
+  /** static function to make the plan */
+  static FFTPlanType FFT_plan_dft_r2c_3d( int szX, int szY, int szZ, float* in, FFTComplexType* out, unsigned int uiAction )
+  {
+    return fftwf_plan_dft_r2c_3d( szX, szY, szZ, in, out, uiAction );
+  };
+
+  /** static function to make the plan */
+  static FFTPlanType FFT_plan_dft_c2r_1d( int szX, FFTComplexType* out, float* in, unsigned int uiAction )
+  {
+    return fftwf_plan_dft_c2r_1d( szX, out, in, uiAction );
+  };
+
+  /** static function to make the plan */
+  static FFTPlanType FFT_plan_dft_c2r_2d( int szX, int szY, FFTComplexType* out, float* in, unsigned int uiAction )
+  {
+    return fftwf_plan_dft_c2r_2d( szX, szY, out, in, uiAction );
+  };
+
+  /** static function to make the plan */
+  static FFTPlanType FFT_plan_dft_c2r_3d( int szX, int szY, int szZ, FFTComplexType* out, float* in, unsigned int uiAction )
+  {
+    return fftwf_plan_dft_c2r_3d( szX, szY, szZ, out, in, uiAction );
+  };
+
+  /** Array of input doubles to be transformed */
+  float* in;
+  /** Array of output double-pairs to hold the result */
+  fftwf_complex* out;
+
+  /** FFTW plan object for the forward transformation */
+  fftwf_plan fwd;
+  /** FFTW plan object for the backward transformation */
+  fftwf_plan bck;
+};
+
+template < >
+class CFFTDataType< double >
+{
+public:
+  /** generic typedef for the fftw complex type */
+  typedef fftw_complex FFTComplexType;
+  typedef fftw_plan FFTPlanType;
+
+  /** static function to excute the plan */
+  static void FFTExecute( fftw_plan_s* fftplan )
+  {
+    fftw_execute( fftplan );
+  };
+
+  /** static function to destroy the plan */
+  static void FFTDestroyPlan( fftw_plan_s* fftplan )
+  {
+    fftw_destroy_plan( fftplan );
+  };
+
+  /** static function to make the plan */
+  static FFTPlanType FFT_plan_dft_r2c_1d( int szX, double* in, FFTComplexType* out, unsigned int uiAction )
+  {
+    return fftw_plan_dft_r2c_1d( szX, in, out, uiAction );
+  };
+
+  /** static function to make the plan */
+  static FFTPlanType FFT_plan_dft_r2c_2d( int szX, int szY, double* in, FFTComplexType* out, unsigned int uiAction )
+  {
+    return fftw_plan_dft_r2c_2d( szX, szY, in, out, uiAction );
+  };
+
+  /** static function to make the plan */
+  static FFTPlanType FFT_plan_dft_r2c_3d( int szX, int szY, int szZ, double* in, FFTComplexType* out, unsigned int uiAction )
+  {
+    return fftw_plan_dft_r2c_3d( szX, szY, szZ, in, out, uiAction );
+  };
+
+  /** static function to make the plan */
+  static FFTPlanType FFT_plan_dft_c2r_1d( int szX, FFTComplexType* out, double* in, unsigned int uiAction )
+  {
+    return fftw_plan_dft_c2r_1d( szX, out, in, uiAction );
+  };
+
+  /** static function to make the plan */
+  static FFTPlanType FFT_plan_dft_c2r_2d( int szX, int szY, FFTComplexType* out, double* in, unsigned int uiAction )
+  {
+    return fftw_plan_dft_c2r_2d( szX, szY, out, in, uiAction );
+  };
+
+  /** static function to make the plan */
+  static FFTPlanType FFT_plan_dft_c2r_3d( int szX, int szY, int szZ, FFTComplexType* out, double* in, unsigned int uiAction )
+  {
+    return fftw_plan_dft_c2r_3d( szX, szY, szZ, out, in, uiAction );
+  };
 
   /** Array of input doubles to be transformed */
   double* in;
   /** Array of output double-pairs to hold the result */
   fftw_complex* out;
-  
+
   /** FFTW plan object for the forward transformation */
   fftw_plan fwd;
   /** FFTW plan object for the backward transformation */
@@ -74,6 +183,7 @@ public:
   
   typedef CKernel< T, VImageDimension > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
+  typedef typename Superclass::VectorImageType1D VectorImageType1D;
   typedef typename Superclass::VectorImageType2D VectorImageType2D;
   typedef typename Superclass::VectorImageType3D VectorImageType3D;
 
@@ -96,6 +206,7 @@ protected:
   void ConfirmKernelsWereComputed();
   void ConfirmMemoryWasAllocated();
 
+  void ConvolveInFourierDomain( VectorImageType1D* pVecImage, VectorImageType1D* pL );
   void ConvolveInFourierDomain( VectorImageType2D* pVecImage, VectorImageType2D* pL );
   void ConvolveInFourierDomain( VectorImageType3D* pVecImage, VectorImageType3D* pL );
 
@@ -104,13 +215,13 @@ protected:
 
 private:
 
+  void AllocateFFTDataStructures1D( unsigned int szX );
   void AllocateFFTDataStructures2D( unsigned int szX, unsigned int szY );
   void AllocateFFTDataStructures3D( unsigned int szX, unsigned int szY, unsigned int szZ );
 
   void DeleteData();
 
-  fftwData2DType* fftwData2D;
-  fftwData3DType* fftwData3D;
+  CFFTDataType<T>* fftwData;
 };
 
 #include "CFourierDomainKernel.txx"

@@ -23,37 +23,23 @@
 template <class T, unsigned int VImageDimension >
 CFourierDomainKernel< T, VImageDimension >::CFourierDomainKernel()
 {
-  fftwData2D = NULL;
-  fftwData3D = NULL;
+  fftwData = NULL;
 }
 
 template <class T, unsigned int VImageDimension >
 void CFourierDomainKernel< T, VImageDimension >::DeleteData()
 {
-  if ( fftwData2D != NULL ) 
+  if ( fftwData != NULL )
     {
 
     // clean up fftw data
-    fftw_destroy_plan(fftwData2D->fwd);
-    fftw_destroy_plan(fftwData2D->bck);
-    fftw_free(fftwData2D->in);
-    fftw_free(fftwData2D->out);
+    CFFTDataType<T>::FFTDestroyPlan( fftwData->fwd );
+    CFFTDataType<T>::FFTDestroyPlan( fftwData->bck );
+    fftw_free( fftwData->in );
+    fftw_free( fftwData->out );
 
-    delete fftwData2D;
-    fftwData2D = NULL;
-    }
-
-  if ( fftwData3D != NULL ) 
-    {
-
-    // clean up fftw data
-    fftw_destroy_plan(fftwData3D->fwd);
-    fftw_destroy_plan(fftwData3D->bck);
-    fftw_free(fftwData3D->in);
-    fftw_free(fftwData3D->out);
-
-    delete fftwData3D;
-    fftwData3D = NULL;
+    delete fftwData;
+    fftwData = NULL;
     }
 
    this->m_MemoryWasAllocated = false;
@@ -75,33 +61,52 @@ CFourierDomainKernel< T, VImageDimension >::~CFourierDomainKernel()
 }
 
 template <class T, unsigned int VImageDimension >
+void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures1D( unsigned int szX )
+{
+  typedef typename CFFTDataType<T>::FFTComplexType FFTComplexType;
+
+  // Set up the fftw data
+  unsigned int numElts = szX;
+  fftwData = new CFFTDataType<T>();
+
+  fftwData->in = (T*) fftw_malloc( sizeof(T) * numElts);
+  fftwData->out = (FFTComplexType*) fftw_malloc(sizeof(FFTComplexType) * numElts);
+
+  fftwData->fwd = CFFTDataType<T>::FFT_plan_dft_r2c_1d(szX, fftwData->in, fftwData->out, FFTW_ESTIMATE);
+  fftwData->bck = CFFTDataType<T>::FFT_plan_dft_c2r_1d(szX, fftwData->out, fftwData->in, FFTW_ESTIMATE);
+}
+
+template <class T, unsigned int VImageDimension >
 void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures2D( unsigned int szX, unsigned int szY )
 {
+  typedef typename CFFTDataType<T>::FFTComplexType FFTComplexType;
+
   // Set up the fftw data
   unsigned int numElts = szX*szY;
-  fftwData2D = new fftwData2DType();
+  fftwData = new CFFTDataType<T>();
   
-  fftwData2D->in = (double*) fftw_malloc(sizeof(double) * numElts);
-  fftwData2D->out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * numElts);
+  fftwData->in = (T*) fftw_malloc( sizeof(T) * numElts);
+  fftwData->out = (FFTComplexType*) fftw_malloc( sizeof(FFTComplexType) * numElts);
   
-  fftwData2D->fwd = fftw_plan_dft_r2c_2d(szX, szY, fftwData2D->in, fftwData2D->out, FFTW_ESTIMATE);
-  fftwData2D->bck = fftw_plan_dft_c2r_2d(szX, szY, fftwData2D->out, fftwData2D->in, FFTW_ESTIMATE);
+  fftwData->fwd = CFFTDataType<T>::FFT_plan_dft_r2c_2d(szX, szY, fftwData->in, fftwData->out, FFTW_ESTIMATE);
+  fftwData->bck = CFFTDataType<T>::FFT_plan_dft_c2r_2d(szX, szY, fftwData->out, fftwData->in, FFTW_ESTIMATE);
 
 }
 
 template <class T, unsigned int VImageDimension >
 void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures3D( unsigned int szX, unsigned int szY, unsigned int szZ )
 {
+  typedef typename CFFTDataType<T>::FFTComplexType FFTComplexType;
 
  // Set up the fftw data
   unsigned int numElts = szX*szY*szZ;
-  fftwData3D = new fftwData3DType();
+  fftwData = new CFFTDataType<T>();
   
-  fftwData3D->in = (double*) fftw_malloc(sizeof(double) * numElts);
-  fftwData3D->out = (fftw_complex*) fftw_malloc(sizeof(fftw_complex) * numElts);
+  fftwData->in = (T*) fftw_malloc( sizeof(T) * numElts );
+  fftwData->out = (FFTComplexType*) fftw_malloc( sizeof(FFTComplexType) * numElts);
 
-  fftwData3D->fwd = fftw_plan_dft_r2c_3d(szX, szY, szZ, fftwData3D->in, fftwData3D->out, FFTW_ESTIMATE);
-  fftwData3D->bck = fftw_plan_dft_c2r_3d(szX, szY, szZ, fftwData3D->out, fftwData3D->in, FFTW_ESTIMATE);
+  fftwData->fwd = CFFTDataType<T>::FFT_plan_dft_r2c_3d(szX, szY, szZ, fftwData->in, fftwData->out, FFTW_ESTIMATE);
+  fftwData->bck = CFFTDataType<T>::FFT_plan_dft_c2r_3d(szX, szY, szZ, fftwData->out, fftwData->in, FFTW_ESTIMATE);
 }
 
 template <class T, unsigned int VImageDimension >
@@ -113,6 +118,8 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures( Vect
 
   switch ( VImageDimension )
     {
+    case 1:
+      AllocateFFTDataStructures1D( szX );
     case 2:
       AllocateFFTDataStructures2D( szX, szY );
       break;
@@ -178,7 +185,7 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
         { 
         // add to fftw matrix
         unsigned int index = y + (szY * x);
-        fftwData2D->in[index] = pVecImage->getValue(x,y,d);
+        fftwData->in[index] = pVecImage->getValue(x,y,d);
         }
       }
       
@@ -187,7 +194,7 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
     //
   
     // tranform forward
-    fftw_execute(fftwData2D->fwd);
+    CFFTDataType<T>::FFTExecute( fftwData->fwd );
   
     // TODO: Assumption here is that we have a self-adjoint operator
     // TODO: need to support complex cases and do it really with the actual adjoint
@@ -200,13 +207,13 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
         unsigned int index = y + ((szY/2+1) * x);
         T lVal = pL->getValue(x,y,0);
       
-        fftwData2D->out[index][0] = fftwData2D->out[index][0] * lVal;
-        fftwData2D->out[index][1] = fftwData2D->out[index][1] * lVal;
+        fftwData->out[index][0] = fftwData->out[index][0] * lVal;
+        fftwData->out[index][1] = fftwData->out[index][1] * lVal;
         }
       }
   
     // transform backward
-    fftw_execute( fftwData2D->bck );
+    CFFTDataType<T>::FFTExecute( fftwData->bck );
 
     //
     // convolve to get result and convert back to our format
@@ -220,7 +227,7 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
         unsigned int index = y + (szY * x);
       
         // scale the fft results and calculate gradient
-        T val = (fftwData2D->in[index])/(szX*szY);
+        T val = (fftwData->in[index])/(szX*szY);
       
         pVecImage->setValue(x,y,d,val);
         }
@@ -255,7 +262,7 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
           {
           // add to fftw matrix
           unsigned int index = z + szZ * (y + szY*x);
-          fftwData3D->in[index] = pVecImage->getValue(x,y,z,d);
+          fftwData->in[index] = pVecImage->getValue(x,y,z,d);
           }
         }
       }
@@ -266,7 +273,7 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
     //
     
     // tranform forward
-    fftw_execute(fftwData3D->fwd);
+    CFFTDataType< T >::FFTExecute( fftwData->fwd );
 
     // multiply by L^2
   
@@ -279,15 +286,15 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
           unsigned int index = z + (szZ/2+1) * (y + szY*x);
           T lVal = pL->getValue(x,y,z,0);
         
-          fftwData3D->out[index][0] = fftwData3D->out[index][0] * lVal;
-          fftwData3D->out[index][1] = fftwData3D->out[index][1] * lVal;
+          fftwData->out[index][0] = fftwData->out[index][0] * lVal;
+          fftwData->out[index][1] = fftwData->out[index][1] * lVal;
 
           }
         }
       }
       
     // transform backward
-    fftw_execute(fftwData3D->bck);
+    CFFTDataType< T >::FFTExecute( fftwData->bck );
   
     //
     // convolve to get result and convert back to our format
@@ -301,7 +308,7 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
           {
           unsigned int index = z + szZ * (y + szY*x);
         
-          T val = fftwData3D->in[index]/(szX*szY*szZ);
+          T val = fftwData->in[index]/(szX*szY*szZ);
         
           pVecImage->setValue(x,y,z,d, val);
         

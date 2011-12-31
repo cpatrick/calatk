@@ -355,6 +355,18 @@ void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::GetI
 }
 
 template < class TState >
+void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::GetMomentum( VectorImageType* ptrMomentum, T dTime )
+{
+  GetMap( m_ptrMapTmp, dTime );
+  // now compute the momentum by interpolation
+  VectorImageType* ptrInitialMomentum = this->m_pState->GetPointerToInitialMomentum();
+  LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapTmp, ptrInitialMomentum, ptrMomentum );
+  LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( m_ptrMapTmp, m_ptrDeterminantOfJacobian );
+  ptrMomentum->multElementwise( m_ptrDeterminantOfJacobian );
+
+}
+
+template < class TState >
 void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::ComputeVelocity( const VectorImagePointerType ptrI, const VectorImagePointerType ptrP, VectorFieldPointerType ptrVout)
 {
   /**
