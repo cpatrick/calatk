@@ -289,10 +289,29 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetImage( VectorIm
 }
 
 template < class TState >
+void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetInitialImage( VectorImageType* ptrIm )
+{
+  ptrIm->copy( ptrI0 );
+}
+
+template < class TState >
 void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetMomentum( VectorImageType* ptrMomentum, T dTime )
 {
-  std::cout << "Not yet implemented" << std::endl;
-  ptrMomentum->setConst( 0.0 );
+  ComputeImagesForward();
+  ComputeAdjointBackward();
+
+  GetMap( m_ptrMapTmp, dTime );
+  // now compute the image by interpolation
+  LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapTmp, (*m_ptrLambda)[0], ptrMomentum );
+  LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( m_ptrMapTmp, m_ptrDeterminantOfJacobian );
+
+  ptrMomentum->multElementwise( m_ptrDeterminantOfJacobian );
+}
+
+template < class TState >
+void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetInitialMomentum( VectorImageType* ptrMomentum )
+{
+  ptrMomentum->copy( (*m_ptrLambda)[0] );
 }
 
 template < class TState >

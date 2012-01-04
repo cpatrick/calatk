@@ -168,26 +168,29 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::PerformStep(  
 template <class T, unsigned int VImageDimension >
 T COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::ComputeMaximalUpdateStep( const VectorFieldType* v ) const
 {
-
+#warning Use an appropriate time step factor -- implement a real semi-Lagrangian scheme
   // TODO: fixme: improve this. Handle anisotropic spacing and introduce a factor which allows for larger steps for the semi-lagrangian scheme
+  // Implement actual semi-Lagrangian method
+  const T dFact = 0.1;
 
   T vMax = VectorFieldUtils< T, VImageDimension >::absMaxAll( v );
 
   if ( vMax==0 ) vMax = 1; // if everything is zero use a default value
 
-  T dtx = v->getSpaceX()/vMax;
+  // TODO: take this back out, just for testing
+  T dtx = dFact*v->getSpaceX()/vMax;
 
   T dty = std::numeric_limits< T >::infinity();
   T dtz = std::numeric_limits< T >::infinity();
 
   if ( VImageDimension>1 )
     {
-    dty = v->getSpaceY()/vMax;
+    dty = dFact*v->getSpaceY()/vMax;
     }
 
   if ( VImageDimension>2 )
     {
-    dtz = v->getSpaceZ()/vMax;
+    dtz = dFact*v->getSpaceZ()/vMax;
     }
 
   T minDT = std::min( dtx, dty );

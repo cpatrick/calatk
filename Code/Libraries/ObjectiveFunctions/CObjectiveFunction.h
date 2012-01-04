@@ -66,6 +66,9 @@ public:
   /* Gets the image at a specific time point */
   virtual void GetImage( VectorImageType* ptrIm, T dTime ) = 0;
 
+  /* Gets the initial image */
+  virtual void GetInitialImage( VectorImageType* ptrIm ) = 0;
+
   virtual void InitializeState() = 0;
   virtual void InitializeState( TState* ) = 0;
 

@@ -17,23 +17,16 @@
 *
 */
 
-#ifndef C_LDDMM_VELOCITY_FIELD_REGISTRATION_H
-#define C_LDDMM_VELOCITY_FIELD_REGISTRATION_H
+#ifndef C_LDDMM_VELOCITY_FIELD_WITH_MOMENTUM_REGISTRATION_H
+#define C_LDDMM_VELOCITY_FIELD_WITH_MOMENTUM_REGISTRATION_H
 
-#include "CLDDMMSpatioTemporalVelocityFieldObjectiveFunction.h"
-#include "CHelmholtzKernel.h"
-#include "CGaussianKernel.h"
-#include "CMetricSSD.h"
-#include "COneStepEvolverSemiLagrangianAdvection.h"
-#include "CStationaryEvolver.h"
-#include "CAlgorithm.h"
-//#include "CImageManagerFullScale.h"
-#include "CImageManagerMultiScale.h"
-#include "CSolverLineSearch.h"
-#include "CSolverMultiScale.h"
+#include "CLDDMMVelocityFieldRegistration.h"
+#include "CVelocityFieldObjectiveFunctionWithMomentum.h"
 
 namespace CALATK
 {
+/** Class which introduces output of the momentum */
+
 /**
   * A reasonable default value for the state is
   * TState = CStateSpatioTemporalVelocityField< T, VImageDimension >
@@ -43,14 +36,14 @@ namespace CALATK
   * TState - CStateInitialImageMomentum< T, VImageDimension >
   */
 template < class TState >
-class CLDDMMVelocityFieldRegistration
-    : public CAlgorithm< TState >
+class CLDDMMVelocityFieldWithMomentumRegistration
+    : public CLDDMMVelocityFieldRegistration< TState >
 {
-public:
+ public:
 
   /* some useful typedefs */
 
-  typedef CAlgorithm< TState > Superclass;
+  typedef CLDDMMVelocityFieldRegistration< TState > Superclass;
 
   typedef typename TState::TFloat T;
 
@@ -63,31 +56,17 @@ public:
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 
-  CLDDMMVelocityFieldRegistration();
-  ~CLDDMMVelocityFieldRegistration();
+  typedef CVelocityFieldObjectiveFunctionWithMomentum< TState > CVelocityFieldObjectiveFunctionWithMomentumType;
 
-  const VectorFieldType* GetMap( T dTime );
-  const VectorFieldType* GetMapFromTo( T dTimeFrom, T dTimeTo );
-  const VectorImageType* GetImage( T dTime );
-  const VectorImageType* GetInitialImage();
+  CLDDMMVelocityFieldWithMomentumRegistration();
+  ~CLDDMMVelocityFieldWithMomentumRegistration();
 
-protected:
-
-  void SetDefaultMetricPointer();
-  void SetDefaultImageManagerPointer();
-  void SetDefaultKernelPointer();
-  void SetDefaultEvolverPointer();
-  void SetDefaultSolverPointer();
-
-private:
-
-  // default one step evolver
-  COneStepEvolverSemiLagrangianAdvection< T, TState::VImageDimension > oneStepDefaultEvolver;
-
+  const VectorImageType* GetMomentum( T dTime );
+  const VectorImageType* GetInitialMomentum();
 };
 
-#include "CLDDMMVelocityFieldRegistration.txx"
+#include "CLDDMMVelocityFieldWithMomentumRegistration.txx"
 
 } // end namespace
 
-#endif
+#endif // C_LDDMM_VELOCITY_FIELD_WITH_MOMENTUM_REGISTRATION_H

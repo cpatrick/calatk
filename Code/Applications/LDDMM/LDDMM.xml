@@ -77,6 +77,14 @@
           <description>Name of the warped source image.</description>
 	</image>
 
+        <image>
+            <name>initialMomentumImage</name>
+            <label>Initial momentum image</label>
+            <longflag>--initialMomentum</longflag>
+            <default>None</default>
+            <description>Name of the initial momentum image.</description>
+        </image>
+
 	<file>
 	  <name>configFile</name>
 	  <longflag>--config</longflag>

@@ -50,7 +50,11 @@ public:
   GetMacro( SigmaSqr, T );
 
   void GetImage( VectorImageType* ptrIm, T dTime );
+  void GetInitialImage( VectorImageType* ptrIm );
   void GetMomentum( VectorImageType* ptrMomentum, T dTime );
+  void GetInitialMomentum( VectorImageType* ptrMomentum );
+
+  void OutputStateInformation( unsigned int uiIter, std::string outputPrefix="" );
 
   virtual void SetAutoConfiguration( Json::Value& ConfValue );
 

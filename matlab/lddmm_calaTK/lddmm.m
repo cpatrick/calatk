@@ -73,7 +73,7 @@ if ( scenario == 3 )
   optionsOrig.dy = 0.02;
   
   % tests that everyhting is invariant with respect to a scaling of the spacing
-  fac = 10; 
+  fac = 1; 
   
   options.dx = optionsOrig.dx*fac;
   options.dy = optionsOrig.dy*fac;
@@ -426,4 +426,4 @@ axis image
 colormap( gray )
 title( 'I1' );
 
-
+keyboard

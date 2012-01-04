@@ -41,6 +41,7 @@ public:
 
   /* Gets the momentum at a specifc time point */
   virtual void GetMomentum( VectorImageType* ptrMomentum, T dTime ) = 0;
+  virtual void GetInitialMomentum( VectorImageType* ptrMomentum ) = 0;
 };
 
 } // end namespace

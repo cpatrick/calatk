@@ -145,14 +145,14 @@ bool CSolverLineSearch< TState>::SolvePreInitialized()
 
     std::cout << "iter = " << uiIter << ": alpha = " << dAlpha << "; energy = " << dResultingEnergy << std::endl;
 
+    // output the state if desired
+    if ( this->m_OutputStateInformation )
+      {
+      pObj->OutputStateInformation( uiIter + 1, sStatePrefix );
+      }
+
     if ( bSufficientlyDecreasedEnergy )
       {
-
-      // output the state if desired
-      if ( this->m_OutputStateInformation )
-        {
-        pObj->OutputStateInformation( uiIter + 1, sStatePrefix );
-        }
 
       if ( dDesiredStepSize == dAlpha ) // could be decreased immediately
         {

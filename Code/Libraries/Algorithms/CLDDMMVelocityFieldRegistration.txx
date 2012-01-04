@@ -47,6 +47,7 @@ template < class TState >
 void CLDDMMVelocityFieldRegistration< TState >::SetDefaultKernelPointer()
 {
   this->m_ptrKernel = new CHelmholtzKernel< T, TState::VImageDimension >;
+  //this->m_ptrKernel = new CGaussianKernel< T, TState::VImageDimension >;
   this->m_ptrKernel->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 
@@ -90,6 +91,12 @@ CLDDMMVelocityFieldRegistration< TState >::GetImage( T dTime )
   return this->m_ptrIm;
 }
 
-
+template < class TState >
+const typename CLDDMMVelocityFieldRegistration< TState >::VectorImageType*
+CLDDMMVelocityFieldRegistration< TState >::GetInitialImage()
+{
+  this->m_ptrObjectiveFunction->GetInitialImage( this->m_ptrIm );
+  return this->m_ptrIm;
+}
 
 #endif

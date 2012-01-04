@@ -112,6 +112,12 @@ int DoIt( int argc, char** argv )
     delete ptrI0W1;
     }
 
+  if ( initialMomentumImage.compare("None") !=0 )
+  {
+    const VectorImageType* ptrI0 = lddmm.GetInitialMomentum();
+    VectorImageUtilsType::writeFileITK( ptrI0, initialMomentumImage );
+  }
+
   delete ptrMap1;
 
   return EXIT_SUCCESS;

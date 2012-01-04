@@ -22,7 +22,7 @@
 
 #include "CAlgorithm.h"
 #include "CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction.h"
-#include "CLDDMMVelocityFieldRegistration.h"
+#include "CLDDMMVelocityFieldWithMomentumRegistration.h"
 #include "CStateInitialImageMomentum.h"
 #include "CGaussianKernel.h"
 #include "CMetricSSD.h"
@@ -43,12 +43,12 @@ namespace CALATK
 
 template < class TState >
 class CLDDMMGeodesicShootingInitialImageMomentumRegistration
-    : public CLDDMMVelocityFieldRegistration< TState >
+    : public CLDDMMVelocityFieldWithMomentumRegistration< TState >
 {
 public:
 
   /* some useful typedefs */
-  typedef CLDDMMVelocityFieldRegistration< TState > Superclass;
+  typedef CLDDMMVelocityFieldWithMomentumRegistration< TState > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 

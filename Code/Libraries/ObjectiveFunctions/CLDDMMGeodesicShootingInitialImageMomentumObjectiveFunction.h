@@ -20,7 +20,7 @@
 #ifndef C_LDDMM_GEODESIC_SHOOTING_INITIAL_IMAGE_MOMENTUM_OBJECTIVE_FUNCTION_H
 #define C_LDDMM_GEODESIC_SHOOTING_INITIAL_IMAGE_MOMENTUM_OBJECTIVE_FUNCTION_H
 
-#include "CVelocityFieldObjectiveFunction.h"
+#include "CVelocityFieldObjectiveFunctionWithMomentum.h"
 #include "CALATKCommon.h"
 #include "LDDMMUtils.h"
 
@@ -28,13 +28,13 @@ namespace CALATK
 {
 template < class TState >
 class CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction
-    : public CVelocityFieldObjectiveFunction< TState >
+    : public CVelocityFieldObjectiveFunctionWithMomentum< TState >
 {
 public:
 
     /* Some useful typedefs */
 
-    typedef CVelocityFieldObjectiveFunction< TState > Superclass;
+    typedef CVelocityFieldObjectiveFunctionWithMomentum< TState > Superclass;
 
     typedef typename TState::TFloat T;
 
@@ -52,7 +52,9 @@ public:
     void ComputeGradient();
 
     void GetImage( VectorImageType* ptrIm, T dTime );
+    void GetInitialImage( VectorImageType* ptrIm );
     void GetMomentum( VectorImageType* ptrMomentum, T dTime );
+    void GetInitialMomentum( VectorImageType* ptrMomentum );
 
     void GetMap( VectorFieldType* ptrMap, T dTime );
     void GetMapFromTo(VectorFieldType *ptrMap, T dTimeFrom, T dTimeTo);
@@ -129,6 +131,10 @@ private:
 
     VectorPointerToVectorImagePointerType m_ptrI; // image
     VectorPointerToVectorImagePointerType m_ptrP; // momentum
+
+    // just for testing, remove later
+    VectorPointerToVectorImagePointerType tstLamI;
+    VectorPointerToVectorImagePointerType tstLamP;
 
     VectorImagePointerType m_ptrCurrentLambdaI; // adjoint 1
     VectorImagePointerType m_ptrCurrentLambdaP; // adjoint 2

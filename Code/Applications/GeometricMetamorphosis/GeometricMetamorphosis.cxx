@@ -122,6 +122,12 @@ int DoIt( int argc, char** argv )
     VectorImageUtilsType::writeFileITK( ptrI0W1, warpedSourceImage );
     }
   
+  if ( initialMomentumImage.compare("None") !=0 )
+  {
+    const VectorImageType* ptrI0 = lddmm.GetInitialMomentum();
+    VectorImageUtilsType::writeFileITK( ptrI0, initialMomentumImage );
+  }
+
   if ( bWriteDetailedResults )
     {
     const VectorImageType* ptrIm = new VectorImageType( lddmm.GetImage( 1.0 ) );

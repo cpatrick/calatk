@@ -79,6 +79,8 @@ protected:
   void GetMap( VectorFieldType*, T ) {};
   /** purposefully not implemented */   
   void GetImage( VectorImageType*, T ) {};
+  /** purposefully not implemented */
+  void GetInitialImage( VectorImageType* ) {};
 
 private:
   TState state;
