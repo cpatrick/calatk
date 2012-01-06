@@ -34,6 +34,17 @@ CSolverMultiScale< TState >::~CSolverMultiScale()
 }
 
 template < class TState >
+void CSolverMultiScale< TState >::SetAutoConfiguration( Json::Value &ConfValue )
+{
+  Superclass::SetAutoConfiguration( ConfValue );
+
+  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "MultiScaleFinalOutput", Json::nullValue );
+
+  SetJSONOutputStateInformation( this->m_jsonConfig.GetFromKey( currentConfiguration, "OutputStateInformation", this->GetExternalOrDefaultOutputStateInformation() ).asBool() );
+  SetJSONOutputStateInformationFrequency( this->m_jsonConfig.GetFromKey( currentConfiguration, "OutputStateInformationFrequency", this->GetExternalOrDefaultOutputStateInformationFrequency() ).asUInt() );
+}
+
+template < class TState >
 void CSolverMultiScale< TState >::SetDefaultSingleScaleSolver()
 {
   DeleteDefaultSingleScaleSolver();

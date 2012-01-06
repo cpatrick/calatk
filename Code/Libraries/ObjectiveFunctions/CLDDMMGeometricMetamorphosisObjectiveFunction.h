@@ -38,6 +38,8 @@ public:
 
   typedef typename TState::TFloat T;
 
+  typedef typename Superclass::CEnergyValues CEnergyValues;
+
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
   typedef CKernel< T, TState::VImageDimension >* ptrKernelType;
@@ -51,7 +53,7 @@ public:
   void GetMomentum( VectorImageType* ptrMomentum, T dTime );
   void GetInitialMomentum( VectorImageType* ptrMomentum );
 
-  T GetCurrentEnergy();
+  CEnergyValues GetCurrentEnergy();
   void ComputeGradient();
 
   SetMacro( Sigma1Sqr, T );

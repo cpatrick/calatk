@@ -100,7 +100,7 @@ int DoIt( int argc, char** argv )
   // write out the resulting JSON file if desired
   if ( configFileOut.compare("None") != 0 )
     {
-    config.WriteCurrentConfigurationToJSONFile( configFileOut );
+    config.WriteCurrentConfigurationToJSONFile( configFileOut, CALATK::GetCALATKJsonHeaderString() );
     }
 
   const VectorImageType* ptrI0Orig = ptrImageManager->GetOriginalImageById( uiI0 );

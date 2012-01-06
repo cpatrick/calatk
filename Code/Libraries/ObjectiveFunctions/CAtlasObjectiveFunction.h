@@ -36,14 +36,17 @@ public:
   /* Some useful typedefs */
 
   typedef CObjectiveFunction< TState > ObjectiveFunctionType;
+  typedef ObjectiveFunctionType Superclass;
 
   typedef typename TState::TFloat T;
   typedef typename TState::TIndividualState TIndividualState;
 
+  typedef typename Superclass::CEnergyValues CEnergyValues;
+
   CAtlasObjectiveFunction();
   virtual ~CAtlasObjectiveFunction();
 
-  T GetCurrentEnergy();
+  CEnergyValues GetCurrentEnergy();
   void ComputeGradient();
 
   /**

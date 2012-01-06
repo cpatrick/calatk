@@ -56,6 +56,7 @@ void CLDDMMVelocityFieldRegistration< TState >::SetDefaultEvolverPointer()
 {
   this->m_ptrEvolver = new CStationaryEvolver< T, TState::VImageDimension >;
   this->m_ptrEvolver->SetOneStepEvolverPointer( &oneStepDefaultEvolver );
+  oneStepDefaultEvolver.SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
   this->m_ptrEvolver->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 

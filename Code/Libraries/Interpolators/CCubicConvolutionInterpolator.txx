@@ -49,6 +49,8 @@ T CCubicConvolutionInterpolator< T, VImageDimension >::Interpolate( T* vals, T d
     \f]
     */
 
+  assert( dS>=0 && dS<=1 );
+
   if ( dS==0 )
   {
     return vals[1];
@@ -63,11 +65,12 @@ T CCubicConvolutionInterpolator< T, VImageDimension >::Interpolate( T* vals, T d
     T dSCubed = dSSqr*dS;
 
     T ckm1 = ( -dSCubed + 2*dSSqr - dS )/2;
-    T ck = ( 2*dSCubed - 5*dSSqr + 2 );
+    T ck = ( 3*dSCubed - 5*dSSqr + 2 )/2;
     T ckp1 = ( -3*dSCubed + 4*dSSqr + dS )/2;
     T ckp2 = ( dSCubed - dSSqr )/2;
 
     T dVal = ckm1*vals[0] + ck*vals[1] + ckp1*vals[2] + ckp2*vals[3];
+
     return dVal;
   }
 }

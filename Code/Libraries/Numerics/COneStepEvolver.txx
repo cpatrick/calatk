@@ -23,20 +23,33 @@
 //
 // empty constructor
 //
-template <class T, unsigned int VImageDimension >
+template < class T, unsigned int VImageDimension >
 COneStepEvolver<T, VImageDimension >::COneStepEvolver()
-  : DefaultNumberOfThreads( 1 ), m_ExternallySetNumberOfThreads( false )
+  : DefaultNumberOfThreads( 1 ), m_ExternallySetNumberOfThreads( false ),
+    m_InitializeOneStepEvolverState( true )
 {
   m_NumberOfThreads = DefaultNumberOfThreads; // default number of threads
 }
 
-template <class T, unsigned int VImageDimension >
+template < class T, unsigned int VImageDimension >
 void COneStepEvolver<T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValue )
 {
   Superclass::SetAutoConfiguration( ConfValue );
   Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "OneStepEvolver", Json::nullValue );
   
   SetJSONNumberOfThreads( this->m_jsonConfig.GetFromKey( currentConfiguration, "NumberOfThreads", GetExternalOrDefaultNumberOfThreads() ).asUInt() );
+}
+
+template < class T, unsigned int VImageDimension >
+void COneStepEvolver< T, VImageDimension >::SetInitializeOneStepEvolverState( bool bInitialize )
+{
+  m_InitializeOneStepEvolverState = bInitialize;
+}
+
+template < class T, unsigned int VImageDimension >
+bool COneStepEvolver< T, VImageDimension >::GetInitializeOneStepEvolverState()
+{
+  return m_InitializeOneStepEvolverState;
 }
 
 #endif

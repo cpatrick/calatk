@@ -25,12 +25,12 @@
 //
 template < class TState >
 CSolverLineSearch< TState>::CSolverLineSearch()
-  : DefaultInitialStepSize( 0.001 ),
+  : DefaultInitialStepSize( 0.00001 ),
     DefaultAdjustStepSizeUpFactor(2),
     DefaultAdjustStepSizeDownFactor(0.5),
     DefaultReductionFactor(0.5),
     DefaultMinAllowedStepSize(1e-6),
-    DefaultDecreaseConstant(1e-6),
+    DefaultDecreaseConstant(0.0),
     DefaultMaxNumberOfIterations(100),
     DefaultMaxNumberOfTries(10),
     DefaultAdjustStepSizeUpNumber(2),
@@ -108,6 +108,9 @@ void CSolverLineSearch< TState>::SetAutoConfiguration( Json::Value& ConfValue )
   SetJSONMaxNumberOfTries( this->m_jsonConfig.GetFromKey( currentConfiguration, "MaxNumberOfTries", GetExternalOrDefaultMaxNumberOfTries() ).asUInt() );
   SetJSONAdjustStepSizeUpNumber( this->m_jsonConfig.GetFromKey( currentConfiguration, "AdjustStepSizeUpNumber", GetExternalOrDefaultAdjustStepSizeUpNumber() ).asUInt() );
   SetJSONAdjustStepSizeDownNumber( this->m_jsonConfig.GetFromKey( currentConfiguration, "AdjustStepSizeDownNumber", GetExternalOrDefaultAdjustStepSizeDownNumber() ).asUInt() );
+
+  SetJSONOutputStateInformation( this->m_jsonConfig.GetFromKey( currentConfiguration, "OutputStateInformation", this->GetExternalOrDefaultOutputStateInformation() ).asBool() );
+  SetJSONOutputStateInformationFrequency( this->m_jsonConfig.GetFromKey( currentConfiguration, "OutputStateInformationFrequency", this->GetExternalOrDefaultOutputStateInformationFrequency() ).asUInt() );
 }
 
 //
@@ -121,12 +124,12 @@ bool CSolverLineSearch< TState>::SolvePreInitialized()
   unsigned int uiNrOfIterationsWithImmediateDecrease = 0;
   unsigned int uiNrOfIterationsWithoutImmediateDecrease = 0;
 
-  T dInitialEnergy = pObj->GetCurrentEnergy();
-  std::cout << "Initial energy = " << dInitialEnergy << std::endl;
+  CEnergyValues InitialEnergy = pObj->GetCurrentEnergy();
+  std::cout << "Initial energy = " << InitialEnergy.dEnergy << std::endl;
 
   T dDesiredStepSize = m_InitialStepSize;
   T dAlpha;
-  T dResultingEnergy;
+  CEnergyValues ResultingEnergy;
 
   // creating new temp state
   pTempState = new TState( *pObj->GetStatePointer() );
@@ -134,22 +137,30 @@ bool CSolverLineSearch< TState>::SolvePreInitialized()
   std::string sStatePrefix = "S" + CreateIntegerString( (int)this->GetExternalSolverState() ) + "-";
 
   // output the initial state if desired
-  if ( this->m_OutputStateInformation )
-    {
-    pObj->OutputStateInformation( 0,  sStatePrefix );
-    }
+  this->OutputStateInformation( 0, sStatePrefix );
 
   for ( unsigned int uiIter = 0; uiIter<m_MaxNumberOfIterations; ++uiIter )
     {
-    bool bSufficientlyDecreasedEnergy = LineSearchWithBacktracking( dDesiredStepSize, dAlpha, dResultingEnergy );
+    unsigned int uiRequiredIterations;
+    bool bSufficientlyDecreasedEnergy = LineSearchWithBacktracking( dDesiredStepSize, dAlpha, ResultingEnergy, uiRequiredIterations );
 
-    std::cout << "iter = " << uiIter << ": alpha = " << dAlpha << "; energy = " << dResultingEnergy << std::endl;
+    // output the current energy information
+
+    std::cout << "I " << std::setw(5) << uiIter << "; ";
+    std::cout << "alpha = " << std::setw(10) << dAlpha << "; ";
+    std::cout << "E(tot) = " << std::setw(10) << ResultingEnergy.dEnergy << "; ";
+    std::cout << "E(I) = " << std::setw(10) << ResultingEnergy.dMatchingEnergy << "; ";
+    std::cout << "E(v) = " << std::setw(10) << ResultingEnergy.dRegularizationEnergy << "; ";
+    std::cout << "reqIter = " << std::setw(2) << uiRequiredIterations;
+
+    if ( !bSufficientlyDecreasedEnergy )
+      std::cout << "!";
+
+    std::cout << std::endl;
+
 
     // output the state if desired
-    if ( this->m_OutputStateInformation )
-      {
-      pObj->OutputStateInformation( uiIter + 1, sStatePrefix );
-      }
+    this->OutputStateInformation( uiIter + 1, sStatePrefix );
 
     if ( bSufficientlyDecreasedEnergy )
       {
@@ -206,7 +217,7 @@ bool CSolverLineSearch< TState>::SolvePreInitialized()
 
   delete pTempState;
 
-  if ( dResultingEnergy<dInitialEnergy )
+  if ( ResultingEnergy.dEnergy < InitialEnergy.dEnergy )
     {
     // could reduce the energy
     return true;
@@ -220,17 +231,16 @@ bool CSolverLineSearch< TState>::SolvePreInitialized()
 }
 
 template < class TState >
-bool CSolverLineSearch< TState>::LineSearchWithBacktracking( T dDesiredStepSize, T& dAlpha, T& dResultingEnergy )
+bool CSolverLineSearch< TState>::LineSearchWithBacktracking( T dDesiredStepSize, T& dAlpha, CEnergyValues& ResultingEnergy, unsigned int& uiIter )
 {
 
   ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();
 
   // get current energy
-  T dInitialEnergy = pObj->GetCurrentEnergy();
-  T dComputedEnergy = std::numeric_limits< T >::infinity();
+  CEnergyValues InitialEnergy = pObj->GetCurrentEnergy();
+  CEnergyValues ComputedEnergy;
 
   T dAdjustedEnergy = std::numeric_limits< T >::infinity();
-
 
   // save the current state
   *pTempState = *pObj->GetStatePointer();
@@ -247,7 +257,7 @@ bool CSolverLineSearch< TState>::LineSearchWithBacktracking( T dDesiredStepSize,
   // compute the norm of the gradient (required for line search with gradient descent)
   T dSquaredNorm = pCurrentGradient->SquaredNorm();
 
-  std::cout << "dSquaredNorm = " << dSquaredNorm << std::endl;
+  //std::cout << "dSquaredNorm = " << dSquaredNorm << std::endl;
 
   // now see if we can reduce the energy by backtracking
   // FIXME: Add sufficient decrease condition: for now just see if it is decreasing
@@ -256,7 +266,7 @@ bool CSolverLineSearch< TState>::LineSearchWithBacktracking( T dDesiredStepSize,
 
   bool bHitLowerStepSizeBound = false;
   bool bTerminate = false;
-  unsigned int uiIter = 0;
+  uiIter = 0;
 
   do 
     {
@@ -274,21 +284,20 @@ bool CSolverLineSearch< TState>::LineSearchWithBacktracking( T dDesiredStepSize,
     *pState += *pTempState;
 
     // recompute the energy
-    dComputedEnergy = pObj->GetCurrentEnergy();
 
-    std::cout << "initE = " << dInitialEnergy << std::endl;
+    ComputedEnergy = pObj->GetCurrentEnergy();
+
+    /*std::cout << "initE = " << dInitialEnergy << std::endl;
     std::cout << "dc = " << m_DecreaseConstant << std::endl;
     std::cout << "alpha = " << dAlpha << std::endl;
-    std::cout << "sqNorm = " << dSquaredNorm << std::endl;
+    std::cout << "sqNorm = " << dSquaredNorm << std::endl;*/
 
-    dAdjustedEnergy = dInitialEnergy - m_DecreaseConstant*dAlpha*dSquaredNorm;
+    dAdjustedEnergy = InitialEnergy.dEnergy - m_DecreaseConstant*dAlpha*dSquaredNorm;
 
-    std::cout << "computed energy = " << dComputedEnergy << "; dAdjustedEnergy = " << dAdjustedEnergy << std::endl;
-
-
+    //std::cout << "computed energy = " << dComputedEnergy << "; dAdjustedEnergy = " << dAdjustedEnergy << std::endl;
     //std::cout << "dComputedEnergy = " << dComputedEnergy << std::endl;
 
-    if ( dComputedEnergy >= dAdjustedEnergy )
+    if ( ComputedEnergy.dEnergy >= dAdjustedEnergy )
       {
       dAlpha *= m_ReductionFactor;
       if ( dAlpha < m_MinAllowedStepSize )
@@ -301,20 +310,20 @@ bool CSolverLineSearch< TState>::LineSearchWithBacktracking( T dDesiredStepSize,
     uiIter++;
 
     } 
-  while ( ( dComputedEnergy >= dAdjustedEnergy ) && ( uiIter <= m_MaxNumberOfTries ) && ( !bTerminate ) );
+  while ( ( ComputedEnergy.dEnergy >= dAdjustedEnergy ) && ( uiIter <= m_MaxNumberOfTries ) && ( !bTerminate ) );
 
-  if ( dComputedEnergy > dAdjustedEnergy )
+  if ( ComputedEnergy.dEnergy > dAdjustedEnergy )
     {
     // could not reduce the energy, so keep the original one
     *pState = *pTempState;
-    dResultingEnergy = dInitialEnergy;
+    ResultingEnergy = InitialEnergy;
     return false;
 
     }
   else
     {
     // energy was successfully reduced, we can keep the updated state (in pState)
-    dResultingEnergy = dComputedEnergy;
+    ResultingEnergy = ComputedEnergy;
     return true;
     }
     

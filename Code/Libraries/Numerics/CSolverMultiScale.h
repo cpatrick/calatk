@@ -37,7 +37,11 @@ public:
   typedef typename TState::TFloat T;
   static const unsigned int VImageDimension = TState::VImageDimension;
 
+  typedef CSolver< TState > Superclass;
+  typedef typename Superclass::CEnergyValues CEnergyValues;
+
   typedef CSolver< TState > SolverType;
+
   typedef VectorImage< T, VImageDimension > VectorImageType;
   typedef VectorImageUtils< T, VImageDimension > VectorImageUtilsType;
   typedef CImageManagerMultiScale< T, VImageDimension > ImageManagerMultiScaleType;
@@ -56,6 +60,10 @@ public:
 
   virtual bool SolvePreInitialized();
   virtual bool Solve();
+
+  // auto configuration
+
+  virtual void SetAutoConfiguration( Json::Value &ConfValue );
 
 protected:
 

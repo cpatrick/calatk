@@ -26,6 +26,35 @@
 namespace CALATK
 {
 
+std::string GetCALATKVersionString()
+{
+  std::string calatkVersionMajor;
+  std::string calatkVersionMinor;
+
+#ifdef CALATK_VERSION_MAJOR
+  calatkVersionMajor = CreateIntegerString( CALATK_VERSION_MAJOR, 0);
+#else
+  calatkVersionMajor = "?";
+#endif
+
+#ifdef CALATK_VERSION_MINOR
+  calatkVersionMinor = CreateIntegerString( CALATK_VERSION_MINOR, 0 );
+#else
+  calatkVersionMinor = "?";
+#endif
+
+  std::string versionString = calatkVersionMajor + "." + calatkVersionMinor;
+
+  return versionString;
+}
+
+std::string GetCALATKJsonHeaderString()
+{
+  std::string headerString = "// CALATK version " + GetCALATKVersionString() + "; JSON configuration file";
+
+  return headerString;
+}
+
 std::string CreateNumberedFileName( std::string strPrefix, unsigned int uiNr, std::string postFix )
 {
   std::stringstream ss;

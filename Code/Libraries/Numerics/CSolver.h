@@ -38,8 +38,11 @@ class CSolver : public CProcessBase
 public:
 
   typedef typename TState::TFloat T;
+  typedef CProcessBase Superclass;
 
   typedef CObjectiveFunction< TState>* ptrObjectiveFunctionType;
+
+  typedef typename CObjectiveFunction< TState >::CEnergyValues CEnergyValues;
 
   CSolver();
   virtual ~CSolver();
@@ -50,16 +53,22 @@ public:
   virtual bool Solve();
   virtual bool SolvePreInitialized() = 0;
 
-  GetMacro(OutputStateInformation,bool);
-  SetMacro(OutputStateInformation,bool);
-  
-  GetMacro(ExternalSolverState,unsigned int);
-  SetMacro(ExternalSolverState,unsigned int);
+  GetMacro( OutputStateInformation, bool);
+  SetMacro( OutputStateInformation, bool);
+
+  GetMacro( OutputStateInformationFrequency, unsigned int );
+  SetMacro( OutputStateInformationFrequency, unsigned int );
+
+  GetMacro( ExternalSolverState, unsigned int);
+  SetMacro( ExternalSolverState, unsigned int);
+
+  virtual void OutputStateInformation( unsigned int uiIter, std::string prefix );
 
 protected:
 
   ptrObjectiveFunctionType m_pObjectiveFunction;
   bool m_OutputStateInformation;
+  unsigned int m_OutputStateInformationFrequency;
 
 private:
 
@@ -68,9 +77,11 @@ private:
   unsigned int m_ExternalSolverState;
 
   const bool DefaultOutputStateInformation;
+  const unsigned int DefaultOutputStateInformationFrequency;
   const unsigned int DefaultExternalSolverState;
 
   bool m_ExternallySetOutputStateInformation;
+  bool m_ExternallySetOutputStateInformationFrequency;
   bool m_ExternallySetExternalSolverState;
 
 };

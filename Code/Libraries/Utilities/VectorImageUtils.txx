@@ -787,6 +787,25 @@ void VectorImageUtils< T, VImageDimension >::applyAffineITK(typename ITKAffineTr
 
 }
 
+template < class T, unsigned int VImageDimension >
+bool VectorImageUtils< T, VImageDimension >::IsSameSize( const VectorImageType* im1, const VectorImageType* im2)
+{
+
+  if ( im1 == NULL || im2 == NULL )
+  {
+    return false;
+  }
+
+  bool bIsSameSize =
+      ( im1->getSizeX() == im2->getSizeX() ) &&
+      ( im1->getSizeY() == im2->getSizeY() ) &&
+      ( im1->getSizeZ() == im2->getSizeZ() ) &&
+      ( im1->getDim() == im2->getDim() );
+
+  return bIsSameSize;
+
+}
+
 
 /////////////////////////////
 // ITK Interface Functions //

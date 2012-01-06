@@ -36,6 +36,7 @@ public:
   /* some useful typedefs */
 
   typedef CVelocityFieldObjectiveFunction< TState > Superclass;
+  typedef typename Superclass::CEnergyValues CEnergyValues;
 
   typedef typename TState::TFloat T;
 

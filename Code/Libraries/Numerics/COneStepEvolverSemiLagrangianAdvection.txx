@@ -25,14 +25,52 @@
 //
 template <class T, unsigned int VImageDimension >
 COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::COneStepEvolverSemiLagrangianAdvection()
+  : DefaultTimeStepFactor( 1 ), m_ExternallySetTimeStepFactor( false ),
+    DefaultNumberOfIterationsToDetermineFlowField( 2 ), m_ExternallySetNumberOfIterationsToDetermineFlowField( false )
 {
+  m_TimeStepFactor = DefaultTimeStepFactor;
+  m_NumberOfIterationsToDetermineFlowField = DefaultNumberOfIterationsToDetermineFlowField;
+
+  ptrAdjustedVectorField = NULL;
+  ptrTmpVectorField = NULL;
+
 }
 
 //
-// Performs a step for a 2D image
+// destructor to get rid of the dynamically allocated memory
 //
 template <class T, unsigned int VImageDimension >
-void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::PerformStep2D(  const VectorFieldType* v, const VectorImageType* In, VectorImageType* Inp1, T dt )
+COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::~COneStepEvolverSemiLagrangianAdvection()
+{
+  if ( ptrAdjustedVectorField != NULL )
+  {
+    delete ptrAdjustedVectorField;
+    ptrAdjustedVectorField = NULL;
+  }
+
+  if ( ptrTmpVectorField != NULL )
+  {
+    delete ptrTmpVectorField;
+    ptrTmpVectorField = NULL;
+  }
+}
+
+template <class T, unsigned int VImageDimension >
+void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValue )
+{
+  Superclass::SetAutoConfiguration( ConfValue );
+
+  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "OneStepEvolverSemiLagrangianAdvection", Json::nullValue );
+
+  SetJSONNumberOfIterationsToDetermineFlowField( this->m_jsonConfig.GetFromKey( currentConfiguration, "NumberOfIterationsToDetermineFlowField", GetExternalOrDefaultNumberOfIterationsToDetermineFlowField() ).asUInt() );
+  SetJSONTimeStepFactor( this->m_jsonConfig.GetFromKey( currentConfiguration, "TimeStepFactor", GetExternalOrDefaultTimeStepFactor() ).asDouble() );
+}
+
+//
+// Performs a step for an image
+//
+template <class T, unsigned int VImageDimension >
+void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::PerformStepWithGivenVectorField(  const VectorFieldType* v, const VectorImageType* In, VectorImageType* Inp1, T dt )
 {
 
   //
@@ -46,132 +84,98 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::PerformStep2D(
   }
 #endif
   
-  int szX = (int)In->getSizeX();
-  int szY = (int)In->getSizeY();
-  int dim = (int)In->getDim();
   
 #ifdef DEBUG
-  // sizes match
-  if (v->getSizeX() != szX || v->getSizeY() != szY ||
-    Inp1->getSizeX() != szX || Inp1->getSizeY() != szY || Inp1->getDim() != dim) {
+
+  // check that the image sizes match
+  if ( !VectorImageUtilsType::IsSameSize( v, In ) || !VectorImageUtils::IsSameSize( v, Inp1 ) )
+  {
     throw std::invalid_argument("Dimension Mismatch");
   }
 #endif
-  
-  T dt_div_dx = dt/In->getSpaceX();
-  T dt_div_dy = dt/In->getSpaceY();
-  
-  //
-  // do the first order accurate flow
-  //
 
-// TODO: put openmp back in here
-//#pragma omp parallel for num_threads(Superclass::m_uiNrOfThreads)
-  for (int y = 0; y < szY; ++y) 
-    {
-    for (int x = 0; x < szX; ++x) 
-      {
-        
-      // get the grid coordinates
-      T xPos = x - v->getX(x,y)*dt_div_dx;
-      T yPos = y - v->getY(x,y)*dt_div_dy;
-      
-      for (int d = 0; d < dim; d++) 
-        {
-        // set the new value
-        Inp1->setValue(x,y,d, VectorImageUtils< T, VImageDimension >::interpolatePosGridCoordinates(In, xPos, yPos, d) );
-        }
-      }
-    }
+  interpolator.InterpolateNegativeVelocityPos( In, v, dt, Inp1 );
+  
 }
 
-//
-// Performs a step for a 3D image
-//
+
 template <class T, unsigned int VImageDimension >
-void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::PerformStep3D(  const VectorFieldType* v, const VectorImageType* In, VectorImageType* Inp1, T dt )
+void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::PerformStepWithAdjustedVectorField(  const VectorFieldType* v, const VectorImageType* In, VectorImageType* Inp1, T dt )
 {
-
-  //
-  // check to make sure all data is set properly
-  //
-  
-#ifdef DEBUG
-  // data defined
-  if (In == NULL || v == NULL || Inp1 == NULL) {
-    throw std::runtime_error("No Data");
-  }
-#endif
-  
-  int szX = (int)In->getSizeX();
-  int szY = (int)In->getSizeY();
-  int szZ = (int)In->getSizeZ();
-  int dim = (int)In->getDim();
-  
-#ifdef DEBUG
-  // sizes match
-  if (v->getSizeX() != szX || v->getSizeY() != szY || v->getSizeZ() != szZ ||
-    Inp1->getSizeX() != szX || Inp1->getSizeY() != szY || Inp1->getSizeZ() != szZ || Inp1->getDim() != dim) {
-    throw std::invalid_argument("Dimension Mismatch");
-  }
-#endif
-  
-  T dt_div_dx = dt/In->getSpaceX();
-  T dt_div_dy = dt/In->getSpaceY();
-  T dt_div_dz = dt/In->getSpaceZ();
-  
-  //
-  // do the first order accurate flow
-  //
-
-// TODO: put openmp back in here
-//#pragma omp parallel for num_threads(Superclass::m_uiNrOfThreads)
-  for (int z = 0; z < szZ; ++z) 
-    {
-    for (int y = 0; y < szY; ++y) 
-      {
-      for (int x = 0; x < szX; ++x) 
-        {
-        
-        // get desired coordinates in grid coordinates
-        T xPos = x - v->getX(x,y,z)*dt_div_dx;
-        T yPos = y - v->getY(x,y,z)*dt_div_dy;
-        T zPos = z - v->getZ(x,y,z)*dt_div_dz;
-        
-        for (int d = 0; d < dim; d++) 
-          {
-          // set the new value
-          Inp1->setValue(x,y,z,d, VectorImageUtils< T, VImageDimension >::interpolatePosGridCoordinates(In, xPos, yPos, zPos, d) );
-          }
-        }
-      }
-    }
+  ComputeAdjustedVectorFieldIfRequired( v, dt );
+  interpolator.InterpolateNegativeVelocityPos( In, ptrAdjustedVectorField, dt, Inp1 );
 }
 
+template <class T, unsigned int VImageDimension >
+void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::ComputeAdjustedVectorFieldIfRequired( const VectorFieldType* v, T dt )
+{
+  // we need to compute it in any of these cases
+  // 1) the image dimensions have changed
+  // 2) memory has not been allocated
+  // 3) the initialization state is set to true
+
+  bool bIsSameSize = ( VectorImageUtilsType::IsSameSize( v, ptrAdjustedVectorField ) ) &&
+                     ( VectorImageUtilsType::IsSameSize( v, ptrTmpVectorField ) );
+
+  bool bRecompute =  ( this->GetInitializeOneStepEvolverState() ) || ( !bIsSameSize );
+
+  if ( bRecompute )
+  {
+    if ( !bIsSameSize )
+    {
+      // allocate or reallocate the fields
+      if ( ptrAdjustedVectorField != NULL )
+      {
+        delete ptrAdjustedVectorField;
+      }
+      ptrAdjustedVectorField = new VectorFieldType( v );
+
+      if ( ptrTmpVectorField != NULL )
+      {
+        delete ptrTmpVectorField;
+      }
+      ptrTmpVectorField = new VectorFieldType( v );
+
+    }
+
+    // now that we have all the memory that is required do the computation
+    ptrAdjustedVectorField->copy( v );
+
+    for ( unsigned int iI=0; iI < m_NumberOfIterationsToDetermineFlowField; ++iI )
+    {
+      interpolator.InterpolateNegativeVelocityPos( ptrAdjustedVectorField, v, dt*0.5, ptrTmpVectorField );
+
+      // swap the pointers, so we have the updated result in ptrAdjustedVectorField
+      VectorFieldType* ptrSwap = ptrAdjustedVectorField;
+      ptrAdjustedVectorField = ptrTmpVectorField;
+      ptrTmpVectorField = ptrSwap;
+    }
+
+  }
+
+  // certify that this initialization was done
+  this->SetInitializeOneStepEvolverState( false );
+
+}
 
 template <class T, unsigned int VImageDimension >
 void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::PerformStep(  const VectorFieldType* v, const VectorImageType* In, VectorImageType* Inp1, T dt )
 {
-  switch ( VImageDimension )
-    {
-    case 2:
-      PerformStep2D( v, In, Inp1, dt );
-      break;
-    case 3:
-      PerformStep3D( v, In, Inp1, dt );
-      break;
-    default:
-      std::runtime_error("COneStepEvolverSemiLagrangianAdvection: Cannot solve for this dimension.");
-    }
+  if ( m_NumberOfIterationsToDetermineFlowField > 0 )
+  {
+    PerformStepWithAdjustedVectorField( v, In, Inp1, dt );
+  }
+  else
+  {
+    PerformStepWithGivenVectorField( v, In, Inp1, dt );
+  }
 }
+
 
 template <class T, unsigned int VImageDimension >
 T COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::ComputeMaximalUpdateStep( const VectorFieldType* v ) const
 {
-#warning Use an appropriate time step factor -- implement a real semi-Lagrangian scheme
-  // TODO: fixme: improve this. Handle anisotropic spacing and introduce a factor which allows for larger steps for the semi-lagrangian scheme
-  // Implement actual semi-Lagrangian method
-  const T dFact = 0.1;
+  T dFact = m_TimeStepFactor;
 
   T vMax = VectorFieldUtils< T, VImageDimension >::absMaxAll( v );
 

@@ -40,12 +40,12 @@ void CInterpolator< T, VImageDimension >::Interpolate( const VectorImageType1D* 
 
   if ( m_NrOfPointsNegative <=0 || m_NrOfPointsPositive <=0 )
   {
-    throw std::error("CInterpolator: nr of points not appropriately set");
+    throw std::runtime_error("CInterpolator: nr of points not appropriately set");
     return;
   }
 
-  int* ptrIndxVals = new int[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
-  T* ptrVals = new T[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
+  int* ptrIndxVals = new int[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
+  T* ptrVals = new T[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
 
   unsigned int dim = imIn->getDim();
 
@@ -86,16 +86,16 @@ void CInterpolator< T, VImageDimension >::InterpolateNegativeVelocityPos( const 
 
   if ( m_NrOfPointsNegative <=0 || m_NrOfPointsPositive <=0 )
   {
-    throw std::error("CInterpolator: nr of points not appropriately set");
+    throw std::runtime_error("CInterpolator: nr of points not appropriately set");
     return;
   }
 
-  int* ptrIndxVals = new int[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
-  T* ptrVals = new T[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
+  int* ptrIndxVals = new int[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
+  T* ptrVals = new T[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
 
   unsigned int dim = imIn->getDim();
 
-  unsigned int szXnew = pos->getSizeX();
+  unsigned int szXnew = imOut->getSizeX();
 
   T dx = imIn->getSpaceX();
   T dt_div_dx = dt/dx;
@@ -127,14 +127,14 @@ void CInterpolator< T, VImageDimension >::Interpolate( const VectorImageType2D* 
 
   if ( m_NrOfPointsNegative <=0 || m_NrOfPointsPositive <=0 )
   {
-    throw std::error("CInterpolator: nr of points not appropriately set");
+    throw std::runtime_error("CInterpolator: nr of points not appropriately set");
     return;
   }
 
-  int* ptrIndxXVals = new int[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
-  int* ptrIndxYVals = new int[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
-  T* ptrXVals = new T[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
-  T* ptrYVals = new T[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
+  int* ptrIndxXVals = new int[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
+  int* ptrIndxYVals = new int[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
+  T* ptrXVals = new T[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
+  T* ptrYVals = new T[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
 
   unsigned int dim = imIn->getDim();
 
@@ -176,26 +176,26 @@ void CInterpolator< T, VImageDimension >::Interpolate( const VectorImageType2D* 
 }
 
 template < class T, unsigned int VImageDimension >
-void CInterpolator< T, VImageDimension >::InterpolateNegativeVelocityPos( const VectorImageType2D* imIn, const VectorFieldType2D* v, T dT, VectorImageType2D* imOut )
+void CInterpolator< T, VImageDimension >::InterpolateNegativeVelocityPos( const VectorImageType2D* imIn, const VectorFieldType2D* v, T dt, VectorImageType2D* imOut )
 {
   assert( m_NrOfPointsNegative > 0 );
   assert( m_NrOfPointsPositive > 0 );
 
   if ( m_NrOfPointsNegative <=0 || m_NrOfPointsPositive <=0 )
   {
-    throw std::error("CInterpolator: nr of points not appropriately set");
+    throw std::runtime_error("CInterpolator: nr of points not appropriately set");
     return;
   }
 
-  int* ptrIndxXVals = new int[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
-  int* ptrIndxYVals = new int[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
-  T* ptrXVals = new T[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
-  T* ptrYVals = new T[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
+  int* ptrIndxXVals = new int[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
+  int* ptrIndxYVals = new int[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
+  T* ptrXVals = new T[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
+  T* ptrYVals = new T[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
 
   unsigned int dim = imIn->getDim();
 
-  unsigned int szXnew = pos->getSizeX();
-  unsigned int szYnew = pos->getSizeY();
+  unsigned int szXnew = imOut->getSizeX();
+  unsigned int szYnew = imOut->getSizeY();
 
   T dx = imIn->getSpaceX();
   T dy = imIn->getSpaceY();
@@ -236,16 +236,16 @@ void CInterpolator< T, VImageDimension >::Interpolate( const VectorImageType3D* 
 
   if ( m_NrOfPointsNegative <=0 || m_NrOfPointsPositive <=0 )
   {
-    throw std::error("CInterpolator: nr of points not appropriately set");
+    throw std::runtime_error("CInterpolator: nr of points not appropriately set");
     return;
   }
 
-  int* ptrIndxXVals = new int[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
-  int* ptrIndxYVals = new int[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
-  int* ptrIndxZVals = new int[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
-  T* ptrXVals = new T[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
-  T* ptrYVals = new T[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
-  T* ptrZVals = new T[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
+  int* ptrIndxXVals = new int[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
+  int* ptrIndxYVals = new int[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
+  int* ptrIndxZVals = new int[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
+  T* ptrXVals = new T[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
+  T* ptrYVals = new T[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
+  T* ptrZVals = new T[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
 
   unsigned int dim = imIn->getDim();
 
@@ -301,22 +301,22 @@ void CInterpolator< T, VImageDimension >::InterpolateNegativeVelocityPos( const 
 
   if ( m_NrOfPointsNegative <=0 || m_NrOfPointsPositive <=0 )
   {
-    throw std::error("CInterpolator: nr of points not appropriately set");
+    throw std::runtime_error("CInterpolator: nr of points not appropriately set");
     return;
   }
 
-  int* ptrIndxXVals = new int[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
-  int* ptrIndxYVals = new int[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
-  int* ptrIndxZVals = new int[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
-  T* ptrXVals = new T[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
-  T* ptrYVals = new T[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
-  T* ptrZVals = new T[ m_nrOfPointsNegative + m_NrOfPointsPositive ];
+  int* ptrIndxXVals = new int[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
+  int* ptrIndxYVals = new int[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
+  int* ptrIndxZVals = new int[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
+  T* ptrXVals = new T[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
+  T* ptrYVals = new T[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
+  T* ptrZVals = new T[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
 
   unsigned int dim = imIn->getDim();
 
-  unsigned int szXnew = pos->getSizeX();
-  unsigned int szYnew = pos->getSizeY();
-  unsigned int szZnew = pos->getSizeZ();
+  unsigned int szXnew = imOut->getSizeX();
+  unsigned int szYnew = imOut->getSizeY();
+  unsigned int szZnew = imOut->getSizeZ();
 
   T dx = imIn->getSpaceX();
   T dy = imIn->getSpaceY();
@@ -394,20 +394,20 @@ T CInterpolator< T, VImageDimension >::InterpolatePosGridCoordinates( const Vect
   yPos = Clamp( yPos, 0, szY-1 );
 
   GetIndices( xPos, ptrIndxXVals, 0, szX-1 );
-  GetIndices( yPos, ptrIndxYVals, 0, szZ-1 );
+  GetIndices( yPos, ptrIndxYVals, 0, szY-1 );
 
   for ( int iX=0; iX < m_NrOfPoints; ++iX )
   {
     for ( int iY=0; iY < m_NrOfPoints; ++iY )
     {
       // constant x
-      ptrValsY[ iY ] = imIn->getValue( ptrIndxXVals[ iX ], ptrIndxYVals[ iY ], d );
+      ptrYVals[ iY ] = imIn->getValue( ptrIndxXVals[ iX ], ptrIndxYVals[ iY ], d );
     }
     // evaluate at a particular y value for constant x
-    ptrValsX[ iX ] = Interpolate( ptrValsY, GetS( yPos ) );
+    ptrXVals[ iX ] = Interpolate( ptrYVals, GetS( yPos ) );
   }
   // now we can compute the final interpolated value
-  return Interpolate( ptrValsX, GetS( xPos ) );
+  return Interpolate( ptrXVals, GetS( xPos ) );
 }
 
 template < class T, unsigned int VImageDimension >
@@ -430,22 +430,22 @@ T CInterpolator< T, VImageDimension >::InterpolatePosGridCoordinates( const Vect
   GetIndices( zPos, ptrIndxZVals, 0, szZ-1 );
 
   for ( int iX=0; iX < m_NrOfPoints; ++iX )
-  \{
+  {
     for ( int iY=0; iY < m_NrOfPoints; ++iY )
     {
       for ( int iZ=0; iZ< m_NrOfPoints; ++iZ )
       {
         // constant iX and iY
-        ptrValsZ[ iZ ] = imIn->getValue( ptrIndxXVals[ iX ], ptrIndxYVals[ iY ], ptrIndxZVals[ iZ ], d );
+        ptrZVals[ iZ ] = imIn->getValue( ptrIndxXVals[ iX ], ptrIndxYVals[ iY ], ptrIndxZVals[ iZ ], d );
       }
       // now we can compute the value at a particular z position for an x/y pair
-      ptrsValsY[ iY ] = Interpolate( ptrValsZ, GetS( zPos ) );
+      ptrYVals[ iY ] = Interpolate( ptrZVals, GetS( zPos ) );
     }
     // for constant x
-    ptrsValsX[ iX ] = Interpolate( ptrsValsY, GetS( yPos ) );
+    ptrXVals[ iX ] = Interpolate( ptrYVals, GetS( yPos ) );
   }
   // now we can compute the final interpolated value
-  return Interpolate( ptrsValsX, GetS( xPos ) );
+  return Interpolate( ptrXVals, GetS( xPos ) );
 
 }
 
@@ -461,12 +461,13 @@ void CInterpolator< T, VImageDimension >::GetIndices( T pos, int* ptrIndxVals, i
   // extract m_NrOfPointsNegative in the negative and m_NrOfPointsPositive in the positive direction
   for ( int iI=m_NrOfPointsNegative-1; iI>=0; --iI )
   {
-    ptrIndxVals[ iI ] = GetNegativeIndex( pos, iI, minVal );
+    ptrIndxVals[ m_NrOfPointsNegative-1-iI ] = GetNegativeIndex( pos, iI, minVal );
   }
-  for ( int iI=0; iI<m_NrOfPointsPositive; ++iI )
+  for ( int iI=0; iI<(int)m_NrOfPointsPositive; ++iI )
   {
     ptrIndxVals[ m_NrOfPointsNegative + iI ] = GetPositiveIndex( pos, iI, maxVal );
   }
+
 }
 
 template < class T, unsigned int VImageDimension >

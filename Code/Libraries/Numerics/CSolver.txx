@@ -25,10 +25,15 @@
 //
 template < class TState >
 CSolver< TState >::CSolver()
-  : DefaultOutputStateInformation( true ), DefaultExternalSolverState( 0 ), m_ExternallySetOutputStateInformation( false ), m_ExternallySetExternalSolverState( false )
+  : DefaultOutputStateInformation( false ),
+    DefaultOutputStateInformationFrequency( 100 ),
+    DefaultExternalSolverState( 0 ),
+    m_ExternallySetOutputStateInformation( false ),
+    m_ExternallySetOutputStateInformationFrequency( false ),
+    m_ExternallySetExternalSolverState( false )
 {
-  //m_OutputStateInformation = false;
   m_OutputStateInformation = DefaultOutputStateInformation;
+  m_OutputStateInformationFrequency = DefaultOutputStateInformationFrequency;
   m_ExternalSolverState = DefaultExternalSolverState;
 }
 
@@ -38,6 +43,18 @@ CSolver< TState >::CSolver()
 template < class TState >
 CSolver< TState >::~CSolver()
 {
+}
+
+template < class TState >
+void CSolver< TState >::OutputStateInformation( unsigned int uiIter, std::string prefix )
+{
+  if ( this->m_OutputStateInformation )
+  {
+    if ( uiIter % m_OutputStateInformationFrequency == 0 )
+    {
+      m_pObjectiveFunction->OutputStateInformation( uiIter, prefix );
+    }
+  }
 }
 
 //

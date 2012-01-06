@@ -44,10 +44,10 @@ int calatkAdvectionTest( int argc, char* argv[] )
   std::cout << "Output: " << argv[2] << std::endl;
 
   TFLOAT dvx = atof( argv[3] );
-  std::cout << "Velocity in x direction" << dvx << std::endl;
+  std::cout << "Velocity in x direction: " << dvx << std::endl;
 
   TFLOAT dvy = atof( argv[4] );
-  std::cout << "Velocity in y direction" << dvy << std::endl;
+  std::cout << "Velocity in y direction: " << dvy << std::endl;
   
   TFLOAT dTime = atof( argv[5] );
   std::cout << "Evolution time: " << dTime << std::endl;

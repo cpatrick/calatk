@@ -22,4 +22,5 @@
 void RegisterTests()
 {
   REGISTER_TEST( calatkAdvectionTest );
+  REGISTER_TEST( calatkInterpolationTest );
 }

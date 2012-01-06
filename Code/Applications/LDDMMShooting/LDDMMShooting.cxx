@@ -94,7 +94,7 @@ int DoIt( int argc, char** argv )
   // write out the resulting JSON file if desired
   if ( configFileOut.compare("None") != 0 )
     {
-    config.WriteCurrentConfigurationToJSONFile( configFileOut );
+    config.WriteCurrentConfigurationToJSONFile( configFileOut, CALATK::GetCALATKJsonHeaderString() );
     }
 
   const VectorFieldType* ptrMap1 = new VectorFieldType( lddmm.GetMap( 1.0 ) );
@@ -107,6 +107,7 @@ int DoIt( int argc, char** argv )
     // generating warped image (not always written out)
     LDDMMUtilsType::applyMap( ptrMap1, ptrI0Orig, ptrI0W1 );
     VectorImageUtilsType::writeFileITK( ptrI0W1, warpedSourceImage );
+
     delete ptrI0W1;
     }
 

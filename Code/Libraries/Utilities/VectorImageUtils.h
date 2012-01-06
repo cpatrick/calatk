@@ -255,6 +255,13 @@ public:
    */
   static void applyAffineITK(typename ITKAffineTransform<T,3>::Type::Pointer itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue = 0, T originX = 0, T originY = 0, T originZ = 0);
 
+
+  /**
+    * Determines if two vector images have the same size
+    *
+    */
+  static bool IsSameSize( const VectorImageType* im1, const VectorImageType* im2 );
+
   /***************************
    * ITK interface functions *
    ***************************/

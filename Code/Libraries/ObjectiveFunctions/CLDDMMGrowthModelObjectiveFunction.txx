@@ -316,7 +316,8 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeGradient()
 }
 
 template < class TState >
-typename TState::TFloat CLDDMMGrowthModelObjectiveFunction< TState >::GetCurrentEnergy()
+typename CLDDMMGrowthModelObjectiveFunction< TState >::CEnergyValues
+CLDDMMGrowthModelObjectiveFunction< TState >::GetCurrentEnergy()
 {
 
   T dEnergy = 0;
@@ -363,7 +364,7 @@ typename TState::TFloat CLDDMMGrowthModelObjectiveFunction< TState >::GetCurrent
 
   dEnergy += dImageNorm;
 
-  std::cout << "E = " << dEnergy << "; dV = " << dVelocitySquareNorm << "; dI = " << dImageNorm << std::endl;
+  //std::cout << "E = " << dEnergy << "; dV = " << dVelocitySquareNorm << "; dI = " << dImageNorm << std::endl;
 
   // write out the velocity, the image and the adjoint (everything basically)
 
@@ -372,75 +373,74 @@ typename TState::TFloat CLDDMMGrowthModelObjectiveFunction< TState >::GetCurrent
   //VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( this->m_ptrI, "lambdas.nrrd" );
   //VectorImageUtils< T, VImageDimension >::writeFileITK( this->m_ptrKernel->GetKernel() , "kernel.nrrd");
 
-  return dEnergy;
+  CEnergyValues energyValues;
+  energyValues.dEnergy = dEnergy;
+  energyValues.dRegularizationEnergy = dVelocitySquareNorm;
+  energyValues.dMatchingEnergy = dImageNorm;
+
+  return energyValues;
 
 }
 
 template < class TState >
 void CLDDMMGrowthModelObjectiveFunction< TState >::OutputStateInformation( unsigned int uiIter, std::string outputPrefix )
 {
+  std::cout << "saving gradient components at iteration " << uiIter << std::endl;
 
-  // every 10 iterations write out the state information
-  if ( uiIter % 10 == 0 )
-  {
-    std::cout << "saving gradient components at iteration " << uiIter << std::endl;
+  outputPrefix = outputPrefix + "LDDMM-";
 
-    outputPrefix = outputPrefix + "LDDMM-";
+  ComputeImagesForward();
+  ComputeAdjointBackward();
 
-    ComputeImagesForward();
-    ComputeAdjointBackward();
+  // can compute the gradient from this
+  // \f$ \nabla E = v + (L^\dagger L)^{-1}(\sum_i \lambda_i \nabla I_i ) \f$
+  //
+  // Here the energy is defined as
+  // \f$ E = 1/2 \int_0^1 \|v\|_L^2~dt + 1/(sigma^2)\|I(1)-I_1\|^2
+  // and the gradient used is the Hilbert gradient
 
-    // can compute the gradient from this
-    // \f$ \nabla E = v + (L^\dagger L)^{-1}(\sum_i \lambda_i \nabla I_i ) \f$
-    //
-    // Here the energy is defined as
-    // \f$ E = 1/2 \int_0^1 \|v\|_L^2~dt + 1/(sigma^2)\|I(1)-I_1\|^2
-    // and the gradient used is the Hilbert gradient
+  unsigned int dim = m_ptrI0->getDim();
 
-    unsigned int dim = m_ptrI0->getDim();
+  VectorFieldType* ptrCurrentGradient = new VectorFieldType( m_ptrTmpGradient );
 
-    VectorFieldType* ptrCurrentGradient = new VectorFieldType( m_ptrTmpGradient );
+  std::string suffix = "-iter-" + CreateIntegerString( uiIter, 3 ) + ".nrrd";
 
-    std::string suffix = "-iter-" + CreateIntegerString( uiIter, 3 ) + ".nrrd";
+  // write out the kernel
+  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( this->m_ptrKernel->GetKernel(), outputPrefix + "Kernel" + CreateIntegerString( 0, 3 ) + suffix );
 
-    // write out the kernel
-    VectorImageUtils< T, TState::VImageDimension >::writeFileITK( this->m_ptrKernel->GetKernel(), outputPrefix + "Kernel" + CreateIntegerString( 0, 3 ) + suffix );
+  for ( unsigned int iI = 0; iI < this->m_vecTimeDiscretization.size()-1; ++iI )
+    {
+    // initialize to 0
+    ptrCurrentGradient->setConst( 0 );
 
-    for ( unsigned int iI = 0; iI < this->m_vecTimeDiscretization.size()-1; ++iI )
+    VectorImageUtils< T, TState::VImageDimension >::writeFileITK( (*m_ptrI)[iI], outputPrefix + "I" + CreateIntegerString( iI, 3 ) + suffix );
+    VectorImageUtils< T, TState::VImageDimension >::writeFileITK( (*m_ptrLambda)[iI], outputPrefix + "lam" + CreateIntegerString( iI, 3 ) + suffix );
+
+    for ( unsigned int iD = 0; iD<dim; ++iD )
       {
-      // initialize to 0
-      ptrCurrentGradient->setConst( 0 );
+      VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( (*m_ptrI)[ iI ], iD, m_ptrTmpGradient );
+      VectorImageUtils< T, TState::VImageDimension >::writeFileITK( m_ptrTmpGradient, outputPrefix + "gradI" + CreateIntegerString( iI, 3 ) + suffix );
 
-      VectorImageUtils< T, TState::VImageDimension >::writeFileITK( (*m_ptrI)[iI], outputPrefix + "I" + CreateIntegerString( iI, 3 ) + suffix );
-      VectorImageUtils< T, TState::VImageDimension >::writeFileITK( (*m_ptrLambda)[iI], outputPrefix + "lam" + CreateIntegerString( iI, 3 ) + suffix );
+      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( (*m_ptrLambda)[ iI ], iD, m_ptrTmpGradient );
+      VectorImageUtils< T, TState::VImageDimension >::writeFileITK( m_ptrTmpGradient, outputPrefix + "lam_x_gradI" + CreateIntegerString( iI, 3 ) + suffix );
 
-      for ( unsigned int iD = 0; iD<dim; ++iD )
-        {
-        VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( (*m_ptrI)[ iI ], iD, m_ptrTmpGradient );
-        VectorImageUtils< T, TState::VImageDimension >::writeFileITK( m_ptrTmpGradient, outputPrefix + "gradI" + CreateIntegerString( iI, 3 ) + suffix );
-
-        VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( (*m_ptrLambda)[ iI ], iD, m_ptrTmpGradient );
-        VectorImageUtils< T, TState::VImageDimension >::writeFileITK( m_ptrTmpGradient, outputPrefix + "lam_x_gradI" + CreateIntegerString( iI, 3 ) + suffix );
-
-        ptrCurrentGradient->addCellwise( m_ptrTmpGradient );
-        }
-
-      this->m_ptrKernel->ConvolveWithKernel( ptrCurrentGradient );
-
-      VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrCurrentGradient, outputPrefix + "conv_lam_x_gradI" + CreateIntegerString( iI, 3 ) + suffix );
-
-      // add v
-      VectorFieldType* ptrCurrentVelocity = this->m_pState->GetVectorFieldPointer( iI );
-      VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrCurrentVelocity, outputPrefix + "v" + CreateIntegerString( iI, 3 ) + suffix );
-
-      ptrCurrentGradient->addCellwise( ptrCurrentVelocity );
-      VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrCurrentGradient, outputPrefix + "gradv" + CreateIntegerString( iI, 3 ) + suffix );
-
+      ptrCurrentGradient->addCellwise( m_ptrTmpGradient );
       }
 
-    delete ptrCurrentGradient;
+    this->m_ptrKernel->ConvolveWithKernel( ptrCurrentGradient );
 
-  }
+    VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrCurrentGradient, outputPrefix + "conv_lam_x_gradI" + CreateIntegerString( iI, 3 ) + suffix );
+
+    // add v
+    VectorFieldType* ptrCurrentVelocity = this->m_pState->GetVectorFieldPointer( iI );
+    VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrCurrentVelocity, outputPrefix + "v" + CreateIntegerString( iI, 3 ) + suffix );
+
+    ptrCurrentGradient->addCellwise( ptrCurrentVelocity );
+    VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrCurrentGradient, outputPrefix + "gradv" + CreateIntegerString( iI, 3 ) + suffix );
+
+    }
+
+  delete ptrCurrentGradient;
 
 }
 

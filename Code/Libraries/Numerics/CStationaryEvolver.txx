@@ -33,6 +33,9 @@ CStationaryEvolver< T, VImageDimension >::~CStationaryEvolver()
 template <class T, unsigned int VImageDimension >
 void CStationaryEvolver< T, VImageDimension >::SolveForward( VectorFieldType* pV, VectorImageType* pImIn, VectorImageType* pImOut, VectorImageType* pImTmp, T dT )
 {
+  // needs to make sure that it will be initialized for the given velocity field
+  this->m_ptrOneStepEvolver->SetInitializeOneStepEvolverState( true );
+
   // FIXME: What should the multiplier be here, 1, 0.25?
   T dMaxTimeStep = this->m_ptrOneStepEvolver->ComputeMaximalUpdateStep( pV );
   assert( dMaxTimeStep>0 );

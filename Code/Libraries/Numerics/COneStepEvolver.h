@@ -58,6 +58,14 @@ public:
   typedef VectorField< T, VImageDimension > VectorFieldType;
   typedef VectorImage< T, VImageDimension > VectorImageType;
 
+  typedef VectorField< T, 1 > VectorFieldType1D;
+  typedef VectorField< T, 2 > VectorFieldType2D;
+  typedef VectorField< T, 3 > VectorFieldType3D;
+
+  typedef VectorImage< T, 1 > VectorImageType1D;
+  typedef VectorImage< T, 2 > VectorImageType2D;
+  typedef VectorImage< T, 3 > VectorImageType3D;
+
   typedef CProcessBase Superclass;
 
   /********************************
@@ -102,13 +110,25 @@ public:
 
   virtual void SetAutoConfiguration( Json::Value& ConfValue );
 
+  /**
+    *
+    * Sets a flag that any dynamic information needs to be initialized.
+    * The solver will call this prior to a solution.
+    */
+  void SetInitializeOneStepEvolverState( bool );
+
+  /**
+    * Returns the set flag.
+    */
+  bool GetInitializeOneStepEvolverState();
+
 private:
 
-  unsigned int m_NumberOfThreads;
   unsigned int DefaultNumberOfThreads;
-
   bool m_ExternallySetNumberOfThreads;
+  unsigned int m_NumberOfThreads;
 
+  bool m_InitializeOneStepEvolverState;
 };
 
 #include "COneStepEvolver.txx"

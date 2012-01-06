@@ -84,7 +84,7 @@ void CJSONConfiguration::SetRootReference( Json::Value& vRoot )
     }
 }
 
-bool CJSONConfiguration::WriteCurrentConfigurationToJSONFile( std::string sFileName )
+bool CJSONConfiguration::WriteCurrentConfigurationToJSONFile( std::string sFileName, std::string commentString )
 {
   std::ofstream outFile;
   outFile.open( sFileName.c_str() );
@@ -94,6 +94,15 @@ bool CJSONConfiguration::WriteCurrentConfigurationToJSONFile( std::string sFileN
     std::cerr << "Could not open " << sFileName << " for writing." << std::endl;
     return false;
     }
+
+  // write a header unless there is already some form of it
+  if ( !commentString.empty() )
+  {
+    if ( !m_ptrRoot->hasComment( Json::commentBefore) )
+    {
+      m_ptrRoot->setComment( commentString, Json::commentBefore );
+    }
+  }
 
   if ( m_ptrRoot != NULL )
     {

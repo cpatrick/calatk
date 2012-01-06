@@ -149,6 +149,8 @@ const double PI = 4.0*atan(1.0);
   #define MIN(x,y) ((x)<(y)?(x):(y))
 #endif
 
+std::string GetCALATKVersionString();
+std::string GetCALATKJsonHeaderString();
 std::string CreateIntegerString( int iNr, unsigned int uiW = 4 );
 std::string CreateNumberedFileName( std::string strPrefix, unsigned int uiNr, std::string postFix );
 

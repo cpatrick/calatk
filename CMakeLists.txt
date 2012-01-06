@@ -14,6 +14,8 @@ PROJECT(CALATK)
 SET(CALATK_VERSION_MAJOR "0")
 SET(CALATK_VERSION_MINOR "1")
 
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCALATK_VERSION_MAJOR=${CALATK_VERSION_MAJOR} -DCALATK_VERSION_MINOR=${CALATK_VERSION_MINOR}" CACHE INTERNAL "Flags to support versioned json headers")
+
 MARK_AS_ADVANCED(Verbose_Compilation)
 OPTION(Verbose_Compilation OFF)
 IF(Verbose_Compilation)
@@ -112,6 +114,7 @@ SET(CALATK_INCLUDE_DIRS
   ${CMAKE_SOURCE_DIR}/Code/Libraries/Kernels
   ${CMAKE_SOURCE_DIR}/Code/Libraries/States
   ${CMAKE_SOURCE_DIR}/Code/Libraries/Resamplers
+  ${CMAKE_SOURCE_DIR}/Code/Libraries/Interpolators
   ${CMAKE_SOURCE_DIR}/Code/Libraries/ObjectiveFunctions
   ${CMAKE_SOURCE_DIR}/Code/External/ITKTestingCommands
   ${CMAKE_SOURCE_DIR}/Code/External/jsoncpp

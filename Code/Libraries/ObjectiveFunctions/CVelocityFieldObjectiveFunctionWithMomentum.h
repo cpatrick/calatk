@@ -34,6 +34,8 @@ class CVelocityFieldObjectiveFunctionWithMomentum : public CVelocityFieldObjecti
 public:
   typedef CVelocityFieldObjectiveFunction< TState > Superclass;
 
+  typedef typename Superclass::CEnergyValues CEnergyValues;
+
   typedef typename TState::TFloat T;
 
   typedef typename Superclass::VectorImageType VectorImageType;

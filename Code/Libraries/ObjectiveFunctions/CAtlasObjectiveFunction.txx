@@ -147,14 +147,16 @@ void CAtlasObjectiveFunction< TState >
 
 // this is simply the sum of the energy over all the individual components
 template < class TState >
-T CAtlasObjectiveFunction< TState >::GetCurrentEnergy()
+CAtlasObjectiveFunction< TState >::CEnergyValues
+CAtlasObjectiveFunction< TState >::GetCurrentEnergy()
 {
-  T dEnergy = 0;
+  CEnergyValues energyValues;
   typename std::vector< ObjectiveFunctionType* >::iterator iter;
   for ( iter=vecObjectiveFunctionPtrs.begin(); iter!=vecObjectiveFunctionPtrs.end(); ++iter )
     {
-      dEnergy += iter->GetCurrentEnergy();
+      energyValues += iter->GetCurrentEnergy();
     }
+  return energyValues;
 }
 
 // this is the gradient given all the individual registrations, i.e., just the concatenation of all the individual gradients

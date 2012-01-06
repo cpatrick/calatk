@@ -637,7 +637,8 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeGradient()
 }
 
 template < class TState >
-typename TState::TFloat CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetCurrentEnergy()
+typename CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::CEnergyValues
+CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetCurrentEnergy()
 {
   // Here the energy is defined as
   // \f$ E = (1-w)\int_0^1 \|v\|_L^2~dt + w\int_1^2 \|v\|_L^2~dt 
@@ -677,6 +678,8 @@ typename TState::TFloat CLDDMMGeometricMetamorphosisObjectiveFunction< TState >:
 
     }
 
+  T dVelocitySquareNorm = dEnergy;
+
   // now add the contributions of the data terms
   
   // create the current images according to the current state 
@@ -711,7 +714,12 @@ typename TState::TFloat CLDDMMGeometricMetamorphosisObjectiveFunction< TState >:
 
   std::cout << "geomet energy = " << dEnergy << std::endl;
 
-  return dEnergy;
+  CEnergyValues energyValues;
+  energyValues.dEnergy = dEnergy;
+  energyValues.dRegularizationEnergy = dVelocitySquareNorm;
+  energyValues.dMatchingEnergy = dImageNorm;
+
+  return energyValues;
 
 }
 

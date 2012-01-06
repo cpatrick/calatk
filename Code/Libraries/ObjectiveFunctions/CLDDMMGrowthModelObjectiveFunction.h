@@ -37,13 +37,15 @@ public:
 
   typedef typename TState::TFloat T;
 
+  typedef typename Superclass::CEnergyValues CEnergyValues;
+
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 
   CLDDMMGrowthModelObjectiveFunction();
   virtual ~CLDDMMGrowthModelObjectiveFunction();
 
-  T GetCurrentEnergy();
+  CEnergyValues GetCurrentEnergy();
   void ComputeGradient();
 
   SetMacro( SigmaSqr, T );

@@ -59,14 +59,14 @@ public:
   // lookup at pos-v*dt
   void InterpolateNegativeVelocityPos( const VectorImageType1D* imIn, const VectorFieldType1D* v, T dt, VectorImageType1D* imOut );
   void InterpolateNegativeVelocityPos( const VectorImageType2D* imIn, const VectorFieldType2D* v, T dt, VectorImageType2D* imOut );
-  void InterpolateNegativeVelocityPos( const VectorImageType3D* imIn, pos, const VectorFieldType3D* v, T dt, VectorImageType3D* imOut );
+  void InterpolateNegativeVelocityPos( const VectorImageType3D* imIn, const VectorFieldType3D* v, T dt, VectorImageType3D* imOut );
 
 protected:
 
   /// ptrVals is a pointer to an array which will hold the desired number of grid points to be passed to Interpolate
   T InterpolatePosGridCoordinates( const VectorImageType1D* imIn, T xPos, unsigned int d, int* ptrIndxVals, T* ptrVals );
-  T InterpolatePosGridCoordinates( const VectorImageType2D* imIn, T xPos, T yPos, unsigned int d, int* ptrIndxVals, T* ptrVals );
-  T InterpolatePosGridCoordinates( const VectorImageType3D* imIn, T xPos, T yPos, T zPos, unsigned int d, int* ptrIndxVals, T* ptrVals );
+  T InterpolatePosGridCoordinates( const VectorImageType2D* imIn, T xPos, T yPos, unsigned int d, int* ptrIndxXVals, int* ptrIndxYVals, T* ptrXVals, T* ptrYVals );
+  T InterpolatePosGridCoordinates( const VectorImageType3D* imIn, T xPos, T yPos, T zPos, unsigned int d, int* ptrIndxXVals, int* ptrIndxYVals, int* ptrIndxZVals, T* ptrXVals, T* ptrYVals, T* ptrZVals );
 
   /** Interpolation function to be defined in the derived class
     *
@@ -79,9 +79,10 @@ protected:
     */
   virtual T Interpolate( T* vals, T dS ) = 0;
 
-private:
   unsigned int m_NrOfPointsNegative; ///< number of points in the negative index direction which are required for the interpolation method
   unsigned int m_NrOfPointsPositive; ///< number of points in the positive index direction which are required for the interpolation method
+
+private:
 
   T Clamp( T dVal, T dLow, T dHigh ); ///< clamps a value so that is is in [dLow,dHigh]
 

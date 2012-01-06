@@ -36,6 +36,8 @@ public:
   typedef CObjectiveFunction< TState > Superclass;
   typedef typename TState::TFloat T;
 
+  typedef typename Superclass::CEnergyValues CEnergyValues;
+
   typedef CEvolver< T, TState::VImageDimension >* ptrEvolverType;
   typedef CKernel< T, TState::VImageDimension >* ptrKernelType;
 

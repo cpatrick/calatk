@@ -48,11 +48,85 @@ public:
   typedef VectorImage< T, TState::VImageDimension > VectorImageType;
   typedef VectorField< T, TState::VImageDimension > VectorFieldType;
 
+  // structure to return the energy
+  class CEnergyValues
+  {
+  public:
+
+    CEnergyValues()
+      : dEnergy( 0 ), dRegularizationEnergy( 0 ), dMatchingEnergy( 0 )
+    {};
+
+    // copy constructor
+    CEnergyValues( const CEnergyValues& c ) :
+      dEnergy( c.dEnergy ),
+      dRegularizationEnergy( c.dRegularizationEnergy ),
+      dMatchingEnergy( c.dMatchingEnergy )
+    {};
+
+    // assignment
+    CEnergyValues & operator=( const CEnergyValues &p )
+    {
+      if ( this==&p )
+        return *this;
+      this->dEnergy = p.dEnergy;
+      this->dRegularizationEnergy = p.dRegularizationEnergy;
+      this->dMatchingEnergy = p.dMatchingEnergy;
+      return *this;
+    };
+
+    CEnergyValues & operator+=( const CEnergyValues & p )
+    {
+      this->dEnergy += p.dEnergy;
+      this->dRegularizationEnergy += p.dRegularizationEnergy;
+      this->dMatchingEnergy += p.dMatchingEnergy;
+      return *this;
+    };
+
+    CEnergyValues & operator-=( const CEnergyValues & p )
+    {
+      this->dEnergy -= p.dEnergy;
+      this->dRegularizationEnergy -= p.dRegularizationEnergy;
+      this->dMatchingEnergy -= p.dMatchingEnergy;
+      return *this;
+    };
+
+    CEnergyValues & operator*=( const CEnergyValues & p )
+    {
+      this->dEnergy *= p.dEnergy;
+      this->dRegularizationEnergy *= p.dRegularizationEnergy;
+      this->dMatchingEnergy *= p.dMatchingEnergy;
+      return *this;
+    };
+
+    CEnergyValues operator+( const CEnergyValues & p ) const
+    {
+      CEnergyValues r = *this;
+      return r += p;
+    };
+
+    CEnergyValues operator-( const CEnergyValues & p ) const
+    {
+      CEnergyValues r = *this;
+      return r -= p;
+    };
+
+    CEnergyValues operator*( const CEnergyValues &p ) const
+    {
+      CEnergyValues r = *this;
+      return r *= p;
+    }
+
+    T dEnergy;
+    T dRegularizationEnergy;
+    T dMatchingEnergy;
+  };
+
   CObjectiveFunction();
   virtual ~CObjectiveFunction();
 
   /* Returns the energy of the objective function */
-  virtual T GetCurrentEnergy() = 0;
+  virtual CEnergyValues GetCurrentEnergy() = 0;
 
   /* Compute the gradient of the objective function and store it in the gradient member variable */
   virtual void ComputeGradient();
@@ -125,10 +199,6 @@ protected:
   // TODO: FIXME, needs to be an array, so we can in principle support registrations at every measurement
   ptrMetricType m_pMetric;
   ptrImageManagerType m_ptrImageManager;
-
-private:
-
-
 
 };
 

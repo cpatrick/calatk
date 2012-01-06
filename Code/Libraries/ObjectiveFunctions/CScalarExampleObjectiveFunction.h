@@ -35,6 +35,8 @@ public:
   typedef CObjectiveFunction< TState > Superclass;
   typedef typename Superclass::T T;
 
+  typedef typename Superclass::CEnergyValues CEnergyValues;
+
   CScalarExampleObjectiveFunction()
   {
     state.SetValue( 0 );
@@ -47,10 +49,12 @@ public:
 
   }
 
-  T GetCurrentEnergy()
+  CEnergyValues GetCurrentEnergy()
   {
     // E = (x-2)^2
-    return (state.GetValue()-2)*(state.GetValue()-2);
+    CEnergyValues energyValues;
+    energyValues.dEnergy = (state.GetValue()-2)*(state.GetValue()-2);
+    return energyValues;
   }
 
   void ComputeGradient()

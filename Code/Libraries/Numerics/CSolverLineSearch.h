@@ -40,6 +40,7 @@ public:
   typedef typename TState::TFloat T;
   typedef CSolver< TState > Superclass;
   typedef typename Superclass::ptrObjectiveFunctionType ptrObjectiveFunctionType;
+  typedef typename Superclass::CEnergyValues CEnergyValues;
 
 /**
  *Constructor setting the default values
@@ -90,7 +91,7 @@ public:
 
 protected:
 
-  bool LineSearchWithBacktracking( T dDesiredStepSize, T& dAlpha, T& dResultingEnergy );
+  bool LineSearchWithBacktracking( T dDesiredStepSize, T& dAlpha, CEnergyValues& ResultingEnergy, unsigned int &uiIter );
 
   T m_InitialStepSize;
   

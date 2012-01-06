@@ -20,6 +20,8 @@
 #ifndef C_LDDMM_GEODESIC_SHOOTING_INITIAL_IMAGE_MOMENTUM_OBJECTIVE_FUNCTION_TXX
 #define C_LDDMM_GEODESIC_SHOOTING_INITIAL_IMAGE_MOMENTUM_OBJECTIVE_FUNCTION_TXX
 
+#define EXTREME_DEBUGGING 0
+
 template < class TState >
 CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction()
     : DefaultNumberOfDiscretizationVolumesPerUnitTime( 10.0 ), m_ExternallySetNumberOfDiscretizationVolumesPerUnitTime( false ),
@@ -63,7 +65,8 @@ CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::CLDDMMGeo
     m_ptrDI = NULL;
     m_ptrDP = NULL;
 
-    // just for testing
+    // just for testing, if EXTREME_DEBUG is defined it will store the full timecoarse of lamI and lamP
+    // this is very memory intensive for 3D, hence disabled by default.
     tstLamI = NULL;
     tstLamP = NULL;
 }
@@ -229,8 +232,11 @@ void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState>::Creat
     m_ptrP = new std::vector< VectorImagePointerType >;
 
     // for testing
+    
+#ifdef EXTREME_DEBUG
     tstLamI = new std::vector< VectorImagePointerType >;
     tstLamP = new std::vector< VectorImagePointerType >;
+#endif
 
     m_ptrCurrentLambdaI = new VectorImageType( pImInfo->pIm );
     m_ptrCurrentLambdaP = new VectorImageType( pImInfo->pIm );
@@ -248,12 +254,14 @@ void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState>::Creat
       ptrCurrentVectorImage = new VectorImageType( pImInfo->pIm );
       m_ptrP->push_back( ptrCurrentVectorImage );
 
+#ifdef EXTREME_DEBUG
       // for testing
       ptrCurrentVectorImage = new VectorImageType( pImInfo->pIm );
       tstLamI->push_back( ptrCurrentVectorImage );
 
       ptrCurrentVectorImage = new VectorImageType( pImInfo->pIm );
       tstLamP->push_back( ptrCurrentVectorImage );
+#endif
 
       }
 
@@ -555,8 +563,10 @@ void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::Comp
     m_ptrCurrentLambdaI->copy( m_ptrCurrentLambdaIEnd );
     m_ptrCurrentLambdaP->setConst( 0.0 );
 
+#ifdef EXTREME_DEBUG
     (*tstLamI)[ m_vecTimeDiscretization.size()-1 ]->copy( m_ptrCurrentLambdaI );
     (*tstLamP)[ m_vecTimeDiscretization.size()-1 ]->copy( m_ptrCurrentLambdaP );
+#endif
 
     for ( int iI = (int)m_vecTimeDiscretization.size()-1-1; iI>=0; iI--)
     {
@@ -648,8 +658,12 @@ void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::Comp
         m_ptrCurrentLambdaIEnd->copy( m_ptrCurrentLambdaI );
         m_ptrCurrentLambdaPEnd->copy( m_ptrCurrentLambdaP );
       }
+
+#ifdef EXTREME_DEBUG
       (*tstLamI)[ iI ]->copy( m_ptrCurrentLambdaI );
       (*tstLamP)[ iI ]->copy( m_ptrCurrentLambdaP );
+#endif
+
   }
 }
 
@@ -734,7 +748,8 @@ void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState>::Compu
 }
 
 template < class TState >
-typename TState::TFloat CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::GetCurrentEnergy()
+typename CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::CEnergyValues
+CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::GetCurrentEnergy()
 {
   /**
     Computes the energy for the shooting method. The energy is defined as
@@ -772,8 +787,6 @@ typename TState::TFloat CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunct
   unsigned int uiNrOfDiscretizationPoints = m_vecTimeDiscretization.size();
   T dTimeDuration = this->m_vecTimeDiscretization[ uiNrOfDiscretizationPoints-1 ].dTime - this->m_vecTimeDiscretization[0].dTime;
 
-  std::cout << "time duration = " << dTimeDuration << std::endl;
-
   dEnergy *= 0.5*dTimeDuration;
 
   T dVelocitySquareNorm = dEnergy;
@@ -798,79 +811,83 @@ typename TState::TFloat CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunct
 
   dEnergy += dImageNorm;
 
-  std::cout << "E = " << dEnergy << "; dV = " << dVelocitySquareNorm << "; dI = " << dImageNorm << std::endl;
+  // std::cout << "E = " << dEnergy << "; dV = " << dVelocitySquareNorm << "; dI = " << dImageNorm << std::endl;
 
-  return dEnergy;
+  CEnergyValues energyValues;
+  energyValues.dEnergy = dEnergy;
+  energyValues.dRegularizationEnergy = dVelocitySquareNorm;
+  energyValues.dMatchingEnergy = dImageNorm;
+
+  return energyValues;
+
 }
 
 template < class TState >
 void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::OutputStateInformation( unsigned int uiIter, std::string outputPrefix )
 {
-  // every 10 iterations write out the state information
-  if ( uiIter  % 10 == 0 )
-  {
-    std::cout << "saving gradient components at iteration " << uiIter << std::endl;
+  std::cout << "saving gradient components at iteration " << uiIter << std::endl;
 
-    outputPrefix = outputPrefix + "Shooting-";
+  outputPrefix = outputPrefix + "Shooting-";
 
-    ComputeImageMomentumForward();
-    ComputeAdjointsBackward();
+  ComputeImageMomentumForward();
+  ComputeAdjointsBackward();
 
-    unsigned int dim = m_ptrTmpImage->getDim();
+  unsigned int dim = m_ptrTmpImage->getDim();
 
-    VectorFieldType* ptrCurrentGradient = new VectorFieldType( m_ptrTmpField );
+  VectorFieldType* ptrCurrentGradient = new VectorFieldType( m_ptrTmpField );
 
-    std::string suffix = "-iter-"  + CreateIntegerString( uiIter, 3 ) + ".nrrd";
+  std::string suffix = "-iter-"  + CreateIntegerString( uiIter, 3 ) + ".nrrd";
 
-    // write out the kernel
-    VectorImageUtils< T, TState::VImageDimension >::writeFileITK( this->m_ptrKernel->GetKernel(), outputPrefix + "Kernel" + CreateIntegerString( 0, 3 ) + suffix );
+  // write out the kernel
+  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( this->m_ptrKernel->GetKernel(), outputPrefix + "Kernel" + CreateIntegerString( 0, 3 ) + suffix );
 
-    VectorImageType* ptrI0Gradient = this->m_pGradient->GetPointerToInitialImage();
-    VectorImageType* ptrP0Gradient = this->m_pGradient->GetPointerToInitialMomentum();
+  VectorImageType* ptrI0Gradient = this->m_pGradient->GetPointerToInitialImage();
+  VectorImageType* ptrP0Gradient = this->m_pGradient->GetPointerToInitialMomentum();
 
-    // write out the currently stored gradient
-    VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrI0Gradient, outputPrefix + "I0Gradient" + CreateIntegerString( 0, 3 ) + suffix );
-    VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrP0Gradient, outputPrefix + "P0Gradient" + CreateIntegerString( 0, 3 ) + suffix );
+  // write out the currently stored gradient
+  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrI0Gradient, outputPrefix + "I0Gradient" + CreateIntegerString( 0, 3 ) + suffix );
+  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrP0Gradient, outputPrefix + "P0Gradient" + CreateIntegerString( 0, 3 ) + suffix );
 
-    for ( unsigned int iI = 0; iI < this->m_vecTimeDiscretization.size()-1; ++iI )
+  for ( unsigned int iI = 0; iI < this->m_vecTimeDiscretization.size()-1; ++iI )
+    {
+    // initialize to 0
+    ptrCurrentGradient->setConst( 0 );
+
+    VectorImageUtils< T, TState::VImageDimension >::writeFileITK( (*m_ptrI)[iI], outputPrefix + "I" + CreateIntegerString( iI, 3 ) + suffix );
+    VectorImageUtils< T, TState::VImageDimension >::writeFileITK( (*m_ptrP)[iI], outputPrefix + "lam" + CreateIntegerString( iI, 3 ) + suffix );
+
+    for ( unsigned int iD = 0; iD<dim; ++iD )
       {
-      // initialize to 0
-      ptrCurrentGradient->setConst( 0 );
+      VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( (*m_ptrI)[ iI ], iD, m_ptrTmpField );
+      VectorImageUtils< T, TState::VImageDimension >::writeFileITK( m_ptrTmpField, outputPrefix + "gradI" + CreateIntegerString( iI, 3 ) + suffix );
 
-      VectorImageUtils< T, TState::VImageDimension >::writeFileITK( (*m_ptrI)[iI], outputPrefix + "I" + CreateIntegerString( iI, 3 ) + suffix );
-      VectorImageUtils< T, TState::VImageDimension >::writeFileITK( (*m_ptrP)[iI], outputPrefix + "lam" + CreateIntegerString( iI, 3 ) + suffix );
-
-      for ( unsigned int iD = 0; iD<dim; ++iD )
-        {
-        VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( (*m_ptrI)[ iI ], iD, m_ptrTmpField );
-        VectorImageUtils< T, TState::VImageDimension >::writeFileITK( m_ptrTmpField, outputPrefix + "gradI" + CreateIntegerString( iI, 3 ) + suffix );
-
-        VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( (*m_ptrP)[ iI ], iD, m_ptrTmpField );
-        VectorImageUtils< T, TState::VImageDimension >::writeFileITK( m_ptrTmpField, outputPrefix + "lam_x_gradI" + CreateIntegerString( iI, 3 ) + suffix );
-
-        ptrCurrentGradient->addCellwise( m_ptrTmpField );
-        }
-
-      this->m_ptrKernel->ConvolveWithKernel( ptrCurrentGradient );
-
-      VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrCurrentGradient, outputPrefix + "conv_lam_x_gradI" + CreateIntegerString( iI, 3 ) + suffix );
-
-      // add v
-      ComputeVelocity( (*m_ptrI)[ iI ], (*m_ptrP)[ iI ], m_ptrTmpField );
-
-      VectorImageUtils< T, TState::VImageDimension >::writeFileITK( m_ptrTmpField, outputPrefix + "v" + CreateIntegerString( iI, 3 ) + suffix );
+      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( (*m_ptrP)[ iI ], iD, m_ptrTmpField );
+      VectorImageUtils< T, TState::VImageDimension >::writeFileITK( m_ptrTmpField, outputPrefix + "lam_x_gradI" + CreateIntegerString( iI, 3 ) + suffix );
 
       ptrCurrentGradient->addCellwise( m_ptrTmpField );
-      VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrCurrentGradient, outputPrefix + "gradv" + CreateIntegerString( iI, 3 ) + suffix );
-
-      VectorImageUtils< T, TState::VImageDimension >::writeFileITK( (*tstLamI)[iI], outputPrefix + "lamI" + CreateIntegerString( iI, 3) + suffix );
-      VectorImageUtils< T, TState::VImageDimension >::writeFileITK( (*tstLamP)[iI], outputPrefix + "lamP" + CreateIntegerString( iI, 3) + suffix );
-
       }
 
-    delete ptrCurrentGradient;
+    this->m_ptrKernel->ConvolveWithKernel( ptrCurrentGradient );
 
-  }
+    VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrCurrentGradient, outputPrefix + "conv_lam_x_gradI" + CreateIntegerString( iI, 3 ) + suffix );
+
+    // add v
+    ComputeVelocity( (*m_ptrI)[ iI ], (*m_ptrP)[ iI ], m_ptrTmpField );
+
+    VectorImageUtils< T, TState::VImageDimension >::writeFileITK( m_ptrTmpField, outputPrefix + "v" + CreateIntegerString( iI, 3 ) + suffix );
+
+    ptrCurrentGradient->addCellwise( m_ptrTmpField );
+    VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrCurrentGradient, outputPrefix + "gradv" + CreateIntegerString( iI, 3 ) + suffix );
+
+#ifdef EXTREME_DEBUG
+    VectorImageUtils< T, TState::VImageDimension >::writeFileITK( (*tstLamI)[iI], outputPrefix + "lamI" + CreateIntegerString( iI, 3) + suffix );
+    VectorImageUtils< T, TState::VImageDimension >::writeFileITK( (*tstLamP)[iI], outputPrefix + "lamP" + CreateIntegerString( iI, 3) + suffix );
+#endif
+
+    }
+
+  delete ptrCurrentGradient;
+
 }
 
 #endif

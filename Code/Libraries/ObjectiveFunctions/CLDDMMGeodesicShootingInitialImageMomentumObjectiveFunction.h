@@ -38,9 +38,10 @@ public:
 
     typedef typename TState::TFloat T;
 
+    typedef typename Superclass::CEnergyValues CEnergyValues;
+
     typedef typename Superclass::VectorImageType VectorImageType;
     typedef typename Superclass::VectorFieldType VectorFieldType;
-
 
     CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction();
     virtual ~CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction();
@@ -48,7 +49,7 @@ public:
     void InitializeState();
     void InitializeState( TState* pState );
 
-    T GetCurrentEnergy();
+    CEnergyValues GetCurrentEnergy();
     void ComputeGradient();
 
     void GetImage( VectorImageType* ptrIm, T dTime );

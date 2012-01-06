@@ -80,6 +80,7 @@ calatkGaussianBlurringTest.cxx
 
 SET(testDriverPDESolver_SRCS
 calatkAdvectionTest.cxx
+calatkInterpolationTest.cxx
 )
 
 ADD_EXECUTABLE(testDriverFiltering testDriverFiltering.cxx ${testDriverFiltering_SRCS})

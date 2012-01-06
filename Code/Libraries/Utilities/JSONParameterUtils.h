@@ -76,9 +76,10 @@ public:
    * @brief Writes the JSON description (relative to the root) to a file.
    *
    * @param sFileName File to write to
+   * @param comment header comment (first line)
    * @return bool Returns true if the writing was successful and false otherwise.
    */
-  bool WriteCurrentConfigurationToJSONFile( std::string sFileName );
+  bool WriteCurrentConfigurationToJSONFile( std::string sFileName, std::string commentString="" );
 
   Json::Value& GetFromKey( std::string sKey, Json::Value vDefault );
   Json::Value& GetFromKey( Json::Value& vSubTree, std::string sKey, Json::Value vDefault, bool bUseIndent = true );
