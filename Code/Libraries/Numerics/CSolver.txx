@@ -48,7 +48,7 @@ CSolver< TState >::~CSolver()
 template < class TState >
 void CSolver< TState >::OutputStateInformation( unsigned int uiIter, std::string prefix )
 {
-  if ( this->m_OutputStateInformation )
+  if ( this->m_OutputStateInformation && m_OutputStateInformationFrequency != 0 )
   {
     if ( uiIter % m_OutputStateInformationFrequency == 0 )
     {

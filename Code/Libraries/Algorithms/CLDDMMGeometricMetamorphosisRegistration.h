@@ -55,6 +55,11 @@ public:
   void SetMaskKernelPointer( ptrKernelType ptrKernel );
   ptrKernelType GetMaskKernelPointer();
 
+  SetMacro( MaskKernel, std::string );
+  GetMacro( MaskKernel, std::string );
+
+  virtual void SetAutoConfiguration( Json::Value& ConfValue );
+
 protected:
 
   void SetDefaultsIfNeeded();
@@ -62,6 +67,11 @@ protected:
   void SetDefaultMaskKernelPointer();
 
 private:
+
+  std::string m_MaskKernel;
+  const std::string DefaultMaskKernel;
+  bool m_ExternallySetMaskKernel;
+
   ptrKernelType m_ptrMaskKernel;
   bool m_bSetDefaultMaskKernel;
 };

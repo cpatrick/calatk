@@ -60,6 +60,26 @@ void CHelmholtzKernel< T, VImageDimension >::SetGamma( T dGamma )
 }
 
 template <class T, unsigned int VImageDimension >
+void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType1D* pVecImageGraft )
+{
+  unsigned int szX = pVecImageGraft->getSizeX();
+
+  T dx = pVecImageGraft->getSpaceX();
+
+  T pi = (T)CALATK::PI;
+
+  T f1Eff = 0;
+
+  for (unsigned int x = 0; x < szX; ++x)
+    {
+    f1Eff = GetFFromIndex( x, szX, dx );
+    T val = m_Gamma + 2*m_Alpha*( (1 - std::cos(2*pi*f1Eff*dx))/(dx*dx) );
+    this->m_ptrLInv->setValue(x,0, val*val );
+    this->m_ptrL->setValue(x,0,1.0/(val*val) );
+    }
+}
+
+template <class T, unsigned int VImageDimension >
 void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType2D* pVecImageGraft )
 {
   unsigned int szX = pVecImageGraft->getSizeX();

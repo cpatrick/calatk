@@ -114,11 +114,7 @@ private:
     VectorFieldPointerType m_ptrMapIdentity; // stores the identity map
     VectorFieldPointerType m_ptrMapIncremental; // stores the incremental map for the source terms of the adjoint PDEs
 
-    VectorImagePointerType m_ptrCurrentLambdaIEnd; // current value of the adjoint lambda_I, gets successively updated for multiple time points
-    VectorImagePointerType m_ptrCurrentLambdaPEnd; // current value of the adjoint lambda_P
-
     VectorImagePointerType m_ptrCurrentAdjointIDifference;
-
     VectorImagePointerType m_ptrDeterminantOfJacobian;
 
     // temporary storage memory managed by this class

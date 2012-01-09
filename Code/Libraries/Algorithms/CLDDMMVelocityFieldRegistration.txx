@@ -22,7 +22,11 @@
 
 template < class TState >
 CLDDMMVelocityFieldRegistration< TState >::CLDDMMVelocityFieldRegistration()
+  : DefaultKernel( "HelmholtzKernel" ), m_ExternallySetKernel( false ),
+    DefaultMetric( "SSD" ), m_ExternallySetMetric( false )
 {
+  m_Kernel = DefaultKernel;
+  m_Metric = DefaultMetric;
 }
 
 template < class TState >
@@ -31,23 +35,32 @@ CLDDMMVelocityFieldRegistration< TState >::~CLDDMMVelocityFieldRegistration()
 }
 
 template < class TState >
+void CLDDMMVelocityFieldRegistration< TState >::SetAutoConfiguration( Json::Value& ConfValue )
+{
+  Superclass::SetAutoConfiguration( ConfValue );
+  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
+
+  SetJSONKernel( this->m_jsonConfig.GetFromKey( currentConfiguration, "Kernel", GetExternalOrDefaultKernel() ).asString() );
+  SetJSONMetric( this->m_jsonConfig.GetFromKey( currentConfiguration, "Metric", GetExternalOrDefaultMetric() ).asString() );
+}
+
+template < class TState >
 void CLDDMMVelocityFieldRegistration< TState >::SetDefaultMetricPointer()
 {
-  this->m_ptrMetric = new CMetricSSD< T, TState::VImageDimension >;
+  this->m_ptrMetric = CMetricFactory< T, TState::VImageDimension >::CreateNewMetric( m_Metric );
+  this->m_ptrMetric->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 
 template < class TState >
 void CLDDMMVelocityFieldRegistration< TState >::SetDefaultImageManagerPointer()
 {
-  //this->m_ptrImageManager = new CImageManagerFullScale< T, VImageDimension >;
   this->m_ptrImageManager = new CImageManagerMultiScale< T, TState::VImageDimension >;
 }
 
 template < class TState >
 void CLDDMMVelocityFieldRegistration< TState >::SetDefaultKernelPointer()
 {
-  this->m_ptrKernel = new CHelmholtzKernel< T, TState::VImageDimension >;
-  //this->m_ptrKernel = new CGaussianKernel< T, TState::VImageDimension >;
+  this->m_ptrKernel = CKernelFactory< T, TState::VImageDimension >::CreateNewKernel( m_Kernel );
   this->m_ptrKernel->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 

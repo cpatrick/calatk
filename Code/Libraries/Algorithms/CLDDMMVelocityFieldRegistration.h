@@ -21,8 +21,10 @@
 #define C_LDDMM_VELOCITY_FIELD_REGISTRATION_H
 
 #include "CLDDMMSpatioTemporalVelocityFieldObjectiveFunction.h"
-#include "CHelmholtzKernel.h"
-#include "CGaussianKernel.h"
+
+#include "CKernelFactory.h"
+#include "CMetricFactory.h"
+
 #include "CMetricSSD.h"
 #include "COneStepEvolverSemiLagrangianAdvection.h"
 #include "CStationaryEvolver.h"
@@ -71,6 +73,14 @@ public:
   const VectorImageType* GetImage( T dTime );
   const VectorImageType* GetInitialImage();
 
+  SetMacro( Kernel, std::string );
+  GetMacro( Kernel, std::string );
+
+  SetMacro( Metric, std::string );
+  GetMacro( Metric, std::string );
+
+  virtual void SetAutoConfiguration( Json::Value& ConfValue );
+
 protected:
 
   void SetDefaultMetricPointer();
@@ -80,6 +90,14 @@ protected:
   void SetDefaultSolverPointer();
 
 private:
+
+  std::string m_Kernel;
+  const std::string DefaultKernel;
+  bool m_ExternallySetKernel;
+
+  std::string m_Metric;
+  const std::string DefaultMetric;
+  bool m_ExternallySetMetric;
 
   // default one step evolver
   COneStepEvolverSemiLagrangianAdvection< T, TState::VImageDimension > oneStepDefaultEvolver;

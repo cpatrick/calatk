@@ -20,7 +20,8 @@
 #ifndef C_LDDMM_GEODESIC_SHOOTING_INITIAL_IMAGE_MOMENTUM_OBJECTIVE_FUNCTION_TXX
 #define C_LDDMM_GEODESIC_SHOOTING_INITIAL_IMAGE_MOMENTUM_OBJECTIVE_FUNCTION_TXX
 
-#define EXTREME_DEBUGGING 0
+#define EXTREME_DEBUGGING
+#undef EXTREME_DEBUGGING
 
 template < class TState >
 CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction()
@@ -39,9 +40,6 @@ CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::CLDDMMGeo
 
     m_ptrMapIdentity = NULL;
     m_ptrMapIncremental = NULL;
-
-    m_ptrCurrentLambdaIEnd = NULL;
-    m_ptrCurrentLambdaPEnd = NULL;
 
     m_ptrCurrentAdjointIDifference = NULL;
 
@@ -82,9 +80,6 @@ void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::Dele
 
     SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapIncremental );
     SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapIdentity );
-
-    SaveDelete< VectorImagePointerType >::Pointer( m_ptrCurrentLambdaIEnd );
-    SaveDelete< VectorImagePointerType >::Pointer( m_ptrCurrentLambdaPEnd );
 
     SaveDelete< VectorImagePointerType >::Pointer( m_ptrDeterminantOfJacobian );
     SaveDelete< VectorImagePointerType >::Pointer( m_ptrDeterminantOfJacobian );
@@ -233,7 +228,7 @@ void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState>::Creat
 
     // for testing
     
-#ifdef EXTREME_DEBUG
+#ifdef EXTREME_DEBUGGING
     tstLamI = new std::vector< VectorImagePointerType >;
     tstLamP = new std::vector< VectorImagePointerType >;
 #endif
@@ -254,7 +249,7 @@ void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState>::Creat
       ptrCurrentVectorImage = new VectorImageType( pImInfo->pIm );
       m_ptrP->push_back( ptrCurrentVectorImage );
 
-#ifdef EXTREME_DEBUG
+#ifdef EXTREME_DEBUGGING
       // for testing
       ptrCurrentVectorImage = new VectorImageType( pImInfo->pIm );
       tstLamI->push_back( ptrCurrentVectorImage );
@@ -283,11 +278,6 @@ void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState>::Creat
 
     m_ptrDI = new VectorImageType( pImInfo->pIm );
     m_ptrDP = new VectorImageType( pImInfo->pIm );
-
-    // storage for the adjoint
-
-    m_ptrCurrentLambdaIEnd = new VectorImageType( pImInfo->pIm );
-    m_ptrCurrentLambdaPEnd = new VectorImageType( pImInfo->pIm );
 
     // storage for the adjoint difference
 
@@ -478,25 +468,25 @@ void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::Comp
   VectorImageType* ptrInitialImage = this->m_pState->GetPointerToInitialImage();
   VectorImageType* ptrInitialMomentum = this->m_pState->GetPointerToInitialMomentum();
 
-    LDDMMUtils< T, TState::VImageDimension>::identityMap( m_ptrMapIn );
+  LDDMMUtils< T, TState::VImageDimension>::identityMap( m_ptrMapIn );
 
-    (*m_ptrI)[ 0 ]->copy( ptrInitialImage );
-    (*m_ptrP)[ 0 ]->copy( ptrInitialMomentum );
+  (*m_ptrI)[ 0 ]->copy( ptrInitialImage );
+  (*m_ptrP)[ 0 ]->copy( ptrInitialMomentum );
 
-    for ( unsigned int iI = 0; iI < m_vecTimeDiscretization.size()-1; iI++ )
-    {
-        ComputeVelocity( (*m_ptrI)[ iI ], (*m_ptrP)[iI], (*m_ptrVelocityField)[iI] );
-        this->m_ptrEvolver->SolveForward( (*m_ptrVelocityField)[iI], m_ptrMapIn, m_ptrMapOut, m_ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
+  for ( unsigned int iI = 0; iI < m_vecTimeDiscretization.size()-1; iI++ )
+  {
+      ComputeVelocity( (*m_ptrI)[ iI ], (*m_ptrP)[iI], (*m_ptrVelocityField)[iI] );
+      this->m_ptrEvolver->SolveForward( (*m_ptrVelocityField)[iI], m_ptrMapIn, m_ptrMapOut, m_ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
 
-        LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapOut, ptrInitialImage, (*m_ptrI) [ iI +1 ]);
-        LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapOut, ptrInitialMomentum, (*m_ptrP) [ iI+1 ]);
+      LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapOut, ptrInitialImage, (*m_ptrI) [ iI +1 ]);
+      LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapOut, ptrInitialMomentum, (*m_ptrP) [ iI+1 ]);
 
-        LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( m_ptrMapOut, m_ptrDeterminantOfJacobian );
+      LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( m_ptrMapOut, m_ptrDeterminantOfJacobian );
 
-        (*m_ptrP)[iI+1]->multElementwise( m_ptrDeterminantOfJacobian );
+      (*m_ptrP)[iI+1]->multElementwise( m_ptrDeterminantOfJacobian );
 
-        m_ptrMapIn->copy( m_ptrMapOut );
-    }
+      m_ptrMapIn->copy( m_ptrMapOut );
+  }
 
 }
 
@@ -516,7 +506,7 @@ void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::Comp
 
     // map all the temporary variables to variables with meaningful names for this method
     VectorFieldType* ptrCurrentVelocityField = m_ptrTmpField;
-    VectorFieldType *ptrCurrentKLambdaV = m_ptrTmpFieldConv;
+    VectorFieldType* ptrCurrentKLambdaV = m_ptrTmpFieldConv;
 
     unsigned int uiNrOfTimePoints = m_vecTimeDiscretization.size();
     unsigned int uiNrOfMeasuredImagesAtFinalTimePoint;
@@ -528,123 +518,97 @@ void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::Comp
     // \f$ \lambda^I(t_end) = -w_end \nabla_{I(t_end)}d^2(I(t_end),Y(t_end))\f$
     // \f$ \lambda^p(t_end) = 0
 
-    // 1) First for lambda p, just setting it to zero
-    // NEEDED??
-    m_ptrCurrentLambdaPEnd->setConst( 0 );
-    // 2) Second, for lambda I, accounting for the final image mismatch
-    m_ptrCurrentLambdaIEnd->setConst( 0 );
-
     // create the final condition for the image adjoint \lambda^I
     // TODO: Check that this final condition has the correct sign
+
+    m_ptrCurrentLambdaI->setConst( 0.0 );
+    m_ptrCurrentLambdaP->setConst( 0.0 );
 
     // loop over all measurement images at the last time point (likely this will only be one in most cases)
     for (unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtFinalTimePoint; iM++)
     {
       this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointIDifference, m_vecTimeDiscretization[ uiNrOfTimePoints-1].vecEstimatedImages[ 0 ], m_vecTimeDiscretization[ uiNrOfTimePoints - 1].vecMeasurementImages[iM] );
-      // CHANGED sign here
       m_ptrCurrentAdjointIDifference->multConst( m_vecTimeDiscretization[uiNrOfTimePoints-1].vecWeights[iM] );
-      //m_ptrCurrentAdjointIDifference->multConst( -m_vecTimeDiscretization[uiNrOfTimePoints-1].vecWeights[iM] );
-      m_ptrCurrentLambdaIEnd->addCellwise( m_ptrCurrentAdjointIDifference );
+      m_ptrCurrentLambdaI->addCellwise( m_ptrCurrentAdjointIDifference );
     }
-
-    // initialize the map used to flow backwards
-    // m_ptrMapIn maps between different measurement timepoints
-    LDDMMUtils< T, TState::VImageDimension>::identityMap( m_ptrMapIn );
 
     // initialize the initial condition for the incremental map used to flow backwards. Will not be changed during
     // the iterations, because the numerical solution is always started from the identity
     // m_ptrMapIncremental maps bewtween different time discretization points; used for the source terms
     LDDMMUtils< T, TState::VImageDimension>::identityMap( m_ptrMapIdentity );
 
-    m_ptrDI->setConst( 0 );
-    m_ptrDP->setConst( 0 );
-
-    // initialize the current values for the adjoints lambdap and lambdai
-    m_ptrCurrentLambdaI->copy( m_ptrCurrentLambdaIEnd );
-    m_ptrCurrentLambdaP->setConst( 0.0 );
-
-#ifdef EXTREME_DEBUG
+#ifdef EXTREME_DEBUGGING
     (*tstLamI)[ m_vecTimeDiscretization.size()-1 ]->copy( m_ptrCurrentLambdaI );
     (*tstLamP)[ m_vecTimeDiscretization.size()-1 ]->copy( m_ptrCurrentLambdaP );
 #endif
 
     for ( int iI = (int)m_vecTimeDiscretization.size()-1-1; iI>=0; iI--)
     {
-       // use the velocity field computed in the forward direction, but negate it
+      // use the velocity field computed in the forward direction, but negate it
       ptrCurrentVelocityField->copy( (*m_ptrVelocityField)[ iI ] );
       ptrCurrentVelocityField->multConst(-1);
-
-      // update the map
-      this->m_ptrEvolver->SolveForward( ptrCurrentVelocityField, m_ptrMapIn, m_ptrMapOut, m_ptrMapTmp, this->m_vecTimeIncrements[iI] );
-      // for next step copy
-      m_ptrMapIn->copy( m_ptrMapOut );
 
       // update the incremental map
       this->m_ptrEvolver->SolveForward( ptrCurrentVelocityField, m_ptrMapIdentity, m_ptrMapIncremental, m_ptrMapTmp, this->m_vecTimeIncrements[iI] );
 
       // compute the convolved adjoint velocity at time point i+1
       // this introduces a slight assymmetry in the solution (because ideally we would like to compute it at i)
-      // compute K*\lambda_v
+      // compute K*\lambda_v; first lambda_v
       ComputeVelocityAdjoint( (*m_ptrI)[ iI+1 ], (*m_ptrP)[ iI+1 ], m_ptrCurrentLambdaI, m_ptrCurrentLambdaP, ptrCurrentKLambdaV );
 
       // compute K*\lambda_v
       this->m_ptrKernel->ConvolveWithKernel( ptrCurrentKLambdaV );
 
-      // compute di = -div(p K*lambda_v) and dp = \nabla I^T ( K* lambda_v )
+      // compute di = div(p K*lambda_v) and dp = -\nabla I^T ( K* lambda_v )
+
+      m_ptrDI->setConst( 0 );
+      m_ptrDP->setConst( 0 );
 
       for ( unsigned int iD=0; iD<dim; iD++ )
       {
-        // 1) compute dp = \nabla I^T ( K* lambda_v )
+        // 1) compute dp = -\nabla I^T ( K* lambda_v )
         // nabla I
         VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( (*m_ptrI)[ iI+1 ], iD, m_ptrTmpField );
+
         // compute the element-wise inner product
         VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByVectorInnerProductElementwise( m_ptrTmpField, ptrCurrentKLambdaV, m_ptrTmpScalarImage );
+
         // account for the time-increment
         m_ptrTmpScalarImage->multConst( -1.0*m_vecTimeIncrements[ iI ] );
         // store it in the i-th dimension of dp
         VectorImageUtils< T, TState::VImageDimension>::addScalarImageToVectorImageAtDimensionInPlace( m_ptrTmpScalarImage, m_ptrDP, iD );
 
-        // 2) Compute di = -div( p K*lambda_v )
+        // 2) Compute di = div( p K*lambda_v )
         m_ptrTmpField->copy( ptrCurrentKLambdaV );
         // multiply it by the d-th dimension of p
         VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( (*m_ptrP)[ iI+1 ], iD, m_ptrTmpField );
-        m_ptrTmpField->multConst( m_vecTimeIncrements[ iI ] );
+
         // compute the divergence
         VectorFieldUtils< T, TState::VImageDimension >::computeDivergence( m_ptrTmpField, m_ptrTmpScalarImage );
+
+        m_ptrTmpScalarImage->multConst( m_vecTimeIncrements[ iI ] );
         // store it in the i-th dimension of di
         VectorImageUtils< T, TState::VImageDimension>::addScalarImageToVectorImageAtDimensionInPlace( m_ptrTmpScalarImage, m_ptrDI, iD );
       }
 
-      // now add up all the contributions
-      // 1) first for the increments, just push one step further through the map
-      LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapIncremental, m_ptrDI, m_ptrTmpImage );
-      LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( m_ptrMapIncremental, m_ptrDeterminantOfJacobian );
-      m_ptrDI->copy( m_ptrTmpImage );
-      m_ptrDI->multElementwise( m_ptrDeterminantOfJacobian );
+      // now add up all the contributions that will happened during this time step
 
-      LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapIncremental, m_ptrDP,  m_ptrTmpImage );
-      m_ptrDP->copy( m_ptrTmpImage );
-
-      LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapIn, m_ptrCurrentLambdaIEnd,  m_ptrCurrentLambdaI );
-      LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapIn, m_ptrCurrentLambdaPEnd,  m_ptrCurrentLambdaP );
-      LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( m_ptrMapIn, m_ptrDeterminantOfJacobian );
-      m_ptrCurrentLambdaI->multElementwise( m_ptrDeterminantOfJacobian );
-
-      // now add these contributions back together (the fully map warped part and the incremental part)
       m_ptrCurrentLambdaI->addCellwise( m_ptrDI );
       m_ptrCurrentLambdaP->addCellwise( m_ptrDP );
+
+      LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( m_ptrMapIncremental, m_ptrDeterminantOfJacobian );
+
+      // 1) account for the deformation in this time increment; just push via map by one timestep
+      LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapIncremental, m_ptrCurrentLambdaI, m_ptrTmpImage );
+      m_ptrCurrentLambdaI->copy( m_ptrTmpImage );
+      m_ptrCurrentLambdaI->multElementwise( m_ptrDeterminantOfJacobian );
+
+      LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapIncremental, m_ptrCurrentLambdaP,  m_ptrTmpImage );
+      m_ptrCurrentLambdaP->copy( m_ptrTmpImage );
 
       // update if we need to jump at the current time-point
       if ( m_vecTimeDiscretization[ iI ].bIsMeasurementPoint )
       {
-
-        // reset the map to flow backwards, because we update the current adjoint
-        LDDMMUtils< T, TState::VImageDimension >::identityMap( m_ptrMapIn );
-
-        // reset the increments
-        m_ptrDI->setConst( 0 );
-        m_ptrDP->setConst( 0 );
-
         // account for all possible jumps of the adjoint at this time-point
         unsigned int uiNrOfMeasuredImagesAtTimePoint = m_vecTimeDiscretization[ iI ].vecMeasurementImages.size();
         for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM )
@@ -654,12 +618,9 @@ void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::Comp
           m_ptrCurrentLambdaI->addCellwise( m_ptrCurrentAdjointIDifference );
         }
 
-        // reset the current adjoint to the adjoint at current time point
-        m_ptrCurrentLambdaIEnd->copy( m_ptrCurrentLambdaI );
-        m_ptrCurrentLambdaPEnd->copy( m_ptrCurrentLambdaP );
       }
 
-#ifdef EXTREME_DEBUG
+#ifdef EXTREME_DEBUGGING
       (*tstLamI)[ iI ]->copy( m_ptrCurrentLambdaI );
       (*tstLamP)[ iI ]->copy( m_ptrCurrentLambdaP );
 #endif
@@ -708,23 +669,21 @@ void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState>::Compu
 
     for ( unsigned int iD=0; iD<dim; iD++ )
     {
-      // 1) first, compute the gradient with respect to the d-th dimension of p
+      // 1) first, compute the gradient with respect to the d-th dimension of p; -\lambda^p(t_0) + \nabla I(t_0)^T K* ( p(t_0)\nabla I(t_0) )
 
       // nabla I
       VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( ptrInitialImage, iD, m_ptrTmpField );
       m_ptrTmpFieldConv->copy( m_ptrTmpField );
-      // multiply with initial momentum corresponding to this dimension of the image
+      // multiply with initial momentum corresponding to this dimension of the image; p_i \nabla I
       VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrInitialMomentum, iD, m_ptrTmpFieldConv );
 
-      // convolve with kernel
+      // convolve with kernel; CAN BE OPTIMIZED HERE, JUST CONVOLVE AFTER SUMMING
       this->m_ptrKernel->ConvolveWithKernel( m_ptrTmpFieldConv );
 
-      // compute the element-wise inner product
+      // compute the element-wise inner product; \nabla I^ K*(p_i\nabla I)
       VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByVectorInnerProductElementwise( m_ptrTmpField, m_ptrTmpFieldConv, m_ptrTmpScalarImage );
 
-      // now multiply this by -1 and add to the d-th component of ptrp0Gradient
-      m_ptrTmpScalarImage->multConst( -1 );
-
+      // now add it to the p0 gradient
       VectorImageUtils< T, TState::VImageDimension>::addScalarImageToVectorImageAtDimensionInPlace( m_ptrTmpScalarImage, ptrP0Gradient, iD );
 
       // only compute the gradient if we want to update the initial image
@@ -733,7 +692,7 @@ void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState>::Compu
       {
         // 2) Second, compute the component for the gradient with respect to the d-th dimension of I
 
-        // multiply ptrTmpFieldConv (K*(p(t_0)\nabla I(0)) with p(t_0)
+        // multiply ptrTmpFieldConv (K*(p_i(t_0)\nabla I(t_0)) with p_i(t_0)
         VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrInitialMomentum, iD, m_ptrTmpFieldConv );
 
         // compute the divergence
@@ -772,10 +731,10 @@ CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::GetCurren
   {
       // nabla I
       VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( ptrInitialImage, iD, m_ptrTmpField );
-      // multiply with initial momentum corresponding to this dimension of the image
+      // multiply with initial momentum corresponding to this dimension of the image; p_i\nabla I
       VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrInitialMomentum, iD, m_ptrTmpField );
 
-      // convolve with kernel
+      // convolve with kernel, K*(pi\nabla I)
       m_ptrTmpFieldConv->copy( m_ptrTmpField );
       this->m_ptrKernel->ConvolveWithKernel( m_ptrTmpFieldConv );
 
@@ -879,7 +838,7 @@ void CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState >::Outp
     ptrCurrentGradient->addCellwise( m_ptrTmpField );
     VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrCurrentGradient, outputPrefix + "gradv" + CreateIntegerString( iI, 3 ) + suffix );
 
-#ifdef EXTREME_DEBUG
+#ifdef EXTREME_DEBUGGING
     VectorImageUtils< T, TState::VImageDimension >::writeFileITK( (*tstLamI)[iI], outputPrefix + "lamI" + CreateIntegerString( iI, 3) + suffix );
     VectorImageUtils< T, TState::VImageDimension >::writeFileITK( (*tstLamP)[iI], outputPrefix + "lamP" + CreateIntegerString( iI, 3) + suffix );
 #endif

@@ -27,6 +27,7 @@
 #include <fstream>
 #include <string>
 #include <stdexcept>
+#include <vector>
 
 namespace CALATK
 {
@@ -41,6 +42,9 @@ class CJSONConfiguration
 public:
   CJSONConfiguration();
   ~CJSONConfiguration();
+
+  typedef std::vector< double > VectorType;
+  typedef std::vector< float > VectorFloatType;
 
   /**
    * @brief Sets the JSON configuration root by passing a JSON reference.
@@ -84,6 +88,8 @@ public:
   Json::Value& GetFromKey( std::string sKey, Json::Value vDefault );
   Json::Value& GetFromKey( Json::Value& vSubTree, std::string sKey, Json::Value vDefault, bool bUseIndent = true );
   Json::Value& GetFromIndex( Json::Value& vSubTree, Json::ArrayIndex ind, bool bUseIndent = true );
+  VectorType GetFromKeyAsVector( Json::Value& vSubTree, std::string sKey, VectorType, bool bUseIndent = true );
+  VectorFloatType GetFromKeyAsVector( Json::Value& vSubTree, std::string sKey, VectorFloatType, bool bUseIndent = true );
 
   void PrintSettingsOn();
   void PrintSettingsOff();

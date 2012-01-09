@@ -143,6 +143,79 @@ void CJSONConfiguration::InitializeEmptyRoot()
 
 }
 
+CJSONConfiguration::VectorFloatType
+CJSONConfiguration::GetFromKeyAsVector( Json::Value& vSubTree, std::string sKey, VectorFloatType vDefault, bool bUseIndent )
+{
+  VectorType vecD;
+  for ( unsigned int iI=0; iI<vDefault.size(); ++iI )
+  {
+    vecD.push_back( vDefault[iI] );
+  }
+  VectorType vecRet = GetFromKeyAsVector( vSubTree, sKey, vecD, bUseIndent );
+
+  VectorFloatType vecF;
+  for ( unsigned int iI=0; iI<vecRet.size(); ++iI )
+  {
+    vecF.push_back( vecRet[ iI ] );
+  }
+
+  return vecF;
+}
+
+CJSONConfiguration::VectorType
+CJSONConfiguration::GetFromKeyAsVector( Json::Value& vSubTree, std::string sKey, VectorType vDefault, bool bUseIndent )
+{
+  unsigned int uiIndent;
+  if ( bUseIndent )
+  {
+    uiIndent = m_Indent;
+  }
+  else
+  {
+    uiIndent = 0;
+  }
+
+  std::vector<double> vecReturn = vDefault;
+
+  // check if it is a member, if not make one
+  if ( !vSubTree.isMember( sKey ) )
+  {
+    for ( unsigned int iI=0; iI<vDefault.size(); ++iI )
+    {
+      vSubTree[ sKey ][ iI ] = vDefault[ iI ];
+    }
+  }
+  else // was in tree, read out the values
+  {
+    if ( vSubTree[ sKey ].type() != Json::arrayValue )
+    {
+      std::cerr << "ERROR: json, expected array for key \"" << sKey << "\" , but did not see an array. Using default value." << std::endl;
+    }
+    else // found array, extract the values
+    {
+      vecReturn.clear();
+      unsigned int uiNrOfElements = vSubTree[ sKey ].size();
+      for ( unsigned int iI=0; iI< uiNrOfElements; ++iI )
+      {
+        vecReturn.push_back( vSubTree[ sKey ][ iI ].asDouble() );
+      }
+    }
+  }
+
+  if ( m_PrintSettings )
+  {
+    std::cout << std::string( uiIndent, '-' ) << "Key = \"" << sKey << "\" : used value = [ ";
+    for ( unsigned int iI=0; iI<vecReturn.size(); ++iI )
+    {
+      std::cout << vecReturn[iI ] << " ";
+    }
+    std::cout << "]" << std::endl;
+  }
+
+  return vecReturn;
+
+}
+
 Json::Value& CJSONConfiguration::GetFromKey( std::string sKey, Json::Value vDefault )
 {
   if ( m_ptrRoot == NULL )

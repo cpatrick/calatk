@@ -23,7 +23,7 @@
 template <class T, unsigned int VImageDimension >
 CImageManagerMultiScale< T, VImageDimension >::CImageManagerMultiScale()
   : DefaultSigma( 0.5 ), m_ExternallySetSigma( false ),
-    DefaultBlurHighestResolutionImage( false ), m_ExternallySetBlurHighestResolutionImage( false )
+    DefaultBlurHighestResolutionImage( true ), m_ExternallySetBlurHighestResolutionImage( false )
 {
   m_uiCurrentlySelectedScale = 0;
   m_bImagesWereRead = false;

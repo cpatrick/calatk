@@ -712,8 +712,6 @@ CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetCurrentEnergy()
 
   dEnergy += dImageNorm;
 
-  std::cout << "geomet energy = " << dEnergy << std::endl;
-
   CEnergyValues energyValues;
   energyValues.dEnergy = dEnergy;
   energyValues.dRegularizationEnergy = dVelocitySquareNorm;

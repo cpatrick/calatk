@@ -50,6 +50,37 @@ void CGaussianKernel< T, VImageDimension >::SetSigma( T dSigma )
 }
 
 template <class T, unsigned int VImageDimension >
+void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType1D* pVecImageGraft )
+{
+  unsigned int szX = pVecImageGraft->getSizeX();
+
+  T dx = pVecImageGraft->getSpaceX();
+
+  T pi = (T)CALATK::PI;
+
+  T f1Eff = 0;
+
+  for (unsigned int x = 0; x < szX; ++x)
+    {
+    f1Eff = GetFFromIndex( x, szX, dx );
+
+    T val = exp( -m_Sigma*m_Sigma*( 4*pi*pi*(f1Eff*f1Eff)/2 ) );
+    this->m_ptrL->setValue(x,0, val );
+
+    // avoid division by zero!!
+    if ( val <= std::numeric_limits<T>::epsilon() )
+      {
+      this->m_ptrLInv->setValue(x,0,1.0/std::numeric_limits<T>::epsilon() );
+      }
+    else
+      {
+      this->m_ptrLInv->setValue(x,0,1.0/(val) );
+      }
+    }
+
+}
+
+template <class T, unsigned int VImageDimension >
 void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType2D* pVecImageGraft )
 {
   unsigned int szX = pVecImageGraft->getSizeX();
@@ -69,9 +100,19 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vecto
     for (unsigned int x = 0; x < szX; ++x) 
       {
       f1Eff = GetFFromIndex( x, szX, dx );
+
       T val = exp( -m_Sigma*m_Sigma*( 4*pi*pi*(f1Eff*f1Eff + f2Eff*f2Eff )/2 ) );
       this->m_ptrL->setValue(x,y,0, val );
-      this->m_ptrLInv->setValue(x,y,0,1.0/(val) );
+
+      // avoid division by zero!!
+      if ( val <= std::numeric_limits<T>::epsilon() )
+        {
+        this->m_ptrLInv->setValue(x,y,0,1.0/std::numeric_limits<T>::epsilon() );
+        }
+      else
+        {
+        this->m_ptrLInv->setValue(x,y,0,1.0/(val) );
+        }
       }
     }
 
@@ -106,7 +147,17 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vecto
         f1Eff = GetFFromIndex( x, szX, dx );
         T val = exp( -m_Sigma*m_Sigma*( 4*pi*pi*( f1Eff*f1Eff + f2Eff*f2Eff + f3Eff*f3Eff)/2 ) );
         this->m_ptrL->setValue(x,y,z,0, val );
-        this->m_ptrLInv->setValue(x,y,z,0,1.0/(val) );
+
+        // avoid division by zero!!
+        if ( val <= std::numeric_limits<T>::epsilon() )
+          {
+          this->m_ptrLInv->setValue(x,y,z,0,1.0/std::numeric_limits<T>::epsilon() );
+          }
+        else
+          {
+          this->m_ptrLInv->setValue(x,y,z,0,1.0/(val) );
+          }
+
         }
       }
     }

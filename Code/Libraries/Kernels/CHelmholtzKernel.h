@@ -38,6 +38,7 @@ public:
 
   typedef CFourierDomainKernel< T, VImageDimension > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
+  typedef typename Superclass::VectorImageType1D VectorImageType1D;
   typedef typename Superclass::VectorImageType2D VectorImageType2D;
   typedef typename Superclass::VectorImageType3D VectorImageType3D;
 
@@ -56,6 +57,7 @@ public:
 
 protected:
 
+  void ComputeKernelAndInverseKernel( VectorImageType1D* pVecImageGraft );
   void ComputeKernelAndInverseKernel( VectorImageType2D* pVecImageGraft );
   void ComputeKernelAndInverseKernel( VectorImageType3D* pVecImageGraft );
 

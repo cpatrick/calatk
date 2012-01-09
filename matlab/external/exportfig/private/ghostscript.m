@@ -121,5 +121,5 @@ good = good == 0;
 return
 
 function path = current_gs_path
-path = 'gs';
+path = '/usr/local/bin/gs';
 return

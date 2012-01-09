@@ -1,0 +1,63 @@
+// CALATK version ?.?; JSON configuration file
+
+
+{
+	"GeneralRegistrationSettings" : 
+	{
+		"Kernel" : "MultiGaussian",
+		"Metric" : "SSD"
+	},
+	"LDDMMGeodesicInitialMomentum" : 
+	{
+		"EstimateInitialImage" : false,
+		"NumberOfDiscretizationVolumesPerUnitTime" : 10.0,
+		"SigmaSqr" : 0.01
+	},
+	"MultiGaussianKernel" : 
+	{
+		"EffectiveWeights" : [ 1.0, 0.25, 0.025 ],
+		"GradientScalingFactors" : [ 1.0, 1.0, 1.0 ],
+		"Sigmas" : [ 0.250, 0.15, 0.05 ]
+	},
+	"MultiScaleBlurHighestResolutionImage" : true,
+	"MultiScaleFinalOutput" : 
+	{
+		"OutputStateInformation" : false,
+		"OutputStateInformationFrequency" : 100
+	},
+	"MultiScaleSigmaInVoxels" : 1.0,
+	"MultiscaleSettings" : 
+	[
+		
+		{
+			"Downsample" : 
+			{
+				"Scale" : 1
+			},
+			"LineSearch" : 
+			{
+				"AdjustStepSizeDownFactor" : 0.50,
+				"AdjustStepSizeDownNumber" : 2,
+				"AdjustStepSizeUpFactor" : 2.0,
+				"AdjustStepSizeUpNumber" : 2,
+				"DecreaseConstant" : 0.0,
+				"InitialStepSize" : 1.0e-5,
+				"MaxNumberOfIterations" : 500,
+				"MaxNumberOfTries" : 10,
+				"MinAllowedStepSize" : 1.0e-10,
+				"OutputStateInformation" : false,
+				"OutputStateInformationFrequency" : 100,
+				"ReductionFactor" : 0.50
+			}
+		}
+	],
+	"OneStepEvolver" : 
+	{
+		"NumberOfThreads" : 1
+	},
+	"OneStepEvolverSemiLagrangianAdvection" : 
+	{
+		"NumberOfIterationsToDetermineFlowField" : 2,
+		"TimeStepFactor" : 1.0
+	}
+}

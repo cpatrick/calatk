@@ -1,49 +1,108 @@
-// Example LDDMM, multiscale configuration file
-{
-    // array of settings for the multi-scale image pyramid at different levels
-    "MultiscaleSettings": [
-        {
-	    "Downsample" :
-	    {
-		"Sigma": 0.1,
-        	"Scale": 1
-            },
-	    "LineSearch" :
-	    {
-		"Tolerance": 1e-3,
-		"MaxNumberOfIterations": 25
-	    }  
-	    
-	},
-	{
-	    "Downsample" :
-	    {
-		"Sigma": 0.1,
-		"Scale": 0.75    
-	    },
-	    "LineSearch" :
-	    {
-		"Tolerance": 1e-3,
-		"MaxNumberOfIterations": 50
-	    }  
-	},
-	{
-	    "Downsample" :
-           {
-		"Sigma": 0.1,
-		"Scale": 0.5
-            },
-	    "LineSearch" :
-	    {
-		"Tolerance": 1e-3,
-		"MaxNumberOfIterations": 100
-	    }  
-	}
-    ],
+// CALATK version ?.?; JSON configuration file
 
-    "GrowthModel" :
-    {
-	"Gamma": 1,
-	"Alpha": 0.01    
-    }
+
+{
+	"GeneralRegistrationSettings" : 
+	{
+		"Kernel" : "HelmholtzKernel",
+		"Metric" : "SSD"
+	},
+	"GrowthModel" : 
+	{
+		"SigmaSqr" : 0.010
+	},
+	"HelmholtzKernel" : 
+	{
+		"Alpha" : 0.050,
+		"Gamma" : 1.0
+	},
+	"MultiScaleBlurHighestResolutionImage" : false,
+	"MultiScaleFinalOutput" : 
+	{
+		"OutputStateInformation" : false,
+		"OutputStateInformationFrequency" : 100
+	},
+	"MultiScaleSigmaInVoxels" : 0.50,
+	"MultiscaleSettings" : 
+	[
+		
+		{
+			"Downsample" : 
+			{
+				"Scale" : 1
+			},
+			"LineSearch" : 
+			{
+				"AdjustStepSizeDownFactor" : 0.50,
+				"AdjustStepSizeDownNumber" : 2,
+				"AdjustStepSizeUpFactor" : 2.0,
+				"AdjustStepSizeUpNumber" : 2,
+				"DecreaseConstant" : 0.0,
+				"InitialStepSize" : 1.000000000000000e-03,
+				"MaxNumberOfIterations" : 50,
+				"MaxNumberOfTries" : 10,
+				"MinAllowedStepSize" : 1.000000000000000e-04,
+				"OutputStateInformation" : false,
+				"OutputStateInformationFrequency" : 100,
+				"ReductionFactor" : 0.50
+			}
+		},
+		
+		{
+			"Downsample" : 
+			{
+				"Scale" : 0.750
+			},
+			"LineSearch" : 
+			{
+				"AdjustStepSizeDownFactor" : 0.50,
+				"AdjustStepSizeDownNumber" : 2,
+				"AdjustStepSizeUpFactor" : 2.0,
+				"AdjustStepSizeUpNumber" : 2,
+				"DecreaseConstant" : 0.0,
+				"InitialStepSize" : 1.000000000000000e-03,
+				"MaxNumberOfIterations" : 100,
+				"MaxNumberOfTries" : 10,
+				"MinAllowedStepSize" : 1.000000000000000e-05,
+				"OutputStateInformation" : false,
+				"OutputStateInformationFrequency" : 100,
+				"ReductionFactor" : 0.50
+			}
+		},
+		
+		{
+			"Downsample" : 
+			{
+				"Scale" : 0.50
+			},
+			"LineSearch" : 
+			{
+				"AdjustStepSizeDownFactor" : 0.50,
+				"AdjustStepSizeDownNumber" : 2,
+				"AdjustStepSizeUpFactor" : 2.0,
+				"AdjustStepSizeUpNumber" : 2,
+				"DecreaseConstant" : 0.0,
+				"InitialStepSize" : 1.000000000000000e-05,
+				"MaxNumberOfIterations" : 200,
+				"MaxNumberOfTries" : 10,
+				"MinAllowedStepSize" : 1.000000000000000e-07,
+				"OutputStateInformation" : false,
+				"OutputStateInformationFrequency" : 100,
+				"ReductionFactor" : 0.50
+			}
+		}
+	],
+	"OneStepEvolver" : 
+	{
+		"NumberOfThreads" : 1
+	},
+	"OneStepEvolverSemiLagrangianAdvection" : 
+	{
+		"NumberOfIterationsToDetermineFlowField" : 2,
+		"TimeStepFactor" : 1.0
+	},
+	"SpatioTemporalVelocityField" : 
+	{
+		"NumberOfDiscretizationVolumesPerUnitTime" : 10.0
+	}
 }

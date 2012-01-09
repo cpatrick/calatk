@@ -17,22 +17,29 @@
 *
 */
 
-#ifndef C_GAUSSIAN_KERNEL_H
-#define C_GAUSSIAN_KERNEL_H
+#ifndef C_MULTI_GAUSSIAN_KERNEL_H
+#define C_MULTI_GAUSSIAN_KERNEL_H
 
 #include "CFourierDomainKernel.h"
 #include "CALATKCommon.h"
 
 namespace CALATK
 {
-
 /**
- * CGaussianKernel: Implements the Gaussian kernel with standard deviation \sigma
- *
- */
+  * Implements a multi-Gaussian kernel.
+  *
+  * See
+  *
+  * L. Risser, F.-X. Vialard, R. Wolz, M. Murgasova, D. Holm, D. Rueckert
+  * "Simultaneous Mutli-scale Registration using Large Deformation Diffeomorphic Metric Mapping,"
+  * IEEE Transactions on Medical Imaging, vol. 30(10), 2011
+  *
+  * on details on the behavior of such a kernel
+  *
+  */
 
 template <class T, unsigned int VImageDimension=3 >
-class CGaussianKernel : public CFourierDomainKernel< T, VImageDimension >
+class CMultiGaussianKernel : public CFourierDomainKernel< T, VImageDimension >
 {
 public:
 
@@ -42,13 +49,18 @@ public:
   typedef typename Superclass::VectorImageType2D VectorImageType2D;
   typedef typename Superclass::VectorImageType3D VectorImageType3D;
 
-  CGaussianKernel();
-  ~CGaussianKernel();
+  CMultiGaussianKernel();
+  ~CMultiGaussianKernel();
 
-  void SetSigma( T dSigma );
-  SetJSONMacro( Sigma, T );
+  void SetSigmasEffectiveWeightsAndScalingFactors( std::vector<T> Sigmas, std::vector<T> EffectiveWeights, std::vector<T> GradientScalingFactors );
 
-  GetMacro( Sigma, T );
+  SetJSONMacro( Sigmas, std::vector<T> );
+  SetJSONMacro( EffectiveWeights, std::vector<T> );
+  SetJSONMacro( GradientScalingFactors, std::vector<T> );
+
+  GetMacro( Sigmas, std::vector<T> );
+  GetMacro( EffectiveWeights, std::vector<T> );
+  GetMacro( GradientScalingFactors, std::vector<T> );
 
   virtual void SetAutoConfiguration( Json::Value& ConfValue );
 
@@ -60,17 +72,28 @@ protected:
 
   void ConfirmKernelsNeedToBeComputed();
 
+  void ComputeActualWeights();
+
 private:
 
-  T m_Sigma;
+  std::vector<T> m_Sigmas;
+  std::vector<T> m_EffectiveWeights;
+  std::vector<T> m_GradientScalingFactors;
 
-  const T DefaultSigma;
+  std::vector<T> DefaultSigmas;
+  std::vector<T> DefaultEffectiveWeights;
+  std::vector<T> DefaultGradientScalingFactors;
 
-  bool m_ExternallySetSigma;
+  bool m_ExternallySetSigmas;
+  bool m_ExternallySetEffectiveWeights;
+  bool m_ExternallySetGradientScalingFactors;
+
+  std::vector<T> m_ActualWeights;
+
 };
 
-#include "CGaussianKernel.txx"
+#include "CMultiGaussianKernel.txx"
 
 } // end namespace
 
-#endif
+#endif // C_MULTI_GAUSSIAN_KERNEL_H

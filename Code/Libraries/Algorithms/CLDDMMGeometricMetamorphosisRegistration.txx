@@ -22,7 +22,10 @@
 
 template < class TState >
 CLDDMMGeometricMetamorphosisRegistration< TState >::CLDDMMGeometricMetamorphosisRegistration()
+  : DefaultMaskKernel( "HelmholtzKernel" ), m_ExternallySetMaskKernel( false )
 {
+  m_MaskKernel = DefaultMaskKernel;
+
   m_ptrMaskKernel = NULL;
   m_bSetDefaultMaskKernel = false;
 }
@@ -39,6 +42,15 @@ CLDDMMGeometricMetamorphosisRegistration< TState >::~CLDDMMGeometricMetamorphosi
     CLDDMMType* plddmm = dynamic_cast< CLDDMMType *>( this->m_ptrObjectiveFunction );
     plddmm->SetMaskKernelPointer( this->m_ptrMaskKernel );    
     }
+}
+
+template< class TState >
+void CLDDMMGeometricMetamorphosisRegistration< TState >::SetAutoConfiguration( Json::Value& ConfValue )
+{
+  Superclass::SetAutoConfiguration( ConfValue );
+  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
+
+  SetJSONMaskKernel( this->m_jsonConfig.GetFromKey( currentConfiguration, "MaskKernel", GetExternalOrDefaultMaskKernel() ).asString() );
 }
 
 template < class TState >
@@ -62,15 +74,8 @@ CLDDMMGeometricMetamorphosisRegistration< TState >::GetMaskKernelPointer()
 template < class TState >
 void CLDDMMGeometricMetamorphosisRegistration< TState >::SetDefaultMaskKernelPointer()
 {
-  CHelmholtzKernel< T, TState::VImageDimension >* ptrHH = new CHelmholtzKernel< T, TState::VImageDimension >;
-  this->m_ptrMaskKernel = ptrHH;
-
-  // multiply alpha by 0.25 to make the mask more fluid as default behavior
-  //ptrHH->SetAlpha( 0.2*ptrHH->GetAlpha() );
-  //std::cout << "WARNING: Check that this works properly and does not overwrite the previously set value if no other value is specified." << std::endl;
-
-  ptrHH->SetAutoConfiguration( this->m_jsonConfig.GetFromKey( "MaskKernel", Json::nullValue ) );
-  
+  this->m_ptrMaskKernel = CKernelFactory< T, TState::VImageDimension >::CreateNewKernel( m_MaskKernel );
+  this->m_ptrMaskKernel->SetAutoConfiguration( this->m_jsonConfig.GetFromKey( "MaskKernel", Json::nullValue ) );
 }
 
 template < class TState >
