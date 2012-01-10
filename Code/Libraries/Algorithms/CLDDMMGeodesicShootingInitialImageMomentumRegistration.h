@@ -21,7 +21,7 @@
 #define C_LDDMM_GEODESIC_SHOOTING_INITIAL_IMAGE_MOMENTUM_REGISTRATION_H
 
 #include "CAlgorithm.h"
-#include "CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction.h"
+#include "CLDDMMAdjointGeodesicShootingObjectiveFunction.h"
 #include "CLDDMMVelocityFieldWithMomentumRegistration.h"
 #include "CStateInitialImageMomentum.h"
 #include "CGaussianKernel.h"

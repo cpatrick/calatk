@@ -17,24 +17,36 @@
 *
 */
 
-#ifndef C_LDDMM_GEODESIC_SHOOTING_INITIAL_IMAGE_MOMENTUM_OBJECTIVE_FUNCTION_H
-#define C_LDDMM_GEODESIC_SHOOTING_INITIAL_IMAGE_MOMENTUM_OBJECTIVE_FUNCTION_H
+#ifndef C_LDDMM_ADJOINT_GEODESIC_SHOOTING_OBJECTIVE_FUNCTION_H
+#define C_LDDMM_ADJOINT_GEODESIC_SHOOTING_OBJECTIVE_FUNCTION_H
 
-#include "CVelocityFieldObjectiveFunctionWithMomentum.h"
+#include "CLDDMMGeodesicShootingObjectiveFunction.h"
 #include "CALATKCommon.h"
 #include "LDDMMUtils.h"
 
+
 namespace CALATK
 {
+/**
+  * Implements the adjoint formulation of geodesic shooting as described in
+  *
+  * Vialard et al., ...
+  *
+  * Supports time series and therefore can be used to compute geodesic regression lines as described in
+  *
+  * Niethammer et al., "Geodesic Regression for Image Time-Series," MICCAI 2011.
+  *
+  */
+
 template < class TState >
-class CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction
-    : public CVelocityFieldObjectiveFunctionWithMomentum< TState >
+class CLDDMMAdjointGeodesicShootingObjectiveFunction
+    : public CLDDMMGeodesicShootingObjectiveFunction< TState >
 {
 public:
 
     /* Some useful typedefs */
 
-    typedef CVelocityFieldObjectiveFunctionWithMomentum< TState > Superclass;
+    typedef CLDDMMGeodesicShootingObjectiveFunction< TState > Superclass;
 
     typedef typename TState::TFloat T;
 
@@ -43,36 +55,22 @@ public:
     typedef typename Superclass::VectorImageType VectorImageType;
     typedef typename Superclass::VectorFieldType VectorFieldType;
 
-    CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction();
-    virtual ~CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction();
+    CLDDMMAdjointGeodesicShootingObjectiveFunction();
+    virtual ~CLDDMMAdjointGeodesicShootingObjectiveFunction();
 
     void InitializeState();
     void InitializeState( TState* pState );
 
-    CEnergyValues GetCurrentEnergy();
-    void ComputeGradient();
-
     void GetImage( VectorImageType* ptrIm, T dTime );
-    void GetInitialImage( VectorImageType* ptrIm );
     void GetMomentum( VectorImageType* ptrMomentum, T dTime );
-    void GetInitialMomentum( VectorImageType* ptrMomentum );
 
     void GetMap( VectorFieldType* ptrMap, T dTime );
     void GetMapFromTo(VectorFieldType *ptrMap, T dTimeFrom, T dTimeTo);
 
-    SetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );
-    GetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );
-
-    /// Sigma square is the (here constant) weight for the dataterms, w = 1/sigmaSqr
-    SetMacro( SigmaSqr, T );
-    GetMacro( SigmaSqr, T );
-
-    SetMacro( EstimateInitialImage, bool );
-    GetMacro( EstimateInitialImage, bool );
+    CEnergyValues GetCurrentEnergy();
+    void ComputeGradient();
 
     void OutputStateInformation( unsigned int uiIter, std::string outputPrefix="" );
-
-    void SetAutoConfiguration( Json::Value& ConfValue );
 
 protected:
 
@@ -84,27 +82,26 @@ protected:
     typedef VectorImageType* VectorImagePointerType;
     typedef std::vector< VectorImagePointerType >* VectorPointerToVectorImagePointerType;
 
-    typedef CImageManager< T, TState::VImageDimension > ImageManagerType;
-    typedef typename ImageManagerType::SImageInformation SImageInformation;
-    typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
-
-    typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;
-
     void InitializeDataStructures();
     void InitializeDataStructuresFromState( TState* pState );
 
     void DeleteData();
 
-    void CreateTimeDiscretization();
-    void CreateTimeDiscretization( SubjectInformationType* pSubjectInfo, std::vector< STimePoint >& vecTimeDiscretization, std::vector< T >& vecTimeIncrements, T dNumberOfDiscretizationVolumesPerUnitTime );
     void CreateNewStateStructures();
     void ShallowCopyStateStructures( TState* pState );
     void CreateGradientAndAuxiliaryStructures();
 
     void ComputeImageMomentumForward();
     void ComputeAdjointsBackward();
-    void ComputeVelocity( const VectorImagePointerType ptrI, const VectorImagePointerType ptrP, VectorFieldPointerType ptrVout );
     void ComputeVelocityAdjoint(VectorImagePointerType ptrI, VectorImagePointerType ptrP, VectorImagePointerType ptrLambdaI, VectorImagePointerType ptrLambdaP, VectorFieldPointerType LambdaVOut);
+
+    void CreateTimeDiscretization();
+
+    typedef CImageManager< T, TState::VImageDimension > ImageManagerType;
+    typedef typename ImageManagerType::SImageInformation SImageInformation;
+    typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
+
+    typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;
 
 private:
 
@@ -139,27 +136,16 @@ private:
 
     VectorPointerToVectorFieldPointerType m_ptrVelocityField;
 
-    T m_NumberOfDiscretizationVolumesPerUnitTime;
-    const T DefaultNumberOfDiscretizationVolumesPerUnitTime;
-    bool m_ExternallySetNumberOfDiscretizationVolumesPerUnitTime;
-
-    bool m_EstimateInitialImage;
-    const bool DefaultEstimateInitialImage;
-    bool m_ExternallySetEstimateInitialImage;
-
-    T m_SigmaSqr;
-    const T DefaultSigmaSqr;
-    bool m_ExternallySetSigmaSqr;
-
     std::vector< T > m_vecMeasurementTimepoints;
 
     // bookkeeping structure, which keeps track of what measurements need to be compared to what estimated images
 
     std::vector< STimePoint > m_vecTimeDiscretization;
     std::vector< T > m_vecTimeIncrements;
+
 };
 
-#include "CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction.txx"
+#include "CLDDMMAdjointGeodesicShootingObjectiveFunction.txx"
 
 } // end namespace
 #endif // C_LDDMM_GEODESIC_SHOOTING_INITIAL_IMAGE_MOMENTUM_OBJECTIVE_FUNCTION_H

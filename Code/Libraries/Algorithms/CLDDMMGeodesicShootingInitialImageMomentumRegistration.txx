@@ -50,7 +50,7 @@ void CLDDMMGeodesicShootingInitialImageMomentumRegistration< TState >::SetDefaul
     throw std::runtime_error( "Image manager needs to be defined before default objective function can be created." );
     }
 
-  typedef CLDDMMGeodesicShootingInitialImageMomentumObjectiveFunction< TState > CLDDMMType;
+  typedef CLDDMMAdjointGeodesicShootingObjectiveFunction< TState > CLDDMMType;
   CLDDMMType* plddmm = new CLDDMMType;
   plddmm->SetEvolverPointer( this->m_ptrEvolver );
   plddmm->SetKernelPointer( this->m_ptrKernel );
