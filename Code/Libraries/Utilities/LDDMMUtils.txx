@@ -145,8 +145,10 @@ void LDDMMUtils< T, VImageDimension >::CreateTimeDiscretization( const std::vect
 // Determining the timepoint data from data of the image manager
 //
 template < class T, unsigned int VImageDimension >
-void LDDMMUtils< T, VImageDimension >::DetermineTimeSeriesTimePointData( ImageManagerType* ptrImageManager, unsigned int uiSubjectIndex, std::vector< STimePoint >& vecTimePointData )
+unsigned int LDDMMUtils< T, VImageDimension >::DetermineTimeSeriesTimePointData( ImageManagerType* ptrImageManager, unsigned int uiSubjectIndex, std::vector< STimePoint >& vecTimePointData )
 {
+  unsigned int uiNumberOfMeasurements = 0;
+
   // get the subject ids
   std::vector< unsigned int > vecSubjectIndices;
   ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
@@ -156,7 +158,7 @@ void LDDMMUtils< T, VImageDimension >::DetermineTimeSeriesTimePointData( ImageMa
   if ( uiNumberOfDifferentSubjects != 1 )
     {
     throw std::runtime_error( "DetermineTimeSeriesTimePointData: Currently only supports one subject at a time." );
-    return;
+    return uiNumberOfMeasurements;
     }
 
   std::vector< T > vecMeasurementTimepoints;
@@ -188,6 +190,8 @@ void LDDMMUtils< T, VImageDimension >::DetermineTimeSeriesTimePointData( ImageMa
   for ( iter = pSubjectInfo->begin(); iter != pSubjectInfo->end(); ++iter )
     {
 
+    uiNumberOfMeasurements++;
+
     if ( !bFirstValue && ( dLastTimePoint == (*iter)->timepoint ) )
       {
       // if there is a multiple measurement
@@ -212,6 +216,8 @@ void LDDMMUtils< T, VImageDimension >::DetermineTimeSeriesTimePointData( ImageMa
       bFirstValue = false;
 
     }
+
+  return uiNumberOfMeasurements;
 
 }
 

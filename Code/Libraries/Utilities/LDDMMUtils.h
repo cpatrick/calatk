@@ -107,8 +107,9 @@ public:
     * @param pImageMangager - pointer to the image manager
     * @param uiSubjectIndex - index of subject of which the timepoints should be extracted
     * @param vecTimePointData - resulting vector of timepoint data
+    * @return number of measurements in the time series
     */
-  static void DetermineTimeSeriesTimePointData( ImageManagerType* pImageManager, unsigned int uiSubjectIndex, std::vector< STimePoint >& vecTimePointData );
+  static unsigned int DetermineTimeSeriesTimePointData( ImageManagerType* pImageManager, unsigned int uiSubjectIndex, std::vector< STimePoint >& vecTimePointData );
 
   /**
     * Function which computes a map between two time-points given a spatio-temporal velocity field.

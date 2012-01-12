@@ -655,8 +655,8 @@ typename CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::CEnergyValues
 CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::GetCurrentEnergy()
 {
   /**
-    Computes the energy for the shooting method. The energy is defined as
-    (Note this is different than in the Miccai paper, because the initial energy is multiplied by 0.5)
+    * Computes the energy for the shooting method. The energy is defined as
+    * (Note this is different than in the Miccai paper, because the initial energy is multiplied by 0.5)
     \f[
       E = 0.5 \langle p(t_0)\nabla I(t_0),K*(p(t_0)\nabla I(t_0)\rangle + \sum_{i=0}^{M-1} w_i d^2(I(t_i),Y_i)
     \f]

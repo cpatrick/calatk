@@ -20,7 +20,7 @@
 #ifndef C_LDDMM_SIMPLIFIED_GEODESIC_SHOOTING_OBJECTIVE_FUNCTION_H
 #define C_LDDMM_SIMPLIFIED_GEODESIC_SHOOTING_OBJECTIVE_FUNCTION_H
 
-#include "CVelocityFieldObjectiveFunctionWithMomentum.h"
+#include "CLDDMMGeodesicShootingObjectiveFunction.h"
 #include "CALATKCommon.h"
 #include "LDDMMUtils.h"
 
@@ -39,13 +39,13 @@ namespace CALATK
 
 template < class TState >
 class CLDDMMSimplifiedGeodesicShootingObjectiveFunction
-    : public CVelocityFieldObjectiveFunctionWithMomentum< TState >
+    : public CLDDMMGeodesicShootingObjectiveFunction< TState >
 {
 public:
 
   /* Some useful typedefs */
 
-  typedef CVelocityFieldObjectiveFunctionWithMomentum< TState > Superclass;
+  typedef CLDDMMGeodesicShootingObjectiveFunction< TState > Superclass;
 
   typedef typename TState::TFloat T;
 
@@ -60,12 +60,20 @@ public:
   void InitializeState();
   void InitializeState( TState* pState );
 
+  void GetImage( VectorImageType* ptrIm, T dTime );
+  void GetMomentum( VectorImageType* ptrMomentum, T dTime );
+
+  void GetMap( VectorFieldType* ptrMap, T dTime );
+  void GetMapFromTo(VectorFieldType *ptrMap, T dTimeFrom, T dTimeTo);
+
   CEnergyValues GetCurrentEnergy();
   void ComputeGradient();
 
   void OutputStateInformation( unsigned int uiIter, std::string outputPrefix="" );
 
 protected:
+
+  void DeleteData();
 
 private:
   // maps to keep track of the current deformation (and temporary storage for the solver)
