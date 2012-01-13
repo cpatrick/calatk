@@ -31,7 +31,7 @@
 
 #include "JSONParameterUtils.h"
 
-#include "LDDMMCLP.h"
+#include "LDDMMRelaxationCLP.h"
 
 template < class TFLOAT, unsigned int VImageDimension >
 int DoIt( int argc, char** argv )

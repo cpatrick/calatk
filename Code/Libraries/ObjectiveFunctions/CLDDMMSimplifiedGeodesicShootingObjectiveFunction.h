@@ -73,7 +73,17 @@ public:
 
 protected:
 
+  void CreateNewStateStuctures();
+  void ShallowCopyStateStructures( TState* pState );
+  void CreateGradientAndAuxiliaryStructures();
+  void InitializeDataStructuresFromState( TState* pState );
+  void InitializeDataStructures();
+  void InitializeState();
   void DeleteData();
+
+  void CreateTimeDiscretization();
+
+  void ComputeImageMomentumForwardAndFinalAdjointWarpedToInitialImage( VectorImageType* ptrWarpedFinalToInitialAdjoint );
 
 private:
   // maps to keep track of the current deformation (and temporary storage for the solver)
@@ -82,6 +92,19 @@ private:
   VectorFieldPointerType m_ptrMapTmp; // map for the numerical solution
 
   VectorImagePointerType m_ptrDeterminantOfJacobian;
+
+  VectorImagePointerType m_ptrCurrentI;
+  VectorImagePointerType m_ptrCurrentP;
+  VectorFieldPointerType m_ptrCurrentVelocity;
+
+  VectorFieldPointerType m_ptrCurrentBackMap;
+  VectorFieldPointerType m_ptrMapIdentity;
+
+  VectorImagePointerType m_ptrCurrentFinalAdjoint;
+  VectorImagePointerType m_ptrWarpedFinalToInitialAdjoint;
+
+  VectorImagePointerType ptrI0;
+  VectorImagePointerType ptrI1;
 
 };
 
