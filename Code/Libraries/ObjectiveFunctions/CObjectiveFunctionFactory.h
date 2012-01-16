@@ -22,7 +22,7 @@
 
 #include "JSONParameterUtils.h"
 #include "CALATKCommon.h"
-#include "CObjectiveFunction.h"
+#include "CObjectiveFunctionBase.h"
 #include "CProcessBase.h"
 
 // include for all the supported objective functions
@@ -31,6 +31,9 @@
 #include "CLDDMMGrowthModelObjectiveFunction.h"
 #include "CLDDMMGeometricMetamorphosisObjectiveFunction.h"
 
+#include "CStateInitialImageMomentum.h"
+#include "CStateSpatioTemporalVelocityField.h"
+
 namespace CALATK
 {
 /**
@@ -38,22 +41,25 @@ namespace CALATK
   *
   */
 
-template < class TState >
+template < class T, unsigned int VImageDimension >
 class CObjectiveFunctionFactory :
     public CProcessBase
 {
 public:
 
   // all the objective function typedefs
-  typedef CObjectiveFunction< TState > ObjectiveFunctionType;
+  typedef CObjectiveFunctionBase< T, VImageDimension > ObjectiveFunctionBaseType;
+
+  typedef CStateInitialImageMomentum< T, VImageDimension > InitialImageMomentumStateType;
+  typedef CStateSpatioTemporalVelocityField< T, VImageDimension >  SpatioTemporalVelocityFieldStateType;
 
   enum NumericObjectiveFunctionType { LDDMMAdjointGeodesicShooting, LDDMMSimplifiedGeodesicShooting, LDDMMGrowthModel, LDDMMGeometricMetamorphosis };
 
   CObjectiveFunctionFactory();
   ~CObjectiveFunctionFactory();
 
-  static ObjectiveFunctionType* CreateNewObjectiveFunction( std::string sObjectiveFunction );
-  static ObjectiveFunctionType* CreateNewObjectiveFunction( NumericObjectiveFunctionType objectiveFunction );
+  static ObjectiveFunctionBaseType* CreateNewObjectiveFunction( std::string sObjectiveFunction );
+  static ObjectiveFunctionBaseType* CreateNewObjectiveFunction( NumericObjectiveFunctionType objectiveFunction );
 
 protected:
   static NumericObjectiveFunctionType GetObjectiveFunctionTypeFromString( std::string sObjectiveFunction );

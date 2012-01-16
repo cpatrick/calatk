@@ -17,37 +17,25 @@
 *
 */
 
-#ifndef C_OBJECTIVE_FUNCTION_TXX
-#define C_OBJECTIVE_FUNCTION_TXX
+#ifndef C_OBJECTIVE_FUNCTION_BASE_TXX
+#define C_OBJECTIVE_FUNCTION_BASE_TXX
 
 //
 // empty constructor
 //
-template < class TState >
-CObjectiveFunction< TState >::CObjectiveFunction()
+template < class T, unsigned int VImageDimension >
+CObjectiveFunctionBase< T, VImageDimension >::CObjectiveFunctionBase()
 {
-  m_pState = NULL;
-  m_pGradient = NULL;
+  m_pMetric = NULL;
+  m_ptrImageManager = NULL;
 }
 
 //
 // destructor
 //
-template < class TState >
-CObjectiveFunction< TState >::~CObjectiveFunction()
+template < class T, unsigned int VImageDimension >
+CObjectiveFunctionBase< T, VImageDimension >::~CObjectiveFunctionBase()
 {
-}
-
-//
-// gradient function
-//
-template < class TState >
-void CObjectiveFunction< TState >::ComputeGradient()
-{
-  if ( m_pGradient == NULL )
-    {
-    throw std::runtime_error( "Memory for gradient not allocated, nothing will be computed." );
-    }
 }
 
 #endif

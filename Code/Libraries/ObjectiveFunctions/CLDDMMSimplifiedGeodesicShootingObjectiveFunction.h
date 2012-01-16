@@ -53,6 +53,8 @@ public:
 
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
+  typedef VectorImageType* VectorImagePointerType;
+  typedef VectorFieldType* VectorFieldPointerType;
 
   CLDDMMSimplifiedGeodesicShootingObjectiveFunction();
   virtual ~CLDDMMSimplifiedGeodesicShootingObjectiveFunction();
@@ -73,17 +75,22 @@ public:
 
 protected:
 
-  void CreateNewStateStuctures();
+  void CreateNewStateStructures();
   void ShallowCopyStateStructures( TState* pState );
   void CreateGradientAndAuxiliaryStructures();
   void InitializeDataStructuresFromState( TState* pState );
   void InitializeDataStructures();
-  void InitializeState();
   void DeleteData();
 
   void CreateTimeDiscretization();
 
   void ComputeImageMomentumForwardAndFinalAdjointWarpedToInitialImage( VectorImageType* ptrWarpedFinalToInitialAdjoint );
+
+  typedef CImageManager< T, TState::VImageDimension > ImageManagerType;
+  typedef typename ImageManagerType::SImageInformation SImageInformation;
+  typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
+
+  typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;
 
 private:
   // maps to keep track of the current deformation (and temporary storage for the solver)
@@ -97,6 +104,9 @@ private:
   VectorImagePointerType m_ptrCurrentP;
   VectorFieldPointerType m_ptrCurrentVelocity;
 
+  VectorFieldPointerType m_ptrTmpField;
+  VectorFieldPointerType m_ptrTmpFieldConv;
+
   VectorFieldPointerType m_ptrCurrentBackMap;
   VectorFieldPointerType m_ptrMapIdentity;
 
@@ -105,6 +115,13 @@ private:
 
   VectorImagePointerType ptrI0;
   VectorImagePointerType ptrI1;
+
+  std::vector< T > m_vecMeasurementTimepoints;
+
+  // bookkeeping structure, which keeps track of what measurements need to be compared to what estimated images
+
+  std::vector< STimePoint > m_vecTimeDiscretization;
+  std::vector< T > m_vecTimeIncrements;
 
 };
 

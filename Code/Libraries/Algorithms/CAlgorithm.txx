@@ -23,70 +23,22 @@
 template < class TState >
 CAlgorithm< TState >::CAlgorithm()
 {
-  m_ptrMetric = NULL;
-  m_ptrImageManager = NULL;
-  m_ptrEvolver = NULL;
-  m_ptrKernel = NULL;
   m_ptrObjectiveFunction = NULL;
   m_ptrSolver = NULL;
 
-  m_ptrIm = NULL;
-  m_ptrMap = NULL;
-
-  m_bSetDefaultMetric = false;
-  m_bSetDefaultEvolver = false;
-  m_bSetDefaultKernel = false;
   m_bSetDefaultObjectiveFunction = false;
   m_bSetDefaultSolver = false;
-  m_bSetDefaultImageManager = false;
-
 }
 
 template < class TState >
 CAlgorithm< TState >::~CAlgorithm()
 {
-  if ( m_bSetDefaultMetric )
-    {
-    if ( m_ptrMetric != NULL ) 
-      {
-      delete m_ptrMetric;
-      m_ptrMetric = NULL;
-      }
-    }
-
-  if ( m_bSetDefaultImageManager )
-    {
-    if ( m_ptrImageManager != NULL ) 
-      {
-      delete m_ptrImageManager;
-      m_ptrImageManager = NULL;
-      }
-    }
-
-  if ( m_bSetDefaultEvolver )
-    {
-    if ( m_ptrEvolver != NULL ) 
-      {
-      delete m_ptrEvolver;
-      m_ptrEvolver = NULL;
-      }
-    }
-
   if ( m_bSetDefaultObjectiveFunction )
     {
     if ( m_ptrObjectiveFunction != NULL ) 
       {
       delete m_ptrObjectiveFunction;
       m_ptrObjectiveFunction = NULL;
-      }
-    }
-
-  if ( m_bSetDefaultKernel )
-    {
-    if ( m_ptrKernel != NULL ) 
-      {
-      delete m_ptrKernel;
-      m_ptrKernel = NULL;
       }
     }
 
@@ -98,42 +50,12 @@ CAlgorithm< TState >::~CAlgorithm()
       m_ptrSolver = NULL;
       }
     }
-
-  if ( m_ptrIm != NULL )
-    {
-    delete m_ptrIm;
-    m_ptrIm = NULL;
-    }
-  
-  if ( m_ptrMap != NULL )
-    {
-    delete m_ptrMap;
-    m_ptrMap = NULL;
-    }
-
 }
 
 template < class TState >
 void CAlgorithm< TState >::SetDefaultsIfNeeded()
 {
-
-  if ( m_ptrMetric == NULL ) 
-    {
-    SetDefaultMetricPointer();
-    m_bSetDefaultMetric = true;
-    }
-
-  if ( m_ptrEvolver == NULL ) 
-    {
-    SetDefaultEvolverPointer();
-    m_bSetDefaultEvolver = true;
-    }
-
-  if ( m_ptrKernel == NULL ) 
-    {
-    SetDefaultKernelPointer();
-    m_bSetDefaultKernel = true;
-    }
+  Superclass::SetDefaultsIfNeeded();
 
   if ( m_ptrSolver == NULL ) 
     {
@@ -146,35 +68,13 @@ void CAlgorithm< TState >::SetDefaultsIfNeeded()
     SetDefaultObjectiveFunctionPointer();
     m_bSetDefaultObjectiveFunction = true;
     }
-  
-  // get the subject ids
-  std::vector< unsigned int > vecSubjectIndices;
-  this->m_ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
-  // also create the memory for the map and the image, so we can use it to return a map and an image at any time
-  SImageInformation* pImInfo;
-  m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[ 0 ], 0 );
-
-  assert( m_ptrIm == NULL );
-  if ( m_ptrIm == NULL ) // this should be the default
-    {
-    m_ptrIm = new VectorImageType( pImInfo->pIm );
-    m_ptrIm->setConst( 0 );
-    }
-
-  assert( m_ptrMap == NULL );
-  if ( m_ptrMap == NULL )
-    {
-    m_ptrMap = new VectorFieldType( pImInfo->pIm );
-    m_ptrMap->setConst( 0 );
-    }
-
 }
 
 template < class TState >
 void CAlgorithm< TState >::Solve()
 {
   // image manager needs to be specified, so that data can be assigned
-  assert( m_ptrImageManager != NULL );
+  assert( this->m_ptrImageManager != NULL );
   SetDefaultsIfNeeded();
 
   this->m_ptrSolver->SetObjectiveFunctionPointer( this->m_ptrObjectiveFunction );
@@ -182,61 +82,6 @@ void CAlgorithm< TState >::Solve()
 
 }
 
-template < class TState >
-void CAlgorithm< TState >::SetImageManagerPointer( ptrImageManagerType ptrImageManager )
-{
-  m_ptrImageManager = ptrImageManager;
-}
-
-template < class TState >
-typename CAlgorithm< TState >::ptrImageManagerType
-CAlgorithm< TState >::GetImageManagerPointer()
-{
-  if ( m_ptrImageManager == NULL )
-    {
-    this->SetDefaultImageManagerPointer();
-    m_bSetDefaultImageManager = true;
-    }
-  return m_ptrImageManager;
-}
-
-template < class TState >
-void CAlgorithm< TState >::SetKernelPointer( ptrKernelType ptrKernel )
-{
-  m_ptrKernel = ptrKernel;
-  this->m_ptrKernel->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
-}
-
-template < class TState >
-typename CAlgorithm< TState >::ptrKernelType
-CAlgorithm< TState >::GetKernelPointer()
-{
-  if ( m_ptrKernel == NULL )
-    {
-    this->SetDefaultKernelPointer();
-    m_bSetDefaultKernel = true;
-    }
-  return m_ptrKernel;
-}
-
-template < class TState >
-void CAlgorithm< TState >::SetEvolverPointer( ptrEvolverType ptrEvolver )
-{
-  m_ptrEvolver = ptrEvolver;
-  this->m_ptrEvolver->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
-}
-
-template < class TState >
-typename CAlgorithm< TState >::ptrEvolverType
-CAlgorithm< TState >::GetEvolverPointer()
-{
-  if ( m_ptrEvolver == NULL )
-    {
-    this->SetDefaultEvolverPointer();
-    m_bSetDefaultEvolver = true;
-    }
-  return m_ptrEvolver;
-}
 
 template < class TState >
 void CAlgorithm< TState >::SetObjectiveFunctionPointer( ptrObjectiveFunctionType ptrObjectiveFunction )
@@ -255,25 +100,6 @@ CAlgorithm< TState >::GetObjectiveFunctionPointer()
     m_bSetDefaultObjectiveFunction = true;
     }
   return m_ptrObjectiveFunction;
-}
-
-template < class TState >
-void CAlgorithm< TState >::SetMetricPointer( ptrMetricType ptrMetric )
-{
-  m_ptrMetric = ptrMetric;
-  this->m_ptrMetric->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
-}
-
-template < class TState >
-typename CAlgorithm< TState >::ptrMetricType
-CAlgorithm< TState >::GetMetricPointer()
-{
-  if ( m_ptrMetric == NULL )
-    {
-    this->SetDefaultMetricPointer();
-    m_bSetDefaultMetric = true;
-    }
-  return m_ptrMetric;
 }
 
 template < class TState >

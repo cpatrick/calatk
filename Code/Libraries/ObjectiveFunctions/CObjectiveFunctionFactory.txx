@@ -20,53 +20,53 @@
 #ifndef C_OBJECTIVE_FUNCTION_FACTORY_TXX
 #define C_OBJECTIVE_FUNCTION_FACTORY_TXX
 
-template < class TState >
-CObjectiveFunctionFactory< TState >::CObjectiveFunctionFactory()
+template < class T, unsigned int VImageDimension >
+CObjectiveFunctionFactory< T, VImageDimension >::CObjectiveFunctionFactory()
 {
 }
 
-template < class TState >
-CObjectiveFunctionFactory< TState >::~CObjectiveFunctionFactory()
+template < class T, unsigned int VImageDimension >
+CObjectiveFunctionFactory< T, VImageDimension >::~CObjectiveFunctionFactory()
 {
 }
 
-template < class TState >
-typename CObjectiveFunctionFactory< TState >::ObjectiveFunctionType*
-CObjectiveFunctionFactory< TState >::CreateNewObjectiveFunction( NumericObjectiveFunctionType objectiveFunction )
+template < class T, unsigned int VImageDimension >
+typename CObjectiveFunctionFactory< T, VImageDimension >::ObjectiveFunctionBaseType*
+CObjectiveFunctionFactory< T, VImageDimension >::CreateNewObjectiveFunction( NumericObjectiveFunctionType objectiveFunction )
 {
-  ObjectiveFunctionType* ptrObjectiveFunction = NULL;
+  ObjectiveFunctionBaseType* ptrObjectiveFunction = NULL;
   switch ( objectiveFunction )
   {
   default:
     std::cout << "Unknown objective functionn type = " << objectiveFunction << "; defaulting to LDDMMGrowthModel" << std::endl;
   case LDDMMGrowthModel:
-    ptrObjectiveFunction = new CLDDMMGrowthModelObjectiveFunction< TState >;
+    ptrObjectiveFunction = new CLDDMMGrowthModelObjectiveFunction< SpatioTemporalVelocityFieldStateType >;
     break;
   case  LDDMMAdjointGeodesicShooting:
-    ptrObjectiveFunction = new CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >;
+    ptrObjectiveFunction = new CLDDMMAdjointGeodesicShootingObjectiveFunction< InitialImageMomentumStateType >;
     break;
   case LDDMMSimplifiedGeodesicShooting:
-    ptrObjectiveFunction = new CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >;
+    ptrObjectiveFunction = new CLDDMMSimplifiedGeodesicShootingObjectiveFunction< InitialImageMomentumStateType >;
     break;
   case LDDMMGeometricMetamorphosis:
-    ptrObjectiveFunction = new CLDDMMGeometricMetamorphosisObjectiveFunction< TState >;
+    ptrObjectiveFunction = new CLDDMMGeometricMetamorphosisObjectiveFunction< SpatioTemporalVelocityFieldStateType >;
     break;
   }
 
   return ptrObjectiveFunction;
 }
 
-template < class TState >
-typename CObjectiveFunctionFactory< TState >::ObjectiveFunctionType*
-CObjectiveFunctionFactory< TState >::CreateNewObjectiveFunction( std::string sObjectiveFunction )
+template < class T, unsigned int VImageDimension >
+typename CObjectiveFunctionFactory< T, VImageDimension >::ObjectiveFunctionBaseType*
+CObjectiveFunctionFactory< T, VImageDimension >::CreateNewObjectiveFunction( std::string sObjectiveFunction )
 {
   NumericObjectiveFunctionType objectiveFunction = GetObjectiveFunctionTypeFromString( sObjectiveFunction );
   return CreateNewObjectiveFunction( objectiveFunction );
 }
 
-template < class TState >
-typename CObjectiveFunctionFactory< TState >::NumericObjectiveFunctionType
-CObjectiveFunctionFactory< TState >::GetObjectiveFunctionTypeFromString( std::string sObjectiveFunction )
+template < class T, unsigned int VImageDimension >
+typename CObjectiveFunctionFactory< T, VImageDimension >::NumericObjectiveFunctionType
+CObjectiveFunctionFactory< T, VImageDimension >::GetObjectiveFunctionTypeFromString( std::string sObjectiveFunction )
 {
   std::string sObjectiveFunctionLowerCase = sObjectiveFunction;
   // convert to all lower case

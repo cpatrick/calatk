@@ -23,6 +23,7 @@
 #include "CObjectiveFunctionFactory.h"
 #include "CALATKCommon.h"
 #include "JSONParameterUtils.h"
+#include "CLDDMMVelocityFieldWithMomentumRegistration.h"
 
 namespace CALATK
 {

@@ -62,10 +62,18 @@ void CLDDMMGenericRegistration< TState >::SetDefaultObjectiveFunctionPointer()
     throw std::runtime_error( "Image manager needs to be defined before default objective function can be created." );
     }
 
-  typedef CObjectiveFunction< TState > CLDDMMType;
-  CLDDMMType* plddmm = new CLDDMMType;
+  //typedef CObjectiveFunction< TState > CLDDMMType;
+  //CLDDMMType* plddmm = NULL;
+  typedef CVelocityFieldObjectiveFunctionWithMomentum< TState > LDDMMVelocityFieldObjectiveFunctionWithMomentumType;
+  LDDMMVelocityFieldObjectiveFunctionWithMomentumType* plddmm = NULL;
 
-  plddmm = CObjectiveFunctionFactory< TState >:CreateNewObjectiveFunction( m_ObjectiveFunction );
+  plddmm = dynamic_cast< LDDMMVelocityFieldObjectiveFunctionWithMomentumType * >( CObjectiveFunctionFactory< typename TState::TFloat, TState::VImageDimension >::CreateNewObjectiveFunction( m_ObjectiveFunction ) );
+
+  if ( plddmm == NULL )
+  {
+    throw std::runtime_error("Could not initialize the objective function. Make sure the instantiated state type is consistent with the objective function chosen.");
+    return;
+  }
 
   plddmm->SetEvolverPointer( this->m_ptrEvolver );
   plddmm->SetKernelPointer( this->m_ptrKernel );

@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+
+  <category>Registration</category>
+    <title>LDDMM Image-to-Image Registration</title>
+    <description>An implementation of LDDMM</description>
+    <version>1.0</version>
+    <documentation-url></documentation-url>
+    <license>Apache 2.0</license>
+    <contributor>The CALATK team</contributor>
+    <acknowledgements></acknowledgements>
+
+  <parameters>
+        <label>Computational settings</label>
+        <description>Adjusts main settings for the computation</description>
+
+        <integer>
+            <name>iDimension</name>
+            <label>Image Dimension</label>
+            <flag>d</flag>
+            <longflag>--dimension</longflag>
+            <constraints>
+                <minimum>0</minimum>
+                <maximum>3</maximum>
+                <step>1</step>
+            </constraints>
+            <default>0</default>
+            <description>Specifies explicitly the dimension of the used images. If not specified, the image dimension is guessed. However, this can lead to ambiguities for vector-valued images.</description>
+        </integer>
+
+        <string-enumeration>
+            <name>sFloatingPointType</name>
+            <label>Floating point type</label>
+            <flag>t</flag>
+            <longflag>--type</longflag>
+            <default>float</default>
+            <element>float</element>
+            <element>double</element>
+            <description>Specifies the floating point type for the computations (float/double). In general float is recommended (because it will save memory). If CALATK is not compiled to support floating point choice, this option is ignored.</description>
+        </string-enumeration>
+
+        <string-enumeration>
+            <name>sLDDMMSolverType</name>
+            <label>LDDMM Solver Type</label>
+            <flag>s</flag>
+            <longflag>--solver</longflag>
+            <default>relaxation</default>
+            <element>simplifiedShooting</element>
+            <element>adjointShooting</element>
+            <element>relaxation</element>
+            <description>Selects the desired LDDMM solver (simplifiedShooting/adjointShooting/relaxation). The relaxation solver performs the optimization over the full spatio-temporal velocity field.\
+            This is the algorithm by Beg. The simplified shooting method and the adjoint shooting method perform the optimization over the initial image and the initial momentum. The implementations are based\
+            on a modification of the shooting algorithm by Ashburner (simplified shooting) and the adjoint shooting method/geodesic regression formulation by Vialard/Niethammer.</description>
+        </string-enumeration>
+
+  </parameters>
+
+  <parameters>
+        <label>Input/Output</label>
+        <description>Input/Output Parameters</description>
+
+        <image>
+            <name>sourceImage</name>
+            <label>Source Image</label>
+	    <channel>input</channel>
+	    <index>0</index>
+            <description>Source image for the registration.</description>
+        </image>
+
+	<image>
+            <name>targetImage</name>
+            <label>Target Image</label>
+            <channel>input</channel>
+            <index>1</index>
+            <description>Target image for the registration.</description>
+        </image>
+
+	<image>
+	  <name>sourceToTargetMap</name>
+	  <label>Source to target map</label>
+	  <channel>output</channel>
+	  <index>2</index>
+	  <description>Resulting registration map from source to target in target space.</description>
+	</image>
+
+	<image>
+	  <name>warpedSourceImage</name>
+	  <label>Warped source image</label>
+	  <longflag>--wsource</longflag>
+	  <default>None</default>
+          <description>Name of the warped source image.</description>
+	</image>
+
+        <image>
+            <name>initialMomentumImage</name>
+            <label>Initial momentum image</label>
+            <longflag>--initialMomentum</longflag>
+            <default>None</default>
+            <description>Name of the initial momentum image.</description>
+        </image>
+
+	<file>
+	  <name>configFile</name>
+	  <longflag>--config</longflag>
+	  <label>Configuration file</label>
+	  <default>None</default>
+	  <description>JSON Configuration file.</description>
+	</file>
+
+	<file>
+	  <name>configFileOut</name>
+	  <longflag>--configOut</longflag>
+	  <label>Resulting configuration file</label>
+	  <default>None</default>
+	  <description>JSON Configuration file which describes the full parameterization of the algorithm run..</description>
+	</file>
+
+  </parameters>
+  
+</executable>

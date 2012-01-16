@@ -34,6 +34,9 @@ CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::CLDDMMSimplifiedGeo
   m_ptrCurrentP = NULL;
   m_ptrCurrentVelocity = NULL;
 
+  m_ptrTmpField = NULL;
+  m_ptrTmpFieldConv = NULL;
+
   m_ptrCurrentBackMap = NULL;
   m_ptrMapIdentity = NULL;
 
@@ -62,6 +65,9 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::DeleteData()
 
   SaveDelete< VectorFieldPointerType >::Pointer( m_ptrCurrentVelocity );
 
+  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrTmpField );
+  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrTmpFieldConv );
+
   SaveDelete< VectorFieldPointerType >::Pointer( m_ptrCurrentBackMap );
   SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapIdentity );
 
@@ -86,7 +92,7 @@ CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::~CLDDMMSimplifiedGe
 }
 
 template < class TState >
-void CLDDMMSimpleGeodesicShootingObjectiveFunction< TState >::CreateNewStateStructures()
+void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::CreateNewStateStructures()
 {
     assert( this->m_pState == NULL );
     assert( m_vecTimeDiscretization.size() > 1 );
@@ -107,7 +113,7 @@ void CLDDMMSimpleGeodesicShootingObjectiveFunction< TState >::CreateNewStateStru
     this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 1 );
     ptrI1 = pImInfo->pIm;
 
-    VectorImageType* ptrInitialImage = new VectorImageType( pImInfo->pIm );
+    VectorImageType* ptrInitialImage = new VectorImageType( ptrI0 );
     VectorImageType* ptrInitialMomentum = new VectorImageType( pImInfo->pIm );
     ptrInitialMomentum->setConst(0);
 
@@ -157,12 +163,16 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::CreateGradientA
     m_ptrMapTmp = new VectorFieldType( pImInfo->pIm );
 
     // storage for the determinant of the Jacobian
-    m_ptrDeterminantOfJacobian = new VectorImageType( pImInfo0>pIm );
+    m_ptrDeterminantOfJacobian = new VectorImageType( pImInfo->pIm );
 
     // storage for current state
     m_ptrCurrentI = new VectorImageType( pImInfo->pIm );
     m_ptrCurrentP = new VectorImageType( pImInfo->pIm );
     m_ptrCurrentVelocity = new VectorFieldType( pImInfo->pIm );
+
+    // temporary storage
+    m_ptrTmpField = new VectorFieldType( pImInfo->pIm );
+    m_ptrTmpFieldConv = new VectorFieldType( pImInfo->pIm );
 
     // storage for the back map and the adjoint
     m_ptrCurrentBackMap = new VectorFieldType( pImInfo->pIm );
@@ -245,7 +255,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMap( Vector
 }
 
 template < class TState >
-void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo )
+void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo )
 {
    /**
     * Solves the EPDiff equation forward in time using a map-based approach to compute the map between two time-points
@@ -259,7 +269,7 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( Vec
   assert( dTimeTo >= dTimeFrom );
   std::cout << "Computing map from " << dTimeFrom << " to " << dTimeTo << std::endl;
 
-  if ( dTimeFrom < vecTimeDiscretization[0].dTime || dTimeTo > vecTimeDiscretization.back().dTime )
+  if ( dTimeFrom < m_vecTimeDiscretization[0].dTime || dTimeTo > m_vecTimeDiscretization.back().dTime )
     {
     throw std::runtime_error("Requested map outside of valid time range.");
     return;
@@ -291,17 +301,24 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( Vec
   ptrCurrentI->copy( ptrInitialImage );
   ptrCurrentP->copy( ptrInitialMomentum );
 
-  T dCurrentTime = vecTimeDiscretization[0].dTime;
-  unsigned int uiStart = 0;
+  T dCurrentTime = m_vecTimeDiscretization[0].dTime;
 
   // first integrate all the way to the start
 
   bool bInitializedMap = false;
 
+  T dTimeEvolvedFor = 0;
+
   for ( unsigned int iI = 0; iI < m_vecTimeDiscretization.size()-1; iI++ )
   {
+
+    std::cout << "current time = " << dCurrentTime << std::endl;
+
+    T dCurrentDT = m_vecTimeDiscretization[ iI+1 ].dTime - m_vecTimeDiscretization[ iI ].dTime;
+
     ComputeVelocity( ptrCurrentI, ptrCurrentP, ptrCurrentVelocity, ptrMapOut );
-    this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMapIn, ptrMapOut, ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
+    std::cout << "evolving overall map for " << m_vecTimeIncrements[ iI ] << std::endl;
+    this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMapIn, ptrMapOut, ptrMapTmp, m_vecTimeIncrements[ iI ] );
 
     LDDMMUtils< T, TState::VImageDimension >::applyMap( ptrMapOut, ptrInitialImage, ptrCurrentI );
     LDDMMUtils< T, TState::VImageDimension >::applyMap( ptrMapOut, ptrInitialMomentum, ptrCurrentP );
@@ -314,10 +331,12 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( Vec
 
     if ( bInitializedMap )
     {
-      if ( dCurrentTime + m_vecTimeDiscretization > dTimeTo )
+      if ( dCurrentTime + dCurrentDT >= dTimeTo )
       {
         // the full map is in between this time interval so just integrate it for a little bit
-        this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, dTimeTo - dTimeFrom );
+        std::cout << "1: evolving map for " << dTimeTo - dCurrentTime << std::endl;
+        dTimeEvolvedFor += dTimeTo - dCurrentTime;
+        this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, dTimeTo - dCurrentTime );
         ptrMap->copy( ptrMapOut );
 
         delete ptrMapOut;
@@ -328,24 +347,32 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( Vec
         delete ptrCurrentI;
         delete ptrCurrentP;
 
+        std::cout << "Overall time evolved for = " << dTimeEvolvedFor << std::endl;
+
         return; // done because everything was in this interval
       }
       else
       {
          // integrate it for the full interval
-        this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
+        std::cout << "2: evolving map for " << m_vecTimeIncrements[ iI ] << std::endl;
+        dTimeEvolvedFor += m_vecTimeIncrements[ iI ];
+        this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, m_vecTimeIncrements[ iI ] );
         ptrMap->copy( ptrMapOut );
       }
     }
 
     // determine if we need to perform a partial step for the map to be computed
-    if ( dCurrentTime + m_vecTimeDiscretization[ iI ] > dTimeFrom && !bInitializedMap )
+    if ( dCurrentTime + dCurrentDT > dTimeFrom && !bInitializedMap )
     {
-      if ( dCurrentTime + m_vecTimeDiscretizatio[ iI ] > dTimeTo )
+      if ( dCurrentTime + dCurrentDT > dTimeTo )
       {
         // the full map is in between this time interval so just integrate it for a little bit
+        std::cout << "3: evolving map for " << dTimeTo - dTimeFrom << std::endl;
+        dTimeEvolvedFor += dTimeTo = dTimeFrom;
         this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, dTimeTo - dTimeFrom );
         ptrMap->copy( ptrMapOut );
+
+        std::cout << "Overall time evolved for = " << dTimeEvolvedFor << std::endl;
 
         delete ptrMapOut;
         delete ptrMapTmp;
@@ -360,7 +387,8 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( Vec
       else
       {
         // integrate the map until the end of this interval
-        T dCurrentDT = dCurrentTime + m_vecTimeDiscretization[ iI ] - dTimeTo;
+        std::cout << "4: evolving map for " << dCurrentDT << std::endl;
+        dTimeEvolvedFor += dCurrentDT;
         this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, dCurrentDT );
         ptrMap->copy( ptrMapOut );
         bInitializedMap = true;
@@ -368,9 +396,11 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( Vec
 
     }
 
-    dCurrentTime += m_vecTimeDiscretization;
+    dCurrentTime += dCurrentDT;
 
   }
+
+  std::cout << "Overall time evolved for = " << dTimeEvolvedFor << std::endl;
 
 }
 
@@ -455,18 +485,20 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeImageMo
       m_ptrCurrentVelocity->multConst( -1.0 );
 
       // m_ptrMapOut here is the incremental part of the map within this time-step
-      this->m_ptrEvolver->SolveForward( m_ptrCurrentVelocityField, m_ptrMapIdentity, m_ptrMapOut, m_ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
+      this->m_ptrEvolver->SolveForward( m_ptrCurrentVelocity, m_ptrMapIdentity, m_ptrMapOut, m_ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
 
       m_ptrMapTmp->copy( m_ptrCurrentBackMap );
-      LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapTmp, m_ptrMapOut, m_ptrCurrentBackMap )
+      LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapTmp, m_ptrMapOut, m_ptrCurrentBackMap );
   }
 
   // TODO: implement this for multiple time points
 
   // now we have the back map and can compute the adjoint in the initial frame by pulling it back
 
+  unsigned int uiNrOfTimePoints = m_vecTimeDiscretization.size();
+
   this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentFinalAdjoint, m_ptrCurrentI, ptrI1 );
-  m_ptrCurrentFinalAdjoint->multConst( m_vecTimeDiscretization[uiNrOfTimePoints-1].vecWeights[iM] );
+  m_ptrCurrentFinalAdjoint->multConst( m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecWeights[ 0 ] );
 
   LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrCurrentBackMap, m_ptrCurrentFinalAdjoint, ptrWarpedFinalToInitialAdjoint );
 }
@@ -474,7 +506,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeImageMo
 template < class TState >
 void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::ComputeGradient()
 {
-  ComputeImageMomentumAndMapForward( m_ptrWarpedFinalToInitialAdjoint );
+  ComputeImageMomentumForwardAndFinalAdjointWarpedToInitialImage( m_ptrWarpedFinalToInitialAdjoint );
 
   /**
     * The gradient is now simply
@@ -488,7 +520,6 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::ComputeGradient
     \f]
     */
 
-  VectorImageType* ptrInitialImage = this->m_pState->GetPointerToInitialImage();
   VectorImageType* ptrInitialMomentum = this->m_pState->GetPointerToInitialMomentum();
 
   VectorImageType* ptrI0Gradient = this->m_pGradient->GetPointerToInitialImage();
@@ -497,7 +528,10 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::ComputeGradient
   ptrP0Gradient->copy( ptrInitialMomentum );
   ptrP0Gradient->multConst(-1);
 
-  ptrP0Gradient->add( m_ptrWarpedFinalToInitialAdjoint );
+  ptrP0Gradient->addCellwise( m_ptrWarpedFinalToInitialAdjoint );
+
+  // debug
+  ptrP0Gradient->multConst(-1);
 
   if ( this->m_EstimateInitialImage )
   {
@@ -523,6 +557,8 @@ CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::GetCurrentEnergy()
       E = 0.5 \langle p(t_0)\nabla I(t_0),K*(p(t_0)\nabla I(t_0)\rangle + \frac{1}{\sigma}^2 d^2(I(t_1),Y)
     \f]
     */
+
+  T dEnergy = 0;
 
   // computing \f$ 0.5\langle p(t_0) \nabla I(t_0) +  K*( p(t_0)\nabla I(t_0) ) \rangle \f$
   // this is done dimension for dimension (i.e., if we have a multidimensional image, we have as many of these terms as we have dimensions)
@@ -564,7 +600,7 @@ CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::GetCurrentEnergy()
   // we only have two timepoints here
 
   dImageNorm += m_vecTimeDiscretization[ 0 ].vecWeights[ 0 ] * this->m_pMetric->GetMetric( ptrI0, ptrInitialImage );
-  dImageNorm += m_vecTimeDiscretization[ 1 ].vecWeights[ 0 ] * this->m_pMetric->GetMetric( ptrI1, m_ptrCurrentI );
+  dImageNorm += m_vecTimeDiscretization[ uiNrOfDiscretizationPoints-1 ].vecWeights[ 0 ] * this->m_pMetric->GetMetric( ptrI1, m_ptrCurrentI );
 
   dEnergy += dImageNorm;
 
@@ -574,6 +610,41 @@ CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::GetCurrentEnergy()
   energyValues.dMatchingEnergy = dImageNorm;
 
   return energyValues;
+}
+
+template < class TState >
+void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::OutputStateInformation( unsigned int uiIter, std::string outputPrefix )
+{
+  std::cout << "Saving state information at iteration " << uiIter << std::endl;
+
+  outputPrefix = outputPrefix + "Shooting-";
+
+  ComputeImageMomentumForwardAndFinalAdjointWarpedToInitialImage( m_ptrWarpedFinalToInitialAdjoint );
+
+  VectorImageType* ptrInitialMomentum = this->m_pState->GetPointerToInitialMomentum();
+  VectorImageType* ptrInitialImage = this->m_pState->GetPointerToInitialImage();
+
+  VectorImageType* ptrP0Gradient = this->m_pGradient->GetPointerToInitialMomentum();
+
+  ptrP0Gradient->copy( ptrInitialMomentum );
+  ptrP0Gradient->multConst(-1);
+
+  ptrP0Gradient->addCellwise( m_ptrWarpedFinalToInitialAdjoint );
+
+  std::string suffix = "-iter-" + CreateIntegerString( uiIter, 3 ) + ".nrrd";
+
+  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( m_ptrWarpedFinalToInitialAdjoint, outputPrefix + "warpedLam" + suffix );
+  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( m_ptrCurrentFinalAdjoint, outputPrefix + "Lam1" + suffix );
+  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( m_ptrCurrentBackMap, outputPrefix + "backMap" + suffix );
+  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( m_ptrMapIn, outputPrefix + "fwdMap" + suffix );
+  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrInitialMomentum, outputPrefix + "p0" + suffix );
+  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrInitialImage, outputPrefix + "sI0" + suffix );
+  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrP0Gradient, outputPrefix + "gradp0" + suffix );
+  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrI0, outputPrefix + "I0" + suffix );
+  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrI1, outputPrefix + "I1" + suffix );
+  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( m_ptrCurrentI, outputPrefix + "wI0" + suffix );
+  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( m_ptrCurrentP, outputPrefix + "wP0" + suffix );
+
 }
 
 #endif
