@@ -91,7 +91,7 @@ public:
 
 protected:
 
-  bool LineSearchWithBacktracking( T dDesiredStepSize, T& dAlpha, CEnergyValues& ResultingEnergy, unsigned int &uiIter );
+  bool LineSearchWithBacktracking( CEnergyValues CurrentEnergy, T dDesiredStepSize, T& dAlpha, CEnergyValues& ResultingEnergy, unsigned int &uiIter );
 
   T m_InitialStepSize;
   

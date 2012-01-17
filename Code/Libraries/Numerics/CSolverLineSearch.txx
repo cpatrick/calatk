@@ -139,10 +139,17 @@ bool CSolverLineSearch< TState>::SolvePreInitialized()
   // output the initial state if desired
   this->OutputStateInformation( 0, sStatePrefix );
 
+  CEnergyValues CurrentEnergy = InitialEnergy;
+
   for ( unsigned int uiIter = 0; uiIter<m_MaxNumberOfIterations; ++uiIter )
     {
     unsigned int uiRequiredIterations;
-    bool bSufficientlyDecreasedEnergy = LineSearchWithBacktracking( dDesiredStepSize, dAlpha, ResultingEnergy, uiRequiredIterations );
+    bool bSufficientlyDecreasedEnergy = LineSearchWithBacktracking( CurrentEnergy, dDesiredStepSize, dAlpha, ResultingEnergy, uiRequiredIterations );
+
+    if ( bSufficientlyDecreasedEnergy )
+      {
+        CurrentEnergy = ResultingEnergy;
+      }
 
     // output the current energy information
 
@@ -231,13 +238,13 @@ bool CSolverLineSearch< TState>::SolvePreInitialized()
 }
 
 template < class TState >
-bool CSolverLineSearch< TState>::LineSearchWithBacktracking( T dDesiredStepSize, T& dAlpha, CEnergyValues& ResultingEnergy, unsigned int& uiIter )
+bool CSolverLineSearch< TState>::LineSearchWithBacktracking( CEnergyValues CurrentEnergy, T dDesiredStepSize, T& dAlpha, CEnergyValues& ResultingEnergy, unsigned int& uiIter )
 {
 
   ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();
 
   // get current energy
-  CEnergyValues InitialEnergy = pObj->GetCurrentEnergy();
+  CEnergyValues InitialEnergy = CurrentEnergy;
   CEnergyValues ComputedEnergy;
 
   T dAdjustedEnergy = std::numeric_limits< T >::infinity();
