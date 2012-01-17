@@ -295,6 +295,13 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetInitialImage( V
 }
 
 template < class TState >
+const typename CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::VectorImageType*
+CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetPointerToInitialImage() const
+{
+  return ptrI0;
+}
+
+template < class TState >
 void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetMomentum( VectorImageType* ptrMomentum, T dTime )
 {
   ComputeImagesForward();

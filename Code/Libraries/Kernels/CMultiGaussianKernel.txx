@@ -24,7 +24,7 @@ template <class T, unsigned int VImageDimension >
 CMultiGaussianKernel< T, VImageDimension >::CMultiGaussianKernel()
   : m_ExternallySetSigmas( false ),
     m_ExternallySetEffectiveWeights( false ),
-    m_ExternallySetGradientScalingFactors( false )
+    m_ExternallySetEstimateGradientScalingFactors( true )
 {
   DefaultSigmas.resize( 5 );
   DefaultSigmas[ 0 ] = 0.25;
@@ -33,14 +33,14 @@ CMultiGaussianKernel< T, VImageDimension >::CMultiGaussianKernel()
   DefaultSigmas[ 3 ] = 0.10;
   DefaultSigmas[ 4 ] = 0.05;
 
-  DefaultEffectiveWeights.resize( 5, 0.2 );
+  DefaultEffectiveWeights.resize( 5, 1.0 );
   DefaultGradientScalingFactors.resize( 5, 1.0 );
 
   m_Sigmas = DefaultSigmas;
   m_EffectiveWeights = DefaultEffectiveWeights;
-  m_GradientScalingFactors = DefaultGradientScalingFactors;
+  m_EstimateGradientScalingFactors = DefaultEstimateGradientScalingFactors;
 
-  ComputeActualWeights();
+  m_GradientScalingFactors = DefaultGradientScalingFactors;
 
 }
 
@@ -58,13 +58,11 @@ void CMultiGaussianKernel< T, VImageDimension >::SetAutoConfiguration( Json::Val
   // get the values that should be used if nothing can be found
   std::vector<T> currentSigmas = GetExternalOrDefaultSigmas();
   std::vector<T> currentEffectiveWeights = GetExternalOrDefaultEffectiveWeights();
-  std::vector<T> currentGradientScalingFactors = GetExternalOrDefaultGradientScalingFactors();
+  bool currentEstimateGradientScalingFactors = GetExternalOrDefaultEstimateGradientScalingFactors();
 
   SetJSONSigmas( this->m_jsonConfig.GetFromKeyAsVector( currentConfiguration, "Sigmas", currentSigmas ) );
   SetJSONEffectiveWeights( this->m_jsonConfig.GetFromKeyAsVector( currentConfiguration, "EffectiveWeights", currentEffectiveWeights ) );
-  SetJSONGradientScalingFactors( this->m_jsonConfig.GetFromKeyAsVector( currentConfiguration, "GradientScalingFactors", currentGradientScalingFactors ) );
-
-  ComputeActualWeights();
+  SetJSONEstimateGradientScalingFactors( this->m_jsonConfig.GetFromKey( currentConfiguration, "EstimateGradientScalingFactors", currentEstimateGradientScalingFactors ).asBool() );
 
 }
 
@@ -80,7 +78,7 @@ void CMultiGaussianKernel< T, VImageDimension >::ComputeActualWeights()
   }
   if ( m_Sigmas.size() != m_EffectiveWeights.size() )
   {
-    throw std::runtime_error( "CMultiGaussianKernel: dimension of standard deviations and of the actual weights disagrees.");
+    throw std::runtime_error( "CMultiGaussianKernel: dimension of standard deviations and of the effective weights disagrees.");
     return;
   }
   else
@@ -97,13 +95,6 @@ void CMultiGaussianKernel< T, VImageDimension >::ComputeActualWeights()
       m_ActualWeights.push_back( m_EffectiveWeights[ iI ]/m_GradientScalingFactors[ iI ] );
     }
   }
-
-  std::cout << "actual weights, set : ";
-  for ( unsigned int iI=0; iI<m_ActualWeights.size(); ++iI )
-  {
-    std::cout << m_ActualWeights[ iI ] << " ";
-  }
-  std::cout << std::endl;
 
   // scale the weights so they sum up to one
 
@@ -125,19 +116,26 @@ void CMultiGaussianKernel< T, VImageDimension >::ComputeActualWeights()
     throw std::runtime_error( "Gaussian multi kernel weights sum up to zero. Cannot be normalized.");
   }
 
+  std::cout << "actual weights, set : ";
+  for ( unsigned int iI=0; iI<m_ActualWeights.size(); ++iI )
+  {
+    std::cout << m_ActualWeights[ iI ] << " ";
+  }
+  std::cout << std::endl;
+
   ConfirmKernelsNeedToBeComputed();
 }
 
 template <class T, unsigned int VImageDimension >
-void CMultiGaussianKernel< T, VImageDimension >::SetSigmasEffectiveWeightsAndScalingFactors( std::vector<T> Sigmas, std::vector<T> EffectiveWeights, std::vector<T> GradientScalingFactors )
+void CMultiGaussianKernel< T, VImageDimension >::SetSigmasAndEffectiveWeights( std::vector<T> Sigmas, std::vector<T> EffectiveWeights )
 {
   m_Sigmas = Sigmas;
   m_EffectiveWeights = EffectiveWeights;
-  m_GradientScalingFactors = GradientScalingFactors;
-
   ComputeActualWeights();
 
   m_ExternallySetSigmas = true;
+  m_ExternallySetEffectiveWeights = true;
+
   ConfirmKernelsNeedToBeComputed();
 }
 
@@ -272,6 +270,102 @@ void CMultiGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( 
         }
       }
     }
+}
+
+template<class T, unsigned int VImageDimension >
+std::vector< T > CMultiGaussianKernel< T, VImageDimension >::ComputeDataDependentScalingFactors()
+{
+  std::vector< T > vecWeights;
+
+  unsigned int uiNrOfSigmas = m_Sigmas.size();
+  if ( uiNrOfSigmas==0 )
+  {
+    std::cerr << "Sigmas for multi-Gaussian kernel have not been set. Cannot compute the weights." << std::endl;
+    // return an empty vector
+    return vecWeights;
+  }
+
+  if ( this->ptrObjectiveFunction == NULL )
+  {
+    // cannot determine this in a data-driven manner; just initialize to constants
+    std::cerr << "Cannot compute data-dependent scaling factors for multi-Gaussian kernels, because objective function was not set." << std::endl;
+    // return an empty vector for now
+    return vecWeights;
+  }
+  else
+  {
+    // initialize a vector field of appropriate size
+    VectorFieldType *ptrGradient = new VectorFieldType( this->ptrObjectiveFunction->GetPointerToInitialImage() );
+
+    this->ptrObjectiveFunction->ComputeInitialUnsmoothedVelocityGradient( ptrGradient );
+    // now go through all the sigmas and determine what the weights should be
+    VectorFieldType *ptrSmoothedGradient = new VectorFieldType( ptrGradient );
+
+    for ( unsigned int iI=0; iI < uiNrOfSigmas; ++iI )
+    {
+      std::cout << "Computing multi-Gaussian kernel weight for sigma = " << m_Sigmas[ iI ] << " ... ";
+
+      // instantiate a Gaussian kernel with appropriate sigma
+      CGaussianKernel< T, VImageDimension > gaussianKernel;
+      gaussianKernel.SetSigma( m_Sigmas[ iI ] );
+
+      ptrSmoothedGradient->copy( ptrGradient );
+      gaussianKernel.ConvolveWithKernel( ptrSmoothedGradient );
+
+      // now determine what the maximal magnitude of the vectors is
+      T dMaximalNorm = sqrt( ptrSmoothedGradient->computeMaximalSquareNorm() );
+
+      // and store it
+      if ( dMaximalNorm==0 )
+      {
+        std::cerr << "WARNING: computed a zero gradient; setting gradient scaling factor to 1" << std::endl;
+        vecWeights.push_back( 1.0 );
+      }
+      else
+      {
+        vecWeights.push_back( dMaximalNorm );
+      }
+
+      std::cout << "done. max = " << dMaximalNorm << std::endl;
+
+    }
+
+    // clean up the memory
+    delete ptrGradient;
+    delete ptrSmoothedGradient;
+
+    return vecWeights;
+
+  }
+
+}
+
+template <class T, unsigned int VImageDimension >
+void CMultiGaussianKernel< T, VImageDimension >::ConvolveWithKernel( VectorImageType* pVecImage )
+{
+  if ( this->m_KernelsNeedToBeComputed )
+  {
+    if ( m_EstimateGradientScalingFactors )
+    {
+      m_GradientScalingFactors = ComputeDataDependentScalingFactors();
+    }
+    ComputeActualWeights();
+  }
+  Superclass::ConvolveWithKernel( pVecImage );
+}
+
+template <class T, unsigned int VImageDimension >
+void CMultiGaussianKernel< T, VImageDimension >::ConvolveWithInverseKernel( VectorImageType* pVecImage )
+{
+  if ( this->m_KernelsNeedToBeComputed )
+  {
+    if ( m_EstimateGradientScalingFactors )
+    {
+      m_GradientScalingFactors = ComputeDataDependentScalingFactors();
+    }
+    ComputeActualWeights();
+  }
+  Superclass::ConvolveWithInverseKernel( pVecImage );
 }
 
 template <class T, unsigned int VImageDimension >

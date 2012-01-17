@@ -69,6 +69,7 @@ public:
 
     CEnergyValues GetCurrentEnergy();
     void ComputeGradient();
+    void ComputeInitialUnsmoothedVelocityGradient( VectorFieldType *ptrInitialUnsmoothedVelocityGradient );
 
     void OutputStateInformation( unsigned int uiIter, std::string outputPrefix="" );
 

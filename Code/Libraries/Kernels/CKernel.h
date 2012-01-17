@@ -27,11 +27,14 @@
 namespace CALATK
 {
 
+/** Need forward declaration of objective function */
+
+template < class T, unsigned int VImageDimension > class CObjectiveFunctionBase;
+
 /** 
  * CKernel: base class for the smoothing kernels to smooth a velocity field
  *
  */
-
 template <class T, unsigned int VImageDimension=3 >
 class CKernel : public CProcessBase
 {
@@ -43,6 +46,8 @@ public:
   typedef VectorImage< T, 1 > VectorImageType1D;
   typedef VectorImage< T, 2 > VectorImageType2D;
   typedef VectorImage< T, 3 > VectorImageType3D;
+
+  typedef CObjectiveFunctionBase< T, VImageDimension > ObjectiveFunctionBaseType;
 
   CKernel();
   virtual ~CKernel();
@@ -66,6 +71,10 @@ public:
 
   virtual void DeallocateMemory();
 
+  /// some kernel (like the multi-Gaussian one) need access to the data to estimate weights
+  void SetObjectiveFunctionPointer( ObjectiveFunctionBaseType* ptrObjectiveFunction );
+  ObjectiveFunctionBaseType* GetObjectiveFunctionPointer();
+
 protected:
 
   virtual void AllocateMemoryForKernelAndInverseKernel( VectorImageType* );
@@ -83,6 +92,8 @@ protected:
   VectorImageType *m_ptrL;
   VectorImageType *m_ptrLInv;
 
+  ObjectiveFunctionBaseType* ptrObjectiveFunction;
+
 private:
 
 };
@@ -90,5 +101,7 @@ private:
 #include "CKernel.txx"
 
 } // end namespace
+
+#include "CObjectiveFunctionBase.h"
 
 #endif

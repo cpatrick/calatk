@@ -16,7 +16,7 @@
 	"MultiGaussianKernel" : 
 	{
 		"EffectiveWeights" : [ 1.0, 0.25, 0.025 ],
-		"GradientScalingFactors" : [ 1.0, 1.0, 1.0 ],
+		"EstimateGradientScalingFactors" : true,
 		"Sigmas" : [ 0.250, 0.15, 0.05 ]
 	},
 	"MultiScaleBlurHighestResolutionImage" : true,

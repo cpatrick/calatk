@@ -504,7 +504,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeImageMo
 }
 
 template < class TState >
-void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::ComputeGradient()
+void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeGradient()
 {
   ComputeImageMomentumForwardAndFinalAdjointWarpedToInitialImage( m_ptrWarpedFinalToInitialAdjoint );
 
@@ -516,7 +516,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::ComputeGradient
     \f]
     *
     \f[
-      \nabla_{p(t_0)}E = (\lambda(0)-p(0))
+      \nabla_{p(t_0)}E = (-\lambda(0)+p(0))
     \f]
     */
 
@@ -525,13 +525,10 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::ComputeGradient
   VectorImageType* ptrI0Gradient = this->m_pGradient->GetPointerToInitialImage();
   VectorImageType* ptrP0Gradient = this->m_pGradient->GetPointerToInitialMomentum();
 
-  ptrP0Gradient->copy( ptrInitialMomentum );
+  ptrP0Gradient->copy( m_ptrWarpedFinalToInitialAdjoint );
   ptrP0Gradient->multConst(-1);
 
-  ptrP0Gradient->addCellwise( m_ptrWarpedFinalToInitialAdjoint );
-
-  // debug
-  ptrP0Gradient->multConst(-1);
+  ptrP0Gradient->addCellwise( ptrInitialMomentum );
 
   if ( this->m_EstimateInitialImage )
   {
@@ -542,6 +539,39 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::ComputeGradient
   {
     ptrI0Gradient->setConst( 0.0 );
   }
+}
+
+template < class TState >
+void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeInitialUnsmoothedVelocityGradient( VectorFieldType* ptrInitialUnsmoothedVelocityGradient )
+{
+  // compute the unsmoothed velocity gradient; to be used to estimate weights for the multi-Gaussian kernels.
+  // v and p(0) is assumed zero here and the unsmoothed gradient is then
+  // \f$ \sum_i -\lambda_i(0)\nabla I_0 \f$
+  // where the \lambda_i(0) is the warped adjoint from the final state warped to the initial image
+
+  unsigned int dim = ptrI0->getDim();
+
+  unsigned int uiNrOfTimePoints = m_vecTimeDiscretization.size();
+
+  VectorImageType* ptrCurrentAdjointDifference = new VectorImageType( ptrI0 );
+
+  this->m_pMetric->GetAdjointMatchingDifferenceImage( ptrCurrentAdjointDifference, ptrI0, ptrI1 );
+  ptrCurrentAdjointDifference->multConst( m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecWeights[ 0 ] );
+
+  // initialize to 0
+  VectorFieldType* ptrCurrentGradient = ptrInitialUnsmoothedVelocityGradient;
+  ptrCurrentGradient->setConst( 0 );
+
+  for ( unsigned int iD = 0; iD<dim; ++iD )
+    {
+    VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( ptrI0, iD, m_ptrTmpField );
+    VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrCurrentAdjointDifference, iD, m_ptrTmpField );
+    ptrCurrentGradient->addCellwise( m_ptrTmpField );
+    }
+
+  ptrCurrentGradient->multConst( 1.0 );
+
+  delete ptrCurrentAdjointDifference;
 }
 
 template < class TState >

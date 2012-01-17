@@ -34,6 +34,7 @@ public:
   /* some useful typedefs */
   
   typedef typename TState::TFloat T;
+ typedef VectorField< T, TState::VImageDimension > VectorFieldType;
 
   typedef TState* ptrStateType;
 
@@ -63,7 +64,7 @@ public:
     return m_pGradient;
   };
 
-  /* Compute the gradient of the objective function and store it in the gradient member variable */
+  /** Compute the gradient of the objective function and store it in the gradient member variable */
   virtual void ComputeGradient();
 
 protected:

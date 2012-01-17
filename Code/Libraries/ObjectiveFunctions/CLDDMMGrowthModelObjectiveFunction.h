@@ -47,12 +47,14 @@ public:
 
   CEnergyValues GetCurrentEnergy();
   void ComputeGradient();
+  void ComputeInitialUnsmoothedVelocityGradient( VectorFieldType* ptrInitialUnsmoothedVelocityGradient );
 
   SetMacro( SigmaSqr, T );
   GetMacro( SigmaSqr, T );
 
   void GetImage( VectorImageType* ptrIm, T dTime );
   void GetInitialImage( VectorImageType* ptrIm );
+  const VectorImageType* GetPointerToInitialImage() const;
   void GetMomentum( VectorImageType* ptrMomentum, T dTime );
   void GetInitialMomentum( VectorImageType* ptrMomentum );
 

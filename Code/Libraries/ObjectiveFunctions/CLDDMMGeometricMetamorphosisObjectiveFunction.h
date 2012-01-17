@@ -50,6 +50,7 @@ public:
   void GetImageT( VectorImageType* ptrIm, T dTime );
   void GetImage( VectorImageType* ptrIm, T dTime );
   void GetInitialImage( VectorImageType* ptrIm );
+  const VectorImageType* GetPointerToInitialImage() const;
   void GetMomentum( VectorImageType* ptrMomentum, T dTime );
   void GetInitialMomentum( VectorImageType* ptrMomentum );
 

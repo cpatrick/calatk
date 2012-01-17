@@ -22,6 +22,7 @@
 
 #include "CFourierDomainKernel.h"
 #include "CALATKCommon.h"
+#include "VectorField.h"
 
 namespace CALATK
 {
@@ -49,20 +50,26 @@ public:
   typedef typename Superclass::VectorImageType2D VectorImageType2D;
   typedef typename Superclass::VectorImageType3D VectorImageType3D;
 
+  typedef VectorField< T, VImageDimension > VectorFieldType;
+
   CMultiGaussianKernel();
   ~CMultiGaussianKernel();
 
-  void SetSigmasEffectiveWeightsAndScalingFactors( std::vector<T> Sigmas, std::vector<T> EffectiveWeights, std::vector<T> GradientScalingFactors );
+  void SetSigmasAndEffectiveWeights( std::vector<T> Sigmas, std::vector<T> EffectiveWeights );
 
   SetJSONMacro( Sigmas, std::vector<T> );
   SetJSONMacro( EffectiveWeights, std::vector<T> );
-  SetJSONMacro( GradientScalingFactors, std::vector<T> );
 
   GetMacro( Sigmas, std::vector<T> );
   GetMacro( EffectiveWeights, std::vector<T> );
-  GetMacro( GradientScalingFactors, std::vector<T> );
+
+  SetMacro( EstimateGradientScalingFactors, bool );
+  GetMacro( EstimateGradientScalingFactors, bool );
 
   virtual void SetAutoConfiguration( Json::Value& ConfValue );
+
+  virtual void ConvolveWithKernel( VectorImageType* pVecImage );
+  virtual void ConvolveWithInverseKernel(VectorImageType *pVecImage);
 
 protected:
 
@@ -74,22 +81,25 @@ protected:
 
   void ComputeActualWeights();
 
+  std::vector< T > ComputeDataDependentScalingFactors();
+
 private:
 
   std::vector<T> m_Sigmas;
   std::vector<T> m_EffectiveWeights;
-  std::vector<T> m_GradientScalingFactors;
+  bool m_EstimateGradientScalingFactors;
 
   std::vector<T> DefaultSigmas;
   std::vector<T> DefaultEffectiveWeights;
-  std::vector<T> DefaultGradientScalingFactors;
+  bool DefaultEstimateGradientScalingFactors;
 
   bool m_ExternallySetSigmas;
   bool m_ExternallySetEffectiveWeights;
-  bool m_ExternallySetGradientScalingFactors;
+  bool m_ExternallySetEstimateGradientScalingFactors;
 
   std::vector<T> m_ActualWeights;
-
+  std::vector<T> DefaultGradientScalingFactors;
+  std::vector<T> m_GradientScalingFactors;
 };
 
 #include "CMultiGaussianKernel.txx"

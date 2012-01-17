@@ -84,6 +84,8 @@ protected:
   /** purposefully not implemented */   
   void GetImage( VectorImageType*, T ) {};
   /** purposefully not implemented */
+  const VectorImageType* GetPointerToInitialImage() {};
+  /** purposefully not implemented */
   void GetInitialImage( VectorImageType* ) {};
 
 private:

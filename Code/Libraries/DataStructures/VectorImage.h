@@ -204,6 +204,12 @@ public:
   T computeSquareNorm();
 
   /**
+    * Computes the maximum square norm over the image (for the vector-valued pixels/voxels)
+    *
+    */
+  T computeMaximalSquareNorm();
+
+  /**
    * Computes the inner product with another image
    *
    */

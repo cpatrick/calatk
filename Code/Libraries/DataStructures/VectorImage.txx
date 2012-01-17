@@ -257,6 +257,42 @@ T VectorImage< T, VImageDimension>::computeSquareNorm()
 }
 
 //
+// compute maximal square norm
+//
+template <class T, unsigned int VImageDimension >
+T VectorImage< T, VImageDimension>::computeMaximalSquareNorm()
+{
+  unsigned int szX = this->getSizeX();
+  unsigned int szY = this->getSizeY();
+  unsigned int szZ = this->getSizeZ();
+  unsigned int dim = this->getDim();
+
+  T dLargestSquareVal = std::numeric_limits< T >::min();
+
+  for ( unsigned z = 0; z<szZ; ++z )
+  {
+    for ( unsigned y = 0; y<szY; ++y )
+    {
+      for ( unsigned x = 0; x<szX; ++x )
+      {
+        T dCurrentSquareVal = 0;
+        for ( unsigned d = 0; d<dim; ++d )
+        {
+          dCurrentSquareVal += this->getValue( x, y, z, d )*this->getValue( x, y, z, d );
+        }
+        if ( dCurrentSquareVal > dLargestSquareVal )
+        {
+          dLargestSquareVal = dCurrentSquareVal;
+        }
+      }
+    }
+  }
+
+  return dLargestSquareVal;
+
+}
+
+//
 // computeInnerProduct
 //
 template <class T, unsigned int VImageDimension >

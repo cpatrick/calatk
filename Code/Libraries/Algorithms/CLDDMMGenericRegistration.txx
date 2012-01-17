@@ -83,6 +83,7 @@ void CLDDMMGenericRegistration< TState >::SetDefaultObjectiveFunctionPointer()
   plddmm->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 
   this->m_ptrObjectiveFunction = plddmm;
+  this->m_ptrKernel->SetObjectiveFunctionPointer( plddmm );
 
 }
 

@@ -134,7 +134,8 @@ void CLDDMMGeometricMetamorphosisRegistration< TState >::SetDefaultObjectiveFunc
   plddmm->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
   
   this->m_ptrObjectiveFunction = plddmm;
-
+  this->m_ptrKernel->SetObjectiveFunctionPointer( plddmm );
+  this->m_ptrMaskKernel->SetObjectiveFunctionPointer( plddmm );
 }
 
 #endif

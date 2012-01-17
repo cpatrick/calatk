@@ -28,6 +28,9 @@ CKernel< T, VImageDimension >::CKernel()
 
   m_ptrL = NULL;
   m_ptrLInv = NULL;
+
+  ptrObjectiveFunction = NULL;
+
 }
 
 template <class T, unsigned int VImageDimension >
@@ -88,5 +91,19 @@ void CKernel< T, VImageDimension >::AllocateMemoryForKernelAndInverseKernel( Vec
       throw std::runtime_error("Cannot allocate kernel memory of desired dimension.");
     }
 }
+
+template <class T, unsigned int VImageDimension >
+void CKernel< T, VImageDimension >::SetObjectiveFunctionPointer( ObjectiveFunctionBaseType* ptrObj )
+{
+  ptrObjectiveFunction = ptrObj;
+}
+
+template <class T, unsigned int VImageDimension >
+typename CKernel< T, VImageDimension >::ObjectiveFunctionBaseType*
+CKernel< T, VImageDimension >::GetObjectiveFunctionPointer()
+{
+  return ptrObjectiveFunction;
+}
+
 
 #endif

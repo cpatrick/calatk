@@ -133,6 +133,9 @@ public:
   /* Gets the image at a specific time point */
   virtual void GetImage( VectorImageType* ptrIm, T dTime ) = 0;
 
+  /* Gets a pointer to the initial image */
+  virtual const VectorImageType* GetPointerToInitialImage() const = 0;
+
   /* Gets the initial image */
   virtual void GetInitialImage( VectorImageType* ptrIm ) = 0;
 
@@ -160,6 +163,12 @@ public:
   {
     return m_pMetric;
   };
+
+  /**
+  * Computes initial un-smoothed velocity gradient of the velocity.
+  * This can be used to estimate weights for multi-Gaussian kernels for example.
+  */
+  virtual void ComputeInitialUnsmoothedVelocityGradient( VectorFieldType* ptrInitialUnsmoothedVelocityGradient );
 
 protected:
 

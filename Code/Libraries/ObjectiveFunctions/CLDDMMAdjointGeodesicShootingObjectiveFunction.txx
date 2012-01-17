@@ -651,6 +651,56 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::ComputeGradient()
 }
 
 template < class TState >
+void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ComputeInitialUnsmoothedVelocityGradient( VectorFieldType* ptrInitialUnsmoothedVelocityGradient )
+{
+  // compute the unsmoothed velocity gradient; to be used to estimate weights for the multi-Gaussian kernels.
+  // v and p(0) is assumed zero here and the unsmoothed gradient is then
+
+  // \f$ \nabla E = (\sum_i \lambda_i \nabla I_0 ) \f$
+  // where the \lambda_i are the respective adjoints (based on the chosen metric)
+
+  VectorImageType* ptrI0 = this->m_pState->GetPointerToInitialImage();
+  unsigned int dim = ptrI0->getDim();
+
+  // compute the initial adjoint, assuming that there is only a zero velocity field
+  VectorImageType* ptrLambda0 = new VectorImageType( ptrI0 );
+  ptrLambda0->setConst( 0.0 );
+
+  VectorImageType* ptrCurrentAdjointDifference = new VectorImageType( ptrI0 );
+
+  for ( unsigned int iI = 0; iI< this->m_vecTimeDiscretization.size(); ++iI )
+    {
+    // update if we need to jump at the current time-point
+    if ( this->m_vecTimeDiscretization[ iI ].bIsMeasurementPoint )
+      {
+      // account for all possible jumps of the adjoint at this time-point
+      unsigned int uiNrOfMeasuredImagesAtTimePoint = this->m_vecTimeDiscretization[ iI ].vecMeasurementImages.size();
+      for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM )
+        {
+        this->m_pMetric->GetAdjointMatchingDifferenceImage( ptrCurrentAdjointDifference, ptrI0 , this->m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ] );
+        ptrCurrentAdjointDifference->multConst( m_vecTimeDiscretization[ iI ].vecWeights[ iM ] );
+        ptrLambda0->addCellwise( ptrCurrentAdjointDifference );
+        }
+      }
+    }
+
+  // initialize to 0
+  VectorFieldType* ptrCurrentGradient = ptrInitialUnsmoothedVelocityGradient;
+  ptrCurrentGradient->setConst( 0 );
+
+  for ( unsigned int iD = 0; iD<dim; ++iD )
+    {
+    VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( ptrI0, iD, m_ptrTmpField );
+    VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrLambda0, iD, m_ptrTmpField );
+    ptrCurrentGradient->addCellwise( m_ptrTmpField );
+    }
+
+  delete ptrLambda0;
+  delete ptrCurrentAdjointDifference;
+
+}
+
+template < class TState >
 typename CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::CEnergyValues
 CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::GetCurrentEnergy()
 {

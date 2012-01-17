@@ -52,6 +52,7 @@ public:
   virtual ~CLDDMMGeodesicShootingObjectiveFunction();
 
   void GetInitialImage( VectorImageType* ptrIm );
+  const VectorImageType* GetPointerToInitialImage() const;
   void GetInitialMomentum( VectorImageType* ptrMomentum );
 
   SetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );
