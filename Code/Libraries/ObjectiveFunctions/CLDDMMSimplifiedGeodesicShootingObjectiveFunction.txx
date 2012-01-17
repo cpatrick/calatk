@@ -108,12 +108,8 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::CreateNewState
     SImageInformation* pImInfo;
     // get information from the first image to figure out the dimensions and determine the source and target image
     this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
-    ptrI0 = pImInfo->pIm;
 
-    this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 1 );
-    ptrI1 = pImInfo->pIm;
-
-    VectorImageType* ptrInitialImage = new VectorImageType( ptrI0 );
+    VectorImageType* ptrInitialImage = new VectorImageType( pImInfo->pIm );
     VectorImageType* ptrInitialMomentum = new VectorImageType( pImInfo->pIm );
     ptrInitialMomentum->setConst(0);
 
@@ -142,10 +138,14 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::CreateGradientA
     assert( vecSubjectIndices.size()>0 );
 
     // obtain image from which to graft the image information for the data structures
-
+    // and assign the convenience image pointer ptrI0, ptrI1
     SImageInformation* pImInfo;
-    // get information from the first image to figure out the dimensions
+    // get information from the first image to figure out the dimensions and determine the source and target image
     this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
+    ptrI0 = pImInfo->pIm;
+
+    this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 1 );
+    ptrI1 = pImInfo->pIm;
 
     // create the gradient
     VectorImageType* ptrI0Gradient = new VectorImageType( pImInfo->pIm );
