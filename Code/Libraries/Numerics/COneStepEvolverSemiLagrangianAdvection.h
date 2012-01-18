@@ -25,6 +25,7 @@
 #include "CALATKCommon.h"
 #include "COneStepEvolver.h"
 #include "VectorFieldUtils.h"
+#include "CFastLinearInterpolator.h"
 #include "CLinearInterpolator.h"
 #include "CCubicConvolutionInterpolator.h"
 #include "VectorImageUtils.h"
@@ -99,7 +100,7 @@ private:
   const unsigned int DefaultNumberOfIterationsToDetermineFlowField;
   bool m_ExternallySetNumberOfIterationsToDetermineFlowField;
 
-  CLinearInterpolator< T, VImageDimension > interpolator;
+  CFastLinearInterpolator< T, VImageDimension > interpolator;
 };
 
 #include "COneStepEvolverSemiLagrangianAdvection.txx"

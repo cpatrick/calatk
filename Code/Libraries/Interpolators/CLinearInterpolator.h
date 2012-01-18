@@ -20,7 +20,7 @@
 #ifndef C_LINEAR_INTERPOLATOR_H
 #define C_LINEAR_INTERPOLATOR_H
 
-#include "CInterpolator.h"
+#include "CGenericInterpolator.h"
 
 namespace CALATK
 {
@@ -29,7 +29,7 @@ namespace CALATK
   */
 template < class T, unsigned int VImageDimension=3 >
 class CLinearInterpolator :
-    public CInterpolator< T, VImageDimension >
+    public CGenericInterpolator< T, VImageDimension >
 {
 public:
   CLinearInterpolator();

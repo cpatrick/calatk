@@ -93,7 +93,7 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::PerformStepWit
     throw std::invalid_argument("Dimension Mismatch");
   }
 #endif
-
+  interpolator.SetNumberOfThreads( this->GetNumberOfThreads() );
   interpolator.InterpolateNegativeVelocityPos( In, v, dt, Inp1 );
   
 }
@@ -103,6 +103,7 @@ template <class T, unsigned int VImageDimension >
 void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::PerformStepWithAdjustedVectorField(  const VectorFieldType* v, const VectorImageType* In, VectorImageType* Inp1, T dt )
 {
   ComputeAdjustedVectorFieldIfRequired( v, dt );
+  interpolator.SetNumberOfThreads( this->GetNumberOfThreads() );
   interpolator.InterpolateNegativeVelocityPos( In, ptrAdjustedVectorField, dt, Inp1 );
 }
 
@@ -140,6 +141,8 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::ComputeAdjuste
 
     // now that we have all the memory that is required do the computation
     ptrAdjustedVectorField->copy( v );
+
+    interpolator.SetNumberOfThreads( this->GetNumberOfThreads() );
 
     for ( unsigned int iI=0; iI < m_NumberOfIterationsToDetermineFlowField; ++iI )
     {

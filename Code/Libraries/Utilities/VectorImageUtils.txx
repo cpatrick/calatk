@@ -213,12 +213,34 @@ VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( cons
   return pNewIm;
 }
 
+//
+// interpolatePos 1D
+//
+template <class T, unsigned int VImageDimension >
+T VectorImageUtils< T, VImageDimension >::interpolatePosGridCoordinates( const VectorImageType1D* imIn, T xPos, unsigned int d)
+{
+
+  unsigned int szXold = imIn->getSizeX();
+
+  // make sure there are no out-of bounds issues
+  xPos = MAX(0,xPos);
+  xPos = MIN(szXold-1,xPos);
+
+  // interpolate the coordinates
+  unsigned int x1 = (unsigned int)xPos;
+  unsigned int x2 = MIN(x1+1,szXold-1);
+  T dx = xPos - x1;
+
+  // compute the interpolated value
+  return (1-dx)*( imIn->getValue(x1, d) )
+        + dx*( imIn->getValue(x2, d) );
+}
 
 //
 // interpolatePos 2D
 //
 template <class T, unsigned int VImageDimension >
-T VectorImageUtils< T, VImageDimension >::interpolatePosGridCoordinates( const VectorImageType* imIn, T xPos, T yPos, unsigned int d)
+T VectorImageUtils< T, VImageDimension >::interpolatePosGridCoordinates( const VectorImageType2D* imIn, T xPos, T yPos, unsigned int d)
 {
 
   unsigned int szXold = imIn->getSizeX();
@@ -251,7 +273,7 @@ T VectorImageUtils< T, VImageDimension >::interpolatePosGridCoordinates( const V
 // interpolatePos 3D
 //
 template <class T, unsigned int VImageDimension >
-T VectorImageUtils< T, VImageDimension >::interpolatePosGridCoordinates( const VectorImageType* imIn, T xPos, T yPos, T zPos, unsigned int d)
+T VectorImageUtils< T, VImageDimension >::interpolatePosGridCoordinates( const VectorImageType3D* imIn, T xPos, T yPos, T zPos, unsigned int d)
 {
 
   unsigned int szXold = imIn->getSizeX();
@@ -295,19 +317,14 @@ T VectorImageUtils< T, VImageDimension >::interpolatePosGridCoordinates( const V
 // interpolate 3D
 //
 template <class T, unsigned int VImageDimension >
-void VectorImageUtils< T, VImageDimension >::interpolate( const VectorImageType3D* imIn, const VectorImageType3D* pos, VectorImageType3D* imOut)
+void VectorImageUtils< T, VImageDimension >::interpolate( const VectorImageType3D* imIn, const VectorImageType3D* pos, VectorImageType3D* imOut, unsigned int uiNrOfThreads )
 {
 
-  if ( VImageDimension != 3 )
-    {
-    throw std::runtime_error( "interpolate3D only for 3D images." );
-    }
+  int dim = (int)imIn->getDim();
 
-  unsigned int dim = imIn->getDim();
-
-  unsigned int szXnew = pos->getSizeX();
-  unsigned int szYnew = pos->getSizeY();
-  unsigned int szZnew = pos->getSizeZ();
+  int szXnew = (int)pos->getSizeX();
+  int szYnew = (int)pos->getSizeY();
+  int szZnew = (int)pos->getSizeZ();
 
   T dx = imIn->getSpaceX();
   T dy = imIn->getSpaceY();
@@ -320,21 +337,21 @@ void VectorImageUtils< T, VImageDimension >::interpolate( const VectorImageType3
 #endif
 
   // using linear interpolation for now
-  for (unsigned int z = 0; z < szZnew; ++z) 
+#pragma omp parallel for schedule(static) num_threads( uiNrOfThreads )
+  for ( int z = 0; z < szZnew; ++z)
     {
-    for (unsigned int y = 0; y < szYnew; ++y) 
+    for ( int y = 0; y < szYnew; ++y)
       {
-      for (unsigned int x = 0; x < szXnew; ++x) 
+      for ( int x = 0; x < szXnew; ++x)
         {
-        for (unsigned int d = 0; d < dim; ++d) 
-          {
+        // interpolate the coordinates from the grid coordinates assuming origin 0
+        // TODO: Add support for origin different than 0 here
+        T xPos = pos->getValue(x,y,z,0)/dx;
+        T yPos = pos->getValue(x,y,z,1)/dy;
+        T zPos = pos->getValue(x,y,z,2)/dz;
 
-          // interpolate the coordinates from the grid coordinates assuming origin 0
-          // TODO: Add support for origin different than 0 here
-          T xPos = pos->getValue(x,y,z,0)/dx;
-          T yPos = pos->getValue(x,y,z,1)/dy;
-          T zPos = pos->getValue(x,y,z,2)/dz;
-
+        for ( int d = 0; d < dim; ++d)
+          {         
           // set the new value
           T val = VectorImageUtils< T, VImageDimension >::interpolatePosGridCoordinates(imIn, xPos, yPos, zPos, d);
           imOut->setValue(x,y,z,d, val);
@@ -348,13 +365,13 @@ void VectorImageUtils< T, VImageDimension >::interpolate( const VectorImageType3
 // interpolate 2D
 //
 template <class T, unsigned int VImageDimension >
-void VectorImageUtils< T, VImageDimension >::interpolate( const VectorImageType2D* imIn, const VectorImageType2D* pos, VectorImageType2D* imOut)
+void VectorImageUtils< T, VImageDimension >::interpolate( const VectorImageType2D* imIn, const VectorImageType2D* pos, VectorImageType2D* imOut, unsigned int uiNrOfThreads )
 {
 
-  unsigned int dim = imIn->getDim();
+  int dim = (int)imIn->getDim();
   
-  unsigned int szXnew = pos->getSizeX();
-  unsigned int szYnew = pos->getSizeY();
+  int szXnew = (int)pos->getSizeX();
+  int szYnew = (int)pos->getSizeY();
 
   T dx = imIn->getSpaceX();
   T dy = imIn->getSpaceY();
@@ -367,18 +384,19 @@ void VectorImageUtils< T, VImageDimension >::interpolate( const VectorImageType2
 #endif
   
   // using linear interpolation for now
-  for (unsigned int y = 0; y < szYnew; ++y) 
+#pragma omp parallel for schedule(static) num_threads( uiNrOfThreads )
+  for ( int y = 0; y < szYnew; ++y)
     {
-    for (unsigned int x = 0; x < szXnew; ++x) 
+    for ( int x = 0; x < szXnew; ++x)
       {
-      for (unsigned int d = 0; d < dim; ++d) 
-        {
-        // interpolate the coordinates from the grid coordinates assuming origin 0
-        // TODO: Add support for origin different than 0 here
-        
-        T xPos = pos->getValue(x,y,0)/dx;
-        T yPos = pos->getValue(x,y,1)/dy;
-        
+      // interpolate the coordinates from the grid coordinates assuming origin 0
+      // TODO: Add support for origin different than 0 here
+
+      T xPos = pos->getValue(x,y,0)/dx;
+      T yPos = pos->getValue(x,y,1)/dy;
+
+      for ( int d = 0; d < dim; ++d)
+        {        
         // set the new value
         T val = VectorImageUtils< T, VImageDimension >::interpolatePosGridCoordinates(imIn, xPos, yPos, d);
         imOut->setValue(x,y,d, val);
@@ -386,6 +404,166 @@ void VectorImageUtils< T, VImageDimension >::interpolate( const VectorImageType2
       }
     }
 }
+
+//
+// interpolate 1D
+//
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension >::interpolate( const VectorImageType1D* imIn, const VectorImageType1D* pos, VectorImageType1D* imOut, unsigned int uiNrOfThreads )
+{
+
+  int dim = (int)imIn->getDim();
+
+  int szXnew = (int)pos->getSizeX();
+
+  T dx = imIn->getSpaceX();
+
+#ifdef DEBUG
+  if (pos->getDim() != 1)
+    {
+    throw std::invalid_argument("VectorImageTypeUtils::resize -> invalid pos image");
+    }
+#endif
+
+  // using linear interpolation for now
+#pragma omp parallel for schedule(static) num_threads( uiNrOfThreads )
+  for ( int x = 0; x < szXnew; ++x)
+    {
+    // interpolate the coordinates from the grid coordinates assuming origin 0
+    // TODO: Add support for origin different than 0 here
+
+    T xPos = pos->getValue(x,0)/dx;
+
+    for ( int d = 0; d < dim; ++d)
+      {
+      // set the new value
+      T val = VectorImageUtils< T, VImageDimension >::interpolatePosGridCoordinates(imIn, xPos, d);
+      imOut->setValue(x,d, val);
+      }
+    }
+}
+
+//
+// interpolateNegativeVelocityPos 3D
+//
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension >::interpolateNegativeVelocityPos( const VectorImageType3D* imIn, const VectorFieldType3D* v, T dt, VectorImageType3D* imOut, unsigned int uiNrOfThreads )
+{
+
+  int dim = (int)imIn->getDim();
+
+  int szXnew = (int)imIn->getSizeX();
+  int szYnew = (int)imIn->getSizeY();
+  int szZnew = (int)imIn->getSizeZ();
+
+  T dx = imIn->getSpaceX();
+  T dy = imIn->getSpaceY();
+  T dz = imIn->getSpaceZ();
+
+  T dt_div_dx = dt/dx;
+  T dt_div_dy = dt/dy;
+  T dt_div_dz = dt/dz;
+
+  // using linear interpolation for now
+#pragma omp parallel for schedule(static) num_threads( uiNrOfThreads )
+  for ( int z = 0; z < szZnew; ++z)
+    {
+    for ( int y = 0; y < szYnew; ++y)
+      {
+      for ( int x = 0; x < szXnew; ++x)
+        {
+
+        // interpolate the coordinates from the grid coordinates assuming origin 0
+        // TODO: Add support for origin different than 0 here
+        T xPos = x - v->getX(x,y,z)*dt_div_dx;
+        T yPos = y - v->getY(x,y,z)*dt_div_dy;
+        T zPos = z - v->getZ(x,y,z)*dt_div_dz;
+
+        for ( int d = 0; d < dim; ++d)
+          {
+          // set the new value
+          T val = VectorImageUtils< T, VImageDimension >::interpolatePosGridCoordinates(imIn, xPos, yPos, zPos, d);
+          imOut->setValue(x,y,z,d, val);
+          }
+        }
+      }
+    }
+}
+
+//
+// interpolateNegativeVelocityPos 2D
+//
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension >::interpolateNegativeVelocityPos( const VectorImageType2D* imIn, const VectorFieldType2D* v, T dt, VectorImageType2D* imOut, unsigned int uiNrOfThreads )
+{
+
+  int dim = (int)imIn->getDim();
+
+  int szXnew = (int)imIn->getSizeX();
+  int szYnew = (int)imIn->getSizeY();
+
+  T dx = imIn->getSpaceX();
+  T dy = imIn->getSpaceY();
+
+  T dt_div_dx = dt/dx;
+  T dt_div_dy = dt/dy;
+
+  // using linear interpolation for now
+#pragma omp parallel for schedule(static) num_threads( uiNrOfThreads )
+  for ( int y = 0; y < szYnew; ++y)
+    {
+    for ( int x = 0; x < szXnew; ++x)
+      {
+
+      // interpolate the coordinates from the grid coordinates assuming origin 0
+      // TODO: Add support for origin different than 0 here
+
+      T xPos = x - v->getX(x,y)*dt_div_dx;
+      T yPos = y - v->getY(x,y)*dt_div_dy;
+
+      for ( int d = 0; d < dim; ++d)
+        {
+        // set the new value
+        T val = VectorImageUtils< T, VImageDimension >::interpolatePosGridCoordinates(imIn, xPos, yPos, d);
+        imOut->setValue(x,y,d, val);
+        }
+
+      }
+    }
+}
+
+//
+// interpolateNegativeVelocityPos 1D
+//
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension >::interpolateNegativeVelocityPos( const VectorImageType1D* imIn, const VectorFieldType1D* v, T dt, VectorImageType1D* imOut, unsigned int uiNrOfThreads )
+{
+
+  int dim = (int)imIn->getDim();
+
+  int szXnew = (int)imIn->getSizeX();
+
+  T dx = imIn->getSpaceX();
+  T dt_div_dx = dt/dx;
+
+  // using linear interpolation for now
+#pragma omp parallel for schedule(static) num_threads( uiNrOfThreads )
+  for ( int x = 0; x < szXnew; ++x)
+    {
+    // interpolate the coordinates from the grid coordinates assuming origin 0
+    // TODO: Add support for origin different than 0 here
+
+    T xPos = x - v->getX(x)*dt_div_dx;
+
+    for ( int d = 0; d < dim; ++d)
+      {
+      // set the new value
+      T val = VectorImageUtils< T, VImageDimension >::interpolatePosGridCoordinates(imIn, xPos, d);
+      imOut->setValue(x,d, val);
+      }
+    }
+}
+
 
 //
 // resize2D

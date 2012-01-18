@@ -20,7 +20,7 @@
 #ifndef C_CUBIC_CONVOLUTION_INTERPOLATOR_H
 #define C_CUBIC_CONVOLUTION_INTERPOLATOR_H
 
-#include "CInterpolator.h"
+#include "CGenericInterpolator.h"
 
 namespace CALATK
 {
@@ -36,7 +36,7 @@ namespace CALATK
     */
 template < class T, unsigned int VImageDimension=3 >
 class CCubicConvolutionInterpolator :
-    public CInterpolator< T, VImageDimension >
+    public CGenericInterpolator< T, VImageDimension >
 {
   public:
     CCubicConvolutionInterpolator();

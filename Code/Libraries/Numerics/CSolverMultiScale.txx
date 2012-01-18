@@ -130,6 +130,8 @@ bool CSolverMultiScale< TState >::Solve()
     
     m_ptrSolver->SetAutoConfiguration( this->m_jsonConfig.GetFromIndex( currentConfiguration, iI, Json::nullValue ) );
 
+    std::cout << "Solving multiscale level " << iI+1 << "/" << uiNrOfScales << std::endl;
+
     if ( !bHasBeenInitialized )
       {
       std::cout << "Initializing multi-scale solution." << std::endl;

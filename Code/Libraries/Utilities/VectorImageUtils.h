@@ -22,6 +22,7 @@
 
 #include "CALATKCommon.h"
 #include "VectorImage.h"
+#include "VectorField.h"
 #include <cmath>
 #include <string>
 #include <iostream>
@@ -47,8 +48,14 @@ class VectorImageUtils
 public:
 
   typedef VectorImage< T, VImageDimension > VectorImageType;
+  typedef VectorImage< T, 1 > VectorImageType1D;
   typedef VectorImage< T, 2 > VectorImageType2D;
   typedef VectorImage< T, 3 > VectorImageType3D;
+
+  typedef VectorField< T, VImageDimension > VectorFieldType;
+  typedef VectorField< T, 1 > VectorFieldType1D;
+  typedef VectorField< T, 2 > VectorFieldType2D;
+  typedef VectorField< T, 3 > VectorFieldType3D;
 
   /**
    * Method that returns the max of the data in the image
@@ -99,6 +106,15 @@ public:
   static VectorImageType* AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, unsigned int szx, unsigned int szy, unsigned int szz );
 
   /**
+   * Method that performs interpolation on a single point in 1D, using I coordinates
+   *
+   * @param imIn - the source image
+   * @param xPos - the desired x position
+   * @param d - the dimension to work on
+   */
+  static T interpolatePosGridCoordinates( const VectorImageType1D* imIn, T xPos, unsigned int d);
+
+  /**
    * Method that performs interpolation on a single point in 2D, using IJ coordinates
    *
    * @param imIn - the source image
@@ -106,7 +122,7 @@ public:
    * @param yPos - the desired y position
    * @param d - the dimension to work on
    */
-  static T interpolatePosGridCoordinates( const VectorImageType* imIn, T xPos, T yPos, unsigned int d);
+  static T interpolatePosGridCoordinates( const VectorImageType2D* imIn, T xPos, T yPos, unsigned int d);
 
   /**
    * Method that performs interpolation on a single point in 3D, using IJK coordinates
@@ -117,7 +133,18 @@ public:
    * @param zPos - the desired z position
    * @param d - the dimension to work on
    */
-  static T interpolatePosGridCoordinates( const VectorImageType* imIn, T xPos, T yPos, T zPos, unsigned int d);
+  static T interpolatePosGridCoordinates( const VectorImageType3D* imIn, T xPos, T yPos, T zPos, unsigned int d);
+
+  /**
+   * 1D Method that interpolates data from an input image to a given coordinate frame using world coordinates
+   *
+   * @param imIn - the source image
+   * @param pos - an image with 3 vector dimensions. (one for x positions, one for y positions,
+   *     one for z position)
+   * @param imOut - return parameter for interpolated image
+   * @param uiNrOfThreads -- number of threads used
+   */
+  static void interpolate( const VectorImageType1D* imIn, const VectorImageType1D* pos, VectorImageType1D* imOut, unsigned int uiNrOfThreads = 1 );
 
   /**
    * 2D Method that interpolates data from an input image to a given coordinate frame using world coordinates
@@ -125,9 +152,10 @@ public:
    * @param imIn - the source image
    * @param pos - an image with 3 vector dimensions. (one for x positions, one for y positions,
    *     one for z position)
-   * @param imOut - return parameter for resized image
+   * @param imOut - return parameter for interpolated image
+   * @param uiNrOfThreads -- number of threads used
    */
-  static void interpolate( const VectorImageType2D* imIn, const VectorImageType2D* pos, VectorImageType2D* imOut);
+  static void interpolate( const VectorImageType2D* imIn, const VectorImageType2D* pos, VectorImageType2D* imOut, unsigned int uiNrOfThreads = 1 );
 
   /**
    * 3D Method that interpolates data from an input image to a given coordinate frame using world coordinates
@@ -135,9 +163,46 @@ public:
    * @param imIn - the source image
    * @param pos - an image with 3 vector dimensions. (one for x positions, one for y positions,
    *     one for z position)
-   * @param imOut - return parameter for resized image
-   */
-  static void interpolate( const VectorImageType3D* imIn, const VectorImageType3D* pos, VectorImageType3D* imOut);
+   * @param imOut - return parameter for interpolated image
+   * @param uiNrOfThreads -- number of threads used
+  */
+  static void interpolate( const VectorImageType3D* imIn, const VectorImageType3D* pos, VectorImageType3D* imOut, unsigned int uiNrOfThreads = 1 );
+
+  /**
+    * 1D method that interpolates data from an input image based on a relative lookup in the negative direction of a vector field
+    * using world coordinates.
+    *
+    * @param imIn -- the source image
+    * @param v -- velocity field
+    * @param dt -- offset (e.g., timestep for a semi-Lagrangian advection solver
+    * @param imOut -- return parameter for interpolated image
+    * @param uiNrOfThreads -- number of threads used
+  */
+  static void interpolateNegativeVelocityPos( const VectorImageType1D* imIn, const VectorFieldType1D* v, T dt, VectorImageType1D* imOut, unsigned int uiNrOfThreads = 1 );
+
+  /**
+    * 2D method that interpolates data from an input image based on a relative lookup in the negative direction of a vector field
+    * using world coordinates.
+    *
+    * @param imIn -- the source image
+    * @param v -- velocity field
+    * @param dt -- offset (e.g., timestep for a semi-Lagrangian advection solver
+    * @param imOut -- return parameter for interpolated image
+    * @param uiNrOfThreads -- number of threads used
+  */
+  static void interpolateNegativeVelocityPos( const VectorImageType2D* imIn, const VectorFieldType2D* v, T dt, VectorImageType2D* imOut, unsigned int uiNrOfThreads = 1 );
+
+  /**
+    * 3D method that interpolates data from an input image based on a relative lookup in the negative direction of a vector field
+    * using world coordinates.
+    *
+    * @param imIn -- the source image
+    * @param v -- velocity field
+    * @param dt -- offset (e.g., timestep for a semi-Lagrangian advection solver
+    * @param imOut -- return parameter for interpolated image
+    * @param uiNrOfThreads -- number of threads used
+    */
+  static void interpolateNegativeVelocityPos( const VectorImageType3D* imIn, const VectorFieldType3D* v, T dt, VectorImageType3D* imOut, unsigned int uiNrOfThreads = 1 );
 
   /**
    * 2D Method to resize the array in both dimensions
