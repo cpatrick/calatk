@@ -24,14 +24,14 @@
 #include "CObjectiveFunction.h"
 #include "CSolver.h"
 
-/**
- * Implements a generic line search algorithm
- */
 
 // TODO: Make this a generic line search. This one is a line search for a gradient descent
 
 namespace CALATK
 {
+/**
+ * Base class for a generic line search algorithm
+ */
 template < class TState >
 class CSolverLineSearch : public CSolver< TState >
 {
@@ -84,14 +84,9 @@ public:
 
   virtual void SetAutoConfiguration( Json::Value& ConfValue );
 
-/**
- * Performs the line search
- */
-  bool SolvePreInitialized();
-
 protected:
 
-  bool LineSearchWithBacktracking( CEnergyValues CurrentEnergy, T dDesiredStepSize, T& dAlpha, CEnergyValues& ResultingEnergy, unsigned int &uiIter );
+  bool LineSearchWithBacktracking( CEnergyValues CurrentEnergy, T dDesiredStepSize, T& dAlpha, CEnergyValues& ResultingEnergy, unsigned int &uiIter, TState* pTempState );
 
   T m_InitialStepSize;
   
@@ -133,8 +128,6 @@ private:
   bool m_ExternallySetMaxNumberOfTries;
   bool m_ExternallySetAdjustStepSizeUpNumber;
   bool m_ExternallySetAdjustStepSizeDownNumber;
-
-  TState *pTempState;
 
 };
 

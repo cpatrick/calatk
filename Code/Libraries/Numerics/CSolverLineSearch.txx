@@ -98,147 +98,25 @@ void CSolverLineSearch< TState>::SetAutoConfiguration( Json::Value& ConfValue )
 
   Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "LineSearch", Json::nullValue );
   
-  SetJSONInitialStepSize( this->m_jsonConfig.GetFromKey( currentConfiguration, "InitialStepSize", GetExternalOrDefaultInitialStepSize() ).asDouble() );
-  SetJSONAdjustStepSizeUpFactor( this->m_jsonConfig.GetFromKey( currentConfiguration, "AdjustStepSizeUpFactor", GetExternalOrDefaultAdjustStepSizeUpFactor() ).asDouble() );
-  SetJSONAdjustStepSizeDownFactor( this->m_jsonConfig.GetFromKey( currentConfiguration, "AdjustStepSizeDownFactor", GetExternalOrDefaultAdjustStepSizeDownFactor() ).asDouble() );
-  SetJSONReductionFactor( this->m_jsonConfig.GetFromKey( currentConfiguration, "ReductionFactor", GetExternalOrDefaultReductionFactor() ).asDouble() );
-  SetJSONMinAllowedStepSize( this->m_jsonConfig.GetFromKey( currentConfiguration, "MinAllowedStepSize", GetExternalOrDefaultMinAllowedStepSize() ).asDouble() );
-  SetJSONDecreaseConstant( this->m_jsonConfig.GetFromKey( currentConfiguration, "DecreaseConstant", GetExternalOrDefaultDecreaseConstant() ).asDouble() );
-  SetJSONMaxNumberOfIterations( this->m_jsonConfig.GetFromKey( currentConfiguration, "MaxNumberOfIterations", GetExternalOrDefaultMaxNumberOfIterations() ).asUInt() );
-  SetJSONMaxNumberOfTries( this->m_jsonConfig.GetFromKey( currentConfiguration, "MaxNumberOfTries", GetExternalOrDefaultMaxNumberOfTries() ).asUInt() );
-  SetJSONAdjustStepSizeUpNumber( this->m_jsonConfig.GetFromKey( currentConfiguration, "AdjustStepSizeUpNumber", GetExternalOrDefaultAdjustStepSizeUpNumber() ).asUInt() );
-  SetJSONAdjustStepSizeDownNumber( this->m_jsonConfig.GetFromKey( currentConfiguration, "AdjustStepSizeDownNumber", GetExternalOrDefaultAdjustStepSizeDownNumber() ).asUInt() );
+  SetJSONFromKeyDouble( currentConfiguration, InitialStepSize );
+  SetJSONFromKeyDouble( currentConfiguration, AdjustStepSizeUpFactor );
+  SetJSONFromKeyDouble( currentConfiguration, AdjustStepSizeDownFactor );
+  SetJSONFromKeyDouble( currentConfiguration, ReductionFactor );
+  SetJSONFromKeyDouble( currentConfiguration, MinAllowedStepSize );
+  SetJSONFromKeyDouble( currentConfiguration, DecreaseConstant );
+  SetJSONFromKeyUInt( currentConfiguration, MaxNumberOfIterations );
+  SetJSONFromKeyUInt( currentConfiguration, MaxNumberOfTries );
+  SetJSONFromKeyUInt( currentConfiguration, AdjustStepSizeUpNumber );
+  SetJSONFromKeyUInt( currentConfiguration, AdjustStepSizeDownNumber );
 
-  SetJSONOutputStateInformation( this->m_jsonConfig.GetFromKey( currentConfiguration, "OutputStateInformation", this->GetExternalOrDefaultOutputStateInformation() ).asBool() );
-  SetJSONOutputStateInformationFrequency( this->m_jsonConfig.GetFromKey( currentConfiguration, "OutputStateInformationFrequency", this->GetExternalOrDefaultOutputStateInformationFrequency() ).asUInt() );
-}
-
-//
-// minimizes the objective function
-//
-template < class TState >
-bool CSolverLineSearch< TState>::SolvePreInitialized()
-{
-  ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();
-  
-  unsigned int uiNrOfIterationsWithImmediateDecrease = 0;
-  unsigned int uiNrOfIterationsWithoutImmediateDecrease = 0;
-
-  CEnergyValues InitialEnergy = pObj->GetCurrentEnergy();
-  std::cout << "Initial energy = " << InitialEnergy.dEnergy << std::endl;
-
-  T dDesiredStepSize = m_InitialStepSize;
-  T dAlpha;
-  CEnergyValues ResultingEnergy;
-
-  // creating new temp state
-  pTempState = new TState( *pObj->GetStatePointer() );
-
-  std::string sStatePrefix = "S" + CreateIntegerString( (int)this->GetExternalSolverState() ) + "-";
-
-  // output the initial state if desired
-  this->OutputStateInformation( 0, sStatePrefix );
-
-  CEnergyValues CurrentEnergy = InitialEnergy;
-
-  for ( unsigned int uiIter = 0; uiIter<m_MaxNumberOfIterations; ++uiIter )
-    {
-    unsigned int uiRequiredIterations;
-    bool bSufficientlyDecreasedEnergy = LineSearchWithBacktracking( CurrentEnergy, dDesiredStepSize, dAlpha, ResultingEnergy, uiRequiredIterations );
-
-    if ( bSufficientlyDecreasedEnergy )
-      {
-        CurrentEnergy = ResultingEnergy;
-      }
-
-    // output the current energy information
-
-    std::cout << "I " << std::setw(5) << uiIter << "; ";
-    std::cout << "alpha = " << std::setw(10) << dAlpha << "; ";
-    std::cout << "E(tot) = " << std::setw(10) << ResultingEnergy.dEnergy << "; ";
-    std::cout << "E(I) = " << std::setw(10) << ResultingEnergy.dMatchingEnergy << "; ";
-    std::cout << "E(v) = " << std::setw(10) << ResultingEnergy.dRegularizationEnergy << "; ";
-    std::cout << "reqIter = " << std::setw(2) << uiRequiredIterations;
-
-    if ( !bSufficientlyDecreasedEnergy )
-      std::cout << "!";
-
-    std::cout << std::endl;
-
-
-    // output the state if desired
-    this->OutputStateInformation( uiIter + 1, sStatePrefix );
-
-    if ( bSufficientlyDecreasedEnergy )
-      {
-
-      if ( dDesiredStepSize == dAlpha ) // could be decreased immediately
-        {
-        uiNrOfIterationsWithImmediateDecrease++;
-        uiNrOfIterationsWithoutImmediateDecrease = 0;
-        }
-      else
-        {
-        uiNrOfIterationsWithImmediateDecrease = 0;
-        uiNrOfIterationsWithoutImmediateDecrease++;
-        }
-
-      if ( uiNrOfIterationsWithImmediateDecrease >= m_AdjustStepSizeUpNumber )
-        {
-        std::cout << "Adjusting step size up" << std::endl;
-        dDesiredStepSize *= m_AdjustStepSizeUpFactor;
-        uiNrOfIterationsWithImmediateDecrease = 0;
-        uiNrOfIterationsWithoutImmediateDecrease = 0;
-        }
-      
-      if ( uiNrOfIterationsWithoutImmediateDecrease >= m_AdjustStepSizeDownNumber )
-        {
-        std::cout << "Adjusting step size down" << std::endl;
-        dDesiredStepSize *= m_AdjustStepSizeDownFactor;
-        uiNrOfIterationsWithImmediateDecrease = 0;
-        uiNrOfIterationsWithoutImmediateDecrease = 0;
-        }
-
-      }
-    else // could not decrease energy 
-      {
-      // terminate if smallest step size has been tried
-      if ( dAlpha == m_MinAllowedStepSize )
-        {
-        std::cout << "Smallest allowable step size did not yield an energy reduction. Stopping iterations." << std::endl;
-        break;
-        }
-      else
-        {
-        uiNrOfIterationsWithImmediateDecrease = 0;
-        uiNrOfIterationsWithoutImmediateDecrease++;
-        // set the desired step size to the last tried one
-        std::cout << "Could not decrease energy. Trying again with smaller step size." << std::endl;
-        dDesiredStepSize = dAlpha;
-        }
-
-      }
-    }
-
-  // clean up
-
-  delete pTempState;
-
-  if ( ResultingEnergy.dEnergy < InitialEnergy.dEnergy )
-    {
-    // could reduce the energy
-    return true;
-    }
-  else
-    {
-    // could not reduce the energy
-    return false;
-    }
+  SetJSONFromKeyBool( currentConfiguration, OutputStateInformation );
+  SetJSONFromKeyUInt( currentConfiguration, OutputStateInformationFrequency );
 
 }
 
+
 template < class TState >
-bool CSolverLineSearch< TState>::LineSearchWithBacktracking( CEnergyValues CurrentEnergy, T dDesiredStepSize, T& dAlpha, CEnergyValues& ResultingEnergy, unsigned int& uiIter )
+bool CSolverLineSearch< TState>::LineSearchWithBacktracking( CEnergyValues CurrentEnergy, T dDesiredStepSize, T& dAlpha, CEnergyValues& ResultingEnergy, unsigned int& uiIter, TState* pTempState )
 {
 
   ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();

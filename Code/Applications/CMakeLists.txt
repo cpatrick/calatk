@@ -12,6 +12,8 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/LDDMMShooting)
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/LDDMM)
 
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/MetamorphosisShooting)
+
 #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/AtlasBuilder)
 
 #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/TimeSeries)

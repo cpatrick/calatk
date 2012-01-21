@@ -39,8 +39,8 @@ void CHelmholtzKernel< T, VImageDimension >::SetAutoConfiguration( Json::Value& 
   Superclass::SetAutoConfiguration( ConfValue );
   Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "HelmholtzKernel", Json::nullValue );
 
-  SetJSONAlpha( this->m_jsonConfig.GetFromKey( currentConfiguration, "Alpha", GetExternalOrDefaultAlpha() ).asDouble() );
-  SetJSONGamma( this->m_jsonConfig.GetFromKey( currentConfiguration, "Gamma", GetExternalOrDefaultGamma() ).asDouble() );
+  SetJSONFromKeyDouble( currentConfiguration, Alpha );
+  SetJSONFromKeyDouble( currentConfiguration, Gamma );
 }
 
 template <class T, unsigned int VImageDimension >

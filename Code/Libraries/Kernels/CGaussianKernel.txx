@@ -38,7 +38,7 @@ void CGaussianKernel< T, VImageDimension >::SetAutoConfiguration( Json::Value& C
   Superclass::SetAutoConfiguration( ConfValue );
   
   Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "GaussianKernel", Json::nullValue );
-  SetJSONSigma( this->m_jsonConfig.GetFromKey( currentConfiguration, "Sigma", GetExternalOrDefaultSigma() ).asDouble() );
+  SetJSONFromKeyDouble( currentConfiguration, Sigma );
 }
 
 template <class T, unsigned int VImageDimension >

@@ -55,7 +55,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::SetAutoConfiguration( Json::V
   Superclass::SetAutoConfiguration( ConfValue );
   Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "GrowthModel", Json::nullValue );
 
-  SetJSONSigmaSqr( this->m_jsonConfig.GetFromKey( currentConfiguration, "SigmaSqr", GetExternalOrDefaultSigmaSqr() ).asDouble() );
+  SetJSONFromKeyDouble( currentConfiguration, SigmaSqr );
 
 }
 

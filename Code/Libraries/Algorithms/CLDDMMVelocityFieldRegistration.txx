@@ -76,7 +76,6 @@ void CLDDMMVelocityFieldRegistration< TState >::SetDefaultEvolverPointer()
 template < class TState >
 void CLDDMMVelocityFieldRegistration< TState >::SetDefaultSolverPointer()
 {
-  //this->m_ptrSolver = new CSolverLineSearch< TState >;
   this->m_ptrSolver = new CSolverMultiScale< TState >;
   this->m_ptrSolver->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }

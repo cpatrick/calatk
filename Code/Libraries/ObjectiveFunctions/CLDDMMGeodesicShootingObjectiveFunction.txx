@@ -42,12 +42,10 @@ void CLDDMMGeodesicShootingObjectiveFunction< TState >::SetAutoConfiguration( Js
   Superclass::SetAutoConfiguration( ConfValue );
   Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "LDDMMGeodesicShooting", Json::nullValue );
 
-  SetJSONNumberOfDiscretizationVolumesPerUnitTime( this->m_jsonConfig.GetFromKey( currentConfiguration, "NumberOfDiscretizationVolumesPerUnitTime", GetExternalOrDefaultNumberOfDiscretizationVolumesPerUnitTime() ).asDouble() );
-  SetJSONEstimateInitialImage( this->m_jsonConfig.GetFromKey( currentConfiguration, "EstimateInitialImage", GetExternalOrDefaultEstimateInitialImage() ).asBool() );
-  SetJSONSigmaSqr( this->m_jsonConfig.GetFromKey( currentConfiguration, "SigmaSqr", GetExternalOrDefaultSigmaSqr() ).asDouble() );
+  SetJSONFromKeyDouble( currentConfiguration, NumberOfDiscretizationVolumesPerUnitTime );
+  SetJSONFromKeyBool( currentConfiguration, EstimateInitialImage );
+  SetJSONFromKeyDouble( currentConfiguration, SigmaSqr );
 }
-
-
 
 template < class TState >
 void CLDDMMGeodesicShootingObjectiveFunction< TState >::GetInitialImage( VectorImageType* ptrIm )

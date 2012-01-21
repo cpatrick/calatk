@@ -21,7 +21,7 @@
 #define C_SOLVER_MULTISCALE_H
 
 #include "CSolver.h"
-#include "CSolverLineSearch.h"
+#include "CSolverLineSearchUnconstrained.h"
 #include "CImageManagerMultiScale.h"
 #include "VectorImage.h"
 #include "VectorImageUtils.h"

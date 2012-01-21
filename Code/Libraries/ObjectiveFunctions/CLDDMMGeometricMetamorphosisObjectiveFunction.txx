@@ -101,9 +101,9 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::SetAutoConfigurati
   Superclass::SetAutoConfiguration( ConfValue );
   Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "GeometricMetamorphosis", Json::nullValue );
   
-  SetJSONSigma1Sqr( this->m_jsonConfig.GetFromKey( currentConfiguration, "Sigma1Sqr", GetExternalOrDefaultSigma1Sqr() ).asDouble() );
-  SetJSONSigma2Sqr( this->m_jsonConfig.GetFromKey( currentConfiguration, "Sigma2Sqr", GetExternalOrDefaultSigma2Sqr() ).asDouble() );
-  SetJSONW( this->m_jsonConfig.GetFromKey( currentConfiguration, "W", GetExternalOrDefaultW() ).asDouble() );
+  SetJSONFromKeyDouble( currentConfiguration, Sigma1Sqr );
+  SetJSONFromKeyDouble( currentConfiguration, Sigma2Sqr );
+  SetJSONFromKeyDouble( currentConfiguration, W );
 
 }
 

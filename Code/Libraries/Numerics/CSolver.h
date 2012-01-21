@@ -64,6 +64,8 @@ public:
 
   virtual void OutputStateInformation( unsigned int uiIter, std::string prefix );
 
+  virtual void SetAutoConfiguration( Json::Value& ConfValue );
+
 protected:
 
   ptrObjectiveFunctionType m_pObjectiveFunction;

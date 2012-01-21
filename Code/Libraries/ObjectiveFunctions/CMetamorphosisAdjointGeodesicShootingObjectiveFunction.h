@@ -17,10 +17,11 @@
 *
 */
 
-#ifndef C_LDDMM_ADJOINT_GEODESIC_SHOOTING_OBJECTIVE_FUNCTION_H
-#define C_LDDMM_ADJOINT_GEODESIC_SHOOTING_OBJECTIVE_FUNCTION_H
+#ifndef C_METAMORPHOSIS_ADJOINT_GEODESIC_SHOOTING_OBJECTIVE_FUNCTION_H
+#define C_METAMORPHOSIS_ADJOINT_GEODESIC_SHOOTING_OBJECTIVE_FUNCTION_H
 
 #include "CLDDMMGeodesicShootingObjectiveFunction.h"
+#include "CAugmentedLagrangianInterface.h"
 #include "CALATKCommon.h"
 #include "LDDMMUtils.h"
 
@@ -28,19 +29,14 @@
 namespace CALATK
 {
 /**
-  * Implements the adjoint formulation of geodesic shooting as described in
-  *
-  * Vialard et al., ...
-  *
-  * Supports time series and therefore can be used to compute geodesic regression lines as described in
-  *
-  * Niethammer et al., "Geodesic Regression for Image Time-Series," MICCAI 2011.
+  * Implements the shooting method for metamorphosis
   *
   */
 
 template < class TState >
-class CLDDMMAdjointGeodesicShootingObjectiveFunction
-    : public CLDDMMGeodesicShootingObjectiveFunction< TState >
+class CMetamorphosisAdjointGeodesicShootingObjectiveFunction
+    : public CAugmentedLagrangianInterface< typename TState::TFloat, TState::VImageDimension >,
+      public CLDDMMGeodesicShootingObjectiveFunction< TState >
 {
 public:
 
@@ -55,8 +51,8 @@ public:
     typedef typename Superclass::VectorImageType VectorImageType;
     typedef typename Superclass::VectorFieldType VectorFieldType;
 
-    CLDDMMAdjointGeodesicShootingObjectiveFunction();
-    virtual ~CLDDMMAdjointGeodesicShootingObjectiveFunction();
+    CMetamorphosisAdjointGeodesicShootingObjectiveFunction();
+    virtual ~CMetamorphosisAdjointGeodesicShootingObjectiveFunction();
 
     void InitializeState();
     void InitializeState( TState* pState );
@@ -72,6 +68,12 @@ public:
     void ComputeInitialUnsmoothedVelocityGradient( VectorFieldType *ptrInitialUnsmoothedVelocityGradient );
 
     void OutputStateInformation( unsigned int uiIter, std::string outputPrefix="" );
+
+    // metods for the augmented Lagrangian
+    void SetSquaredPenaltyScalarWeight( T dWeight );
+    T GetSquaredPenaltyScalarWeight();
+    VectorImageType* GetPointerToImageLagrangianMultiplier();
+    const VectorImageType* GetPointerToCurrentImageResidual();
 
 protected:
 
@@ -144,9 +146,13 @@ private:
     std::vector< STimePoint > m_vecTimeDiscretization;
     std::vector< T > m_vecTimeIncrements;
 
+    // augmented Lagrangian
+    T m_AugmentedLagrangianMu;
+    VectorImageType* m_ptrImageLagrangianMultiplier;
+
 };
 
-#include "CLDDMMAdjointGeodesicShootingObjectiveFunction.txx"
+#include "CMetamorphosisAdjointGeodesicShootingObjectiveFunction.txx"
 
 } // end namespace
-#endif // C_LDDMM_GEODESIC_SHOOTING_OBJECTIVE_FUNCTION_H
+#endif // C_METAMORPHOSIS_GEODESIC_SHOOTING_OBJECTIVE_FUNCTION_H

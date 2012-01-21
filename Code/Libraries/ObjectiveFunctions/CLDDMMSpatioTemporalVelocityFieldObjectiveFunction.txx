@@ -53,7 +53,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::SetAutoConfig
   Superclass::SetAutoConfiguration( ConfValue );
   Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "SpatioTemporalVelocityField", Json::nullValue );
 
-  SetJSONNumberOfDiscretizationVolumesPerUnitTime( this->m_jsonConfig.GetFromKey( currentConfiguration, "NumberOfDiscretizationVolumesPerUnitTime", GetExternalOrDefaultNumberOfDiscretizationVolumesPerUnitTime() ).asDouble() );
+  SetJSONFromKeyDouble( currentConfiguration, NumberOfDiscretizationVolumesPerUnitTime );
 }
 
 

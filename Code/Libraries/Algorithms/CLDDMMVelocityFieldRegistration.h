@@ -31,7 +31,7 @@
 #include "CAlgorithm.h"
 //#include "CImageManagerFullScale.h"
 #include "CImageManagerMultiScale.h"
-#include "CSolverLineSearch.h"
+#include "CSolverLineSearchUnconstrained.h"
 #include "CSolverMultiScale.h"
 
 namespace CALATK
@@ -83,11 +83,11 @@ public:
 
 protected:
 
-  void SetDefaultMetricPointer();
-  void SetDefaultImageManagerPointer();
-  void SetDefaultKernelPointer();
-  void SetDefaultEvolverPointer();
-  void SetDefaultSolverPointer();
+  virtual void SetDefaultMetricPointer();
+  virtual void SetDefaultImageManagerPointer();
+  virtual void SetDefaultKernelPointer();
+  virtual void SetDefaultEvolverPointer();
+  virtual void SetDefaultSolverPointer();
 
 private:
 

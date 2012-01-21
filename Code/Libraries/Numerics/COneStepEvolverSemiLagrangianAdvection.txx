@@ -62,8 +62,8 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::SetAutoConfigu
 
   Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "OneStepEvolverSemiLagrangianAdvection", Json::nullValue );
 
-  SetJSONNumberOfIterationsToDetermineFlowField( this->m_jsonConfig.GetFromKey( currentConfiguration, "NumberOfIterationsToDetermineFlowField", GetExternalOrDefaultNumberOfIterationsToDetermineFlowField() ).asUInt() );
-  SetJSONTimeStepFactor( this->m_jsonConfig.GetFromKey( currentConfiguration, "TimeStepFactor", GetExternalOrDefaultTimeStepFactor() ).asDouble() );
+  SetJSONFromKeyUInt( currentConfiguration, NumberOfIterationsToDetermineFlowField );
+  SetJSONFromKeyDouble( currentConfiguration, TimeStepFactor );
 }
 
 //

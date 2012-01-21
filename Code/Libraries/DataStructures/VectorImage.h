@@ -226,13 +226,6 @@ public:
   typename ITKVectorImage< T, VImageDimension >::Type::DirectionType getDirection() const;
   
   /**
-   * Method that adds the elements of the input image to the current image
-   *
-   * @param im - the input image
-   */
-  void addImage(VectorImage* im);
-
-  /**
    * Method that writes the contents of the image to a file
    * NOT IMPLEMENTED YET
    *

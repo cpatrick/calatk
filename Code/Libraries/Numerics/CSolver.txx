@@ -58,6 +58,15 @@ void CSolver< TState >::OutputStateInformation( unsigned int uiIter, std::string
 }
 
 //
+// auto configuration
+//
+template < class TState >
+void CSolver< TState >::SetAutoConfiguration( Json::Value& ConfValue )
+{
+  Superclass::SetAutoConfiguration( ConfValue );
+}
+
+//
 // setting the objective function pointer
 template < class TState >
 void CSolver< TState >::SetObjectiveFunctionPointer( ptrObjectiveFunctionType pObj )
