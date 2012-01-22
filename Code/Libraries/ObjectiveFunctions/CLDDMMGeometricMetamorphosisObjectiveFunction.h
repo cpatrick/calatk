@@ -71,7 +71,7 @@ public:
 
   void OutputStateInformation( unsigned int uiIter, std::string outputPrefix="" );
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValue );
+  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
 
 protected:
 

@@ -50,12 +50,13 @@ CLDDMMGrowthModelObjectiveFunction< TState >::~CLDDMMGrowthModelObjectiveFunctio
 }
 
 template < class TState >
-void CLDDMMGrowthModelObjectiveFunction< TState >::SetAutoConfiguration( Json::Value& ConfValue )
+void CLDDMMGrowthModelObjectiveFunction< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
 {
-  Superclass::SetAutoConfiguration( ConfValue );
-  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "GrowthModel", Json::nullValue );
+  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "GrowthModel", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "GrowthModel", Json::nullValue );
 
-  SetJSONFromKeyDouble( currentConfiguration, SigmaSqr );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, SigmaSqr );
 
 }
 

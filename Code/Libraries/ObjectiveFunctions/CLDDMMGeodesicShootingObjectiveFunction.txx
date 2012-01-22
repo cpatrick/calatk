@@ -37,14 +37,15 @@ CLDDMMGeodesicShootingObjectiveFunction< TState >::~CLDDMMGeodesicShootingObject
 }
 
 template < class TState >
-void CLDDMMGeodesicShootingObjectiveFunction< TState >::SetAutoConfiguration( Json::Value& ConfValue )
+void CLDDMMGeodesicShootingObjectiveFunction< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
 {
-  Superclass::SetAutoConfiguration( ConfValue );
-  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "LDDMMGeodesicShooting", Json::nullValue );
+  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "LDDMMGeodesicShooting", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "LDDMMGeodesicShooting", Json::nullValue );
 
-  SetJSONFromKeyDouble( currentConfiguration, NumberOfDiscretizationVolumesPerUnitTime );
-  SetJSONFromKeyBool( currentConfiguration, EstimateInitialImage );
-  SetJSONFromKeyDouble( currentConfiguration, SigmaSqr );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, NumberOfDiscretizationVolumesPerUnitTime );
+  SetJSONFromKeyBool( currentConfigurationIn, currentConfigurationOut, EstimateInitialImage );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, SigmaSqr );
 }
 
 template < class TState >

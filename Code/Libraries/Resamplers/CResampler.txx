@@ -33,12 +33,13 @@ CResampler< T, VImageDimension >::~CResampler()
 }
 
 template <class T, unsigned int VImageDimension >
-void CResampler< T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValue )
+void CResampler< T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
 {
-  Superclass::SetAutoConfiguration( ConfValue );
-  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "Resampler", Json::nullValue );
+  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "Resampler", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "Resampler", Json::nullValue );
 
-  SetJSONFromKeyDouble( currentConfiguration, Sigma );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, Sigma );
 }
 
 template <class T, unsigned int VImageDimension >

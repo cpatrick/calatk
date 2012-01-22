@@ -50,16 +50,18 @@ int DoIt( int argc, char** argv )
 
   regType lddmm;
 
-  CALATK::CJSONConfiguration config;
+  CALATK::CJSONConfiguration configIn;
+  CALATK::CJSONConfiguration configOut;
+  configOut.InitializeEmptyRoot();
 
   if ( configFile.compare("None") != 0 )
     {
-    bool parsingSuccessful = config.ReadJSONFile( configFile );
+    bool parsingSuccessful = configIn.ReadJSONFile( configFile );
     if ( !parsingSuccessful ) return EXIT_FAILURE;
     }
   else
     {
-    config.InitializeEmptyRoot();
+    configIn.InitializeEmptyRoot();
     }
 
   ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm.GetImageManagerPointer() );
@@ -75,23 +77,27 @@ int DoIt( int argc, char** argv )
   // by default there will be only one scale
   // which will be overwritten if there is a configuration file available
 
-  TFLOAT dSigma = config.GetFromKey( "MultiScaleSigmaInVoxels", 1.0 ).asDouble();
+  TFLOAT dSigma = configIn.GetFromKey( "MultiScaleSigmaInVoxels", 1.0 ).asDouble();
+  configOut.GetFromKey("MultiScaleSigmaInVoxels", dSigma ).asDouble();
   ptrImageManager->SetSigma( dSigma );
-  bool bBlurHighestResolutionImage = config.GetFromKey( "MultiScaleBlurHighestResolutionImage", true ).asBool();
+  bool bBlurHighestResolutionImage = configIn.GetFromKey( "MultiScaleBlurHighestResolutionImage", true ).asBool();
+  configOut.GetFromKey( "MultiScaleBlurHighestResolutionImage", bBlurHighestResolutionImage ).asBool();
   ptrImageManager->SetBlurHighestResolutionImage( bBlurHighestResolutionImage );
 
-  Json::Value& currentConfiguration = config.GetFromKey( "MultiscaleSettings", Json::nullValue );
-  
-  std::cout << "Detected " << currentConfiguration.size() << " scales." << std::endl;
+  Json::Value& currentConfigurationIn = configIn.GetFromKey( "MultiscaleSettings", Json::nullValue );
+  Json::Value& currentConfigurationOut = configOut.GetFromKey( "MultiscaleSettings", Json::nullValue );
+
+  std::cout << "Detected " << currentConfigurationIn.size() << " scales." << std::endl;
   // find the scales
-  for ( unsigned int iI=0; iI<currentConfiguration.size(); ++iI )
+  for ( unsigned int iI=0; iI<currentConfigurationIn.size(); ++iI )
     {
-    Json::Value& currentSettings = config.GetFromIndex( currentConfiguration, iI, Json::nullValue );
-    Json::Value& currentScaleSettings = config.GetFromKey( currentSettings, "Downsample", Json::nullValue );
-    TFLOAT dCurrentScale = config.GetFromKey( currentScaleSettings, "Scale", 1 ).asDouble();
+    Json::Value& currentSettings = configIn.GetFromIndex( currentConfigurationIn, iI, Json::nullValue );
+    Json::Value& currentScaleSettings = configIn.GetFromKey( currentSettings, "Downsample", Json::nullValue );
+    TFLOAT dCurrentScale = configIn.GetFromKey( currentScaleSettings, "Scale", 1 ).asDouble();
+    currentConfigurationOut[ iI ][ "Downsample" ][ "Scale" ] = dCurrentScale;
     ptrImageManager->AddScale( dCurrentScale, iI );
     }  
-  lddmm.SetAutoConfiguration( *config.GetRootPointer() );
+  lddmm.SetAutoConfiguration( *configIn.GetRootPointer(), *configOut.GetRootPointer() );
 
   ptrImageManager->print( std::cout );
 
@@ -100,8 +106,16 @@ int DoIt( int argc, char** argv )
   // write out the resulting JSON file if desired
   if ( configFileOut.compare("None") != 0 )
     {
-    config.WriteCurrentConfigurationToJSONFile( configFileOut, CALATK::GetCALATKJsonHeaderString() );
+      if ( bCleanJSONConfigOutput )
+      {
+      configOut.WriteCurrentConfigurationToJSONFile( configFileOut, CALATK::GetCALATKJsonHeaderString() + "  -- CLEANED" );
+      }
+      else
+      {
+      configIn.WriteCurrentConfigurationToJSONFile( configFileOut, CALATK::GetCALATKJsonHeaderString() );
+      }
     }
+
 
   const VectorImageType* ptrI0Orig = ptrImageManager->GetOriginalImageById( uiI0 );
   const VectorImageType* ptrI1Orig = ptrImageManager->GetOriginalImageById( uiI1 );

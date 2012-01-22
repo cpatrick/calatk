@@ -50,19 +50,15 @@ CMultiGaussianKernel< T, VImageDimension >::~CMultiGaussianKernel()
 }
 
 template<class T, unsigned int VImageDimension >
-void CMultiGaussianKernel< T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValue )
+void CMultiGaussianKernel< T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
 {
-  Superclass::SetAutoConfiguration( ConfValue );
-  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "MultiGaussianKernel", Json::nullValue );
+  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "MultiGaussianKernel", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "MultiGaussianKernel", Json::nullValue );
 
-  // get the values that should be used if nothing can be found
-  std::vector<T> currentSigmas = GetExternalOrDefaultSigmas();
-  std::vector<T> currentEffectiveWeights = GetExternalOrDefaultEffectiveWeights();
-  bool currentEstimateGradientScalingFactors = GetExternalOrDefaultEstimateGradientScalingFactors();
-
-  SetJSONSigmas( this->m_jsonConfig.GetFromKeyAsVector( currentConfiguration, "Sigmas", currentSigmas ) );
-  SetJSONEffectiveWeights( this->m_jsonConfig.GetFromKeyAsVector( currentConfiguration, "EffectiveWeights", currentEffectiveWeights ) );
-  SetJSONEstimateGradientScalingFactors( this->m_jsonConfig.GetFromKey( currentConfiguration, "EstimateGradientScalingFactors", currentEstimateGradientScalingFactors ).asBool() );
+  SetJSONFromKeyVector( currentConfigurationIn, currentConfigurationOut, Sigmas );
+  SetJSONFromKeyVector( currentConfigurationIn, currentConfigurationOut, EffectiveWeights );
+  SetJSONFromKeyBool( currentConfigurationIn, currentConfigurationOut, EstimateGradientScalingFactors );
 
 }
 

@@ -42,29 +42,40 @@ public:
       m_PrintConfiguration = DefaultPrintConfiguration;
   }
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValue )
+  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
   {
-    m_jsonConfig.SetRootReference( ConfValue );
+    m_jsonConfigIn.SetRootReference( ConfValueIn );
+    m_jsonConfigOut.SetRootReference( ConfValueOut );
+
+    // this is the input file that is being parsed; only the fresh values (in out) are printed as needed
+    m_jsonConfigOut.PrintSettingsOff();
+
     if ( this->GetPrintConfiguration() )
       {
-      m_jsonConfig.PrintSettingsOn();
+      m_jsonConfigIn.PrintSettingsOn();
       }
     else
       {
-      m_jsonConfig.PrintSettingsOff();
+      m_jsonConfigIn.PrintSettingsOff();
       }
   }
 
-  const Json::Value* GetAutoConfiguration()
+  const Json::Value* GetAutoConfigurationIn()
   {
-    return m_jsonConfig.GetRootPointer();
+    return m_jsonConfigIn.GetRootPointer();
+  }
+
+  const Json::Value* GetAutoConfigurationOut()
+  {
+    return m_jsonConfigOut.GetRootPointer();
   }
 
   SetMacro( PrintConfiguration, bool );
   GetMacro( PrintConfiguration, bool );
 
 protected:
-  CJSONConfiguration m_jsonConfig;
+  CJSONConfiguration m_jsonConfigIn;
+  CJSONConfiguration m_jsonConfigOut;
 
 private:
   // if true the Json configurations will be printed

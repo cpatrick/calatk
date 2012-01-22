@@ -48,7 +48,7 @@ public:
   SetMacro( ObjectiveFunction, std::string );
   GetMacro( ObjectiveFunction, std::string );
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValue );
+  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
 
 protected:
 

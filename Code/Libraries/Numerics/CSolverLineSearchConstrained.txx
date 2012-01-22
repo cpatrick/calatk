@@ -36,14 +36,15 @@ CSolverLineSearchConstrained< TState >::CSolverLineSearchConstrained()
 // auto configuration
 //
 template < class TState >
-void CSolverLineSearchConstrained< TState>::SetAutoConfiguration( Json::Value& ConfValue )
+void CSolverLineSearchConstrained< TState>::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
 {
-  Superclass::SetAutoConfiguration( ConfValue );
+  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
 
-  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "LineSearch", Json::nullValue );
+  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "LineSearch", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "LineSearch", Json::nullValue );
 
-  SetJSONFromKeyUInt( currentConfiguration, NumberOfAugmentedLagrangianIterations );
-  SetJSONFromKeyDouble( currentConfiguration, AugmentedLagrangianPenaltyIncreaseFactor );
+  SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, NumberOfAugmentedLagrangianIterations );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, AugmentedLagrangianPenaltyIncreaseFactor );
 }
 
 

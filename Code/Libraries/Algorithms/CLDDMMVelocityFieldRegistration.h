@@ -79,7 +79,7 @@ public:
   SetMacro( Metric, std::string );
   GetMacro( Metric, std::string );
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValue );
+  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
 
 protected:
 

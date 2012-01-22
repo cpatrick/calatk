@@ -32,12 +32,13 @@ COneStepEvolver<T, VImageDimension >::COneStepEvolver()
 }
 
 template < class T, unsigned int VImageDimension >
-void COneStepEvolver<T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValue )
+void COneStepEvolver<T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
 {
-  Superclass::SetAutoConfiguration( ConfValue );
-  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "OneStepEvolver", Json::nullValue );
-  
-  SetJSONNumberOfThreads( this->m_jsonConfig.GetFromKey( currentConfiguration, "NumberOfThreads", GetExternalOrDefaultNumberOfThreads() ).asUInt() );
+  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "OneStepEvolver", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "OneStepEvolver", Json::nullValue );
+
+  SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, NumberOfThreads );
 }
 
 template < class T, unsigned int VImageDimension >

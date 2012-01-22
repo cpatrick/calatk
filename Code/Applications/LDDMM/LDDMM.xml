@@ -48,9 +48,7 @@
             <element>simplifiedShooting</element>
             <element>adjointShooting</element>
             <element>relaxation</element>
-            <description>Selects the desired LDDMM solver (simplifiedShooting/adjointShooting/relaxation). The relaxation solver performs the optimization over the full spatio-temporal velocity field.\
-            This is the algorithm by Beg. The simplified shooting method and the adjoint shooting method perform the optimization over the initial image and the initial momentum. The implementations are based\
-            on a modification of the shooting algorithm by Ashburner (simplified shooting) and the adjoint shooting method/geodesic regression formulation by Vialard/Niethammer.</description>
+            <description>Selects the desired LDDMM solver (simplifiedShooting/adjointShooting/relaxation). The relaxation solver performs the optimization over the full spatio-temporal velocity field. This is the algorithm by Beg. The simplified shooting method and the adjoint shooting method perform the optimization over the initial image and the initial momentum. The implementations are based on a modification of the shooting algorithm by Ashburner (simplified shooting) and the adjoint shooting method/geodesic regression formulation by Vialard/Niethammer.</description>
         </string-enumeration>
 
   </parameters>
@@ -114,6 +112,14 @@
 	  <default>None</default>
 	  <description>JSON Configuration file which describes the full parameterization of the algorithm run..</description>
 	</file>
+
+        <boolean>
+          <name>bCleanJSONConfigOutput</name>
+          <longflag>--cleanConfigOutput</longflag>
+          <default>false</default>
+          <description>If set a config file written out with --configOut will only contain values that are actually used within a run. This is useful when using a pre-specified configuration file with --config to extract only the relevant settings. Otherwise missing settings are simply added (which can also be useful if one would like to store multiple settings, e.g., for different kernels. etc. in one configuration file).
+          </description>
+        </boolean>
 
   </parameters>
   

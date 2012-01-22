@@ -96,14 +96,15 @@ CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::~CLDDMMGeometricMetamor
 }
 
 template < class TState >
-void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::SetAutoConfiguration( Json::Value& ConfValue )
+void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
 {
-  Superclass::SetAutoConfiguration( ConfValue );
-  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "GeometricMetamorphosis", Json::nullValue );
-  
-  SetJSONFromKeyDouble( currentConfiguration, Sigma1Sqr );
-  SetJSONFromKeyDouble( currentConfiguration, Sigma2Sqr );
-  SetJSONFromKeyDouble( currentConfiguration, W );
+  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "GeometricMetamorphosis", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "GeometricMetamorphosis", Json::nullValue );
+
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, Sigma1Sqr );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, Sigma2Sqr );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, W );
 
 }
 

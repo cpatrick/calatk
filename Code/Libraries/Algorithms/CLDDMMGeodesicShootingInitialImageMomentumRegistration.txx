@@ -57,7 +57,7 @@ void CLDDMMGeodesicShootingInitialImageMomentumRegistration< TState >::SetDefaul
   plddmm->SetMetricPointer( this->m_ptrMetric );
   plddmm->SetImageManagerPointer( this->m_ptrImageManager );
 
-  plddmm->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
+  plddmm->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 
   this->m_ptrObjectiveFunction = plddmm;
   this->m_ptrKernel->SetObjectiveFunctionPointer( plddmm );

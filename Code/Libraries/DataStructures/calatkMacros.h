@@ -96,15 +96,25 @@
 
 /** Master macro to deal with setting parameters through JSON in the classes */
 
-#define SetJSONFromKeyDouble( currentConfiguration, VariableName ) \
-  SetJSON##VariableName( this->m_jsonConfig.GetFromKey( currentConfiguration, #VariableName, this->GetExternalOrDefault##VariableName() ).asDouble() ); \
+#define SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, VariableName ) \
+  SetJSON##VariableName( this->m_jsonConfigIn.GetFromKey( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ).asDouble() ); \
+  this->m_jsonConfigOut.GetFromKey( currentConfigurationOut, #VariableName, this->GetExternalOrDefault##VariableName() ).asDouble(); \
 
-#define SetJSONFromKeyUInt( currentConfiguration, VariableName ) \
-  SetJSON##VariableName( this->m_jsonConfig.GetFromKey( currentConfiguration, #VariableName, this->GetExternalOrDefault##VariableName() ).asUInt() ); \
+#define SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, VariableName ) \
+  SetJSON##VariableName( this->m_jsonConfigIn.GetFromKey( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ).asUInt() ); \
+  this->m_jsonConfigOut.GetFromKey( currentConfigurationOut, #VariableName, this->GetExternalOrDefault##VariableName() ).asUInt(); \
 
-#define SetJSONFromKeyBool( currentConfiguration, VariableName ) \
-  SetJSON##VariableName( this->m_jsonConfig.GetFromKey( currentConfiguration, #VariableName, this->GetExternalOrDefault##VariableName() ).asBool() ); \
+#define SetJSONFromKeyBool( currentConfigurationIn, currentConfigurationOut, VariableName ) \
+  SetJSON##VariableName( this->m_jsonConfigIn.GetFromKey( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ).asBool() ); \
+  this->m_jsonConfigOut.GetFromKey( currentConfigurationOut, #VariableName, this->GetExternalOrDefault##VariableName() ).asBool(); \
 
+#define SetJSONFromKeyString( currentConfigurationIn, currentConfigurationOut, VariableName ) \
+  SetJSON##VariableName( this->m_jsonConfigIn.GetFromKey( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ).asString() ); \
+  this->m_jsonConfigOut.GetFromKey( currentConfigurationOut, #VariableName, this->GetExternalOrDefault##VariableName() ).asString(); \
+
+#define SetJSONFromKeyVector( currentConfigurationIn, currentConfigurationOut, VariableName ) \
+  SetJSON##VariableName( this->m_jsonConfigIn.GetFromKeyAsVector( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ) ); \
+  this->m_jsonConfigOut.GetFromKeyAsVector( currentConfigurationOut, #VariableName, this->GetExternalOrDefault##VariableName() ); \
 
 /** multi-dimensional macro */
 #define DoItND(type,ImageDimension,argc,argv) \

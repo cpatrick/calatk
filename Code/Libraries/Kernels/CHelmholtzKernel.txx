@@ -34,13 +34,14 @@ CHelmholtzKernel< T, VImageDimension >::~CHelmholtzKernel()
 }
 
 template <class T, unsigned int VImageDimension >
-void CHelmholtzKernel< T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValue )
+void CHelmholtzKernel< T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
 {
-  Superclass::SetAutoConfiguration( ConfValue );
-  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "HelmholtzKernel", Json::nullValue );
+  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "HelmholtzKernel", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "HelmholtzKernel", Json::nullValue );
 
-  SetJSONFromKeyDouble( currentConfiguration, Alpha );
-  SetJSONFromKeyDouble( currentConfiguration, Gamma );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, Alpha );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, Gamma );
 }
 
 template <class T, unsigned int VImageDimension >

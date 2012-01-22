@@ -92,25 +92,26 @@ CSolverLineSearch< TState>::~CSolverLineSearch()
 // auto configuration
 //
 template < class TState >
-void CSolverLineSearch< TState>::SetAutoConfiguration( Json::Value& ConfValue )
+void CSolverLineSearch< TState>::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
 {
-  Superclass::SetAutoConfiguration( ConfValue );
+  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
 
-  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "LineSearch", Json::nullValue );
-  
-  SetJSONFromKeyDouble( currentConfiguration, InitialStepSize );
-  SetJSONFromKeyDouble( currentConfiguration, AdjustStepSizeUpFactor );
-  SetJSONFromKeyDouble( currentConfiguration, AdjustStepSizeDownFactor );
-  SetJSONFromKeyDouble( currentConfiguration, ReductionFactor );
-  SetJSONFromKeyDouble( currentConfiguration, MinAllowedStepSize );
-  SetJSONFromKeyDouble( currentConfiguration, DecreaseConstant );
-  SetJSONFromKeyUInt( currentConfiguration, MaxNumberOfIterations );
-  SetJSONFromKeyUInt( currentConfiguration, MaxNumberOfTries );
-  SetJSONFromKeyUInt( currentConfiguration, AdjustStepSizeUpNumber );
-  SetJSONFromKeyUInt( currentConfiguration, AdjustStepSizeDownNumber );
+  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "LineSearch", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "LineSearch", Json::nullValue );
 
-  SetJSONFromKeyBool( currentConfiguration, OutputStateInformation );
-  SetJSONFromKeyUInt( currentConfiguration, OutputStateInformationFrequency );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, InitialStepSize );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, AdjustStepSizeUpFactor );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, AdjustStepSizeDownFactor );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, ReductionFactor );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, MinAllowedStepSize );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, DecreaseConstant );
+  SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, MaxNumberOfIterations );
+  SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, MaxNumberOfTries );
+  SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, AdjustStepSizeUpNumber );
+  SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, AdjustStepSizeDownNumber );
+
+  SetJSONFromKeyBool( currentConfigurationIn, currentConfigurationOut, OutputStateInformation );
+  SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, OutputStateInformationFrequency );
 
 }
 

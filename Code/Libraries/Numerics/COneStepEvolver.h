@@ -108,7 +108,7 @@ public:
    */
   GetMacro( NumberOfThreads, unsigned int );
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValue );
+  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
 
   /**
     *

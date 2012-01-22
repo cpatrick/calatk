@@ -35,20 +35,21 @@ CLDDMMVelocityFieldRegistration< TState >::~CLDDMMVelocityFieldRegistration()
 }
 
 template < class TState >
-void CLDDMMVelocityFieldRegistration< TState >::SetAutoConfiguration( Json::Value& ConfValue )
+void CLDDMMVelocityFieldRegistration< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
 {
-  Superclass::SetAutoConfiguration( ConfValue );
-  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
+  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
 
-  SetJSONKernel( this->m_jsonConfig.GetFromKey( currentConfiguration, "Kernel", GetExternalOrDefaultKernel() ).asString() );
-  SetJSONMetric( this->m_jsonConfig.GetFromKey( currentConfiguration, "Metric", GetExternalOrDefaultMetric() ).asString() );
+  SetJSONFromKeyString( currentConfigurationIn, currentConfigurationOut, Kernel );
+  SetJSONFromKeyString( currentConfigurationIn, currentConfigurationOut, Metric );
 }
 
 template < class TState >
 void CLDDMMVelocityFieldRegistration< TState >::SetDefaultMetricPointer()
 {
   this->m_ptrMetric = CMetricFactory< T, TState::VImageDimension >::CreateNewMetric( m_Metric );
-  this->m_ptrMetric->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
+  this->m_ptrMetric->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 }
 
 template < class TState >
@@ -61,7 +62,7 @@ template < class TState >
 void CLDDMMVelocityFieldRegistration< TState >::SetDefaultKernelPointer()
 {
   this->m_ptrKernel = CKernelFactory< T, TState::VImageDimension >::CreateNewKernel( m_Kernel );
-  this->m_ptrKernel->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
+  this->m_ptrKernel->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 }
 
 template < class TState >
@@ -69,15 +70,15 @@ void CLDDMMVelocityFieldRegistration< TState >::SetDefaultEvolverPointer()
 {
   this->m_ptrEvolver = new CStationaryEvolver< T, TState::VImageDimension >;
   this->m_ptrEvolver->SetOneStepEvolverPointer( &oneStepDefaultEvolver );
-  oneStepDefaultEvolver.SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
-  this->m_ptrEvolver->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
+  oneStepDefaultEvolver.SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
+  this->m_ptrEvolver->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 }
 
 template < class TState >
 void CLDDMMVelocityFieldRegistration< TState >::SetDefaultSolverPointer()
 {
   this->m_ptrSolver = new CSolverMultiScale< TState >;
-  this->m_ptrSolver->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
+  this->m_ptrSolver->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 }
 
 template < class TState >

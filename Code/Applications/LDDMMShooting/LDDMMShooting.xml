@@ -102,6 +102,14 @@
 	  <description>JSON Configuration file which describes the full parameterization of the algorithm run..</description>
 	</file>
 
+        <boolean>
+          <name>bCleanJSONConfigOutput</name>
+          <longflag>--cleanConfigOutput</longflag>
+          <default>false</default>
+          <description>If set a config file written out with --configOut will only contain values that are actually used within a run. This is useful when using a pre-specified configuration file with --config to extract only the relevant settings. Otherwise missing settings are simply added (which can also be useful if one would like to store multiple settings, e.g., for different kernels. etc. in one configuration file).
+          </description>
+        </boolean>
+
   </parameters>
   
 </executable>

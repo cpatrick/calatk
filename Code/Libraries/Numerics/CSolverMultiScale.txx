@@ -34,13 +34,14 @@ CSolverMultiScale< TState >::~CSolverMultiScale()
 }
 
 template < class TState >
-void CSolverMultiScale< TState >::SetAutoConfiguration( Json::Value &ConfValue )
+void CSolverMultiScale< TState >::SetAutoConfiguration( Json::Value &ConfValueIn, Json::Value &ConfValueOut )
 {
-  Superclass::SetAutoConfiguration( ConfValue );
-  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "MultiScaleFinalOutput", Json::nullValue );
+  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "MultiScaleFinalOutput", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "MultiScaleFinalOutput", Json::nullValue );
 
-  SetJSONFromKeyBool( currentConfiguration, OutputStateInformation );
-  SetJSONFromKeyUInt( currentConfiguration, OutputStateInformationFrequency );
+  SetJSONFromKeyBool( currentConfigurationIn, currentConfigurationOut, OutputStateInformation );
+  SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, OutputStateInformationFrequency );
 
 }
 
@@ -120,7 +121,8 @@ bool CSolverMultiScale< TState >::Solve()
 
   bool bHasBeenInitialized = false;
 
-  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "MultiscaleSettings", Json::nullValue );
+  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "MultiscaleSettings", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "MultiscaleSettings", Json::nullValue );
 
   // loop over all scales, starting at the lowest
   for ( int iI=(int)uiNrOfScales-1; iI>=0; --iI )
@@ -128,7 +130,10 @@ bool CSolverMultiScale< TState >::Solve()
     ptrImageManager->SelectScale( (unsigned int)iI );
     m_ptrSolver->SetExternalSolverState( (unsigned int)iI );
     
-    m_ptrSolver->SetAutoConfiguration( this->m_jsonConfig.GetFromIndex( currentConfiguration, iI, Json::nullValue ) );
+    m_ptrSolver->SetAutoConfiguration(
+          this->m_jsonConfigIn.GetFromIndex( currentConfigurationIn, iI, Json::nullValue ),
+          this->m_jsonConfigOut.GetFromIndex( currentConfigurationOut, iI, Json::nullValue )
+          );
 
     std::cout << "Solving multiscale level " << iI+1 << "/" << uiNrOfScales << std::endl;
 

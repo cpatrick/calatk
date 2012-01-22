@@ -57,7 +57,7 @@ void CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TState >::S
   pMetamorphosis->SetMetricPointer( this->m_ptrMetric );
   pMetamorphosis->SetImageManagerPointer( this->m_ptrImageManager );
 
-  pMetamorphosis->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
+  pMetamorphosis->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 
   this->m_ptrObjectiveFunction = pMetamorphosis;
   this->m_ptrKernel->SetObjectiveFunctionPointer( pMetamorphosis );

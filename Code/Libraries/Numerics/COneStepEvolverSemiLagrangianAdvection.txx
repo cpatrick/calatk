@@ -56,14 +56,15 @@ COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::~COneStepEvolverSem
 }
 
 template <class T, unsigned int VImageDimension >
-void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValue )
+void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
 {
-  Superclass::SetAutoConfiguration( ConfValue );
+  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
 
-  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "OneStepEvolverSemiLagrangianAdvection", Json::nullValue );
+  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "OneStepEvolverSemiLagrangianAdvection", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "OneStepEvolverSemiLagrangianAdvection", Json::nullValue );
 
-  SetJSONFromKeyUInt( currentConfiguration, NumberOfIterationsToDetermineFlowField );
-  SetJSONFromKeyDouble( currentConfiguration, TimeStepFactor );
+  SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, NumberOfIterationsToDetermineFlowField );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, TimeStepFactor );
 }
 
 //

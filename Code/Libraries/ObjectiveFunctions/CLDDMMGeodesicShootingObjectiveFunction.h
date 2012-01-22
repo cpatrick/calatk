@@ -65,7 +65,7 @@ public:
   SetMacro( EstimateInitialImage, bool );
   GetMacro( EstimateInitialImage, bool );
 
-  void SetAutoConfiguration( Json::Value& ConfValue );
+  void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
 
 protected:
 

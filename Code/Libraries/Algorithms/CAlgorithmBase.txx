@@ -158,7 +158,7 @@ template < class T, unsigned int VImageDimension >
 void CAlgorithmBase< T, VImageDimension >::SetKernelPointer( ptrKernelType ptrKernel )
 {
   m_ptrKernel = ptrKernel;
-  this->m_ptrKernel->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
+  this->m_ptrKernel->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 }
 
 template < class T, unsigned int VImageDimension >

@@ -66,7 +66,7 @@ public:
   SetMacro( EstimateGradientScalingFactors, bool );
   GetMacro( EstimateGradientScalingFactors, bool );
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValue );
+  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
 
   virtual void ConvolveWithKernel( VectorImageType* pVecImage );
   virtual void ConvolveWithInverseKernel(VectorImageType *pVecImage);

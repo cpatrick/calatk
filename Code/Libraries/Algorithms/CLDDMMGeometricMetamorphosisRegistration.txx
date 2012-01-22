@@ -45,12 +45,13 @@ CLDDMMGeometricMetamorphosisRegistration< TState >::~CLDDMMGeometricMetamorphosi
 }
 
 template< class TState >
-void CLDDMMGeometricMetamorphosisRegistration< TState >::SetAutoConfiguration( Json::Value& ConfValue )
+void CLDDMMGeometricMetamorphosisRegistration< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
 {
-  Superclass::SetAutoConfiguration( ConfValue );
-  Json::Value& currentConfiguration = this->m_jsonConfig.GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
+  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
 
-  SetJSONMaskKernel( this->m_jsonConfig.GetFromKey( currentConfiguration, "MaskKernel", GetExternalOrDefaultMaskKernel() ).asString() );
+  SetJSONFromKeyString( currentConfigurationIn, currentConfigurationOut, MaskKernel );
 }
 
 template < class TState >
@@ -75,7 +76,7 @@ template < class TState >
 void CLDDMMGeometricMetamorphosisRegistration< TState >::SetDefaultMaskKernelPointer()
 {
   this->m_ptrMaskKernel = CKernelFactory< T, TState::VImageDimension >::CreateNewKernel( m_MaskKernel );
-  this->m_ptrMaskKernel->SetAutoConfiguration( this->m_jsonConfig.GetFromKey( "MaskKernel", Json::nullValue ) );
+  this->m_ptrMaskKernel->SetAutoConfiguration( this->m_jsonConfigIn.GetFromKey( "MaskKernel", Json::nullValue ), this->m_jsonConfigOut.GetFromKey( "MaskKernel", Json::nullValue ) );
 }
 
 template < class TState >
@@ -131,7 +132,7 @@ void CLDDMMGeometricMetamorphosisRegistration< TState >::SetDefaultObjectiveFunc
   plddmm->SetMetricPointer( this->m_ptrMetric );
   plddmm->SetImageManagerPointer( this->m_ptrImageManager );
 
-  plddmm->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
+  plddmm->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
   
   this->m_ptrObjectiveFunction = plddmm;
   this->m_ptrKernel->SetObjectiveFunctionPointer( plddmm );
