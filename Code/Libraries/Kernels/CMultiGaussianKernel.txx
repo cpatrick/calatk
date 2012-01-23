@@ -56,10 +56,18 @@ void CMultiGaussianKernel< T, VImageDimension >::SetAutoConfiguration( Json::Val
   Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "MultiGaussianKernel", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "MultiGaussianKernel", Json::nullValue );
 
+  SetJSONHelpForRootKey( MultiGaussianKernel, "weighted sum of Gaussians" );
+
   SetJSONFromKeyVector( currentConfigurationIn, currentConfigurationOut, Sigmas );
   SetJSONFromKeyVector( currentConfigurationIn, currentConfigurationOut, EffectiveWeights );
   SetJSONFromKeyBool( currentConfigurationIn, currentConfigurationOut, EstimateGradientScalingFactors );
 
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, Sigmas,
+                     "vector of standard deviations (in physical coordinates)" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, EffectiveWeights,
+                     "weightings for the Gaussians (can be normalized with EstimateGradientScalingFactors)" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, EstimateGradientScalingFactors,
+                     "estimates the scaling factors for each sigma based on the initial image gradient for that sigma" );
 }
 
 

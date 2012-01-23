@@ -54,7 +54,12 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::SetAutoConfig
   Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "SpatioTemporalVelocityField", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "SpatioTemporalVelocityField", Json::nullValue );
 
+  SetJSONHelpForRootKey( SpatioTemporalVelocityField, "settings for the spatio-temporal velocity field" );
+
   SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, NumberOfDiscretizationVolumesPerUnitTime );
+
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, NumberOfDiscretizationVolumesPerUnitTime,
+                     "number of time discretization steps used for a unit time period" );
 }
 
 

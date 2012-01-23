@@ -116,6 +116,22 @@
   SetJSON##VariableName( this->m_jsonConfigIn.GetFromKeyAsVector( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ) ); \
   this->m_jsonConfigOut.GetFromKeyAsVector( currentConfigurationOut, #VariableName, this->GetExternalOrDefault##VariableName() ); \
 
+#define SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, VariableName, HelpString) \
+  this->m_jsonConfigIn.SetHelpForKey( currentConfigurationIn, #VariableName, HelpString ); \
+  this->m_jsonConfigOut.SetHelpForKey( currentConfigurationOut, #VariableName, HelpString ); \
+
+#define SetJSONHelpForRootKey( VariableName, HelpString ) \
+  this->m_jsonConfigIn.SetHelpForKey( #VariableName, HelpString ); \
+  this->m_jsonConfigOut.SetHelpForKey( #VariableName, HelpString ); \
+
+#define SetJSONHelpForKeyBefore( currentConfigurationIn, currentConfigurationOut, VariableName, HelpString) \
+  this->m_jsonConfigIn.SetHelpForKey( currentConfigurationIn, #VariableName, HelpString, Json::commentBefore ); \
+  this->m_jsonConfigOut.SetHelpForKey( currentConfigurationOut, #VariableName, HelpString, Json::commentBefore ); \
+
+#define SetJSONHelpForRootKeyBefore( VariableName, HelpString ) \
+  this->m_jsonConfigIn.SetHelpForKey( #VariableName, HelpString, Json::commentBefore ); \
+  this->m_jsonConfigOut.SetHelpForKey( #VariableName, HelpString, Json::commentBefore ); \
+
 /** multi-dimensional macro */
 #define DoItND(type,ImageDimension,argc,argv) \
   switch ( ImageDimension ) \

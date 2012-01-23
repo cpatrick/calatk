@@ -124,6 +124,8 @@ bool CSolverMultiScale< TState >::Solve()
   Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "MultiscaleSettings", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "MultiscaleSettings", Json::nullValue );
 
+  SetJSONHelpForRootKey( MultiscaleSettings, "settings for the multiscale solver" );
+
   // loop over all scales, starting at the lowest
   for ( int iI=(int)uiNrOfScales-1; iI>=0; --iI )
     {

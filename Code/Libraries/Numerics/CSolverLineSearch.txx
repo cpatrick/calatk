@@ -99,6 +99,8 @@ void CSolverLineSearch< TState>::SetAutoConfiguration( Json::Value& ConfValueIn,
   Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "LineSearch", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "LineSearch", Json::nullValue );
 
+  SetJSONHelpForRootKey( LineSearch, "setting for the linesearch algorithm" );
+
   SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, InitialStepSize );
   SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, AdjustStepSizeUpFactor );
   SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, AdjustStepSizeDownFactor );
@@ -113,6 +115,30 @@ void CSolverLineSearch< TState>::SetAutoConfiguration( Json::Value& ConfValueIn,
   SetJSONFromKeyBool( currentConfigurationIn, currentConfigurationOut, OutputStateInformation );
   SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, OutputStateInformationFrequency );
 
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, InitialStepSize,
+                     "initial step size the solver tries" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, AdjustStepSizeUpFactor,
+                     "factor the desired step size is adjust up (if a sufficient number of successful steps were taken" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, AdjustStepSizeDownFactor,
+                     "factor the desired step size is adjusted down (if the desired step size could not be used repeatedly" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, ReductionFactor,
+                     "factor by which the step size of the line search is reduced if a reduction could not be found with the current stepsize" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, MinAllowedStepSize,
+                     "minimal allowed step size (before declaring optimization complete)" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, DecreaseConstant,
+                     "require sufficient decrease of energy" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, MaxNumberOfIterations,
+                     "maximal number of iterations" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, MaxNumberOfTries,
+                     "number of tries to find a smaller solution" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, AdjustStepSizeUpNumber,
+                     "after how many initial successful steps is the desired step size increased" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, AdjustStepSizeDownNumber,
+                     "after how many unsuccessful initial steps is the desrired step size decreased" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, OutputStateInformation,
+                     "output internal information of algorithm (for debugging)" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, OutputStateInformationFrequency,
+                     "controls at which iterations the state information should be output" );
 }
 
 

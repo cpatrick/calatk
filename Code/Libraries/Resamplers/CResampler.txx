@@ -39,7 +39,12 @@ void CResampler< T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfVa
   Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "Resampler", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "Resampler", Json::nullValue );
 
+  SetJSONHelpForRootKey( Resampler, "image resampler" );
+
   SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, Sigma );
+
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, Sigma,
+                     "controls the standard deviation of Gaussian used when resampling" );
 }
 
 template <class T, unsigned int VImageDimension >

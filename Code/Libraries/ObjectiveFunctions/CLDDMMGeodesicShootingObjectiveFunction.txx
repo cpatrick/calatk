@@ -43,9 +43,19 @@ void CLDDMMGeodesicShootingObjectiveFunction< TState >::SetAutoConfiguration( Js
   Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "LDDMMGeodesicShooting", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "LDDMMGeodesicShooting", Json::nullValue );
 
+  SetJSONHelpForRootKey( LDDMMGeodesicShooting, "setting for LDDMM shooting implementation (depending only on initial image/momentum" );
+
   SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, NumberOfDiscretizationVolumesPerUnitTime );
   SetJSONFromKeyBool( currentConfigurationIn, currentConfigurationOut, EstimateInitialImage );
   SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, SigmaSqr );
+
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, NumberOfDiscretizationVolumesPerUnitTime,
+                     "if time is discretized, determines how many discretization steps are used for each unit of time" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, EstimateIntialImage,
+                     "when true the initial image is jointly estimated with the initial momentum" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, SigmaSqr,
+                     "1/SigmaSqr is the weight for the datamatch term" );
+
 }
 
 template < class TState >

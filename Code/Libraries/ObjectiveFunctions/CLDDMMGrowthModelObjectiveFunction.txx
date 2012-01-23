@@ -56,8 +56,12 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::SetAutoConfiguration( Json::V
   Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "GrowthModel", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "GrowthModel", Json::nullValue );
 
+  SetJSONHelpForRootKey( GrowthModel, "settings for the LDDMM growth model" );
+
   SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, SigmaSqr );
 
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, SigmaSqr,
+                     "1/SigmaSqr is the weight for the data match term" );
 }
 
 template < class TState >

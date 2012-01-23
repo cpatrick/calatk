@@ -63,8 +63,15 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::SetAutoConfigu
   Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "OneStepEvolverSemiLagrangianAdvection", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "OneStepEvolverSemiLagrangianAdvection", Json::nullValue );
 
+  SetJSONHelpForRootKey( OneStepEvolverSemiLagrangianAdvection, "settings for the semi-Lagrangian advection solver" );
+
   SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, NumberOfIterationsToDetermineFlowField );
   SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, TimeStepFactor );
+
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, NumberOfIterationsToDetermineFlowField,
+                     "number of iterations the solver to determine the velocity which a particle had to end up at the current point" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, TimeStepFactor,
+                     "factor the CFL timestep is multiplied by (can be larger than one for a semi-Lagrangian scheme" );
 }
 
 //

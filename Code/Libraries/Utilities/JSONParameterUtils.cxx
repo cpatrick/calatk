@@ -24,7 +24,11 @@ namespace CALATK
 {
 
 CJSONConfiguration::CJSONConfiguration()
-  : m_Indent( 2 ), m_IsMasterNode( false ), m_PrintSettings( true ), m_ptrRoot( NULL )
+  : m_Indent( 2 ),
+    m_IsMasterNode( false ),
+    m_PrintSettings( true ),
+    m_AllowHelpComments( false ),
+    m_ptrRoot( NULL )
 {
 }
 
@@ -54,6 +58,21 @@ void CJSONConfiguration::PrintSettingsOff()
 bool CJSONConfiguration::GetPrintSettings()
 {
   return m_PrintSettings;
+}
+
+void CJSONConfiguration::AllowHelpCommentsOn()
+{
+  m_AllowHelpComments = true;
+}
+
+void CJSONConfiguration::AllowHelpCommentsOff()
+{
+  m_AllowHelpComments = false;
+}
+
+bool CJSONConfiguration::GetAllowHelpComments()
+{
+  return m_AllowHelpComments;
 }
 
 void CJSONConfiguration::SetIndent( unsigned int uiIndent )
@@ -216,6 +235,15 @@ CJSONConfiguration::GetFromKeyAsVector( Json::Value& vSubTree, std::string sKey,
 
 }
 
+void CJSONConfiguration::SetHelpForKey( Json::Value &vSubTree, std::string sKey, std::string sHelpString, Json::CommentPlacement commentPlacement )
+{
+  if ( this->GetAllowHelpComments() )
+  {
+    Json::Value& currentValue = GetFromKey( vSubTree, sKey );
+    currentValue.setComment( "// " + sHelpString, commentPlacement );
+  } // otherwise do not do anything, because help comments are disabled
+}
+
 Json::Value& CJSONConfiguration::GetFromKey( std::string sKey, Json::Value vDefault )
 {
   if ( m_ptrRoot == NULL )
@@ -225,6 +253,15 @@ Json::Value& CJSONConfiguration::GetFromKey( std::string sKey, Json::Value vDefa
     InitializeEmptyRoot();
     }
   return GetFromKey( *m_ptrRoot, sKey, vDefault, false );
+}
+
+void CJSONConfiguration::SetHelpForKey( std::string sKey, std::string sHelpString, Json::CommentPlacement commentPlacement )
+{
+  if ( this->GetAllowHelpComments() )
+  {
+    Json::Value& currentValue = GetFromKey( sKey );
+    currentValue.setComment( "// " + sHelpString, commentPlacement );
+  } // otherwise do not do anything, because help comments are disabled
 }
 
 Json::Value& CJSONConfiguration::GetFromIndex( Json::Value& vSubTree, Json::ArrayIndex ind, bool bUseIndent )

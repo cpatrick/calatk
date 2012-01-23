@@ -49,6 +49,7 @@ public:
 
     // this is the input file that is being parsed; only the fresh values (in out) are printed as needed
     m_jsonConfigOut.PrintSettingsOff();
+    m_jsonConfigOut.AllowHelpCommentsOn();
 
     if ( this->GetPrintConfiguration() )
       {

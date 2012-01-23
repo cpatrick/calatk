@@ -85,15 +85,22 @@ public:
    */
   bool WriteCurrentConfigurationToJSONFile( std::string sFileName, std::string commentString="" );
 
-  Json::Value& GetFromKey( std::string sKey, Json::Value vDefault );
-  Json::Value& GetFromKey( Json::Value& vSubTree, std::string sKey, Json::Value vDefault, bool bUseIndent = true );
+  Json::Value& GetFromKey( std::string sKey, Json::Value vDefault = Json::nullValue );
+  Json::Value& GetFromKey( Json::Value& vSubTree, std::string sKey, Json::Value vDefault = Json::nullValue, bool bUseIndent = true );
   Json::Value& GetFromIndex( Json::Value& vSubTree, Json::ArrayIndex ind, bool bUseIndent = true );
   VectorType GetFromKeyAsVector( Json::Value& vSubTree, std::string sKey, VectorType, bool bUseIndent = true );
   VectorFloatType GetFromKeyAsVector( Json::Value& vSubTree, std::string sKey, VectorFloatType, bool bUseIndent = true );
 
+  void SetHelpForKey( Json::Value& vSubTree, std::string sKey, std::string sHelpString, Json::CommentPlacement commentPlacement = Json::commentAfterOnSameLine );
+  void SetHelpForKey( std::string sKey, std::string sHelpString, Json::CommentPlacement commentPlacement = Json::commentAfterOnSameLine );
+
   void PrintSettingsOn();
   void PrintSettingsOff();
   bool GetPrintSettings();
+
+  void AllowHelpCommentsOn();
+  void AllowHelpCommentsOff();
+  bool GetAllowHelpComments();
 
   void SetIndent( unsigned int uiIndent );
   unsigned int GetIndent();
@@ -108,6 +115,7 @@ private:
   unsigned int m_Indent;
   bool m_IsMasterNode;
   bool m_PrintSettings;
+  bool m_AllowHelpComments;
   Json::Value* m_ptrRoot;
 };
 

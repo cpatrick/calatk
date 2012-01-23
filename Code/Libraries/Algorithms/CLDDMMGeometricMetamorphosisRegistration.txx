@@ -51,7 +51,12 @@ void CLDDMMGeometricMetamorphosisRegistration< TState >::SetAutoConfiguration( J
   Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
 
+  SetJSONHelpForRootKey( GeneralRegistrationSettings, "general setting for the registration")
+
   SetJSONFromKeyString( currentConfigurationIn, currentConfigurationOut, MaskKernel );
+
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, MaskKernel,
+                     "kernel for the mask: GaussianKernel / HelmholtzKernel /  MultiGaussianKernel" );
 }
 
 template < class TState >

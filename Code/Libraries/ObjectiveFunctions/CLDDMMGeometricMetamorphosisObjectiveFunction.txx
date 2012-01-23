@@ -102,10 +102,18 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::SetAutoConfigurati
   Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "GeometricMetamorphosis", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "GeometricMetamorphosis", Json::nullValue );
 
+  SetJSONHelpForRootKey( GeometricMetamorphosis, "settings for geometric metamorphosis" );
+
   SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, Sigma1Sqr );
   SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, Sigma2Sqr );
   SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, W );
 
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, Sigma1Sqr,
+                     "1/Sigma1Sqr is the weight for the image match" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, Sigma2Sqr,
+                     "1/Sigma2Sqr is the weight for the mask match" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, W,
+                     "W is the weight between the energy terms in [0,1] and [1,2]" );
 }
 
 template < class TState >

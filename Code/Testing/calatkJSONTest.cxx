@@ -57,6 +57,11 @@ int main( int argc, char* argv[] )
   valObj[0]["test"]=1;
   valObj[1]["test"]=2;
 
+  valObj[0]["test"].setComment("// one value", Json::commentAfterOnSameLine );
+
+  valObj.setComment( "// sets the objective function; comment after on same line", Json::commentAfterOnSameLine );
+  valObj.setComment( "// sets the objective function; comment before", Json::commentBefore );
+
   config.WriteCurrentConfigurationToJSONFile( argv[2] );
 
   CALATK::CJSONConfiguration subConfig;

@@ -40,8 +40,15 @@ void CHelmholtzKernel< T, VImageDimension >::SetAutoConfiguration( Json::Value& 
   Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "HelmholtzKernel", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "HelmholtzKernel", Json::nullValue );
 
+  SetJSONHelpForRootKey( HelmholtzKernel, "kernel of the form L=-\\gamma + \\alpha \\nabla^2" );
+
   SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, Alpha );
   SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, Gamma );
+
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, Alpha,
+                     "controls smoothness penalty; larger == smoother" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, Gamma,
+                     "controls penalty for deformation length; larger == less deformation");
 }
 
 template <class T, unsigned int VImageDimension >

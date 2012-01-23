@@ -41,8 +41,15 @@ void CLDDMMVelocityFieldRegistration< TState >::SetAutoConfiguration( Json::Valu
   Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
 
+  SetJSONHelpForRootKey( GeneralRegistrationSettings, "general settings for the registration" );
+
   SetJSONFromKeyString( currentConfigurationIn, currentConfigurationOut, Kernel );
   SetJSONFromKeyString( currentConfigurationIn, currentConfigurationOut, Metric );
+
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, Kernel,
+                     "kernel: GaussianKernel / MultigaussianKernel / HelmholtzKernel " );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, Metric,
+                     "type of metric: SSD" );
 }
 
 template < class TState >
