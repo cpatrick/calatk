@@ -49,8 +49,8 @@ int DoIt( int argc, char** argv )
 
   regType lddmm;
 
-  CALATK::CJSONConfiguration configIn;
-  CALATK::CJSONConfiguration configOut;
+  CALATK::CJSONConfiguration configIn( true );
+  CALATK::CJSONConfiguration configOut( false );
   configOut.InitializeEmptyRoot();
 
   if ( configFile.compare("None") != 0 )
