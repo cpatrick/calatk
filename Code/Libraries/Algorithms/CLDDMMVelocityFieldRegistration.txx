@@ -47,7 +47,7 @@ void CLDDMMVelocityFieldRegistration< TState >::SetAutoConfiguration( Json::Valu
   SetJSONFromKeyString( currentConfigurationIn, currentConfigurationOut, Metric );
 
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, Kernel,
-                     "kernel: GaussianKernel / MultigaussianKernel / HelmholtzKernel " );
+                     "kernel: GaussianKernel / MultiGaussianKernel / HelmholtzKernel " );
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, Metric,
                      "type of metric: SSD" );
 }
@@ -56,6 +56,8 @@ template < class TState >
 void CLDDMMVelocityFieldRegistration< TState >::SetDefaultMetricPointer()
 {
   this->m_ptrMetric = CMetricFactory< T, TState::VImageDimension >::CreateNewMetric( m_Metric );
+  this->m_ptrMetric->SetPrintConfiguration( this->GetPrintConfiguration() );
+  this->m_ptrMetric->SetAllowHelpComments( this->GetAllowHelpComments() );
   this->m_ptrMetric->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 }
 
@@ -69,6 +71,8 @@ template < class TState >
 void CLDDMMVelocityFieldRegistration< TState >::SetDefaultKernelPointer()
 {
   this->m_ptrKernel = CKernelFactory< T, TState::VImageDimension >::CreateNewKernel( m_Kernel );
+  this->m_ptrKernel->SetPrintConfiguration( this->GetPrintConfiguration() );
+  this->m_ptrKernel->SetAllowHelpComments( this->GetAllowHelpComments() );
   this->m_ptrKernel->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 }
 
@@ -77,7 +81,12 @@ void CLDDMMVelocityFieldRegistration< TState >::SetDefaultEvolverPointer()
 {
   this->m_ptrEvolver = new CStationaryEvolver< T, TState::VImageDimension >;
   this->m_ptrEvolver->SetOneStepEvolverPointer( &oneStepDefaultEvolver );
+  oneStepDefaultEvolver.SetPrintConfiguration( this->GetPrintConfiguration() );
+  oneStepDefaultEvolver.SetAllowHelpComments( this->GetAllowHelpComments() );
   oneStepDefaultEvolver.SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
+
+  this->m_ptrEvolver->SetPrintConfiguration( this->GetPrintConfiguration() );
+  this->m_ptrEvolver->SetAllowHelpComments( this->GetAllowHelpComments() );
   this->m_ptrEvolver->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 }
 
@@ -85,6 +94,9 @@ template < class TState >
 void CLDDMMVelocityFieldRegistration< TState >::SetDefaultSolverPointer()
 {
   this->m_ptrSolver = new CSolverMultiScale< TState >;
+
+  this->m_ptrSolver->SetPrintConfiguration( this->GetPrintConfiguration() );
+  this->m_ptrSolver->SetAllowHelpComments( this->GetAllowHelpComments() );
   this->m_ptrSolver->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 }
 

@@ -90,8 +90,8 @@ int DoIt( int argc, char** argv )
     return EXIT_FAILURE;
   }
 
-  CALATK::CJSONConfiguration configIn;
-  CALATK::CJSONConfiguration configOut;
+  CALATK::CJSONConfiguration configIn( true );
+  CALATK::CJSONConfiguration configOut( false );
   configOut.InitializeEmptyRoot();
 
   if ( configFile.compare("None") != 0 )
@@ -133,6 +133,7 @@ int DoIt( int argc, char** argv )
     ptrImageManager->AddScale( dCurrentScale, iI );
     }  
 
+  plddmm->SetAllowHelpComments( bCreateJSONHelp );
   plddmm->SetAutoConfiguration( *configIn.GetRootPointer(), *configOut.GetRootPointer() );
 
   ptrImageManager->print( std::cout );

@@ -47,7 +47,7 @@ void CSolverLineSearchConstrained< TState>::SetAutoConfiguration( Json::Value& C
   SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, AugmentedLagrangianPenaltyIncreaseFactor );
 
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, NumberOfAugmentedLagrangianIterations,
-                     "number of times the augmented Lagrangian shuld be updated" );
+                     "number of times the augmented Lagrangian should be updated" );
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, AugmentedLagrangianPenaltyIncreaseFactor,
                      "factor by which the penalty for the constraint is increased at each augmented Lagrangian iteration" );
 }

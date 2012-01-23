@@ -40,7 +40,7 @@ namespace CALATK
 class CJSONConfiguration
 {
 public:
-  CJSONConfiguration();
+  CJSONConfiguration( bool bPrintConfiguration = false );
   ~CJSONConfiguration();
 
   typedef std::vector< double > VectorType;

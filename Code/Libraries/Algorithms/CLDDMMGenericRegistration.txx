@@ -36,6 +36,7 @@ template < class TState >
 void CLDDMMGenericRegistration< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
 {
   Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+
   Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
 
@@ -86,6 +87,8 @@ void CLDDMMGenericRegistration< TState >::SetDefaultObjectiveFunctionPointer()
   plddmm->SetMetricPointer( this->m_ptrMetric );
   plddmm->SetImageManagerPointer( this->m_ptrImageManager );
 
+  plddmm->SetPrintConfiguration( this->GetPrintConfiguration() );
+  plddmm->SetAllowHelpComments( this->GetAllowHelpComments() );
   plddmm->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 
   this->m_ptrObjectiveFunction = plddmm;

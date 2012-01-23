@@ -38,7 +38,12 @@ void COneStepEvolver<T, VImageDimension >::SetAutoConfiguration( Json::Value& Co
   Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "OneStepEvolver", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "OneStepEvolver", Json::nullValue );
 
+  SetJSONHelpForRootKey( OneStepEvolver, "settings for solver between two temporal discretization steps" );
+
   SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, NumberOfThreads );
+
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, NumberOfThreads,
+                     "how many threads to be used for computations" );
 }
 
 template < class T, unsigned int VImageDimension >

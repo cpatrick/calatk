@@ -40,9 +40,15 @@ void CSolverMultiScale< TState >::SetAutoConfiguration( Json::Value &ConfValueIn
   Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "MultiScaleFinalOutput", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "MultiScaleFinalOutput", Json::nullValue );
 
+  SetJSONHelpForRootKey( MultiScaleFinalOutput, "output after the last stage of the multi-scale solver")
+
   SetJSONFromKeyBool( currentConfigurationIn, currentConfigurationOut, OutputStateInformation );
   SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, OutputStateInformationFrequency );
 
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, OutputStateInformation,
+                     "if set to true will generate output images" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, OutputStateInformationFrequency,
+                     "at what iteration steps output should be generated" );
 }
 
 template < class TState >
@@ -132,6 +138,8 @@ bool CSolverMultiScale< TState >::Solve()
     ptrImageManager->SelectScale( (unsigned int)iI );
     m_ptrSolver->SetExternalSolverState( (unsigned int)iI );
     
+    m_ptrSolver->SetPrintConfiguration( this->GetPrintConfiguration() );
+    m_ptrSolver->SetAllowHelpComments( this->GetAllowHelpComments() );
     m_ptrSolver->SetAutoConfiguration(
           this->m_jsonConfigIn.GetFromIndex( currentConfigurationIn, iI, Json::nullValue ),
           this->m_jsonConfigOut.GetFromIndex( currentConfigurationOut, iI, Json::nullValue )

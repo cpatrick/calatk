@@ -97,6 +97,8 @@ int DoIt( int argc, char** argv )
     currentConfigurationOut[ iI ][ "Downsample" ][ "Scale" ] = dCurrentScale;
     ptrImageManager->AddScale( dCurrentScale, iI );
     }  
+
+  lddmm.SetAllowHelpComments( bCreateJSONHelp );
   lddmm.SetAutoConfiguration( *configIn.GetRootPointer(), *configOut.GetRootPointer() );
 
   ptrImageManager->print( std::cout );

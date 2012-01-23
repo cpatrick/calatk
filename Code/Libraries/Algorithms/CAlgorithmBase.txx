@@ -158,6 +158,8 @@ template < class T, unsigned int VImageDimension >
 void CAlgorithmBase< T, VImageDimension >::SetKernelPointer( ptrKernelType ptrKernel )
 {
   m_ptrKernel = ptrKernel;
+  this->m_ptrKernel->SetPrintConfiguration( this->GetPrintConfiguration() );
+  this->m_ptrKernel->SetAllowHelpComments( this->GetAllowHelpComments() );
   this->m_ptrKernel->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 }
 
@@ -177,6 +179,8 @@ template < class T, unsigned int VImageDimension >
 void CAlgorithmBase< T, VImageDimension >::SetEvolverPointer( ptrEvolverType ptrEvolver )
 {
   m_ptrEvolver = ptrEvolver;
+  this->m_ptrEvolver->SetPrintConfiguration( this->GetPrintConfiguration() );
+  this->m_ptrEvolver->SetAllowHelpComments( this->GetAllowHelpComments() );
   this->m_ptrEvolver->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 
@@ -197,6 +201,8 @@ template < class T, unsigned int VImageDimension >
 void CAlgorithmBase< T, VImageDimension >::SetMetricPointer( ptrMetricType ptrMetric )
 {
   m_ptrMetric = ptrMetric;
+  this->m_ptrMetric->SetPrintConfiguration( this->GetPrintConfiguration() );
+  this->m_ptrMetric->SetAllowHelpComments( this->GetAllowHelpComments() );
   this->m_ptrMetric->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 

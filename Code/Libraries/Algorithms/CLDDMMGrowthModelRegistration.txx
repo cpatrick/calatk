@@ -57,6 +57,8 @@ void CLDDMMGrowthModelRegistration< TState >::SetDefaultObjectiveFunctionPointer
   plddmm->SetMetricPointer( this->m_ptrMetric );
   plddmm->SetImageManagerPointer( this->m_ptrImageManager );
 
+  plddmm->SetPrintConfiguration( this->GetPrintConfiguration() );
+  plddmm->SetAllowHelpComments( this->GetAllowHelpComments() );
   plddmm->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 
   this->m_ptrObjectiveFunction = plddmm;

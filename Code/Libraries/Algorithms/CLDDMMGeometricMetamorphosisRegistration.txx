@@ -81,6 +81,8 @@ template < class TState >
 void CLDDMMGeometricMetamorphosisRegistration< TState >::SetDefaultMaskKernelPointer()
 {
   this->m_ptrMaskKernel = CKernelFactory< T, TState::VImageDimension >::CreateNewKernel( m_MaskKernel );
+  this->m_ptrMaskKernel->SetPrintConfiguration( this->GetPrintConfiguration() );
+  this->m_ptrMaskKernel->SetAllowHelpComments( this->GetAllowHelpComments() );
   this->m_ptrMaskKernel->SetAutoConfiguration( this->m_jsonConfigIn.GetFromKey( "MaskKernel", Json::nullValue ), this->m_jsonConfigOut.GetFromKey( "MaskKernel", Json::nullValue ) );
 }
 
@@ -137,6 +139,8 @@ void CLDDMMGeometricMetamorphosisRegistration< TState >::SetDefaultObjectiveFunc
   plddmm->SetMetricPointer( this->m_ptrMetric );
   plddmm->SetImageManagerPointer( this->m_ptrImageManager );
 
+  plddmm->SetPrintConfiguration( this->GetPrintConfiguration() );
+  plddmm->SetAllowHelpComments( this->GetAllowHelpComments() );
   plddmm->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
   
   this->m_ptrObjectiveFunction = plddmm;

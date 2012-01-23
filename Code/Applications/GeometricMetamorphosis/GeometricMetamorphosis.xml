@@ -139,6 +139,13 @@
           </description>
         </boolean>
 
+        <boolean>
+          <name>bCreateJSONHelp</name>
+          <longflag>--createJSONHelp</longflag>
+          <default>false</default>
+          <description>If set, will generate annotated settings in the JSON configuration file. This is to help understand the meaning and options of the different settings.</description>
+        </boolean>
+
   </parameters>
   
 </executable>

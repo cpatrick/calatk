@@ -87,6 +87,8 @@ template < class TState >
 void CAlgorithm< TState >::SetObjectiveFunctionPointer( ptrObjectiveFunctionType ptrObjectiveFunction )
 {
   m_ptrObjectiveFunction = ptrObjectiveFunction;
+  this->m_ptrObjectiveFunction->SetPrintConfiguration( this->GetPrintConfiguration() );
+  this->m_ptrObjectiveFunction->SetAllowHelpComments( this->GetAllowHelpComments() );
   this->m_ptrObjectiveFunction->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 
@@ -106,6 +108,8 @@ template < class TState >
 void CAlgorithm< TState >::SetSolverPointer( ptrSolverType ptrSolver )
 {
   m_ptrSolver = ptrSolver;
+  this->m_ptrSolver->SetPrintConfiguration( this->GetPrintConfiguration() );
+  this->m_ptrSolver->SetAllowHelpComments( this->GetAllowHelpComments() );
   this->m_ptrSolver->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 

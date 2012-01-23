@@ -37,28 +37,20 @@ class CProcessBase
 {
 public:
   CProcessBase()
-    : DefaultPrintConfiguration( true ), m_ExternallySetPrintConfiguration( false )
+    : m_PrintConfiguration( true ),
+      m_AllowHelpComments( false )
   {
-      m_PrintConfiguration = DefaultPrintConfiguration;
+      m_jsonConfigOut.PrintSettingsOff();
+      m_jsonConfigIn.PrintSettingsOn();
+
+      m_jsonConfigOut.AllowHelpCommentsOff();
+      m_jsonConfigIn.AllowHelpCommentsOff();
   }
 
   virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
   {
     m_jsonConfigIn.SetRootReference( ConfValueIn );
     m_jsonConfigOut.SetRootReference( ConfValueOut );
-
-    // this is the input file that is being parsed; only the fresh values (in out) are printed as needed
-    m_jsonConfigOut.PrintSettingsOff();
-    m_jsonConfigOut.AllowHelpCommentsOn();
-
-    if ( this->GetPrintConfiguration() )
-      {
-      m_jsonConfigIn.PrintSettingsOn();
-      }
-    else
-      {
-      m_jsonConfigIn.PrintSettingsOff();
-      }
   }
 
   const Json::Value* GetAutoConfigurationIn()
@@ -71,8 +63,43 @@ public:
     return m_jsonConfigOut.GetRootPointer();
   }
 
-  SetMacro( PrintConfiguration, bool );
-  GetMacro( PrintConfiguration, bool );
+  void SetPrintConfiguration( bool bPrint )
+  {
+    m_PrintConfiguration = bPrint;
+    if ( m_PrintConfiguration )
+    {
+      m_jsonConfigIn.PrintSettingsOn();
+    }
+    else
+    {
+      m_jsonConfigIn.PrintSettingsOff();
+    }
+  }
+
+  bool GetPrintConfiguration()
+  {
+    return m_PrintConfiguration;
+  }
+
+  void SetAllowHelpComments( bool bAllow )
+  {
+    m_AllowHelpComments = bAllow;
+    if ( m_AllowHelpComments )
+    {
+      m_jsonConfigIn.AllowHelpCommentsOn();
+      m_jsonConfigOut.AllowHelpCommentsOn();
+    }
+    else
+    {
+      m_jsonConfigIn.AllowHelpCommentsOff();
+      m_jsonConfigOut.AllowHelpCommentsOff();
+    }
+  }
+
+  bool GetAllowHelpComments()
+  {
+    return m_AllowHelpComments;
+  }
 
 protected:
   CJSONConfiguration m_jsonConfigIn;
@@ -81,11 +108,11 @@ protected:
 private:
   // if true the Json configurations will be printed
   bool m_PrintConfiguration;
-  bool DefaultPrintConfiguration;
-  bool m_ExternallySetPrintConfiguration;
+
+  // if true help comments will be added to the JSON configuration file
+  bool m_AllowHelpComments;
 
 };
-
 
 } // end namespace
 

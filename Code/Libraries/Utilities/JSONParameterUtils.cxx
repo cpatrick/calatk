@@ -23,13 +23,13 @@
 namespace CALATK
 {
 
-CJSONConfiguration::CJSONConfiguration()
+CJSONConfiguration::CJSONConfiguration( bool bPrintConfiguration )
   : m_Indent( 2 ),
     m_IsMasterNode( false ),
-    m_PrintSettings( true ),
     m_AllowHelpComments( false ),
     m_ptrRoot( NULL )
 {
+  m_PrintSettings = bPrintConfiguration;
 }
 
 CJSONConfiguration::~CJSONConfiguration()
@@ -239,7 +239,11 @@ void CJSONConfiguration::SetHelpForKey( Json::Value &vSubTree, std::string sKey,
 {
   if ( this->GetAllowHelpComments() )
   {
+    // need to suppress printing
+    bool bPrintingState = GetPrintSettings();
+    this->PrintSettingsOff();
     Json::Value& currentValue = GetFromKey( vSubTree, sKey );
+    if ( bPrintingState ) this->PrintSettingsOn();
     currentValue.setComment( "// " + sHelpString, commentPlacement );
   } // otherwise do not do anything, because help comments are disabled
 }
@@ -259,7 +263,11 @@ void CJSONConfiguration::SetHelpForKey( std::string sKey, std::string sHelpStrin
 {
   if ( this->GetAllowHelpComments() )
   {
+    // need to suppress printing
+    bool bPrintingState = GetPrintSettings();
+    this->PrintSettingsOff();
     Json::Value& currentValue = GetFromKey( sKey );
+    if ( bPrintingState ) this->PrintSettingsOn();
     currentValue.setComment( "// " + sHelpString, commentPlacement );
   } // otherwise do not do anything, because help comments are disabled
 }
