@@ -29,6 +29,7 @@
 #include "COneStepEvolverSemiLagrangianAdvection.h"
 #include "CStationaryEvolver.h"
 #include "CImageManagerMultiScale.h"
+#include "CSolverLineSearchConstrained.h"
 
 namespace CALATK
 {
@@ -55,7 +56,8 @@ public:
 
 protected:
 
-  void SetDefaultObjectiveFunctionPointer();
+  virtual void SetDefaultSolverPointer();
+  virtual void SetDefaultObjectiveFunctionPointer();
 
 private:
 };

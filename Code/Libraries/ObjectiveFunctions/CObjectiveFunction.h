@@ -21,20 +21,25 @@
 #define C_OBJECTIVE_FUNCTION_H
 
 #include "CObjectiveFunctionBase.h"
+#include "CAugmentedLagrangianInterface.h"
+#include "VectorImage.h"
+#include "VectorField.h"
 
 namespace CALATK
 {
 
 template < class TState >
 class CObjectiveFunction
-    : public CObjectiveFunctionBase< typename TState::TFloat, TState::VImageDimension >
+    : public CObjectiveFunctionBase< typename TState::TFloat, TState::VImageDimension >,
+    public CAugmentedLagrangianInterface< typename TState::TFloat, TState::VImageDimension >
 {
 public:
 
   /* some useful typedefs */
   
   typedef typename TState::TFloat T;
- typedef VectorField< T, TState::VImageDimension > VectorFieldType;
+  typedef VectorField< T, TState::VImageDimension > VectorFieldType;
+  typedef VectorImage< T, TState::VImageDimension > VectorImageType;
 
   typedef TState* ptrStateType;
 

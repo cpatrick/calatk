@@ -36,11 +36,21 @@ public:
 
   typedef VectorImage< T, VImageDimension > VectorImageType;
 
-  virtual void SetSquaredPenaltyScalarWeight( T dWeight ) = 0;
-  virtual T GetSquaredPenaltyScalarWeight() = 0;
+  virtual void SetSquaredPenaltyScalarWeight( T dWeight ) {};
+  virtual T GetSquaredPenaltyScalarWeight()
+  {
+    return 0;
+  };
 
-  virtual VectorImageType* GetPointerToImageLagrangianMultiplier() = 0;
-  virtual const VectorImageType* GetPointerToCurrentImageResidual() = 0;
+  virtual VectorImageType* GetPointerToImageLagrangianMultiplier()
+  {
+    return NULL;
+  };
+
+  virtual const VectorImageType* GetPointerToCurrentImageResidual()
+  {
+    return NULL;
+  };
 
 };
 

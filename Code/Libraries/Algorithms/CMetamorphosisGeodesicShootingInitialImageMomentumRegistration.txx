@@ -31,6 +31,20 @@ CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TState >::~CMeta
 }
 
 template < class TState >
+void CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TState >::SetDefaultSolverPointer()
+{
+  CSolverMultiScale< TState > ptrMSSolver = new CSolverMultiScale< TState >;
+
+  ptrMSSolver->SetSingleScaleSolverPointer( new CSolverLineSearchConstrained< TState > );
+  ptrMSSolver->SetPrintConfiguration( this->GetPrintConfiguration() );
+  ptrMSSolver->SetAllowHelpComments( this->GetAllowHelpComments() );
+  ptrMSSolver->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
+
+  this->m_ptrSolver = ptrMSSolver;
+}
+
+
+template < class TState >
 void CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TState >::SetDefaultObjectiveFunctionPointer()
 {
   // make sure that all we need has already been allocated

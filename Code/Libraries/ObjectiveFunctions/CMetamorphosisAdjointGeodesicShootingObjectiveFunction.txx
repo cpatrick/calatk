@@ -315,12 +315,49 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetMoment
 template < class TState >
 void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetImage( VectorImageType* ptrIm, T dTime )
 {
-  // TODO: account for appearance changes, based on closeby images
-  GetMap( m_ptrMapTmp, dTime );
-  // now compute the image by interpolation
-  VectorImageType* ptrInitialImage = this->m_pState->GetPointerToInitialImage();
-  LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapTmp, ptrInitialImage, ptrIm );
+  // This is more complicated than for the standard models, because we have an appearance change here
+  // required an integration forward in time
 
+#warning This is a simplification which restricts time-points to discretization time-points, need better implementation
+
+  ComputeImageMomentumForward();
+
+  // now extract the appropriate time-point
+
+  if ( dTime < m_vecTimeDiscretization[0].dTime || dTime > m_vecTimeDiscretization.back().dTime )
+    {
+    throw std::runtime_error("Requested map outside of valid time range.");
+    return;
+    }
+
+  // get the desired discretization timepoint (closest to the requested one)
+
+  unsigned int iI = 0;
+  for ( iI=0; iI < m_vecTimeDiscretization.size()-1; ++iI )
+    {
+      if ( m_vecTimeDiscretization[ iI ].dTime >= dTime )
+        {
+          break;
+        }
+    }
+
+  unsigned int desiredI = iI;
+
+  if ( iI>0 )
+    {
+      if ( m_vecTimeDiscretization[ iI ].dTime - dTime < dTime-m_vecTimeDiscretization[ iI-1 ].dTime )
+        {
+          desiredI = iI;
+        }
+      else
+        {
+          desiredI = iI-1;
+        }
+    }
+
+  std::cout << "desired I = " << desiredI << std::endl;
+
+  ptrIm->copy( (*m_ptrI)[ desiredI ] );
 }
 
 template < class TState >
@@ -410,7 +447,8 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ComputeIm
   /**
     * Solves the metamorphosis version of the EPDiff equation forward in time using a map-based approach
     *
-    * Note that this is more complicated than for the standard EPDiff equation because we need to deal with a source term for the image
+    * Note that this is more complicated than for the standard EPDiff equation because we need to deal with a source term for the image.
+    * Following the method to solve for the adjoint.
     *
     * \f$ I_t + \nabla I^T v = p, \f$
     * \f$ p_t + div( p v ) = 0, \f$
@@ -418,29 +456,38 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ComputeIm
     *
     */
 
-#warning CONTINUE HERE
-
   VectorImageType* ptrInitialImage = this->m_pState->GetPointerToInitialImage();
   VectorImageType* ptrInitialMomentum = this->m_pState->GetPointerToInitialMomentum();
 
-  LDDMMUtils< T, TState::VImageDimension>::identityMap( m_ptrMapIn );
+  LDDMMUtils< T, TState::VImageDimension>::identityMap( m_ptrMapIdentity );
 
   (*m_ptrI)[ 0 ]->copy( ptrInitialImage );
   (*m_ptrP)[ 0 ]->copy( ptrInitialMomentum );
 
   for ( unsigned int iI = 0; iI < m_vecTimeDiscretization.size()-1; iI++ )
   {
+      // compute the current velocity field
       ComputeVelocity( (*m_ptrI)[ iI ], (*m_ptrP)[iI], (*m_ptrVelocityField)[iI], m_ptrTmpField );
-      this->m_ptrEvolver->SolveForward( (*m_ptrVelocityField)[iI], m_ptrMapIn, m_ptrMapOut, m_ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
 
-      LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapOut, ptrInitialImage, (*m_ptrI) [ iI +1 ]);
-      LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapOut, ptrInitialMomentum, (*m_ptrP) [ iI+1 ]);
+      // compute the incremental map update
+      this->m_ptrEvolver->SolveForward( (*m_ptrVelocityField)[iI], m_ptrMapIdentity, m_ptrMapIncremental, m_ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
 
-      LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( m_ptrMapOut, m_ptrDeterminantOfJacobian );
+      // compute the results for p and I at time-point iI+1
 
+      // for I
+      // create the current updated I (i.e., include the source term) and then warp it
+      m_ptrTmpImage->copy( (*m_ptrP)[ iI ] );
+      m_ptrTmpImage->multConst( this->m_vecTimeIncrements[ iI ] );
+      m_ptrTmpImage->addCellwise( (*m_ptrI)[ iI ] );
+
+      LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapIncremental, m_ptrTmpImage, (*m_ptrI)[ iI +1 ]);
+
+      // now create the updated p, this is just warping p forward in time
+      LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapIncremental, (*m_ptrP)[ iI ], (*m_ptrP)[ iI+1 ]);
+      // adjust with respect to the warp (i.e., multiply with the determinant of the Jacobian)
+      LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( m_ptrMapIncremental, m_ptrDeterminantOfJacobian );
       (*m_ptrP)[iI+1]->multElementwise( m_ptrDeterminantOfJacobian );
 
-      m_ptrMapIn->copy( m_ptrMapOut );
   }
 
 }
@@ -449,12 +496,16 @@ template < class TState >
 void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ComputeAdjointsBackward()
 {
   /**
-    * Computes the adjoint equations backward
+    * Computes the adjoint equations backward for metamorphosis.
+    * Equations are similar as for the adjoint image-to-image registration case, but include the contributions of the augmented Lagrangian scheme.
     *
     * \f$ -\lambda_t^I -div(v\lambda^I)- div(pK*\lambda^v) = 0 \f$
-    * \f$ -\lambda_t^p -v^T\nabla\lambda^p + \nabla I^T K*\lambda^v = 0 \f$
+    * \f$ -\lambda_t^p -v^T\nabla\lambda^p + \nabla I^T K*\lambda^v = \lambda^I \f$
     * \f$ \lambda^v = p\nabla \lambda^p - \lambda^I\nabla I \f$
     *
+    * with final conditions
+    *
+    * \f$ \lambda^p(1) = 0, \lambda^I(1) = r-\mu(I(1)-I_1) \f$
     */
 
     VectorImageType* ptrInitialImage = this->m_pState->GetPointerToInitialImage();
@@ -469,23 +520,27 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ComputeAd
 
     uiNrOfMeasuredImagesAtFinalTimePoint = m_vecTimeDiscretization[ uiNrOfTimePoints - 1].vecMeasurementImages.size();
 
+    // TODO: write general checks for methods that make sure that they are only run if the underlying assumptions hold
+    // TODO: also check that there are really only two images (one source and one target; otherwise this method does not work)
+    assert( uiNrOfMeasuredImagesAtFinalTimePoint == 1 );
+
     // compute the final conditions
-    // \f$ \lambda^I(t_end) = -w_end \nabla_{I(t_end)}d^2(I(t_end),Y(t_end))\f$
+    // \f$ \lambda^I(t_end) = r-\mu(I(1)-I_1)\f$
     // \f$ \lambda^p(t_end) = 0
 
     // create the final condition for the image adjoint \lambda^I
-    // TODO: Check that this final condition has the correct sign
 
     m_ptrCurrentLambdaI->setConst( 0.0 );
     m_ptrCurrentLambdaP->setConst( 0.0 );
 
-    // loop over all measurement images at the last time point (likely this will only be one in most cases)
-    for (unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtFinalTimePoint; iM++)
-    {
-      this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointIDifference, m_vecTimeDiscretization[ uiNrOfTimePoints-1].vecEstimatedImages[ 0 ], m_vecTimeDiscretization[ uiNrOfTimePoints - 1].vecMeasurementImages[iM] );
-      m_ptrCurrentAdjointIDifference->multConst( m_vecTimeDiscretization[uiNrOfTimePoints-1].vecWeights[iM] );
-      m_ptrCurrentLambdaI->addCellwise( m_ptrCurrentAdjointIDifference );
-    }
+    // I_1
+    m_ptrCurrentLambdaI->copy( m_vecTimeDiscretization[ uiNrOfTimePoints - 1].vecMeasurementImages[ 0 ] );
+    // -I(1)
+    m_ptrCurrentLambdaI->addCellwiseMultiple( m_vecTimeDiscretization[ uiNrOfTimePoints-1].vecEstimatedImages[ 0 ], -1.0 );
+    // \mu(I_1-I(1))
+    m_ptrCurrentLambdaI->multConst( m_AugmentedLagrangianMu );
+    // add r
+    m_ptrCurrentLambdaI->addCellwise( m_ptrImageLagrangianMultiplier );
 
     // initialize the initial condition for the incremental map used to flow backwards. Will not be changed during
     // the iterations, because the numerical solution is always started from the identity
@@ -514,14 +569,14 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ComputeAd
       // compute K*\lambda_v
       this->m_ptrKernel->ConvolveWithKernel( ptrCurrentKLambdaV );
 
-      // compute di = div(p K*lambda_v) and dp = -\nabla I^T ( K* lambda_v )
+      // compute di = div(p K*lambda_v) and dp = -\nabla I^T ( K* lambda_v ) + \lambda^I
 
       m_ptrDI->setConst( 0 );
       m_ptrDP->setConst( 0 );
 
       for ( unsigned int iD=0; iD<dim; iD++ )
       {
-        // 1) compute dp = -\nabla I^T ( K* lambda_v )
+        // 1) compute dp = -\nabla I^T ( K* lambda_v ) + \lambda^I
         // nabla I
         VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( (*m_ptrI)[ iI+1 ], iD, m_ptrTmpField );
 
@@ -529,7 +584,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ComputeAd
         VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByVectorInnerProductElementwise( m_ptrTmpField, ptrCurrentKLambdaV, m_ptrTmpScalarImage );
 
         // account for the time-increment
-        m_ptrTmpScalarImage->multConst( -1.0*m_vecTimeIncrements[ iI ] );
+        m_ptrTmpScalarImage->multConst( -1.0 );
         // store it in the i-th dimension of dp
         VectorImageUtils< T, TState::VImageDimension>::addScalarImageToVectorImageAtDimensionInPlace( m_ptrTmpScalarImage, m_ptrDP, iD );
 
@@ -541,12 +596,18 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ComputeAd
         // compute the divergence
         VectorFieldUtils< T, TState::VImageDimension >::computeDivergence( m_ptrTmpField, m_ptrTmpScalarImage );
 
-        m_ptrTmpScalarImage->multConst( m_vecTimeIncrements[ iI ] );
         // store it in the i-th dimension of di
         VectorImageUtils< T, TState::VImageDimension>::addScalarImageToVectorImageAtDimensionInPlace( m_ptrTmpScalarImage, m_ptrDI, iD );
       }
 
-      // now add up all the contributions that will happened during this time step
+      // add \lambda^I to DP
+      m_ptrDP->addCellwise( m_ptrCurrentLambdaI );
+
+      // account for the time-difference
+      m_ptrDI->multConst( m_vecTimeIncrements[ iI ] );
+      m_ptrDP->multConst( m_vecTimeIncrements[ iI ] );
+
+      // now add up all the contributions that happened during this time step
 
       m_ptrCurrentLambdaI->addCellwise( m_ptrDI );
       m_ptrCurrentLambdaP->addCellwise( m_ptrDP );
@@ -561,19 +622,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ComputeAd
       LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapIncremental, m_ptrCurrentLambdaP,  m_ptrTmpImage );
       m_ptrCurrentLambdaP->copy( m_ptrTmpImage );
 
-      // update if we need to jump at the current time-point
-      if ( m_vecTimeDiscretization[ iI ].bIsMeasurementPoint )
-      {
-        // account for all possible jumps of the adjoint at this time-point
-        unsigned int uiNrOfMeasuredImagesAtTimePoint = m_vecTimeDiscretization[ iI ].vecMeasurementImages.size();
-        for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM )
-        {
-          this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointIDifference, m_vecTimeDiscretization[ iI ].vecEstimatedImages[ 0 ], m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ] );
-          m_ptrCurrentAdjointIDifference->multConst( m_vecTimeDiscretization[ iI ].vecWeights[ iM ] );
-          m_ptrCurrentLambdaI->addCellwise( m_ptrCurrentAdjointIDifference );
-        }
-
-      }
+      // no jumps necessary. we assume initial image is exact and there are no measurements in between
 
 #ifdef EXTREME_DEBUGGING
       (*tstLamI)[ iI ]->copy( m_ptrCurrentLambdaI );
@@ -645,54 +694,36 @@ template < class TState >
 void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ComputeInitialUnsmoothedVelocityGradient( VectorFieldType* ptrInitialUnsmoothedVelocityGradient )
 {
 
-  // FIXME: This is not yet adapted to metamorphosis
-
   std::cout << "WARNING: initial unsmooth gradient computation is NOT adapted for metamorphosis. Results may be inaccurate. FIXME." << std::endl;
 
   // compute the unsmoothed velocity gradient; to be used to estimate weights for the multi-Gaussian kernels.
-  // v and p(0) is assumed zero here and the unsmoothed gradient is then
+  // this is an approximation based on adding the augmented Lagrangian constraint to the original model (rather than the 2nd order for shooting)
+  // v, r and p(0) is assumed zero here and the unsmoothed gradient is then, because I(t) = I(0) and p(t) = p(1)
 
-  // \f$ \nabla E = (\sum_i \lambda_i \nabla I_0 ) \f$
-  // where the \lambda_i are the respective adjoints (based on the chosen metric)
+  // \f$ \nabla E = \sum_i \mu(I_0-I_1)\nabla I_0  \f$
+  // sum is over dimensions
 
   VectorImageType* ptrI0 = this->m_pState->GetPointerToInitialImage();
   unsigned int dim = ptrI0->getDim();
 
-  // compute the initial adjoint, assuming that there is only a zero velocity field
-  VectorImageType* ptrLambda0 = new VectorImageType( ptrI0 );
-  ptrLambda0->setConst( 0.0 );
-
-  VectorImageType* ptrCurrentAdjointDifference = new VectorImageType( ptrI0 );
-
-  for ( unsigned int iI = 0; iI< this->m_vecTimeDiscretization.size(); ++iI )
-    {
-    // update if we need to jump at the current time-point
-    if ( this->m_vecTimeDiscretization[ iI ].bIsMeasurementPoint )
-      {
-      // account for all possible jumps of the adjoint at this time-point
-      unsigned int uiNrOfMeasuredImagesAtTimePoint = this->m_vecTimeDiscretization[ iI ].vecMeasurementImages.size();
-      for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM )
-        {
-        this->m_pMetric->GetAdjointMatchingDifferenceImage( ptrCurrentAdjointDifference, ptrI0 , this->m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ] );
-        ptrCurrentAdjointDifference->multConst( m_vecTimeDiscretization[ iI ].vecWeights[ iM ] );
-        ptrLambda0->addCellwise( ptrCurrentAdjointDifference );
-        }
-      }
-    }
+  unsigned int uiNrOfDiscretizationPoints = this->m_vecTimeDiscretization.size();
+  VectorImageType* ptrI1 =  this->m_vecTimeDiscretization[ uiNrOfDiscretizationPoints-1 ].vecMeasurementImages[ 0 ];
 
   // initialize to 0
   VectorFieldType* ptrCurrentGradient = ptrInitialUnsmoothedVelocityGradient;
   ptrCurrentGradient->setConst( 0 );
 
+  // \mu(I_0-I_1)
+  m_ptrTmpImage->copy( ptrI0 );
+  m_ptrTmpImage->addCellwiseMultiple( ptrI1, -1.0 );
+  m_ptrTmpImage->multConst( m_AugmentedLagrangianMu );
+
   for ( unsigned int iD = 0; iD<dim; ++iD )
     {
     VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( ptrI0, iD, m_ptrTmpField );
-    VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrLambda0, iD, m_ptrTmpField );
+    VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrTmpImage, iD, m_ptrTmpField );
     ptrCurrentGradient->addCellwise( m_ptrTmpField );
     }
-
-  delete ptrLambda0;
-  delete ptrCurrentAdjointDifference;
 
 }
 
@@ -749,12 +780,10 @@ CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetCurrentEner
 
   T dImageNorm = 0;
 
-  unsigned int uiNrOfTimePoints= m_vecTimeDiscretization.size()-1;
-
   // computing I(1)-I_1
-  m_ptrTmpImage->copy( m_vecTimeDiscretization[ uiNrOfTimePoints - 1].vecMeasurementImages[ 0 ] );
+  m_ptrTmpImage->copy( m_vecTimeDiscretization[ uiNrOfDiscretizationPoints - 1].vecMeasurementImages[ 0 ] );
   m_ptrTmpImage->multConst( -1.0 );
-  m_ptrTmpImage->addCellwise( m_vecTimeDiscretization[ uiNrOfTimePoints-1].vecEstimatedImages[ 0 ] );
+  m_ptrTmpImage->addCellwise( m_vecTimeDiscretization[ uiNrOfDiscretizationPoints-1].vecEstimatedImages[ 0 ] );
 
   // -<r,I(1)-I_1>
   dImageNorm += -m_ptrTmpImage->computeInnerProduct( m_ptrImageLagrangianMultiplier );
@@ -868,7 +897,7 @@ CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetPointerToCu
 {
   // TODO: extend to support multiple time-points (how?)
   // just look at the last time point for now here
-  unsigned int uiNrOfTimePoints= m_vecTimeDiscretization.size()-1;
+  unsigned int uiNrOfTimePoints= m_vecTimeDiscretization.size();
   unsigned int uiNrOfMeasuredImagesAtFinalTimePoint = m_vecTimeDiscretization[ uiNrOfTimePoints - 1].vecMeasurementImages.size();
 
   // for now we can only deal with one image (to be fixed)

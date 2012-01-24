@@ -21,7 +21,6 @@
 #define C_METAMORPHOSIS_ADJOINT_GEODESIC_SHOOTING_OBJECTIVE_FUNCTION_H
 
 #include "CLDDMMGeodesicShootingObjectiveFunction.h"
-#include "CAugmentedLagrangianInterface.h"
 #include "CALATKCommon.h"
 #include "LDDMMUtils.h"
 
@@ -35,8 +34,7 @@ namespace CALATK
 
 template < class TState >
 class CMetamorphosisAdjointGeodesicShootingObjectiveFunction
-    : public CAugmentedLagrangianInterface< typename TState::TFloat, TState::VImageDimension >,
-      public CLDDMMGeodesicShootingObjectiveFunction< TState >
+    : public CLDDMMGeodesicShootingObjectiveFunction< TState >
 {
 public:
 
@@ -148,6 +146,7 @@ private:
 
     // augmented Lagrangian
     T m_AugmentedLagrangianMu;
+
     VectorImageType* m_ptrImageLagrangianMultiplier;
 
 };
