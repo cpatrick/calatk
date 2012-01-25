@@ -21,6 +21,7 @@
 #define C_SOLVER_LINE_SEARCH_CONSTRAINED_H
 
 #include "CSolverLineSearch.h"
+#include "VectorImage.h"
 
 namespace CALATK
 {
@@ -35,6 +36,7 @@ public:
   typedef CSolverLineSearch< TState > Superclass;
   typedef typename Superclass::ptrObjectiveFunctionType ptrObjectiveFunctionType;
   typedef typename Superclass::CEnergyValues CEnergyValues;
+  typedef VectorImage< T, TState::VImageDimension > VectorImageType;
 
   CSolverLineSearchConstrained();
 
@@ -43,26 +45,33 @@ public:
    */
     bool SolvePreInitialized();
 
-    SetMacro( NumberOfAugmentedLagrangianIterations, unsigned int );
-    GetMacro( NumberOfAugmentedLagrangianIterations, unsigned int );
+    SetMacro( AugmentedLagrangianNumberOfIterations, unsigned int );
+    GetMacro( AugmentedLagrangianNumberOfIterations, unsigned int );
 
     SetMacro( AugmentedLagrangianPenaltyIncreaseFactor, T );
     GetMacro( AugmentedLagrangianPenaltyIncreaseFactor, T );
+
+    SetMacro( AugmentedLagrangianInitialMu, T );
+    GetMacro( AugmentedLagrangianInitialMu, T );
 
     virtual void SetAutoConfiguration( Json::Value &ConfValueIn, Json::Value &ConfValueOut );
 
 protected:
 
-    unsigned int m_NumberOfAugmentedLagrangianIterations;
+    unsigned int m_AugmentedLagrangianNumberOfIterations;
     T m_AugmentedLagrangianPenaltyIncreaseFactor;
+    T m_AugmentedLagrangianInitialMu;
 
 private:
 
-    const unsigned int DefaultNumberOfAugmentedLagrangianIterations;
-    bool m_ExternallySetNumberOfAugmentedLagrangianIterations;
+    const unsigned int DefaultAugmentedLagrangianNumberOfIterations;
+    bool m_ExternallySetAugmentedLagrangianNumberOfIterations;
 
     const T DefaultAugmentedLagrangianPenaltyIncreaseFactor;
     bool m_ExternallySetAugmentedLagrangianPenaltyIncreaseFactor;
+
+    const T DefaultAugmentedLagrangianInitialMu;
+    bool m_ExternallySetAugmentedLagrangianInitialMu;
 
     TState *pTempState;
 };

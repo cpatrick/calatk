@@ -525,7 +525,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ComputeAd
     assert( uiNrOfMeasuredImagesAtFinalTimePoint == 1 );
 
     // compute the final conditions
-    // \f$ \lambda^I(t_end) = r-\mu(I(1)-I_1)\f$
+    // \f$ \lambda^I(t_end) = r-\mu(I_1-I(1))\f$
     // \f$ \lambda^p(t_end) = 0
 
     // create the final condition for the image adjoint \lambda^I
@@ -564,6 +564,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ComputeAd
       // compute the convolved adjoint velocity at time point i+1
       // this introduces a slight assymmetry in the solution (because ideally we would like to compute it at i)
       // compute K*\lambda_v; first lambda_v
+
       ComputeVelocityAdjoint( (*m_ptrI)[ iI+1 ], (*m_ptrP)[ iI+1 ], m_ptrCurrentLambdaI, m_ptrCurrentLambdaP, ptrCurrentKLambdaV );
 
       // compute K*\lambda_v
@@ -734,7 +735,7 @@ CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetCurrentEner
   /**
     * Computes the energy for the shooting method.
     \f[
-      E = 0.5 \langle p(t_0)\nabla I(t_0),K*(p(t_0)\nabla I(t_0)\rangle + 0.5 \langle p(t_0), p(t_0) \rangle -\langle r, I(1)-I_1\rangle + \frac{\mu}{2}\|I(1)-I_1\|^2
+      E = 0.5 \langle p(t_0)\nabla I(t_0),K*(p(t_0)\nabla I(t_0)\rangle + 0.5 \langle p(t_0), p(t_0) \rangle -\langle r, I_1-I(1)\rangle + \frac{\mu}{2}\|I_1-I(1)\|^2
     \f]
   */
   T dEnergy = 0;
@@ -778,20 +779,20 @@ CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetCurrentEner
 
   ComputeImageMomentumForward();
 
-  T dImageNorm = 0;
-
-  // computing I(1)-I_1
-  m_ptrTmpImage->copy( m_vecTimeDiscretization[ uiNrOfDiscretizationPoints - 1].vecMeasurementImages[ 0 ] );
+  // computing I_1-I(1)
+  m_ptrTmpImage->copy( m_vecTimeDiscretization[ uiNrOfDiscretizationPoints-1].vecEstimatedImages[ 0 ] );
   m_ptrTmpImage->multConst( -1.0 );
-  m_ptrTmpImage->addCellwise( m_vecTimeDiscretization[ uiNrOfDiscretizationPoints-1].vecEstimatedImages[ 0 ] );
+  m_ptrTmpImage->addCellwise( m_vecTimeDiscretization[ uiNrOfDiscretizationPoints - 1].vecMeasurementImages[ 0 ] );
 
-  // -<r,I(1)-I_1>
-  dImageNorm += -m_ptrTmpImage->computeInnerProduct( m_ptrImageLagrangianMultiplier );
+  T dImageNorm = m_ptrTmpImage->computeSquareNorm();
 
   // +\mu/2\|I(1)-I_1\|^2
-  dImageNorm += 0.5*m_AugmentedLagrangianMu*m_ptrTmpImage->computeSquareNorm();
+  T dAugmentedLagrangianNorm = 0.5*m_AugmentedLagrangianMu*dImageNorm;
 
-  dEnergy += dImageNorm;
+  // -<r,I_1-I(1)>
+  dAugmentedLagrangianNorm += -m_ptrTmpImage->computeInnerProduct( m_ptrImageLagrangianMultiplier );
+
+  dEnergy += dAugmentedLagrangianNorm;
 
   CEnergyValues energyValues;
   energyValues.dEnergy = dEnergy;
@@ -903,10 +904,10 @@ CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetPointerToCu
   // for now we can only deal with one image (to be fixed)
   assert( uiNrOfMeasuredImagesAtFinalTimePoint==1 );
 
-  // computing I(1)-I_1
-  m_ptrTmpImage->copy( m_vecTimeDiscretization[ uiNrOfTimePoints - 1].vecMeasurementImages[ 0 ] );
+  // computing I_1-I(1)
+  m_ptrTmpImage->copy( m_vecTimeDiscretization[ uiNrOfTimePoints-1].vecEstimatedImages[ 0 ] );
   m_ptrTmpImage->multConst( -1.0 );
-  m_ptrTmpImage->addCellwise( m_vecTimeDiscretization[ uiNrOfTimePoints-1].vecEstimatedImages[ 0 ] );
+  m_ptrTmpImage->addCellwise( m_vecTimeDiscretization[ uiNrOfTimePoints - 1].vecMeasurementImages[ 0 ] );
 
   return m_ptrTmpImage;
 

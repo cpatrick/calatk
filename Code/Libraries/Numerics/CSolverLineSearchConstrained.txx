@@ -22,13 +22,16 @@
 
 template < class TState >
 CSolverLineSearchConstrained< TState >::CSolverLineSearchConstrained()
-  : DefaultNumberOfAugmentedLagrangianIterations( 5 ),
+  : DefaultAugmentedLagrangianNumberOfIterations( 5 ),
+    m_ExternallySetAugmentedLagrangianNumberOfIterations( false ),
     DefaultAugmentedLagrangianPenaltyIncreaseFactor( 2 ),
-    m_ExternallySetNumberOfAugmentedLagrangianIterations( false ),
-    m_ExternallySetAugmentedLagrangianPenaltyIncreaseFactor( false )
+    m_ExternallySetAugmentedLagrangianPenaltyIncreaseFactor( false ),
+    DefaultAugmentedLagrangianInitialMu( 10 ),
+    m_ExternallySetAugmentedLagrangianInitialMu( false )
 {
-  m_NumberOfAugmentedLagrangianIterations = DefaultNumberOfAugmentedLagrangianIterations;
+  m_AugmentedLagrangianNumberOfIterations = DefaultAugmentedLagrangianNumberOfIterations;
   m_AugmentedLagrangianPenaltyIncreaseFactor = DefaultAugmentedLagrangianPenaltyIncreaseFactor;
+  m_AugmentedLagrangianInitialMu = DefaultAugmentedLagrangianInitialMu;
   pTempState = NULL;
 }
 
@@ -43,13 +46,16 @@ void CSolverLineSearchConstrained< TState>::SetAutoConfiguration( Json::Value& C
   Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "LineSearch", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "LineSearch", Json::nullValue );
 
-  SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, NumberOfAugmentedLagrangianIterations );
+  SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, AugmentedLagrangianNumberOfIterations );
   SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, AugmentedLagrangianPenaltyIncreaseFactor );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, AugmentedLagrangianInitialMu );
 
-  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, NumberOfAugmentedLagrangianIterations,
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, AugmentedLagrangianNumberOfIterations,
                      "number of times the augmented Lagrangian should be updated" );
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, AugmentedLagrangianPenaltyIncreaseFactor,
                      "factor by which the penalty for the constraint is increased at each augmented Lagrangian iteration" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, AugmentedLagrangianInitialMu,
+                     "initial weight factor for the quadratic penalty term")
 }
 
 
@@ -73,14 +79,20 @@ bool CSolverLineSearchConstrained< TState>::SolvePreInitialized()
   // output the initial state if desired
   this->OutputStateInformation( 0, sStatePrefix );
 
-  for ( unsigned int uiALIter = 0; uiALIter < this->m_NumberOfAugmentedLagrangianIterations; ++uiALIter )
+  CEnergyValues InitialEnergy;
+
+  // initialize the values for the augmented Lagrangian
+  pObj->GetPointerToImageLagrangianMultiplier()->setConst( 0.0 );
+  pObj->SetSquaredPenaltyScalarWeight( m_AugmentedLagrangianInitialMu );
+
+  for ( unsigned int uiALIter = 0; uiALIter < this->m_AugmentedLagrangianNumberOfIterations; ++uiALIter )
   {
     unsigned int uiNrOfIterationsWithImmediateDecrease = 0;
     unsigned int uiNrOfIterationsWithoutImmediateDecrease = 0;
 
-    std::cout << "Augmented Lagrangian iteration " << uiALIter << "/" << m_NumberOfAugmentedLagrangianIterations << std::endl;
+    std::cout << "Augmented Lagrangian iteration " << uiALIter << "/" << m_AugmentedLagrangianNumberOfIterations << std::endl;
 
-    CEnergyValues InitialEnergy = pObj->GetCurrentEnergy();
+    InitialEnergy = pObj->GetCurrentEnergy();
     std::cout << "Initial energy = " << InitialEnergy.dEnergy << std::endl;
 
     CEnergyValues CurrentEnergy = InitialEnergy;
@@ -166,14 +178,14 @@ bool CSolverLineSearchConstrained< TState>::SolvePreInitialized()
 
     // do the augmented Lagrangian up-date step (this is based on an image)
 
-    VectorImageType* ptrCurrentImageLagrangianMultiplier = this->pObj->GetPointerToImageLagrangianMultiplier();
-    VectorImageType* ptrCurrentImageResidual = this->pObj->GetPointerToCurrentImageResidual();
+    VectorImageType* ptrCurrentImageLagrangianMultiplier = pObj->GetPointerToImageLagrangianMultiplier();
+    const VectorImageType* ptrCurrentImageResidual = pObj->GetPointerToCurrentImageResidual();
 
-    T dMu = this->pObj->GetSquaredPenaltyScalarWeight();
+    T dMu = pObj->GetSquaredPenaltyScalarWeight();
 
     /**
       \f[
-      r^{(k+1)} = r^{(k)}-\mu^{(k)}(I(1)-I_1)
+      r^{(k+1)} = r^{(k)}-\mu^{(k)}(I_1-I(1))
       \f]
       */
 
@@ -181,7 +193,7 @@ bool CSolverLineSearchConstrained< TState>::SolvePreInitialized()
     ptrTmpImage->multConst( -dMu );
     ptrCurrentImageLagrangianMultiplier->addCellwise( ptrTmpImage );
     std::cout << "mu[k] = " << dMu << " -> mu[k+1] = " << dMu*this->m_AugmentedLagrangianPenaltyIncreaseFactor << std::endl;
-    this->pObj->SetSquaredPenaltyScalarWeight( dMu*this->m_AugmentedLagrangianPenaltyIncreaseFactor );
+    pObj->SetSquaredPenaltyScalarWeight( dMu*this->m_AugmentedLagrangianPenaltyIncreaseFactor );
     delete ptrTmpImage;
   }
   // clean up

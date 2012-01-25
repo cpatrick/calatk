@@ -33,7 +33,7 @@ CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TState >::~CMeta
 template < class TState >
 void CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TState >::SetDefaultSolverPointer()
 {
-  CSolverMultiScale< TState > ptrMSSolver = new CSolverMultiScale< TState >;
+  CSolverMultiScale< TState >* ptrMSSolver = new CSolverMultiScale< TState >;
 
   ptrMSSolver->SetSingleScaleSolverPointer( new CSolverLineSearchConstrained< TState > );
   ptrMSSolver->SetPrintConfiguration( this->GetPrintConfiguration() );

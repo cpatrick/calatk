@@ -71,7 +71,7 @@ void CSolverMultiScale< TState >::DeleteDefaultSingleScaleSolver()
 }
 
 template < class TState >
-void CSolverMultiScale< TState >::SetSingleScaleSolverPointer( const SolverType* ptrSolver )
+void CSolverMultiScale< TState >::SetSingleScaleSolverPointer( SolverType* ptrSolver )
 {
   DeleteDefaultSingleScaleSolver();
   m_ptrSolver = ptrSolver;

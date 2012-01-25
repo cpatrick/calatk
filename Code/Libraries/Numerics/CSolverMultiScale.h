@@ -53,7 +53,7 @@ public:
   // TODO: Make it such that we can have different solvers for the different scales
   // for now: One solver with identical settings
 
-  void SetSingleScaleSolverPointer( const SolverType* ptrSolver );
+  void SetSingleScaleSolverPointer( SolverType* ptrSolver );
   const SolverType* GetSingleScaleSolverPointer() const;
 
   // the objective function has an image manager associated with it

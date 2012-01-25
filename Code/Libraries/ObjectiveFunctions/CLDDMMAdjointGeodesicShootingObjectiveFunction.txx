@@ -460,6 +460,8 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ComputeAdjointsBa
 
     // compute the final conditions
     // \f$ \lambda^I(t_end) = -w_end \nabla_{I(t_end)}d^2(I(t_end),Y(t_end))\f$
+    // For SSD, this will be \f$\lambda^I(t_end)=2*w_end (I(t_end)-I_{t_end})\f$
+    // i.e., estimated - measured for the image difference
     // \f$ \lambda^p(t_end) = 0
 
     // create the final condition for the image adjoint \lambda^I
