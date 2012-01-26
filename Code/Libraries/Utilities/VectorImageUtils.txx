@@ -590,12 +590,9 @@ void VectorImageUtils< T, VImageDimension >::resize( const VectorImageType2D* im
     {
     for (unsigned int x = 0; x < szXnew; ++x) 
       {
-      for (unsigned int d = 0; d < dim; ++d) 
-        {
         // perform the interpolation
         pos->setValue(x,y,0, (T)x*dx);
         pos->setValue(x,y,1, (T)y*dy);
-        }
       }
     }
 
@@ -633,15 +630,10 @@ void VectorImageUtils< T, VImageDimension >::resize( const VectorImageType3D* im
       {
       for (unsigned int x = 0; x < szXnew; ++x) 
         {
-        for (unsigned int d = 0; d < dim; ++d) 
-          {
-
           // perform the interpolation
           pos->setValue(x,y,z,0, (T)x*dx);
           pos->setValue(x,y,z,1, (T)y*dy);
           pos->setValue(x,y,z,2, (T)z*dz);
-     
-          }
         }
       }
     }

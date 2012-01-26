@@ -692,7 +692,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState>::ComputeGra
 }
 
 template < class TState >
-void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ComputeInitialUnsmoothedVelocityGradient( VectorFieldType* ptrInitialUnsmoothedVelocityGradient )
+void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ComputeInitialUnsmoothedVelocityGradient( VectorFieldType* ptrInitialUnsmoothedVelocityGradient, unsigned int uiKernelNumber )
 {
 
   std::cout << "WARNING: initial unsmooth gradient computation is NOT adapted for metamorphosis. Results may be inaccurate. FIXME." << std::endl;

@@ -47,7 +47,7 @@ public:
 
   CEnergyValues GetCurrentEnergy();
   void ComputeGradient();
-  void ComputeInitialUnsmoothedVelocityGradient( VectorFieldType* ptrInitialUnsmoothedVelocityGradient );
+  void ComputeInitialUnsmoothedVelocityGradient( VectorFieldType* ptrInitialUnsmoothedVelocityGradient, unsigned int uiKernelNumber = 0 );
 
   SetMacro( SigmaSqr, T );
   GetMacro( SigmaSqr, T );

@@ -168,7 +168,7 @@ public:
   * Computes initial un-smoothed velocity gradient of the velocity.
   * This can be used to estimate weights for multi-Gaussian kernels for example.
   */
-  virtual void ComputeInitialUnsmoothedVelocityGradient( VectorFieldType* ptrInitialUnsmoothedVelocityGradient );
+  virtual void ComputeInitialUnsmoothedVelocityGradient( VectorFieldType* ptrInitialUnsmoothedVelocityGradient, unsigned int uiKernelNumber = 0 );
 
 protected:
 

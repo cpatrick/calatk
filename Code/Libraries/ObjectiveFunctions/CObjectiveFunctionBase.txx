@@ -41,7 +41,7 @@ CObjectiveFunctionBase< T, VImageDimension >::~CObjectiveFunctionBase()
 //
 // initial unsmoothed gradient computation (for example for kernel weight determination)
 template < class T, unsigned int VImageDimension >
-void CObjectiveFunctionBase< T, VImageDimension >::ComputeInitialUnsmoothedVelocityGradient( VectorFieldType* ptrInitialUnsmoothedVelocityGradient )
+void CObjectiveFunctionBase< T, VImageDimension >::ComputeInitialUnsmoothedVelocityGradient( VectorFieldType* ptrInitialUnsmoothedVelocityGradient, unsigned int uiKernelNumber )
 {
   std::cerr << "ComputeInitialUnsmoothedVelocityGradient has not been implemented. Returning 0." << std::endl;
   ptrInitialUnsmoothedVelocityGradient->setConst( 0.0 );

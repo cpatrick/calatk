@@ -22,15 +22,13 @@
 
 template <class T, unsigned int VImageDimension >
 CKernel< T, VImageDimension >::CKernel()
+  : m_MemoryWasAllocated( false ),
+    m_KernelsNeedToBeComputed( true ),
+    m_ptrL( NULL ),
+    m_ptrLInv( NULL ),
+    ptrObjectiveFunction( NULL ),
+    m_KernelNumber( 0 )
 {
-  m_MemoryWasAllocated = false;
-  m_KernelsNeedToBeComputed = true;
-
-  m_ptrL = NULL;
-  m_ptrLInv = NULL;
-
-  ptrObjectiveFunction = NULL;
-
 }
 
 template <class T, unsigned int VImageDimension >
@@ -105,5 +103,16 @@ CKernel< T, VImageDimension >::GetObjectiveFunctionPointer()
   return ptrObjectiveFunction;
 }
 
+template <class T, unsigned int VImageDimension >
+void CKernel< T, VImageDimension >::SetObjectiveFunctionKernelNumber( unsigned int uiKN )
+{
+  m_KernelNumber = uiKN;
+}
+
+template <class T, unsigned int VImageDimension >
+unsigned int CKernel< T, VImageDimension >::GetObjectiveFunctionKernelNumber()
+{
+  return m_KernelNumber;
+}
 
 #endif

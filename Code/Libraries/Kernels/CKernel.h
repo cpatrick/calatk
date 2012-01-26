@@ -75,6 +75,11 @@ public:
   void SetObjectiveFunctionPointer( ObjectiveFunctionBaseType* ptrObjectiveFunction );
   ObjectiveFunctionBaseType* GetObjectiveFunctionPointer();
 
+  /// some objective functions (such as geometric metamorphosis) have multiple kernels.
+  /// Weight estimation is then kernel-dependent and the right one needs to be selected.
+  void SetObjectiveFunctionKernelNumber( unsigned int iI=0 );
+  unsigned int GetObjectiveFunctionKernelNumber();
+
 protected:
 
   virtual void AllocateMemoryForKernelAndInverseKernel( VectorImageType* );
@@ -93,6 +98,7 @@ protected:
   VectorImageType *m_ptrLInv;
 
   ObjectiveFunctionBaseType* ptrObjectiveFunction;
+  unsigned int m_KernelNumber;
 
 private:
 

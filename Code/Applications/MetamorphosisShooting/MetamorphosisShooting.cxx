@@ -65,13 +65,13 @@ int DoIt( int argc, char** argv )
 
   ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm.GetImageManagerPointer() );
 
-  unsigned int uiI0 = ptrImageManager->AddImage( sourceImage, 0.0, 0 );
+  ptrImageManager->AddImage( sourceImage, 0.0, 0 );
   ptrImageManager->AddImage( targetImage, 1.0, 0 );
 
   // by default there will be only one scale
   // which will be overwritten if there is a configuration file available
 
-  TFLOAT dSigma = configIn.GetFromKey( "MultiScaleSigmaInVoxels", 1.0 ).asDouble();
+  TFLOAT dSigma = configIn.GetFromKey( "MultiScaleSigmaInVoxels", 0.5 ).asDouble();
   configOut.GetFromKey( "MultiScaleSigmaInVoxels", dSigma ).asDouble();
   ptrImageManager->SetSigma( dSigma );
   bool bBlurHighestResolutionImage = configIn.GetFromKey( "MultiScaleBlurHighestResolutionImage", true ).asBool();

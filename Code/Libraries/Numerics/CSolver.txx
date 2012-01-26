@@ -26,7 +26,7 @@
 template < class TState >
 CSolver< TState >::CSolver()
   : DefaultOutputStateInformation( false ),
-    DefaultOutputStateInformationFrequency( 100 ),
+    DefaultOutputStateInformationFrequency( 0 ),
     DefaultExternalSolverState( 0 ),
     m_ExternallySetOutputStateInformation( false ),
     m_ExternallySetOutputStateInformationFrequency( false ),

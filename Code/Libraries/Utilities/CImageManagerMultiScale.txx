@@ -192,6 +192,8 @@ void CImageManagerMultiScale< T, VImageDimension >::GetImage( SImageInformation*
           // convert the voxel sigma to a pyhysical sigma based on the largest voxel extent
           T dLargestSpacing = pCurrentImInfo->pImOrig->getLargestSpacing();
 
+          std::cout << "Computing resampled image with sigma = " << dLargestSpacing*m_Sigma/m_ScaleVector[ iI ] << std::endl;
+
           m_ptrResampler->SetSigma( dLargestSpacing*m_Sigma/m_ScaleVector[ iI ] );
           m_ptrResampler->Downsample( pCurrentImInfo->pImOrig, ptrResampledImage );
           }

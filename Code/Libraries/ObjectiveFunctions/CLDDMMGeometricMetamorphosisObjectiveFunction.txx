@@ -22,7 +22,12 @@
 
 template < class TState >
 CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::CLDDMMGeometricMetamorphosisObjectiveFunction()
-  : DefaultSigma1Sqr( 0.01 ), DefaultSigma2Sqr( 0.01 ), DefaultW( 0.5 ), m_ExternallySetSigma1Sqr( false ), m_ExternallySetSigma2Sqr( false ), m_ExternallySetW( false )
+  : DefaultSigma1Sqr( 0.01 ),
+    DefaultSigma2Sqr( 0.01 ),
+    DefaultW( 0.5 ),
+    m_ExternallySetSigma1Sqr( false ),
+    m_ExternallySetSigma2Sqr( false ),
+    m_ExternallySetW( false )
 {
   m_Sigma1Sqr = DefaultSigma1Sqr;
   m_Sigma2Sqr = DefaultSigma2Sqr;
@@ -602,7 +607,7 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeGradient()
     
     // initialize to 0
     VectorFieldType* ptrCurrentGradient = this->m_pGradient->GetVectorFieldPointer( iI );
-    ptrCurrentGradient->setConst( 0 );
+    ptrCurrentGradient->setConst( 0.0 );
 
     // first add the components from the image
     for ( unsigned int iD = 0; iD<dim; ++iD )
@@ -648,6 +653,125 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeGradient()
     m_ptrTmpGradient->multConst( 2*m_W );
     ptrCurrentGradient->addCellwise( m_ptrTmpGradient );
 
+    }
+
+}
+
+
+template < class TState >
+void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeInitialUnsmoothedVelocityGradient( VectorFieldType* ptrInitialUnsmoothedVelocityGradient, unsigned int uiKernelNumber )
+{
+  /// uiKernelNumber == 0 -> kernel for the image-terms t\in[0,1]
+  /// uiKernelNumber == 1 -> kernel for the mask-terms t\in(1,2]
+
+  // shorthand for convenience
+  VectorFieldType* ptrGradient = ptrInitialUnsmoothedVelocityGradient;
+
+  if ( uiKernelNumber == 0 )
+    {
+      /** This is for the image-kernel.
+        * For L2 and assuming v=0 initially the unsmoothed gradient becomes
+        *
+        \f[
+        [2/\sigma1^2(I_0-I_1)^2(1-T_2)^2(1-T_1)-2/\sigma_2^2(T_1-T_2)]\nabla T_1 + \nabla I_0 \sum_i 2/\sigma_1^2(I_1-I_0)_i(1-T_1)^2(1-T_2)^2
+        \f]
+        *
+        */
+      ptrGradient->setConst( 0.0 );
+      unsigned int dim = ptrI0->getDim();
+
+      // first add the components from the image
+
+      // compute the adjoint related to the image, i.e., -\sigma_1^2(I_0-I_1)(1-T_1)^2(1-T_2)^2
+      this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, ptrI0, ptrI1 );
+      m_ptrCurrentAdjointDifference->multConst( 1.0/m_Sigma1Sqr );
+
+      // \lambda(1) = -2/sigma1^2*(I_0-I_1)*(T2-1)^2*(IT(1)-1)^2
+      this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, ptrI0, ptrI1 );
+      m_ptrCurrentAdjointDifference->multConst( 1.0/m_Sigma1Sqr );
+
+      // for convencience of notation, use a scalar image as temporary storage
+      VectorImageType* ptrTmp = m_ptrCurrentAdjointDifferenceT;
+
+      // now multiply it with (T2-1)^2 and (T1-1)^2 to get the final desired result for \lambda(1)
+      // compute the mask contribution: (T1-1)
+      ComputeInvertedMask( ptrT0, ptrTmp );
+
+      // multiply with (T1-1)^2
+      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrTmp, 0, m_ptrCurrentAdjointDifference );
+      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrTmp, 0, m_ptrCurrentAdjointDifference );
+
+      // compute the mask contribution: (T2-1)
+      ComputeInvertedMask( ptrT2, ptrTmp );
+
+      // multiply with (T2-1)^2
+      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrTmp, 0, m_ptrCurrentAdjointDifference );
+      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrTmp, 0, m_ptrCurrentAdjointDifference );
+
+      // now do the multiplication dimension by dimension
+      for ( unsigned int iD = 0; iD<dim; ++iD )
+        {
+        VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( ptrI0, iD, m_ptrTmpGradient );
+        VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrCurrentAdjointDifference, iD, m_ptrTmpGradient );
+        ptrGradient->addCellwise( m_ptrTmpGradient );
+        }
+
+      // now add the mask component, i.e., [2/\sigma1^2(I_0-I_1)^2(1-T_2)^2(1-T_1)-2/\sigma_2^2(T_1-T_2)]\nabla T_1
+      VectorFieldType* m_ptrTmpGradient2 = m_ptrTmpVelocityField; // convenience mapping
+
+      VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( ptrT0, 0, m_ptrTmpGradient );
+      m_ptrTmpGradient2->copy( m_ptrTmpGradient );
+
+      // now compute the final condition for \lambda
+      // \lambda(1) = -2/sigma2^2*(T1-T2)
+      this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifferenceT, ptrT0, ptrT2 );
+      m_ptrCurrentAdjointDifferenceT->multConst( 1.0/m_Sigma2Sqr );
+
+      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrCurrentAdjointDifferenceT, 0, m_ptrTmpGradient2 );
+
+      ptrGradient->addCellwise( m_ptrTmpGradient2 );
+
+      // compute the mask contributions: (T2-1) and (IT(1)-1)
+      ComputeInvertedMask( ptrT2, m_ptrT2M1 );
+      ComputeInvertedMask( ptrT0, m_ptrEstT1M1 );
+
+      // now add the jump to currentlambdaTEnd
+      // \lambda^\tau(1-) = \lambda^\tau(1+) -2/sigma1^2(I0-I_1)^2*(T2-1)^2(T1-1)
+      this->m_pMetric->GetLocalizedMetric( m_ptrCurrentAdjointDifferenceT, ptrI0, ptrI1 );
+      m_ptrCurrentAdjointDifferenceT->multConst( 1.0/m_Sigma1Sqr );
+
+      // now multiply it with (T2-1)^2 and (IT(1)-1) to get the final desired result for \lambda(1)
+      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrT2M1, 0, m_ptrCurrentAdjointDifferenceT );
+      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrT2M1, 0, m_ptrCurrentAdjointDifferenceT );
+      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrEstT1M1, 0, m_ptrCurrentAdjointDifferenceT );
+
+      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrCurrentAdjointDifferenceT, 0, m_ptrTmpGradient );
+
+      ptrGradient->addCellwise( m_ptrTmpGradient );
+
+    }
+  else if ( uiKernelNumber == 1 )
+    {
+      /** This is for the mask kernel.
+      * For L2 and assuming v=0 initially the unsmoothed gradient becomes:
+      \f[
+      \nabla E = \lambda^\tau \nabla I^\tau = -\frac{2}{\sigma_2^2}(T_1-T_2)\nabla T_1
+      \f]
+      */
+      // influence of the mask
+      VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( ptrT0, 0, ptrGradient );
+
+      // now compute the final condition for \lambda
+      // \lambda(1) = -2/sigma2^2*(T1-T2)
+      this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifferenceT, ptrT0, ptrT2 );
+      m_ptrCurrentAdjointDifferenceT->multConst( 1.0/m_Sigma2Sqr );
+
+      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrCurrentAdjointDifferenceT, 0, ptrGradient );
+    }
+  else
+    {
+      std::cerr << "WARNING: Unknown kernel number: returning 0 gradient field." << std::endl;
+      ptrGradient->setConst( 0.0 );
     }
 
 }
@@ -746,6 +870,12 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::OutputStateInforma
   VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrEstT2, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-Est-T2.nrrd" ) );
   VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrEstI1, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-Est-I1.nrrd" ) );
 
+  // blurred images and masks
+  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrI0, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-I0-saved-orig.nrrd" ) );
+  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrI1, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-I1-saved-orig.nrrd" ) );
+  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrT0, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-T0-saved-orig.nrrd" ) );
+  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrT2, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-T2-saved-orig.nrrd" ) );
+
   // compute the mask contributions: (T2-1) and (IT(1)-1)
   ComputeInvertedMask( ptrT2, m_ptrT2M1 );
   ComputeInvertedMask( ptrEstT1, m_ptrEstT1M1 );
@@ -757,8 +887,7 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::OutputStateInforma
   VectorImageUtils< T, TState::VImageDimension >::writeFileITK( m_ptrI1Comp, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-I1-comp.nrrd" ) );
   VectorImageUtils< T, TState::VImageDimension >::writeFileITK( m_ptrEstI1Comp, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-Est-I1-comp.nrrd" ) );
 
-  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrI1, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-I1-saved-orig.nrrd" ) );
-  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrT2, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-T2-saved-orig.nrrd" ) );
+
 
 }
 

@@ -48,10 +48,11 @@ template< class TState >
 void CLDDMMGeometricMetamorphosisRegistration< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
 {
   Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+
   Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
 
-  SetJSONHelpForRootKey( GeneralRegistrationSettings, "general setting for the registration")
+  SetJSONHelpForRootKey( GeneralRegistrationSettings, "general setting for the registration" );
 
   SetJSONFromKeyString( currentConfigurationIn, currentConfigurationOut, MaskKernel );
 
@@ -144,8 +145,11 @@ void CLDDMMGeometricMetamorphosisRegistration< TState >::SetDefaultObjectiveFunc
   plddmm->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
   
   this->m_ptrObjectiveFunction = plddmm;
+  // set the objective functions for the kernels and the kernel numbers
   this->m_ptrKernel->SetObjectiveFunctionPointer( plddmm );
+  this->m_ptrKernel->SetObjectiveFunctionKernelNumber( 0 );
   this->m_ptrMaskKernel->SetObjectiveFunctionPointer( plddmm );
+  this->m_ptrMaskKernel->SetObjectiveFunctionKernelNumber( 1 );
 }
 
 #endif

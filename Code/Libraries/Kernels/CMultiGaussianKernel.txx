@@ -22,9 +22,10 @@
 
 template <class T, unsigned int VImageDimension >
 CMultiGaussianKernel< T, VImageDimension >::CMultiGaussianKernel()
-  : m_ExternallySetSigmas( false ),
+  : DefaultEstimateGradientScalingFactors( true ),
+    m_ExternallySetSigmas( false ),
     m_ExternallySetEffectiveWeights( false ),
-    m_ExternallySetEstimateGradientScalingFactors( true )
+    m_ExternallySetEstimateGradientScalingFactors( false )
 {
   DefaultSigmas.resize( 5 );
   DefaultSigmas[ 0 ] = 0.25;
@@ -301,9 +302,11 @@ std::vector< T > CMultiGaussianKernel< T, VImageDimension >::ComputeDataDependen
     // initialize a vector field of appropriate size
     VectorFieldType *ptrGradient = new VectorFieldType( this->ptrObjectiveFunction->GetPointerToInitialImage() );
 
-    this->ptrObjectiveFunction->ComputeInitialUnsmoothedVelocityGradient( ptrGradient );
+    this->ptrObjectiveFunction->ComputeInitialUnsmoothedVelocityGradient( ptrGradient, this->m_KernelNumber );
     // now go through all the sigmas and determine what the weights should be
     VectorFieldType *ptrSmoothedGradient = new VectorFieldType( ptrGradient );
+
+    std::cout << "Computing multi-Gaussian kernel weights for kernel #" << this->m_KernelNumber << std::endl;
 
     for ( unsigned int iI=0; iI < uiNrOfSigmas; ++iI )
     {

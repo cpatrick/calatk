@@ -98,23 +98,23 @@
 
 #define SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, VariableName ) \
   SetJSON##VariableName( this->m_jsonConfigIn.GetFromKey( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ).asDouble() ); \
-  this->m_jsonConfigOut.GetFromKey( currentConfigurationOut, #VariableName, this->GetExternalOrDefault##VariableName() ).asDouble(); \
+  currentConfigurationOut[ #VariableName ] = currentConfigurationIn[ #VariableName ]; \
 
 #define SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, VariableName ) \
   SetJSON##VariableName( this->m_jsonConfigIn.GetFromKey( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ).asUInt() ); \
-  this->m_jsonConfigOut.GetFromKey( currentConfigurationOut, #VariableName, this->GetExternalOrDefault##VariableName() ).asUInt(); \
+  currentConfigurationOut[ #VariableName ] = currentConfigurationIn[ #VariableName ]; \
 
 #define SetJSONFromKeyBool( currentConfigurationIn, currentConfigurationOut, VariableName ) \
   SetJSON##VariableName( this->m_jsonConfigIn.GetFromKey( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ).asBool() ); \
-  this->m_jsonConfigOut.GetFromKey( currentConfigurationOut, #VariableName, this->GetExternalOrDefault##VariableName() ).asBool(); \
+  currentConfigurationOut[ #VariableName ] = currentConfigurationIn[ #VariableName ]; \
 
 #define SetJSONFromKeyString( currentConfigurationIn, currentConfigurationOut, VariableName ) \
   SetJSON##VariableName( this->m_jsonConfigIn.GetFromKey( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ).asString() ); \
-  this->m_jsonConfigOut.GetFromKey( currentConfigurationOut, #VariableName, this->GetExternalOrDefault##VariableName() ).asString(); \
+  currentConfigurationOut[ #VariableName ] = currentConfigurationIn[ #VariableName ]; \
 
 #define SetJSONFromKeyVector( currentConfigurationIn, currentConfigurationOut, VariableName ) \
   SetJSON##VariableName( this->m_jsonConfigIn.GetFromKeyAsVector( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ) ); \
-  this->m_jsonConfigOut.GetFromKeyAsVector( currentConfigurationOut, #VariableName, this->GetExternalOrDefault##VariableName() ); \
+  currentConfigurationOut[ #VariableName ] = currentConfigurationIn[ #VariableName ]; \
 
 #define SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, VariableName, HelpString) \
   this->m_jsonConfigIn.SetHelpForKey( currentConfigurationIn, #VariableName, HelpString ); \

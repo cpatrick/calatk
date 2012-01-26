@@ -542,7 +542,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeGradien
 }
 
 template < class TState >
-void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeInitialUnsmoothedVelocityGradient( VectorFieldType* ptrInitialUnsmoothedVelocityGradient )
+void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeInitialUnsmoothedVelocityGradient( VectorFieldType* ptrInitialUnsmoothedVelocityGradient, unsigned int uiKernelNumber )
 {
   // compute the unsmoothed velocity gradient; to be used to estimate weights for the multi-Gaussian kernels.
   // v and p(0) is assumed zero here and the unsmoothed gradient is then
