@@ -67,7 +67,7 @@ public:
 
     void OutputStateInformation( unsigned int uiIter, std::string outputPrefix="" );
 
-    // metods for the augmented Lagrangian
+    // methods for the augmented Lagrangian
     void SetSquaredPenaltyScalarWeight( T dWeight );
     T GetSquaredPenaltyScalarWeight();
     VectorImageType* GetPointerToImageLagrangianMultiplier();

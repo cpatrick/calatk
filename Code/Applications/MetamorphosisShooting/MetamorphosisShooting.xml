@@ -117,6 +117,13 @@
           <description>If set, will generate annotated settings in the JSON configuration file. This is to help understand the meaning and options of the different settings.</description>
         </boolean>
 
+        <boolean>
+          <name>bUseFullAdjoint</name>
+          <longflag>--useFullAdjoint</longflag>
+          <default>false</default>
+          <description>If set, will use the full adjoint metamorphosis scheme instead of the simplied scheme. Currently not recommended (highly experimental).</description>
+        </boolean>
+
   </parameters>
   
 </executable>

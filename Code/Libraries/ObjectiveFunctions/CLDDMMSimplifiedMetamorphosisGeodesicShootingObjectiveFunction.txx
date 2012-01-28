@@ -17,12 +17,18 @@
 *
 */
 
-#ifndef C_LDDMM_SIMPIFIED_GEODESIC_SHOOTING_OBJECTIVE_FUNCTION_TXX
-#define C_LDDMM_SIMPIFIED_GEODESIC_SHOOTING_OBJECTIVE_FUNCTION_TXX
+#ifndef C_LDDMM_SIMPIFIED_METAMORPHOSIS_GEODESIC_SHOOTING_OBJECTIVE_FUNCTION_TXX
+#define C_LDDMM_SIMPIFIED_METAMORPHOSIS_GEODESIC_SHOOTING_OBJECTIVE_FUNCTION_TXX
 
 template < class TState >
-CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::CLDDMMSimplifiedGeodesicShootingObjectiveFunction()
+CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction()
+  : DefaultRho( 1 ),
+    m_ExternallySetRho( false ),
+    m_AugmentedLagrangianMu( 0.1 ),
+    m_ptrImageLagrangianMultiplier( NULL )
 {
+  m_Rho = DefaultRho;
+
   // storage for the map
   m_ptrMapIn = NULL;
   m_ptrMapOut = NULL;
@@ -36,6 +42,7 @@ CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::CLDDMMSimplifiedGeo
 
   m_ptrTmpField = NULL;
   m_ptrTmpFieldConv = NULL;
+  m_ptrTmpImage = NULL;
 
   m_ptrCurrentBackMap = NULL;
   m_ptrMapIdentity = NULL;
@@ -50,7 +57,7 @@ CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::CLDDMMSimplifiedGeo
 }
 
 template< class TState >
-void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::DeleteData()
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::DeleteData()
 {
   this->m_ptrKernel->DeallocateMemory();
 
@@ -67,6 +74,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::DeleteData()
 
   SaveDelete< VectorFieldPointerType >::Pointer( m_ptrTmpField );
   SaveDelete< VectorFieldPointerType >::Pointer( m_ptrTmpFieldConv );
+  SaveDelete< VectorImagePointerType >::Pointer( m_ptrTmpImage );
 
   SaveDelete< VectorFieldPointerType >::Pointer( m_ptrCurrentBackMap );
   SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapIdentity );
@@ -83,16 +91,34 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::DeleteData()
 
   SaveDelete< TState* >::Pointer( this->m_pState );
   SaveDelete< TState* >::Pointer( this->m_pGradient );
+
+  SaveDelete< VectorImagePointerType >::Pointer( m_ptrImageLagrangianMultiplier );
+
 }
 
 template < class TState >
-CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::~CLDDMMSimplifiedGeodesicShootingObjectiveFunction()
+CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::~CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction()
 {
   DeleteData();
 }
 
 template < class TState >
-void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::CreateNewStateStructures()
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+{
+  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "SimplifiedMetamorphosis", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "SimplifiedMetamorphosis", Json::nullValue );
+
+  SetJSONHelpForRootKey( GrowthModel, "settings for the simplified metamorphosis model" );
+
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, Rho );
+
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, Rho,
+                     "rho is the weight of the appearance change penalty rho|q|^2" );
+}
+
+template < class TState >
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::CreateNewStateStructures()
 {
     assert( this->m_pState == NULL );
     assert( m_vecTimeDiscretization.size() > 1 );
@@ -117,7 +143,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::CreateNewState
 }
 
 template< class TState >
-void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ShallowCopyStateStructures( TState* pState )
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::ShallowCopyStateStructures( TState* pState )
 {
     assert ( this->m_pState == NULL );
 
@@ -128,7 +154,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ShallowCopySta
 }
 
 template < class TState >
-void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::CreateGradientAndAuxiliaryStructures()
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState>::CreateGradientAndAuxiliaryStructures()
 {
 
     // get the subject ids
@@ -162,7 +188,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::CreateGradientA
     m_ptrMapOut = new VectorFieldType( pImInfo->pIm );
     m_ptrMapTmp = new VectorFieldType( pImInfo->pIm );
 
-    // storage for the determinant of the Jacobian (is a scalar)
+    // storage for the determinant of the Jacobian
     m_ptrDeterminantOfJacobian = new VectorImageType( pImInfo->pIm, 0.0, 1 );
 
     // storage for current state
@@ -174,6 +200,8 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::CreateGradientA
     m_ptrTmpField = new VectorFieldType( pImInfo->pIm );
     m_ptrTmpFieldConv = new VectorFieldType( pImInfo->pIm );
 
+    m_ptrTmpImage = new VectorImageType( pImInfo->pIm );
+
     // storage for the back map and the adjoint
     m_ptrCurrentBackMap = new VectorFieldType( pImInfo->pIm );
     m_ptrMapIdentity = new VectorFieldType( pImInfo->pIm );
@@ -181,10 +209,13 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::CreateGradientA
     m_ptrCurrentFinalAdjoint = new VectorImageType( pImInfo->pIm );
     m_ptrWarpedFinalToInitialAdjoint = new VectorImageType( pImInfo->pIm );
 
+    // augmented Lagrangian
+    m_ptrImageLagrangianMultiplier = new VectorImageType( pImInfo->pIm );
+
 }
 
 template < class TState >
-void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::InitializeDataStructuresFromState( TState* pState )
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState>::InitializeDataStructuresFromState( TState* pState )
 {
     DeleteData();
 
@@ -197,7 +228,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::InitializeDataS
 }
 
 template < class TState >
-void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::InitializeDataStructures()
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::InitializeDataStructures()
 {
     DeleteData();
 
@@ -213,19 +244,19 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::InitializeData
 }
 
 template < class TState >
-void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::InitializeState()
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::InitializeState()
 {
   InitializeDataStructures();
 }
 
 template < class TState >
-void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::InitializeState(TState* pState)
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::InitializeState(TState* pState)
 {
   InitializeDataStructuresFromState( pState );
 }
 
 template < class TState >
-void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMomentum( VectorImageType* ptrMomentum, T dTime )
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::GetMomentum( VectorImageType* ptrMomentum, T dTime )
 {
   GetMap( m_ptrMapTmp, dTime );
   // now compute the momentum by interpolation
@@ -237,30 +268,34 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMomentum( V
 }
 
 template < class TState >
-void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetImage( VectorImageType* ptrIm, T dTime )
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::GetImage( VectorImageType* ptrIm, T dTime )
 {
-  // TODO: account for appearance changes, based on closeby images
-  GetMap( m_ptrMapTmp, dTime );
-  // now compute the image by interpolation
-  VectorImageType* ptrInitialImage = this->m_pState->GetPointerToInitialImage();
-  LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapTmp, ptrInitialImage, ptrIm );
-
+  // This is more complicated than for the standard models, because we have an appearance change here
+  // required an integration forward in time
+  T dTimeFrom = m_vecTimeDiscretization[0].dTime;
+  GetMapFromToAndImageAtFinalTime( NULL, ptrIm, dTimeFrom, dTime );
 }
 
 template < class TState >
-void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMap( VectorFieldType* ptrMap, T dTime )
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::GetMap( VectorFieldType* ptrMap, T dTime )
 {
   T dTimeFrom = m_vecTimeDiscretization[0].dTime;
   GetMapFromTo( ptrMap, dTimeFrom, dTime );
 }
 
 template < class TState >
-void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo )
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo )
+{
+  GetMapFromToAndImageAtFinalTime( ptrMap, NULL, dTimeFrom, dTimeTo );
+}
+
+template < class TState >
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::GetMapFromToAndImageAtFinalTime( VectorFieldType* ptrMap, VectorImageType* ptrIm, T dTimeFrom, T dTimeTo )
 {
    /**
-    * Solves the EPDiff equation forward in time using a map-based approach to compute the map between two time-points
+    * Solves the EPDiff equation for metamorphosis forward in time using a map-based approach to compute the map between two time-points
     *
-    * \f$ I_t + \nabla I^T v = 0, \f$
+    * \f$ I_t + \nabla I^T v = p/rho, \f$
     * \f$ p_t + div( p v ) = 0, \f$
     * \f$ v = -K*(p\nabla I) \f$
     *
@@ -275,18 +310,26 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
     return;
     }
 
-  LDDMMUtils< T, TState::VImageDimension >::identityMap( ptrMap );
+  if ( ptrMap != NULL )
+  {
+    LDDMMUtils< T, TState::VImageDimension >::identityMap( ptrMap );
+  }
+
   // identity map if the time points are the same
   if ( dTimeFrom == dTimeTo )
   {
+    if ( ptrIm != NULL )
+    {
+      ptrIm->copy( this->m_pState->GetPointerToInitialImage() );
+    }
     return;
   }
 
   // create four additional maps to hold the solution
-  VectorFieldType* ptrMapIn = new VectorFieldType( ptrMap );
-  VectorFieldType* ptrMapTmp = new VectorFieldType( ptrMap );
-  VectorFieldType* ptrMapOut = new VectorFieldType( ptrMap );
-  VectorFieldType* ptrCurrentVelocity = new VectorFieldType( ptrMap );
+  VectorFieldType* ptrMapIn = new VectorFieldType( m_ptrMapTmp );
+  VectorFieldType* ptrMapTmp = new VectorFieldType( m_ptrMapTmp );
+  VectorFieldType* ptrMapOut = new VectorFieldType( m_ptrMapTmp );
+  VectorFieldType* ptrCurrentVelocity = new VectorFieldType( m_ptrMapTmp );
 
   // create two new images to hold the image and the adjoint
   VectorImageType* ptrCurrentP = new VectorImageType( m_ptrCurrentP );
@@ -320,6 +363,17 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
     std::cout << "evolving overall map for " << m_vecTimeIncrements[ iI ] << std::endl;
     this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMapIn, ptrMapOut, ptrMapTmp, m_vecTimeIncrements[ iI ] );
 
+    // add p/rho*dt to I
+    m_ptrTmpImage->copy( m_ptrCurrentP );
+    m_ptrTmpImage->multConst( ( this->m_vecTimeIncrements[ iI ] )/m_Rho );
+    m_ptrCurrentI->addCellwise( m_ptrTmpImage );
+
+#warning This is just an approximation for the final image
+    if ( ptrIm != NULL )
+    {
+      ptrIm->copy( m_ptrCurrentI );
+    }
+
     LDDMMUtils< T, TState::VImageDimension >::applyMap( ptrMapOut, ptrInitialImage, ptrCurrentI );
     LDDMMUtils< T, TState::VImageDimension >::applyMap( ptrMapOut, ptrInitialMomentum, ptrCurrentP );
 
@@ -336,8 +390,12 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
         // the full map is in between this time interval so just integrate it for a little bit
         std::cout << "1: evolving map for " << dTimeTo - dCurrentTime << std::endl;
         dTimeEvolvedFor += dTimeTo - dCurrentTime;
-        this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, dTimeTo - dCurrentTime );
-        ptrMap->copy( ptrMapOut );
+
+        if ( ptrMap != NULL )
+        {
+          this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, dTimeTo - dCurrentTime );
+          ptrMap->copy( ptrMapOut );
+        }
 
         delete ptrMapOut;
         delete ptrMapTmp;
@@ -356,8 +414,12 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
          // integrate it for the full interval
         std::cout << "2: evolving map for " << m_vecTimeIncrements[ iI ] << std::endl;
         dTimeEvolvedFor += m_vecTimeIncrements[ iI ];
-        this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, m_vecTimeIncrements[ iI ] );
-        ptrMap->copy( ptrMapOut );
+
+        if ( ptrMap != NULL )
+        {
+          this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, m_vecTimeIncrements[ iI ] );
+          ptrMap->copy( ptrMapOut );
+        }
       }
     }
 
@@ -369,8 +431,12 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
         // the full map is in between this time interval so just integrate it for a little bit
         std::cout << "3: evolving map for " << dTimeTo - dTimeFrom << std::endl;
         dTimeEvolvedFor += dTimeTo = dTimeFrom;
-        this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, dTimeTo - dTimeFrom );
-        ptrMap->copy( ptrMapOut );
+
+        if ( ptrMap != NULL )
+        {
+          this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, dTimeTo - dTimeFrom );
+          ptrMap->copy( ptrMapOut );
+        }
 
         std::cout << "Overall time evolved for = " << dTimeEvolvedFor << std::endl;
 
@@ -389,8 +455,12 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
         // integrate the map until the end of this interval
         std::cout << "4: evolving map for " << dCurrentDT << std::endl;
         dTimeEvolvedFor += dCurrentDT;
-        this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, dCurrentDT );
-        ptrMap->copy( ptrMapOut );
+
+        if ( ptrMap != NULL )
+        {
+          this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, dCurrentDT );
+          ptrMap->copy( ptrMapOut );
+        }
         bInitializedMap = true;
       }
 
@@ -405,7 +475,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
 }
 
 template< class TState >
-void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::CreateTimeDiscretization()
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::CreateTimeDiscretization()
 {
     if ( this->m_ptrImageManager == NULL )
     {
@@ -418,7 +488,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::CreateTimeDisc
 
     if ( uiNrOfMeasurements != 2 )
     {
-      throw std::runtime_error( "CLDDMMSimplifiedGeodesicShootingObjectiveFunction only supports two measurements (one source and one target image" );
+      throw std::runtime_error( "CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction only supports two measurements (one source and one target image" );
       return;
     }
 
@@ -441,13 +511,13 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::CreateTimeDisc
 }
 
 template < class TState >
-void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeImageMomentumForwardAndFinalAdjointWarpedToInitialImage( VectorImageType* ptrWarpedFinalToInitialAdjoint )
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::ComputeImageMomentumForwardAndFinalAdjointWarpedToInitialImage( VectorImageType* ptrWarpedFinalToInitialAdjoint )
 {
   /**
     * Solves the EPDiff equation forward in time using a map-based approach
     * and computes the map, mapping to the initial condition
     *
-    * \f$ I_t + \nabla I^T v = 0, \f$
+    * \f$ I_t + \nabla I^T v = p/rho, \f$
     * \f$ p_t + div( p v ) = 0, \f$
     * \f$ v = -K*(p\nabla I) \f$
     *
@@ -470,6 +540,11 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeImageMo
       ComputeVelocity( m_ptrCurrentI, m_ptrCurrentP, m_ptrCurrentVelocity, m_ptrMapOut );
 
       this->m_ptrEvolver->SolveForward( m_ptrCurrentVelocity, m_ptrMapIn, m_ptrMapOut, m_ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
+
+      // add p/rho*dt to I
+      m_ptrTmpImage->copy( m_ptrCurrentP );
+      m_ptrTmpImage->multConst( ( this->m_vecTimeIncrements[ iI ] )/m_Rho );
+      m_ptrCurrentI->addCellwise( m_ptrTmpImage );
 
       LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapOut, ptrInitialImage, m_ptrCurrentI );
       LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapOut, ptrInitialMomentum, m_ptrCurrentP );
@@ -495,16 +570,22 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeImageMo
 
   // now we have the back map and can compute the adjoint in the initial frame by pulling it back
 
-  unsigned int uiNrOfTimePoints = m_vecTimeDiscretization.size();
+  // the final condition here is: p(1) = r-\mu(I(1)-I_1)
 
-  this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentFinalAdjoint, m_ptrCurrentI, ptrI1 );
-  m_ptrCurrentFinalAdjoint->multConst( m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecWeights[ 0 ] );
+  // I_1
+  m_ptrCurrentFinalAdjoint->copy( ptrI1 );
+  // -I(1)
+  m_ptrCurrentFinalAdjoint->addCellwiseMultiple( m_ptrCurrentI, -1.0 );
+  // \mu(I_1-I(1))
+  m_ptrCurrentFinalAdjoint->multConst( m_AugmentedLagrangianMu );
+  // add r
+  m_ptrCurrentFinalAdjoint->addCellwise( m_ptrImageLagrangianMultiplier );
 
   LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrCurrentBackMap, m_ptrCurrentFinalAdjoint, ptrWarpedFinalToInitialAdjoint );
 }
 
 template < class TState >
-void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeGradient()
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::ComputeGradient()
 {
   ComputeImageMomentumForwardAndFinalAdjointWarpedToInitialImage( m_ptrWarpedFinalToInitialAdjoint );
 
@@ -512,7 +593,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeGradien
     * The gradient is now simply
     *
     \f[
-      \nabla_{I_0(t_0)}E = -\lambda(0) -\frac{1}{\sigma^2}\nabla d^2(I(0),I_0)
+      \nabla_{I_0(t_0)}E = 0 // not used, I(0) is fixed
     \f]
     *
     \f[
@@ -529,54 +610,45 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeGradien
   ptrP0Gradient->multConst(-1);
 
   ptrP0Gradient->addCellwise( ptrInitialMomentum );
+  ptrI0Gradient->setConst( 0.0 );
 
-  if ( this->m_EstimateInitialImage )
-  {
-    ptrI0Gradient->copy( m_ptrWarpedFinalToInitialAdjoint );
-    ptrI0Gradient->multConst(-1);
-  }
-  else
-  {
-    ptrI0Gradient->setConst( 0.0 );
-  }
 }
 
 template < class TState >
-void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeInitialUnsmoothedVelocityGradient( VectorFieldType* ptrInitialUnsmoothedVelocityGradient, unsigned int uiKernelNumber )
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::ComputeInitialUnsmoothedVelocityGradient( VectorFieldType* ptrInitialUnsmoothedVelocityGradient, unsigned int uiKernelNumber )
 {
+
+  std::cout << "WARNING: initial unsmooth gradient computation is NOT adapted for metamorphosis. Results may be inaccurate. FIXME." << std::endl;
+
   // compute the unsmoothed velocity gradient; to be used to estimate weights for the multi-Gaussian kernels.
-  // v and p(0) is assumed zero here and the unsmoothed gradient is then
-  // \f$ \sum_i -\lambda_i(0)\nabla I_0 \f$
-  // where the \lambda_i(0) is the warped adjoint from the final state warped to the initial image
+  // this is an approximation based on adding the augmented Lagrangian constraint to the original model (rather than the 2nd order for shooting)
+  // v, r and p(0) is assumed zero here and the unsmoothed gradient is then, because I(t) = I(0) and p(t) = p(1)
+
+  // \f$ \nabla E = \sum_i \mu(I_0-I_1)\nabla I_0  \f$
+  // sum is over dimensions
 
   unsigned int dim = ptrI0->getDim();
-
-  unsigned int uiNrOfTimePoints = m_vecTimeDiscretization.size();
-
-  VectorImageType* ptrCurrentAdjointDifference = new VectorImageType( ptrI0 );
-
-  this->m_pMetric->GetAdjointMatchingDifferenceImage( ptrCurrentAdjointDifference, ptrI0, ptrI1 );
-  ptrCurrentAdjointDifference->multConst( m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecWeights[ 0 ] );
 
   // initialize to 0
   VectorFieldType* ptrCurrentGradient = ptrInitialUnsmoothedVelocityGradient;
   ptrCurrentGradient->setConst( 0 );
 
+  // \mu(I_0-I_1)
+  m_ptrTmpImage->copy( ptrI0 );
+  m_ptrTmpImage->addCellwiseMultiple( ptrI1, -1.0 );
+  m_ptrTmpImage->multConst( m_AugmentedLagrangianMu );
+
   for ( unsigned int iD = 0; iD<dim; ++iD )
     {
     VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( ptrI0, iD, m_ptrTmpField );
-    VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrCurrentAdjointDifference, iD, m_ptrTmpField );
+    VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrTmpImage, iD, m_ptrTmpField );
     ptrCurrentGradient->addCellwise( m_ptrTmpField );
     }
-
-  ptrCurrentGradient->multConst( 1.0 );
-
-  delete ptrCurrentAdjointDifference;
 }
 
 template < class TState >
-typename CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::CEnergyValues
-CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::GetCurrentEnergy()
+typename CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::CEnergyValues
+CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState>::GetCurrentEnergy()
 {
   /**
     * Computes the energy for the simplified shooting method.
@@ -584,7 +656,7 @@ CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::GetCurrentEnergy()
     * enforced we can compute the energy just as for the full adjoint formulation
     *
     \f[
-      E = 0.5 \langle p(t_0)\nabla I(t_0),K*(p(t_0)\nabla I(t_0)\rangle + \frac{1}{\sigma}^2 d^2(I(t_1),Y)
+      E = 0.5 \langle p(t_0)\nabla I(t_0),K*(p(t_0)\nabla I(t_0)\rangle + 0.5 \langle p(t_0), p(t_0) \rangle -\langle r, I_1-I(1)\rangle + \frac{\mu}{2}\|I_1-I(1)\|^2
     \f]
     */
 
@@ -613,6 +685,9 @@ CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::GetCurrentEnergy()
       dEnergy += m_ptrTmpField->computeInnerProduct( m_ptrTmpFieldConv );
   }
 
+  // now add the simply the squared norm of the initial momentum
+  dEnergy += m_Rho*ptrInitialMomentum->computeSquareNorm();
+
   // multiply the full energy by 0.5
   unsigned int uiNrOfDiscretizationPoints = m_vecTimeDiscretization.size();
   T dTimeDuration = this->m_vecTimeDiscretization[ uiNrOfDiscretizationPoints-1 ].dTime - this->m_vecTimeDiscretization[0].dTime;
@@ -625,14 +700,21 @@ CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::GetCurrentEnergy()
 
   ComputeImageMomentumForwardAndFinalAdjointWarpedToInitialImage( m_ptrWarpedFinalToInitialAdjoint );
 
-  T dImageNorm = 0;
+  // computing I_1-I(1)
+  m_ptrTmpImage->copy( m_ptrCurrentI );
+  m_ptrTmpImage->multConst( -1.0 );
+  m_ptrTmpImage->addCellwise( ptrI1 );
 
-  // we only have two timepoints here
+  T dImageNorm = m_ptrTmpImage->computeSquareNorm();
 
-  dImageNorm += m_vecTimeDiscretization[ 0 ].vecWeights[ 0 ] * this->m_pMetric->GetMetric( ptrI0, ptrInitialImage );
-  dImageNorm += m_vecTimeDiscretization[ uiNrOfDiscretizationPoints-1 ].vecWeights[ 0 ] * this->m_pMetric->GetMetric( ptrI1, m_ptrCurrentI );
+  // +\mu/2\|I(1)-I_1\|^2
+  T dAugmentedLagrangianNorm = 0.5*m_AugmentedLagrangianMu*dImageNorm;
 
-  dEnergy += dImageNorm;
+#warning make the sign consistent with the equation here
+  // -<r,I(1)-I_1>
+  dAugmentedLagrangianNorm += m_ptrTmpImage->computeInnerProduct( m_ptrImageLagrangianMultiplier );
+
+  dEnergy += dAugmentedLagrangianNorm;
 
   CEnergyValues energyValues;
   energyValues.dEnergy = dEnergy;
@@ -643,7 +725,7 @@ CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::GetCurrentEnergy()
 }
 
 template < class TState >
-void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::OutputStateInformation( unsigned int uiIter, std::string outputPrefix )
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::OutputStateInformation( unsigned int uiIter, std::string outputPrefix )
 {
   std::cout << "Saving state information at iteration " << uiIter << std::endl;
 
@@ -676,5 +758,49 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::OutputStateInf
   VectorImageUtils< T, TState::VImageDimension >::writeFileITK( m_ptrCurrentP, outputPrefix + "wP0" + suffix );
 
 }
+
+/// functionality for augmented Lagrangian
+template < class TState >
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::SetSquaredPenaltyScalarWeight( T dWeight )
+{
+  m_AugmentedLagrangianMu = dWeight;
+}
+
+template < class TState >
+typename TState::TFloat
+CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::GetSquaredPenaltyScalarWeight()
+{
+  return m_AugmentedLagrangianMu;
+}
+
+template < class TState >
+typename CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::VectorImageType*
+CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::GetPointerToImageLagrangianMultiplier()
+{
+  return m_ptrImageLagrangianMultiplier;
+}
+
+template < class TState >
+const typename CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::VectorImageType*
+CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::GetPointerToCurrentImageResidual()
+{
+  // TODO: extend to support multiple time-points (how?)
+  // just look at the last time point for now here
+  unsigned int uiNrOfTimePoints= m_vecTimeDiscretization.size();
+  unsigned int uiNrOfMeasuredImagesAtFinalTimePoint = m_vecTimeDiscretization[ uiNrOfTimePoints - 1].vecMeasurementImages.size();
+
+  // for now we can only deal with one image (to be fixed)
+  assert( uiNrOfMeasuredImagesAtFinalTimePoint==1 );
+
+#warning Very dirty way of accessing the last image, need a cleaner approach
+  // computing I(1)-I_1
+  m_ptrTmpImage->copy( ptrI1 );
+  m_ptrTmpImage->multConst( -1.0 );
+  m_ptrTmpImage->addCellwise( m_ptrCurrentI );
+
+  return m_ptrTmpImage;
+
+}
+
 
 #endif

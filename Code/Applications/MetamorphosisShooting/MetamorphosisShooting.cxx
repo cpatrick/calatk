@@ -25,6 +25,8 @@
 #include <iostream>
 #include "CALATKCommon.h"
 #include "CMetamorphosisGeodesicShootingInitialImageMomentumRegistration.h"
+#include "CLDDMMSimplifiedMetamorphosisGeodesicShootingRegistration.h"
+#include "CLDDMMVelocityFieldWithMomentumRegistration.h"
 #include "VectorImageUtils.h"
 #include "CImageManagerMultiScale.h"
 
@@ -39,15 +41,29 @@ int DoIt( int argc, char** argv )
   // define the type of state
   typedef CALATK::CStateInitialImageMomentum< TFLOAT, VImageDimension > TState;
   // define the registration method based on this state
-  typedef CALATK::CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TState > regType;
+
+  typedef CALATK::CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TState > regTypeFull;
+  typedef CALATK::CLDDMMSimplifiedMetamorphosisGeodesicShootingRegistration< TState > regTypeSimplified;
 
   typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension > VectorImageUtilsType;
   typedef CALATK::CImageManagerMultiScale< TFLOAT, VImageDimension > ImageManagerMultiScaleType;
   typedef CALATK::LDDMMUtils< TFLOAT, VImageDimension > LDDMMUtilsType;
+
+  typedef CALATK::CLDDMMVelocityFieldWithMomentumRegistration< TState > regType;
+
   typedef typename regType::VectorImageType VectorImageType;
   typedef typename regType::VectorFieldType VectorFieldType;
 
-  regType lddmm;
+  regType* plddmm;
+
+  if ( bUseFullAdjoint )
+  {
+    plddmm = new regTypeFull;
+  }
+  else
+  {
+    plddmm = new regTypeSimplified;
+  }
 
   CALATK::CJSONConfiguration configIn( true );
   CALATK::CJSONConfiguration configOut( false );
@@ -63,7 +79,7 @@ int DoIt( int argc, char** argv )
     configIn.InitializeEmptyRoot();
     }
 
-  ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm.GetImageManagerPointer() );
+  ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( plddmm->GetImageManagerPointer() );
 
   ptrImageManager->AddImage( sourceImage, 0.0, 0 );
   ptrImageManager->AddImage( targetImage, 1.0, 0 );
@@ -92,12 +108,12 @@ int DoIt( int argc, char** argv )
     ptrImageManager->AddScale( dCurrentScale, iI );
     }
 
-  lddmm.SetAllowHelpComments( bCreateJSONHelp );
-  lddmm.SetAutoConfiguration( *configIn.GetRootPointer(), *configOut.GetRootPointer() );
+  plddmm->SetAllowHelpComments( bCreateJSONHelp );
+  plddmm->SetAutoConfiguration( *configIn.GetRootPointer(), *configOut.GetRootPointer() );
 
   ptrImageManager->print( std::cout );
 
-  lddmm.Solve();
+  plddmm->Solve();
 
   // write out the resulting JSON file if desired
   if ( configFileOut.compare("None") != 0 )
@@ -112,12 +128,12 @@ int DoIt( int argc, char** argv )
       }
     }
 
-  const VectorFieldType* ptrMap1 = new VectorFieldType( lddmm.GetMap( 1.0 ) );
+  const VectorFieldType* ptrMap1 = new VectorFieldType( plddmm->GetMap( 1.0 ) );
   VectorImageUtilsType::writeFileITK( ptrMap1, sourceToTargetMap );
 
   if ( warpedSourceImage.compare("None") != 0 )
     {
-    VectorImageType* ptrI0W1 = new VectorImageType( lddmm.GetImage( 1.0 ) );
+    VectorImageType* ptrI0W1 = new VectorImageType( plddmm->GetImage( 1.0 ) );
     // generating warped image (not always written out)
     VectorImageUtilsType::writeFileITK( ptrI0W1, warpedSourceImage );
 
@@ -126,11 +142,13 @@ int DoIt( int argc, char** argv )
 
   if ( initialMomentumImage.compare("None") !=0 )
   {
-    const VectorImageType* ptrI0 = lddmm.GetInitialMomentum();
+    const VectorImageType* ptrI0 = plddmm->GetInitialMomentum();
     VectorImageUtilsType::writeFileITK( ptrI0, initialMomentumImage );
   }
 
   delete ptrMap1;
+
+  delete plddmm;
 
   return EXIT_SUCCESS;
 }

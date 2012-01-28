@@ -581,8 +581,6 @@ void VectorImageUtils< T, VImageDimension >::resize( const VectorImageType2D* im
   assert( szXnew>0 );
   assert( szYnew>0 );
 
-  unsigned int dim = imIn->getDim();
-
   VectorImageType* pos = new VectorImageType(szXnew, szYnew, 2);
 
   // create the interpolation maps
@@ -614,8 +612,6 @@ void VectorImageUtils< T, VImageDimension >::resize( const VectorImageType3D* im
   unsigned int szXnew = imOut->getSizeX();
   unsigned int szYnew = imOut->getSizeY();
   unsigned int szZnew = imOut->getSizeZ();
-
-  unsigned int dim = imIn->getDim();
 
   T dx = imOut->getSpaceX();
   T dy = imOut->getSpaceY();

@@ -56,6 +56,7 @@ bool CSolverLineSearchUnconstrained< TState>::SolvePreInitialized()
 
   for ( unsigned int uiIter = 0; uiIter<this->m_MaxNumberOfIterations; ++uiIter )
     {
+
     unsigned int uiRequiredIterations;
     bool bSufficientlyDecreasedEnergy = this->LineSearchWithBacktracking( CurrentEnergy, dDesiredStepSize, dAlpha, ResultingEnergy, uiRequiredIterations, pTempState );
 

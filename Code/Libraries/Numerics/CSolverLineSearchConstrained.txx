@@ -67,7 +67,6 @@ bool CSolverLineSearchConstrained< TState>::SolvePreInitialized()
 {
   ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();
 
-  T dDesiredStepSize = this->m_InitialStepSize;
   T dAlpha;
   CEnergyValues ResultingEnergy;
 
@@ -87,6 +86,8 @@ bool CSolverLineSearchConstrained< TState>::SolvePreInitialized()
 
   for ( unsigned int uiALIter = 0; uiALIter < this->m_AugmentedLagrangianNumberOfIterations; ++uiALIter )
   {
+    T dDesiredStepSize = this->m_InitialStepSize; // so the step size gets reset
+
     unsigned int uiNrOfIterationsWithImmediateDecrease = 0;
     unsigned int uiNrOfIterationsWithoutImmediateDecrease = 0;
 
@@ -185,7 +186,7 @@ bool CSolverLineSearchConstrained< TState>::SolvePreInitialized()
 
     /**
       \f[
-      r^{(k+1)} = r^{(k)}-\mu^{(k)}(I_1-I(1))
+      r^{(k+1)} = r^{(k)}-\mu^{(k)}(I(1)-I_1)
       \f]
       */
 

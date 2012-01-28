@@ -242,7 +242,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState>::CreateGrad
     m_ptrCurrentAdjointIDifference = new VectorImageType( pImInfo->pIm );
 
     // storage for the determinant of Jacobian
-    m_ptrDeterminantOfJacobian  = new VectorImageType( pImInfo->pIm );
+    m_ptrDeterminantOfJacobian  = new VectorImageType( pImInfo->pIm, 0.0, 1 );
 
     // storage for the negated velocity field
     m_ptrVelocityField = new std::vector<VectorFieldPointerType>;
@@ -904,10 +904,10 @@ CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetPointerToCu
   // for now we can only deal with one image (to be fixed)
   assert( uiNrOfMeasuredImagesAtFinalTimePoint==1 );
 
-  // computing I_1-I(1)
-  m_ptrTmpImage->copy( m_vecTimeDiscretization[ uiNrOfTimePoints-1].vecEstimatedImages[ 0 ] );
+  // computing I(1)-I_1
+  m_ptrTmpImage->copy( m_vecTimeDiscretization[ uiNrOfTimePoints - 1].vecMeasurementImages[ 0 ] );
   m_ptrTmpImage->multConst( -1.0 );
-  m_ptrTmpImage->addCellwise( m_vecTimeDiscretization[ uiNrOfTimePoints - 1].vecMeasurementImages[ 0 ] );
+  m_ptrTmpImage->addCellwise( m_vecTimeDiscretization[ uiNrOfTimePoints-1].vecEstimatedImages[ 0 ] );
 
   return m_ptrTmpImage;
 
