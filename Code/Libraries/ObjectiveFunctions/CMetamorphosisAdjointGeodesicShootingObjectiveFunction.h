@@ -73,6 +73,11 @@ public:
     VectorImageType* GetPointerToImageLagrangianMultiplier();
     const VectorImageType* GetPointerToCurrentImageResidual();
 
+    GetMacro( Rho, T );
+    SetMacro( Rho, T );
+
+    virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+
 protected:
 
     /** Some useful protected typedefs */
@@ -143,6 +148,12 @@ private:
 
     std::vector< STimePoint > m_vecTimeDiscretization;
     std::vector< T > m_vecTimeIncrements;
+
+
+    T m_Rho;  ///< how much the image source term is penalized
+
+    const T DefaultRho;
+    bool m_ExternallySetRho;
 
     // augmented Lagrangian
     T m_AugmentedLagrangianMu;

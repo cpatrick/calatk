@@ -73,7 +73,7 @@ int DoIt( int argc, char** argv )
   // by default there will be only one scale
   // which will be overwritten if there is a configuration file available
 
-  TFLOAT dSigma = configIn.GetFromKey( "MultiScaleSigmaInVoxels", 0.5 ).asDouble();
+  TFLOAT dSigma = configIn.GetFromKey( "MultiScaleSigmaInVoxels", 1.0 ).asDouble();
   configOut.GetFromKey( "MultiScaleSigmaInVoxels", dSigma ).asDouble();
   ptrImageManager->SetSigma( dSigma );
   bool bBlurHighestResolutionImage = configIn.GetFromKey( "MultiScaleBlurHighestResolutionImage", true ).asBool();

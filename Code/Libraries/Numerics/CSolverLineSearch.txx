@@ -29,7 +29,7 @@ CSolverLineSearch< TState>::CSolverLineSearch()
     DefaultAdjustStepSizeUpFactor(2),
     DefaultAdjustStepSizeDownFactor(0.5),
     DefaultReductionFactor(0.5),
-    DefaultMinAllowedStepSize(1e-10),
+    DefaultMinAllowedStepSize(1e-8),
     DefaultDecreaseConstant(0.0),
     DefaultMaxNumberOfIterations(0),
     DefaultMaxNumberOfTries(10),

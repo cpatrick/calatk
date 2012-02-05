@@ -25,9 +25,13 @@
 
 template < class TState >
 CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::CMetamorphosisAdjointGeodesicShootingObjectiveFunction()
-  : m_AugmentedLagrangianMu( 0.1 ),
+  : DefaultRho( 1 ),
+    m_ExternallySetRho( false ),
+    m_AugmentedLagrangianMu( 0.1 ),
     m_ptrImageLagrangianMultiplier( NULL )
 {
+    m_Rho = DefaultRho;
+
     // storage for the map
     m_ptrMapIn = NULL;
     m_ptrMapOut = NULL;
@@ -58,7 +62,7 @@ CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::CMetamorphosis
     m_ptrDI = NULL;
     m_ptrDP = NULL;
 
-    // just for testing, if EXTREME_DEBUG is defined it will store the full timecoarse of lamI and lamP
+    // just for testing, if EXTREME_DEBUGGING is defined it will store the full timecoarse of lamI and lamP
     // this is very memory intensive for 3D, hence disabled by default.
     tstLamI = NULL;
     tstLamP = NULL;
@@ -116,6 +120,20 @@ CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::~CMetamorphosi
     DeleteData();
 }
 
+template < class TState >
+void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+{
+  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "AdjointMetamorphosis", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "AdjointMetamorphosis", Json::nullValue );
+
+  SetJSONHelpForRootKey( GrowthModel, "settings for the adjoint metamorphosis model" );
+
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, Rho );
+
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, Rho,
+                     "rho is the weight of the appearance change penalty rho|q|^2" );
+}
 
 template < class TState >
 void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::CreateNewStateStructures()
@@ -318,7 +336,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetImage(
   // This is more complicated than for the standard models, because we have an appearance change here
   // required an integration forward in time
 
-#warning This is a simplification which restricts time-points to discretization time-points, need better implementation
+  std::cout << "WARNING: GetImage for t = " << dTime << "will return the closest discretization time-point and not the value at the exact time. FIX THIS." << std::endl;
 
   ComputeImageMomentumForward();
 
@@ -450,7 +468,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ComputeIm
     * Note that this is more complicated than for the standard EPDiff equation because we need to deal with a source term for the image.
     * Following the method to solve for the adjoint.
     *
-    * \f$ I_t + \nabla I^T v = p, \f$
+    * \f$ I_t + \nabla I^T v = p/rho, \f$
     * \f$ p_t + div( p v ) = 0, \f$
     * \f$ v = -K*(p\nabla I) \f$
     *
@@ -477,7 +495,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ComputeIm
       // for I
       // create the current updated I (i.e., include the source term) and then warp it
       m_ptrTmpImage->copy( (*m_ptrP)[ iI ] );
-      m_ptrTmpImage->multConst( this->m_vecTimeIncrements[ iI ] );
+      m_ptrTmpImage->multConst( this->m_vecTimeIncrements[ iI ]/m_Rho );
       m_ptrTmpImage->addCellwise( (*m_ptrI)[ iI ] );
 
       LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapIncremental, m_ptrTmpImage, (*m_ptrI)[ iI +1 ]);
@@ -500,7 +518,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ComputeAd
     * Equations are similar as for the adjoint image-to-image registration case, but include the contributions of the augmented Lagrangian scheme.
     *
     * \f$ -\lambda_t^I -div(v\lambda^I)- div(pK*\lambda^v) = 0 \f$
-    * \f$ -\lambda_t^p -v^T\nabla\lambda^p + \nabla I^T K*\lambda^v = \lambda^I \f$
+    * \f$ -\lambda_t^p -v^T\nabla\lambda^p + \nabla I^T K*\lambda^v = 1/rho\lambda^I \f$
     * \f$ \lambda^v = p\nabla \lambda^p - \lambda^I\nabla I \f$
     *
     * with final conditions
@@ -525,7 +543,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ComputeAd
     assert( uiNrOfMeasuredImagesAtFinalTimePoint == 1 );
 
     // compute the final conditions
-    // \f$ \lambda^I(t_end) = r-\mu(I_1-I(1))\f$
+    // \f$ \lambda^I(t_end) = r-\mu(I(1)-I_1)\f$
     // \f$ \lambda^p(t_end) = 0
 
     // create the final condition for the image adjoint \lambda^I
@@ -602,7 +620,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ComputeAd
       }
 
       // add \lambda^I to DP
-      m_ptrDP->addCellwise( m_ptrCurrentLambdaI );
+      m_ptrDP->addCellwiseMultiple( m_ptrCurrentLambdaI, 1.0/m_Rho );
 
       // account for the time-difference
       m_ptrDI->multConst( m_vecTimeIncrements[ iI ] );
@@ -650,7 +668,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState>::ComputeGra
       \f]
       *
       \f[
-        \nabla_{p(t_0)}E = -\lambda^p(t_0) + \nabla I(t_0)^T K* ( p(t_0)\nabla I(t_0) ) + p(t_0)
+        \nabla_{p(t_0)}E = -\lambda^p(t_0) + \nabla I(t_0)^T K* ( p(t_0)\nabla I(t_0) ) + 1/rho*p(t_0)
       \f]
       */
 
@@ -663,7 +681,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState>::ComputeGra
     ptrP0Gradient->copy( m_ptrCurrentLambdaP );
     ptrP0Gradient->multConst(-1);
 
-    ptrP0Gradient->addCellwise( ptrInitialMomentum );
+    ptrP0Gradient->addCellwiseMultiple( ptrInitialMomentum, 1.0/m_Rho );
 
     ptrI0Gradient->setConst( 0.0 );
 
@@ -735,7 +753,7 @@ CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetCurrentEner
   /**
     * Computes the energy for the shooting method.
     \f[
-      E = 0.5 \langle p(t_0)\nabla I(t_0),K*(p(t_0)\nabla I(t_0)\rangle + 0.5 \langle p(t_0), p(t_0) \rangle -\langle r, I_1-I(1)\rangle + \frac{\mu}{2}\|I_1-I(1)\|^2
+      E = 0.5 \langle p(t_0)\nabla I(t_0),K*(p(t_0)\nabla I(t_0)\rangle + 0.5 rho \langle p(t_0), p(t_0) \rangle -\langle r, I(1)-I_1\rangle + \frac{\mu}{2}\|I_1-I(1)\|^2
     \f]
   */
   T dEnergy = 0;
@@ -765,7 +783,7 @@ CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetCurrentEner
 
   // now add the simply the squared norm of the initial momentum
 
-  dEnergy += ptrInitialMomentum->computeSquareNorm();
+  dEnergy += m_Rho*ptrInitialMomentum->computeSquareNorm();
 
   // multiply the full energy by 0.5
   unsigned int uiNrOfDiscretizationPoints = m_vecTimeDiscretization.size();
@@ -779,18 +797,17 @@ CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetCurrentEner
 
   ComputeImageMomentumForward();
 
-  // computing I_1-I(1)
+  // computing I(1)-I_1
   m_ptrTmpImage->copy( m_vecTimeDiscretization[ uiNrOfDiscretizationPoints-1].vecEstimatedImages[ 0 ] );
-  m_ptrTmpImage->multConst( -1.0 );
-  m_ptrTmpImage->addCellwise( m_vecTimeDiscretization[ uiNrOfDiscretizationPoints - 1].vecMeasurementImages[ 0 ] );
+  m_ptrTmpImage->addCellwiseMultiple( m_vecTimeDiscretization[ uiNrOfDiscretizationPoints - 1].vecMeasurementImages[ 0 ], -1.0 );
 
   T dImageNorm = m_ptrTmpImage->computeSquareNorm();
 
   // +\mu/2\|I(1)-I_1\|^2
   T dAugmentedLagrangianNorm = 0.5*m_AugmentedLagrangianMu*dImageNorm;
 
-  // -<r,I_1-I(1)>
-  dAugmentedLagrangianNorm += -m_ptrTmpImage->computeInnerProduct( m_ptrImageLagrangianMultiplier );
+  // -<r,I(1)-I_1>
+  dAugmentedLagrangianNorm -= m_ptrTmpImage->computeInnerProduct( m_ptrImageLagrangianMultiplier );
 
   dEnergy += dAugmentedLagrangianNorm;
 

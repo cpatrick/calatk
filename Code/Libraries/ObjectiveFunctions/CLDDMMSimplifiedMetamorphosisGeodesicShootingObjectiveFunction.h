@@ -123,6 +123,7 @@ private:
 
   VectorFieldPointerType m_ptrCurrentBackMap;
   VectorFieldPointerType m_ptrMapIdentity;
+  VectorFieldPointerType m_ptrMapIncremental;
 
   VectorImagePointerType m_ptrCurrentFinalAdjoint;
   VectorImagePointerType m_ptrWarpedFinalToInitialAdjoint;
