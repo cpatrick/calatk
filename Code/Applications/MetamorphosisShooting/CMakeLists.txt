@@ -1,5 +1,5 @@
 #
 # Add the Metamorphosis shooting application
 #
-SET(libraries ${FFTW_LIB} ITKCommon ITKIO itksys)
+SET(libraries ${FFTW_LIB} ${ITK_LIBRARIES})
 add_clp_application(MetamorphosisShooting MetamorphosisShooting ${libraries})

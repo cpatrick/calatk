@@ -84,12 +84,12 @@ calatkInterpolationTest.cxx
 )
 
 ADD_EXECUTABLE(testDriverFiltering testDriverFiltering.cxx ${testDriverFiltering_SRCS})
-TARGET_LINK_LIBRARIES(testDriverFiltering CALATK ITKCommon ITKIO)
+TARGET_LINK_LIBRARIES(testDriverFiltering CALATK ${ITK_LIBRARIES})
 
 add_ctest_test_image_compare(calatkGaussianBlurringTest ${ALGORITHMS_TESTS_FILTERING} I0_short.nhdr I0_blurred.nrrd I0-blurred-sig01-baseline.nrrd)
 
 ADD_EXECUTABLE(testDriverPDESolver testDriverPDESolver.cxx ${testDriverPDESolver_SRCS})
-TARGET_LINK_LIBRARIES(testDriverPDESolver CALATK ITKCommon ITKIO)
+TARGET_LINK_LIBRARIES(testDriverPDESolver CALATK ${ITK_LIBRARIES})
 
 add_ctest_test_image_compare(calatkAdvectionTest ${ALGORITHMS_TESTS_PDESOLVER} I0_short.nhdr I0_advected.nrrd I0-advected-baseline-x.nrrd 1 0 0.25)
 
@@ -99,7 +99,7 @@ add_ctest_test_image_compare(calatkAdvectionTest ${ALGORITHMS_TESTS_PDESOLVER} I
 
 # Set up all the test which go through the standard (non-test-driver) testing mechanism
 
-add_test_executable(calatkImageDataStructureTest CALATK ITKCommon ITKIO)
+add_test_executable(calatkImageDataStructureTest CALATK ${ITK_LIBRARIES})
 add_ctest_test(calatkImageDataStructureTest ${test_temp_dir})
 
 add_test_executable(calatkJSONTest CALATK)
@@ -122,79 +122,79 @@ add_ctest_test(calatkRegularizationSpacingTest ${test_temp_dir})
 #
 
 ## conservationTest
-#add_test_executable(conservationTest CALATK ITKCommon ITKIO)
+#add_test_executable(conservationTest CALATK ${ITK_LIBRARIES})
 
 ## FlowTest
-#add_test_executable(FlowTest CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(FlowTest CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 
 ## vvImageTest
-#add_test_executable(vvImageTest CALATK ITKCommon ITKIO)
+#add_test_executable(vvImageTest CALATK ${ITK_LIBRARIES})
 
 ## LDDMMTest
-#add_test_executable(LDDMMTest CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(LDDMMTest CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 
 ## GradientTest
-#add_test_executable(GradientTest CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(GradientTest CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 
 ## IOTest
-#add_test_executable(IOTest CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(IOTest CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 
 ## TimeSeriesTest
-#add_test_executable(TimeSeriesTest CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(TimeSeriesTest CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 
 ## LDDMMTestMultiscale
-#add_test_executable(LDDMMTestMultiscale CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(LDDMMTestMultiscale CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 
 ## TimeSeriesTestMultiscale
-#add_test_executable(TimeSeriesTestMultiscale CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(TimeSeriesTestMultiscale CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 
 ## AtlasBuilderTest
-#add_test_executable(AtlasBuilderTest CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(AtlasBuilderTest CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 
 ## AtlasBuilderTestMultiscale
-#add_test_executable(AtlasBuilderTestMultiscale CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(AtlasBuilderTestMultiscale CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 
 ## mapTest
-#add_test_executable(mapTest CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(mapTest CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 
 ## AffineITKTest
-#add_test_executable(AffineITKTest CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(AffineITKTest CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 
 ## TimeSeriesDataTest
-#add_test_executable(TimeSeriesDataTest CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(TimeSeriesDataTest CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 
 ## TimeSeriesComputePoints
-#add_test_executable(TimeSeriesComputePoints CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(TimeSeriesComputePoints CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 
 ## LongitudinalAtlasTest
-#add_test_executable(LongitudinalAtlasTest CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(LongitudinalAtlasTest CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 
 ## resizeImage
-#add_test_executable(resizeImage CALATK ITKCommon ITKIO)
+#add_test_executable(resizeImage CALATK ${ITK_LIBRARIES})
 
 ## imageMask
-#add_test_executable(imageMask CALATK ITKCommon ITKIO)
+#add_test_executable(imageMask CALATK ${ITK_LIBRARIES})
 
 ## TimeSeriesFinalEnergy
-#add_test_executable(TimeSeriesFinalEnergy CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(TimeSeriesFinalEnergy CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 
 ## TimeSeriesWarpImageToTime
-#add_test_executable(TimeSeriesWarpImageToTime CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(TimeSeriesWarpImageToTime CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 
 ## TimeSeriesDetJacobian
-#add_test_executable(TimeSeriesDetJacobian CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(TimeSeriesDetJacobian CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 
 ## TimeSeriesComputeMaps
-#add_test_executable(TimeSeriesComputeMaps CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(TimeSeriesComputeMaps CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 
 ## ComputeDetJacobian
-#add_test_executable(ComputeDetJacobian CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(ComputeDetJacobian CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 
 ## GeometricMetamorphosis
-#add_test_executable(GeometricMetamorphosisTest CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(GeometricMetamorphosisTest CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 
 ## GeometricMetamorphosisFigures
-#add_test_executable(GeometricMetamorphosisFiguresTest CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(GeometricMetamorphosisFiguresTest CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 
 
 #------------------------------------------------------------------------------
@@ -202,26 +202,26 @@ add_ctest_test(calatkRegularizationSpacingTest ${test_temp_dir})
 #
 
 ## advectionTest
-#add_test_executable(advectionTest CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(advectionTest CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 #add_ctest_test(advectionTest ${test_temp_dir})
 
 ## VectorImage2DTest
-#add_test_executable(VectorImage2DTest CALATK ITKCommon ITKIO)
+#add_test_executable(VectorImage2DTest CALATK ${ITK_LIBRARIES})
 #add_ctest_test(VectorImage2DTest)
 
 ## VectorImage3DTest
-#add_test_executable(VectorImage3DTest CALATK ITKCommon ITKIO)
+#add_test_executable(VectorImage3DTest CALATK ${ITK_LIBRARIES})
 #add_ctest_test(VectorImage3DTest)
 
 ## convertITKMetaDataTest
-#add_test_executable(convertITKMetaDataTest CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(convertITKMetaDataTest CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 #add_ctest_test(convertITKMetaDataTest
 #  ${test_input_dir}/2Dsample.mha
 #  ${test_input_dir}/3Dsample.mha
 #  )
 
 ## writeFileITKTest
-#add_test_executable(writeFileITKTest CALATK ${FFTW_LIB} ITKCommon ITKIO)
+#add_test_executable(writeFileITKTest CALATK ${FFTW_LIB} ${ITK_LIBRARIES})
 #add_ctest_test(writeFileITKTest
 #  # 2D input
 #  ${test_input_dir}/2Dsample.mha
@@ -232,20 +232,20 @@ add_ctest_test(calatkRegularizationSpacingTest ${test_temp_dir})
 #  )
 
 ## dirExistsTest
-#add_test_executable(dirExistsTest CALATK ITKCommon ITKIO)
+#add_test_executable(dirExistsTest CALATK ${ITK_LIBRARIES})
 #add_ctest_test(dirExistsTest
 #  # A valid directory path
 #  ${CMAKE_CURRENT_SOURCE_DIR}
 #  )
 
 ## makeDirIfNeededTest
-#add_test_executable(makeDirIfNeededTest CALATK ITKCommon ITKIO)
+#add_test_executable(makeDirIfNeededTest CALATK ${ITK_LIBRARIES})
 #add_ctest_test(makeDirIfNeededTest
 #  # Temporary output path
 #  ${test_temp_dir}
 #  )
 
 ## removeDoubleSlashesTest
-#add_test_executable(removeDoubleSlashesTest CALATK ITKCommon ITKIO)
+#add_test_executable(removeDoubleSlashesTest CALATK ${ITK_LIBRARIES})
 #add_ctest_test(removeDoubleSlashesTest)
 
