@@ -32,6 +32,7 @@ VectorImage< T, VImageDimension >::VectorImage()
   Superclass::__dim = 0;
   Superclass::__length = 0;
   Superclass::__dataPtr = 0;
+  Superclass::m_ManageMemory = true;
   __spaceX = 0;
   __spaceY = 0;
   __spaceZ = 0;
@@ -43,7 +44,7 @@ VectorImage< T, VImageDimension >::VectorImage()
 // 0D size and dim constructor
 //
 template <class T, unsigned int VImageDimension >
-VectorImage< T, VImageDimension >::VectorImage( unsigned int dim)
+VectorImage< T, VImageDimension >::VectorImage( unsigned int dim )
   : VectorArray<T,VImageDimension>::VectorArray( dim )
 {
   // all the other data is filled in by the constructor of the superclass
@@ -58,7 +59,7 @@ VectorImage< T, VImageDimension >::VectorImage( unsigned int dim)
 // 1D size and dim constructor
 //
 template <class T, unsigned int VImageDimension >
-VectorImage< T, VImageDimension >::VectorImage(unsigned int sizeX, unsigned int dim)
+VectorImage< T, VImageDimension >::VectorImage(unsigned int sizeX, unsigned int dim )
   : VectorArray<T,VImageDimension>::VectorArray( sizeX, dim )
 {
   // all the other data is filled in by the constructor of the superclass
@@ -73,7 +74,7 @@ VectorImage< T, VImageDimension >::VectorImage(unsigned int sizeX, unsigned int 
 // 2D size and dim constructor
 //
 template <class T, unsigned int VImageDimension >
-VectorImage< T, VImageDimension >::VectorImage(unsigned int sizeX, unsigned int sizeY, unsigned int dim)
+VectorImage< T, VImageDimension >::VectorImage(unsigned int sizeX, unsigned int sizeY, unsigned int dim )
   : VectorArray<T,VImageDimension>::VectorArray( sizeX, sizeY, dim )
 {
   // all the other data is filled in by the constructor of the superclass
@@ -88,7 +89,7 @@ VectorImage< T, VImageDimension >::VectorImage(unsigned int sizeX, unsigned int 
 // 3D size and dim constructor
 //
 template <class T, unsigned int VImageDimension >
-VectorImage< T, VImageDimension >::VectorImage(unsigned int sizeX, unsigned int sizeY, unsigned int sizeZ, unsigned int dim)
+VectorImage< T, VImageDimension >::VectorImage(unsigned int sizeX, unsigned int sizeY, unsigned int sizeZ, unsigned int dim )
   : VectorArray<T,VImageDimension>::VectorArray( sizeX, sizeY, sizeZ, dim )
 {
   // all the other data is filled in by the constructor of the superclass
@@ -103,7 +104,7 @@ VectorImage< T, VImageDimension >::VectorImage(unsigned int sizeX, unsigned int 
 // copy constructor
 //
 template <class T, unsigned int VImageDimension >
-VectorImage< T, VImageDimension >::VectorImage( const VectorImage* source)
+VectorImage< T, VImageDimension >::VectorImage( const VectorImage* source )
   : VectorArray<T,VImageDimension>::VectorArray( source )
 {
   __spaceX = source->getSpaceX();
@@ -112,6 +113,20 @@ VectorImage< T, VImageDimension >::VectorImage( const VectorImage* source)
   __origin = source->getOrigin();
   __direction = source->getDirection();
 
+}
+
+//
+// copy constructor
+//
+template <class T, unsigned int VImageDimension >
+VectorImage< T, VImageDimension >::VectorImage( const VectorImage* source, T* ptrMemory )
+  : VectorArray< T, VImageDimension >::VectorArray( source, ptrMemory )
+{
+  __spaceX = source->getSpaceX();
+  __spaceY = source->getSpaceY();
+  __spaceZ = source->getSpaceZ();
+  __origin = source->getOrigin();
+  __direction = source->getDirection();
 }
 
 //
@@ -143,7 +158,6 @@ VectorImage< T, VImageDimension >::VectorImage( const VectorImage* source, T dVa
   __direction = source->getDirection();
 
 }
-
 
 //
 // destructor

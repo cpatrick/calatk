@@ -41,7 +41,17 @@ public:
 
   // default empty constuctor
   CState() { }
-protected:
+
+  virtual long int GetNumberOfStateVectorElements()
+  {
+    return 0;
+  };
+
+  virtual T* GetPointerToState()
+  {
+    return NULL;
+  };
+
 private:
   // copy constructor private
   CState( const CState & c ) {}

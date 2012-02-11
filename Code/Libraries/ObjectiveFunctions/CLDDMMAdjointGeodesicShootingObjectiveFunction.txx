@@ -131,22 +131,15 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::CreateNewStateStr
     // get information from the first image to figure out the dimensions
     this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
 
-    VectorImageType* ptrInitialImage = new VectorImageType( pImInfo->pIm );
-    VectorImageType* ptrInitialMomentum = new VectorImageType( pImInfo->pIm );
-    ptrInitialMomentum->setConst(0);
-
-    this->m_pState = new TState( ptrInitialImage, ptrInitialMomentum );
+    this->m_pState = new TState( pImInfo->pIm );
+    this->m_pState->GetPointerToInitialMomentum()->setConst( 0 );
 }
 
 template< class TState >
 void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ShallowCopyStateStructures( TState* pState )
 {
     assert ( this->m_pState == NULL );
-
-    VectorImageType* ptrInitialImage = pState->GetPointerToInitialImage();
-    VectorImageType* ptrInitialMomentum = pState->GetPointerToInitialMomentum();
-
-    this->m_pState = new TState( ptrInitialImage, ptrInitialMomentum );
+    this->m_pState = pState;
 }
 
 template < class TState >
@@ -166,13 +159,9 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::CreateGradientAndA
     this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
 
     // create the gradient
-    VectorImageType* ptrI0Gradient = new VectorImageType( pImInfo->pIm );
-    ptrI0Gradient->setConst(0);
-
-    VectorImageType* ptrP0Gradient = new VectorImageType( pImInfo->pIm );
-    ptrP0Gradient->setConst(0);
-
-    this->m_pGradient = new TState( ptrI0Gradient, ptrP0Gradient );
+    this->m_pGradient = new TState( pImInfo->pIm );
+    this->m_pGradient->GetPointerToInitialImage()->setConst( 0 );
+    this->m_pGradient->GetPointerToInitialMomentum()->setConst( 0 );
 
     // allocate all the auxiliary data
 

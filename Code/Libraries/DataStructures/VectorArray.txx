@@ -34,7 +34,8 @@ VectorArray<T, VImageDimension>::VectorArray() :
   __sizeZ(0),
   __dim(0),
   __length(0),
-  __dataPtr(0)   
+  __dataPtr(0),
+  m_ManageMemory( true )
 {}
 
 //
@@ -47,7 +48,8 @@ VectorArray<T, VImageDimension>::VectorArray(unsigned int dim) :
   __sizeZ(1),
   __dim(dim),
   __length(__dim),
-  __dataPtr(0)
+  __dataPtr(0),
+  m_ManageMemory( true )
 {
   __allocate();
 }
@@ -62,7 +64,8 @@ VectorArray<T, VImageDimension>::VectorArray(unsigned int sizeX, unsigned int di
   __sizeZ(1),
   __dim(dim),
   __length(__sizeX*__dim),
-  __dataPtr(0)
+  __dataPtr(0),
+  m_ManageMemory( true )
 {
   __allocate();
 }
@@ -78,7 +81,8 @@ VectorArray<T, VImageDimension>::VectorArray(unsigned int sizeX, unsigned int si
   __sizeZ(1),
   __dim(dim),
   __length(__sizeX*__sizeY*__dim),
-  __dataPtr(0)
+  __dataPtr(0),
+  m_ManageMemory( true )
 {
   __allocate();
 }
@@ -93,7 +97,8 @@ VectorArray<T, VImageDimension>::VectorArray(unsigned int sizeX, unsigned int si
   __sizeZ(sizeZ),
   __dim(dim),
   __length(__sizeX*__sizeY*__sizeZ*__dim),
-  __dataPtr(0)
+  __dataPtr(0),
+  m_ManageMemory( true )
 {
   __allocate();
 }
@@ -108,7 +113,8 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, VImageDimensi
   __sizeZ(source->getSizeZ()),
   __dim(source->getDim()),
   __length(__sizeX*__sizeY*__sizeZ*__dim),
-  __dataPtr(0)
+  __dataPtr(0),
+  m_ManageMemory( true )
 {  
   __allocate();
   
@@ -124,13 +130,37 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, VImageDimensi
 // copy constructor
 //
 template <class T, unsigned int VImageDimension>
+VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, VImageDimension>* source, T* ptrMemory ) :
+  __sizeX(source->getSizeX()),
+  __sizeY(source->getSizeY()),
+  __sizeZ(source->getSizeZ()),
+  __dim(source->getDim()),
+  __length(__sizeX*__sizeY*__sizeZ*__dim),
+  __dataPtr( ptrMemory ),
+  m_ManageMemory( false )
+{  
+  
+  // copy the data, just based on linear indexing for efficiency
+  for (unsigned int uiIndx = 0; uiIndx < __length; ++uiIndx )
+    {
+    __dataPtr[ uiIndx ] = source->getValue( uiIndx );
+    }
+
+}
+
+
+//
+// copy constructor
+//
+template <class T, unsigned int VImageDimension>
 VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, VImageDimension>* source, T dVal ) :
   __sizeX(source->getSizeX()),
   __sizeY(source->getSizeY()),
   __sizeZ(source->getSizeZ()),
   __dim(source->getDim()),
   __length(__sizeX*__sizeY*__sizeZ*__dim),
-  __dataPtr(0)
+  __dataPtr(0),
+  m_ManageMemory( true )
 {
   __allocate();
 
@@ -152,7 +182,8 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, 2>* source, T
   __sizeZ(source->getSizeZ()),
   __dim(uiNumDim),
   __length(__sizeX*__sizeY*__sizeZ*uiNumDim),
-  __dataPtr(0)
+  __dataPtr(0),
+  m_ManageMemory( true )
 {
   __allocate();
 
@@ -185,7 +216,8 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, 3>* source, T
   __sizeZ(source->getSizeZ()),
   __dim(uiNumDim),
   __length(__sizeX*__sizeY*__sizeZ*uiNumDim),
-  __dataPtr(0)
+  __dataPtr(0),
+  m_ManageMemory( true )
 {
   __allocate();
 
@@ -216,8 +248,8 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, 3>* source, T
 // destructor
 //
 template <class T, unsigned int VImageDimension>
-VectorArray<T, VImageDimension>::~VectorArray() {
-  
+VectorArray<T, VImageDimension>::~VectorArray() 
+{
   __deallocate();
 }
 
@@ -807,7 +839,7 @@ T* VectorArray<T, VImageDimension>::getDataPointer() {
 template <class T, unsigned int VImageDimension>
 void VectorArray<T, VImageDimension>::__allocate() {
 
-  if ( __dataPtr != 0 )
+  if ( __dataPtr != NULL )
     {
     throw std::runtime_error("Tried to re-allocate memory");
     }
@@ -822,10 +854,14 @@ void VectorArray<T, VImageDimension>::__allocate() {
 template <class T, unsigned int VImageDimension>
 void VectorArray<T, VImageDimension>::__deallocate() {
 
-  if(__dataPtr != 0) {
-    delete [] __dataPtr;
-  }
-  __dataPtr = NULL;
+  if ( m_ManageMemory )
+    {
+    if(__dataPtr != NULL ) 
+      {
+      delete [] __dataPtr;
+      }
+    __dataPtr = NULL;
+    }
   
 }
 

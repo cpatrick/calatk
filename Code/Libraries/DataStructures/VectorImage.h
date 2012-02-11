@@ -109,6 +109,15 @@ public:
   VectorImage( const VectorImage* source, T dVal );
 
   /**
+   * Copy constructor that takes an existing VectorImage and makes
+   * another image of the same size, but with externally allocated memory.
+   *
+   * @param source - the source image to copy the dimensionality from
+   * @param ptrMemory - pointer to memory of appropriate size
+   */
+  VectorImage( const VectorImage* source, T* ptrMemory );
+
+  /**
     * Copy constructor that takes an existing vector image and makes a
     * vector image with the same size with a given number of dimensions
     * and initialized with a given value

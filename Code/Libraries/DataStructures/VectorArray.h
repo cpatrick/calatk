@@ -108,6 +108,15 @@ public:
   VectorArray( const VectorArray<T,VImageDimension>* source, T dVal );
 
   /**
+   * Copy constructor that takes an existing VectorImage and makes
+   * another image of the same size, but with externally allocated memory.
+   *
+   * @param source - the source image to copy the dimensionality from
+   * @param ptrMemory - pointer to memory of appropriate size
+   */
+  VectorArray( const VectorArray<T,VImageDimension>* source, T* ptrMemory );
+
+  /**
     * Copy constructor that takes an existing 2D vector array and makes a
     * vector array with the same size with a given number of dimensions
     * and initialized with a given value
@@ -386,6 +395,9 @@ protected:
   {
     return ( ( z*__sizeY + y )*__sizeX + x )*__dim + d;
   };
+
+private:
+  bool m_ManageMemory;
 
 };
 
