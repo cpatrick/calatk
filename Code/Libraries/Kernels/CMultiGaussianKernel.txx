@@ -22,10 +22,14 @@
 
 template <class T, unsigned int VImageDimension >
 CMultiGaussianKernel< T, VImageDimension >::CMultiGaussianKernel()
-  : DefaultEstimateGradientScalingFactors( true ),
+  : DefaultGamma( 1.0 ),
+    DefaultEstimateGradientScalingFactors( true ),
+    DefaultUseConstantPenaltyGamma( true ),
     m_ExternallySetSigmas( false ),
     m_ExternallySetEffectiveWeights( false ),
-    m_ExternallySetEstimateGradientScalingFactors( false )
+    m_ExternallySetGamma( false ),
+    m_ExternallySetEstimateGradientScalingFactors( false ),
+    m_ExternallySetUseConstantPenaltyGamma( false )
 {
   DefaultSigmas.resize( 5 );
   DefaultSigmas[ 0 ] = 0.25;
@@ -39,7 +43,9 @@ CMultiGaussianKernel< T, VImageDimension >::CMultiGaussianKernel()
 
   m_Sigmas = DefaultSigmas;
   m_EffectiveWeights = DefaultEffectiveWeights;
+  m_Gamma = DefaultGamma;
   m_EstimateGradientScalingFactors = DefaultEstimateGradientScalingFactors;
+  m_UseConstantPenaltyGamma = DefaultUseConstantPenaltyGamma;
 
   m_GradientScalingFactors = DefaultGradientScalingFactors;
 
@@ -61,14 +67,20 @@ void CMultiGaussianKernel< T, VImageDimension >::SetAutoConfiguration( Json::Val
 
   SetJSONFromKeyVector( currentConfigurationIn, currentConfigurationOut, Sigmas );
   SetJSONFromKeyVector( currentConfigurationIn, currentConfigurationOut, EffectiveWeights );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, Gamma );
   SetJSONFromKeyBool( currentConfigurationIn, currentConfigurationOut, EstimateGradientScalingFactors );
+  SetJSONFromKeyBool( currentConfigurationIn, currentConfigurationOut, UseConstantPenaltyGamma );
 
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, Sigmas,
                      "vector of standard deviations (in physical coordinates)" );
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, EffectiveWeights,
                      "weightings for the Gaussians (can be normalized with EstimateGradientScalingFactors)" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, Gamma,
+                     "constant which penalizes the magnitude of a vector" );
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, EstimateGradientScalingFactors,
                      "estimates the scaling factors for each sigma based on the initial image gradient for that sigma" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, UseConstantPenaltyGamma,
+                     "flag which determines if the gamma constant is used or not in the multi-Gaussian kernel" );
 }
 
 
@@ -145,6 +157,16 @@ void CMultiGaussianKernel< T, VImageDimension >::SetSigmasAndEffectiveWeights( s
 }
 
 template <class T, unsigned int VImageDimension >
+void CMultiGaussianKernel< T, VImageDimension >::SetGamma( T dGamma )
+{
+  m_Gamma = dGamma;
+
+  m_ExternallySetGamma = true;
+
+  ConfirmKernelsNeedToBeComputed();
+}
+
+template <class T, unsigned int VImageDimension >
 void CMultiGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType1D* pVecImageGraft )
 {
   unsigned int szX = pVecImageGraft->getSizeX();
@@ -164,6 +186,19 @@ void CMultiGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( 
     for ( unsigned int iI=0; iI<m_ActualWeights.size(); ++iI )
     {
       val += m_ActualWeights[ iI ]*exp( -m_Sigmas[ iI ]*m_Sigmas[ iI ]*( 4*pi*pi*(f1Eff*f1Eff)/2 ) );
+    }
+
+    if ( m_UseConstantPenaltyGamma )
+    {
+      if ( m_Gamma > 0 )
+      {
+        // because we just want it additive for the inverse
+        val = val/( 1 + m_Gamma*val );
+      }
+      else
+      {
+        std::cout << "WARNING: gamma <=0. IGNORING" << std::endl;
+      }
     }
 
     this->m_ptrL->setValue(x,0, val );
@@ -208,6 +243,19 @@ void CMultiGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( 
       for ( unsigned int iI=0; iI<m_ActualWeights.size(); ++iI )
       {
         val += m_ActualWeights[ iI ]*exp( -m_Sigmas[ iI ]*m_Sigmas[ iI ]*( 4*pi*pi*(f1Eff*f1Eff + f2Eff*f2Eff )/2 ) );
+      }
+
+      if ( m_UseConstantPenaltyGamma )
+      {
+        if ( m_Gamma > 0 )
+        {
+          // because we just want it additive for the inverse
+          val = val/( 1 + m_Gamma*val );
+        }
+        else
+        {
+          std::cout << "WARNING: gamma <=0. IGNORING" << std::endl;
+        }
       }
 
       this->m_ptrL->setValue(x,y,0, val );
@@ -259,6 +307,19 @@ void CMultiGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( 
         for ( unsigned int iI=0; iI<m_ActualWeights.size(); ++iI )
         {
           val += m_ActualWeights[ iI ]*exp( -m_Sigmas[ iI ]*m_Sigmas[ iI ]*( 4*pi*pi*(f1Eff*f1Eff + f2Eff*f2Eff + f3Eff*f3Eff )/2 ) );
+        }
+
+        if ( m_UseConstantPenaltyGamma )
+        {
+          if ( m_Gamma > 0 )
+          {
+            // because we just want it additive for the inverse
+            val = val/( 1 + m_Gamma*val );
+          }
+          else
+          {
+            std::cout << "WARNING: gamma <=0. IGNORING" << std::endl;
+          }
         }
 
         this->m_ptrL->setValue(x,y,z,0, val );

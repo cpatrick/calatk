@@ -101,11 +101,19 @@ void CAlgorithmBase< T, VImageDimension >::SetDefaultsIfNeeded()
     m_bSetDefaultMetric = true;
     }
 
+  m_ptrMetric->SetPrintConfiguration( this->GetPrintConfiguration() );
+  m_ptrMetric->SetAllowHelpComments( this->GetAllowHelpComments() );
+  m_ptrMetric->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
+
   if ( m_ptrEvolver == NULL )
     {
     SetDefaultEvolverPointer();
     m_bSetDefaultEvolver = true;
     }
+
+  m_ptrEvolver->SetPrintConfiguration( this->GetPrintConfiguration() );
+  m_ptrEvolver->SetAllowHelpComments( this->GetAllowHelpComments() );
+  m_ptrEvolver->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 
   if ( m_ptrKernel == NULL )
     {
@@ -113,9 +121,18 @@ void CAlgorithmBase< T, VImageDimension >::SetDefaultsIfNeeded()
     m_bSetDefaultKernel = true;
     }
 
+  m_ptrKernel->SetPrintConfiguration( this->GetPrintConfiguration() );
+  m_ptrKernel->SetAllowHelpComments( this->GetAllowHelpComments() );
+  m_ptrKernel->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
+
   // get the subject ids
   std::vector< unsigned int > vecSubjectIndices;
   this->m_ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
+
+  this->m_ptrImageManager->SetPrintConfiguration( this->GetPrintConfiguration() );
+  this->m_ptrImageManager->SetAllowHelpComments( this->GetAllowHelpComments() );
+  this->m_ptrImageManager->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
+
   // also create the memory for the map and the image, so we can use it to return a map and an image at any time
   SImageInformation* pImInfo;
   m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[ 0 ], 0 );
@@ -158,9 +175,6 @@ template < class T, unsigned int VImageDimension >
 void CAlgorithmBase< T, VImageDimension >::SetKernelPointer( ptrKernelType ptrKernel )
 {
   m_ptrKernel = ptrKernel;
-  this->m_ptrKernel->SetPrintConfiguration( this->GetPrintConfiguration() );
-  this->m_ptrKernel->SetAllowHelpComments( this->GetAllowHelpComments() );
-  this->m_ptrKernel->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 }
 
 template < class T, unsigned int VImageDimension >
@@ -179,9 +193,6 @@ template < class T, unsigned int VImageDimension >
 void CAlgorithmBase< T, VImageDimension >::SetEvolverPointer( ptrEvolverType ptrEvolver )
 {
   m_ptrEvolver = ptrEvolver;
-  this->m_ptrEvolver->SetPrintConfiguration( this->GetPrintConfiguration() );
-  this->m_ptrEvolver->SetAllowHelpComments( this->GetAllowHelpComments() );
-  this->m_ptrEvolver->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 
 template < class T, unsigned int VImageDimension >
@@ -201,9 +212,6 @@ template < class T, unsigned int VImageDimension >
 void CAlgorithmBase< T, VImageDimension >::SetMetricPointer( ptrMetricType ptrMetric )
 {
   m_ptrMetric = ptrMetric;
-  this->m_ptrMetric->SetPrintConfiguration( this->GetPrintConfiguration() );
-  this->m_ptrMetric->SetAllowHelpComments( this->GetAllowHelpComments() );
-  this->m_ptrMetric->SetAutoConfiguration( *this->m_jsonConfig.GetRootPointer() );
 }
 
 template < class T, unsigned int VImageDimension >

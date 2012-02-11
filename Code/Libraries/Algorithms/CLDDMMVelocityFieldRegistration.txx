@@ -22,8 +22,10 @@
 
 template < class TState >
 CLDDMMVelocityFieldRegistration< TState >::CLDDMMVelocityFieldRegistration()
-  : DefaultKernel( "HelmholtzKernel" ), m_ExternallySetKernel( false ),
-    DefaultMetric( "SSD" ), m_ExternallySetMetric( false )
+  : DefaultKernel( "HelmholtzKernel" ),
+    m_ExternallySetKernel( false ),
+    DefaultMetric( "SSD" ),
+    m_ExternallySetMetric( false )
 {
   m_Kernel = DefaultKernel;
   m_Metric = DefaultMetric;
@@ -56,9 +58,6 @@ template < class TState >
 void CLDDMMVelocityFieldRegistration< TState >::SetDefaultMetricPointer()
 {
   this->m_ptrMetric = CMetricFactory< T, TState::VImageDimension >::CreateNewMetric( m_Metric );
-  this->m_ptrMetric->SetPrintConfiguration( this->GetPrintConfiguration() );
-  this->m_ptrMetric->SetAllowHelpComments( this->GetAllowHelpComments() );
-  this->m_ptrMetric->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 }
 
 template < class TState >
@@ -71,9 +70,6 @@ template < class TState >
 void CLDDMMVelocityFieldRegistration< TState >::SetDefaultKernelPointer()
 {
   this->m_ptrKernel = CKernelFactory< T, TState::VImageDimension >::CreateNewKernel( m_Kernel );
-  this->m_ptrKernel->SetPrintConfiguration( this->GetPrintConfiguration() );
-  this->m_ptrKernel->SetAllowHelpComments( this->GetAllowHelpComments() );
-  this->m_ptrKernel->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 }
 
 template < class TState >
@@ -84,20 +80,12 @@ void CLDDMMVelocityFieldRegistration< TState >::SetDefaultEvolverPointer()
   oneStepDefaultEvolver.SetPrintConfiguration( this->GetPrintConfiguration() );
   oneStepDefaultEvolver.SetAllowHelpComments( this->GetAllowHelpComments() );
   oneStepDefaultEvolver.SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
-
-  this->m_ptrEvolver->SetPrintConfiguration( this->GetPrintConfiguration() );
-  this->m_ptrEvolver->SetAllowHelpComments( this->GetAllowHelpComments() );
-  this->m_ptrEvolver->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 }
 
 template < class TState >
 void CLDDMMVelocityFieldRegistration< TState >::SetDefaultSolverPointer()
 {
   this->m_ptrSolver = new CSolverMultiScale< TState >;
-
-  this->m_ptrSolver->SetPrintConfiguration( this->GetPrintConfiguration() );
-  this->m_ptrSolver->SetAllowHelpComments( this->GetAllowHelpComments() );
-  this->m_ptrSolver->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 }
 
 template < class TState >

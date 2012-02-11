@@ -65,6 +65,17 @@ void CImageManagerFullScale< T, VImageDimension>::GetImage( SImageInformation* p
       std::cout << "Loading " << pCurrentImInfo->sImageFileName << " ... ";
       pCurrentImInfo->pIm = VectorImageUtils< T, VImageDimension>::readFileITK( pCurrentImInfo->sImageFileName );
 
+
+      if ( this->GetAutoScaleImages() )
+      {
+        std::cout << " auto-scaling ... ";
+        CALATK::VectorImageUtils< T, VImageDimension >::normalizeClampNegativeMaxOne( pCurrentImInfo->pIm );
+      }
+
+      // determine min max
+      T dMinVal = CALATK::VectorImageUtils< T, VImageDimension >::minAll( pCurrentImInfo->pIm );
+      T dMaxVal = CALATK::VectorImageUtils< T, VImageDimension >::maxAll( pCurrentImInfo->pIm );
+
       if ( m_BlurImage )
         {
         std::cout << "WARNING: blurring the original image" << std::endl;
@@ -72,7 +83,13 @@ void CImageManagerFullScale< T, VImageDimension>::GetImage( SImageInformation* p
         }
 
       pCurrentImInfo->pImOrig = pCurrentImInfo->pIm;
-      std::cout << "done." << std::endl;
+      std::cout << "done. [" << dMinVal << "," << dMaxVal << "] " << std::endl;
+
+      if ( dMinVal < 0 || dMaxVal > 1 )
+      {
+        std::cout << "WARNING: Recommended scale for image intensities is [ 0 , 1 ]." << std::endl;
+      }
+
       }
     }
   

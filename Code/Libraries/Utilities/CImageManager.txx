@@ -25,11 +25,15 @@
 //
 template <class T, unsigned int VImageDimension >
 CImageManager< T, VImageDimension >::CImageManager()
+  : DefaultAutoScaleImages( false ),
+    m_ExternallySetAutoScaleImages( false )
 {
   // id for dataset, gets incremented every time a new dataset is added
   // can be used as a unique identifier. Needed since we allow for multiple datasets at the same time point 
   // (for example to support multiple measurements)
   m_uiCurrentRunningId = 0;
+
+  m_AutoScaleImages = DefaultAutoScaleImages;
 }
 
 //
@@ -73,6 +77,26 @@ CImageManager< T, VImageDimension >::~CImageManager()
       delete iterSubject->second; 
       }
     }
+}
+
+//
+// auto configuration
+//
+
+template <class T, unsigned int VImageDimension >
+void CImageManager< T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+{
+  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "ImageManager", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "ImageManager", Json::nullValue );
+
+  SetJSONHelpForRootKey( ImageManager, "administers the images, resolutions, and scalings" );
+
+  SetJSONFromKeyBool( currentConfigurationIn, currentConfigurationOut, AutoScaleImages );
+
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, AutoScaleImages,
+                     "if enabled will will set all values of an image smaller than 0 to 0 and scale the maximum value to 1." );
+
 }
 
 //

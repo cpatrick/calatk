@@ -27,7 +27,7 @@
 namespace CALATK
 {
 /**
-  * Implements a multi-Gaussian kernel.
+  * Implements a multi-Gaussian kernel. Adds the option of specifying an additional constant component.
   *
   * See
   *
@@ -56,15 +56,21 @@ public:
   ~CMultiGaussianKernel();
 
   void SetSigmasAndEffectiveWeights( std::vector<T> Sigmas, std::vector<T> EffectiveWeights );
+  void SetGamma( T dGamma );
 
   SetJSONMacro( Sigmas, std::vector<T> );
   SetJSONMacro( EffectiveWeights, std::vector<T> );
+  SetJSONMacro( Gamma, T );
 
   GetMacro( Sigmas, std::vector<T> );
   GetMacro( EffectiveWeights, std::vector<T> );
+  GetMacro( Gamma, T );
 
   SetMacro( EstimateGradientScalingFactors, bool );
   GetMacro( EstimateGradientScalingFactors, bool );
+
+  SetMacro( UseConstantPenaltyGamma, bool );
+  GetMacro( UseConstantPenaltyGamma, bool );
 
   virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
 
@@ -87,15 +93,21 @@ private:
 
   std::vector<T> m_Sigmas;
   std::vector<T> m_EffectiveWeights;
+  T m_Gamma;
   bool m_EstimateGradientScalingFactors;
+  bool m_UseConstantPenaltyGamma;
 
   std::vector<T> DefaultSigmas;
   std::vector<T> DefaultEffectiveWeights;
+  T DefaultGamma;
   bool DefaultEstimateGradientScalingFactors;
+  bool DefaultUseConstantPenaltyGamma;
 
   bool m_ExternallySetSigmas;
   bool m_ExternallySetEffectiveWeights;
+  bool m_ExternallySetGamma;
   bool m_ExternallySetEstimateGradientScalingFactors;
+  bool m_ExternallySetUseConstantPenaltyGamma;
 
   std::vector<T> m_ActualWeights;
   std::vector<T> DefaultGradientScalingFactors;
