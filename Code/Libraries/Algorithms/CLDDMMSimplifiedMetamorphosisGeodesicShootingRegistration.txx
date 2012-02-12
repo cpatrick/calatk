@@ -36,9 +36,6 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingRegistration< TState >::SetDef
   CSolverMultiScale< TState >* ptrMSSolver = new CSolverMultiScale< TState >;
 
   ptrMSSolver->SetSingleScaleSolverPointer( new CSolverLineSearchConstrained< TState > );
-  ptrMSSolver->SetPrintConfiguration( this->GetPrintConfiguration() );
-  ptrMSSolver->SetAllowHelpComments( this->GetAllowHelpComments() );
-  ptrMSSolver->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 
   this->m_ptrSolver = ptrMSSolver;
 }
@@ -70,10 +67,6 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingRegistration< TState >::SetDef
   pMetamorphosis->SetKernelPointer( this->m_ptrKernel );
   pMetamorphosis->SetMetricPointer( this->m_ptrMetric );
   pMetamorphosis->SetImageManagerPointer( this->m_ptrImageManager );
-
-  pMetamorphosis->SetPrintConfiguration( this->GetPrintConfiguration() );
-  pMetamorphosis->SetAllowHelpComments( this->GetAllowHelpComments() );
-  pMetamorphosis->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 
   this->m_ptrObjectiveFunction = pMetamorphosis;
   this->m_ptrKernel->SetObjectiveFunctionPointer( pMetamorphosis );

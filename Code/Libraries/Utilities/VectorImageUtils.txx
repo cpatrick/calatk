@@ -21,6 +21,37 @@
 #define VECTOR_IMAGE_UTILS_TXX
 
 //
+// max
+//
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension >::max( VectorImageType* in, T dMaxVal )
+{
+  unsigned int len = in->getLength();
+
+  for ( unsigned int iI=0; iI<len; ++iI )
+  {
+    T val = in->getValue(iI);
+    in->setValue( iI, std::max( val, dMaxVal ) );
+  }
+}
+
+//
+// min
+//
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension >::min( VectorImageType* in, T dMinVal )
+{
+  unsigned int len = in->getLength();
+
+  for ( unsigned int iI=0; iI<len; ++iI )
+  {
+    T val = in->getValue(iI);
+    in->setValue( iI, std::min( val, dMinVal ) );
+  }
+}
+
+
+//
 // maxAll
 //
 template <class T, unsigned int VImageDimension >
@@ -658,6 +689,20 @@ void VectorImageUtils< T, VImageDimension >::normalize(VectorImageType* imInOut,
   imInOut->multConst(fact);
 
 }
+
+//
+// normalize
+//
+template <class T, unsigned int VImageDimension >
+void VectorImageUtils< T, VImageDimension >::normalizeClampNegativeMaxOne(VectorImageType* imInOut )
+{
+
+  VectorImageUtils::max( imInOut, 0 );
+  T maxC = VectorImageUtils< T, VImageDimension >::maxAll( imInOut );
+
+  imInOut->multConst( 1.0/maxC );
+}
+
 
 //
 // meanPixelwise

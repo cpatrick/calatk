@@ -48,6 +48,8 @@ public:
   typedef VectorImage< T, VImageDimension > VectorImageType; /**< Image type of given dimension and floating point format. */
   typedef VectorField< T, VImageDimension > VectorFieldType; /**< Vector field type of given dimension and floating point format. */
 
+  typedef CProcessBase Superclass;
+
   /**
    * Data structure keeping all the image information
    *
@@ -262,6 +264,11 @@ public:
     return false;
   }
 
+  SetMacro( AutoScaleImages, bool );
+  GetMacro( AutoScaleImages, bool );
+
+  virtual void SetAutoConfiguration( Json::Value &ConfValueIn, Json::Value &ConfValueOut );
+
 protected:
 
   SubjectCollectionInformationMapType m_SubjectCollectionMapImageInformation;
@@ -280,6 +287,10 @@ private:
 
   unsigned int m_uiCurrentRunningId; /**< Internal running id for images */
   std::map< unsigned int, unsigned int> m_MapIdToSubjectId; /**< map which stores a map from image id to subject id */
+
+  bool m_AutoScaleImages;
+  bool DefaultAutoScaleImages;
+  bool m_ExternallySetAutoScaleImages;
 
 };
 

@@ -22,7 +22,8 @@
 
 template < class TState >
 CLDDMMGenericRegistration< TState >::CLDDMMGenericRegistration()
-  : DefaultObjectiveFunction( "LDDMMGrowthModel" ), m_ExternallySetObjectiveFunction( false )
+  : DefaultObjectiveFunction( "LDDMMGrowthModel" ),
+    m_ExternallySetObjectiveFunction( false )
 {
   m_ObjectiveFunction = DefaultObjectiveFunction;
 }
@@ -86,10 +87,6 @@ void CLDDMMGenericRegistration< TState >::SetDefaultObjectiveFunctionPointer()
   plddmm->SetKernelPointer( this->m_ptrKernel );
   plddmm->SetMetricPointer( this->m_ptrMetric );
   plddmm->SetImageManagerPointer( this->m_ptrImageManager );
-
-  plddmm->SetPrintConfiguration( this->GetPrintConfiguration() );
-  plddmm->SetAllowHelpComments( this->GetAllowHelpComments() );
-  plddmm->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 
   this->m_ptrObjectiveFunction = plddmm;
   this->m_ptrKernel->SetObjectiveFunctionPointer( plddmm );

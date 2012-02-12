@@ -58,6 +58,24 @@ public:
   typedef VectorField< T, 3 > VectorFieldType3D;
 
   /**
+    * Method that that takes a vector image and replaces all its elements by the max of the element value and a given value
+    *
+    * @param in -- the input/output image
+    * @param dMaxValue -- out = max( in, dMaxValue )
+    *
+    */
+  static void max( VectorImageType* in, T dMaxValue );
+
+  /**
+    * Method that that takes a vector image and replaces all its elements by the min of the element value and a given value
+    *
+    * @param in -- the input/output image
+    * @param dMinValue -- out = min( in, dMinValue )
+    *
+    */
+  static void min( VectorImageType* in, T dMinValue );
+
+  /**
    * Method that returns the max of the data in the image
    *
    * @param in - the input image
@@ -228,6 +246,14 @@ public:
    * @param max - the new maximum
    */
   static void normalize(VectorImageType* imInOut, T min, T max);
+
+  /**
+   * Method that normalizes an image in place by setting negative values to zero and scaling the maximum to one
+   *
+   * @param imInOut - the image to be normalized
+   */
+  static void normalizeClampNegativeMaxOne( VectorImageType* imInOut );
+
 
   /**
    * Method that takes the pixelwise average of a set of images

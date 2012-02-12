@@ -23,6 +23,7 @@
 #include "CALATKCommon.h"
 #include <stdexcept>
 #include "VectorFieldUtils.h"
+#include "VectorImageUtils.h"
 #include "CGaussianKernel.h"
 
 /**
