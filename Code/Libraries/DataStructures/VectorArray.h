@@ -396,7 +396,6 @@ protected:
     return ( ( z*__sizeY + y )*__sizeX + x )*__dim + d;
   };
 
-private:
   bool m_ManageMemory;
 
 };

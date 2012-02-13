@@ -33,6 +33,8 @@ SET(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/bin)
 OPTION(COMPILE_APPLICATIONS ON)
 OPTION(BUILD_DOCUMENTATION ON)
 
+# So that it finds nlopt
+FIND_LIBRARY(NLOPT_LIB nlopt)
 
 #
 # Include the fftw path
@@ -116,6 +118,8 @@ SET(CALATK_INCLUDE_DIRS
   ${CMAKE_SOURCE_DIR}/Code/Libraries/ObjectiveFunctions
   ${CMAKE_SOURCE_DIR}/Code/External/ITKTestingCommands
   ${CMAKE_SOURCE_DIR}/Code/External/jsoncpp
+  ${CMAKE_SOURCE_DIR}/Code/External/libbfgs
+  ${CMAKE_SOURCE_DIR}/Code/External/nlopt-2.2.4/api
   ${CMAKE_BINARY_DIR}
   # Casey's Code
   ${CMAKE_SOURCE_DIR}/Utilities/DTIProcess/Library

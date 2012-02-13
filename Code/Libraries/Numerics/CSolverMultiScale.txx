@@ -55,7 +55,12 @@ template < class TState >
 void CSolverMultiScale< TState >::SetDefaultSingleScaleSolver()
 {
   DeleteDefaultSingleScaleSolver();
-  m_ptrSolver = new CSolverLineSearchUnconstrained< TState >;
+  //m_ptrSolver = new CSolverLineSearchUnconstrained< TState >;
+
+#warning Just for testing replaced the solver here
+//  m_ptrSolver = new CSolverLBFGS< TState >;
+  m_ptrSolver = new CSolverNLOpt< TState >;
+
   m_bSetDefaultSingleScaleSolver = true;
 }
 

@@ -38,6 +38,12 @@ void CStationaryEvolver< T, VImageDimension >::SolveForward( VectorFieldType* pV
 
   // FIXME: What should the multiplier be here, 1, 0.25?
   T dMaxTimeStep = this->m_ptrOneStepEvolver->ComputeMaximalUpdateStep( pV );
+
+  if ( !( dMaxTimeStep>0 ) )
+    {
+    std::cerr << "ERROR: dMaxTimeStep = " << dMaxTimeStep << std::endl;
+    }
+
   assert( dMaxTimeStep>0 );
 
   T dCurrentTime = 0;

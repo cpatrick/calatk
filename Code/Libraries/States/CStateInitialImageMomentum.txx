@@ -84,13 +84,12 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMo
   // here the memory allocation is performed externally
   
   unsigned int uiLengthOfImage = pGraftImage->getLength();
-  unsigned int uiLengthOfMomentum = pGraft->getLength();
+  unsigned int uiLengthOfMomentum = pGraftImage->getLength();
   
   long int liNumberOfStateVectorElements = uiLengthOfImage + uiLengthOfMomentum;
 
   m_ptrRawData = new T[ liNumberOfStateVectorElements ];
   
-
   m_NumberOfStateVectorElements = liNumberOfStateVectorElements;
 
   m_ptrInitialImage = new VectorImageType( pGraftImage, m_ptrRawData );
@@ -343,15 +342,14 @@ T CStateInitialImageMomentum< T, VImageDimension, TResampler >::SquaredNorm()
 template <class T, unsigned int VImageDimension, class TResampler >
 long int CStateInitialImageMomentum< T, VImageDimension, TResampler >::GetNumberOfStateVectorElements()
 {
-  return m_NumberOfStateVectorElements();
+  return m_NumberOfStateVectorElements;
 }
 
 //
 // Gets the pointer to the state vector. Primarily intended so that the states can be used with external optimizers
 //
 template <class T, unsigned int VImageDimension, class TResampler >
-typename CStateInitialImageMomentum< T, VImageDimension, TResampler >::T*
-CStateIntialImageMomentum< T, VImageDimension, TResampler >::GetPointerToState()
+T* CStateInitialImageMomentum< T, VImageDimension, TResampler >::GetPointerToState()
 {
   return m_ptrRawData;
 }
