@@ -2,7 +2,8 @@
 # Go to library subdirectories
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/DataStructures)
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/Utilities)
-add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../External/jsoncpp ${LIBRARY_OUTPUT_PATH} )
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../External/jsoncpp
+  ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} )
 
 
 # Create a single library for the toolkit
