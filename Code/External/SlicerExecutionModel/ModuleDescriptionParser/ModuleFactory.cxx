@@ -364,26 +364,23 @@ ModuleFactory
 {
   // Load the module cache information
   this->LoadModuleCache();
-  
+
   // Scan for shared object modules first since they will be higher
   // performance than command line module
-  int numberOfShared, numberOfExecutables, numberOfPeekedExecutables, numberOfPython = 0, numberOfOtherFiles;
 
-  numberOfShared = this->ScanForSharedObjectModules();
-  numberOfPeekedExecutables = this->ScanForCommandLineModulesByPeeking();
-  numberOfExecutables = this->ScanForCommandLineModulesByExecuting();
+  const int numberOfShared = this->ScanForSharedObjectModules();
+  const int numberOfPeekedExecutables = this->ScanForCommandLineModulesByPeeking();
+  const int numberOfExecutables = this->ScanForCommandLineModulesByExecuting();
+  int numberOfPython = 0;
 #ifdef ModuleDescriptionParser_USE_PYTHON
   // Be sure that python is initialized
   Py_Initialize();
-  numberOfPython = this->ScanForPythonModulesByLoading();
+  int numberOfPython = this->ScanForPythonModulesByLoading();
 #endif
 
-  numberOfOtherFiles = this->ScanForNotAModuleFiles();
-  
   // Store the module cache information
   this->SaveModuleCache();
 
-  
   if (numberOfShared + numberOfExecutables + numberOfPeekedExecutables + numberOfPython == 0)
     {
     this->WarningMessage( ("No plugin modules found. Check your module search path and your " + this->Name + " installation.").c_str() );
@@ -528,7 +525,6 @@ ModuleFactory
 
     for ( unsigned int ii=0; ii < directory.GetNumberOfFiles(); ++ii)
       {
-      bool isAPlugin = true;
       const char *filename = directory.GetFile(ii);
       
       // skip any directories
@@ -784,7 +780,6 @@ ModuleFactory
                 // not a plugin, no xml description, close the library
                 itksys::DynamicLoader::CloseLibrary(lib);
 
-                isAPlugin = false;
                 information << filename
                             << " is not a plugin (no XML description)."
                             << std::endl;
@@ -800,7 +795,6 @@ ModuleFactory
               // not a plugin, doesn't have the symbols, close the library
               itksys::DynamicLoader::CloseLibrary(lib);
 
-              isAPlugin = false;
               information << filename
                           << " is not a plugin (no entry points)."
                           << std::endl;
@@ -866,7 +860,6 @@ ModuleFactory
 
     for ( unsigned int ii=0; ii < directory.GetNumberOfFiles(); ++ii)
       {
-      bool isAPlugin = true;
       const char *filename = directory.GetFile(ii);
       
       // skip any directories
@@ -1104,18 +1097,15 @@ ModuleFactory
               }
             else
               {
-              isAPlugin = false;
               information << filename << " is not a plugin (did not generate an XML description)." << std::endl;
               }
             }
           else if (result == itksysProcess_State_Expired)
             {
-            isAPlugin = false;
             information << filename << " is not a plugin (timeout exceeded)." << std::endl;
             }
           else
             {
-            isAPlugin = false;
             information << filename << " is not a plugin (did not exit cleanly), command[0] = " << command[0] << ", [1] = " << command[1] << std::endl;
             }
 
