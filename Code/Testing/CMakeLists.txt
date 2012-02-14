@@ -109,7 +109,13 @@ add_ctest_test(calatkJSONTest
   )
 
 add_test_executable(calatkRegularizationSpacingTest CALATK)
-add_ctest_test(calatkRegularizationSpacingTest ${test_temp_dir})
+add_ctest_test(calatkRegularizationSpacingTest
+  ${test_input_dir}/brainSlices/ws_slice.nrrd
+  ${test_input_dir}/brainSlices/wt_slice.nrrd
+  0.9
+  ${test_temp_dir}/calatkRegularizationSpacingTest_warped_source.nrrd
+  ${test_temp_dir}/calatkRegularizationSpacingTest_target_map.mha
+  )
 
 #add_ctest_test(writeFileITKTest
 #  # 2D input
