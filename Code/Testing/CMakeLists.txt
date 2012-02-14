@@ -5,58 +5,58 @@ set(test_temp_dir ${CALATK_BINARY_DIR}/Testing/Temporary)
 set(test_input_dir ${CALATK_SOURCE_DIR}/TestingData)
 set(test_bin_dir ${CALATK_BINARY_DIR}/Code/Testing)
 
-SET(ALGORITHMS_TESTS_FILTERING ${test_bin_dir}/testDriverFiltering)
-SET(ALGORITHMS_TESTS_FILTERING ${test_bin_dir}/testDriverPDESolver)
+set(ALGORITHMS_TESTS_FILTERING ${test_bin_dir}/testDriverFiltering)
+set(ALGORITHMS_TESTS_FILTERING ${test_bin_dir}/testDriverPDESolver)
 
 #
 # Define a function for adding a test with an optional set of lbraries to link against
 #
-FUNCTION(add_test_executable testName)
+function(add_test_executable testName)
 
   # if we're coming from testing off, force this test to compile
-  IF(NOT BUILD_TESTING)
-    SET(force_testing${testName} ON CACHE INTERNAL "temp variable for testing switches" FORCE)
-  ENDIF(NOT BUILD_TESTING)
+  if(NOT BUILD_TESTING)
+    set(force_testing${testName} ON CACHE INTERNAL "temp variable for testing switches" FORCE)
+  endif(NOT BUILD_TESTING)
 
   # set up the option and mark it as advanced
-  MARK_AS_ADVANCED( compile_${testName} )
-  OPTION(compile_${testName} "Compile ${testName}" ON)
+  mark_as_advanced( compile_${testName} )
+  option(compile_${testName} "Compile ${testName}" ON)
 
   # only turn the test on if BUILD_TESTING was just turned on
-  IF(BUILD_TESTING)
-    IF(force_testing${testName})
-      SET(compile_${testName} ON CACHE BOOL "Compile ${testName}" FORCE)
-      SET(force_testing${testName} OFF CACHE INTERNAL "temp variable for testing switches" FORCE)
-    ENDIF(force_testing${testName})
-    IF(compile_${testName})
+  if(BUILD_TESTING)
+    if(force_testing${testName})
+      set(compile_${testName} ON CACHE BOOL "Compile ${testName}" FORCE)
+      set(force_testing${testName} OFF CACHE INTERNAL "temp variable for testing switches" FORCE)
+    endif(force_testing${testName})
+    if(compile_${testName})
 
       # compile the program
-      ADD_EXECUTABLE(${testName} ${testName}.cxx )
-      TARGET_LINK_LIBRARIES(${testName} ${ARGN})
+      add_executable(${testName} ${testName}.cxx )
+      target_link_libraries(${testName} ${ARGN})
 
-    ENDIF(compile_${testName})
+    endif(compile_${testName})
 
   # if BUILD_TESTING is off, force the test to turn on next time BUILD_TESTING is turned on
-  ELSE(BUILD_TESTING)
-    SET(compile_${testName} OFF CACHE BOOL "Compile ${testName}" FORCE)
-  ENDIF(BUILD_TESTING)
+  else(BUILD_TESTING)
+    set(compile_${testName} OFF CACHE BOOL "Compile ${testName}" FORCE)
+  endif(BUILD_TESTING)
 
-ENDFUNCTION(add_test_executable)
+endfunction(add_test_executable)
 
 #
 # Define a function that adds a ctest test only if the executable is turned on
 #
-FUNCTION(add_ctest_test testName)
-  IF(BUILD_TESTING AND compile_${testName})
+function(add_ctest_test testName)
+  if(BUILD_TESTING AND compile_${testName})
     add_test(${testName} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${testName} ${ARGN})
-  ENDIF(BUILD_TESTING AND compile_${testName})
-ENDFUNCTION(add_ctest_test)
+  endif(BUILD_TESTING AND compile_${testName})
+endfunction(add_ctest_test)
 
 #
 # Define a function that adds a ctest test with image comparison only if the executable is turned on
 #
-FUNCTION(add_ctest_test_image_compare testName testDriver imIn imOut imBaseline)
-  IF(BUILD_TESTING AND compile_${testName})
+function(add_ctest_test_image_compare testName testDriver imIn imOut imBaseline)
+  if(BUILD_TESTING AND compile_${testName})
     add_test(${testName} ${testDriver}
       --compare ${test_input_dir}/Baseline/${imBaseline}
                 ${test_temp_dir}/${imOut}
@@ -65,8 +65,8 @@ FUNCTION(add_ctest_test_image_compare testName testDriver imIn imOut imBaseline)
       ${test_temp_dir}/${imOut}
       ${ARGN}
       )
-  ENDIF(BUILD_TESTING AND compile_${testName})
-ENDFUNCTION(add_ctest_test_image_compare)
+  endif(BUILD_TESTING AND compile_${testName})
+endfunction(add_ctest_test_image_compare)
 
 #------------------------------------------------------------------------------
 # New tests, added during the redevelopment of FRAT -> CALATK
@@ -74,22 +74,22 @@ ENDFUNCTION(add_ctest_test_image_compare)
 
 # Set up source code files for all the tests which are processed by the testDriver
 
-SET(testDriverFiltering_SRCS
+set(testDriverFiltering_SRCS
 calatkGaussianBlurringTest.cxx
 )
 
-SET(testDriverPDESolver_SRCS
+set(testDriverPDESolver_SRCS
 calatkAdvectionTest.cxx
 calatkInterpolationTest.cxx
 )
 
-ADD_EXECUTABLE(testDriverFiltering testDriverFiltering.cxx ${testDriverFiltering_SRCS})
-TARGET_LINK_LIBRARIES(testDriverFiltering CALATK ${ITK_LIBRARIES})
+add_executable(testDriverFiltering testDriverFiltering.cxx ${testDriverFiltering_SRCS})
+target_link_libraries(testDriverFiltering CALATK ${ITK_LIBRARIES})
 
 add_ctest_test_image_compare(calatkGaussianBlurringTest ${ALGORITHMS_TESTS_FILTERING} I0_short.nhdr I0_blurred.nrrd I0-blurred-sig01-baseline.nrrd)
 
-ADD_EXECUTABLE(testDriverPDESolver testDriverPDESolver.cxx ${testDriverPDESolver_SRCS})
-TARGET_LINK_LIBRARIES(testDriverPDESolver CALATK ${ITK_LIBRARIES})
+add_executable(testDriverPDESolver testDriverPDESolver.cxx ${testDriverPDESolver_SRCS})
+target_link_libraries(testDriverPDESolver CALATK ${ITK_LIBRARIES})
 
 add_ctest_test_image_compare(calatkAdvectionTest ${ALGORITHMS_TESTS_PDESOLVER} I0_short.nhdr I0_advected.nrrd I0-advected-baseline-x.nrrd 1 0 0.25)
 
