@@ -36,6 +36,8 @@ OPTION(BUILD_DOCUMENTATION ON)
 # So that it finds nlopt
 FIND_LIBRARY(NLOPT_LIB nlopt)
 
+# Find the Ipopt library and includes
+
 #
 # Include the fftw path
 #
