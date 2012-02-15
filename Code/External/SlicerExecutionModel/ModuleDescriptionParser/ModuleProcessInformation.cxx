@@ -13,6 +13,11 @@
 ==========================================================================*/
 #include "ModuleProcessInformation.h"
 
+ModuleProcessInformation
+::ModuleProcessInformation()
+{
+  this->Initialize();
+}
 
 std::ostream& operator<<(std::ostream &os, const ModuleProcessInformation &p)
 {
