@@ -112,12 +112,12 @@ char *GetXMLModuleDescription()
     bool echoSwitch = false; \
     bool xmlSwitch = false; \
     std::string processInformationAddressString = "0"; \
-try \
-  { \
     TCLAP::CmdLine commandLine ( \
       "Generates C++ code that will parse command lines", \
        ' ', \
       "1.0" ); \
+try \
+  { \
  \
       itksys_ios::ostringstream msg; \
     msg.str("");msg << "Generate TCLAP Code (default: " << UseTCLAP << ")"; \
