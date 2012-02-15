@@ -98,7 +98,9 @@ char *GetXMLModuleDescription()
 #define GENERATE_XML \
   if (argc >= 2 && (strcmp(argv[1],"--xml") == 0)) \
     { \
-    std::cout << GetXMLModuleDescription(); \
+    char * description = GetXMLModuleDescription(); \
+    std::cout << description; \
+    delete [] description; \
     return EXIT_SUCCESS; \
     }
 #define GENERATE_TCLAP \
