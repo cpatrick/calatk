@@ -24,6 +24,7 @@
 #include "CSolverLineSearchUnconstrained.h"
 #include "CSolverLBFGS.h"
 #include "CSolverNLOpt.h"
+#include "CSolverIpOpt.h"
 #include "CImageManagerMultiScale.h"
 #include "VectorImage.h"
 #include "VectorImageUtils.h"

@@ -1,0 +1,5 @@
+20111223
+ xpress.c: catch SIGINT (control-C) and return the best available
+solution.  Quickly giving several control-C's may sometimes lead to
+the new solve_result_num value 520 (and no returned solution).
+ README.xpress: minor adjustments.

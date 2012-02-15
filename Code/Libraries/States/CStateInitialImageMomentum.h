@@ -108,7 +108,13 @@ public:
   T SquaredNorm();
 
   virtual long int GetNumberOfStateVectorElements();
-  virtual T* GetPointerToState();
+  virtual T* GetPointerToStateVector();
+
+  virtual long int GetNumberOfStateVectorElementsToEstimate();
+  virtual T* GetPointerToStateVectorElementsToEstimate();
+
+  GetMacro( EstimateInitialImage, bool );
+  SetMacro( EstimateInitialImage, bool );
 
 protected:
   void ClearDataStructure();
@@ -120,6 +126,11 @@ private:
 
   long int m_NumberOfStateVectorElements;
   T* m_ptrRawData;
+
+  bool m_EstimateInitialImage;
+  const bool DefaultEstimateInitialImage;
+  bool m_ExternallySetEstimateInitialImage;
+
 
 };
 

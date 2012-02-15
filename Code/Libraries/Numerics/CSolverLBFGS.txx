@@ -43,8 +43,8 @@ bool CSolverLBFGS< TState >::SolvePreInitialized()
 
   // initialize
 
-  T *ptrCurrentState = pObj->GetStatePointer()->GetPointerToState();
-  long int liNumberOfStateVectorElements = pObj->GetStatePointer()->GetNumberOfStateVectorElements();
+  T *ptrCurrentState = pObj->GetStatePointer()->GetPointerToStateVectorElementsToEstimate();
+  long int liNumberOfStateVectorElements = pObj->GetStatePointer()->GetNumberOfStateVectorElementsToEstimate();
 
   T *ptrMX = new T[ liNumberOfStateVectorElements ];
 
@@ -221,6 +221,7 @@ std::string CSolverLBFGS< TState >::GetStringForStatusCode( int ret )
 template < class TState >
 bool CSolverLBFGS< TState >::SolvePreInitialized( float* ptr, long int liNumberOfStateVectorElements )
 {
+  m_x = ptr;
   throw std::runtime_error( "Not implemented for type float. Try double.");
   return false;
 }
@@ -238,9 +239,9 @@ CSolverLBFGS< TState >::evaluate(  const T *x,
 
   ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();
   // initialize
-  T *ptrCurrentState = pObj->GetStatePointer()->GetPointerToState();
+  T *ptrCurrentState = pObj->GetStatePointer()->GetPointerToStateVectorElementsToEstimate();
 
-  long int liNumberOfStateVectorElements = pObj->GetStatePointer()->GetNumberOfStateVectorElements();
+  long int liNumberOfStateVectorElements = pObj->GetStatePointer()->GetNumberOfStateVectorElementsToEstimate();
 
   // copy it
   for ( long int iI=0; iI<liNumberOfStateVectorElements; ++iI )
@@ -253,7 +254,7 @@ CSolverLBFGS< TState >::evaluate(  const T *x,
 
   // get current gradient
   TState *pCurrentGradient = pObj->GetGradientPointer();
-  T* ptrCurrentGradient = pCurrentGradient->GetPointerToState();
+  T* ptrCurrentGradient = pCurrentGradient->GetPointerToStateVectorElementsToEstimate();
 
   // copy it
   for ( long int iI=0; iI<liNumberOfStateVectorElements; ++iI )

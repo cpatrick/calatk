@@ -47,7 +47,17 @@ public:
     return 0;
   };
 
-  virtual T* GetPointerToState()
+  virtual long int GetNumberOfStateVectorElementsToEstimate()
+  {
+    return 0;
+  }
+
+  virtual T* GetPointerToStateVector()
+  {
+    return NULL;
+  };
+
+  virtual T* GetPointerToStateVectorElementsToEstimate()
   {
     return NULL;
   };

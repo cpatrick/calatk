@@ -15,7 +15,7 @@ set(CALATK_source
 )
 
 add_library(CALATK ${CALATK_source})
-target_link_libraries(CALATK ${FFTW_LIB} ${FFTWF_LIB} ITKCommon ITKIO itksys ${NLOPT_LIB})
+target_link_libraries(CALATK ${FFTW_LIB} ${FFTWF_LIB} ITKCommon ITKIO itksys ${NLOPT_LIB} ${IPOPT_LIBS} )
 
 INSTALL( TARGETS CALATK 
 	RUNTIME DESTINATION bin

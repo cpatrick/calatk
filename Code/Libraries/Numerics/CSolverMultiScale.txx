@@ -59,7 +59,9 @@ void CSolverMultiScale< TState >::SetDefaultSingleScaleSolver()
 
 #warning Just for testing replaced the solver here
 //  m_ptrSolver = new CSolverLBFGS< TState >;
-  m_ptrSolver = new CSolverNLOpt< TState >;
+//  m_ptrSolver = new CSolverNLOpt< TState >;
+
+  m_ptrSolver = new CSolverIpOpt< TState >;
 
   m_bSetDefaultSingleScaleSolver = true;
 }

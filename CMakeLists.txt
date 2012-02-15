@@ -37,11 +37,24 @@ OPTION(BUILD_DOCUMENTATION ON)
 FIND_LIBRARY(NLOPT_LIB nlopt)
 
 # Find the Ipopt library and includes
+FIND_PATH(IPOPT_PATH IpoptConfig.h DOC "where IpoptConfig.h is found")
+INCLUDE_DIRECTORIES(${IPOPT_PATH})
+FIND_PATH(IPOPT_LIB_PATH ipopt DOC "path where libipopt is located")
+
+SET(IPOPT_LIBS 
+  ${IPOPT_LIB_PATH}/libcoinlapack.a
+  ${IPOPT_LIB_PATH}/libcoinblas.a
+  ${IPOPT_LIB_PATH}/libcoinasl.a 
+  ${IPOPT_LIB_PATH}/libipopt.a
+  ${IPOPT_LIB_PATH}/libipoptamplinterface.a
+  ${IPOPT_LIB_PATH}/libcoinmumps.a
+  -lgfortran
+)
 
 #
 # Include the fftw path
 #
-FIND_PATH(FFTW_PATH fftw3.h)
+FIND_PATH(FFTW_PATH fftw3.h DOC "include directory for FFTW")
 INCLUDE_DIRECTORIES(${FFTW_PATH})
 FIND_LIBRARY(FFTW_LIB fftw3)
 FIND_LIBRARY(FFTWF_LIB fftw3f)

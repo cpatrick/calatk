@@ -38,7 +38,7 @@ FUNCTION(add_clp_application appName mainFile libraries)
       # compile the program
 
   ADD_EXECUTABLE(${appName} ${CLP}.cxx)  
-  TARGET_LINK_LIBRARIES( ${appName} CALATK ${libraries} ${ARGN} )
+  TARGET_LINK_LIBRARIES( ${appName} CALATK ${libraries} ${IPOPT_LIBS} ${ARGN} )
  
   INSTALL( TARGETS ${appName} 
     RUNTIME DESTINATION bin
@@ -80,7 +80,7 @@ FUNCTION(add_application appName mainFile)
 
       # compile the program
       ADD_EXECUTABLE(${appName} ${mainFile}.cxx )
-      TARGET_LINK_LIBRARIES(${appName} CALATK ${ARGN})
+      TARGET_LINK_LIBRARIES(${appName} CALATK ${IPOPT_LIBS} ${ARGN})
 
       INSTALL( TARGETS ${appName} 
 	RUNTIME DESTINATION bin

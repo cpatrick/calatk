@@ -28,8 +28,11 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMo
   : m_ptrInitialImage( NULL ), 
     m_ptrInitialMomentum( NULL ),
     m_NumberOfStateVectorElements( 0 ),
-    m_ptrRawData( NULL )
+    m_ptrRawData( NULL ),
+    DefaultEstimateInitialImage( false ),
+    m_ExternallySetEstimateInitialImage( false )
 {
+  m_EstimateInitialImage = DefaultEstimateInitialImage;
 }
 
 //
@@ -40,8 +43,12 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMo
   : m_ptrInitialImage( NULL ), 
     m_ptrInitialMomentum( NULL ),
     m_NumberOfStateVectorElements( 0 ),
-    m_ptrRawData( NULL )
+    m_ptrRawData( NULL ),
+    DefaultEstimateInitialImage( false ),
+    m_ExternallySetEstimateInitialImage( false )
 {
+  m_EstimateInitialImage = DefaultEstimateInitialImage;
+
   if (this != &c)
     {
     VectorImagePointerType ptrImage = c.GetPointerToInitialImage();
@@ -58,8 +65,11 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMo
   : m_ptrInitialImage( pInitialImage ), 
     m_ptrInitialMomentum( pInitialMomentum ),
     m_NumberOfStateVectorElements( 0 ),
-    m_ptrRawData( ptrRawData )
+    m_ptrRawData( ptrRawData ),
+    DefaultEstimateInitialImage( false ),
+    m_ExternallySetEstimateInitialImage( false )
 {
+  m_EstimateInitialImage = DefaultEstimateInitialImage;
   // here the memory allocation is performed externally
   
   unsigned int uiLengthOfImage = pInitialImage->getLength();
@@ -79,8 +89,11 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMo
   : m_ptrInitialImage( NULL ), 
     m_ptrInitialMomentum( NULL ),
     m_NumberOfStateVectorElements( 0 ),
-    m_ptrRawData( NULL )
+    m_ptrRawData( NULL ),
+    DefaultEstimateInitialImage( false ),
+    m_ExternallySetEstimateInitialImage( false )
 {
+  m_EstimateInitialImage = DefaultEstimateInitialImage;
   // here the memory allocation is performed externally
   
   unsigned int uiLengthOfImage = pGraftImage->getLength();
@@ -346,12 +359,46 @@ long int CStateInitialImageMomentum< T, VImageDimension, TResampler >::GetNumber
 }
 
 //
+// return the overall number of elements in the vector which holds the state information
+//
+template <class T, unsigned int VImageDimension, class TResampler >
+long int CStateInitialImageMomentum< T, VImageDimension, TResampler >::GetNumberOfStateVectorElementsToEstimate()
+{
+  if ( m_EstimateInitialImage )
+  {
+    return m_NumberOfStateVectorElements;
+  }
+  else
+  {
+    return GetPointerToInitialMomentum()->getLength();
+  }
+}
+
+//
 // Gets the pointer to the state vector. Primarily intended so that the states can be used with external optimizers
 //
 template <class T, unsigned int VImageDimension, class TResampler >
-T* CStateInitialImageMomentum< T, VImageDimension, TResampler >::GetPointerToState()
+T* CStateInitialImageMomentum< T, VImageDimension, TResampler >::GetPointerToStateVector()
 {
   return m_ptrRawData;
+}
+
+//
+// Get the pointer to the part of the state vector that needs to be estimated
+// (full state vector if initial image is also to be estimated)
+//
+template <class T, unsigned int VImageDimension, class TResampler >
+T* CStateInitialImageMomentum< T, VImageDimension, TResampler >::GetPointerToStateVectorElementsToEstimate()
+{
+  if ( m_EstimateInitialImage )
+  {
+    return GetPointerToStateVector();
+  }
+  else
+  {
+    unsigned int uiLengthOfImage = GetPointerToInitialImage()->getLength();
+    return m_ptrRawData + uiLengthOfImage;
+  }
 }
 
 #endif

@@ -1,0 +1,3 @@
+20111109
+  gurobi.c:  update for Gurobi 4.6.  Should still work with earlier
+versions of Gurobi.
