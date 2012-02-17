@@ -56,9 +56,9 @@ ENDIF(ITK_FOUND)
 #
 # Configure calatkConfigure.h.in
 #
-SET(CALATK_SYSTEM_UNIX ${UNIX})
-SET(CALATK_SYSTEM_WINDOWS ${WIN32})
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/calatkConfigure.h.in ${CMAKE_BINARY_DIR}/calatkConfigure.h)
+set(CALATK_SYSTEM_UNIX ${UNIX})
+set(CALATK_SYSTEM_WINDOWS ${WIN32})
+configure_file(${CMAKE_SOURCE_DIR}/calatkConfigure.h.in ${CMAKE_BINARY_DIR}/calatkConfigure.h)
 
 #
 # Add OpenMP flag
@@ -179,10 +179,16 @@ set (CPACK_PACKAGE_INSTALL_DIRECTORY "calatk-${CMake_VERSION_MAJOR}.${CMake_VERS
 
 include (CPack)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCALATK_VERSION_MAJOR=${CALATK_VERSION_MAJOR} -DCALATK_VERSION_MINOR=${CALATK_VERSION_MINOR}" CACHE INTERNAL "Flags to support versioned json headers")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCALATK_VERSION_MAJOR=${CALATK_VERSION_MAJOR} -DCALATK_VERSION_MINOR=${CALATK_VERSION_MINOR}" CACHE INTERNAL "Flags to support versioned json headers")
 
 #
 # Go to Code
 #
-ADD_SUBDIRECTORY(${CMAKE_SOURCE_DIR}/Code)
+add_subdirectory(${CMAKE_SOURCE_DIR}/Code)
+
+#
+# Configure CTestCustom.cmake.in
+#
+configure_file(${CALATK_SOURCE_DIR}/Scripts/CTestCustom.cmake.in
+  ${CALATK_BINARY_DIR}/CTestCustom.cmake)
 

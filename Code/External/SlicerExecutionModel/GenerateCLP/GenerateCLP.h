@@ -98,7 +98,9 @@ char *GetXMLModuleDescription()
 #define GENERATE_XML \
   if (argc >= 2 && (strcmp(argv[1],"--xml") == 0)) \
     { \
-    std::cout << GetXMLModuleDescription(); \
+    char * description = GetXMLModuleDescription(); \
+    std::cout << description; \
+    delete [] description; \
     return EXIT_SUCCESS; \
     }
 #define GENERATE_TCLAP \
@@ -110,12 +112,12 @@ char *GetXMLModuleDescription()
     bool echoSwitch = false; \
     bool xmlSwitch = false; \
     std::string processInformationAddressString = "0"; \
-try \
-  { \
     TCLAP::CmdLine commandLine ( \
       "Generates C++ code that will parse command lines", \
        ' ', \
       "1.0" ); \
+try \
+  { \
  \
       itksys_ios::ostringstream msg; \
     msg.str("");msg << "Generate TCLAP Code (default: " << UseTCLAP << ")"; \

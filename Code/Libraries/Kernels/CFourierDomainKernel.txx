@@ -57,6 +57,7 @@ void CFourierDomainKernel< T, VImageDimension >::DeallocateMemory()
 template <class T, unsigned int VImageDimension >
 CFourierDomainKernel< T, VImageDimension >::~CFourierDomainKernel()
 {
+  fftw_cleanup();
   DeleteData();
 }
 
@@ -84,10 +85,10 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures2D( un
   // Set up the fftw data
   unsigned int numElts = szX*szY;
   fftwData = new CFFTDataType<T>();
-  
-  fftwData->in = (T*) fftw_malloc( sizeof(T) * numElts);
-  fftwData->out = (FFTComplexType*) fftw_malloc( sizeof(FFTComplexType) * numElts);
-  
+
+  fftwData->in = (T*) fftw_malloc( sizeof(T) * numElts );
+  fftwData->out = (FFTComplexType*) fftw_malloc( sizeof(FFTComplexType) * numElts );
+
   fftwData->fwd = CFFTDataType<T>::FFT_plan_dft_r2c_2d(szX, szY, fftwData->in, fftwData->out, FFTW_ESTIMATE);
   fftwData->bck = CFFTDataType<T>::FFT_plan_dft_c2r_2d(szX, szY, fftwData->out, fftwData->in, FFTW_ESTIMATE);
 

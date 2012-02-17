@@ -188,6 +188,7 @@ main(int argc, char *argv[])
   if (parser.Parse(XML, module))
     {
     std::cerr << "GenerateCLP: One or more errors detected. Code generation aborted." << std::endl;
+    delete [] XML;
     return EXIT_FAILURE;
     }
 
@@ -207,11 +208,13 @@ main(int argc, char *argv[])
     {
     std::cerr << argv[0] << ": Cannot open " << OutputCxx << " for output" << std::endl;
     perror(argv[0]);
+    delete [] XML;
     return EXIT_FAILURE;
     }
   if (logoFiles.size() > 0 && !itksys::SystemTools::FileExists(logoFiles[0].c_str()))
     {
     std::cerr << argv[0] << ": Cannot open " << logoFiles[0] << " as a logo file" << std::endl;
+    delete [] XML;
     return EXIT_FAILURE;
     }
 
@@ -230,6 +233,7 @@ main(int argc, char *argv[])
   GeneratePost(sout);
   sout.close();
 
+  delete [] XML;
   return (EXIT_SUCCESS);
 }
 
