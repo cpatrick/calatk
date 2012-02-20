@@ -22,7 +22,11 @@
 
 template < class TState >
 CSolverMultiScale< TState >::CSolverMultiScale()
+  : DefaultSingleScaleSolver( "LineSearchUnconstrained" ),
+    m_ExternallySetSingleScaleSolver( false )
 {
+  m_SingleScaleSolver = DefaultSingleScaleSolver;
+
   m_ptrSolver = NULL;
   m_bSetDefaultSingleScaleSolver = false;
 }
@@ -40,7 +44,7 @@ void CSolverMultiScale< TState >::SetAutoConfiguration( Json::Value &ConfValueIn
   Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "MultiScaleFinalOutput", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "MultiScaleFinalOutput", Json::nullValue );
 
-  SetJSONHelpForRootKey( MultiScaleFinalOutput, "output after the last stage of the multi-scale solver")
+  SetJSONHelpForRootKey( MultiScaleFinalOutput, "output after the last stage of the multi-scale solver");
 
   SetJSONFromKeyBool( currentConfigurationIn, currentConfigurationOut, OutputStateInformation );
   SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, OutputStateInformationFrequency );
@@ -49,19 +53,24 @@ void CSolverMultiScale< TState >::SetAutoConfiguration( Json::Value &ConfValueIn
                      "if set to true will generate output images" );
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, OutputStateInformationFrequency,
                      "at what iteration steps output should be generated" );
+
+  Json::Value& currentConfigurationInGS = this->m_jsonConfigIn.GetFromKey( "MultiScaleGeneralSettings", Json::nullValue );
+  Json::Value& currentConfigurationOutGS = this->m_jsonConfigOut.GetFromKey( "MultiScaleGeneralSettings", Json::nullValue );
+
+  SetJSONHelpForRootKey( MultiScaleGeneralSettings, "general settings, affecting each scale of the multiscale soltion" );
+
+  SetJSONFromKeyString( currentConfigurationInGS, currentConfigurationOutGS, SingleScaleSolver );
+
+  SetJSONHelpForKey( currentConfigurationInGS, currentConfigurationOutGS, SingleScaleSolver,
+                     "specifies the numerical solver: IpOpt, LineSearchUnconstrained, LineSearchConstrained, NLOpt, LBFGS; IpOpt or LineSearchUnconstrained are recommended. All but LineSearch use an L-BFGS quasi Newton method.")
+
 }
 
 template < class TState >
 void CSolverMultiScale< TState >::SetDefaultSingleScaleSolver()
 {
   DeleteDefaultSingleScaleSolver();
-  //m_ptrSolver = new CSolverLineSearchUnconstrained< TState >;
-
-#warning Just for testing replaced the solver here
-//  m_ptrSolver = new CSolverLBFGS< TState >;
-//  m_ptrSolver = new CSolverNLOpt< TState >;
-
-  m_ptrSolver = new CSolverIpOpt< TState >;
+  m_ptrSolver = CSolverFactory< TState >::CreateNewSolver( m_SingleScaleSolver );
 
   m_bSetDefaultSingleScaleSolver = true;
 }

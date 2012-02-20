@@ -55,6 +55,35 @@ public:
   bool SolvePreInitialized( double* ptr, long int liNumberOfStateVectorElements );
   bool SolvePreInitialized( float* ptr, long int liNumberOfStateVectorElements );
 
+  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+
+  SetMacro( tol, T );
+  GetMacro( tol, T );
+
+  SetMacro( print_level, int );
+  GetMacro( print_level, int );
+
+  SetMacro( limited_memory_max_history, int );
+  GetMacro( limited_memory_max_history, int );
+
+  SetMacro( hessian_approximation, std::string );
+  GetMacro( hessian_approximation, std::string );
+
+  SetMacro( eta_phi, T );
+  GetMacro( eta_phi, T );
+
+  SetMacro( watchdog_shortened_iter_trigger, int );
+  GetMacro( watchdog_shortened_iter_trigger, int );
+
+  SetMacro( accept_every_trial_step, std::string );
+  GetMacro( accept_every_trial_step, std::string );
+
+  SetMacro( output_file, std::string );
+  GetMacro( output_file, std::string );
+
+  SetMacro( derivative_test, std::string );
+  GetMacro( derivative_test, std::string );
+
 protected:
 
   struct SUserData
@@ -100,6 +129,43 @@ protected:
               Index nele_hess, Index *iRow, Index *jCol,
               T *values, UserDataPtr user_data);
 
+  // variables of the solver which can be set externally
+
+  T m_tol;
+  const T Defaulttol;
+  bool m_ExternallySettol;
+
+  int m_print_level;
+  const int Defaultprint_level;
+  bool m_ExternallySetprint_level;
+
+  int m_limited_memory_max_history;
+  const int Defaultlimited_memory_max_history;
+  bool m_ExternallySetlimited_memory_max_history;
+
+  std::string m_hessian_approximation;
+  const std::string Defaulthessian_approximation;
+  bool m_ExternallySethessian_approximation;
+
+  T m_eta_phi;
+  const T Defaulteta_phi;
+  bool m_ExternallySeteta_phi;
+
+  int m_watchdog_shortened_iter_trigger;
+  const int Defaultwatchdog_shortened_iter_trigger;
+  bool m_ExternallySetwatchdog_shortened_iter_trigger;
+
+  std::string m_accept_every_trial_step;
+  const std::string Defaultaccept_every_trial_step;
+  bool m_ExternallySetaccept_every_trial_step;
+
+  std::string m_output_file;
+  const std::string Defaultoutput_file;
+  bool m_ExternallySetoutput_file;
+
+  std::string m_derivative_test;
+  std::string Defaultderivative_test;
+  bool m_ExternallySetderivative_test;
 
 };
 

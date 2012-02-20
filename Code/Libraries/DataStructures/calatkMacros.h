@@ -104,6 +104,10 @@
   SetJSON##VariableName( this->m_jsonConfigIn.GetFromKey( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ).asUInt() ); \
   currentConfigurationOut[ #VariableName ] = currentConfigurationIn[ #VariableName ]; \
 
+#define SetJSONFromKeyInt( currentConfigurationIn, currentConfigurationOut, VariableName ) \
+  SetJSON##VariableName( this->m_jsonConfigIn.GetFromKey( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ).asInt() ); \
+  currentConfigurationOut[ #VariableName ] = currentConfigurationIn[ #VariableName ]; \
+
 #define SetJSONFromKeyBool( currentConfigurationIn, currentConfigurationOut, VariableName ) \
   SetJSON##VariableName( this->m_jsonConfigIn.GetFromKey( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ).asBool() ); \
   currentConfigurationOut[ #VariableName ] = currentConfigurationIn[ #VariableName ]; \

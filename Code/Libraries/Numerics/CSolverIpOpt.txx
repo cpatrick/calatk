@@ -22,8 +22,37 @@
 
 template < class TState >
 CSolverIpOpt< TState >::CSolverIpOpt()
-  : m_x( NULL )
+  : m_x( NULL ),
+    Defaulttol( 1e-7 ),
+    m_ExternallySettol( false ),
+    Defaultprint_level( 5 ),
+    m_ExternallySetprint_level( false ),
+    Defaultlimited_memory_max_history( 3 ),
+    m_ExternallySetlimited_memory_max_history( false ),
+    Defaulthessian_approximation( "limited_memory" ),
+    m_ExternallySethessian_approximation( false ),
+    Defaulteta_phi( 1e-20 ),
+    m_ExternallySeteta_phi( false ),
+    Defaultwatchdog_shortened_iter_trigger( 2 ),
+    m_ExternallySetwatchdog_shortened_iter_trigger( false ),
+    Defaultaccept_every_trial_step( "no" ),
+    m_ExternallySetaccept_every_trial_step( false ),
+    Defaultoutput_file( "ipopt.out" ),
+    m_ExternallySetoutput_file( false ),
+    Defaultderivative_test( "first_order" ),
+    m_ExternallySetderivative_test( false )
+
 {
+  m_tol = Defaulttol;
+  m_print_level = Defaultprint_level;
+  m_limited_memory_max_history = Defaultlimited_memory_max_history;
+  m_hessian_approximation = Defaulthessian_approximation;
+  m_eta_phi = Defaulteta_phi;
+  m_watchdog_shortened_iter_trigger = Defaultwatchdog_shortened_iter_trigger;
+  m_accept_every_trial_step = Defaultaccept_every_trial_step;
+  m_output_file = Defaultoutput_file;
+  m_derivative_test = Defaultderivative_test;
+
 }
 
 template < class TState >
@@ -34,6 +63,45 @@ CSolverIpOpt< TState >::~CSolverIpOpt()
     delete [] m_x;
     m_x = NULL;
   }
+}
+
+template < class TState >
+void CSolverIpOpt< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+{
+  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "IpOpt", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "IpOpt", Json::nullValue );
+
+  SetJSONHelpForRootKey( IpOpt, "Setting for the IpOpt optimizer" );
+
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, tol );
+  SetJSONFromKeyInt( currentConfigurationIn, currentConfigurationOut, print_level );
+  SetJSONFromKeyInt( currentConfigurationIn, currentConfigurationOut, limited_memory_max_history );
+  SetJSONFromKeyString( currentConfigurationIn, currentConfigurationOut, hessian_approximation );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, eta_phi );
+  SetJSONFromKeyInt( currentConfigurationIn, currentConfigurationOut, watchdog_shortened_iter_trigger );
+  SetJSONFromKeyString( currentConfigurationIn, currentConfigurationOut, accept_every_trial_step );
+  SetJSONFromKeyString( currentConfigurationIn, currentConfigurationOut, output_file );
+  SetJSONFromKeyString( currentConfigurationIn, currentConfigurationOut, derivative_test );
+
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, tol,
+                     "tolerance for optimizer" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, print_level,
+                     "how much information should be printed (higher->more, max 10)" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, limited_memory_max_history,
+                     "how many gradients are stored for a quasi Newton method to approximate the Hessian" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, hessian_approximation,
+                     "how the Hessian should be approximated" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, eta_phi,
+                     "line search sufficient decrease" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, watchdog_shortened_iter_trigger,
+                     "how many steps for watchdog" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, accept_every_trial_step,
+                     "disable proper line search and accept every step (very aggressive)" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, output_file,
+                     "file to write the optimization information to" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, derivative_test,
+                     "how to test the derivative numerically" );
 }
 
 template < class TState >
@@ -144,16 +212,16 @@ bool CSolverIpOpt< TState >::SolvePreInitialized( double* ptr, long int liNumber
 
   /* Set some options.  Note the following ones are only examples,
      they might not be suitable for your problem. */
-  AddNumOption(nlp, "tol", 1e-7);
-  AddIntOption( nlp, "print_level", 5 );
-  AddIntOption( nlp, "limited_memory_max_history", 3 );
-  AddStrOption(nlp, "hessian_approximation", "limited-memory");
-  AddNumOption(nlp, "eta_phi", 1e-20);
-  AddIntOption(nlp, "watchdog shortened iter trigger", 2 );
-  //AddStrOption(nlp, "accept_every_trial_step", "yes");
+  AddNumOption(nlp, "tol", m_tol );
+  AddIntOption( nlp, "print_level", m_print_level );
+  AddIntOption( nlp, "limited_memory_max_history", m_limited_memory_max_history );
+  AddStrOption(nlp, "hessian_approximation", m_hessian_approximation );
+  AddNumOption(nlp, "eta_phi", m_eta_phi );
+  AddIntOption(nlp, "watchdog shortened iter trigger", m_watchdog_shortened_iter_trigger );
+  AddStrOption(nlp, "accept_every_trial_step", m_accept_every_trial_step );
 
-  AddStrOption(nlp, "output_file", "ipopt.out");
-  // AddStrOption(nlp, "derivative_test", "first-order" ); // derivative check if we want it, good for debugging the gradient
+  AddStrOption(nlp, "output_file", m_output_file );
+  AddStrOption(nlp, "derivative_test", m_derivative_test ); // derivative check if we want it, good for debugging the gradient
 
   /* m_x holds the state, no need to allocate again */
 

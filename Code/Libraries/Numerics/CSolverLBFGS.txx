@@ -22,8 +22,26 @@
 
 template < class TState >
 CSolverLBFGS< TState >::CSolverLBFGS()
-  : m_x( NULL )
+  : m_x( NULL ),
+    Defaultepsilon( 1e-10 ),
+    m_ExternallySetepsilon( false ),
+    Defaultmin_step( 1e-10 ),
+    m_ExternallySetmin_step( false ),
+    Defaultmax_linesearch( 20 ),
+    m_ExternallySetmax_linesearch( false ),
+    Defaultm( 3 ),
+    m_ExternallySetm( false ),
+    Defaultftol( 0 ),
+    m_ExternallySetftol( false ),
+    Defaultgtol( 0 ),
+    m_ExternallySetgtol( false )
 {
+  m_epsilon = Defaultepsilon;
+  m_min_step = Defaultmin_step;
+  m_max_linesearch = Defaultmax_linesearch;
+  m_m = Defaultm;
+  m_ftol = Defaultftol;
+  m_gtol = Defaultgtol;
 }
 
 template < class TState >
@@ -34,6 +52,36 @@ CSolverLBFGS< TState >::~CSolverLBFGS()
     delete [] m_x;
     m_x = NULL;
   }
+}
+
+template < class TState >
+void CSolverLBFGS< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+{
+  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "LBFGS", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "LBFGS", Json::nullValue );
+
+  SetJSONHelpForRootKey( IpOpt, "Setting for the libLBFGS optimizer" );
+
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, epsilon );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, min_step );
+  SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, max_linesearch );
+  SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, m );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, ftol );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, gtol );
+
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, epsilon,
+                     "epsilon" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, min_step,
+                     "minimal step for linesearch" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, max_linesearch,
+                     "maximal linesearch tries" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, m,
+                     "number of gradients to store for the Hessian approximation" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, ftol,
+                     "f-tolerance" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, gtol,
+                     "g-tolerance" );
 }
 
 template < class TState >
@@ -75,13 +123,13 @@ bool CSolverLBFGS< TState >::SolvePreInitialized( double* ptr, long int liNumber
   /* Initialize the parameters for the L-BFGS optimization. */
   lbfgs_parameter_init( &param );
   param.linesearch = LBFGS_LINESEARCH_BACKTRACKING_ARMIJO;
-  //param.epsilon = 1e-10;
-  //param.min_step = 1e-10;
-  param.max_linesearch = 100;
-  param.m = 1;
-  param.ftol = 0;
-  param.gtol = 0;
   /*param.linesearch = LBFGS_LINESEARCH_BACKTRACKING;*/
+  param.epsilon = m_epsilon;
+  param.min_step = m_min_step;
+  param.max_linesearch = m_max_linesearch;
+  param.m = m_m;
+  param.ftol = m_ftol;
+  param.gtol = m_gtol;
 
   /*
       Start the L-BFGS optimization; this will invoke the callback functions
@@ -96,8 +144,7 @@ bool CSolverLBFGS< TState >::SolvePreInitialized( double* ptr, long int liNumber
 
   std::cout << "L-BFGS minimal function value = " << fx << std::endl;
 
-#warning replace by real return argument
-  return true;
+  return ( ret == LBFGS_SUCCESS );
 
 }
 

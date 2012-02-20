@@ -21,10 +21,7 @@
 #define C_SOLVER_MULTISCALE_H
 
 #include "CSolver.h"
-#include "CSolverLineSearchUnconstrained.h"
-#include "CSolverLBFGS.h"
-#include "CSolverNLOpt.h"
-#include "CSolverIpOpt.h"
+#include "CSolverFactory.h"
 #include "CImageManagerMultiScale.h"
 #include "VectorImage.h"
 #include "VectorImageUtils.h"
@@ -64,8 +61,11 @@ public:
   virtual bool SolvePreInitialized();
   virtual bool Solve();
 
-  // auto configuration
+  SetMacro( SingleScaleSolver, std::string );
+  GetMacro( SingleScaleSolver, std::string );
 
+
+  // auto configuration
   virtual void SetAutoConfiguration( Json::Value &ConfValueIn, Json::Value &ConfValueOut );
 
 protected:
@@ -78,6 +78,11 @@ protected:
 private:
 
   bool m_bSetDefaultSingleScaleSolver;
+
+  std::string m_SingleScaleSolver;
+  const std::string DefaultSingleScaleSolver;
+  bool m_ExternallySetSingleScaleSolver;
+
 
 };
 

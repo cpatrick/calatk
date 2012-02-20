@@ -50,6 +50,23 @@ public:
   bool SolvePreInitialized( double* ptr, long int liNumberOfStateVectorElements );
   bool SolvePreInitialized( float* ptr, long int liNumberOfStateVectorElements );
 
+  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+
+  SetMacro( initial_step1, T );
+  GetMacro( initial_step1, T );
+
+  SetMacro( maxeval, unsigned int );
+  GetMacro( maxeval, unsigned int );
+
+  SetMacro( xtol_rel, T );
+  GetMacro( xtol_rel, T );
+
+  SetMacro( ftol_rel, T );
+  GetMacro( ftol_rel, T );
+
+  SetMacro( vector_storage, unsigned int );
+  GetMacro( vector_storage, unsigned int );
+
 protected:
 
   struct SUserData
@@ -85,6 +102,26 @@ protected:
         T *g,
         void *my_func_data
         );
+
+    T m_initial_step1;
+    const T Defaultinitial_step1;
+    bool m_ExternallySetinitial_step1;
+
+    unsigned int m_maxeval;
+    const unsigned int Defaultmaxeval;
+    bool m_ExternallySetmaxeval;
+
+    T m_xtol_rel;
+    const T Defaultxtol_rel;
+    bool m_ExternallySetxtol_rel;
+
+    T m_ftol_rel;
+    const T Defaultftol_rel;
+    bool m_ExternallySetftol_rel;
+
+    unsigned int m_vector_storage;
+    const unsigned int Defaultvector_storage;
+    bool m_ExternallySetvector_storage;
 
 };
 

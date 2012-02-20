@@ -22,8 +22,23 @@
 
 template < class TState >
 CSolverNLOpt< TState >::CSolverNLOpt()
-  : m_x( NULL )
+  : m_x( NULL ),
+    Defaultinitial_step1( 1e-5 ),
+    m_ExternallySetinitial_step1( false ),
+    Defaultmaxeval( 1000 ),
+    m_ExternallySetmaxeval( false ),
+    Defaultxtol_rel( 1e-10 ),
+    m_ExternallySetxtol_rel( false ),
+    Defaultftol_rel( 1e-10 ),
+    m_ExternallySetftol_rel( false ),
+    Defaultvector_storage( 5 ),
+    m_ExternallySetvector_storage( false )
 {
+  m_initial_step1 = Defaultinitial_step1;
+  m_maxeval = Defaultmaxeval;
+  m_xtol_rel = Defaultxtol_rel;
+  m_ftol_rel = Defaultftol_rel;
+  m_vector_storage = Defaultvector_storage;
 }
 
 template < class TState >
@@ -34,6 +49,33 @@ CSolverNLOpt< TState >::~CSolverNLOpt()
     delete [] m_x;
     m_x = NULL;
   }
+}
+
+template < class TState >
+void CSolverNLOpt< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+{
+  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "NLOpt", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "NLOpt", Json::nullValue );
+
+  SetJSONHelpForRootKey( IpOpt, "Setting for the NLOpt optimizer" );
+
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, initial_step1 );
+  SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, maxeval );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, xtol_rel );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, ftol_rel );
+  SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, vector_storage );
+
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, initial_step1,
+                     "initial step size for the line search" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, maxeval,
+                     "maximum number of evaluations" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, xtol_rel,
+                     "termnination tolerance for the variable" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, ftol_rel,
+                     "termination tolerance for the function" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, vector_storage,
+                     "number of gradients to store for the L-BFGS Hessian approximation " );
 }
 
 template < class TState >
@@ -74,14 +116,14 @@ bool CSolverNLOpt< TState >::SolvePreInitialized( double* ptr, long int liNumber
   SUserData userData;
   userData.pSolver = this;
 
-  nlopt_set_initial_step1( opt, 1e-5 );
-  nlopt_set_maxeval( opt, 1000 );
+  nlopt_set_initial_step1( opt, m_initial_step1 );
+  nlopt_set_maxeval( opt, m_maxeval );
 
   nlopt_set_min_objective(opt, _evaluate, (void*)&userData );
-  nlopt_set_xtol_rel(opt, 1e-10);
-  nlopt_set_ftol_rel(opt, 1e-10);
+  nlopt_set_xtol_rel(opt, m_xtol_rel );
+  nlopt_set_ftol_rel(opt, m_ftol_rel );
 
-  //nlopt_set_vector_storage( opt, 5 );
+  nlopt_set_vector_storage( opt, m_vector_storage );
 
   T fx; /* the minimum objective value, upon return */
 
@@ -104,8 +146,7 @@ bool CSolverNLOpt< TState >::SolvePreInitialized( double* ptr, long int liNumber
 
   nlopt_destroy(opt);
 
-#warning replace by real return argument
-  return true;
+  return ( ret >=0 );
 
 }
 

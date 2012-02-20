@@ -50,6 +50,7 @@ public:
   virtual void SetObjectiveFunctionPointer( ptrObjectiveFunctionType pObjectiveFunction );
   ptrObjectiveFunctionType GetObjectiveFunctionPointer();
 
+  // returns true if optimization was successful (or energy could be reduced)
   virtual bool Solve();
   virtual bool SolvePreInitialized() = 0;
 

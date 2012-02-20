@@ -49,6 +49,26 @@ public:
   bool SolvePreInitialized( double* ptr, long int liNumberOfStateVectorElements );
   bool SolvePreInitialized( float* ptr, long int liNumberOfStateVectorElements );
 
+  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+
+  SetMacro( epsilon, T );
+  GetMacro( epsilon, T );
+
+  SetMacro( min_step, T );
+  GetMacro( min_step, T );
+
+  SetMacro( max_linesearch, unsigned int );
+  GetMacro( max_linesearch, unsigned int );
+
+  SetMacro( m, unsigned int );
+  GetMacro( m, unsigned int );
+
+  SetMacro( ftol, T );
+  GetMacro( ftol, T );
+
+  SetMacro( gtol, T );
+  GetMacro( gtol, T );
+
 protected:
 
   std::string GetStringForStatusCode( int ret );
@@ -119,6 +139,30 @@ protected:
         int k,
         int ls
         );
+
+  T m_epsilon;
+  const T Defaultepsilon;
+  bool m_ExternallySetepsilon;
+
+  T m_min_step;
+  const T Defaultmin_step;
+  bool m_ExternallySetmin_step;
+
+  unsigned int m_max_linesearch;
+  const unsigned int Defaultmax_linesearch;
+  bool m_ExternallySetmax_linesearch;
+
+  unsigned int m_m;
+  const unsigned int Defaultm;
+  bool m_ExternallySetm;
+
+  T m_ftol;
+  const T Defaultftol;
+  bool m_ExternallySetftol;
+
+  T m_gtol;
+  const T Defaultgtol;
+  bool m_ExternallySetgtol;
 
 };
 
