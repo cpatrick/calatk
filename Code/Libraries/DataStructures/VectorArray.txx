@@ -142,6 +142,36 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, VImageDimensi
 
 }
 
+
+//
+// copy constructor
+//
+template <class T, unsigned int VImageDimension>
+VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, 1>* source, T dVal, unsigned int uiNumDim ) :
+  __sizeX(source->getSizeX()),
+  __sizeY(source->getSizeY()),
+  __sizeZ(source->getSizeZ()),
+  __dim(uiNumDim),
+  __length(__sizeX*__sizeY*__sizeZ*uiNumDim),
+  __dataPtr(0)
+{
+  __allocate();
+
+  // copy the data, just for the first uiNumDim dimensions
+  assert( source->getDim()>=uiNumDim );
+
+  unsigned int szX = source->getSizeX();
+
+  for ( unsigned int x = 0; x < szX; ++x )
+  {
+    for ( unsigned int d = 0; d < uiNumDim; ++ d )
+    {
+      this->setValue(x, d, dVal );
+    }
+  }
+
+}
+
 //
 // copy constructor
 //

@@ -108,6 +108,17 @@ public:
   VectorArray( const VectorArray<T,VImageDimension>* source, T dVal );
 
   /**
+    * Copy constructor that takes an existing 1D vector array and makes a
+    * vector array with the same size with a given number of dimensions
+    * and initialized with a given value
+    *
+    * @param source - the source array to copy from
+    * @param dVal - constant value to initialize with
+    * @param uiNumDim - the number of dimensions to copy
+    */
+  VectorArray( const VectorArray<T,1>* source, T dVal, unsigned int uiNumDim );
+
+  /**
     * Copy constructor that takes an existing 2D vector array and makes a
     * vector array with the same size with a given number of dimensions
     * and initialized with a given value

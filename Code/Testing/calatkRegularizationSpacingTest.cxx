@@ -65,12 +65,15 @@ int DoIt( int argc, char* argv[] )
 
     // now artificially change the spacing
     pIm0->setSpaceX( spacingFactor*pIm0->getSpaceX() );
-    pIm0->setSpaceY( spacingFactor*pIm0->getSpaceY() );
 
     pIm1->setSpaceX( spacingFactor*pIm1->getSpaceX() );
-    pIm1->setSpaceY( spacingFactor*pIm1->getSpaceY() );
 
-    if ( VImageDimension==3 )
+    if ( VImageDimension==2 )
+    {
+        pIm0->setSpaceY( spacingFactor*pIm0->getSpaceY() );
+        pIm1->setSpaceY( spacingFactor*pIm1->getSpaceY() );;
+    }    
+    else if ( VImageDimension==3 )
     {
         pIm0->setSpaceZ( spacingFactor*pIm0->getSpaceZ() );
         pIm1->setSpaceZ( spacingFactor*pIm1->getSpaceZ() );
@@ -131,6 +134,9 @@ int main( int argc, char **argv )
 
     switch ( uiSourceImageDimension )
       {
+      case 1:
+        return DoIt<1>( argc, argv );
+        break;
       case 2:
         return DoIt<2>( argc, argv );
         break;

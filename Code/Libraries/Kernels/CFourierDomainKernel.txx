@@ -165,6 +165,63 @@ T CFourierDomainKernel< T, VImageDimension >::GetFFromIndex( unsigned int iI, un
 }
 
 template <class T, unsigned int VImageDimension >
+void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( VectorImageType1D* pVecImage, VectorImageType1D* pL )
+{
+  assert( pL->getDim() == 1 );
+
+  unsigned int szX = pVecImage->getSizeX();
+
+  unsigned int dim = pVecImage->getDim();
+
+// doing the loop the slow way because fftw
+// requires row-major formatting
+
+  for ( unsigned int d = 0; d < dim; ++d )
+    {
+    for ( unsigned int x = 0; x < szX; ++x ) 
+      {  
+      // add to fftw matrix
+      fftwData->in[x] = pVecImage->getValue(x,d);
+      }
+      
+    //
+    // do fourier domain operations
+    //
+  
+    // tranform forward
+    CFFTDataType<T>::FFTExecute( fftwData->fwd );
+  
+    // TODO: Assumption here is that we have a self-adjoint operator
+    // TODO: need to support complex cases and do it really with the actual adjoint
+    // multiply by L^2
+    for ( unsigned int x = 0; x < szX; ++x ) 
+      {
+      T lVal = pL->getValue(x,0);
+      
+      fftwData->out[x][0] = fftwData->out[x][0] * lVal;
+      fftwData->out[x][1] = fftwData->out[x][1] * lVal;
+      }
+  
+    // transform backward
+    CFFTDataType<T>::FFTExecute( fftwData->bck );
+
+    //
+    // convolve to get result and convert back to our format
+    //
+  
+    for ( unsigned int x = 0; x < szX; ++x ) 
+      {
+      
+      // scale the fft results and calculate gradient
+      T val = (fftwData->in[x])/szX;
+      
+      pVecImage->setValue(x,d,val);
+      }
+
+    } // loop over dimension
+}
+
+template <class T, unsigned int VImageDimension >
 void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( VectorImageType2D* pVecImage, VectorImageType2D* pL )
 {
 

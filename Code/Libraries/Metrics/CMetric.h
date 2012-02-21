@@ -39,6 +39,7 @@ public:
   // some typedefs
 
   typedef VectorImage< T, VImageDimension > VectorImageType;
+  typedef VectorImage< T, 1 > VectorImageType1D;
   typedef VectorImage< T, 2 > VectorImageType2D;
   typedef VectorImage< T, 3 > VectorImageType3D;
 

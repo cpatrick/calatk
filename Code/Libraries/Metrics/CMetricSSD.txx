@@ -50,6 +50,31 @@ T CMetricSSD< T, VImageDimension >::GetMetric( const VectorImageType* pI0, const
 }
 
 template <class T, unsigned int VImageDimension >
+void CMetricSSD< T, VImageDimension >::GetLocalizedMetric( VectorImageType1D* pLocalizedMetric, const VectorImageType1D* pI0, const VectorImageType1D* pI1 )
+{
+  assert( pI0->getLength() == pI1->getLength() );
+  assert( pI0->getDim() == pI1->getDim() );
+
+  assert( pI0->getSizeX() == pLocalizedMetric->getSizeX());
+
+  unsigned int szX = pI0->getSizeX();
+  unsigned int dim = pI0->getDim();
+
+  for ( unsigned int x=0; x<szX; ++x )
+    {
+    T dLocalizedMetric = 0;
+    for ( unsigned int d=0; d<dim; ++d )
+      {
+      T dCurrentDifference = pI0->getValue( x, d ) - pI1->getValue( x, d );
+      dLocalizedMetric += dCurrentDifference*dCurrentDifference;
+      }
+
+    pLocalizedMetric->setValue( x, 0, dLocalizedMetric );
+
+    }
+}
+
+template <class T, unsigned int VImageDimension >
 void CMetricSSD< T, VImageDimension >::GetLocalizedMetric( VectorImageType2D* pLocalizedMetric, const VectorImageType2D* pI0, const VectorImageType2D* pI1 )
 {
   assert( pI0->getLength() == pI1->getLength() );

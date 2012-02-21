@@ -87,6 +87,31 @@ T VectorFieldUtils< T, VImageDimension >::absMaxAll( const VectorFieldType* in)
 }
 
 //
+// identityMap, 1D
+//
+template <class T, unsigned int VImageDimension >
+void VectorFieldUtils< T, VImageDimension >::identityMap(VectorFieldType1D* fld)
+{
+
+  // assumes origin (0), pixel centered
+
+  unsigned int szX = fld->getSizeX();
+
+  T dx = fld->getSpaceX();
+  
+  T xCur = 0;
+
+  for (unsigned int x = 0; x < szX; ++x) 
+    {
+    fld->setX(x, xCur);
+      
+    //update xCur
+    xCur += dx;
+    }
+
+}
+
+//
 // identityMap, 2D
 //
 template <class T, unsigned int VImageDimension >
@@ -172,6 +197,28 @@ void VectorFieldUtils< T, VImageDimension >::identityMap(VectorFieldType3D* fld)
 }
 
 //
+// applyMap, 1D
+//
+template <class T, unsigned int VImageDimension >
+void VectorFieldUtils< T, VImageDimension >::applyMap( const VectorFieldType1D* map, const VectorImageType1D* imIn, VectorImageType1D* imOut)
+{
+
+#ifdef DEBUG
+  unsigned int szX = imIn->getSizeX();
+
+  // make sure map and image are the same size
+  if (map->getSizeX() != szX || imOut->getSizeX() != szX) 
+    {
+    throw std::invalid_argument("VectorFieldUtils::applyMap -> Dimension mismatch");
+    }
+#endif
+  
+  // interpolate
+  VectorImageUtils< T, VImageDimension >::interpolate(imIn, map, imOut);
+
+}
+
+//
 // applyMap, 2D
 //
 template <class T, unsigned int VImageDimension >
@@ -215,6 +262,54 @@ void VectorFieldUtils< T, VImageDimension >::applyMap( const VectorFieldType3D* 
   
   // interpolate
   VectorImageUtils< T, VImageDimension  >::interpolate(imIn, map, imOut);
+
+}
+
+//
+// computeDeterminantOfJacobian, 1D
+//
+template <class T, unsigned int VImageDimension >
+void VectorFieldUtils< T, VImageDimension >::computeDeterminantOfJacobian( const VectorFieldType1D* fld, VectorImageType1D* imOut)
+{
+
+  // set up for the loop
+  unsigned int szX = fld->getSizeX();
+
+  T dx = fld->getSpaceX();
+
+  VectorImageType* D = imOut;
+
+  // compute D for each pixel
+  for (unsigned int x = 0; x < szX; ++x) 
+    {
+
+    T fxDX;
+
+    // X derivatives (handeling boundary cases)
+    if (szX == 1) 
+      {
+      fxDX = 0;
+      } 
+    else if (x == 0) 
+      {
+      fxDX = (fld->getX(x+1) - fld->getX(x))/dx;
+      } 
+    else if (x == szX-1) 
+      {
+      fxDX = (fld->getX(x) - fld->getX(x-1))/dx;
+      } 
+    else 
+      {
+      fxDX = (fld->getX(x+1) - fld->getX(x-1))/(2*dx);
+      }
+      
+    // compute and save the determinant
+    T det = fxDX;
+    D->setValue(x,0, det);
+    }
+
+  // take the absolute value
+  VectorImageUtils< T, VImageDimension >::abs(D);
 
 }
 
@@ -420,6 +515,50 @@ void VectorFieldUtils< T, VImageDimension >::computeDeterminantOfJacobian( const
 }
 
 //
+// computeDivergence, 1D
+//
+template < class T, unsigned int VImageDimension >
+void VectorFieldUtils< T, VImageDimension >::computeDivergence( const VectorFieldType1D* fld, VectorImageType1D* imOut )
+{
+
+  // set up for the loop
+  unsigned int szX = fld->getSizeX();
+
+  T dx = fld->getSpaceX();
+
+  VectorImageType* D = imOut;
+
+  // compute the divergence for each pixel
+  for (unsigned int x = 0; x < szX; ++x)
+    {
+
+    T fxDX;
+
+    // X derivatives (handeling boundary cases)
+    if (szX == 1)
+      {
+      fxDX = 0;
+      }
+    else if (x == 0)
+      {
+      fxDX = (fld->getX(x+1) - fld->getX(x))/dx;
+      }
+    else if (x == szX-1)
+      {
+      fxDX = (fld->getX(x) - fld->getX(x-1))/dx;
+      }
+    else
+      {
+      fxDX = (fld->getX(x+1) - fld->getX(x-1))/(2*dx);
+      }
+
+    // compute and save the divergence
+    D->setValue(x,0, fxDX);
+    }
+}
+
+
+//
 // computeDivergence, 2D
 //
 template < class T, unsigned int VImageDimension >
@@ -578,6 +717,44 @@ void VectorFieldUtils< T, VImageDimension >::computeDivergence( const VectorFiel
   }
 
 }
+
+//
+// computeCentralGradient, 1D
+//
+template <class T, unsigned int VImageDimension >
+void VectorFieldUtils< T, VImageDimension >::computeCentralGradient( const VectorImageType1D* imIn, unsigned int d, VectorFieldType1D* fieldOut )
+{
+  unsigned int szX = imIn->getSizeX();
+
+  T dx = imIn->getSpaceX();
+
+  for (unsigned int x = 0; x < szX; ++x) 
+    {   
+    // compute gradients
+    T Idx = 0;
+    
+    if (szX == 1) 
+      { 
+      Idx = 0;
+      } 
+    else if (x == 0) 
+      {
+      Idx = (imIn->getValue(x+1,d) - imIn->getValue(x,d))/dx;
+      } 
+    else if(x == szX-1) 
+      {
+      Idx = (imIn->getValue(x,d) - imIn->getValue(x-1,d))/dx;
+      } 
+    else 
+      {
+      Idx = (imIn->getValue(x+1,d) - imIn->getValue(x-1,d))/(2*dx);
+      }
+                  
+    fieldOut->setX(x,Idx);
+    }
+      
+}
+
 
 //
 // computeCentralGradient, 2D
@@ -882,6 +1059,63 @@ typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils<
   // return
   return outField;
   
+}
+
+//
+// ITK affine transform to displacement map, 1D
+//
+template <class T, unsigned int VImageDimension >
+void VectorFieldUtils< T, VImageDimension >::affineITKtoMap( typename ITKAffineTransform<T,1>::Type::Pointer itkAffine, VectorFieldType* mapOut)
+{
+
+  // TODO: Check that this is correctly implemented
+
+  // set up the identity
+  VectorFieldType* id = new VectorFieldType(mapOut);
+  VectorFieldUtils< T, VImageDimension >::identityMap(id);
+
+  // transform the identity
+  VectorImageUtils< T, VImageDimension >::applyAffineITK(itkAffine, id, mapOut, -1);
+
+  // get original spacing for reference
+  T spX = mapOut->getSpaceX();
+
+  // look for pixels that need fixing
+  unsigned int szX = mapOut->getSizeX();
+
+  for (unsigned int x = 0; x < szX; ++x) 
+    { 
+    if (mapOut->getX(x) == -1) 
+      {
+      // figure out where this point came from
+      typename ITKImage<T,VImageDimension>::Type::PointType transPoint;
+      transPoint[0] = x*spX;
+      typename ITKImage<T,VImageDimension>::Type::PointType startPoint = itkAffine->TransformPoint(transPoint);
+      
+      T xStart = startPoint[0]/spX;
+
+        // fix X coordinates
+      if (xStart < 0) 
+        {
+        // to the left, so pad with 0
+        mapOut->setX(x, 0);
+        } 
+      else if (xStart >= szX) 
+        {
+        // to the right, so pad with 1
+        mapOut->setX(x, 1);
+        } 
+      else 
+        {
+        // in the middle, so extend ID
+        mapOut->setX(x, id->getX((unsigned int)xStart,0));
+        }
+      }
+    }
+  
+  // clean up
+  delete id;
+
 }
 
 //
