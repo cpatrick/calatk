@@ -183,7 +183,7 @@ public:
    * @param itkAffine - the ITK affine transformation
    * @param mapOut - the output map parameter
    */
-  static void affineITKtoMap( typename ITKAffineTransform<T,2>::Type::Pointer itkAffine, VectorFieldType* mapOut);
+  static void affineITKtoMap( typename ITKAffineTransform<T,2>::Type* itkAffine, VectorFieldType* mapOut);
 
   /**
    * 3D Function that applies an ITKAffineTransform to an identity map, resulting
@@ -192,7 +192,7 @@ public:
    * @param itkAffine - the ITK affine transformation
    * @param mapOut - the output map parameter
    */
-  static void affineITKtoMap( typename ITKAffineTransform<T,3>::Type::Pointer itkAffine, VectorFieldType* mapOut);
+  static void affineITKtoMap( typename ITKAffineTransform<T,3>::Type* itkAffine, VectorFieldType* mapOut);
 
   
   /**
@@ -203,7 +203,7 @@ public:
    * @param coorVector - a std::vector of the x, y, and z components for the point
    * @return - a std::vector of the x, y, and z components of the transformed point
    */
-  static std::vector<T> transformPointITK( typename ITKAffineTransform<T,2>::Type::Pointer itkAffine, std::vector<T> coorVector);
+  static std::vector<T> transformPointITK( typename ITKAffineTransform<T,2>::Type* itkAffine, std::vector<T> coorVector);
 
   /**
    * 3D Function that directly applies the affine transformation matrix to a single
@@ -213,7 +213,7 @@ public:
    * @param coorVector - a std::vector of the x, y, and z components for the point
    * @return - a std::vector of the x, y, and z components of the transformed point
    */
-  static std::vector<T> transformPointITK( typename ITKAffineTransform<T,3>::Type::Pointer itkAffine, std::vector<T> coorVector);
+  static std::vector<T> transformPointITK( typename ITKAffineTransform<T,3>::Type* itkAffine, std::vector<T> coorVector);
 
 
   static bool writeTimeDependantImagesITK( const std::vector< VectorFieldType* >* ims, std::string filename);

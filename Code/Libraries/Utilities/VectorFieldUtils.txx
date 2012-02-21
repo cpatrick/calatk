@@ -888,7 +888,7 @@ typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils<
 // ITK affine transform to displacement map, 2D
 //
 template <class T, unsigned int VImageDimension >
-void VectorFieldUtils< T, VImageDimension >::affineITKtoMap( typename ITKAffineTransform<T,2>::Type::Pointer itkAffine, VectorFieldType* mapOut)
+void VectorFieldUtils< T, VImageDimension >::affineITKtoMap( typename ITKAffineTransform<T,2>::Type* itkAffine, VectorFieldType* mapOut)
 {
 
   // TODO: Check that this is correctly implemented
@@ -972,7 +972,7 @@ void VectorFieldUtils< T, VImageDimension >::affineITKtoMap( typename ITKAffineT
 // ITK affine transform to displacement map, 3D
 //
 template <class T, unsigned int VImageDimension >
-void VectorFieldUtils< T, VImageDimension >::affineITKtoMap( typename ITKAffineTransform<T,3>::Type::Pointer itkAffine, VectorFieldType* mapOut)
+void VectorFieldUtils< T, VImageDimension >::affineITKtoMap( typename ITKAffineTransform<T,3>::Type* itkAffine, VectorFieldType* mapOut)
 {
 
 
@@ -1086,7 +1086,7 @@ void VectorFieldUtils< T, VImageDimension >::affineITKtoMap( typename ITKAffineT
 // transform point, 2D
 //
 template <class T, unsigned int VImageDimension >
-std::vector<T> VectorFieldUtils< T, VImageDimension >::transformPointITK( typename ITKAffineTransform<T,2>::Type::Pointer itkAffine, std::vector<T> coorVector)
+std::vector<T> VectorFieldUtils< T, VImageDimension >::transformPointITK( typename ITKAffineTransform<T,2>::Type* itkAffine, std::vector<T> coorVector)
 {
 
   // TODO: Check that this is correctly implemented
@@ -1121,7 +1121,7 @@ std::vector<T> VectorFieldUtils< T, VImageDimension >::transformPointITK( typena
 // transform point, 3D
 //
 template <class T, unsigned int VImageDimension >
-std::vector<T> VectorFieldUtils< T, VImageDimension >::transformPointITK( typename ITKAffineTransform<T,3>::Type::Pointer itkAffine, std::vector<T> coorVector)
+std::vector<T> VectorFieldUtils< T, VImageDimension >::transformPointITK( typename ITKAffineTransform<T,3>::Type* itkAffine, std::vector<T> coorVector)
 {
 
   // TODO: Check that this is correctly implemented
