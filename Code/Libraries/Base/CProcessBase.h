@@ -29,77 +29,28 @@ namespace CALATK
 {
 
 /**
- * CBase.h -- Base class for all classes that do processing (and have parameters)
+ * \class CProcessBase 
+ * Base class for all classes that do processing (and have parameters)
  * so that they can provide functionality to auto-initialize based on a JSON configuration description
  */
-
 class CProcessBase
 {
 public:
-  CProcessBase()
-    : m_PrintConfiguration( true ),
-      m_AllowHelpComments( false )
-  {
-      m_jsonConfigOut.PrintSettingsOff();
-      m_jsonConfigIn.PrintSettingsOn();
+  CProcessBase();
 
-      m_jsonConfigOut.AllowHelpCommentsOff();
-      m_jsonConfigIn.AllowHelpCommentsOff();
-  }
+  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
-  {
-    m_jsonConfigIn.SetRootReference( ConfValueIn );
-    m_jsonConfigOut.SetRootReference( ConfValueOut );
-  }
+  const Json::Value* GetAutoConfigurationIn();
 
-  const Json::Value* GetAutoConfigurationIn()
-  {
-    return m_jsonConfigIn.GetRootPointer();
-  }
+  const Json::Value* GetAutoConfigurationOut();
 
-  const Json::Value* GetAutoConfigurationOut()
-  {
-    return m_jsonConfigOut.GetRootPointer();
-  }
+  void SetPrintConfiguration( bool bPrint );
 
-  void SetPrintConfiguration( bool bPrint )
-  {
-    m_PrintConfiguration = bPrint;
-    if ( m_PrintConfiguration )
-    {
-      m_jsonConfigIn.PrintSettingsOn();
-    }
-    else
-    {
-      m_jsonConfigIn.PrintSettingsOff();
-    }
-  }
+  bool GetPrintConfiguration();
 
-  bool GetPrintConfiguration()
-  {
-    return m_PrintConfiguration;
-  }
+  void SetAllowHelpComments( bool bAllow );
 
-  void SetAllowHelpComments( bool bAllow )
-  {
-    m_AllowHelpComments = bAllow;
-    if ( m_AllowHelpComments )
-    {
-      m_jsonConfigIn.AllowHelpCommentsOn();
-      m_jsonConfigOut.AllowHelpCommentsOn();
-    }
-    else
-    {
-      m_jsonConfigIn.AllowHelpCommentsOff();
-      m_jsonConfigOut.AllowHelpCommentsOff();
-    }
-  }
-
-  bool GetAllowHelpComments()
-  {
-    return m_AllowHelpComments;
-  }
+  bool GetAllowHelpComments();
 
 protected:
   CJSONConfiguration m_jsonConfigIn;
@@ -111,7 +62,6 @@ private:
 
   // if true help comments will be added to the JSON configuration file
   bool m_AllowHelpComments;
-
 };
 
 } // end namespace
