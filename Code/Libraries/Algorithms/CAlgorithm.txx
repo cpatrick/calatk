@@ -23,33 +23,13 @@
 template < class TState >
 CAlgorithm< TState >::CAlgorithm()
 {
-  m_ptrObjectiveFunction = NULL;
-  m_ptrSolver = NULL;
-
-  m_bSetDefaultObjectiveFunction = false;
-  m_bSetDefaultSolver = false;
+  this->m_ptrObjectiveFunction = NULL;
+  this->m_ptrSolver = NULL;
 }
 
 template < class TState >
 CAlgorithm< TState >::~CAlgorithm()
 {
-  if ( m_bSetDefaultObjectiveFunction )
-    {
-    if ( m_ptrObjectiveFunction != NULL ) 
-      {
-      delete m_ptrObjectiveFunction;
-      m_ptrObjectiveFunction = NULL;
-      }
-    }
-
-  if ( m_bSetDefaultSolver )
-    {
-    if ( m_ptrSolver != NULL ) 
-      {
-      delete m_ptrSolver;
-      m_ptrSolver = NULL;
-      }
-    }
 }
 
 template < class TState >
@@ -57,25 +37,23 @@ void CAlgorithm< TState >::SetDefaultsIfNeeded()
 {
   Superclass::SetDefaultsIfNeeded();
 
-  if ( m_ptrSolver == NULL ) 
+  if ( this->m_ptrSolver.GetPointer() == NULL )
     {
-    SetDefaultSolverPointer();
-    m_bSetDefaultSolver = true;
+    this->SetDefaultSolverPointer();
     }
 
-  m_ptrSolver->SetPrintConfiguration( this->GetPrintConfiguration() );
-  m_ptrSolver->SetAllowHelpComments( this->GetAllowHelpComments() );
-  m_ptrSolver->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
+  this->m_ptrSolver->SetPrintConfiguration( this->GetPrintConfiguration() );
+  this->m_ptrSolver->SetAllowHelpComments( this->GetAllowHelpComments() );
+  this->m_ptrSolver->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 
-  if ( m_ptrObjectiveFunction == NULL ) 
+  if ( this->m_ptrObjectiveFunction.GetPointer() == NULL )
     {
-    SetDefaultObjectiveFunctionPointer();
-    m_bSetDefaultObjectiveFunction = true;
+    this->SetDefaultObjectiveFunctionPointer();
     }
 
-  m_ptrObjectiveFunction->SetPrintConfiguration( this->GetPrintConfiguration() );
-  m_ptrObjectiveFunction->SetAllowHelpComments( this->GetAllowHelpComments() );
-  m_ptrObjectiveFunction->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
+  this->m_ptrObjectiveFunction->SetPrintConfiguration( this->GetPrintConfiguration() );
+  this->m_ptrObjectiveFunction->SetAllowHelpComments( this->GetAllowHelpComments() );
+  this->m_ptrObjectiveFunction->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 
 }
 
@@ -83,8 +61,8 @@ template < class TState >
 void CAlgorithm< TState >::Solve()
 {
   // image manager needs to be specified, so that data can be assigned
-  assert( this->m_ptrImageManager != NULL );
-  SetDefaultsIfNeeded();
+  assert( this->m_ptrImageManager.GetPointer() != NULL );
+  this->SetDefaultsIfNeeded();
 
   this->m_ptrSolver->SetObjectiveFunctionPointer( this->m_ptrObjectiveFunction );
   this->m_ptrSolver->Solve();
@@ -92,39 +70,37 @@ void CAlgorithm< TState >::Solve()
 
 
 template < class TState >
-void CAlgorithm< TState >::SetObjectiveFunctionPointer( ptrObjectiveFunctionType ptrObjectiveFunction )
+void CAlgorithm< TState >::SetObjectiveFunctionPointer( ObjectiveFunctionType * ptrObjectiveFunction )
 {
-  m_ptrObjectiveFunction = ptrObjectiveFunction;
+  this->m_ptrObjectiveFunction = ptrObjectiveFunction;
 }
 
 template < class TState >
-typename CAlgorithm< TState >::ptrObjectiveFunctionType
+typename CAlgorithm< TState >::ObjectiveFunctionType *
 CAlgorithm< TState >::GetObjectiveFunctionPointer()
 {
-  if ( m_ptrObjectiveFunction == NULL )
+  if ( m_ptrObjectiveFunction.GetPointer() == NULL )
     {
     this->SetDefaultObjectiveFunctionPointer();
-    m_bSetDefaultObjectiveFunction = true;
     }
-  return m_ptrObjectiveFunction;
+  return this->m_ptrObjectiveFunction.GetPointer();
 }
 
 template < class TState >
-void CAlgorithm< TState >::SetSolverPointer( ptrSolverType ptrSolver )
+void CAlgorithm< TState >::SetSolverPointer( SolverType * ptrSolver )
 {
-  m_ptrSolver = ptrSolver;
+  this->m_ptrSolver = ptrSolver;
 }
 
 template < class TState >
-typename CAlgorithm< TState >::ptrSolverType
+typename CAlgorithm< TState >::SolverType *
 CAlgorithm< TState >::GetSolverPointer()
 {
-  if ( m_ptrSolver == NULL )
+  if ( this->m_ptrSolver.GetPointer() == NULL )
     {
     this->SetDefaultSolverPointer();
-    m_bSetDefaultSolver = true;
     }
-  return m_ptrSolver;
+  return m_ptrSolver.GetPointer();
 }
 
 #endif

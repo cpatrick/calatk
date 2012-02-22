@@ -43,10 +43,14 @@ template <class T, unsigned int VImageDimension=3 >
 class CImageManagerFullScale : public CImageManager< T, VImageDimension >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CImageManagerFullScale               Self;
+  typedef CImageManager< T, VImageDimension >  Superclass;
+  typedef itk::SmartPointer< Self >            Pointer;
+  typedef itk::SmartPointer< const Self >      ConstPointer;
 
-  typedef CImageManager< T, VImageDimension > Superclass;
-  typedef typename Superclass::SImageInformation SImageInformation;
-  typedef typename Superclass::VectorFieldType VectorFieldType;
+  typedef typename Superclass::SImageInformation      SImageInformation;
+  typedef typename Superclass::VectorFieldType        VectorFieldType;
   typedef typename Superclass::SubjectInformationType SubjectInformationType;
   typedef typename Superclass::SubjectCollectionInformationMapType SubjectCollectionInformationMapType;
 

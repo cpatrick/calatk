@@ -39,13 +39,17 @@ template <class T, unsigned int VImageDimension=3 >
 class CKernel : public CProcessBase
 {
 public:
-  
-  /* some typedefs */
+  /** Standard class typedefs. */
+  typedef CKernel                         Self;
+  typedef CProcessBase                    Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
+  /* some typedefs */
   typedef VectorImage< T, VImageDimension > VectorImageType;
-  typedef VectorImage< T, 1 > VectorImageType1D;
-  typedef VectorImage< T, 2 > VectorImageType2D;
-  typedef VectorImage< T, 3 > VectorImageType3D;
+  typedef VectorImage< T, 1 >               VectorImageType1D;
+  typedef VectorImage< T, 2 >               VectorImageType2D;
+  typedef VectorImage< T, 3 >               VectorImageType3D;
 
   typedef CObjectiveFunctionBase< T, VImageDimension > ObjectiveFunctionBaseType;
 

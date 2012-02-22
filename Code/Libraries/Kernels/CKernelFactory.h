@@ -40,16 +40,20 @@ namespace CALATK
   */
 
 template < class T, unsigned int VImageDimension=3 >
-class CKernelFactory :
-    public CProcessBase
+class CKernelFactory : public CProcessBase
 {
 public:
+  /** Standard class typedefs. */
+  typedef CKernelFactory                  Self;
+  typedef CProcessBase                    Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
-  // all the kernel typdefs
+  // all the kernel typedefs
   typedef CKernel< T, VImageDimension > KernelType;
 
-  typedef CHelmholtzKernel< T, VImageDimension > HelmholtzKernelType;
-  typedef CGaussianKernel< T, VImageDimension > GaussianKernelType;
+  typedef CHelmholtzKernel< T, VImageDimension >     HelmholtzKernelType;
+  typedef CGaussianKernel< T, VImageDimension >      GaussianKernelType;
   typedef CMultiGaussianKernel< T, VImageDimension > MultiGaussianKernelType;
 
   enum NumericKernelType { HelmholtzKernel, GaussianKernel, MultiGaussianKernel };

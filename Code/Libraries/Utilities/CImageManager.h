@@ -44,11 +44,14 @@ template <class T, unsigned int VImageDimension=3 >
 class CImageManager : public CProcessBase
 {
 public:
+  /** Standard class typedefs. */
+  typedef CImageManager                   Self;
+  typedef CProcessBase                    Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
   typedef VectorImage< T, VImageDimension > VectorImageType; /**< Image type of given dimension and floating point format. */
   typedef VectorField< T, VImageDimension > VectorFieldType; /**< Vector field type of given dimension and floating point format. */
-
-  typedef CProcessBase Superclass;
 
   /**
    * Data structure keeping all the image information

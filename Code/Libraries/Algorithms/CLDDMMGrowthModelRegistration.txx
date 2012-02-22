@@ -35,31 +35,29 @@ void CLDDMMGrowthModelRegistration< TState >::SetDefaultObjectiveFunctionPointer
 {
   // make sure that all we need has already been allocated
 
-  if ( this->m_ptrKernel == NULL )
+  if ( this->m_ptrKernel.GetPointer() == NULL )
     {
     throw std::runtime_error( "Kernel needs to be defined before default objective function can be created." );
     }
 
-  if ( this->m_ptrMetric == NULL )
+  if ( this->m_ptrMetric.GetPointer() == NULL )
     {
     throw std::runtime_error( "Metric needs to be defined before default objective function can be created." );
     }
 
-  if ( this->m_ptrImageManager == NULL )
+  if ( this->m_ptrImageManager.GetPointer() == NULL )
     {
     throw std::runtime_error( "Image manager needs to be defined before default objective function can be created." );
     }
 
   typedef CLDDMMGrowthModelObjectiveFunction< TState > CLDDMMType;
   CLDDMMType* plddmm = new CLDDMMType;
+  this->m_ptrObjectiveFunction = plddmm;
+  this->m_ptrKernel->SetObjectiveFunctionPointer( plddmm );
   plddmm->SetEvolverPointer( this->m_ptrEvolver );
   plddmm->SetKernelPointer( this->m_ptrKernel );
   plddmm->SetMetricPointer( this->m_ptrMetric );
   plddmm->SetImageManagerPointer( this->m_ptrImageManager );
-
-  this->m_ptrObjectiveFunction = plddmm;
-  this->m_ptrKernel->SetObjectiveFunctionPointer( plddmm );
-
 }
 
 #endif

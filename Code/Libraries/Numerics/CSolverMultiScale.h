@@ -33,11 +33,15 @@ template < class TState >
 class CSolverMultiScale : public CSolver< TState >
 {
 public:
-  
+  /** Standard class typedefs. */
+  typedef CSolverMultiScale               Self;
+  typedef CSolver< TState >               Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
+
   typedef typename TState::TFloat T;
   static const unsigned int VImageDimension = TState::VImageDimension;
 
-  typedef CSolver< TState > Superclass;
   typedef typename Superclass::CEnergyValues CEnergyValues;
 
   typedef CSolver< TState > SolverType;
@@ -68,9 +72,8 @@ public:
 protected:
 
   void SetDefaultSingleScaleSolver();
-  void DeleteDefaultSingleScaleSolver();
 
-  SolverType* m_ptrSolver;
+  typename SolverType::Pointer m_ptrSolver;
 
 private:
 

@@ -42,11 +42,13 @@ class CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction
     : public CLDDMMGeodesicShootingObjectiveFunction< TState >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction  Self;
+  typedef CLDDMMGeodesicShootingObjectiveFunction< TState >               Superclass;
+  typedef itk::SmartPointer< Self >                                       Pointer;
+  typedef itk::SmartPointer< const Self >                                 ConstPointer;
 
   /* Some useful typedefs */
-
-  typedef CLDDMMGeodesicShootingObjectiveFunction< TState > Superclass;
-
   typedef typename TState::TFloat T;
 
   typedef typename Superclass::CEnergyValues CEnergyValues;

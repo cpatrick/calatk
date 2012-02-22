@@ -39,22 +39,24 @@ template < class TState >
 class CLDDMMVelocityFieldWithMomentumRegistration
     : public CLDDMMVelocityFieldRegistration< TState >
 {
- public:
+public:
+  /** Standard class typedefs. */
+  typedef CLDDMMVelocityFieldWithMomentumRegistration  Self;
+  typedef CLDDMMVelocityFieldRegistration< TState >    Superclass;
+  typedef itk::SmartPointer< Self >                    Pointer;
+  typedef itk::SmartPointer< const Self >              ConstPointer;
 
   /* some useful typedefs */
-
-  typedef CLDDMMVelocityFieldRegistration< TState > Superclass;
-
   typedef typename TState::TFloat T;
 
-  typedef typename Superclass::ptrEvolverType ptrEvolverType;
-  typedef typename Superclass::ptrKernelType ptrKernelType;
-  typedef typename Superclass::ptrObjectiveFunctionType ptrObjectiveFunctionType;
-  typedef typename Superclass::ptrMetricType ptrMetricType;
-  typedef typename Superclass::ptrImageManagerType ptrImageManagerType;
-  typedef typename Superclass::ptrSolverType ptrSolverType;
-  typedef typename Superclass::VectorImageType VectorImageType;
-  typedef typename Superclass::VectorFieldType VectorFieldType;
+  typedef typename Superclass::EvolverType           EvolverType;
+  typedef typename Superclass::KernelType            KernelType;
+  typedef typename Superclass::ObjectiveFunctionType ObjectiveFunctionType;
+  typedef typename Superclass::MetricType            MetricType;
+  typedef typename Superclass::ImageManagerType      ImageManagerType;
+  typedef typename Superclass::SolverType            SolverType;
+  typedef typename Superclass::VectorImageType       VectorImageType;
+  typedef typename Superclass::VectorFieldType       VectorFieldType;
 
   typedef CVelocityFieldObjectiveFunctionWithMomentum< TState > CVelocityFieldObjectiveFunctionWithMomentumType;
 

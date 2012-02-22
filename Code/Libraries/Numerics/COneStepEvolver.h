@@ -50,8 +50,12 @@ namespace CALATK
 template <class T, unsigned int VImageDimension=3 >
 class COneStepEvolver : public CProcessBase
 {
-
 public:
+  /** Standard class typedefs. */
+  typedef COneStepEvolver                 Self;
+  typedef CProcessBase                    Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
   /** Some useful typedefs */
   
@@ -65,8 +69,6 @@ public:
   typedef VectorImage< T, 1 > VectorImageType1D;
   typedef VectorImage< T, 2 > VectorImageType2D;
   typedef VectorImage< T, 3 > VectorImageType3D;
-
-  typedef CProcessBase Superclass;
 
   /********************************
    * Constructors and Destructors *

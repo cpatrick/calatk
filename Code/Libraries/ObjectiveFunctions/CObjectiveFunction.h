@@ -34,6 +34,11 @@ class CObjectiveFunction
     public CAugmentedLagrangianInterface< typename TState::TFloat, TState::VImageDimension >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CObjectiveFunction                                                         Self;
+  typedef CObjectiveFunctionBase< typename TState::TFloat, TState::VImageDimension > Superclass;
+  typedef itk::SmartPointer< Self >                                                  Pointer;
+  typedef itk::SmartPointer< const Self >                                            ConstPointer;
 
   /* some useful typedefs */
   

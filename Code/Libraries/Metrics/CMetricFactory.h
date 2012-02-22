@@ -44,7 +44,7 @@ class CMetricFactory :
 public:
 
   // all the kernel typdefs
-  typedef CMetric< T, VImageDimension > MetricType;
+  typedef CMetric< T, VImageDimension >    MetricType;
   typedef CMetricSSD< T, VImageDimension > SSDMetricType;
 
   enum NumericMetricType { SSDMetric };
@@ -52,6 +52,8 @@ public:
   CMetricFactory();
   ~CMetricFactory();
 
+  /** Create a metric instance for a class with the given name.  The caller
+   * assumes ownership of the object. */
   static MetricType* CreateNewMetric( std::string sMetric );
   static MetricType* CreateNewMetric( NumericMetricType metric );
 

@@ -37,12 +37,15 @@ class CLDDMMGeometricMetamorphosisRegistration
     : public CLDDMMVelocityFieldWithMomentumRegistration< TState >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CLDDMMGeometricMetamorphosisRegistration              Self;
+  typedef CLDDMMVelocityFieldWithMomentumRegistration< TState > Superclass;
+  typedef itk::SmartPointer< Self >                             Pointer;
+  typedef itk::SmartPointer< const Self >                       ConstPointer;
 
   /* some useful typedefs */
-
   typedef typename TState::TFloat T;
 
-  typedef CLDDMMVelocityFieldWithMomentumRegistration< TState > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
   typedef CKernel< T, TState::VImageDimension >* ptrKernelType;

@@ -23,14 +23,12 @@
 template < class TState >
 CSolverMultiScale< TState >::CSolverMultiScale()
 {
-  m_ptrSolver = NULL;
-  m_bSetDefaultSingleScaleSolver = false;
+  this->m_ptrSolver = NULL;
 }
 
 template < class TState >
 CSolverMultiScale< TState >::~CSolverMultiScale()
 {
-  DeleteDefaultSingleScaleSolver();
 }
 
 template < class TState >
@@ -54,41 +52,27 @@ void CSolverMultiScale< TState >::SetAutoConfiguration( Json::Value &ConfValueIn
 template < class TState >
 void CSolverMultiScale< TState >::SetDefaultSingleScaleSolver()
 {
-  DeleteDefaultSingleScaleSolver();
-  m_ptrSolver = new CSolverLineSearchUnconstrained< TState >;
-  m_bSetDefaultSingleScaleSolver = true;
-}
-
-template < class TState >
-void CSolverMultiScale< TState >::DeleteDefaultSingleScaleSolver()
-{
-  if ( m_bSetDefaultSingleScaleSolver )
-    {
-    if ( m_ptrSolver != NULL ) delete m_ptrSolver;
-    m_ptrSolver = NULL;
-    m_bSetDefaultSingleScaleSolver = NULL;
-    }
+  this->m_ptrSolver = new CSolverLineSearchUnconstrained< TState >;
 }
 
 template < class TState >
 void CSolverMultiScale< TState >::SetSingleScaleSolverPointer( SolverType* ptrSolver )
 {
-  DeleteDefaultSingleScaleSolver();
-  m_ptrSolver = ptrSolver;
+  this->m_ptrSolver = ptrSolver;
 }
 
 template < class TState >
 const typename CSolverMultiScale< TState >::SolverType*
 CSolverMultiScale< TState >::GetSingleScaleSolverPointer() const
 {
-  return m_ptrSolver;
+  return this->m_ptrSolver.GetPointer();
 }
 
 template < class TState >
 bool CSolverMultiScale< TState >::SolvePreInitialized()
 {
   // there is not pre-initialization here necessary (because this is the multi-scale solver), so just call solve
-  return Solve();
+  return this->Solve();
 }
 
 template < class TState >
@@ -101,12 +85,12 @@ bool CSolverMultiScale< TState >::Solve()
 
   assert( pObj != NULL );
 
-  if ( m_ptrSolver == NULL )
+  if ( m_ptrSolver.GetPointer() == NULL )
     {
     SetDefaultSingleScaleSolver();
     }
 
-  assert( m_ptrSolver != NULL );
+  assert( m_ptrSolver.GetPointer() != NULL );
 
   this->m_ptrSolver->SetObjectiveFunctionPointer( this->GetObjectiveFunctionPointer() );
 

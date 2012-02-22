@@ -36,10 +36,15 @@ class CObjectiveFunctionBase
     : public CProcessBase
 {
 public:
+  /** Standard class typedefs. */
+  typedef CObjectiveFunctionBase            Self;
+  typedef CProcessBase                      Superclass;
+  typedef itk::SmartPointer< Self >         Pointer;
+  typedef itk::SmartPointer< const Self >   ConstPointer;
 
   typedef CMetric< T, VImageDimension >* ptrMetricType;
-  typedef CKernel< T, VImageDimension >* ptrKernelType;
-  typedef CImageManager< T, VImageDimension >* ptrImageManagerType;
+  typedef CKernel< T, VImageDimension >       KernelType;
+  typedef CImageManager< T, VImageDimension > ImageManagerType;
 
   typedef VectorImage< T, VImageDimension > VectorImageType;
   typedef VectorField< T, VImageDimension > VectorFieldType;
@@ -144,15 +149,8 @@ public:
   {
   };
 
-  void SetImageManagerPointer( ptrImageManagerType ptrImageManager )
-  {
-    m_ptrImageManager = ptrImageManager;
-  };
-
-  ptrImageManagerType GetImageManagerPointer() const
-  {
-    return m_ptrImageManager;
-  };
+  void SetImageManagerPointer( ImageManagerType * ptrImageManager );
+  ImageManagerType* GetImageManagerPointer() const;
 
   void SetMetricPointer( ptrMetricType pMetric )
   {
@@ -174,7 +172,7 @@ protected:
 
   // TODO: FIXME, needs to be an array, so we can in principle support registrations at every measurement
   ptrMetricType m_pMetric;
-  ptrImageManagerType m_ptrImageManager;
+  typename ImageManagerType::Pointer m_ptrImageManager;
 
 };
 

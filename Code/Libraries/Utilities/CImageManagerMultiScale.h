@@ -40,10 +40,13 @@ template <class T, unsigned int VImageDimension=3 >
 class CImageManagerMultiScale : public CImageManagerFullScale< T, VImageDimension >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CImageManagerMultiScale                       Self;
+  typedef CImageManagerFullScale< T, VImageDimension >  Superclass;
+  typedef itk::SmartPointer< Self >                     Pointer;
+  typedef itk::SmartPointer< const Self >               ConstPointer;
 
   /* Some useful typedefs */
-
-  typedef CImageManagerFullScale< T, VImageDimension > Superclass;
   typedef CResampler< T, VImageDimension > ResamplerType;
   
   typedef typename Superclass::SImageInformation SImageInformation;

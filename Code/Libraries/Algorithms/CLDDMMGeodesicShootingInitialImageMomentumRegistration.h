@@ -38,15 +38,18 @@ namespace CALATK
   * TState - CStateInitialImageMomentum< T, VImageDimension >
   *
   */
-
 template < class TState >
 class CLDDMMGeodesicShootingInitialImageMomentumRegistration
     : public CLDDMMVelocityFieldWithMomentumRegistration< TState >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CLDDMMGeodesicShootingInitialImageMomentumRegistration Self;
+  typedef CLDDMMVelocityFieldWithMomentumRegistration< TState >  Superclass;
+  typedef itk::SmartPointer< Self >                              Pointer;
+  typedef itk::SmartPointer< const Self >                        ConstPointer;
 
   /* some useful typedefs */
-  typedef CLDDMMVelocityFieldWithMomentumRegistration< TState > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 

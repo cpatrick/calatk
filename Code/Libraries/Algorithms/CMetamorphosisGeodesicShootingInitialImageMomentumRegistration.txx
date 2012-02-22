@@ -20,6 +20,9 @@
 #ifndef C_METAMORPHOSIS_GEODESIC_SHOOTING_INITIAL_IMAGE_MOMENTUM_REGISTRATION_TXX
 #define C_METAMORPHOSIS_GEODESIC_SHOOTING_INITIAL_IMAGE_MOMENTUM_REGISTRATION_TXX
 
+namespace CALATK
+{
+
 template < class TState >
 CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TState >::CMetamorphosisGeodesicShootingInitialImageMomentumRegistration()
 {
@@ -50,12 +53,12 @@ void CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TState >::S
     throw std::runtime_error( "Kernel needs to be defined before default objective function can be created." );
     }
 
-  if ( this->m_ptrMetric == NULL )
+  if ( this->m_ptrMetric.GetPointer() == NULL )
     {
     throw std::runtime_error( "Metric needs to be defined before default objective function can be created." );
     }
 
-  if ( this->m_ptrImageManager == NULL )
+  if ( this->m_ptrImageManager.GetPointer() == NULL )
     {
     throw std::runtime_error( "Image manager needs to be defined before default objective function can be created." );
     }
@@ -72,5 +75,6 @@ void CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TState >::S
 
 }
 
+} // end namespace CALATK
 
 #endif

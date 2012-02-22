@@ -178,11 +178,14 @@ template <class T, unsigned int VImageDimension=3 >
 class CFourierDomainKernel : public CKernel< T, VImageDimension >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CFourierDomainKernel            Self;
+  typedef CKernel< T, VImageDimension >   Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
   /* some typedefs */
-  
-  typedef CKernel< T, VImageDimension > Superclass;
-  typedef typename Superclass::VectorImageType VectorImageType;
+  typedef typename Superclass::VectorImageType   VectorImageType;
   typedef typename Superclass::VectorImageType1D VectorImageType1D;
   typedef typename Superclass::VectorImageType2D VectorImageType2D;
   typedef typename Superclass::VectorImageType3D VectorImageType3D;

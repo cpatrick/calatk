@@ -29,10 +29,13 @@ template < class TState >
 class CScalarExampleObjectiveFunction : public CObjectiveFunction< TState >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CScalarExampleObjectiveFunction  Self;
+  typedef CObjectiveFunction< TState >     Superclass;
+  typedef itk::SmartPointer< Self >        Pointer;
+  typedef itk::SmartPointer< const Self >  ConstPointer;
 
   /** typedefs */
-
-  typedef CObjectiveFunction< TState > Superclass;
   typedef typename Superclass::T T;
 
   typedef typename Superclass::CEnergyValues CEnergyValues;

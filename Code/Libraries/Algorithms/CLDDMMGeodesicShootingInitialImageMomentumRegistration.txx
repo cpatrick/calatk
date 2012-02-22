@@ -40,7 +40,7 @@ void CLDDMMGeodesicShootingInitialImageMomentumRegistration< TState >::SetDefaul
     throw std::runtime_error( "Kernel needs to be defined before default objective function can be created." );
     }
 
-  if ( this->m_ptrMetric == NULL )
+  if ( this->m_ptrMetric.GetPointer() == NULL )
     {
     throw std::runtime_error( "Metric needs to be defined before default objective function can be created." );
     }

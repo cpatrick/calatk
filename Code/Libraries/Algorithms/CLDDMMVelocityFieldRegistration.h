@@ -49,21 +49,23 @@ class CLDDMMVelocityFieldRegistration
     : public CAlgorithm< TState >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CLDDMMVelocityFieldRegistration Self;
+  typedef CAlgorithm< TState >            Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
   /* some useful typedefs */
-
-  typedef CAlgorithm< TState > Superclass;
-
   typedef typename TState::TFloat T;
 
-  typedef typename Superclass::ptrEvolverType ptrEvolverType;
-  typedef typename Superclass::ptrKernelType ptrKernelType;
-  typedef typename Superclass::ptrObjectiveFunctionType ptrObjectiveFunctionType;
-  typedef typename Superclass::ptrMetricType ptrMetricType;
-  typedef typename Superclass::ptrImageManagerType ptrImageManagerType;
-  typedef typename Superclass::ptrSolverType ptrSolverType;
-  typedef typename Superclass::VectorImageType VectorImageType;
-  typedef typename Superclass::VectorFieldType VectorFieldType;
+  typedef typename Superclass::EvolverType           EvolverType;
+  typedef typename Superclass::KernelType            KernelType;
+  typedef typename Superclass::ObjectiveFunctionType ObjectiveFunctionType;
+  typedef typename Superclass::MetricType            MetricType;
+  typedef typename Superclass::ImageManagerType      ImageManagerType;
+  typedef typename Superclass::SolverType            SolverType;
+  typedef typename Superclass::VectorImageType       VectorImageType;
+  typedef typename Superclass::VectorFieldType       VectorFieldType;
 
   CLDDMMVelocityFieldRegistration();
   ~CLDDMMVelocityFieldRegistration();
@@ -91,16 +93,17 @@ protected:
 
 private:
 
-  std::string m_Kernel;
+  std::string       m_Kernel;
   const std::string DefaultKernel;
-  bool m_ExternallySetKernel;
+  bool              m_ExternallySetKernel;
 
-  std::string m_Metric;
+  std::string       m_Metric;
   const std::string DefaultMetric;
-  bool m_ExternallySetMetric;
+  bool              m_ExternallySetMetric;
 
   // default one step evolver
-  COneStepEvolverSemiLagrangianAdvection< T, TState::VImageDimension > oneStepDefaultEvolver;
+  typedef COneStepEvolverSemiLagrangianAdvection< T, TState::VImageDimension > OneStepDefaultEvolverType;
+  typename OneStepDefaultEvolverType::Pointer m_OneStepDefaultEvolver;
 
 };
 

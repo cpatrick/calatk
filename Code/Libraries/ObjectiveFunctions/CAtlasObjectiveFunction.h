@@ -32,11 +32,15 @@ class CAtlasObjectiveFunction
     : public CObjectiveFunction< TState >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CAtlasObjectiveFunction          Self;
+  typedef CObjectiveFunction< TState >     Superclass;
+  typedef itk::SmartPointer< Self >        Pointer;
+  typedef itk::SmartPointer< const Self >  ConstPointer;
 
   /* Some useful typedefs */
 
   typedef CObjectiveFunction< TState > ObjectiveFunctionType;
-  typedef ObjectiveFunctionType Superclass;
 
   typedef typename TState::TFloat T;
   typedef typename TState::TIndividualState TIndividualState;

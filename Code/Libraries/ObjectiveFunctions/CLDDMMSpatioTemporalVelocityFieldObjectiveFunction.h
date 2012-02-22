@@ -32,10 +32,13 @@ class CLDDMMSpatioTemporalVelocityFieldObjectiveFunction
     : public CVelocityFieldObjectiveFunctionWithMomentum<  TState >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CLDDMMSpatioTemporalVelocityFieldObjectiveFunction    Self;
+  typedef CVelocityFieldObjectiveFunctionWithMomentum< TState > Superclass;
+  typedef itk::SmartPointer< Self >                             Pointer;
+  typedef itk::SmartPointer< const Self >                       ConstPointer;
   
   /* some useful typedefs */
-
-  typedef CVelocityFieldObjectiveFunction< TState > Superclass;
   typedef typename Superclass::CEnergyValues CEnergyValues;
 
   typedef typename TState::TFloat T;
@@ -67,8 +70,8 @@ protected:
   typedef typename VectorImageType::Pointer      VectorImagePointerType;
   typedef std::vector< VectorImagePointerType >* VectorPointerToVectorImagePointerType;
 
-  typedef CImageManager< T, TState::VImageDimension > ImageManagerType;
-  typedef typename ImageManagerType::SImageInformation SImageInformation;
+  typedef CImageManager< T, TState::VImageDimension >       ImageManagerType;
+  typedef typename ImageManagerType::SImageInformation      SImageInformation;
   typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
 
   typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;

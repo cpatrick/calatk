@@ -31,32 +31,36 @@ template < class TState >
 class CVelocityFieldObjectiveFunction : public CObjectiveFunction< TState >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CVelocityFieldObjectiveFunction  Self;
+  typedef CObjectiveFunction< TState >     Superclass;
+  typedef itk::SmartPointer< Self >        Pointer;
+  typedef itk::SmartPointer< const Self >  ConstPointer;
 
   /* some useful typedefs */
-  typedef CObjectiveFunction< TState > Superclass;
   typedef typename TState::TFloat T;
 
   typedef typename Superclass::CEnergyValues CEnergyValues;
 
-  typedef CEvolver< T, TState::VImageDimension >* ptrEvolverType;
-  typedef CKernel< T, TState::VImageDimension >* ptrKernelType;
+  typedef CEvolver< T, TState::VImageDimension > EvolverType;
+  typedef CKernel< T, TState::VImageDimension >  KernelType;
 
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 
   CVelocityFieldObjectiveFunction();
 
-  void SetEvolverPointer( ptrEvolverType pEvolver );
-  ptrEvolverType GetEvolverPointer();
+  void SetEvolverPointer( EvolverType * pEvolver );
+  EvolverType * GetEvolverPointer();
 
-  void SetKernelPointer( ptrKernelType pKernel );
-  ptrKernelType GetKernelPointer();
+  void SetKernelPointer( KernelType * pKernel );
+  KernelType * GetKernelPointer();
 
 protected:
 
-  ptrEvolverType m_ptrEvolver;
+  typename EvolverType::Pointer m_ptrEvolver;
   // TODO: FIXME, support an array, so we can use different types of kernels
-  ptrKernelType m_ptrKernel;
+  typename KernelType::Pointer  m_ptrKernel;
 
 private:
 

@@ -31,11 +31,13 @@ class CLDDMMGeometricMetamorphosisObjectiveFunction
     : public CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CLDDMMGeometricMetamorphosisObjectiveFunction                 Self;
+  typedef CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >  Superclass;
+  typedef itk::SmartPointer< Self >                                     Pointer;
+  typedef itk::SmartPointer< const Self >                               ConstPointer;
 
   /* Some useful typedefs */
-
-  typedef CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState > Superclass;
-
   typedef typename TState::TFloat T;
 
   typedef typename Superclass::CEnergyValues CEnergyValues;

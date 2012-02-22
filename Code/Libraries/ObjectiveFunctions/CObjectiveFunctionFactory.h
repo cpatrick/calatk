@@ -46,6 +46,11 @@ class CObjectiveFunctionFactory :
     public CProcessBase
 {
 public:
+  /** Standard class typedefs. */
+  typedef CObjectiveFunctionFactory        Self;
+  typedef CProcessBase                     Superclass;
+  typedef itk::SmartPointer< Self >        Pointer;
+  typedef itk::SmartPointer< const Self >  ConstPointer;
 
   // all the objective function typedefs
   typedef CObjectiveFunctionBase< T, VImageDimension > ObjectiveFunctionBaseType;

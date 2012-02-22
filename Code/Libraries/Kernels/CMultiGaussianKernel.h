@@ -26,26 +26,32 @@
 
 namespace CALATK
 {
-/**
-  * Implements a multi-Gaussian kernel. Adds the option of specifying an additional constant component.
-  *
-  * See
-  *
-  * L. Risser, F.-X. Vialard, R. Wolz, M. Murgasova, D. Holm, D. Rueckert
-  * "Simultaneous Mutli-scale Registration using Large Deformation Diffeomorphic Metric Mapping,"
-  * IEEE Transactions on Medical Imaging, vol. 30(10), 2011
-  *
-  * on details on the behavior of such a kernel
-  *
-  */
 
+/**
+ * \class CMultiGaussianKernel
+ *
+ * Implements a multi-Gaussian kernel. Adds the option of specifying an additional constant component.
+ *
+ * See
+ *
+ * L. Risser, F.-X. Vialard, R. Wolz, M. Murgasova, D. Holm, D. Rueckert
+ * "Simultaneous Mutli-scale Registration using Large Deformation Diffeomorphic Metric Mapping,"
+ * IEEE Transactions on Medical Imaging, vol. 30(10), 2011
+ *
+ * on details on the behavior of such a kernel
+ *
+ */
 template <class T, unsigned int VImageDimension=3 >
 class CMultiGaussianKernel : public CFourierDomainKernel< T, VImageDimension >
 {
 public:
-
+  /** Standard class typedefs. */
+  typedef CMultiGaussianKernel                       Self;
   typedef CFourierDomainKernel< T, VImageDimension > Superclass;
-  typedef typename Superclass::VectorImageType VectorImageType;
+  typedef itk::SmartPointer< Self >                  Pointer;
+  typedef itk::SmartPointer< const Self >            ConstPointer;
+
+  typedef typename Superclass::VectorImageType   VectorImageType;
   typedef typename Superclass::VectorImageType1D VectorImageType1D;
   typedef typename Superclass::VectorImageType2D VectorImageType2D;
   typedef typename Superclass::VectorImageType3D VectorImageType3D;

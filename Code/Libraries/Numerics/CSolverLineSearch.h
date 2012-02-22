@@ -36,9 +36,13 @@ template < class TState >
 class CSolverLineSearch : public CSolver< TState >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CSolverLineSearch               Self;
+  typedef CSolver< TState >               Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
   typedef typename TState::TFloat T;
-  typedef CSolver< TState > Superclass;
   typedef typename Superclass::ptrObjectiveFunctionType ptrObjectiveFunctionType;
   typedef typename Superclass::CEnergyValues CEnergyValues;
 
@@ -46,7 +50,7 @@ public:
  *Constructor setting the default values
  */
   CSolverLineSearch();
-  
+
 /**
  * Destructor
  */

@@ -23,94 +23,50 @@
 template < class T, unsigned int VImageDimension >
 CAlgorithmBase< T, VImageDimension >::CAlgorithmBase()
 {
-  m_ptrMetric = NULL;
-  m_ptrImageManager = NULL;
-  m_ptrEvolver = NULL;
-  m_ptrKernel = NULL;
+  this->m_ptrMetric = NULL;
+  this->m_ptrImageManager = NULL;
+  this->m_ptrEvolver = NULL;
+  this->m_ptrKernel = NULL;
 
-  m_ptrIm = NULL;
-  m_ptrMap = NULL;
-
-  m_bSetDefaultMetric = false;
-  m_bSetDefaultEvolver = false;
-  m_bSetDefaultKernel = false;
-  m_bSetDefaultImageManager = false;
-
+  this->m_ptrIm = NULL;
+  this->m_ptrMap = NULL;
 }
 
 template < class T, unsigned int VImageDimension >
 CAlgorithmBase< T, VImageDimension >::~CAlgorithmBase()
 {
-  if ( m_bSetDefaultMetric )
-    {
-    if ( m_ptrMetric != NULL )
-      {
-      delete m_ptrMetric;
-      m_ptrMetric = NULL;
-      }
-    }
-
-  if ( m_bSetDefaultImageManager )
-    {
-    if ( m_ptrImageManager != NULL )
-      {
-      delete m_ptrImageManager;
-      m_ptrImageManager = NULL;
-      }
-    }
-
-  if ( m_bSetDefaultEvolver )
-    {
-    if ( m_ptrEvolver != NULL )
-      {
-      delete m_ptrEvolver;
-      m_ptrEvolver = NULL;
-      }
-    }
-
-  if ( m_bSetDefaultKernel )
-    {
-    if ( m_ptrKernel != NULL )
-      {
-      delete m_ptrKernel;
-      m_ptrKernel = NULL;
-      }
-    }
 }
 
 template < class T, unsigned int VImageDimension >
 void CAlgorithmBase< T, VImageDimension >::SetDefaultsIfNeeded()
 {
 
-  if ( m_ptrMetric == NULL )
+  if ( m_ptrMetric.GetPointer() == NULL )
     {
-    SetDefaultMetricPointer();
-    m_bSetDefaultMetric = true;
+    this->SetDefaultMetricPointer();
     }
 
-  m_ptrMetric->SetPrintConfiguration( this->GetPrintConfiguration() );
-  m_ptrMetric->SetAllowHelpComments( this->GetAllowHelpComments() );
-  m_ptrMetric->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
+  this->m_ptrMetric->SetPrintConfiguration( this->GetPrintConfiguration() );
+  this->m_ptrMetric->SetAllowHelpComments( this->GetAllowHelpComments() );
+  this->m_ptrMetric->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 
-  if ( m_ptrEvolver == NULL )
+  if ( this->m_ptrEvolver.GetPointer() == NULL )
     {
     SetDefaultEvolverPointer();
-    m_bSetDefaultEvolver = true;
     }
 
-  m_ptrEvolver->SetPrintConfiguration( this->GetPrintConfiguration() );
-  m_ptrEvolver->SetAllowHelpComments( this->GetAllowHelpComments() );
-  m_ptrEvolver->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
+  this->m_ptrEvolver->SetPrintConfiguration( this->GetPrintConfiguration() );
+  this->m_ptrEvolver->SetAllowHelpComments( this->GetAllowHelpComments() );
+  this->m_ptrEvolver->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 
-  if ( m_ptrKernel == NULL )
+  if ( this->m_ptrKernel.GetPointer() == NULL )
     {
     SetDefaultKernelPointer();
-    m_bSetDefaultKernel = true;
     }
 
-  m_ptrKernel->SetPrintConfiguration( this->GetPrintConfiguration() );
-  m_ptrKernel->SetAllowHelpComments( this->GetAllowHelpComments() );
-  m_ptrKernel->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
+  this->m_ptrKernel->SetPrintConfiguration( this->GetPrintConfiguration() );
+  this->m_ptrKernel->SetAllowHelpComments( this->GetAllowHelpComments() );
+  this->m_ptrKernel->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 
   // get the subject ids
   std::vector< unsigned int > vecSubjectIndices;
@@ -134,76 +90,72 @@ void CAlgorithmBase< T, VImageDimension >::SetDefaultsIfNeeded()
 }
 
 template < class T, unsigned int VImageDimension >
-void CAlgorithmBase< T, VImageDimension >::SetImageManagerPointer( ptrImageManagerType ptrImageManager )
+void CAlgorithmBase< T, VImageDimension >::SetImageManagerPointer( ImageManagerType *  ptrImageManager )
 {
   this->m_ptrImageManager = ptrImageManager;
 }
 
 template < class T, unsigned int VImageDimension >
-typename CAlgorithmBase< T, VImageDimension >::ptrImageManagerType
+typename CAlgorithmBase< T, VImageDimension >::ImageManagerType *
 CAlgorithmBase< T, VImageDimension >::GetImageManagerPointer()
 {
-  if ( m_ptrImageManager == NULL )
+  if ( this->m_ptrImageManager.GetPointer() == NULL )
     {
     this->SetDefaultImageManagerPointer();
-    m_bSetDefaultImageManager = true;
     }
-  return m_ptrImageManager;
+  return this->m_ptrImageManager.GetPointer();
 }
 
 template < class T, unsigned int VImageDimension >
-void CAlgorithmBase< T, VImageDimension >::SetKernelPointer( ptrKernelType ptrKernel )
+void CAlgorithmBase< T, VImageDimension >::SetKernelPointer( KernelType * ptrKernel )
 {
-  m_ptrKernel = ptrKernel;
+  this->m_ptrKernel = ptrKernel;
 }
 
 template < class T, unsigned int VImageDimension >
-typename CAlgorithmBase< T, VImageDimension >::ptrKernelType
+typename CAlgorithmBase< T, VImageDimension >::KernelType *
 CAlgorithmBase< T, VImageDimension >::GetKernelPointer()
 {
-  if ( m_ptrKernel == NULL )
+  if ( this->m_ptrKernel.GetPointer() == NULL )
     {
     this->SetDefaultKernelPointer();
-    m_bSetDefaultKernel = true;
     }
-  return m_ptrKernel;
+  return m_ptrKernel.GetPointer();
 }
 
 template < class T, unsigned int VImageDimension >
-void CAlgorithmBase< T, VImageDimension >::SetEvolverPointer( ptrEvolverType ptrEvolver )
+void CAlgorithmBase< T, VImageDimension >::SetEvolverPointer( EvolverType * ptrEvolver )
 {
-  m_ptrEvolver = ptrEvolver;
+  this->m_ptrEvolver = ptrEvolver;
 }
 
 template < class T, unsigned int VImageDimension >
-typename CAlgorithmBase< T, VImageDimension >::ptrEvolverType
+typename CAlgorithmBase< T, VImageDimension >::EvolverType *
 CAlgorithmBase< T, VImageDimension >::GetEvolverPointer()
 {
-  if ( m_ptrEvolver == NULL )
+  if ( this->m_ptrEvolver.GetPointer() == NULL )
     {
     this->SetDefaultEvolverPointer();
-    m_bSetDefaultEvolver = true;
     }
-  return m_ptrEvolver;
+  return this->m_ptrEvolver.GetPointer();
 }
 
 
 template < class T, unsigned int VImageDimension >
-void CAlgorithmBase< T, VImageDimension >::SetMetricPointer( ptrMetricType ptrMetric )
+void CAlgorithmBase< T, VImageDimension >::SetMetricPointer( MetricType * ptrMetric )
 {
-  m_ptrMetric = ptrMetric;
+  this->m_ptrMetric = ptrMetric;
 }
 
 template < class T, unsigned int VImageDimension >
-typename CAlgorithmBase< T, VImageDimension >::ptrMetricType
+typename CAlgorithmBase< T, VImageDimension >::MetricType *
 CAlgorithmBase< T, VImageDimension >::GetMetricPointer()
 {
-  if ( m_ptrMetric == NULL )
+  if ( this->m_ptrMetric.GetPointer() == NULL )
     {
     this->SetDefaultMetricPointer();
-    m_bSetDefaultMetric = true;
     }
-  return m_ptrMetric;
+  return this->m_ptrMetric.GetPointer();
 }
 
 #endif
