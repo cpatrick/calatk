@@ -204,7 +204,6 @@ protected:
   static T GetFFromIndex( unsigned int iI, unsigned int iM, T dx );
   
   void ConfirmKernelsWereComputed();
-  void ConfirmMemoryWasAllocated();
 
   void ConvolveInFourierDomain( VectorImageType1D* pVecImage, VectorImageType1D* pL );
   void ConvolveInFourierDomain( VectorImageType2D* pVecImage, VectorImageType2D* pL );
@@ -222,6 +221,8 @@ private:
   void DeleteData();
 
   CFFTDataType<T>* fftwData;
+
+  bool m_MemoryWasAllocated;
 };
 
 #include "CFourierDomainKernel.txx"

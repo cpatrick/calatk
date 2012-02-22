@@ -66,14 +66,14 @@ protected:
 
   /** Some useful protected typedefs */
 
-  typedef typename Superclass::STimePoint STimePoint;
-  typedef typename Superclass::VectorFieldPointerType VectorFieldPointerType;
-  typedef typename Superclass::VectorImagePointerType VectorImagePointerType;
+  typedef typename Superclass::STimePoint                            STimePoint;
+  typedef typename Superclass::VectorFieldPointerType                VectorFieldPointerType;
+  typedef typename Superclass::VectorImagePointerType                VectorImagePointerType;
   typedef typename Superclass::VectorPointerToVectorFieldPointerType VectorPointerToVectorFieldPointerType;
   typedef typename Superclass::VectorPointerToVectorImagePointerType VectorPointerToVectorImagePointerType;
   
-  typedef typename Superclass::ImageManagerType ImageManagerType;
-  typedef typename Superclass::SImageInformation SImageInformation;
+  typedef typename Superclass::ImageManagerType       ImageManagerType;
+  typedef typename Superclass::SImageInformation      SImageInformation;
   typedef typename Superclass::SubjectInformationType SubjectInformationType;
 
   void ComputeImagesForward();
@@ -81,8 +81,8 @@ protected:
 
   void DetermineTimePointData( std::vector< STimePoint >& vecTimePointData );
 
-  void DeleteAuxiliaryStructures();
-  void CreateAuxiliaryStructures();
+  virtual void CreateAuxiliaryStructures();
+  virtual void DeleteAuxiliaryStructures();
 
 private:
 

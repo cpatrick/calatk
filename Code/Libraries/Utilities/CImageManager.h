@@ -57,7 +57,7 @@ public:
    * @param sImageTransformationFileName - file name for the associated image transformation
    * @param pIm - pointer to image, provided by derived class
    * @param pTransform - pointer to transformation, provided by derived class
-   * @param T - time point associated with the dataset
+   * @param timepoint - time point associated with the dataset
    * @param uiSubjectId - subject id of the image
    * @param uiId - internal dataset id, unique identifier for the registered datasets
    */
@@ -65,14 +65,14 @@ public:
   {
     std::string sImageFileName;
     std::string sImageTransformationFileName;
-    VectorImageType *pIm;
-    VectorImageType *pImOrig;
-    VectorFieldType *pTransform;
+    typename VectorImageType::Pointer pIm;
+    typename VectorImageType::Pointer pImOrig;
+    typename VectorFieldType::Pointer pTransform;
     T timepoint;
     unsigned int uiSubjectId;
     unsigned int uiId;
 
-    std::vector< VectorImageType* > pImsOfAllScales;
+    std::vector< typename VectorImageType::Pointer > pImsOfAllScales;
 
     // define operator for sorting
     bool operator<( const SImageInformation& other ) const

@@ -46,8 +46,11 @@ public:
 
   // standard typedef
 
+  typedef VectorField                       Self;
+  typedef itk::SmartPointer< Self >         Pointer;
+  typedef itk::SmartPointer< const Self >   ConstPointer;
   typedef VectorImage< T, VImageDimension > VectorImageType;
-  typedef VectorImageType Superclass;
+  typedef VectorImageType                   Superclass;
 
   /********************************
    * Constructors and Destructors *

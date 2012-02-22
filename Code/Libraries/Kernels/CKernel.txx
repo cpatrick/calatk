@@ -22,8 +22,7 @@
 
 template <class T, unsigned int VImageDimension >
 CKernel< T, VImageDimension >::CKernel()
-  : m_MemoryWasAllocated( false ),
-    m_KernelsNeedToBeComputed( true ),
+  : m_KernelsNeedToBeComputed( true ),
     m_ptrL( NULL ),
     m_ptrLInv( NULL ),
     ptrObjectiveFunction( NULL ),
@@ -34,34 +33,6 @@ CKernel< T, VImageDimension >::CKernel()
 template <class T, unsigned int VImageDimension >
 CKernel< T, VImageDimension >::~CKernel()
 {
-  DeallocateMemory();
-}
-
-template <class T, unsigned int VImageDimension >
-void CKernel< T, VImageDimension >::DeallocateMemory()
-{
-  DeallocateMemoryForKernelAndInverseKernel();
-}
-
-
-template <class T, unsigned int VImageDimension >
-void CKernel< T, VImageDimension >::DeallocateMemoryForKernelAndInverseKernel()
-{
-  if ( this->m_ptrL != NULL )
-    {
-    delete this->m_ptrL;
-    this->m_ptrL = NULL;
-    }
-
-  if ( this->m_ptrLInv != NULL )
-    {
-    delete this->m_ptrLInv;
-    this->m_ptrLInv = NULL;
-    }
-
-  this->m_MemoryWasAllocated = false;
-  this->m_KernelsNeedToBeComputed = true;
-
 }
 
 template <class T, unsigned int VImageDimension >
@@ -72,8 +43,8 @@ void CKernel< T, VImageDimension >::AllocateMemoryForKernelAndInverseKernel( Vec
   unsigned int szY = pVecImageGraft->getSizeY();
   unsigned int szZ = pVecImageGraft->getSizeZ();
 
-  assert( this->m_ptrL == NULL );
-  assert( this->m_ptrLInv == NULL );
+  assert( this->m_ptrL.GetPointer() == NULL );
+  assert( this->m_ptrLInv.GetPointer() == NULL );
 
   switch ( VImageDimension )
     {

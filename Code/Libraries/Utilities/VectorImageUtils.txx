@@ -205,13 +205,13 @@ VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( cons
   T invScaleX = (T)szxOrig/(T)szx;
   T invScaleY = (T)szyOrig/(T)szy;
 
-  VectorImageType* pNewIm = new VectorImageType( szx, szy, dim );
+  typename VectorImageType::Pointer pNewIm = new VectorImageType( szx, szy, dim );
   pNewIm->setSpaceX( dxOrig*invScaleX );
   pNewIm->setSpaceY( dyOrig*invScaleY );
   pNewIm->setOrigin( imGraft->getOrigin() );
   pNewIm->setDirection( imGraft->getDirection() );
 
-  return pNewIm;
+  return pNewIm.GetPointer();
 }
 
 //
@@ -612,7 +612,7 @@ void VectorImageUtils< T, VImageDimension >::resize( const VectorImageType2D* im
   assert( szXnew>0 );
   assert( szYnew>0 );
 
-  VectorImageType* pos = new VectorImageType(szXnew, szYnew, 2);
+  typename VectorImageType::Pointer pos = new VectorImageType(szXnew, szYnew, 2);
 
   // create the interpolation maps
   for (unsigned int y = 0; y < szYnew; ++y) 
@@ -627,10 +627,6 @@ void VectorImageUtils< T, VImageDimension >::resize( const VectorImageType2D* im
 
   // interpolate
   VectorImageUtils< T, VImageDimension >::interpolate(imIn, pos, imOut);
-  
-  // clean up
-  delete pos;
-
 }
 
 //
@@ -648,7 +644,7 @@ void VectorImageUtils< T, VImageDimension >::resize( const VectorImageType3D* im
   T dy = imOut->getSpaceY();
   T dz = imOut->getSpaceZ();
 
-  VectorImageType* pos = new VectorImageType(szXnew, szYnew, szZnew, 3);
+  typename VectorImageType::Pointer pos = new VectorImageType(szXnew, szYnew, szZnew, 3);
 
   // create the interpolation maps
   for (unsigned int z = 0; z < szZnew; ++z) 
@@ -667,17 +663,14 @@ void VectorImageUtils< T, VImageDimension >::resize( const VectorImageType3D* im
 
   // interpolate
   VectorImageUtils< T, VImageDimension >::interpolate(imIn, pos, imOut);
-
-  // clean up
-  delete pos;
-
 }
 
 //
 // normalize
 //
 template <class T, unsigned int VImageDimension >
-void VectorImageUtils< T, VImageDimension >::normalize(VectorImageType* imInOut, T min, T max) {
+void VectorImageUtils< T, VImageDimension >::normalize(VectorImageType* imInOut, T min, T max)
+{
 
   T minC = VectorImageUtils< T, VImageDimension >::minAll(imInOut);
   T maxC = VectorImageUtils< T, VImageDimension >::maxAll(imInOut);
@@ -1427,7 +1420,7 @@ VectorImageUtils< T, VImageDimension >::convertFromITK( typename ITKVectorImage<
   unsigned int szY = size[1];
   unsigned int dim = size[2];
 
-  VectorImageType* outImage = new VectorImageType(szX, szY, dim );
+  typename VectorImageType::Pointer outImage = new VectorImageType(szX, szY, dim );
   outImage->setSpaceX( space[0] );
   outImage->setSpaceY( space[1] );
 
@@ -1451,7 +1444,7 @@ VectorImageUtils< T, VImageDimension >::convertFromITK( typename ITKVectorImage<
   outImage->setOrigin(itkIm->GetOrigin());
   outImage->setDirection(itkIm->GetDirection());
   
-  return outImage;
+  return outImage.GetPointer();
 }
 
 

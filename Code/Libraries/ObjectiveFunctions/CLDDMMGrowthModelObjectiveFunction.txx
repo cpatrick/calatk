@@ -46,7 +46,6 @@ CLDDMMGrowthModelObjectiveFunction< TState >::CLDDMMGrowthModelObjectiveFunction
 template < class TState >
 CLDDMMGrowthModelObjectiveFunction< TState >::~CLDDMMGrowthModelObjectiveFunction()
 {
-  DeleteAuxiliaryStructures();
 }
 
 template < class TState >
@@ -65,25 +64,6 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::SetAutoConfiguration( Json::V
 }
 
 template < class TState >
-void CLDDMMGrowthModelObjectiveFunction< TState >::DeleteAuxiliaryStructures()
-{
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapIn );
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapOut );
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapTmp );
-
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrTmpVelocityField );
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrTmpGradient );
-
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrI0 );
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrCurrentLambdaEnd );
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrCurrentAdjointDifference );
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrDeterminantOfJacobian );
-
-  SaveDelete< VectorImagePointerType >::PointerVector( m_ptrI );
-  SaveDelete< VectorImagePointerType >::PointerVector( m_ptrLambda );
-}
-
-template < class TState >
 void CLDDMMGrowthModelObjectiveFunction< TState >::CreateAuxiliaryStructures()
 {
 
@@ -99,7 +79,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::CreateAuxiliaryStructures()
   // allocate all the auxiliary data
 
   // image and adjoint time-series
-  m_ptrI = new std::vector< VectorImagePointerType >;
+  m_ptrI = new std::vector< typename VectorImageType::Pointer >;
   m_ptrLambda = new std::vector< VectorImagePointerType >;
 
   // storage for the initial image
@@ -109,7 +89,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::CreateAuxiliaryStructures()
   // one more than for the velocity fields
   for ( unsigned int iI=0; iI < this->m_vecTimeDiscretization.size(); ++iI )
     {
-    VectorImagePointerType ptrCurrentVectorImage = new VectorImageType( pGraftIm ); 
+    typename VectorImageType::Pointer ptrCurrentVectorImage = new VectorImageType( pGraftIm ); 
     m_ptrI->push_back( ptrCurrentVectorImage );
 
     // bookkeeping to simplify metric computations
@@ -143,6 +123,31 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::CreateAuxiliaryStructures()
   // storage for the temporary gradient
   m_ptrTmpGradient = new VectorFieldType( pGraftIm );
 
+}
+
+template < class TState >
+void CLDDMMGrowthModelObjectiveFunction< TState >::DeleteAuxiliaryStructures()
+{
+  this->m_ptrMapIn  = NULL;
+  this->m_ptrMapOut = NULL;
+  this->m_ptrMapTmp = NULL;
+
+  this->m_ptrTmpVelocityField = NULL;
+  this->m_ptrTmpGradient      = NULL;
+
+  this->m_ptrI0                       = NULL;
+  this->m_ptrCurrentLambdaEnd         = NULL;
+  this->m_ptrCurrentAdjointDifference = NULL;
+  this->m_ptrDeterminantOfJacobian    = NULL;
+
+  if( this->m_ptrI )
+    {
+    this->m_ptrI->clear();
+    }
+  if( this->m_ptrLambda )
+    {
+    this->m_ptrLambda->clear();
+    }
 }
 
 template < class TState >

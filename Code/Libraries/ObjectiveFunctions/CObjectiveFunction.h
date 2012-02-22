@@ -41,6 +41,7 @@ public:
   typedef VectorField< T, TState::VImageDimension > VectorFieldType;
   typedef VectorImage< T, TState::VImageDimension > VectorImageType;
 
+  typedef TState  StateType;
   typedef TState* ptrStateType;
 
   CObjectiveFunction();
@@ -73,9 +74,8 @@ public:
   virtual void ComputeGradient();
 
 protected:
-
-  ptrStateType m_pState;
-  ptrStateType m_pGradient;
+  typename StateType::Pointer m_pState;
+  typename StateType::Pointer m_pGradient;
 
 };
 

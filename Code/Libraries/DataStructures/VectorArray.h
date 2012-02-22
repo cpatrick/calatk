@@ -20,6 +20,8 @@
 #ifndef VECTOR_ARRAY_H
 #define VECTOR_ARRAY_H
 
+#include "CObject.h"
+
 #include "CALATKCommon.h"
 #include <stdexcept>
 
@@ -38,7 +40,7 @@ namespace CALATK
 {
 
 template <class T, unsigned int VImageDimension=3>
-class VectorArray
+class VectorArray: public CObject
 {
 
 public:

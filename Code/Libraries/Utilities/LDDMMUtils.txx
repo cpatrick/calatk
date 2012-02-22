@@ -230,7 +230,7 @@ void LDDMMUtils< T, VImageDimension >::GetMapFromToFromSpatioTemporalVelocityFie
     T dTimeFrom,
     T dTimeTo,
     const std::vector< STimePoint >& vecTimeDiscretization,
-    const std::vector< VectorFieldType* >* ptrSpatioTemporalVelocityField,
+    ConstVectorPointerToVectorFieldPointerType ptrSpatioTemporalVelocityField,
     EvolverType* ptrEvolver )
 {
   assert( dTimeTo >= dTimeFrom );
@@ -245,8 +245,8 @@ void LDDMMUtils< T, VImageDimension >::GetMapFromToFromSpatioTemporalVelocityFie
   VectorFieldType* ptrMapOut = ptrMap;
 
   // create two additional maps to hold the solution
-  VectorFieldType* ptrMapIn = new VectorFieldType( ptrMap );
-  VectorFieldType* ptrMapTmp = new VectorFieldType( ptrMap );
+  typename VectorFieldType::Pointer ptrMapIn = new VectorFieldType( ptrMap );
+  typename VectorFieldType::Pointer ptrMapTmp = new VectorFieldType( ptrMap );
 
   // get the map between two time points
   LDDMMUtils< T, VImageDimension >::identityMap( ptrMapIn );
@@ -311,11 +311,6 @@ void LDDMMUtils< T, VImageDimension >::GetMapFromToFromSpatioTemporalVelocityFie
     // for next step, copy
     ptrMapIn->copy( ptrMapOut );
     }
-
-  // get rid of the temporary memory
-  delete ptrMapIn;
-  delete ptrMapTmp;
-
 }
 
 #endif

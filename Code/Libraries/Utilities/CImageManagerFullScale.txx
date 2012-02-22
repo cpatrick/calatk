@@ -57,7 +57,7 @@ template <class T, unsigned int VImageDimension >
 void CImageManagerFullScale< T, VImageDimension>::GetImage( SImageInformation* pCurrentImInfo )
 {
   // do we need to load the image?
-  if ( pCurrentImInfo->pIm == NULL )
+  if ( pCurrentImInfo->pIm.GetPointer() == NULL )
     {
     if ( pCurrentImInfo->sImageFileName.compare("")!=0 ) // set to something
       {
@@ -94,15 +94,15 @@ void CImageManagerFullScale< T, VImageDimension>::GetImage( SImageInformation* p
     }
   
   // do we need to load the transform?
-  if ( pCurrentImInfo->pTransform == NULL )
+  if ( pCurrentImInfo->pTransform.GetPointer() == NULL )
     {
     if ( pCurrentImInfo->sImageTransformationFileName.compare("")!=0 ) // set to something
       {
       // load it
       
-      assert( pCurrentImInfo->pIm != NULL ); // image should have been loaded in previous step
+      assert( pCurrentImInfo->pIm.GetPointer() != NULL ); // image should have been loaded in previous step
       
-      VectorFieldType* mapTrans;
+      typename VectorFieldType::Pointer mapTrans;
       unsigned int szX, szY, szZ;
       T spX, spY, spZ;
       

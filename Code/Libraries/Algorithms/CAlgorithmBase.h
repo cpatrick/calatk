@@ -98,8 +98,8 @@ protected:
   virtual void SetDefaultKernelPointer() = 0;
   virtual void SetDefaultEvolverPointer() = 0;
 
-  VectorImageType* m_ptrIm;
-  VectorFieldType* m_ptrMap;
+  typename VectorImageType::Pointer m_ptrIm;
+  typename VectorFieldType::Pointer m_ptrMap;
 
 private:
 

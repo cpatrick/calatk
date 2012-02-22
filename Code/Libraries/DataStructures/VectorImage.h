@@ -22,6 +22,7 @@
 
 #include "CALATKCommon.h"
 #include "VectorArray.h"
+#include "itkSmartPointer.h"
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -44,7 +45,10 @@ class VectorImage : public VectorArray<T,VImageDimension>
 
 public:
 
-  typedef VectorArray<T,VImageDimension> Superclass;
+  typedef VectorImage                     Self;
+  typedef VectorArray<T,VImageDimension>  Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
   /********************************
    * Constructors and Destructors *

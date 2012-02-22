@@ -31,18 +31,21 @@ template <class T, unsigned int VImageDimension=3, class TResampler=CResamplerLi
 class CStateSpatioTemporalVelocityField : public CStateImageDomain< T, VImageDimension, TResampler >
 {
 public:
+  /* Standard class typedefs. */
+  typedef CStateSpatioTemporalVelocityField                    Self;
+  typedef itk::SmartPointer< Self >                            Pointer;
+  typedef itk::SmartPointer< const Self >                      ConstPointer;
+  typedef CStateImageDomain< T, VImageDimension, TResampler >  Superclass;
 
   /* some useful typedefs */
-
-  typedef CStateImageDomain< T, VImageDimension, TResampler > Superclass;
-  typedef typename Superclass::TState SuperclassTState;
-  typedef CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler > TState;
-  typedef typename Superclass::VectorImageType VectorImageType;
+  typedef typename Superclass::TState           SuperclassTState;
+  typedef CStateSpatioTemporalVelocityField     TState;
+  typedef typename Superclass::VectorImageType  VectorImageType;
   
-  typedef VectorField< T, VImageDimension > VectorFieldType;
-  typedef VectorFieldType* VectorFieldPointerType;
-  typedef std::vector< VectorFieldPointerType >* VectorPointerToVectorFieldPointerType;
-  typedef const std::vector< VectorFieldPointerType >* ConstVectorPointerToVectorFieldPointerType;
+  typedef VectorField< T, VImageDimension >             VectorFieldType;
+  typedef typename VectorFieldType::Pointer             VectorFieldPointerType;
+  typedef std::vector< VectorFieldPointerType >*        VectorPointerToVectorFieldPointerType;
+  typedef const std::vector< VectorFieldPointerType >*  ConstVectorPointerToVectorFieldPointerType;
   /**
    * Empty constructor
    */
@@ -91,8 +94,8 @@ public:
 
   ConstVectorPointerToVectorFieldPointerType GetVectorPointerToVectorFieldPointer() const;
 
-  VectorFieldPointerType GetVectorFieldPointer( unsigned int iI );
-  void SetVectorFieldPointer( unsigned int iI, VectorFieldPointerType ptrVecField );
+  VectorFieldType * GetVectorFieldPointer( unsigned int iI );
+  void SetVectorFieldPointer( unsigned int iI, VectorFieldType * ptrVecField );
 
   void SetSize( unsigned int iS );
   unsigned int GetSize();

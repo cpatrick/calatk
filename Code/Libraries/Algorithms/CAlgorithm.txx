@@ -88,7 +88,6 @@ void CAlgorithm< TState >::Solve()
 
   this->m_ptrSolver->SetObjectiveFunctionPointer( this->m_ptrObjectiveFunction );
   this->m_ptrSolver->Solve();
-
 }
 
 

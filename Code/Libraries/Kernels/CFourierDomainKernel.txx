@@ -21,7 +21,8 @@
 #define C_FOURIER_DOMAIN_KERNEL_TXX
 
 template <class T, unsigned int VImageDimension >
-CFourierDomainKernel< T, VImageDimension >::CFourierDomainKernel()
+CFourierDomainKernel< T, VImageDimension >::CFourierDomainKernel():
+  m_MemoryWasAllocated( false )
 {
   fftwData = NULL;
 }
@@ -50,7 +51,6 @@ void CFourierDomainKernel< T, VImageDimension >::DeleteData()
 template <class T, unsigned int VImageDimension >
 void CFourierDomainKernel< T, VImageDimension >::DeallocateMemory()
 {
-  Superclass::DeallocateMemory();
   DeleteData();
 }
 
@@ -328,7 +328,7 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateMemoryAndComputeKernels
     {
     this->AllocateMemoryForKernelAndInverseKernel( pVecImage );
     AllocateFFTDataStructures( pVecImage );
-    ConfirmMemoryWasAllocated();
+    this->m_MemoryWasAllocated = true;
     }
 
   if ( this->m_KernelsNeedToBeComputed )
@@ -337,7 +337,7 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateMemoryAndComputeKernels
     ConfirmKernelsWereComputed();
     }
 
-  assert( this->m_ptrL != NULL );
+  assert( this->m_ptrL.GetPointer() != NULL );
 
   if ( pVecImage->getSizeX() != this->m_ptrL->getSizeX() ||
        pVecImage->getSizeY() != this->m_ptrL->getSizeY() ||
@@ -346,7 +346,7 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateMemoryAndComputeKernels
     throw std::runtime_error( "Kernel incompatible with velocity field size.");
     }
 
-  assert( this->m_ptrLInv != NULL );
+  assert( this->m_ptrLInv.GetPointer() != NULL );
   
   if ( pVecImage->getSizeX() != this->m_ptrLInv->getSizeX() ||
        pVecImage->getSizeY() != this->m_ptrLInv->getSizeY() ||
@@ -368,12 +368,6 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveWithInverseKernel( Vect
 {
   AllocateMemoryAndComputeKernelsIfNeeded( pVecImage );
   ConvolveInFourierDomain( pVecImage, this->m_ptrLInv );
-}
-
-template <class T, unsigned int VImageDimension >
-void CFourierDomainKernel< T, VImageDimension >::ConfirmMemoryWasAllocated()
-{
-  this->m_MemoryWasAllocated = true;
 }
 
 template <class T, unsigned int VImageDimension >

@@ -43,11 +43,11 @@ public:
   /**
    * Performs the line search
    */
-    bool SolvePreInitialized();
+  bool SolvePreInitialized();
 
 private:
 
-    TState *pTempState;
+  typename TState::Pointer m_TempState;
 };
 
 #include "CSolverLineSearchUnconstrained.txx"

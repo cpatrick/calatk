@@ -89,8 +89,8 @@ private:
 
   void ComputeAdjustedVectorFieldIfRequired( const VectorFieldType* v, T dt );
 
-  VectorFieldType* ptrAdjustedVectorField; ///< Vector field which should be used because it points back to the point of origin for each grid point
-  VectorFieldType* ptrTmpVectorField; ///< holds intermediate iteration results
+  typename VectorFieldType::Pointer m_ptrAdjustedVectorField; ///< Vector field which should be used because it points back to the point of origin for each grid point
+  typename VectorFieldType::Pointer m_ptrTmpVectorField; ///< holds intermediate iteration results
 
   T m_TimeStepFactor; ///< multiplier for the CFL timestep (timstep can be larger for a semi-Lagrangian scheme)
   const T DefaultTimeStepFactor;

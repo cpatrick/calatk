@@ -49,7 +49,7 @@ VectorArray<T, VImageDimension>::VectorArray(unsigned int dim) :
   __length(__dim),
   __dataPtr(0)
 {
-  __allocate();
+  this->__allocate();
 }
 
 //
@@ -64,7 +64,7 @@ VectorArray<T, VImageDimension>::VectorArray(unsigned int sizeX, unsigned int di
   __length(__sizeX*__dim),
   __dataPtr(0)
 {
-  __allocate();
+  this->__allocate();
 }
 
 
@@ -80,7 +80,7 @@ VectorArray<T, VImageDimension>::VectorArray(unsigned int sizeX, unsigned int si
   __length(__sizeX*__sizeY*__dim),
   __dataPtr(0)
 {
-  __allocate();
+  this->__allocate();
 }
 
 //
@@ -95,7 +95,7 @@ VectorArray<T, VImageDimension>::VectorArray(unsigned int sizeX, unsigned int si
   __length(__sizeX*__sizeY*__sizeZ*__dim),
   __dataPtr(0)
 {
-  __allocate();
+  this->__allocate();
 }
 
 //
@@ -110,7 +110,7 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, VImageDimensi
   __length(__sizeX*__sizeY*__sizeZ*__dim),
   __dataPtr(0)
 {  
-  __allocate();
+  this->__allocate();
   
   // copy the data, just based on linear indexing for efficiency
   for (unsigned int uiIndx = 0; uiIndx < __length; ++uiIndx )
@@ -132,7 +132,7 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, VImageDimensi
   __length(__sizeX*__sizeY*__sizeZ*__dim),
   __dataPtr(0)
 {
-  __allocate();
+  this->__allocate();
 
   // copy the data, just based on linear indexing for efficiency
   for (unsigned int uiIndx = 0; uiIndx < __length; ++uiIndx )
@@ -154,7 +154,7 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, 2>* source, T
   __length(__sizeX*__sizeY*__sizeZ*uiNumDim),
   __dataPtr(0)
 {
-  __allocate();
+  this->__allocate();
 
   // copy the data, just for the first uiNumDim dimensions
   assert( source->getDim()>=uiNumDim );
@@ -187,7 +187,7 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, 3>* source, T
   __length(__sizeX*__sizeY*__sizeZ*uiNumDim),
   __dataPtr(0)
 {
-  __allocate();
+  this->__allocate();
 
   // copy the data, just for the first uiNumDim dimensions
   assert( source->getDim()>=uiNumDim );
@@ -216,8 +216,8 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, 3>* source, T
 // destructor
 //
 template <class T, unsigned int VImageDimension>
-VectorArray<T, VImageDimension>::~VectorArray() {
-  
+VectorArray<T, VImageDimension>::~VectorArray()
+{
   __deallocate();
 }
 
@@ -230,7 +230,8 @@ VectorArray<T, VImageDimension>::~VectorArray() {
 // get value, 0D
 //
 template <class T, unsigned int VImageDimension>
-inline T& VectorArray<T, VImageDimension>::getValue(unsigned int d) const {
+inline T& VectorArray<T, VImageDimension>::getValue(unsigned int d) const
+{
   
 #ifdef DEBUG
   // throw exception if there is no data
@@ -252,7 +253,8 @@ inline T& VectorArray<T, VImageDimension>::getValue(unsigned int d) const {
 // get value, 1D
 //
 template <class T, unsigned int VImageDimension>
-inline T& VectorArray<T, VImageDimension>::getValue(unsigned int x, unsigned int d) const {
+inline T& VectorArray<T, VImageDimension>::getValue(unsigned int x, unsigned int d) const 
+{
   
 #ifdef DEBUG
   // throw exception if there is no data
@@ -283,7 +285,8 @@ inline T& VectorArray<T, VImageDimension>::getValue(unsigned int x, unsigned int
 // get value, 2D
 //
 template <class T, unsigned int VImageDimension>
-inline T& VectorArray<T, VImageDimension>::getValue(unsigned int x, unsigned int y, unsigned int d) const {
+inline T& VectorArray<T, VImageDimension>::getValue(unsigned int x, unsigned int y, unsigned int d) const
+{
   
 #ifdef DEBUG
   // throw exception if there is no data
@@ -316,7 +319,8 @@ inline T& VectorArray<T, VImageDimension>::getValue(unsigned int x, unsigned int
 // get value, 3D
 //
 template <class T, unsigned int VImageDimension>
-inline T& VectorArray<T, VImageDimension>::getValue(unsigned int x, unsigned int y, unsigned int z, unsigned int d) const {
+inline T& VectorArray<T, VImageDimension>::getValue(unsigned int x, unsigned int y, unsigned int z, unsigned int d) const
+{
   
 #ifdef DEBUG
   // throw exception if there is no data
@@ -352,7 +356,8 @@ inline T& VectorArray<T, VImageDimension>::getValue(unsigned int x, unsigned int
 // set value 0D
 //
 template <class T, unsigned int VImageDimension>
-void VectorArray<T, VImageDimension>::setValue(unsigned int d, T value) {
+void VectorArray<T, VImageDimension>::setValue(unsigned int d, T value)
+{
 
 #ifdef DEBUG
   // throw exception if there is no data
@@ -373,7 +378,8 @@ void VectorArray<T, VImageDimension>::setValue(unsigned int d, T value) {
 // set value 1D
 //
 template <class T, unsigned int VImageDimension>
-void VectorArray<T, VImageDimension>::setValue(unsigned int x, unsigned int d, T value) {
+void VectorArray<T, VImageDimension>::setValue(unsigned int x, unsigned int d, T value)
+{
 
 #ifdef DEBUG
   // throw exception if there is no data
@@ -403,7 +409,8 @@ void VectorArray<T, VImageDimension>::setValue(unsigned int x, unsigned int d, T
 // set value 2D
 //
 template <class T, unsigned int VImageDimension>
-void VectorArray<T, VImageDimension>::setValue(unsigned int x, unsigned int y, unsigned int d, T value) {
+void VectorArray<T, VImageDimension>::setValue(unsigned int x, unsigned int y, unsigned int d, T value)
+{
 
 #ifdef DEBUG
   // throw exception if there is no data
@@ -436,7 +443,8 @@ void VectorArray<T, VImageDimension>::setValue(unsigned int x, unsigned int y, u
 // set value 3D
 //
 template <class T, unsigned int VImageDimension>
-void VectorArray<T, VImageDimension>::setValue(unsigned int x, unsigned int y, unsigned int z, unsigned int d, T value) {
+void VectorArray<T, VImageDimension>::setValue(unsigned int x, unsigned int y, unsigned int z, unsigned int d, T value)
+{
 
 #ifdef DEBUG
   // throw exception if there is no data
@@ -472,7 +480,8 @@ void VectorArray<T, VImageDimension>::setValue(unsigned int x, unsigned int y, u
 // multCellwise
 //
 template <class T, unsigned int VImageDimension >
-void VectorArray< T, VImageDimension >::multCellwise(VectorArray* im) {
+void VectorArray< T, VImageDimension >::multCellwise(VectorArray* im)
+{
 
 #ifdef DEBUG
   // make sure they are the same size
@@ -522,7 +531,8 @@ void VectorArray< T, VImageDimension >::multElementwise(VectorArray* im)
 // addCellwise
 //
 template <class T, unsigned int VImageDimension >
-void VectorArray< T, VImageDimension >::addCellwise(VectorArray* im) {
+void VectorArray< T, VImageDimension >::addCellwise(VectorArray* im)
+{
 
 #ifdef DEBUG
   // make sure they are the same size
@@ -573,7 +583,8 @@ void VectorArray< T, VImageDimension >::addElementwise(VectorArray* im)
 // addCellwiseMultiple
 //
 template <class T, unsigned int VImageDimension >
-void VectorArray< T, VImageDimension >::addCellwiseMultiple(VectorArray* im, T val) {
+void VectorArray< T, VImageDimension >::addCellwiseMultiple(VectorArray* im, T val)
+{
 
 #ifdef DEBUG
   // make sure they are the same size
@@ -625,7 +636,8 @@ void VectorArray< T, VImageDimension >::addElementwiseMultiple(VectorArray* im, 
 // subtractCellwise
 //
 template <class T, unsigned int VImageDimension >
-void VectorArray< T, VImageDimension >::subtractCellwise(VectorArray* im) {
+void VectorArray< T, VImageDimension >::subtractCellwise(VectorArray* im)
+{
 
 #ifdef DEBUG
   // make sure they are the same size
@@ -676,7 +688,8 @@ void VectorArray< T, VImageDimension >::subtractElementwise(VectorArray* im)
 // addConst
 //
 template <class T, unsigned int VImageDimension >
-void VectorArray< T, VImageDimension >::addConst(T c) {
+void VectorArray< T, VImageDimension >::addConst(T c)
+{
   
   for ( unsigned int uiI = 0; uiI < __length; ++uiI )
     {
@@ -689,7 +702,8 @@ void VectorArray< T, VImageDimension >::addConst(T c) {
 // multConst
 //
 template <class T, unsigned int VImageDimension >
-void VectorArray< T, VImageDimension >::multConst(T c) {
+void VectorArray< T, VImageDimension >::multConst(T c)
+{
 
   for ( unsigned int uiI = 0; uiI < __length; ++uiI )
     {
@@ -702,7 +716,8 @@ void VectorArray< T, VImageDimension >::multConst(T c) {
 // setConst
 //
 template <class T, unsigned int VImageDimension >
-void VectorArray< T, VImageDimension >::setConst(T c) {
+void VectorArray< T, VImageDimension >::setConst(T c)
+{
 
   for ( unsigned int uiI = 0; uiI < __length; ++uiI )
     {
@@ -716,7 +731,8 @@ void VectorArray< T, VImageDimension >::setConst(T c) {
 // copy
 //
 template <class T, unsigned int VImageDimension>
-void VectorArray<T, VImageDimension>::copy(const VectorArray<T, VImageDimension>* source) {
+void VectorArray<T, VImageDimension>::copy(const VectorArray<T, VImageDimension>* source)
+{
 
 #ifdef DEBUG
   // throw exception if there is no data
@@ -752,7 +768,8 @@ void VectorArray<T, VImageDimension>::copy(const VectorArray<T, VImageDimension>
 // getSizeX
 //
 template <class T, unsigned int VImageDimension>
-inline unsigned int VectorArray<T, VImageDimension>::getSizeX() const{
+inline unsigned int VectorArray<T, VImageDimension>::getSizeX() const
+{
   return __sizeX;
 }
 
@@ -760,7 +777,8 @@ inline unsigned int VectorArray<T, VImageDimension>::getSizeX() const{
 // getSizeY
 //
 template <class T, unsigned int VImageDimension>
-inline unsigned int VectorArray<T, VImageDimension>::getSizeY() const{
+inline unsigned int VectorArray<T, VImageDimension>::getSizeY() const
+{
   return __sizeY;
 }
 
@@ -768,7 +786,8 @@ inline unsigned int VectorArray<T, VImageDimension>::getSizeY() const{
 // getSizeZ
 //
 template <class T, unsigned int VImageDimension>
-inline unsigned int VectorArray<T, VImageDimension>::getSizeZ() const{
+inline unsigned int VectorArray<T, VImageDimension>::getSizeZ() const
+{
   return __sizeZ;
 }
 
@@ -776,7 +795,8 @@ inline unsigned int VectorArray<T, VImageDimension>::getSizeZ() const{
 // getDim
 //
 template <class T, unsigned int VImageDimension>
-inline unsigned int VectorArray<T, VImageDimension>::getDim() const{
+inline unsigned int VectorArray<T, VImageDimension>::getDim() const
+{
   return __dim;
 }
 
@@ -784,7 +804,8 @@ inline unsigned int VectorArray<T, VImageDimension>::getDim() const{
 // getLength
 //
 template <class T, unsigned int VImageDimension>
-inline unsigned int VectorArray<T, VImageDimension>::getLength() const{
+inline unsigned int VectorArray<T, VImageDimension>::getLength() const
+{
   return __length;
 }
 
@@ -792,7 +813,8 @@ inline unsigned int VectorArray<T, VImageDimension>::getLength() const{
 // getDataPtr
 //
 template <class T, unsigned int VImageDimension>
-T* VectorArray<T, VImageDimension>::getDataPointer() {
+T* VectorArray<T, VImageDimension>::getDataPointer()
+{
   return __dataPtr;
 }
 
@@ -805,11 +827,12 @@ T* VectorArray<T, VImageDimension>::getDataPointer() {
 // allocate data
 //
 template <class T, unsigned int VImageDimension>
-void VectorArray<T, VImageDimension>::__allocate() {
+void VectorArray<T, VImageDimension>::__allocate()
+{
 
   if ( __dataPtr != 0 )
     {
-    throw std::runtime_error("Tried to re-allocate memory");
+    throw std::logic_error("Tried to re-allocate memory");
     }
 
   __dataPtr = new T [__length];
@@ -820,7 +843,8 @@ void VectorArray<T, VImageDimension>::__allocate() {
 // deallocate data
 //
 template <class T, unsigned int VImageDimension>
-void VectorArray<T, VImageDimension>::__deallocate() {
+void VectorArray<T, VImageDimension>::__deallocate()
+{
 
   if(__dataPtr != 0) {
     delete [] __dataPtr;

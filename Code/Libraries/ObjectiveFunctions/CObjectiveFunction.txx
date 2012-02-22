@@ -44,7 +44,7 @@ CObjectiveFunction< TState >::~CObjectiveFunction()
 template < class TState >
 void CObjectiveFunction< TState >::ComputeGradient()
 {
-  if ( m_pGradient == NULL )
+  if ( m_pGradient.GetPointer() == NULL )
     {
     throw std::runtime_error( "Memory for gradient not allocated, nothing will be computed." );
     }

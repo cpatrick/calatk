@@ -161,7 +161,7 @@ void CImageManagerMultiScale< T, VImageDimension >::GetImage( SImageInformation*
   // get the image consistent with the scale, if image has not been loaded, load it and create the spatial pyramid
   // if any scales were altered since last time calling this, we need to reload also
 
-  if ( pCurrentImInfo->pImOrig == NULL )
+  if ( pCurrentImInfo->pImOrig.GetPointer() == NULL )
     {
     // load it and all information that comes with it (even transform)
     Superclass::GetImage( pCurrentImInfo );
@@ -208,7 +208,7 @@ void CImageManagerMultiScale< T, VImageDimension >::GetImage( SImageInformation*
 
     }
   
-  if ( pCurrentImInfo->pIm != NULL )
+  if ( pCurrentImInfo->pIm.GetPointer() != NULL )
     {
     // was read
     SetScale( pCurrentImInfo );

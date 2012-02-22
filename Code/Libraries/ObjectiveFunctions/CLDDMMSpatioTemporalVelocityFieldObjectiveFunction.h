@@ -61,10 +61,10 @@ public:
 protected:
 
   /* Some useful protected datatypes */
-  typedef VectorFieldType* VectorFieldPointerType;
+  typedef typename VectorFieldType::Pointer      VectorFieldPointerType;
   typedef std::vector< VectorFieldPointerType >* VectorPointerToVectorFieldPointerType;
 
-  typedef VectorImageType* VectorImagePointerType;
+  typedef typename VectorImageType::Pointer      VectorImagePointerType;
   typedef std::vector< VectorImagePointerType >* VectorPointerToVectorImagePointerType;
 
   typedef CImageManager< T, TState::VImageDimension > ImageManagerType;
@@ -77,8 +77,8 @@ protected:
   void InitializeDataStructuresFromState( TState* pState );
 
   // methods which delete and create possible auxiliary dynamic structures
-  virtual void DeleteAuxiliaryStructures() = 0;
   virtual void CreateAuxiliaryStructures() = 0;
+  virtual void DeleteAuxiliaryStructures() = 0;
 
   void DeleteData();
 

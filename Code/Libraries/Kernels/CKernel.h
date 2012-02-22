@@ -61,15 +61,13 @@ public:
 
   virtual const VectorImageType *GetKernel() const
   {
-    return m_ptrL;
+    return m_ptrL.GetPointer();
   }
 
   virtual const VectorImageType *GetInverseKernel() const
   {
-    return m_ptrLInv;
+    return m_ptrLInv.GetPointer();
   }
-
-  virtual void DeallocateMemory();
 
   /// some kernel (like the multi-Gaussian one) need access to the data to estimate weights
   void SetObjectiveFunctionPointer( ObjectiveFunctionBaseType* ptrObjectiveFunction );
@@ -83,19 +81,15 @@ public:
 protected:
 
   virtual void AllocateMemoryForKernelAndInverseKernel( VectorImageType* );
-  virtual void DeallocateMemoryForKernelAndInverseKernel();
   virtual void ComputeKernelAndInverseKernel( VectorImageType* ) = 0;
-  // just to force that the variable is set
-  virtual void ConfirmMemoryWasAllocated() = 0;
   // to force that these variables are set 
   virtual void ConfirmKernelsWereComputed() = 0;
   virtual void ConfirmKernelsNeedToBeComputed() = 0;
 
-  bool m_MemoryWasAllocated;
   bool m_KernelsNeedToBeComputed;
 
-  VectorImageType *m_ptrL;
-  VectorImageType *m_ptrLInv;
+  typename VectorImageType::Pointer m_ptrL;
+  typename VectorImageType::Pointer m_ptrLInv;
 
   ObjectiveFunctionBaseType* ptrObjectiveFunction;
   unsigned int m_KernelNumber;

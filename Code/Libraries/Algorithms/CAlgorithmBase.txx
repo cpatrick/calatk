@@ -76,19 +76,6 @@ CAlgorithmBase< T, VImageDimension >::~CAlgorithmBase()
       m_ptrKernel = NULL;
       }
     }
-
-  if ( m_ptrIm != NULL )
-    {
-    delete m_ptrIm;
-    m_ptrIm = NULL;
-    }
-
-  if ( m_ptrMap != NULL )
-    {
-    delete m_ptrMap;
-    m_ptrMap = NULL;
-    }
-
 }
 
 template < class T, unsigned int VImageDimension >
@@ -135,28 +122,21 @@ void CAlgorithmBase< T, VImageDimension >::SetDefaultsIfNeeded()
 
   // also create the memory for the map and the image, so we can use it to return a map and an image at any time
   SImageInformation* pImInfo;
-  m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[ 0 ], 0 );
+  this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[ 0 ], 0 );
 
-  assert( m_ptrIm == NULL );
-  if ( m_ptrIm == NULL ) // this should be the default
-    {
-    m_ptrIm = new VectorImageType( pImInfo->pIm );
-    m_ptrIm->setConst( 0 );
-    }
+  assert( this->m_ptrIm.GetPointer() == NULL );
+  this->m_ptrIm = new VectorImageType( pImInfo->pIm );
+  this->m_ptrIm->setConst( 0 );
 
-  assert( m_ptrMap == NULL );
-  if ( m_ptrMap == NULL )
-    {
-    m_ptrMap = new VectorFieldType( pImInfo->pIm );
-    m_ptrMap->setConst( 0 );
-    }
-
+  assert( m_ptrMap.GetPointer() == NULL );
+  this->m_ptrMap = new VectorFieldType( pImInfo->pIm );
+  this->m_ptrMap->setConst( 0 );
 }
 
 template < class T, unsigned int VImageDimension >
 void CAlgorithmBase< T, VImageDimension >::SetImageManagerPointer( ptrImageManagerType ptrImageManager )
 {
-  m_ptrImageManager = ptrImageManager;
+  this->m_ptrImageManager = ptrImageManager;
 }
 
 template < class T, unsigned int VImageDimension >

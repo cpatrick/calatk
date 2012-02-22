@@ -27,80 +27,89 @@
 namespace CALATK
 {
 
+/**
+ * \class CStateInitialImageMomentum
+ *
+ * \todo describe me
+ */
 template <class T, unsigned int VImageDimension=3, class TResampler=CResamplerLinear<T, VImageDimension> >
 class CStateInitialImageMomentum: public CStateImageDomain< T, VImageDimension, TResampler >
 {
 public:
+  /* Standard class typedefs. */
+  typedef CStateInitialImageMomentum                               Self;
+  typedef itk::SmartPointer< Self >                                Pointer;
+  typedef itk::SmartPointer< const Self >                          ConstPointer;
+  typedef CStateImageDomain< TState, VImageDimension, TResampler > Superclass;
 
-    /* some useful typedefs */
-    typedef CStateImageDomain< T, VImageDimension, TResampler > Superclass;
-    typedef typename Superclass::TState SuperclassTState;
-    typedef CStateInitialImageMomentum< T, VImageDimension, TResampler > TState;
+  /* some useful typedefs */
+  typedef typename Superclass::TState  SuperclassTState;
+  typedef CStateInitialImageMomentum   TState;
 
-    typedef typename Superclass::VectorImageType VectorImageType;
-    typedef VectorImageType* VectorImagePointerType;
-    typedef const VectorImageType* ConstVectorImagePointerType;
+  typedef typename Superclass::VectorImageType VectorImageType;
+  typedef VectorImageType*                     VectorImagePointerType;
+  typedef const VectorImageType*               ConstVectorImagePointerType;
 
-    /**
-     * Empty constructor
-     */
-    CStateInitialImageMomentum();
+  /**
+   * Empty constructor
+   */
+  CStateInitialImageMomentum();
 
-    /**
-     * Constructor which takes a pointer to the initial image and initial momentum;
-     * Does not copy the data, just stores the pointers to it;
-     * Will destroy the data in Destructor.
-     */
-    CStateInitialImageMomentum( VectorImagePointerType pInitialImage, VectorImagePointerType pInitialMomentum );
+  /**
+   * Constructor which takes a pointer to the initial image and initial momentum;
+   * Does not copy the data, just stores the pointers to it;
+   * Will destroy the data in Destructor.
+   */
+  CStateInitialImageMomentum( VectorImagePointerType pInitialImage, VectorImagePointerType pInitialMomentum );
 
-    /**
-      * copy constructor, creation of the image and momentum for the first time, need to allocate memory
-      */
-    CStateInitialImageMomentum( const CStateInitialImageMomentum & c );
+  /**
+    * copy constructor, creation of the image and momentum for the first time, need to allocate memory
+    */
+  CStateInitialImageMomentum( const CStateInitialImageMomentum & c );
 
-    /**
-      * Destructor
-      */
-    ~CStateInitialImageMomentum();
+  /**
+    * Destructor
+    */
+  ~CStateInitialImageMomentum();
 
-    /*
-     * Allow for upsampling of the state
-     */
-    SuperclassTState* CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const;
+  /*
+   * Allow for upsampling of the state
+   */
+  SuperclassTState* CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const;
 
-    // declare operators to be able to do computations with this state, which are needed in the numerical solvers
-    /**
-     * assignment
-     */
-    CStateInitialImageMomentum & operator=( const CStateInitialImageMomentum & p);
+  // declare operators to be able to do computations with this state, which are needed in the numerical solvers
+  /**
+   * assignment
+   */
+  CStateInitialImageMomentum & operator=( const CStateInitialImageMomentum & p);
 
-    CStateInitialImageMomentum & operator+=( const CStateInitialImageMomentum & p);
+  CStateInitialImageMomentum & operator+=( const CStateInitialImageMomentum & p);
 
-    CStateInitialImageMomentum & operator-=( const CStateInitialImageMomentum & p);
+  CStateInitialImageMomentum & operator-=( const CStateInitialImageMomentum & p);
 
-    CStateInitialImageMomentum & operator*=( const T & p);
+  CStateInitialImageMomentum & operator*=( const T & p);
 
-    CStateInitialImageMomentum operator+( const CStateInitialImageMomentum & p) const;
+  CStateInitialImageMomentum operator+( const CStateInitialImageMomentum & p) const;
 
-    CStateInitialImageMomentum operator-( const CStateInitialImageMomentum & p) const;
+  CStateInitialImageMomentum operator-( const CStateInitialImageMomentum & p) const;
 
-    CStateInitialImageMomentum operator*( const T & p) const;
+  CStateInitialImageMomentum operator*( const T & p) const;
 
-    VectorImagePointerType GetPointerToInitialImage() const;
-    VectorImagePointerType GetPointerToInitialMomentum() const;
+  VectorImagePointerType GetPointerToInitialImage() const;
+  VectorImagePointerType GetPointerToInitialMomentum() const;
 
-    void SetPointerToInitialImage( ConstVectorImagePointerType ptrImage );
-    void SetPointerToInitialMomentum( ConstVectorImagePointerType ptrMomentum );
+  void SetPointerToInitialImage( ConstVectorImagePointerType ptrImage );
+  void SetPointerToInitialMomentum( ConstVectorImagePointerType ptrMomentum );
 
-    T SquaredNorm();
+  T SquaredNorm();
 
 protected:
-    void ClearDataStructure();
-    void CopyDataStructure( ConstVectorImagePointerType ptrImage, ConstVectorImagePointerType ptrMomentum );
+  void ClearDataStructure();
+  void CopyDataStructure( ConstVectorImagePointerType ptrImage, ConstVectorImagePointerType ptrMomentum );
 
 private:
-    VectorImagePointerType m_ptrInitialImage;
-    VectorImagePointerType m_ptrInitialMomentum;
+  VectorImagePointerType m_ptrInitialImage;
+  VectorImagePointerType m_ptrInitialMomentum;
 
 };
 
