@@ -160,6 +160,9 @@ ENDIF(BUILD_DOCUMENTATION)
 enable_testing()
 include (CTest)
 
+# For Cppcheck.
+set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CALATK_SOURCE_DIR}/Scripts/Cppcheck" )
+
 # Build a CPack driven installer package
 include (InstallRequiredSystemLibraries)
 set (CPACK_RESOURCE_FILE_LICENSE  

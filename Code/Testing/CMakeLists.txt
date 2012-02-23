@@ -258,3 +258,21 @@ add_ctest_test(calatkRegularizationSpacingTest
 #add_test_executable(removeDoubleSlashesTest CALATK ${ITK_LIBRARIES})
 #add_ctest_test(removeDoubleSlashesTest)
 
+#------------------------------------------------------------------------------
+# Cppcheck static code analysis test.
+option( CALATK_USE_CPPCHECK 
+  "Create a test that does static code analysis with cppcheck." OFF )
+if( CALATK_USE_CPPCHECK )
+  find_package( Cppcheck REQUIRED )
+  set( cppcheck_paths_to_check "${CALATK_SOURCE_DIR}/Code" )
+  add_test( CppcheckStyle ${CPPCHECK_EXECUTABLE} -q --xml --enable=style ${cppcheck_paths_to_check} )
+  add_test( CppcheckPerformance ${CPPCHECK_EXECUTABLE} -q --xml --enable=performance ${cppcheck_paths_to_check} )
+  add_test( CppcheckPortability ${CPPCHECK_EXECUTABLE} -q --xml --enable=portability ${cppcheck_paths_to_check} )
+  add_test( CppcheckInformation ${CPPCHECK_EXECUTABLE} -q --xml --enable=information ${cppcheck_paths_to_check} )
+  add_test( CppcheckUnusedFunction ${CPPCHECK_EXECUTABLE} -q --xml --enable=unusedFunction ${cppcheck_paths_to_check} )
+  set_tests_properties( CppcheckStyle CppcheckPerformance CppcheckPortability
+    CppcheckInformation CppcheckUnusedFunction
+    PROPERTIES FAIL_REGULAR_EXPRESSION "error file="
+    )
+endif()
+
