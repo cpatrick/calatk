@@ -12,12 +12,15 @@
 	#key = id_git_public
 	#request-url = https://www.kitware.com/Admin/SendPassword.cgi
 
+# We don't use this at this time.
 [stage]
 	#url = git://public.kitware.com/stage/Project.git
 	#pushurl = git@public.kitware.com:stage/Project.git
+        cmd = ssh git@public.kitware.com stage Project
 
 [gerrit]
 	project = calatk
 	site = http://review.source.kitware.com
 	# pushurl placeholder "$username" is literal
 	pushurl = $username@review.source.kitware.com:calatk
+        pushcmd = bash Utilities/Git/git-gerrit-push

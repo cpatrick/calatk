@@ -89,8 +89,7 @@ echo "Setting up git hooks..."
 echo
 
 echo "Setting up useful Git aliases..."
-# todo fix me
-# ./SetupGitAliases.sh || exit 1
+./setup-aliases || exit 1
 echo
 
 # Make this non-fatal, as it is useful to get the other stuff set up

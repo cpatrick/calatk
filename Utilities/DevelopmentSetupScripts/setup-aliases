@@ -1,0 +1,63 @@
+#!/usr/bin/env bash
+#=============================================================================
+# Copyright 2010-2012 Kitware, Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
+#=============================================================================
+
+# Run this script to setup useful Git aliases.
+
+# Project configuration instructions:
+#
+# - Populate adjacent "config" file with:
+#    stage.cmd = Command to talk to the stage.
+#    gerrit.pushcmd = Command used to push to Gerrit.
+
+die() {
+	echo 1>&2 "$@" ; exit 1
+}
+
+# Load the project configuration.
+stage_cmd=$(git config -f config --get stage.cmd) ||
+die 'This project is not configured for stage interaction.'
+gerrit_pushcmd=$(git config -f config --get gerrit.pushcmd) ||
+die 'This project is not configured for Gerrit pushing.'
+
+GIT=git
+
+GITCONFIG="${GIT} config"
+
+# General aliases that could be global
+
+# Pull all updates - first a general pull and then submodules.
+${GITCONFIG} alias.pullall "!bash -c \"git pull && git submodule update --recursive --init\""
+# Useful alias to see what commits are on the current branch with respect
+# to origin/master.
+${GITCONFIG} alias.prepush 'log --graph --stat origin/master..'
+
+# Staging aliases - can help streamline staging topic branches.
+git_branch="\$(git symbolic-ref HEAD | sed -e 's|^refs/heads/||')"
+# General alias to run the SSH command, e.g. git stage-cmd print.
+${GITCONFIG} alias.stage-cmd "!${stage_cmd}"
+# Push the current topic branch to the stage.
+${GITCONFIG} alias.stage-push "!bash -c \"git fetch stage --prune && git push stage HEAD\""
+# List all staged topic branches.
+${GITCONFIG} alias.stage-branch "!bash -c \"${stage_cmd} print\""
+# Merge the current topic branch (if staged) into the next branch.
+${GITCONFIG} alias.stage-merge-next "!bash -c \"${stage_cmd} merge -b next ${git_branch}\""
+# Merge the current topic branch (if staged) into the master branch.
+${GITCONFIG} alias.stage-merge "!bash -c \"${stage_cmd} merge ${git_branch}\""
+# Alias to push the current topic branch to Gerrit
+${GITCONFIG} alias.gerrit-push "!${gerrit_pushcmd}"
+
+# vim: set filetype=sh tabstop=8 softtabstop=8 shiftwidth=8 noexpandtab :
