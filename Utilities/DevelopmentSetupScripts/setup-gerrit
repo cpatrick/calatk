@@ -96,12 +96,12 @@ Add your SSH public keys at
 	if test -z "$gu"; then
 		gu="$USER"
 	fi &&
-	if test -z "$pushurl"; then
-		git remote add "$remote" "$fetchurl"
-	else
-		git config remote."$remote".url "$fetchurl"
-	fi &&
 	pushurl="${pushurl_/\$username/$gu}" &&
+	if git config remote.gerrit.url >/dev/null; then
+		git config remote."$remote".url "$fetchurl"
+	else
+		git remote add "$remote" "$fetchurl"
+	fi &&
 	git config remote."$remote".pushurl "$pushurl" &&
 	echo 'Remote "'"$remote"'" is now configured to push to
 
@@ -140,3 +140,5 @@ to disable this feature (but you will be on your own).' &&
 else
 	echo 'GerritId hook already configured to "'"$hook"'".'
 fi
+
+# vim: set filetype=sh tabstop=8 softtabstop=8 shiftwidth=8 noexpandtab :
