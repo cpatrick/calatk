@@ -161,7 +161,7 @@ try \
         } \
       } \
       } \
-catch ( TCLAP::ArgException e ) \
+catch ( const TCLAP::ArgException & e ) \
   { \
   std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl; \
   return ( EXIT_FAILURE ); \
@@ -194,6 +194,6 @@ std::cout << "    processInformationAddressString: " << processInformationAddres
 ModuleProcessInformation *CLPProcessInformation = 0; \
 if (processInformationAddressString != "") \
 { \
-sscanf(processInformationAddressString.c_str(), "%p", &CLPProcessInformation); \
+sscanf(processInformationAddressString.c_str(), "%66p", &CLPProcessInformation); \
 }
 #define PARSE_ARGS GENERATE_XML;GENERATE_TCLAP;GENERATE_ECHOARGS;GENERATE_ProcessInformationAddressDecoding;

@@ -36,7 +36,7 @@ public:
   virtual ~ModuleParameter() {}
   ModuleParameter(const ModuleParameter& parameter);
 
-  void operator=(const ModuleParameter& parameter);
+  ModuleParameter& operator=(const ModuleParameter& parameter);
   
   virtual void SetTag(const std::string &tag)
   {
