@@ -25,7 +25,7 @@ public:
   ModuleLogo(const ModuleLogo &logo);
   virtual ~ModuleLogo();
 
-  void operator=(const ModuleLogo &logo);
+  ModuleLogo& operator=(const ModuleLogo &logo);
 
   void SetLogo(char const * logo, int width, int height, int pixelSize, unsigned long bufferLength, int options);
 

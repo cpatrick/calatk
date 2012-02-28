@@ -23,7 +23,7 @@ ModuleParameterGroup
   this->Advanced = parameters.Advanced;
 }
 
-void
+ModuleParameterGroup&
 ModuleParameterGroup
 ::operator=(const ModuleParameterGroup &parameters)
 {

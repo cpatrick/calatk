@@ -651,14 +651,13 @@ ModuleFactory
 
                 // Set the target as the entry point to call
                 char entryPointAsText[256];
-                std::string entryPointAsString;
                 std::string lowerName = this->Name;
                 std::transform(lowerName.begin(), lowerName.end(),
                                lowerName.begin(),
                                (int (*)(int))std::tolower);
                 
                 sprintf(entryPointAsText, "%p", entryPoint);
-                entryPointAsString = lowerName + ":" + entryPointAsText;
+                // std::string entryPointAsString = lowerName + ":" + entryPointAsText;
                 // Set the target as "Unknown" and close the
                 // library forcing a lazy evaluation later should this
                 // module be used.
@@ -998,7 +997,6 @@ ModuleFactory
               if (executable != NULL)
                 {
                 // includes the exec with the bare command name
-                std::string newcommand = std::string(executable) + std::string(" ") + commandName;
                 // std::cout << "ScanForCommandLineModulesByExecuting: Setting location to " << executable << ", target to " << newcommand.c_str() << "\n";
                 //module.SetTarget(newcommand);
                 // use location to point to the executable used to run the command in commandName
@@ -1738,14 +1736,14 @@ ModuleFactory
       // exited with errors
       }
     }
-  else if (result == itksysProcess_State_Expired)
-    {
-    // timeout
-    }
-  else
-    {
-    // did not exit cleanly
-    }
+  //else if (result == itksysProcess_State_Expired)
+    //{
+    //// timeout
+    //}
+  //else
+    //{
+    //// did not exit cleanly
+    //}
   
   // clean up
   itksysProcess_Delete(process);
@@ -2116,7 +2114,7 @@ ModuleFactory
           }
         else
           {
-          if (words.size() > 0)
+          if (!words.empty())
             {
             information << "Invalid cache entry for " << words[0] << std::endl;
             }
@@ -2400,7 +2398,7 @@ const char * ModuleFactory::GetExecutableForFileExtension(std::string ext)
   std::map<std::string, std::string>::iterator iter;
   for (iter = this->RegisteredExecutablesForFileExtensions.begin();
        iter != this->RegisteredExecutablesForFileExtensions.end();
-       iter++)
+       ++iter)
     {
     if (ext.compare(iter->first) == 0)
       {

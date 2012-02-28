@@ -75,7 +75,6 @@
 bool NeedsTemp(const ModuleParameter &parameter)
 {
   std::string type = parameter.GetCPPType();
-  std::string multi = parameter.GetMultiple();
   return (((type == "std::vector<int>" ||
            type == "std::vector<float>" ||
            type == "std::vector<double>" ||
@@ -211,7 +210,7 @@ main(int argc, char *argv[])
     delete [] XML;
     return EXIT_FAILURE;
     }
-  if (logoFiles.size() > 0 && !itksys::SystemTools::FileExists(logoFiles[0].c_str()))
+  if (!logoFiles.empty() && !itksys::SystemTools::FileExists(logoFiles[0].c_str()))
     {
     std::cerr << argv[0] << ": Cannot open " << logoFiles[0] << " as a logo file" << std::endl;
     delete [] XML;
@@ -417,8 +416,6 @@ void GeneratePluginProcedures(std::ofstream &sout, std::vector<std::string> &log
 {
   if (logos.size() == 1)
     {
-    std::string logo = logos[0];
-    std::string fileName = itksys::SystemTools::GetFilenameWithoutExtension (logo);
     sout << "unsigned char *GetModuleLogo(int *width," << std::endl;
     sout << "                             int *height," << std::endl;
     sout << "                             int *pixel_size," << std::endl;
@@ -443,7 +440,7 @@ void GeneratePluginProcedures(std::ofstream &sout, std::vector<std::string> &log
 
 void GenerateLOGO(std::ofstream &sout, std::vector<std::string> &logos)
 {
-  if (logos.size() > 0)
+  if (!logos.empty())
     {
     std::string EOL(" \\");
 

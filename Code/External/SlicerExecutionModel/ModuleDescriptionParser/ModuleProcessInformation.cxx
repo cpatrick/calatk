@@ -16,6 +16,8 @@
 ModuleProcessInformation
 ::ModuleProcessInformation()
 {
+  this->ProgressCallbackFunction = NULL;
+  this->ProgressCallbackClientData = NULL;
   this->Initialize();
 }
 

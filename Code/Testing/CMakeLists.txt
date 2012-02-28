@@ -265,11 +265,13 @@ option( CALATK_USE_CPPCHECK
 if( CALATK_USE_CPPCHECK )
   find_package( Cppcheck REQUIRED )
   set( cppcheck_paths_to_check "${CALATK_SOURCE_DIR}/Code" )
-  add_test( CppcheckStyle ${CPPCHECK_EXECUTABLE} -q --xml --enable=style ${cppcheck_paths_to_check} )
-  add_test( CppcheckPerformance ${CPPCHECK_EXECUTABLE} -q --xml --enable=performance ${cppcheck_paths_to_check} )
-  add_test( CppcheckPortability ${CPPCHECK_EXECUTABLE} -q --xml --enable=portability ${cppcheck_paths_to_check} )
-  add_test( CppcheckInformation ${CPPCHECK_EXECUTABLE} -q --xml --enable=information ${cppcheck_paths_to_check} )
-  add_test( CppcheckUnusedFunction ${CPPCHECK_EXECUTABLE} -q --xml --enable=unusedFunction ${cppcheck_paths_to_check} )
+  set( cppcheck_suppressions_file "${CALATK_SOURCE_DIR}/Scripts/Cppcheck/CALATKCppcheck.supp" )
+  set( cppcheck_cmd_prefix "${CPPCHECK_EXECUTABLE}" -q --xml --suppressions "${cppcheck_suppressions_file}" )
+  add_test( CppcheckStyle ${cppcheck_cmd_prefix} --enable=style ${cppcheck_paths_to_check} )
+  add_test( CppcheckPerformance ${cppcheck_cmd_prefix} --enable=performance ${cppcheck_paths_to_check} )
+  add_test( CppcheckPortability ${cppcheck_cmd_prefix} --enable=portability ${cppcheck_paths_to_check} )
+  add_test( CppcheckInformation ${cppcheck_cmd_prefix} --enable=information ${cppcheck_paths_to_check} )
+  add_test( CppcheckUnusedFunction ${cppcheck_cmd_prefix} --enable=unusedFunction ${cppcheck_paths_to_check} )
   set_tests_properties( CppcheckStyle CppcheckPerformance CppcheckPortability
     CppcheckInformation CppcheckUnusedFunction
     PROPERTIES FAIL_REGULAR_EXPRESSION "error file="

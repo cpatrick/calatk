@@ -27,7 +27,7 @@ public:
   ModuleParameterGroup() {};
   ModuleParameterGroup(const ModuleParameterGroup &parameters);
 
-  void operator=(const ModuleParameterGroup &parameters);
+  ModuleParameterGroup& operator=(const ModuleParameterGroup &parameters);
 
   void SetLabel(const std::string &label) {
     this->Label = label;

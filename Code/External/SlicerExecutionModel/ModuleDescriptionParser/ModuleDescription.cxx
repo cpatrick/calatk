@@ -62,12 +62,12 @@ ModuleDescription::ModuleDescription(const ModuleDescription &md)
   this->AlternativeLocation = md.AlternativeLocation;
   this->ParameterGroups = md.ParameterGroups;
   this->Logo = md.Logo;
-  
+
   this->ProcessInformation.Initialize();
 }
 
 //----------------------------------------------------------------------------
-void ModuleDescription::operator=(const ModuleDescription &md)
+ModuleDescription& ModuleDescription::operator=(const ModuleDescription &md)
 {
   this->Title = md.Title;
   this->Category = md.Category;

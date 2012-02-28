@@ -29,7 +29,7 @@ ModuleLogo::ModuleLogo(const ModuleLogo& logo)
   this->Logo = logo.Logo;
 }
 
-void
+ModuleLogo&
 ModuleLogo::operator=(const ModuleLogo &logo)
 {
   this->Width = logo.Width;
