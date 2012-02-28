@@ -1,0 +1,13 @@
+NRRD0004
+# Complete NRRD file format specification at:
+# http://teem.sourceforge.net/nrrd/format.html
+type: float
+dimension: 2
+space dimension: 2
+sizes: 10000 1
+space directions: (9.9999997473787516e-005,0) (0,1)
+kinds: domain domain
+endian: little
+encoding: raw
+space origin: (0,0)
+data file: 1DCurveResult_withJSON.raw
