@@ -3,3 +3,4 @@ uninitVar:*/Code/External/SlicerExecutionModel/ModuleDescriptionParser/ModuleDes
 operatorEqRetRefThis:*/Code/External/SlicerExecutionModel/ModuleDescriptionParser/ModuleDescription.cxx
 unreadVariable:*/Code/External/SlicerExecutionModel/ModuleDescriptionParser/ModuleFactory.cxx:374
 operatorEqRetRefThis:*/Code/External/SlicerExecutionModel/ModuleDescriptionParser/Module*.cxx
+toomanyconfigs:*/Code/External/jsoncpp/jsoncpp.cpp
