@@ -363,7 +363,6 @@ std::string CJSONConfiguration::ReadFileContentIntoString( std::string sFileName
   else
     {
     throw std::runtime_error( "Could not open file " + sFileName );
-    outputString = "";
     }
 
   return outputString;
