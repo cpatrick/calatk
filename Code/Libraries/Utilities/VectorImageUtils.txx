@@ -637,7 +637,7 @@ void VectorImageUtils< T, VImageDimension >::resize( const VectorImageType1D* im
   VectorImageType* pos = new VectorImageType(szXnew, 1);
 
   // create the interpolation maps
-  for (unsigned int x = 0; x < szXnew; ++x) 
+  for (unsigned int x = 0; x < szXnew; ++x)
     {
     // perform the interpolation
     pos->setValue(x,0, (T)x*dx);
@@ -645,7 +645,7 @@ void VectorImageUtils< T, VImageDimension >::resize( const VectorImageType1D* im
 
   // interpolate
   VectorImageUtils< T, VImageDimension >::interpolate(imIn, pos, imOut);
-  
+
   // clean up
   delete pos;
 
@@ -1036,9 +1036,8 @@ void VectorImageUtils< T, VImageDimension >::applyAffineITK(typename ITKAffineTr
   resampler->SetOutputDirection( itkIm->GetDirection() );
   resampler->SetDefaultPixelValue( defaultPixelValue );
 
-  for (unsigned int d = 0; d < dim; ++d) 
+  for (unsigned int d = 0; d < dim; ++d)
     {
-    
     // convert to an itk image
     typename ITKImage<T,VImageDimension>::Type::Pointer itkDim = VectorImageUtils< T, VImageDimension>::convertDimToITK(imIn, d);
     itkDim->SetOrigin(origin);
@@ -1050,7 +1049,7 @@ void VectorImageUtils< T, VImageDimension >::applyAffineITK(typename ITKAffineTr
     // copy the data into the output
     typename ITKImage<T,VImageDimension>::Type::Pointer itkDimTrans = resampler->GetOutput();
     VectorImageUtils< T, VImageDimension>::convertDimFromITK(itkDimTrans, d, imOut);
-  }
+    }
 
 }
 
@@ -1267,8 +1266,6 @@ template <class T, unsigned int VImageDimension >
 typename ITKVectorImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension >::convertToITK( const VectorImageType1D* im)
 {
 
-  std::cout<<"Convert To ITK 1D"<<std::endl;
-
   if ( VImageDimension != 1 )
     {
     throw std::runtime_error( "convertToITK1D only for 1D images." );
@@ -1305,9 +1302,9 @@ typename ITKVectorImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, V
   outImage->Allocate();
 
   // Copy in the data
-  for (unsigned int x = 0; x < szX; ++x) 
+  for (unsigned int x = 0; x < szX; ++x)
     {
-    for (unsigned int d = 0; d < dim; ++d) 
+    for (unsigned int d = 0; d < dim; ++d)
       {
 
       typename ITKVectorImage<T,VImageDimension>::Type::IndexType px;
@@ -1317,7 +1314,7 @@ typename ITKVectorImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, V
       outImage->SetPixel(px, im->getValue(x,d));
       }
     }
-  
+
   // Set origin and direction
   outImage->SetOrigin(im->getOrigin());
   outImage->SetDirection(im->getDirection());
@@ -1531,18 +1528,18 @@ typename ITKImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageD
     idx[0] = x;
 
     typename ITKImage<T,VImageDimension>::Type::PixelType px;
-      
+
     px = im->getValue(x,dimIn);
-      
+
     itkIm->SetPixel(idx, px);
     }
 
   // Set origin and direction
   itkIm->SetOrigin(convertITKVectorOrigin(im->getOrigin()));
   itkIm->SetDirection(convertITKVectorDirection(im->getDirection()));
-  
+
   return itkIm;
-  
+
 }
 
 //
@@ -1722,9 +1719,9 @@ VectorImageUtils< T, VImageDimension >::convertFromITK( typename ITKVectorImage<
   VectorImageType* outImage = new VectorImageType(szX, dim);
   outImage->setSpaceX( space[0] );
 
-  for (unsigned int x = 0; x < szX; ++x) 
+  for (unsigned int x = 0; x < szX; ++x)
     {
-    for (unsigned int d = 0; d < dim; ++d) 
+    for (unsigned int d = 0; d < dim; ++d)
       {
       typename ITKVectorImage<T,VImageDimension>::Type::IndexType idx;
       idx[0] = x;
@@ -1733,11 +1730,11 @@ VectorImageUtils< T, VImageDimension >::convertFromITK( typename ITKVectorImage<
       outImage->setValue(x,d, dCurrentElement );
       }
     }
-  
+
   // Set origin and direction
   outImage->setOrigin(itkIm->GetOrigin());
   outImage->setDirection(itkIm->GetDirection());
-  
+
   return outImage;
 }
 
@@ -1867,7 +1864,7 @@ void VectorImageUtils< T, VImageDimension >::convertDimFromITK( typename ITKImag
 #endif
 
   // copy the data
-  for (unsigned int x = 0; x < szX; ++x) 
+  for (unsigned int x = 0; x < szX; ++x)
     {
 
     typename ITKImage<T,VImageDimension>::Type::IndexType px;
@@ -2146,11 +2143,11 @@ bool VectorImageUtils< T, VImageDimension >::writeFileITK(const VectorImageType1
   vectorImageWriter->UseCompressionOn();
 
   // Try to write the image out
-  try 
+  try
     {
     vectorImageWriter->Update();
-  } 
-  catch( itk::ExceptionObject & err ) 
+  }
+  catch( itk::ExceptionObject & err )
     {
     std::cerr << "VectorImage2DUtils::writeFileITK -> Writing Failed" << std::endl;
     std::cerr << err << std::endl;
@@ -2470,7 +2467,7 @@ template <class T, unsigned int VImageDimension >
 bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK1D( const std::vector< VectorImageType* >* ims, std::string filename)
 {
   // see if we're dealing with one or more dimensions
-  if ( (*ims)[0]->getDim() == 1) 
+  if ( (*ims)[0]->getDim() == 1)
     {
 
     typedef itk::Image<T, 3> ITKTimeImage1D;
@@ -2512,7 +2509,7 @@ bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK1D( cons
       {
       for (unsigned int x = 0; x < szX; ++x) 
         {
-        typename ITKTimeImage2D::IndexType px;
+        typename ITKTimeImage1D::IndexType px;
         px[0] = x;
         px[1] = t;
         
@@ -2533,7 +2530,7 @@ bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK1D( cons
       } 
     catch( itk::ExceptionObject & err ) 
       {
-      std::cerr << "VectorImage2DUtils::writeTimeDependantImagesITK -> Writing Failed" << std::endl;
+      std::cerr << "VectorImage1DUtils::writeTimeDependantImagesITK -> Writing Failed" << std::endl;
       std::cerr << err << std::endl;
       return false;
       }
@@ -2554,7 +2551,7 @@ bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK1D( cons
     unsigned int dim = (*ims)[0]->getDim();
 
     // Set up region
-    typename ITKTimeImage2D::IndexType start;
+    typename ITKTimeImage1D::IndexType start;
     start[0] = 0;
     start[1] = 0;
     start[2] = 0;
@@ -2581,11 +2578,11 @@ bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK1D( cons
     itkImage->Allocate();
 
     // Copy in the data
-    for (unsigned int t = 0; t < ims->size(); ++t) 
+    for (unsigned int t = 0; t < ims->size(); ++t)
       {
-      for (unsigned int x = 0; x < szX; ++x) 
+      for (unsigned int x = 0; x < szX; ++x)
         {
-        for (unsigned int d = 0; d < dim; ++d) 
+        for (unsigned int d = 0; d < dim; ++d)
           {
 
           typename ITKTimeImage1D::IndexType px;
@@ -2597,7 +2594,7 @@ bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK1D( cons
           }
         }
       }
-    
+
     // Initialize ITK writer
     typename ITKTimeImageWriter1D::Pointer imageWriter = ITKTimeImageWriter1D::New();
     imageWriter->SetFileName(filename.c_str());
@@ -2608,14 +2605,14 @@ bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK1D( cons
     try
       {
       imageWriter->Update();
-      } 
+      }
     catch( itk::ExceptionObject & err ) 
       {
-      std::cerr << "VectorImage2DUtils::writeTimeDependantImagesITK -> Writing Failed" << std::endl;
+      std::cerr << "VectorImage1DUtils::writeTimeDependantImagesITK -> Writing Failed" << std::endl;
       std::cerr << err << std::endl;
       return false;
       }
-    
+
     }
 
   return true;

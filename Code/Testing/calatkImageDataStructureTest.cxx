@@ -37,10 +37,10 @@ int main(int argc, char **argv)
   //
   // Test 1D
   //
-  
+
   // create a 1D vector array
-  CALATK::VectorArray< double, 1 > array1D(10,10,1);
-  
+  CALATK::VectorArray< double, 1 > array1D(10,1);
+
   // create a 1D image
   CALATK::VectorImage< int, 1> image(10,1);
   

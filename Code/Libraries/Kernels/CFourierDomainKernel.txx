@@ -176,49 +176,46 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
 // doing the loop the slow way because fftw
 // requires row-major formatting
 
-  for ( unsigned int d = 0; d < dim; ++d )
+  for ( unsigned int x = 0; x < szX; ++x )
     {
-    for ( unsigned int x = 0; x < szX; ++x ) 
-      {  
-      // add to fftw matrix
-      fftwData->in[x] = pVecImage->getValue(x,d);
-      }
-      
-    //
-    // do fourier domain operations
-    //
-  
-    // tranform forward
-    CFFTDataType<T>::FFTExecute( fftwData->fwd );
-  
-    // TODO: Assumption here is that we have a self-adjoint operator
-    // TODO: need to support complex cases and do it really with the actual adjoint
-    // multiply by L^2
-    for ( unsigned int x = 0; x < szX; ++x ) 
-      {
-      T lVal = pL->getValue(x,0);
-      
-      fftwData->out[x][0] = fftwData->out[x][0] * lVal;
-      fftwData->out[x][1] = fftwData->out[x][1] * lVal;
-      }
-  
-    // transform backward
-    CFFTDataType<T>::FFTExecute( fftwData->bck );
+    // add to fftw matrix
+    fftwData->in[x] = pVecImage->getValue(x, 0);
+    }
 
-    //
-    // convolve to get result and convert back to our format
-    //
-  
-    for ( unsigned int x = 0; x < szX; ++x ) 
-      {
-      
-      // scale the fft results and calculate gradient
-      T val = (fftwData->in[x])/szX;
-      
-      pVecImage->setValue(x,d,val);
-      }
+  //
+  // do fourier domain operations
+  //
 
-    } // loop over dimension
+  // tranform forward
+  CFFTDataType<T>::FFTExecute( fftwData->fwd );
+
+  // TODO: Assumption here is that we have a self-adjoint operator
+  // TODO: need to support complex cases and do it really with the actual adjoint
+  // multiply by L^2
+  for ( unsigned int x = 0; x < szX; ++x )
+    {
+    T lVal = pL->getValue(x,0);
+
+    fftwData->out[x][0] = fftwData->out[x][0] * lVal;
+    fftwData->out[x][1] = fftwData->out[x][1] * lVal;
+    }
+
+  // transform backward
+  CFFTDataType<T>::FFTExecute( fftwData->bck );
+
+  //
+  // convolve to get result and convert back to our format
+  //
+
+  for ( unsigned int x = 0; x < szX; ++x )
+    {
+
+    // scale the fft results and calculate gradient
+    T val = (fftwData->in[x])/szX;
+
+    pVecImage->setValue(x,0,val);
+    }
+
 }
 
 template <class T, unsigned int VImageDimension >

@@ -98,7 +98,7 @@ public:
   static void identityMap(VectorFieldType1D* fld);
   
   /**
-   * 2D Function that applys a map to an image
+   * 1D Function that applys a map to an image
    *
    * @param map - the map to apply to im
    * @param imIn - the image to be pulled
@@ -155,7 +155,7 @@ public:
     * @param imOut - image that will hold the divergence of the vector field
     */
   static void computeDivergence( const VectorFieldType1D* fld, VectorImageType1D* imOut );
-  
+
   /**
     * 2D Function to compute the divergence of a vector field
     *
@@ -171,7 +171,7 @@ public:
     * @param imOut - image that will hold the divergence of the vector field
     */
   static void computeDivergence( const VectorFieldType3D* fld, VectorImageType3D* imOut );
-  
+
   /**
    * 1D function computing the gradient of an individual dimension of an image using central differences
    *
@@ -220,7 +220,7 @@ public:
   static typename ITKDeformationField<T,VImageDimension>::Type::Pointer mapToITKDeformationField( VectorFieldType3D* inMap);
    
    /**
-   * 2D Function that applies an ITKAffineTransform to an identity map, resulting
+   * 1D Function that applies an ITKAffineTransform to an identity map, resulting
    * in a displacement map for the transformation
    *
    * @param itkAffine - the ITK affine transformation
@@ -246,7 +246,6 @@ public:
    */
   static void affineITKtoMap( typename ITKAffineTransform<T,3>::Type* itkAffine, VectorFieldType* mapOut);
 
-  
   /**
    * 2D Function that directly applies the affine transformation matrix to a single
    * set of coordinates.
@@ -269,7 +268,7 @@ public:
 
 
   static bool writeTimeDependantImagesITK( const std::vector< VectorFieldType* >* ims, std::string filename);
-  
+
 };
 
 #include "VectorFieldUtils.txx"
