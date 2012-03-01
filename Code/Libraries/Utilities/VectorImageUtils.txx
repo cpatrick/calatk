@@ -1007,7 +1007,7 @@ void VectorImageUtils< T, VImageDimension>::multiplyVectorByVectorInnerProductEl
 // apply ITK affine 1D
 //
 template <class T, unsigned int VImageDimension >
-void VectorImageUtils< T, VImageDimension >::applyAffineITK(typename ITKAffineTransform<T,1>::Type::Pointer itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue, T originX)
+void VectorImageUtils< T, VImageDimension >::applyAffineITK(typename ITKAffineTransform<T,1>::Type* itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue, T originX)
 {
 
   // TODO: Check that this method works appropriately
@@ -1057,7 +1057,7 @@ void VectorImageUtils< T, VImageDimension >::applyAffineITK(typename ITKAffineTr
 // apply ITK affine 2D
 //
 template <class T, unsigned int VImageDimension >
-void VectorImageUtils< T, VImageDimension >::applyAffineITK(typename ITKAffineTransform<T,2>::Type::Pointer itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue, T originX, T originY)
+void VectorImageUtils< T, VImageDimension >::applyAffineITK(typename ITKAffineTransform<T,2>::Type* itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue, T originX, T originY)
 {
 
   // TODO: Check that this method works appropriately
@@ -1110,7 +1110,7 @@ void VectorImageUtils< T, VImageDimension >::applyAffineITK(typename ITKAffineTr
 // apply ITK affine 3D
 //
 template <class T, unsigned int VImageDimension >
-void VectorImageUtils< T, VImageDimension >::applyAffineITK(typename ITKAffineTransform<T,3>::Type::Pointer itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue, T originX, T originY, T originZ ) {
+void VectorImageUtils< T, VImageDimension >::applyAffineITK(typename ITKAffineTransform<T,3>::Type* itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue, T originX, T originY, T originZ ) {
 
   unsigned int dim = imIn->getDim();
 
@@ -2055,7 +2055,7 @@ convertITKDirectionToVector( typename ITKImage<T,VImageDimension>::Type::Directi
 // writeCommaSeparated
 //
 template <class T, unsigned int VImageDimension >
-bool VectorImageUtils< T, VImageDimension >::writeTextFile(VectorImageType* im, std::string filename) {
+bool VectorImageUtils< T, VImageDimension >::writeTextFile(VectorImageType* im, const std::string& filename) {
 
 
   std::ofstream writer;
@@ -2130,7 +2130,7 @@ bool VectorImageUtils< T, VImageDimension >::writeTextFile(VectorImageType* im, 
 // writeFileITK, 1D
 //
 template <class T, unsigned int VImageDimension >
-bool VectorImageUtils< T, VImageDimension >::writeFileITK(const VectorImageType1D* im, std::string filename)
+bool VectorImageUtils< T, VImageDimension >::writeFileITK(const VectorImageType1D* im, const std::string& filename)
 {
   // Initialize ITK image
   typename ITKVectorImage<T,VImageDimension>::Type::Pointer itkImage;
@@ -2163,7 +2163,7 @@ bool VectorImageUtils< T, VImageDimension >::writeFileITK(const VectorImageType1
 // writeFileITK, 2D
 //
 template <class T, unsigned int VImageDimension >
-bool VectorImageUtils< T, VImageDimension >::writeFileITK(const VectorImageType2D* im, std::string filename)
+bool VectorImageUtils< T, VImageDimension >::writeFileITK(const VectorImageType2D* im, const std::string& filename)
 {
   
   //
@@ -2376,10 +2376,10 @@ bool VectorImageUtils< T, VImageDimension >::writeFileITK(const VectorImageType2
     vectorImageWriter->UseCompressionOn();
 
     // Try to write the image out
-    try 
+    try
       {
       vectorImageWriter->Update();
-    } 
+      }
     catch( itk::ExceptionObject & err ) 
       {
       std::cerr << "VectorImage2DUtils::writeFileITK -> Writing Failed" << std::endl;
@@ -2396,7 +2396,7 @@ bool VectorImageUtils< T, VImageDimension >::writeFileITK(const VectorImageType2
 // writeFileITK, 3D
 //
 template <class T, unsigned int VImageDimension >
-bool VectorImageUtils< T, VImageDimension >::writeFileITK( const VectorImageType3D* im, std::string filename)
+bool VectorImageUtils< T, VImageDimension >::writeFileITK( const VectorImageType3D* im, const std::string& filename)
 {
 
   //
@@ -2464,7 +2464,7 @@ bool VectorImageUtils< T, VImageDimension >::writeFileITK( const VectorImageType
 // writeTimeDependantImagesITK, 1D
 //
 template <class T, unsigned int VImageDimension >
-bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK1D( const std::vector< VectorImageType* >* ims, std::string filename)
+bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK1D( const std::vector< VectorImageType* >* ims, const std::string& filename)
 {
   // see if we're dealing with one or more dimensions
   if ( (*ims)[0]->getDim() == 1)
@@ -2623,7 +2623,7 @@ bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK1D( cons
 // writeTimeDependantImagesITK, 2D
 //
 template <class T, unsigned int VImageDimension >
-bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK2D( const std::vector< VectorImageType* >* ims, std::string filename)
+bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK2D( const std::vector< VectorImageType* >* ims, const std::string& filename)
 {
   // see if we're dealing with one or more dimensions
   if ( (*ims)[0]->getDim() == 1) 
@@ -2797,7 +2797,7 @@ bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK2D( cons
 // writeTimeDependentImagesITK, 3D
 //
 template <class T, unsigned int VImageDimension >
-bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK3D( const std::vector< VectorImageType*> * ims, std::string filename)
+bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK3D( const std::vector< VectorImageType*> * ims, const std::string& filename)
 {
 
   // see if we're dealing with one or two dimensions
@@ -2988,7 +2988,7 @@ bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK3D( cons
 // writeTimeDependentImagesITK, 2D/3D
 //
 template <class T, unsigned int VImageDimension >
-bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( const std::vector< VectorImageType*>* ims, std::string filename)
+bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( const std::vector< VectorImageType*>* ims,const std::string& filename)
 {
   switch ( VImageDimension )
     {
@@ -3012,7 +3012,7 @@ bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( const 
 //
 template <class T, unsigned int VImageDimension >
 typename VectorImageUtils< T, VImageDimension >::VectorImageType*
-VectorImageUtils< T, VImageDimension >::readFileITK(std::string filename)
+VectorImageUtils< T, VImageDimension >::readFileITK(const std::string& filename)
 {
 
   // Initialize ITK reader
@@ -3044,7 +3044,7 @@ VectorImageUtils< T, VImageDimension >::readFileITK(std::string filename)
 // read Affine ITK
 //
 template <class T, unsigned int VImageDimension >
-typename ITKAffineTransform<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension >::readAffineTransformITK(std::string filename) {
+typename ITKAffineTransform<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageDimension >::readAffineTransformITK(const std::string& filename) {
 
   // initialize the reader
   itk::TransformFileReader::Pointer reader = itk::TransformFileReader::New();

@@ -372,7 +372,7 @@ public:
    * @param originZ - the z coordinate of the origin (default = 0)
    * @param defaultPixelValue - the value for background pixels
    */
-  static void applyAffineITK(typename ITKAffineTransform<T,1>::Type::Pointer itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue = 0, T originX = 0);
+  static void applyAffineITK(typename ITKAffineTransform<T,1>::Type* itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue = 0, T originX = 0);
 
 
   /**
@@ -386,7 +386,7 @@ public:
    * @param originZ - the z coordinate of the origin (default = 0)
    * @param defaultPixelValue - the value for background pixels
    */
-  static void applyAffineITK(typename ITKAffineTransform<T,2>::Type::Pointer itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue = 0, T originX = 0, T originY = 0);
+  static void applyAffineITK(typename ITKAffineTransform<T,2>::Type* itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue = 0, T originX = 0, T originY = 0);
 
   /**
    * Method that applies an ITK affine transformation to a 3D VectorImageType
@@ -399,7 +399,7 @@ public:
    * @param originZ - the z coordinate of the origin (default = 0)
    * @param defaultPixelValue - the value for background pixels
    */
-  static void applyAffineITK(typename ITKAffineTransform<T,3>::Type::Pointer itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue = 0, T originX = 0, T originY = 0, T originZ = 0);
+  static void applyAffineITK(typename ITKAffineTransform<T,3>::Type* itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue = 0, T originX = 0, T originY = 0, T originZ = 0);
 
 
   /**
@@ -589,7 +589,7 @@ public:
    * @param im - the image to write
    * @param filename - the name of the file to write to
    */
-  static bool writeTextFile(VectorImageType* im, std::string filename);
+  static bool writeTextFile(VectorImageType* im, const std::string& filename);
 
   /**
    * 1D Method that uses ITK to write the image out
@@ -597,7 +597,7 @@ public:
    * @param im - the image to write
    * @param filename - the name of the file to write to
    */
-  static bool writeFileITK(const VectorImageType1D* im, std::string filename);
+  static bool writeFileITK(const VectorImageType1D* im, const std::string& filename);
 
   /**
    * 2D Method that uses ITK to write the image out
@@ -605,7 +605,7 @@ public:
    * @param im - the image to write
    * @param filename - the name of the file to write to
    */
-  static bool writeFileITK(const VectorImageType2D* im, std::string filename);
+  static bool writeFileITK(const VectorImageType2D* im, const std::string& filename);
 
   /**
    * 3D Method that uses ITK to write the image out
@@ -613,7 +613,7 @@ public:
    * @param im - the image to write
    * @param filename - the name of the file to write to
    */
-  static bool writeFileITK(const VectorImageType3D* im, std::string filename);
+  static bool writeFileITK(const VectorImageType3D* im, const std::string& filename);
 
   /**
    * 2D Method that uses ITK to write the time dependant image set out
@@ -622,7 +622,7 @@ public:
    * @param numTimes - the number of time discretized images
    * @param filename - the name of the file to write to
    */
-  static bool writeTimeDependantImagesITK1D( const std::vector< VectorImageType* >* ims, std::string filename);
+  static bool writeTimeDependantImagesITK1D( const std::vector< VectorImageType* >* ims, const std::string& filename);
 
   /**
    * 2D Method that uses ITK to write the time dependant image set out
@@ -631,7 +631,7 @@ public:
    * @param numTimes - the number of time discretized images
    * @param filename - the name of the file to write to
    */
-  static bool writeTimeDependantImagesITK2D( const std::vector< VectorImageType* >* ims, std::string filename);
+  static bool writeTimeDependantImagesITK2D( const std::vector< VectorImageType* >* ims, const std::string& filename);
 
   /**
    * 3D Method that uses ITK to write the time dependant image set out
@@ -640,7 +640,7 @@ public:
    * @param numTimes - the number of time discretized images
    * @param filename - the name of the file to write to
    */
-  static bool writeTimeDependantImagesITK3D( const std::vector< VectorImageType* >* ims, std::string filename);
+  static bool writeTimeDependantImagesITK3D( const std::vector< VectorImageType* >* ims, const std::string& filename);
 
   /**
    * Method that uses ITK to write the time dependant image set out
@@ -649,21 +649,21 @@ public:
    * @param numTimes - the number of time discretized images
    * @param filename - the name of the file to write to
    */
-  static bool writeTimeDependantImagesITK( const std::vector< VectorImageType* >* ims, std::string filename);
+  static bool writeTimeDependantImagesITK( const std::vector< VectorImageType* >* ims, const std::string& filename);
 
   /**
    * Method that uses ITK to read a file in
    *
    * @param filename - the name of the file to write to
    */
-  static VectorImageType* readFileITK(std::string filename);
+  static VectorImageType* readFileITK(const std::string& filename);
 
   /**
    * Method that reads an ITK affine transform from a file
    *
    * @param filename - the name of the file to read
    */
-  static typename ITKAffineTransform<T,VImageDimension>::Type::Pointer readAffineTransformITK(std::string filename);
+  static typename ITKAffineTransform<T,VImageDimension>::Type::Pointer readAffineTransformITK(const std::string& filename);
 
 };
 
