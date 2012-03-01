@@ -1048,7 +1048,7 @@ void VectorImageUtils< T, VImageDimension >::applyAffineITK(typename ITKAffineTr
 
     // copy the data into the output
     typename ITKImage<T,VImageDimension>::Type::Pointer itkDimTrans = resampler->GetOutput();
-    VectorImageUtils< T, VImageDimension>::convertDimFromITK(itkDimTrans, d, imOut);
+    VectorImageUtils< T, VImageDimension>::convertDimFromITK(itkDimTrans.GetPointer(), d, imOut);
     }
 
 }
@@ -1101,7 +1101,7 @@ void VectorImageUtils< T, VImageDimension >::applyAffineITK(typename ITKAffineTr
 
     // copy the data into the output
     typename ITKImage<T,VImageDimension>::Type::Pointer itkDimTrans = resampler->GetOutput();
-    VectorImageUtils< T, VImageDimension>::convertDimFromITK(itkDimTrans, d, imOut);
+    VectorImageUtils< T, VImageDimension>::convertDimFromITK(itkDimTrans.GetPointer(), d, imOut);
   }
 
 }
@@ -1155,7 +1155,7 @@ void VectorImageUtils< T, VImageDimension >::applyAffineITK(typename ITKAffineTr
 
     // copy the data into the output
     typename ITKImage<T,VImageDimension>::Type::Pointer itkDimTrans = resampler->GetOutput();
-    VectorImageUtils< T, VImageDimension >::convertDimFromITK(itkDimTrans, d, imOut);
+    VectorImageUtils< T, VImageDimension >::convertDimFromITK(itkDimTrans.GetPointer(), d, imOut);
   }
 
 }
@@ -1702,7 +1702,7 @@ typename ITKImage<T,VImageDimension>::Type::Pointer VectorImageUtils< T, VImageD
 //
 template <class T, unsigned int VImageDimension >
 typename VectorImageUtils< T, VImageDimension >::VectorImageType*
-VectorImageUtils< T, VImageDimension >::convertFromITK( typename ITKVectorImage<T,1>::Type::Pointer itkIm)
+VectorImageUtils< T, VImageDimension >::convertFromITK( typename ITKVectorImage<T,1>::Type* itkIm)
 {
   if ( VImageDimension!= 1 )
     {
@@ -1744,7 +1744,7 @@ VectorImageUtils< T, VImageDimension >::convertFromITK( typename ITKVectorImage<
 //
 template <class T, unsigned int VImageDimension >
 typename VectorImageUtils< T, VImageDimension >::VectorImageType*
-VectorImageUtils< T, VImageDimension >::convertFromITK( typename ITKVectorImage<T,2>::Type::Pointer itkIm)
+VectorImageUtils< T, VImageDimension >::convertFromITK( typename ITKVectorImage<T,2>::Type* itkIm)
 {
   
   if ( VImageDimension!= 2 )
@@ -1793,7 +1793,7 @@ VectorImageUtils< T, VImageDimension >::convertFromITK( typename ITKVectorImage<
 //
 template <class T, unsigned int VImageDimension >
 typename VectorImageUtils< T, VImageDimension>::VectorImageType*
-VectorImageUtils< T, VImageDimension >::convertFromITK( typename ITKVectorImage<T,3>::Type::Pointer itkIm)
+VectorImageUtils< T, VImageDimension >::convertFromITK( typename ITKVectorImage<T,3>::Type* itkIm)
 {
 
   if ( VImageDimension!= 3 )
@@ -1846,7 +1846,7 @@ VectorImageUtils< T, VImageDimension >::convertFromITK( typename ITKVectorImage<
 // from ITK (dim), 1D
 //
 template <class T, unsigned int VImageDimension >
-void VectorImageUtils< T, VImageDimension >::convertDimFromITK( typename ITKImage<T,1>::Type::Pointer itkIm, unsigned int dimIn, VectorImageType1D* imOut)
+void VectorImageUtils< T, VImageDimension >::convertDimFromITK( typename ITKImage<T,1>::Type* itkIm, unsigned int dimIn, VectorImageType1D* imOut)
 {
 
   unsigned int szX = imOut->getSizeX();
@@ -1886,7 +1886,7 @@ void VectorImageUtils< T, VImageDimension >::convertDimFromITK( typename ITKImag
 // from ITK (dim), 2D
 //
 template <class T, unsigned int VImageDimension >
-void VectorImageUtils< T, VImageDimension >::convertDimFromITK( typename ITKImage<T,2>::Type::Pointer itkIm, unsigned int dimIn, VectorImageType2D* imOut)
+void VectorImageUtils< T, VImageDimension >::convertDimFromITK( typename ITKImage<T,2>::Type* itkIm, unsigned int dimIn, VectorImageType2D* imOut)
 {
 
   unsigned int szX = imOut->getSizeX();
@@ -1931,7 +1931,7 @@ void VectorImageUtils< T, VImageDimension >::convertDimFromITK( typename ITKImag
 // from ITK (dim), 3D
 //
 template <class T, unsigned int VImageDimension >
-void VectorImageUtils< T, VImageDimension >::convertDimFromITK( typename ITKImage<T,3>::Type::Pointer itkIm, unsigned int dimIn, VectorImageType3D* imOut)
+void VectorImageUtils< T, VImageDimension >::convertDimFromITK( typename ITKImage<T,3>::Type* itkIm, unsigned int dimIn, VectorImageType3D* imOut)
 {
 
   unsigned int szX = imOut->getSizeX();
@@ -3037,7 +3037,7 @@ VectorImageUtils< T, VImageDimension >::readFileITK(const std::string& filename)
     }
 
   // Convert to VectorImageType and return
-  return VectorImageUtils< T, VImageDimension >::convertFromITK(itkImage);
+  return VectorImageUtils< T, VImageDimension >::convertFromITK(itkImage.GetPointer());
 }
 
 //

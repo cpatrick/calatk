@@ -490,7 +490,7 @@ public:
    *
    * @param itkIm - the input image
    */
-  static VectorImageType* convertFromITK( typename ITKVectorImage<T,1>::Type::Pointer itkIm);
+  static VectorImageType* convertFromITK( typename ITKVectorImage<T,1>::Type* itkIm);
 
   /**
    * Method that takes an itk::Image<T, 4> and returns a VectorImageType.
@@ -500,7 +500,7 @@ public:
    *
    * @param itkIm - the input image
    */
-  static VectorImageType* convertFromITK( typename ITKVectorImage<T,2>::Type::Pointer itkIm);
+  static VectorImageType* convertFromITK( typename ITKVectorImage<T,2>::Type* itkIm);
 
   /**
    * Method that takes an itk::Image<T, 4> and returns a VectorImageType.
@@ -510,7 +510,7 @@ public:
    *
    * @param itkIm - the input image
    */
-  static VectorImageType* convertFromITK( typename ITKVectorImage<T,3>::Type::Pointer itkIm);
+  static VectorImageType* convertFromITK( typename ITKVectorImage<T,3>::Type* itkIm);
 
   /**
    * 1D Method that converts a non-vector ITK image into a single dimension
@@ -520,7 +520,7 @@ public:
    * @param dim - the dimension in which to place the converted image
    * @param imOut - the VectorImageType to be updated
    */
-  static void convertDimFromITK( typename ITKImage<T,1>::Type::Pointer itkIm, unsigned int dim, VectorImageType1D* imOut);
+  static void convertDimFromITK( typename ITKImage<T,1>::Type* itkIm, unsigned int dim, VectorImageType1D* imOut);
 
   /**
    * 2D Method that converts a non-vector ITK image into a single dimension
@@ -530,7 +530,7 @@ public:
    * @param dim - the dimension in which to place the converted image
    * @param imOut - the VectorImageType to be updated
    */
-  static void convertDimFromITK( typename ITKImage<T,2>::Type::Pointer itkIm, unsigned int dim, VectorImageType2D* imOut);
+  static void convertDimFromITK( typename ITKImage<T,2>::Type* itkIm, unsigned int dim, VectorImageType2D* imOut);
 
   /**
    * 3D Method that converts a non-vector ITK image into a single dimension
@@ -540,7 +540,7 @@ public:
    * @param dim - the dimension in which to place the converted image
    * @param imOut - the VectorImageType to be updated
    */
-  static void convertDimFromITK( typename ITKImage<T,3>::Type::Pointer itkIm, unsigned int dim, VectorImageType3D* imOut);
+  static void convertDimFromITK( typename ITKImage<T,3>::Type* itkIm, unsigned int dim, VectorImageType3D* imOut);
 
   /**
    * Method that converts an ITKVectorImage3D's origin (which has 4 dimensions)
