@@ -46,17 +46,17 @@ public:
   /* some useful typedefs */
   typedef typename TState::TFloat T;
 
-  typedef typename Superclass::VectorImageType VectorImageType;
-  typedef typename Superclass::VectorFieldType VectorFieldType;
-  typedef CKernel< T, TState::VImageDimension >* ptrKernelType;
+  typedef typename Superclass::VectorImageType  VectorImageType;
+  typedef typename Superclass::VectorFieldType  VectorFieldType;
+  typedef CKernel< T, TState::VImageDimension > KernelType;
 
   CLDDMMGeometricMetamorphosisRegistration();
   ~CLDDMMGeometricMetamorphosisRegistration();
 
   const VectorImageType* GetImageT( T dTime );
 
-  void SetMaskKernelPointer( ptrKernelType ptrKernel );
-  ptrKernelType GetMaskKernelPointer();
+  void SetMaskKernelPointer( KernelType * ptrKernel );
+  KernelType * GetMaskKernelPointer();
 
   SetMacro( MaskKernel, std::string );
   GetMacro( MaskKernel, std::string );
@@ -71,12 +71,11 @@ protected:
 
 private:
 
-  std::string m_MaskKernel;
+  std::string       m_MaskKernel;
   const std::string DefaultMaskKernel;
-  bool m_ExternallySetMaskKernel;
+  bool              m_ExternallySetMaskKernel;
 
-  ptrKernelType m_ptrMaskKernel;
-  bool m_bSetDefaultMaskKernel;
+  typename KernelType::Pointer m_ptrMaskKernel;
 };
 
 #include "CLDDMMGeometricMetamorphosisRegistration.txx"

@@ -47,8 +47,6 @@ public:
   typedef CStateInitialImageMomentum   TState;
 
   typedef typename Superclass::VectorImageType VectorImageType;
-  typedef VectorImageType*                     VectorImagePointerType;
-  typedef const VectorImageType*               ConstVectorImagePointerType;
 
   /**
    * Empty constructor
@@ -60,7 +58,7 @@ public:
    * Does not copy the data, just stores the pointers to it;
    * Will destroy the data in Destructor.
    */
-  CStateInitialImageMomentum( VectorImagePointerType pInitialImage, VectorImagePointerType pInitialMomentum );
+  CStateInitialImageMomentum( VectorImageType * pInitialImage, VectorImageType * pInitialMomentum );
 
   /**
     * copy constructor, creation of the image and momentum for the first time, need to allocate memory
@@ -95,21 +93,21 @@ public:
 
   CStateInitialImageMomentum operator*( const T & p) const;
 
-  VectorImagePointerType GetPointerToInitialImage() const;
-  VectorImagePointerType GetPointerToInitialMomentum() const;
+  VectorImageType * GetPointerToInitialImage() const;
+  VectorImageType * GetPointerToInitialMomentum() const;
 
-  void SetPointerToInitialImage( ConstVectorImagePointerType ptrImage );
-  void SetPointerToInitialMomentum( ConstVectorImagePointerType ptrMomentum );
+  void SetPointerToInitialImage( const VectorImageType * ptrImage );
+  void SetPointerToInitialMomentum( const VectorImageType * ptrMomentum );
 
   T SquaredNorm();
 
 protected:
   void ClearDataStructure();
-  void CopyDataStructure( ConstVectorImagePointerType ptrImage, ConstVectorImagePointerType ptrMomentum );
+  void CopyDataStructure( VectorImageType * ptrImage, VectorImageType * ptrMomentum );
 
 private:
-  VectorImagePointerType m_ptrInitialImage;
-  VectorImagePointerType m_ptrInitialMomentum;
+  typename VectorImageType::Pointer m_ptrInitialImage;
+  typename VectorImageType::Pointer m_ptrInitialMomentum;
 
 };
 

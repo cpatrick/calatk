@@ -283,14 +283,14 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
   }
 
   // create four additional maps to hold the solution
-  VectorFieldType* ptrMapIn = new VectorFieldType( ptrMap );
-  VectorFieldType* ptrMapTmp = new VectorFieldType( ptrMap );
-  VectorFieldType* ptrMapOut = new VectorFieldType( ptrMap );
-  VectorFieldType* ptrCurrentVelocity = new VectorFieldType( ptrMap );
+  typename VectorFieldType::Pointer ptrMapIn = new VectorFieldType( ptrMap );
+  typename VectorFieldType::Pointer ptrMapTmp = new VectorFieldType( ptrMap );
+  typename VectorFieldType::Pointer ptrMapOut = new VectorFieldType( ptrMap );
+  typename VectorFieldType::Pointer ptrCurrentVelocity = new VectorFieldType( ptrMap );
 
   // create two new images to hold the image and the adjoint
-  VectorImageType* ptrCurrentP = new VectorImageType( m_ptrCurrentP );
-  VectorImageType* ptrCurrentI = new VectorImageType( m_ptrCurrentI );
+  typename VectorImageType::Pointer ptrCurrentP = new VectorImageType( m_ptrCurrentP );
+  typename VectorImageType::Pointer ptrCurrentI = new VectorImageType( m_ptrCurrentI );
 
   // get the map between the two timepoints
   LDDMMUtils< T, TState::VImageDimension>::identityMap( ptrMapIn );
@@ -339,14 +339,6 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
         this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, dTimeTo - dCurrentTime );
         ptrMap->copy( ptrMapOut );
 
-        delete ptrMapOut;
-        delete ptrMapTmp;
-        delete ptrMapIn;
-        delete ptrCurrentVelocity;
-
-        delete ptrCurrentI;
-        delete ptrCurrentP;
-
         std::cout << "Overall time evolved for = " << dTimeEvolvedFor << std::endl;
 
         return; // done because everything was in this interval
@@ -373,14 +365,6 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
         ptrMap->copy( ptrMapOut );
 
         std::cout << "Overall time evolved for = " << dTimeEvolvedFor << std::endl;
-
-        delete ptrMapOut;
-        delete ptrMapTmp;
-        delete ptrMapIn;
-        delete ptrCurrentVelocity;
-
-        delete ptrCurrentI;
-        delete ptrCurrentP;
 
         return; // done because everything was in this interval
       }
@@ -553,7 +537,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeInitial
 
   unsigned int uiNrOfTimePoints = m_vecTimeDiscretization.size();
 
-  VectorImageType* ptrCurrentAdjointDifference = new VectorImageType( ptrI0 );
+  typename VectorImageType::Pointer ptrCurrentAdjointDifference = new VectorImageType( ptrI0 );
 
   this->m_pMetric->GetAdjointMatchingDifferenceImage( ptrCurrentAdjointDifference, ptrI0, ptrI1 );
   ptrCurrentAdjointDifference->multConst( m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecWeights[ 0 ] );
@@ -570,8 +554,6 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeInitial
     }
 
   ptrCurrentGradient->multConst( 1.0 );
-
-  delete ptrCurrentAdjointDifference;
 }
 
 template < class TState >

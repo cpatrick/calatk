@@ -1060,7 +1060,7 @@ typename ITKCharImage2D::Pointer VectorImageUtils< T, VImageDimension>::convertT
   outImage->Allocate();
 
   // normalize the image onto 0-255
-  VectorImage<T,2>* imCopy = new VectorImage<T,2>(im);
+  typename VectorImage<T,2>::Pointer imCopy = new VectorImage<T,2>(im);
   typedef VectorImageUtils<T,2> VectorImageUtilsType;
 
   VectorImageUtilsType::normalize(imCopy, 0, 255);
@@ -1077,10 +1077,7 @@ typename ITKCharImage2D::Pointer VectorImageUtils< T, VImageDimension>::convertT
       outImage->SetPixel(px, (unsigned char)imCopy->getValue(x,y,0));
       }
     }
-  
-  // delete the copy
-  delete imCopy;
-  
+
   // Set origin and direction
   outImage->SetOrigin(VectorImageUtilsType::convertITKVectorOrigin(im->getOrigin()));
   outImage->SetDirection(VectorImageUtilsType::convertITKVectorDirection(im->getDirection()));
@@ -1837,7 +1834,7 @@ bool VectorImageUtils< T, VImageDimension >::writeFileITK(const VectorImageType2
     outImage->Allocate();
 
     // normalize the image onto 0-255
-    VectorImageType* imNormalized = new VectorImageType( im );
+    typename VectorImageType::Pointer imNormalized = new VectorImageType( im );
 
     typedef VectorImageUtils<T,2> VectorImageUtilsType;
 
@@ -1857,12 +1854,10 @@ bool VectorImageUtils< T, VImageDimension >::writeFileITK(const VectorImageType2
         val[0] = (unsigned char)imNormalized->getValue(x,y,0);
         val[1] = (unsigned char)imNormalized->getValue(x,y,1);
         val[2] = (unsigned char)imNormalized->getValue(x,y,2);
-        
+
         outImage->SetPixel(px, val);
         }
       }
-    
-    delete imNormalized;
 
     // Set origin and direction
 

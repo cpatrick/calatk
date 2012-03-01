@@ -665,10 +665,10 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ComputeInitialUns
   unsigned int dim = ptrI0->getDim();
 
   // compute the initial adjoint, assuming that there is only a zero velocity field
-  VectorImageType* ptrLambda0 = new VectorImageType( ptrI0 );
+  typename VectorImageType::Pointer ptrLambda0 = new VectorImageType( ptrI0 );
   ptrLambda0->setConst( 0.0 );
 
-  VectorImageType* ptrCurrentAdjointDifference = new VectorImageType( ptrI0 );
+  typename VectorImageType::Pointer ptrCurrentAdjointDifference = new VectorImageType( ptrI0 );
 
   for ( unsigned int iI = 0; iI< this->m_vecTimeDiscretization.size(); ++iI )
     {
@@ -696,10 +696,6 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ComputeInitialUns
     VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrLambda0, iD, m_ptrTmpField );
     ptrCurrentGradient->addCellwise( m_ptrTmpField );
     }
-
-  delete ptrLambda0;
-  delete ptrCurrentAdjointDifference;
-
 }
 
 template < class TState >
@@ -789,7 +785,7 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::OutputStateInform
 
   unsigned int dim = m_ptrTmpImage->getDim();
 
-  VectorFieldType* ptrCurrentGradient = new VectorFieldType( m_ptrTmpField );
+  typename VectorFieldType::Pointer ptrCurrentGradient = new VectorFieldType( m_ptrTmpField );
 
   std::string suffix = "-iter-"  + CreateIntegerString( uiIter, 3 ) + ".nrrd";
 
@@ -840,9 +836,6 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::OutputStateInform
 #endif
 
     }
-
-  delete ptrCurrentGradient;
-
 }
 
 #endif

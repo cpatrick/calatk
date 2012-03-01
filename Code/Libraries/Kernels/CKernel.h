@@ -95,7 +95,7 @@ protected:
   typename VectorImageType::Pointer m_ptrL;
   typename VectorImageType::Pointer m_ptrLInv;
 
-  ObjectiveFunctionBaseType* ptrObjectiveFunction;
+  typename ObjectiveFunctionBaseType::Pointer m_ptrObjectiveFunction;
   unsigned int m_KernelNumber;
 
 private:

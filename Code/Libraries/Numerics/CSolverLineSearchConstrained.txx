@@ -190,16 +190,12 @@ bool CSolverLineSearchConstrained< TState>::SolvePreInitialized()
       \f]
       */
 
-    VectorImageType* ptrTmpImage = new VectorImageType( ptrCurrentImageResidual );
+    typename VectorImageType::Pointer ptrTmpImage = new VectorImageType( ptrCurrentImageResidual );
     ptrTmpImage->multConst( -dMu );
     ptrCurrentImageLagrangianMultiplier->addCellwise( ptrTmpImage );
     std::cout << "mu[k] = " << dMu << " -> mu[k+1] = " << dMu*this->m_AugmentedLagrangianPenaltyIncreaseFactor << std::endl;
     pObj->SetSquaredPenaltyScalarWeight( dMu*this->m_AugmentedLagrangianPenaltyIncreaseFactor );
-    delete ptrTmpImage;
   }
-  // clean up
-
-  delete pTempState;
 
   if ( ResultingEnergy.dEnergy < InitialEnergy.dEnergy )
     {

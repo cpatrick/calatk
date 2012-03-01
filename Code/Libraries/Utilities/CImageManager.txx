@@ -47,10 +47,11 @@ CImageManager< T, VImageDimension >::~CImageManager()
 
   for ( iterSubject=m_SubjectCollectionMapImageInformation.begin(); iterSubject!=m_SubjectCollectionMapImageInformation.end(); ++iterSubject )
     {
-    if ( iterSubject->second != NULL )
+    SubjectInformationType * subjectInformation = iterSubject->second;
+    if ( subjectInformation != NULL )
       {
       typename SubjectInformationType::iterator iter;
-      for ( iter = iterSubject->second->begin(); iter != iterSubject->second->end(); ++iter )
+      for ( iter = subjectInformation->begin(); iter != subjectInformation->end(); ++iter )
         {
         // should already be done by the derived class which loads the images and takes care of the memory management
         if ( !( (*iter)->pImsOfAllScales.empty() ) )

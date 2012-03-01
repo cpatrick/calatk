@@ -344,10 +344,10 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeInitialUnsmoothedVeloc
   unsigned int dim = m_ptrI0->getDim();
 
   // compute the initial adjoint, assuming that there is only a zero velocity field
-  VectorImageType* ptrLambda0 = new VectorImageType( m_ptrI0 );
+  typename VectorImageType::Pointer ptrLambda0 = new VectorImageType( m_ptrI0 );
   ptrLambda0->setConst( 0.0 );
 
-  VectorImageType* ptrCurrentAdjointDifference = new VectorImageType( m_ptrI0 );
+  typename VectorImageType::Pointer ptrCurrentAdjointDifference = new VectorImageType( m_ptrI0 );
 
   for ( unsigned int iI = 0; iI< this->m_vecTimeDiscretization.size(); ++iI )
     {
@@ -375,10 +375,6 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeInitialUnsmoothedVeloc
     VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrLambda0, iD, m_ptrTmpGradient );
     ptrCurrentGradient->addCellwise( m_ptrTmpGradient );
     }
-
-  delete ptrLambda0;
-  delete ptrCurrentAdjointDifference;
-
 }
 
 template < class TState >
@@ -467,7 +463,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::OutputStateInformation( unsig
 
   unsigned int dim = m_ptrI0->getDim();
 
-  VectorFieldType* ptrCurrentGradient = new VectorFieldType( m_ptrTmpGradient );
+  typename VectorFieldType::Pointer ptrCurrentGradient = new VectorFieldType( m_ptrTmpGradient );
 
   std::string suffix = "-iter-" + CreateIntegerString( uiIter, 3 ) + ".nrrd";
 
@@ -505,9 +501,6 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::OutputStateInformation( unsig
     VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrCurrentGradient, outputPrefix + "gradv" + CreateIntegerString( iI, 3 ) + suffix );
 
     }
-
-  delete ptrCurrentGradient;
-
 }
 
 #endif

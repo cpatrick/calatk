@@ -76,7 +76,7 @@ private:
     const T DefaultAugmentedLagrangianInitialMu;
     bool m_ExternallySetAugmentedLagrangianInitialMu;
 
-    TState *pTempState;
+    typename TState::Pointer pTempState;
 };
 
 #include "CSolverLineSearchConstrained.txx"

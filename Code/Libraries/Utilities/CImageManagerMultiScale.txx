@@ -27,7 +27,6 @@ CImageManagerMultiScale< T, VImageDimension >::CImageManagerMultiScale()
 {
   m_uiCurrentlySelectedScale = 0;
   m_bImagesWereRead = false;
-  m_bSetDefaultResampler = false;
   m_ptrResampler = NULL;
 
   m_Sigma = DefaultSigma;
@@ -41,25 +40,11 @@ CImageManagerMultiScale< T, VImageDimension >::CImageManagerMultiScale()
 template <class T, unsigned int VImageDimension >
 CImageManagerMultiScale< T, VImageDimension >::~CImageManagerMultiScale()
 {
-  DeleteDefaultResampler();
-  // Upsampled images will be deleted by the base class if they have been allocated
-}
-
-template <class T, unsigned int VImageDimension >
-void CImageManagerMultiScale< T, VImageDimension >::DeleteDefaultResampler()
-{
-  if ( m_bSetDefaultResampler )
-    {
-    if ( m_ptrResampler != NULL ) delete m_ptrResampler;
-    m_ptrResampler = NULL;
-    m_bSetDefaultResampler = false;
-    }
 }
 
 template <class T, unsigned int VImageDimension >
 void CImageManagerMultiScale< T, VImageDimension >::SetResamplerPointer( ResamplerType* ptrResampler )
 {
-  DeleteDefaultResampler();  
   this->m_ptrResampler = ptrResampler;
 }
 
@@ -67,9 +52,7 @@ void CImageManagerMultiScale< T, VImageDimension >::SetResamplerPointer( Resampl
 template <class T, unsigned int VImageDimension >
 void CImageManagerMultiScale< T, VImageDimension >::SetDefaultResamplerPointer()
 {
-  DeleteDefaultResampler();
-  m_ptrResampler = new CResamplerLinear< T, VImageDimension >;
-  m_bSetDefaultResampler = true;
+  this->m_ptrResampler = new CResamplerLinear< T, VImageDimension >;
 }
 
 template <class T, unsigned int VImageDimension >
@@ -187,7 +170,10 @@ void CImageManagerMultiScale< T, VImageDimension >::GetImage( SImageInformation*
         }
         else
         {
-          if ( m_ptrResampler == NULL ) SetDefaultResamplerPointer();
+          if ( m_ptrResampler.GetPointer() == NULL )
+            {
+            this->SetDefaultResamplerPointer();
+            }
 
           // convert the voxel sigma to a pyhysical sigma based on the largest voxel extent
           T dLargestSpacing = pCurrentImInfo->pImOrig->getLargestSpacing();

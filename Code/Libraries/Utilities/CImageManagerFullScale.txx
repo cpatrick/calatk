@@ -37,7 +37,6 @@ CImageManagerFullScale< T, VImageDimension >::CImageManagerFullScale()
 template <class T, unsigned int VImageDimension >
 CImageManagerFullScale< T, VImageDimension >::~CImageManagerFullScale()
 {
-  // images deleted by base class destructor
 }
 
 //

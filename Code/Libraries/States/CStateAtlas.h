@@ -112,7 +112,8 @@ protected:
   void ClearDataStructure();
 
   // holds the state vectors of the individual registration algorithms
-  std::vector< TState* > m_vecIndividualStates;
+  typename std::vector< typename TState::Pointer > VectorIndividualStatesType;
+  VectorIndividualStatesType  m_vecIndividualStates;
 
 private:
 

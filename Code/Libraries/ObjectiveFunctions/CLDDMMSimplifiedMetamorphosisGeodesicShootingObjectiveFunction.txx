@@ -329,19 +329,19 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::G
   }
 
   // create additional maps to hold the solution
-  VectorFieldType* ptrMapIn = new VectorFieldType( m_ptrMapTmp );
-  VectorFieldType* ptrMapTmp = new VectorFieldType( m_ptrMapTmp );
-  VectorFieldType* ptrMapOut = new VectorFieldType( m_ptrMapTmp );
-  VectorFieldType* ptrMapIncremental = new VectorFieldType( m_ptrMapTmp );
-  VectorFieldType* ptrMapIdentity = new VectorFieldType( m_ptrMapTmp );
-  VectorFieldType* ptrCurrentVelocity = new VectorFieldType( m_ptrMapTmp );
+  typename VectorFieldType::Pointer ptrMapIn = new VectorFieldType( m_ptrMapTmp );
+  typename VectorFieldType::Pointer ptrMapTmp = new VectorFieldType( m_ptrMapTmp );
+  typename VectorFieldType::Pointer ptrMapOut = new VectorFieldType( m_ptrMapTmp );
+  typename VectorFieldType::Pointer ptrMapIncremental = new VectorFieldType( m_ptrMapTmp );
+  typename VectorFieldType::Pointer ptrMapIdentity = new VectorFieldType( m_ptrMapTmp );
+  typename VectorFieldType::Pointer ptrCurrentVelocity = new VectorFieldType( m_ptrMapTmp );
 
-  VectorImageType* ptrDeterminantOfJacobian = new VectorImageType( m_ptrTmpImage, 0.0, 1 );
-  VectorImageType* ptrTmpImage = new VectorImageType( m_ptrTmpImage );
+  typename VectorImageType::Pointer ptrDeterminantOfJacobian = new VectorImageType( m_ptrTmpImage, 0.0, 1 );
+  typename VectorImageType::Pointer ptrTmpImage = new VectorImageType( m_ptrTmpImage );
 
   // create two new images to hold the image and the adjoint
-  VectorImageType* ptrCurrentP = new VectorImageType( m_ptrCurrentP );
-  VectorImageType* ptrCurrentI = new VectorImageType( m_ptrCurrentI );
+  typename VectorImageType::Pointer ptrCurrentP = new VectorImageType( m_ptrCurrentP );
+  typename VectorImageType::Pointer ptrCurrentI = new VectorImageType( m_ptrCurrentI );
 
   // get the map between the two timepoints
   LDDMMUtils< T, TState::VImageDimension>::identityMap( ptrMapIn );
@@ -431,19 +431,6 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::G
   {
     ptrIm->copy( ptrCurrentI );
   }
-
-  delete ptrMapOut;
-  delete ptrMapTmp;
-  delete ptrMapIn;
-  delete ptrMapIncremental;
-  delete ptrMapIdentity;
-  delete ptrCurrentVelocity;
-
-  delete ptrTmpImage;
-  delete ptrDeterminantOfJacobian;
-
-  delete ptrCurrentI;
-  delete ptrCurrentP;
 
   std::cout << "Overall time evolved for = " << dTimeEvolvedFor << std::endl;
 

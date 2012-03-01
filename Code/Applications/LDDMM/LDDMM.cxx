@@ -58,7 +58,7 @@ int DoIt( int argc, char** argv )
 
   typedef CALATK::CAlgorithmBase< TFLOAT, VImageDimension > TReg;
 
-  TReg* plddmm = NULL;
+  typename TReg::Pointer plddmm = NULL;
   bool bIsInitialImageMomentumType = false;
   bool bIsSpatioTemporalVelocityType = false;
 
@@ -131,7 +131,7 @@ int DoIt( int argc, char** argv )
     TFLOAT dCurrentScale = configIn.GetFromKey( currentScaleSettings, "Scale", 1 ).asDouble();
     currentConfigurationOut[ iI ][ "Downsample" ][ "Scale" ] = dCurrentScale;
     ptrImageManager->AddScale( dCurrentScale, iI );
-    }  
+    }
 
   plddmm->SetAllowHelpComments( bCreateJSONHelp );
   plddmm->SetAutoConfiguration( *configIn.GetRootPointer(), *configOut.GetRootPointer() );
@@ -153,17 +153,16 @@ int DoIt( int argc, char** argv )
       }
     }
 
-  const VectorFieldType* ptrMap1 = new VectorFieldType( plddmm->GetMap( 1.0 ) );
+  VectorFieldType::ConstPointer ptrMap1 = new VectorFieldType( plddmm->GetMap( 1.0 ) );
   VectorImageUtilsType::writeFileITK( ptrMap1, sourceToTargetMap );
 
   if ( warpedSourceImage.compare("None") != 0 )
     {
     const VectorImageType* ptrI0Orig = ptrImageManager->GetOriginalImageById( uiI0 );
-    VectorImageType* ptrI0W1 = new VectorImageType( ptrI0Orig );
+    typename VectorImageType::Pointer ptrI0W1 = new VectorImageType( ptrI0Orig );
     // generating warped image (not always written out)
     LDDMMUtilsType::applyMap( ptrMap1, ptrI0Orig, ptrI0W1 );
     VectorImageUtilsType::writeFileITK( ptrI0W1, warpedSourceImage );
-    delete ptrI0W1;
     }
 
   if ( initialMomentumImage.compare("None") !=0 )
@@ -184,11 +183,6 @@ int DoIt( int argc, char** argv )
       std::cerr << "Unknown state type: cannot write momentum image" << std::endl;
     }
   }
-
-  delete ptrMap1;
-
-  // delete the registration algorithm
-  delete plddmm;
 
   return EXIT_SUCCESS;
 }

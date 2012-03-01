@@ -25,7 +25,6 @@ CKernel< T, VImageDimension >::CKernel()
   : m_KernelsNeedToBeComputed( true ),
     m_ptrL( NULL ),
     m_ptrLInv( NULL ),
-    ptrObjectiveFunction( NULL ),
     m_KernelNumber( 0 )
 {
 }
@@ -64,14 +63,14 @@ void CKernel< T, VImageDimension >::AllocateMemoryForKernelAndInverseKernel( Vec
 template <class T, unsigned int VImageDimension >
 void CKernel< T, VImageDimension >::SetObjectiveFunctionPointer( ObjectiveFunctionBaseType* ptrObj )
 {
-  ptrObjectiveFunction = ptrObj;
+  this->m_ptrObjectiveFunction = ptrObj;
 }
 
 template <class T, unsigned int VImageDimension >
 typename CKernel< T, VImageDimension >::ObjectiveFunctionBaseType*
 CKernel< T, VImageDimension >::GetObjectiveFunctionPointer()
 {
-  return ptrObjectiveFunction;
+  return this->m_ptrObjectiveFunction.GetPointer();
 }
 
 template <class T, unsigned int VImageDimension >
