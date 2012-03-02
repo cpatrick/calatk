@@ -24,7 +24,7 @@ else
   
   fprintf('Reading ... ');
   
-  im = fread( fid, inf, 'uint16=>uint16' );
+  im = fread( fid, inf, headerInfo.type );
   im = reshape( im, reshape( headerInfo.sizes, [1 length( headerInfo.sizes )] ) ); 
 
   fprintf('done.\n');

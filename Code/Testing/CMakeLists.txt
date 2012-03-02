@@ -117,6 +117,17 @@ add_ctest_test(calatkRegularizationSpacingTest
   ${test_temp_dir}/calatkRegularizationSpacingTest_target_map.mha
   )
 
+
+add_test_executable(calatk1DTest CALATK)
+add_ctest_test(calatk1DTest
+			  ${test_input_dir}/1DCurveSource.nhdr
+			  ${test_input_dir}/1DCurveTarget.nhdr
+			  ${test_temp_dir}/1DCurveResult.nhdr
+			  ${CALATK_SOURCE_DIR}/ExampleJSONConfigurations/lddmmMultiScale.json
+			  --compare ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
+			            ${test_temp_dir}/1DCurveResult.nhdr
+			  )
+
 #add_ctest_test(writeFileITKTest
 #  # 2D input
 #  ${test_input_dir}/2Dsample.mha
@@ -277,4 +288,3 @@ if( CALATK_USE_CPPCHECK )
     PROPERTIES FAIL_REGULAR_EXPRESSION "error file="
     )
 endif()
-

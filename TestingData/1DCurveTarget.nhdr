@@ -1,0 +1,13 @@
+NRRD0004
+# Complete NRRD file format specification at:
+# http://teem.sourceforge.net/nrrd/format.html
+type: double
+dimension: 3
+space: RAS
+sizes: 10000 1 1
+space directions: (0.000100,0.000000,0.000000) (0.000000,0.000100,0.000000) (0.000000,0.000000,0.000100)
+kinds: space space space
+endian: little
+encoding: raw
+space origin: (0.000000,0.000000,0.000000)
+data file: 1DCurveTarget.raw

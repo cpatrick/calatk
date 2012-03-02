@@ -77,6 +77,10 @@ void CKernel< T, VImageDimension >::AllocateMemoryForKernelAndInverseKernel( Vec
 
   switch ( VImageDimension )
     {
+    case 1:
+      this->m_ptrL = new VectorImageType( szX, 1 );
+      this->m_ptrLInv = new VectorImageType( szX, 1 );
+      break;
     case 2:
       this->m_ptrL = new VectorImageType( szX, szY, 1 );
       this->m_ptrLInv = new VectorImageType( szX, szY, 1 );

@@ -136,6 +136,9 @@
 #define DoItND(type,ImageDimension,argc,argv) \
   switch ( ImageDimension ) \
   {    \
+  case 1: \
+    return DoIt<type,1>( argc, argv ); \
+    break; \
   case 2: \
     return DoIt<type,2>( argc, argv ); \
     break; \

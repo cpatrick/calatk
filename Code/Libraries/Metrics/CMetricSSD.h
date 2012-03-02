@@ -36,6 +36,7 @@ public:
 
   typedef CMetric< T, VImageDimension > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
+  typedef typename Superclass::VectorImageType1D VectorImageType1D;
   typedef typename Superclass::VectorImageType2D VectorImageType2D;
   typedef typename Superclass::VectorImageType3D VectorImageType3D;
 
@@ -44,6 +45,7 @@ public:
 
   T GetMetric( const VectorImageType* pI0, const VectorImageType* pI1 ) const;
 
+  void GetLocalizedMetric( VectorImageType1D* pLocalizedMetric, const VectorImageType1D* pI0, const VectorImageType1D* pI1 );
   void GetLocalizedMetric( VectorImageType2D* pLocalizedMetric, const VectorImageType2D* pI0, const VectorImageType2D* pI1 );
   void GetLocalizedMetric( VectorImageType3D* pLocalizedMetric, const VectorImageType3D* pI0, const VectorImageType3D* pI1 );
 
