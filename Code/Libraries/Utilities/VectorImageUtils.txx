@@ -2540,7 +2540,7 @@ bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK1D( cons
     {
 
     typedef itk::Image<T, 4> ITKTimeImage1D;
-    typedef itk::ImageFileWriter< ITKTimeImage1D >  ITKTimeImage1D;
+    typedef itk::ImageFileWriter< ITKTimeImage1D >  ITKTimeImageWriter1D;
 
     // Initialize ITK image
     typename ITKTimeImage1D::Pointer itkImage;
