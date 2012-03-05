@@ -32,7 +32,11 @@ template < class TState >
 class CVelocityFieldObjectiveFunctionWithMomentum : public CVelocityFieldObjectiveFunction< TState >
 {
 public:
-  typedef CVelocityFieldObjectiveFunction< TState > Superclass;
+  /** Standard class typedefs. */
+  typedef CVelocityFieldObjectiveFunctionWithMomentum  Self;
+  typedef CVelocityFieldObjectiveFunction< TState >    Superclass;
+  typedef itk::SmartPointer< Self >                    Pointer;
+  typedef itk::SmartPointer< const Self >              ConstPointer;
 
   typedef typename Superclass::CEnergyValues CEnergyValues;
 

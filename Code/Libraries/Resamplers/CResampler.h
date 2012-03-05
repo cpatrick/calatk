@@ -34,10 +34,14 @@ template <class T, unsigned int VImageDimension=3 >
 class CResampler : public CProcessBase
 {
 public:
+  /** Standard class typedefs. */
+  typedef CResampler                      Self;
+  typedef CProcessBase                    Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
   /* Some useful typedefs */
   typedef VectorImage< T, VImageDimension > VectorImageType;
-  typedef CProcessBase Superclass;
 
   CResampler();
   virtual ~CResampler();

@@ -351,7 +351,7 @@ std::vector< T > CMultiGaussianKernel< T, VImageDimension >::ComputeDataDependen
     return vecWeights;
   }
 
-  if ( this->ptrObjectiveFunction == NULL )
+  if ( this->m_ptrObjectiveFunction.GetPointer() == NULL )
   {
     // cannot determine this in a data-driven manner; just initialize to constants
     std::cerr << "Cannot compute data-dependent scaling factors for multi-Gaussian kernels, because objective function was not set." << std::endl;
@@ -361,11 +361,11 @@ std::vector< T > CMultiGaussianKernel< T, VImageDimension >::ComputeDataDependen
   else
   {
     // initialize a vector field of appropriate size
-    VectorFieldType *ptrGradient = new VectorFieldType( this->ptrObjectiveFunction->GetPointerToInitialImage() );
+    typename VectorFieldType::Pointer ptrGradient = new VectorFieldType( this->m_ptrObjectiveFunction->GetPointerToInitialImage() );
 
-    this->ptrObjectiveFunction->ComputeInitialUnsmoothedVelocityGradient( ptrGradient, this->m_KernelNumber );
+    this->m_ptrObjectiveFunction->ComputeInitialUnsmoothedVelocityGradient( ptrGradient, this->m_KernelNumber );
     // now go through all the sigmas and determine what the weights should be
-    VectorFieldType *ptrSmoothedGradient = new VectorFieldType( ptrGradient );
+    typename VectorFieldType::Pointer ptrSmoothedGradient = new VectorFieldType( ptrGradient );
 
     std::cout << "Computing multi-Gaussian kernel weights for kernel #" << this->m_KernelNumber << std::endl;
 
@@ -398,12 +398,7 @@ std::vector< T > CMultiGaussianKernel< T, VImageDimension >::ComputeDataDependen
 
     }
 
-    // clean up the memory
-    delete ptrGradient;
-    delete ptrSmoothedGradient;
-
     return vecWeights;
-
   }
 
 }

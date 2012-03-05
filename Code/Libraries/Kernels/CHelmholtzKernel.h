@@ -27,17 +27,21 @@ namespace CALATK
 {
 
 /**
- * CHelmholtzKernel: Implements the Helmholtz kernel of the form \gamma I -\alpha \nabla^2
+ * \class CHelmholtzKernel
  *
+ * Implements the Helmholtz kernel of the form \f$ \gamma I - \alpha \nabla^2 \f$
  */
-
 template <class T, unsigned int VImageDimension=3 >
 class CHelmholtzKernel : public CFourierDomainKernel< T, VImageDimension >
 {
 public:
-
+  /** Standard class typedefs. */
+  typedef CHelmholtzKernel                           Self;
   typedef CFourierDomainKernel< T, VImageDimension > Superclass;
-  typedef typename Superclass::VectorImageType VectorImageType;
+  typedef itk::SmartPointer< Self >                  Pointer;
+  typedef itk::SmartPointer< const Self >            ConstPointer;
+
+  typedef typename Superclass::VectorImageType   VectorImageType;
   typedef typename Superclass::VectorImageType1D VectorImageType1D;
   typedef typename Superclass::VectorImageType2D VectorImageType2D;
   typedef typename Superclass::VectorImageType3D VectorImageType3D;

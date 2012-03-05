@@ -31,10 +31,13 @@ template <class T, unsigned int VImageDimension = 3 >
 class CMetricSSD : public CMetric< T, VImageDimension >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CMetricSSD                       Self;
+  typedef CMetric< T, VImageDimension >    Superclass;
+  typedef itk::SmartPointer< Self >        Pointer;
+  typedef itk::SmartPointer< const Self >  ConstPointer;
 
   /* some typedefs */
-
-  typedef CMetric< T, VImageDimension > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorImageType1D VectorImageType1D;
   typedef typename Superclass::VectorImageType2D VectorImageType2D;

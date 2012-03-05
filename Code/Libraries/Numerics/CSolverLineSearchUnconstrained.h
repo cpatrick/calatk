@@ -28,13 +28,16 @@ namespace CALATK
   * Implements the solver functionality for an unconstrained search
   */
 template < class TState >
-class CSolverLineSearchUnconstrained
-    : public CSolverLineSearch< TState >
+class CSolverLineSearchUnconstrained : public CSolverLineSearch< TState >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CSolverLineSearchUnconstrained  Self;
+  typedef CSolverLineSearch< TState >     Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
   typedef typename TState::TFloat T;
-  typedef CSolverLineSearch< TState > Superclass;
   typedef typename Superclass::ptrObjectiveFunctionType ptrObjectiveFunctionType;
   typedef typename Superclass::CEnergyValues CEnergyValues;
 
@@ -43,11 +46,11 @@ public:
   /**
    * Performs the line search
    */
-    bool SolvePreInitialized();
+  bool SolvePreInitialized();
 
 private:
 
-    TState *pTempState;
+  typename TState::Pointer m_TempState;
 };
 
 #include "CSolverLineSearchUnconstrained.txx"

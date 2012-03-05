@@ -56,7 +56,7 @@ int DoIt(std::string LDDMMType, char* sourceImage, char* targetImage, char* resu
 
   typedef CALATK::CAlgorithmBase< TFLOAT, VImageDimension > TReg;
 
-  TReg* plddmm = NULL;
+  typename TReg::Pointer plddmm = NULL;
   bool bIsInitialImageMomentumType = false;
   bool bIsSpatioTemporalVelocityType = false;
 
@@ -67,19 +67,19 @@ int DoIt(std::string LDDMMType, char* sourceImage, char* targetImage, char* resu
   if ( LDDMMType.compare( "simplifiedShooting" ) == 0 )
   {
     plddmm = new regTypeInitialImageMomentum;
-    dynamic_cast< regTypeInitialImageMomentum* >( plddmm )->SetObjectiveFunction( "LDDMMSimplifiedGeodesicShooting" );
+    dynamic_cast< regTypeInitialImageMomentum* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMSimplifiedGeodesicShooting" );
     bIsInitialImageMomentumType = true;
   }
   else if ( LDDMMType.compare( "adjointShooting" ) == 0 )
   {
     plddmm = new regTypeInitialImageMomentum;
-    dynamic_cast< regTypeInitialImageMomentum* >( plddmm )->SetObjectiveFunction( "LDDMMAdjointGeodesicShooting" );
+    dynamic_cast< regTypeInitialImageMomentum* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMAdjointGeodesicShooting" );
     bIsInitialImageMomentumType = true;
   }
   else if ( LDDMMType.compare( "relaxation" ) == 0 )
   {
     plddmm = new regTypeSpatioTemporalVelocityField;
-    dynamic_cast< regTypeSpatioTemporalVelocityField* >( plddmm )->SetObjectiveFunction( "LDDMMGrowthModel" );
+    dynamic_cast< regTypeSpatioTemporalVelocityField* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMGrowthModel" );
     bIsSpatioTemporalVelocityType = true;
   }
   else
@@ -131,13 +131,8 @@ int DoIt(std::string LDDMMType, char* sourceImage, char* targetImage, char* resu
 
   plddmm->Solve();
 
-  const VectorFieldType* ptrMap1 = new VectorFieldType( plddmm->GetMap( 1.0 ) );
+  const typename VectorFieldType::Pointer ptrMap1 = new VectorFieldType( plddmm->GetMap( 1.0 ) );
   VectorImageUtilsType::writeFileITK( ptrMap1, resultImage );
-
-  delete ptrMap1;
-
-  // delete the registration algorithm
-  delete plddmm;
 
   return EXIT_SUCCESS;
 }

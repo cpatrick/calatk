@@ -47,4 +47,17 @@ void CObjectiveFunctionBase< T, VImageDimension >::ComputeInitialUnsmoothedVeloc
   ptrInitialUnsmoothedVelocityGradient->setConst( 0.0 );
 }
 
+template < class T, unsigned int VImageDimension >
+void CObjectiveFunctionBase< T, VImageDimension >::SetImageManagerPointer( ImageManagerType * ptrImageManager )
+{
+  this->m_ptrImageManager = ptrImageManager;
+}
+
+template < class T, unsigned int VImageDimension >
+typename CObjectiveFunctionBase< T, VImageDimension >::ImageManagerType*
+CObjectiveFunctionBase< T, VImageDimension >::GetImageManagerPointer() const
+{
+  return this->m_ptrImageManager;
+}
+
 #endif

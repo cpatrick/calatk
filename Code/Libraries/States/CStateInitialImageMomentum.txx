@@ -38,8 +38,8 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMo
 {
   if (this != &c)
     {
-        VectorImagePointerType ptrImage = c.GetPointerToInitialImage();
-        VectorImagePointerType ptrMomentum = c.GetPointerToInitialMomentum();
+        VectorImageType * ptrImage = c.GetPointerToInitialImage();
+        VectorImageType * ptrMomentum = c.GetPointerToInitialMomentum();
         CopyDataStructure( ptrImage, ptrMomentum );
     }
 }
@@ -48,7 +48,7 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMo
 // constructor which takes an image and a momentum (also an image) as input
 //
 template <class T, unsigned int VImageDimension, class TResampler>
-CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMomentum( VectorImagePointerType pInitialImage, VectorImagePointerType pInitialMomentum )
+CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMomentum( VectorImageType * pInitialImage, VectorImageType * pInitialMomentum )
   : m_ptrInitialImage( NULL ), m_ptrInitialMomentum( NULL )
 {
   // here the memory allocation is performed externally
@@ -62,7 +62,7 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMo
 // copy data structure
 //
 template <class T, unsigned int VImageDimension, class TResampler>
-void CStateInitialImageMomentum <T, VImageDimension, TResampler>::CopyDataStructure( ConstVectorImagePointerType ptrImage, ConstVectorImagePointerType ptrMomentum )
+void CStateInitialImageMomentum <T, VImageDimension, TResampler>::CopyDataStructure( const VectorImageType * ptrImage, const VectorImageType * ptrMomentum )
 {
     ClearDataStructure();
 
@@ -92,30 +92,18 @@ CStateInitialImageMomentum <T, VImageDimension, TResampler>::~CStateInitialImage
 template <class T, unsigned int VImageDimension, class TResampler>
 void CStateInitialImageMomentum<T, VImageDimension, TResampler>::ClearDataStructure()
 {
-    if ( m_ptrInitialImage != NULL)
-    {
-        delete m_ptrInitialImage;
-        m_ptrInitialImage = NULL;
-    }
-
-    if (m_ptrInitialImage !=NULL)
-    {
-        delete m_ptrInitialMomentum;
-        m_ptrInitialMomentum = NULL;
-    }
-
 }
 
 //
 // Upsampling
 //
 template <class T, unsigned int VImageDimension, class TResampler >
-typename CStateInitialImageMomentum<T, VImageDimension, TResampler>::SuperclassTState*
+typename CStateInitialImageMomentum<T, VImageDimension, TResampler>::TState*
 CStateInitialImageMomentum<T, VImageDimension, TResampler>::CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const
 {
     // create an upsampled version of the state with the dimensions of the graft image
-    VectorImagePointerType ptrInitialImage = new VectorImageType( pGraftImage );
-    VectorImagePointerType ptrInitialMomentum = new VectorImageType( pGraftImage );
+    typename VectorImageType::Pointer ptrInitialImage = new VectorImageType( pGraftImage );
+    typename VectorImageType::Pointer ptrInitialMomentum = new VectorImageType( pGraftImage );
 
     TResampler resampler;
 
@@ -130,27 +118,27 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::CreateUpsampledState
 // get the pointer to Initial Image
 //
 template <class T, unsigned int VImageDimension, class TResampler>
-typename CStateInitialImageMomentum< T, VImageDimension, TResampler>::VectorImagePointerType
+typename CStateInitialImageMomentum< T, VImageDimension, TResampler>::VectorImageType *
 CStateInitialImageMomentum<T, VImageDimension, TResampler>::GetPointerToInitialImage() const
 {
-    return m_ptrInitialImage;
+    return m_ptrInitialImage.GetPointer();
 }
 
 //
 // get the pointer to Initial Momentum
 //
 template <class T, unsigned int VImageDimension, class TResampler>
-typename CStateInitialImageMomentum< T, VImageDimension, TResampler>::VectorImagePointerType
+typename CStateInitialImageMomentum< T, VImageDimension, TResampler>::VectorImageType *
 CStateInitialImageMomentum<T, VImageDimension, TResampler>::GetPointerToInitialMomentum() const
 {
-    return m_ptrInitialMomentum;
+    return m_ptrInitialMomentum.GetPointer();
 }
 
 //
 // set the pointer to Initial Image
 //
 template <class T, unsigned int VImageDimension, class TResampler>
-void CStateInitialImageMomentum<T, VImageDimension, TResampler>::SetPointerToInitialImage( ConstVectorImagePointerType ptrImage)
+void CStateInitialImageMomentum<T, VImageDimension, TResampler>::SetPointerToInitialImage( const VectorImageType * ptrImage)
 {
     m_ptrInitialImage =  ptrImage;
 }
@@ -160,7 +148,7 @@ void CStateInitialImageMomentum<T, VImageDimension, TResampler>::SetPointerToIni
 // set the pointer to Initial Momentum
 //
 template <class T, unsigned int VImageDimension, class TResampler>
-void CStateInitialImageMomentum<T, VImageDimension, TResampler>::SetPointerToInitialMomentum( ConstVectorImagePointerType ptrMomentum)
+void CStateInitialImageMomentum<T, VImageDimension, TResampler>::SetPointerToInitialMomentum( const VectorImageType * ptrMomentum)
 {
     m_ptrInitialMomentum =  ptrMomentum;
 }
@@ -178,8 +166,8 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator=( const CSt
 {
     if (this!=&p)
     {
-        VectorImagePointerType ptrImage = p.GetPointerToInitialImage();
-        VectorImagePointerType ptrMomentum = p.GetPointerToInitialMomentum();
+        VectorImageType * ptrImage = p.GetPointerToInitialImage();
+        VectorImageType * ptrMomentum = p.GetPointerToInitialMomentum();
 
         m_ptrInitialImage->copy(ptrImage);
         m_ptrInitialMomentum->copy(ptrMomentum);
@@ -199,8 +187,8 @@ template <class T, unsigned int VImageDimension, class TResampler>
 CStateInitialImageMomentum<T, VImageDimension, TResampler> &
 CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator+=( const CStateInitialImageMomentum & p )
 {
-    VectorImagePointerType ptrImage = p.GetPointerToInitialImage();
-    VectorImagePointerType ptrMomentum = p.GetPointerToInitialMomentum();
+    VectorImageType * ptrImage = p.GetPointerToInitialImage();
+    VectorImageType * ptrMomentum = p.GetPointerToInitialMomentum();
 
     m_ptrInitialImage->addCellwise(ptrImage);
     m_ptrInitialMomentum->addCellwise(ptrMomentum);
@@ -215,8 +203,8 @@ template <class T, unsigned int VImageDimension, class TResampler>
 CStateInitialImageMomentum<T, VImageDimension, TResampler> &
 CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator-=( const CStateInitialImageMomentum & p )
 {
-    VectorImagePointerType ptrImage = p.GetPointerToInitialImage();
-    VectorImagePointerType ptrMomentum = p.GetPointerToInitialMomentum();
+    VectorImageType * ptrImage = p.GetPointerToInitialImage();
+    VectorImageType * ptrMomentum = p.GetPointerToInitialMomentum();
 
     m_ptrInitialImage->subtractCellwise(ptrImage);
     m_ptrInitialMomentum->subtractCellwise(ptrMomentum);

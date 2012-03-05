@@ -20,6 +20,8 @@
 #ifndef C_STATE_ATLAS_H
 #define C_STATE_ATLAS_H
 
+#include "CStateAtlas.h"
+
 namespace CALATK
 {
 /**
@@ -30,14 +32,19 @@ namespace CALATK
 template <class TState>
 class CStateAtlas : public CStateImageDomain< typename TState::TFloat, typename TState::VImageDimension, typename TState::TResampler >
 {
- public:
+public:
   /* some useful typedefs */
-  typedef typename TState::T T;
-  typedef typename TState TIndividualState;
+  typedef typename TState::T               T;
+  typedef typename TState                  TIndividualState;
   typedef typename TState::VImageDimension VImageDimension;
-  typedef typename TState::TResampler TResampler;
+  typedef typename TState::TResampler      TResampler;
+
+  /* Standard class typedefs. */
+  typedef CStateAtlas                                              Self;
+  typedef itk::SmartPointer< Self >                                Pointer;
+  typedef itk::SmartPointer< const Self >                          ConstPointer;
   typedef CStateImageDomain< TState, VImageDimension, TResampler > Superclass;
-  typedef Superclass SuperclassTState;
+  typedef Superclass                                               SuperclassTState;
 
   /**
    * Empty constructor
@@ -105,7 +112,8 @@ protected:
   void ClearDataStructure();
 
   // holds the state vectors of the individual registration algorithms
-  std::vector< TState* > m_vecIndividualStates;
+  typename std::vector< typename TState::Pointer > VectorIndividualStatesType;
+  VectorIndividualStatesType  m_vecIndividualStates;
 
 private:
 

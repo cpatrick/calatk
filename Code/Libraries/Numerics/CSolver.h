@@ -25,7 +25,7 @@
 #include "CProcessBase.h"
 #include "JSONParameterUtils.h"
 
-/** 
+/**
  * Base class for the registration solvers.
  */
 
@@ -36,9 +36,13 @@ template < class TState >
 class CSolver : public CProcessBase
 {
 public:
+  /** Standard class typedefs. */
+  typedef CSolver                         Self;
+  typedef CProcessBase                    Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
   typedef typename TState::TFloat T;
-  typedef CProcessBase Superclass;
 
   typedef CObjectiveFunction< TState>* ptrObjectiveFunctionType;
 

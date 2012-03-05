@@ -54,72 +54,49 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::DeleteData()
 {
   this->m_ptrKernel->DeallocateMemory();
 
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapIn );
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapOut );
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapTmp );
-
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrDeterminantOfJacobian );
-
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrCurrentI );
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrCurrentP );
-
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrCurrentVelocity );
-
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrTmpField );
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrTmpFieldConv );
-
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrCurrentBackMap );
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapIdentity );
-
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrCurrentFinalAdjoint );
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrWarpedFinalToInitialAdjoint );
-
   ptrI0 = NULL;
   ptrI1 = NULL;
 
   m_vecMeasurementTimepoints.clear();
   m_vecTimeDiscretization.clear();
   m_vecTimeIncrements.clear();
-
-  SaveDelete< TState* >::Pointer( this->m_pState );
-  SaveDelete< TState* >::Pointer( this->m_pGradient );
 }
 
 template < class TState >
 CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::~CLDDMMSimplifiedGeodesicShootingObjectiveFunction()
 {
-  DeleteData();
+  this->DeleteData();
 }
 
 template < class TState >
 void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::CreateNewStateStructures()
 {
-    assert( this->m_pState == NULL );
-    assert( m_vecTimeDiscretization.size() > 1 );
+  assert( this->m_pState.GetPointer() == NULL );
+  assert( m_vecTimeDiscretization.size() > 1 );
 
-    // get the subject ids
-    std::vector< unsigned int > vecSubjectIndices;
-    this->m_ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
+  // get the subject ids
+  std::vector< unsigned int > vecSubjectIndices;
+  this->m_ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
 
-    assert( vecSubjectIndices.size()>0 );
+  assert( vecSubjectIndices.size()>0 );
 
-    // obtain image from which to graft the image information for the data structures
+  // obtain image from which to graft the image information for the data structures
 
-    SImageInformation* pImInfo;
-    // get information from the first image to figure out the dimensions and determine the source and target image
-    this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
+  SImageInformation* pImInfo;
+  // get information from the first image to figure out the dimensions and determine the source and target image
+  this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
 
-    VectorImageType* ptrInitialImage = new VectorImageType( pImInfo->pIm );
-    VectorImageType* ptrInitialMomentum = new VectorImageType( pImInfo->pIm );
-    ptrInitialMomentum->setConst(0);
+  VectorImageType* ptrInitialImage = new VectorImageType( pImInfo->pIm );
+  VectorImageType* ptrInitialMomentum = new VectorImageType( pImInfo->pIm );
+  ptrInitialMomentum->setConst(0);
 
-    this->m_pState = new TState( ptrInitialImage, ptrInitialMomentum );
+  this->m_pState = new TState( ptrInitialImage, ptrInitialMomentum );
 }
 
 template< class TState >
 void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ShallowCopyStateStructures( TState* pState )
 {
-    assert ( this->m_pState == NULL );
+    assert ( this->m_pState.GetPointer() == NULL );
 
     VectorImageType* ptrInitialImage = pState->GetPointerToInitialImage();
     VectorImageType* ptrInitialMomentum = pState->GetPointerToInitialMomentum();
@@ -201,7 +178,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::InitializeData
 {
     DeleteData();
 
-    assert (this->m_pGradient == NULL );
+    assert (this->m_pGradient.GetPointer() == NULL );
 
     CreateTimeDiscretization();
 
@@ -283,14 +260,14 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
   }
 
   // create four additional maps to hold the solution
-  VectorFieldType* ptrMapIn = new VectorFieldType( ptrMap );
-  VectorFieldType* ptrMapTmp = new VectorFieldType( ptrMap );
-  VectorFieldType* ptrMapOut = new VectorFieldType( ptrMap );
-  VectorFieldType* ptrCurrentVelocity = new VectorFieldType( ptrMap );
+  typename VectorFieldType::Pointer ptrMapIn = new VectorFieldType( ptrMap );
+  typename VectorFieldType::Pointer ptrMapTmp = new VectorFieldType( ptrMap );
+  typename VectorFieldType::Pointer ptrMapOut = new VectorFieldType( ptrMap );
+  typename VectorFieldType::Pointer ptrCurrentVelocity = new VectorFieldType( ptrMap );
 
   // create two new images to hold the image and the adjoint
-  VectorImageType* ptrCurrentP = new VectorImageType( m_ptrCurrentP );
-  VectorImageType* ptrCurrentI = new VectorImageType( m_ptrCurrentI );
+  typename VectorImageType::Pointer ptrCurrentP = new VectorImageType( m_ptrCurrentP );
+  typename VectorImageType::Pointer ptrCurrentI = new VectorImageType( m_ptrCurrentI );
 
   // get the map between the two timepoints
   LDDMMUtils< T, TState::VImageDimension>::identityMap( ptrMapIn );
@@ -316,7 +293,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
 
     T dCurrentDT = m_vecTimeDiscretization[ iI+1 ].dTime - m_vecTimeDiscretization[ iI ].dTime;
 
-    ComputeVelocity( ptrCurrentI, ptrCurrentP, ptrCurrentVelocity, ptrMapOut );
+    this->ComputeVelocity( ptrCurrentI, ptrCurrentP, ptrCurrentVelocity, ptrMapOut );
     std::cout << "evolving overall map for " << m_vecTimeIncrements[ iI ] << std::endl;
     this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMapIn, ptrMapOut, ptrMapTmp, m_vecTimeIncrements[ iI ] );
 
@@ -338,14 +315,6 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
         dTimeEvolvedFor += dTimeTo - dCurrentTime;
         this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, dTimeTo - dCurrentTime );
         ptrMap->copy( ptrMapOut );
-
-        delete ptrMapOut;
-        delete ptrMapTmp;
-        delete ptrMapIn;
-        delete ptrCurrentVelocity;
-
-        delete ptrCurrentI;
-        delete ptrCurrentP;
 
         std::cout << "Overall time evolved for = " << dTimeEvolvedFor << std::endl;
 
@@ -374,14 +343,6 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
 
         std::cout << "Overall time evolved for = " << dTimeEvolvedFor << std::endl;
 
-        delete ptrMapOut;
-        delete ptrMapTmp;
-        delete ptrMapIn;
-        delete ptrCurrentVelocity;
-
-        delete ptrCurrentI;
-        delete ptrCurrentP;
-
         return; // done because everything was in this interval
       }
       else
@@ -407,7 +368,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
 template< class TState >
 void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::CreateTimeDiscretization()
 {
-    if ( this->m_ptrImageManager == NULL )
+    if ( this->m_ptrImageManager.GetPointer() == NULL )
     {
       throw std::runtime_error( "ERROR: No image manager specified." );
       return;
@@ -553,7 +514,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeInitial
 
   unsigned int uiNrOfTimePoints = m_vecTimeDiscretization.size();
 
-  VectorImageType* ptrCurrentAdjointDifference = new VectorImageType( ptrI0 );
+  typename VectorImageType::Pointer ptrCurrentAdjointDifference = new VectorImageType( ptrI0 );
 
   this->m_pMetric->GetAdjointMatchingDifferenceImage( ptrCurrentAdjointDifference, ptrI0, ptrI1 );
   ptrCurrentAdjointDifference->multConst( m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecWeights[ 0 ] );
@@ -570,8 +531,6 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeInitial
     }
 
   ptrCurrentGradient->multConst( 1.0 );
-
-  delete ptrCurrentAdjointDifference;
 }
 
 template < class TState >

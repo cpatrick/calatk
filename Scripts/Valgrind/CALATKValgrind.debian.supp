@@ -720,10 +720,58 @@
    ...
 }
 {
+   nrrd_32
+   Memcheck:Value8
+   fun:strlen
+   fun:itk_airStrdup
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_33
+   Memcheck:Value8
+   fun:strlen
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
    libgomp_1
    Memcheck:Leak
    fun:malloc
    obj:/usr/lib/x86_64-linux-gnu/libgomp.so.1.0.0
    obj:/usr/lib/x86_64-linux-gnu/libgomp.so.1.0.0
+   ...
+}
+{
+   json_1
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZN4JsonL20duplicateStringValue*
+   fun:_ZN4Json5Value8CZString*
+   ...
+}
+{
+   json_2
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN4Json5Value*
+   fun:_ZN4Json5Value*
+   ...
+}
+{
+   json_3
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocatorISt13_Rb_tree_nodeISt4pairIKN4Json5Value8CZStringES4_EEE8allocateEmPKv
+   fun:_ZNSt8_Rb_treeIN4Json5Value8CZStringESt4pairIKS2_S1_ESt10_Select1stIS5_ESt4lessIS2_ESaIS5_EE11_M_get_nodeEv
    ...
 }

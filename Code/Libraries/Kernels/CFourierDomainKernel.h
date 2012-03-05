@@ -178,11 +178,14 @@ template <class T, unsigned int VImageDimension=3 >
 class CFourierDomainKernel : public CKernel< T, VImageDimension >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CFourierDomainKernel            Self;
+  typedef CKernel< T, VImageDimension >   Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
   /* some typedefs */
-  
-  typedef CKernel< T, VImageDimension > Superclass;
-  typedef typename Superclass::VectorImageType VectorImageType;
+  typedef typename Superclass::VectorImageType   VectorImageType;
   typedef typename Superclass::VectorImageType1D VectorImageType1D;
   typedef typename Superclass::VectorImageType2D VectorImageType2D;
   typedef typename Superclass::VectorImageType3D VectorImageType3D;
@@ -204,7 +207,6 @@ protected:
   static T GetFFromIndex( unsigned int iI, unsigned int iM, T dx );
   
   void ConfirmKernelsWereComputed();
-  void ConfirmMemoryWasAllocated();
 
   void ConvolveInFourierDomain( VectorImageType1D* pVecImage, VectorImageType1D* pL );
   void ConvolveInFourierDomain( VectorImageType2D* pVecImage, VectorImageType2D* pL );
@@ -214,14 +216,15 @@ protected:
   void AllocateMemoryAndComputeKernelsIfNeeded( VectorImageType* pVecImage );
 
 private:
+  void DeleteData();
 
   void AllocateFFTDataStructures1D( unsigned int szX );
   void AllocateFFTDataStructures2D( unsigned int szX, unsigned int szY );
   void AllocateFFTDataStructures3D( unsigned int szX, unsigned int szY, unsigned int szZ );
 
-  void DeleteData();
-
   CFFTDataType<T>* fftwData;
+
+  bool m_MemoryWasAllocated;
 };
 
 #include "CFourierDomainKernel.txx"

@@ -832,7 +832,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::OutputSta
 
   unsigned int dim = m_ptrTmpImage->getDim();
 
-  VectorFieldType* ptrCurrentGradient = new VectorFieldType( m_ptrTmpField );
+  typename VectorFieldType::Pointer ptrCurrentGradient = new VectorFieldType( m_ptrTmpField );
 
   std::string suffix = "-iter-"  + CreateIntegerString( uiIter, 3 ) + ".nrrd";
 
@@ -883,9 +883,6 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::OutputSta
 #endif
 
     }
-
-  delete ptrCurrentGradient;
-
 }
 
 /// functionality for augmented Lagrangian

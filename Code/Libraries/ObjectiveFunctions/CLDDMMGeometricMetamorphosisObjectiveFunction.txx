@@ -137,7 +137,6 @@ CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetMaskKernelPointer()
 template < class TState >
 void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::DeleteAuxiliaryStructures()
 {
-
   // set all the externally controlled pointers to NULL
 
   pImInfo0 = NULL;
@@ -153,41 +152,6 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::DeleteAuxiliaryStr
   ptrEstI1 = NULL;
   ptrEstT1 = NULL;
   ptrEstT2 = NULL;
-  
-  // now delete the data structures that were allocated by geomet
-
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapIn );
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapOut );
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapTmp );
-
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrT2M1 );
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrEstT1M1 );
-
-  SaveDelete< VectorImagePointerType >::PointerVector( m_ptrI );
-  SaveDelete< VectorImagePointerType >::PointerVector( m_ptrT );
-
-  SaveDelete< VectorImagePointerType >::PointerVector( m_ptrLambda );
-  SaveDelete< VectorImagePointerType >::PointerVector( m_ptrLambdaT );
-
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrCurrentAdjointDifference );
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrCurrentAdjointDifferenceT );
-
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrCurrentLambdaEnd );
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrCurrentLambdaTEnd );
-
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrDeterminantOfJacobian );
-
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrTmpVelocityField );
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrTmpGradient );
-
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrI1Comp );
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrEstI1Comp );
-
-  if ( m_ptrMaskKernel != NULL )
-    {
-    m_ptrMaskKernel->DeallocateMemory();
-    }
-
 }
 
 template < class TState >

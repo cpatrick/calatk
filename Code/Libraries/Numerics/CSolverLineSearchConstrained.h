@@ -27,13 +27,16 @@ namespace CALATK
 {
 /** Implements the solver functionality for a constrained search using an augmented Lagrangian approach */
 template < class TState >
-class CSolverLineSearchConstrained
-    : public CSolverLineSearch< TState >
+class CSolverLineSearchConstrained : public CSolverLineSearch< TState >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CSolverLineSearchConstrained    Self;
+  typedef CSolverLineSearch< TState >     Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
   typedef typename TState::TFloat T;
-  typedef CSolverLineSearch< TState > Superclass;
   typedef typename Superclass::ptrObjectiveFunctionType ptrObjectiveFunctionType;
   typedef typename Superclass::CEnergyValues CEnergyValues;
   typedef VectorImage< T, TState::VImageDimension > VectorImageType;
@@ -73,7 +76,7 @@ private:
     const T DefaultAugmentedLagrangianInitialMu;
     bool m_ExternallySetAugmentedLagrangianInitialMu;
 
-    TState *pTempState;
+    typename TState::Pointer pTempState;
 };
 
 #include "CSolverLineSearchConstrained.txx"

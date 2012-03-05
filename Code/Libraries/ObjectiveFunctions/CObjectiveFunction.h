@@ -34,6 +34,11 @@ class CObjectiveFunction
     public CAugmentedLagrangianInterface< typename TState::TFloat, TState::VImageDimension >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CObjectiveFunction                                                         Self;
+  typedef CObjectiveFunctionBase< typename TState::TFloat, TState::VImageDimension > Superclass;
+  typedef itk::SmartPointer< Self >                                                  Pointer;
+  typedef itk::SmartPointer< const Self >                                            ConstPointer;
 
   /* some useful typedefs */
   
@@ -41,6 +46,7 @@ public:
   typedef VectorField< T, TState::VImageDimension > VectorFieldType;
   typedef VectorImage< T, TState::VImageDimension > VectorImageType;
 
+  typedef TState  StateType;
   typedef TState* ptrStateType;
 
   CObjectiveFunction();
@@ -73,9 +79,8 @@ public:
   virtual void ComputeGradient();
 
 protected:
-
-  ptrStateType m_pState;
-  ptrStateType m_pGradient;
+  typename StateType::Pointer m_pState;
+  typename StateType::Pointer m_pGradient;
 
 };
 

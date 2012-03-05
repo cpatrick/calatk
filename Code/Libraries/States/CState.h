@@ -20,24 +20,35 @@
 #ifndef C_STATE_H
 #define C_STATE_H
 
-/**
- * Base class for a state. So far does not do much other than declaring certain operators private
- * May want to add more common functionality later.
- */
+
+#include "CObject.h"
+#include "itkSmartPointer.h"
 
 
 namespace CALATK
 {
 
+/**
+ * \class CState
+ *
+ * Base class for a state. So far does not do much other than declaring certain operators private
+ * May want to add more common functionality later.
+ */
 template <class T, unsigned int DIM, class TResamplerType >
-class CState
+class CState: public CObject
 {
 public:
 
   /* Useful typedefs and constants */
-  typedef T TFloat;
-  typedef TResamplerType TResampler;
+  typedef T                 TFloat;
+  typedef TResamplerType    TResampler;
   static const unsigned int VImageDimension = DIM;
+
+  /** Standard typedefs. */
+  typedef CState                          Self;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
+
 
   // default empty constuctor
   CState() { }

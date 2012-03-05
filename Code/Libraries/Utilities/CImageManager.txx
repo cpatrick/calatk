@@ -47,30 +47,17 @@ CImageManager< T, VImageDimension >::~CImageManager()
 
   for ( iterSubject=m_SubjectCollectionMapImageInformation.begin(); iterSubject!=m_SubjectCollectionMapImageInformation.end(); ++iterSubject )
     {
-    if ( iterSubject->second != NULL )
+    SubjectInformationType * subjectInformation = iterSubject->second;
+    if ( subjectInformation != NULL )
       {
       typename SubjectInformationType::iterator iter;
-      for ( iter = iterSubject->second->begin(); iter != iterSubject->second->end(); ++iter )
+      for ( iter = subjectInformation->begin(); iter != subjectInformation->end(); ++iter )
         {
         // should already be done by the derived class which loads the images and takes care of the memory management
-        if ( (*iter)->pImOrig != NULL ) delete (*iter)->pImOrig;
-        if ( (*iter)->pTransform != NULL ) delete (*iter)->pTransform;
-
         if ( !( (*iter)->pImsOfAllScales.empty() ) )
           {
-          typename std::vector< VectorImageType* >::iterator iterImagesAtScales;
-          for ( iterImagesAtScales = (*iter)->pImsOfAllScales.begin(); iterImagesAtScales != (*iter)->pImsOfAllScales.end(); ++iterImagesAtScales )
-            {
-            if ( *iterImagesAtScales != NULL )
-              {
-              delete *iterImagesAtScales;
-              *iterImagesAtScales = NULL;
-              }
-            }
+          (*iter)->pImsOfAllScales.clear();
           }
-
-        //
-
         delete *iter;
         }
       // now get rid of the multiset itself
@@ -232,7 +219,7 @@ CImageManager< T, VImageDimension >::GetOriginalImageById( unsigned int uiId )
 
   if ( bFound )
     {
-    return (*iterSet)->pImOrig;
+    return (*iterSet)->pImOrig.GetPointer();
     }
   else
     {
@@ -324,8 +311,8 @@ bool CImageManager< T, VImageDimension>::RemoveImage( unsigned int uiId )
     {
     // we can delete it from the set after deleting the data content
     
-    if ( (*iterSet)->pIm != NULL ) delete (*iterSet)->pIm;
-    if ( (*iterSet)->pTransform != NULL ) delete (*iterSet)->pTransform;
+    (*iterSet)->pIm = NULL;
+    (*iterSet)->pTransform = NULL;
 
     // now delete the set element
     
@@ -355,7 +342,7 @@ bool CImageManager< T, VImageDimension>::RemoveTransform( unsigned int uiId )
     {
     // we can delete it from the set after deleting the data content
     
-    if ( (*iterSet)->pTransform != NULL ) delete (*iterSet)->pTransform;
+    (*iterSet)->pTransform = NULL;
     
     SImageInformation* pImInfo = new SImageInformation;
     *pImInfo = *( *iterSet );

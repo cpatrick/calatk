@@ -49,7 +49,7 @@ int DoIt( int argc, char** argv )
   typedef typename regType::VectorImageType VectorImageType;
   typedef typename regType::VectorFieldType VectorFieldType;
 
-  regType lddmm;
+  typename regType::Pointer lddmm = new regType;
 
   CALATK::CJSONConfiguration configIn( true );
   CALATK::CJSONConfiguration configOut( false );
@@ -92,14 +92,14 @@ int DoIt( int argc, char** argv )
     TFLOAT dCurrentScale = configIn.GetFromKey( currentScaleSettings, "Scale", 1 ).asDouble();
     currentConfigurationOut[ iI ][ "Downsample" ][ "Scale" ] = dCurrentScale;
     ptrImageManager->AddScale( dCurrentScale, iI );
-    }  
+    }
 
-  lddmm.SetAllowHelpComments( bCreateJSONHelp );
-  lddmm.SetAutoConfiguration( *configIn.GetRootPointer(), *configOut.GetRootPointer() );
+  lddmm->SetAllowHelpComments( bCreateJSONHelp );
+  lddmm->SetAutoConfiguration( *configIn.GetRootPointer(), *configOut.GetRootPointer() );
 
   ptrImageManager->print( std::cout );
 
-  lddmm.Solve();
+  lddmm->Solve();
 
   // write out the resulting JSON file if desired
   if ( configFileOut.compare("None") != 0 )
@@ -114,26 +114,23 @@ int DoIt( int argc, char** argv )
       }
     }
 
-  const VectorFieldType* ptrMap1 = new VectorFieldType( lddmm.GetMap( 1.0 ) );
+  VectorFieldType::ConstPointer ptrMap1 = new VectorFieldType( lddmm->GetMap( 1.0 ) );
   VectorImageUtilsType::writeFileITK( ptrMap1, sourceToTargetMap );
 
   if ( warpedSourceImage.compare("None") != 0 )
     {
     const VectorImageType* ptrI0Orig = ptrImageManager->GetOriginalImageById( uiI0 );
-    VectorImageType* ptrI0W1 = new VectorImageType( ptrI0Orig );
+    typename VectorImageType::Pointer ptrI0W1 = new VectorImageType( ptrI0Orig );
     // generating warped image (not always written out)
     LDDMMUtilsType::applyMap( ptrMap1, ptrI0Orig, ptrI0W1 );
     VectorImageUtilsType::writeFileITK( ptrI0W1, warpedSourceImage );
-    delete ptrI0W1;
     }
 
   if ( initialMomentumImage.compare("None") !=0 )
   {
-    const VectorImageType* ptrI0 = lddmm.GetInitialMomentum();
+    const VectorImageType* ptrI0 = lddmm->GetInitialMomentum();
     VectorImageUtilsType::writeFileITK( ptrI0, initialMomentumImage );
   }
-
-  delete ptrMap1;
 
   return EXIT_SUCCESS;
 }

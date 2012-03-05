@@ -54,7 +54,7 @@ int DoIt( int argc, char** argv )
   typedef typename regType::VectorImageType VectorImageType;
   typedef typename regType::VectorFieldType VectorFieldType;
 
-  regType* plddmm;
+  typename regType::Pointer plddmm;
 
   if ( bUseFullAdjoint )
   {
@@ -128,16 +128,14 @@ int DoIt( int argc, char** argv )
       }
     }
 
-  const VectorFieldType* ptrMap1 = new VectorFieldType( plddmm->GetMap( 1.0 ) );
+  typename VectorFieldType::Pointer ptrMap1 = new VectorFieldType( plddmm->GetMap( 1.0 ) );
   VectorImageUtilsType::writeFileITK( ptrMap1, sourceToTargetMap );
 
   if ( warpedSourceImage.compare("None") != 0 )
     {
-    VectorImageType* ptrI0W1 = new VectorImageType( plddmm->GetImage( 1.0 ) );
+    typename VectorImageType::Pointer ptrI0W1 = new VectorImageType( plddmm->GetImage( 1.0 ) );
     // generating warped image (not always written out)
     VectorImageUtilsType::writeFileITK( ptrI0W1, warpedSourceImage );
-
-    delete ptrI0W1;
     }
 
   if ( initialMomentumImage.compare("None") !=0 )
@@ -145,10 +143,6 @@ int DoIt( int argc, char** argv )
     const VectorImageType* ptrI0 = plddmm->GetInitialMomentum();
     VectorImageUtilsType::writeFileITK( ptrI0, initialMomentumImage );
   }
-
-  delete ptrMap1;
-
-  delete plddmm;
 
   return EXIT_SUCCESS;
 }

@@ -22,6 +22,7 @@
 
 #include "CALATKCommon.h"
 #include "VectorArray.h"
+#include "itkSmartPointer.h"
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -41,10 +42,13 @@ namespace CALATK
 template <class T, unsigned int VImageDimension=3 >
 class VectorImage : public VectorArray<T,VImageDimension>
 {
-
 public:
+  typedef VectorImage                     Self;
+  typedef VectorArray<T,VImageDimension>  Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
-  typedef VectorArray<T,VImageDimension> Superclass;
+  typedef T TFloat;
 
   /********************************
    * Constructors and Destructors *
@@ -54,14 +58,14 @@ public:
    * Empty Constructor
    */
   VectorImage();
-  
+
   /**
    * 0D Constructor that takes an a vector dimension size
    *
    * @param dim - the size of the vector dimension
    */
   VectorImage(unsigned int dim);
-  
+
   /**
    * 1D Constructor that takes an x size and a vector dimension size
    *
@@ -251,11 +255,11 @@ protected:
    ******************/
 
   /** The original pixel spacing for the x dimension from the image file */
-  T __spaceX;
+  TFloat __spaceX;
   /** The original pixel spacing for the y dimension from the image file */
-  T __spaceY;
+  TFloat __spaceY;
   /** The original pixel spacing for the z dimension from the image file */
-  T __spaceZ;
+  TFloat __spaceZ;
 
   /** ITK Image meta-data */
   typename ITKVectorImage< T, VImageDimension >::Type::PointType __origin;

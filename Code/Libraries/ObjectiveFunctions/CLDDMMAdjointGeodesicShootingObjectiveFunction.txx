@@ -67,43 +67,9 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::DeleteData()
 {
     this->m_ptrKernel->DeallocateMemory();
 
-    SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapIn );
-    SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapOut );
-    SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapTmp );
-
-    SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapIncremental );
-    SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapIdentity );
-
-    SaveDelete< VectorImagePointerType >::Pointer( m_ptrDeterminantOfJacobian );
-    SaveDelete< VectorImagePointerType >::Pointer( m_ptrDeterminantOfJacobian );
-
-    SaveDelete< VectorFieldPointerType >::PointerVector( m_ptrVelocityField );
-
-    SaveDelete< VectorImagePointerType >::PointerVector( m_ptrI );
-    SaveDelete< VectorImagePointerType >::PointerVector( m_ptrP );
-
-    // just for testing
-    SaveDelete< VectorImagePointerType >::PointerVector( tstLamI );
-    SaveDelete< VectorImagePointerType >::PointerVector( tstLamP );
-
-    SaveDelete< VectorImagePointerType >::Pointer( m_ptrCurrentLambdaI );
-    SaveDelete< VectorImagePointerType >::Pointer( m_ptrCurrentLambdaP );
-    SaveDelete< VectorFieldPointerType >::Pointer( m_ptrCurrentLambdaV );
-
-    SaveDelete< VectorFieldPointerType >::Pointer( m_ptrTmpField );
-    SaveDelete< VectorFieldPointerType >::Pointer( m_ptrTmpFieldConv );
-    SaveDelete< VectorImagePointerType >::Pointer( m_ptrTmpScalarImage );
-    SaveDelete< VectorImagePointerType >::Pointer( m_ptrTmpImage );
-
-    SaveDelete< VectorImagePointerType >::Pointer( m_ptrDI );
-    SaveDelete< VectorImagePointerType >::Pointer( m_ptrDP );
-
     m_vecMeasurementTimepoints.clear();
     m_vecTimeDiscretization.clear();
     m_vecTimeIncrements.clear();
-
-    SaveDelete< TState* >::Pointer( this->m_pState );
-    SaveDelete< TState* >::Pointer( this->m_pGradient );
 }
 
 template< class TState >
@@ -116,7 +82,7 @@ CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::~CLDDMMAdjointGeodesic
 template < class TState >
 void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::CreateNewStateStructures()
 {
-    assert( this->m_pState == NULL );
+    assert( this->m_pState.GetPointer() == NULL );
     assert( m_vecTimeDiscretization.size() > 1 );
 
     // get the subject ids
@@ -141,7 +107,7 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::CreateNewStateStr
 template< class TState >
 void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ShallowCopyStateStructures( TState* pState )
 {
-    assert ( this->m_pState == NULL );
+    assert ( this->m_pState.GetPointer() == NULL );
 
     VectorImageType* ptrInitialImage = pState->GetPointerToInitialImage();
     VectorImageType* ptrInitialMomentum = pState->GetPointerToInitialMomentum();
@@ -177,8 +143,8 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::CreateGradientAndA
     // allocate all the auxiliary data
 
     // image and adjoint time-series
-    m_ptrI = new std::vector< VectorImagePointerType >;
-    m_ptrP = new std::vector< VectorImagePointerType >;
+    this->m_ptrI = new std::vector< VectorImagePointerType >;
+    this->m_ptrP = new std::vector< VectorImagePointerType >;
 
     // for testing
     
@@ -187,9 +153,9 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::CreateGradientAndA
     tstLamP = new std::vector< VectorImagePointerType >;
 #endif
 
-    m_ptrCurrentLambdaI = new VectorImageType( pImInfo->pIm );
-    m_ptrCurrentLambdaP = new VectorImageType( pImInfo->pIm );
-    m_ptrCurrentLambdaV = new VectorFieldType( pImInfo->pIm );
+    this->m_ptrCurrentLambdaI = new VectorImageType( pImInfo->pIm );
+    this->m_ptrCurrentLambdaP = new VectorImageType( pImInfo->pIm );
+    this->m_ptrCurrentLambdaV = new VectorFieldType( pImInfo->pIm );
 
     // one more than for the velocity fields
     for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size(); ++iI )
@@ -270,7 +236,7 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::InitializeDataStr
 {
     DeleteData();
 
-    assert (this->m_pGradient == NULL );
+    assert (this->m_pGradient.GetPointer() == NULL );
 
     CreateTimeDiscretization();
 
@@ -339,7 +305,7 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( Vec
 template< class TState >
 void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::CreateTimeDiscretization()
 {
-    if ( this->m_ptrImageManager == NULL )
+    if ( this->m_ptrImageManager.GetPointer() == NULL )
     {
       throw std::runtime_error( "ERROR: No image manager specified." );
       return;
@@ -366,7 +332,7 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::CreateTimeDiscreti
 }
 
 template < class TState >
-void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::ComputeVelocityAdjoint( const VectorImagePointerType ptrI, const VectorImagePointerType ptrP, const VectorImagePointerType ptrLambdaI, const VectorImagePointerType ptrLambdaP, VectorFieldPointerType ptrLambdaVOut)
+void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::ComputeVelocityAdjoint( const VectorImageType * ptrI, const VectorImageType * ptrP, const VectorImageType * ptrLambdaI, const VectorImageType * ptrLambdaP, VectorFieldType * ptrLambdaVOut)
 {
   /**
     * Compute the adjoint to the velocity
@@ -449,8 +415,8 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ComputeAdjointsBa
     VectorImageType* ptrInitialImage = this->m_pState->GetPointerToInitialImage();
 
     // map all the temporary variables to variables with meaningful names for this method
-    VectorFieldType* ptrCurrentVelocityField = m_ptrTmpField;
-    VectorFieldType* ptrCurrentKLambdaV = m_ptrTmpFieldConv;
+    typename VectorFieldType::Pointer ptrCurrentVelocityField = m_ptrTmpField;
+    typename VectorFieldType::Pointer ptrCurrentKLambdaV = m_ptrTmpFieldConv;
 
     unsigned int uiNrOfTimePoints = m_vecTimeDiscretization.size();
     unsigned int uiNrOfMeasuredImagesAtFinalTimePoint;
@@ -665,10 +631,10 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ComputeInitialUns
   unsigned int dim = ptrI0->getDim();
 
   // compute the initial adjoint, assuming that there is only a zero velocity field
-  VectorImageType* ptrLambda0 = new VectorImageType( ptrI0 );
+  typename VectorImageType::Pointer ptrLambda0 = new VectorImageType( ptrI0 );
   ptrLambda0->setConst( 0.0 );
 
-  VectorImageType* ptrCurrentAdjointDifference = new VectorImageType( ptrI0 );
+  typename VectorImageType::Pointer ptrCurrentAdjointDifference = new VectorImageType( ptrI0 );
 
   for ( unsigned int iI = 0; iI< this->m_vecTimeDiscretization.size(); ++iI )
     {
@@ -696,10 +662,6 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ComputeInitialUns
     VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrLambda0, iD, m_ptrTmpField );
     ptrCurrentGradient->addCellwise( m_ptrTmpField );
     }
-
-  delete ptrLambda0;
-  delete ptrCurrentAdjointDifference;
-
 }
 
 template < class TState >
@@ -789,7 +751,7 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::OutputStateInform
 
   unsigned int dim = m_ptrTmpImage->getDim();
 
-  VectorFieldType* ptrCurrentGradient = new VectorFieldType( m_ptrTmpField );
+  typename VectorFieldType::Pointer ptrCurrentGradient = new VectorFieldType( m_ptrTmpField );
 
   std::string suffix = "-iter-"  + CreateIntegerString( uiIter, 3 ) + ".nrrd";
 
@@ -840,9 +802,6 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::OutputStateInform
 #endif
 
     }
-
-  delete ptrCurrentGradient;
-
 }
 
 #endif

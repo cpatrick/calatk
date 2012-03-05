@@ -46,7 +46,6 @@ CLDDMMGrowthModelObjectiveFunction< TState >::CLDDMMGrowthModelObjectiveFunction
 template < class TState >
 CLDDMMGrowthModelObjectiveFunction< TState >::~CLDDMMGrowthModelObjectiveFunction()
 {
-  DeleteAuxiliaryStructures();
 }
 
 template < class TState >
@@ -65,25 +64,6 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::SetAutoConfiguration( Json::V
 }
 
 template < class TState >
-void CLDDMMGrowthModelObjectiveFunction< TState >::DeleteAuxiliaryStructures()
-{
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapIn );
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapOut );
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapTmp );
-
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrTmpVelocityField );
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrTmpGradient );
-
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrI0 );
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrCurrentLambdaEnd );
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrCurrentAdjointDifference );
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrDeterminantOfJacobian );
-
-  SaveDelete< VectorImagePointerType >::PointerVector( m_ptrI );
-  SaveDelete< VectorImagePointerType >::PointerVector( m_ptrLambda );
-}
-
-template < class TState >
 void CLDDMMGrowthModelObjectiveFunction< TState >::CreateAuxiliaryStructures()
 {
 
@@ -99,7 +79,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::CreateAuxiliaryStructures()
   // allocate all the auxiliary data
 
   // image and adjoint time-series
-  m_ptrI = new std::vector< VectorImagePointerType >;
+  m_ptrI = new std::vector< typename VectorImageType::Pointer >;
   m_ptrLambda = new std::vector< VectorImagePointerType >;
 
   // storage for the initial image
@@ -109,13 +89,13 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::CreateAuxiliaryStructures()
   // one more than for the velocity fields
   for ( unsigned int iI=0; iI < this->m_vecTimeDiscretization.size(); ++iI )
     {
-    VectorImagePointerType ptrCurrentVectorImage = new VectorImageType( pGraftIm ); 
+    typename VectorImageType::Pointer ptrCurrentVectorImage = new VectorImageType( pGraftIm );
     m_ptrI->push_back( ptrCurrentVectorImage );
 
     // bookkeeping to simplify metric computations
     this->m_vecTimeDiscretization[ iI ].vecEstimatedImages.push_back( ptrCurrentVectorImage );
-    
-    ptrCurrentVectorImage = new VectorImageType( pGraftIm ); 
+
+    ptrCurrentVectorImage = new VectorImageType( pGraftIm );
     m_ptrLambda->push_back( ptrCurrentVectorImage );
     }
 
@@ -143,6 +123,31 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::CreateAuxiliaryStructures()
   // storage for the temporary gradient
   m_ptrTmpGradient = new VectorFieldType( pGraftIm );
 
+}
+
+template < class TState >
+void CLDDMMGrowthModelObjectiveFunction< TState >::DeleteAuxiliaryStructures()
+{
+  this->m_ptrMapIn  = NULL;
+  this->m_ptrMapOut = NULL;
+  this->m_ptrMapTmp = NULL;
+
+  this->m_ptrTmpVelocityField = NULL;
+  this->m_ptrTmpGradient      = NULL;
+
+  this->m_ptrI0                       = NULL;
+  this->m_ptrCurrentLambdaEnd         = NULL;
+  this->m_ptrCurrentAdjointDifference = NULL;
+  this->m_ptrDeterminantOfJacobian    = NULL;
+
+  if( this->m_ptrI )
+    {
+    this->m_ptrI->clear();
+    }
+  if( this->m_ptrLambda )
+    {
+    this->m_ptrLambda->clear();
+    }
 }
 
 template < class TState >
@@ -199,9 +204,9 @@ template < class TState >
 void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeImagesForward()
 {
   LDDMMUtils< T, TState::VImageDimension >::identityMap( m_ptrMapIn );
-  // FIXME: This is just to make things easier and to support estimating the initial image (todo) later 
+  // FIXME: This is just to make things easier and to support estimating the initial image (todo) later
   (*m_ptrI)[ 0 ]->copy( m_ptrI0 );
-  
+
   for ( unsigned int iI = 0; iI < this->m_vecTimeDiscretization.size()-1; ++iI )
     {
 
@@ -212,7 +217,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeImagesForward()
 
     // now compute the image by interpolation
     LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapIn, m_ptrI0, (*m_ptrI)[ iI+1 ] );
-    
+
     }
 }
 
@@ -222,19 +227,19 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeAdjointBackward()
   // create the final condition
 
   m_ptrCurrentLambdaEnd->setConst( 0 );
-  
+
   unsigned int uiNrOfTimePoints = this->m_vecTimeDiscretization.size();
   unsigned int uiNrOfMeasuredImagesAtTimePoint = 0;
 
   uiNrOfMeasuredImagesAtTimePoint = this->m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecMeasurementImages.size();
   // first set the final condition
-  for ( unsigned int iM = 0; iM <  uiNrOfMeasuredImagesAtTimePoint; ++iM ) 
+  for ( unsigned int iM = 0; iM <  uiNrOfMeasuredImagesAtTimePoint; ++iM )
     {
     this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, this->m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecEstimatedImages[0] , this->m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecMeasurementImages[ iM ] );
     m_ptrCurrentAdjointDifference->multConst( 1.0/m_SigmaSqr );
     m_ptrCurrentLambdaEnd->addCellwise( m_ptrCurrentAdjointDifference );
     }
-  
+
   // last adjoint; just for book-keeping, currently not really used in the algorithm
   (*m_ptrLambda)[ uiNrOfTimePoints-1 ]->copy( m_ptrCurrentLambdaEnd );
 
@@ -249,10 +254,10 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeAdjointBackward()
     m_ptrTmpVelocityField->multConst( -1 );
 
     this->m_ptrEvolver->SolveForward( m_ptrTmpVelocityField, m_ptrMapIn, m_ptrMapOut, m_ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
-    
+
     // now compute the adjoint by interpolation and exploiting the determinant of the Jacobian
     LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapOut, m_ptrCurrentLambdaEnd, (*m_ptrLambda)[ iI ] );
-    
+
     // compute det jacobian
     LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( m_ptrMapOut, m_ptrDeterminantOfJacobian );
     // multiply by the determinant of the Jacobian
@@ -268,10 +273,10 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeAdjointBackward()
 
       // reset the map to flow backwards, because we update the current adjoint
       LDDMMUtils< T, TState::VImageDimension >::identityMap( m_ptrMapIn );
-      
+
       // account for all possible jumps of the adjoint at this time-point
       uiNrOfMeasuredImagesAtTimePoint = this->m_vecTimeDiscretization[ iI ].vecMeasurementImages.size();
-      for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM ) 
+      for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM )
         {
         this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, this->m_vecTimeDiscretization[ iI ].vecEstimatedImages[0] , this->m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ] );
         m_ptrCurrentAdjointDifference->multConst( 1.0/m_SigmaSqr );
@@ -318,7 +323,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeGradient()
 
     //VectorImageUtils< T, VImageDimension >::writeFileITK( ptrCurrentGradient, "curGradAfterConv.nrrd" );
 
-    // add v 
+    // add v
     VectorFieldType* ptrCurrentVelocity = this->m_pState->GetVectorFieldPointer( iI );
     ptrCurrentGradient->addCellwise( ptrCurrentVelocity );
 
@@ -339,10 +344,10 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeInitialUnsmoothedVeloc
   unsigned int dim = m_ptrI0->getDim();
 
   // compute the initial adjoint, assuming that there is only a zero velocity field
-  VectorImageType* ptrLambda0 = new VectorImageType( m_ptrI0 );
+  typename VectorImageType::Pointer ptrLambda0 = new VectorImageType( m_ptrI0 );
   ptrLambda0->setConst( 0.0 );
 
-  VectorImageType* ptrCurrentAdjointDifference = new VectorImageType( m_ptrI0 );
+  typename VectorImageType::Pointer ptrCurrentAdjointDifference = new VectorImageType( m_ptrI0 );
 
   for ( unsigned int iI = 0; iI< this->m_vecTimeDiscretization.size(); ++iI )
     {
@@ -370,10 +375,6 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeInitialUnsmoothedVeloc
     VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrLambda0, iD, m_ptrTmpGradient );
     ptrCurrentGradient->addCellwise( m_ptrTmpGradient );
     }
-
-  delete ptrLambda0;
-  delete ptrCurrentAdjointDifference;
-
 }
 
 template < class TState >
@@ -403,8 +404,8 @@ CLDDMMGrowthModelObjectiveFunction< TState >::GetCurrentEnergy()
   T dVelocitySquareNorm = dEnergy;
 
   // now add the contributions of the data terms
-  
-  // create the current images according to the current state 
+
+  // create the current images according to the current state
   // (in case the velocities were updated externally by the optimizer for example)
 
   ComputeImagesForward();
@@ -415,7 +416,7 @@ CLDDMMGrowthModelObjectiveFunction< TState >::GetCurrentEnergy()
     {
     // account for all possible measurements
     unsigned int uiNrOfMeasuredImagesAtTimePoint = this->m_vecTimeDiscretization[ iI ].vecMeasurementImages.size();
-    for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM ) 
+    for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM )
       {
       T dCurrentImageMetric = 1.0/m_SigmaSqr*this->m_pMetric->GetMetric( this->m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ], this->m_vecTimeDiscretization[ iI ].vecEstimatedImages[0] );
       dImageNorm += dCurrentImageMetric;
@@ -462,7 +463,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::OutputStateInformation( unsig
 
   unsigned int dim = m_ptrI0->getDim();
 
-  VectorFieldType* ptrCurrentGradient = new VectorFieldType( m_ptrTmpGradient );
+  typename VectorFieldType::Pointer ptrCurrentGradient = new VectorFieldType( m_ptrTmpGradient );
 
   std::string suffix = "-iter-" + CreateIntegerString( uiIter, 3 ) + ".nrrd";
 
@@ -500,9 +501,6 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::OutputStateInformation( unsig
     VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrCurrentGradient, outputPrefix + "gradv" + CreateIntegerString( iI, 3 ) + suffix );
 
     }
-
-  delete ptrCurrentGradient;
-
 }
 
 #endif

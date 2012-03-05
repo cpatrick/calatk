@@ -37,10 +37,10 @@ CStateAtlas< TState  >::CStateAtlas( const CStateAtlas & c )
   if ( this != &c )
     {
       assert ( this->m_vecIndividualStates.isempty() );
-      typename std::vector< TState* >::const_iterator iter;
+      typename VectorIndividualStatesType::const_iterator iter;
       for ( iter=c.m_vecIndividualStates.begin(); iter!=c.m_vecIndividualStates.end(); ++iter )
         {
-          TState *pCopiedState = new TState( *iter );
+          typename TState::Pointer pCopiedState = new TState( *iter );
           this->m_vecIndividualStates.push_back( pCopiedState );
         }
     }
@@ -52,7 +52,7 @@ CStateAtlas< TState  >::CStateAtlas( const CStateAtlas & c )
 template <class TState>
 CStateAtlas< TState  >::CStateAtlas( const std::vector< TState* >* pVec )
 {
-  typename std::vector< TState* >::const_iterator iter;
+  typename VectorIndividualStatesType::const_iterator iter;
   for ( iter = pVec->begion(); iter != pVec->end(); ++iter )
     {
       m_vecIndividualStates.push_back( *iter );
@@ -66,11 +66,6 @@ CStateAtlas< TState  >::CStateAtlas( const std::vector< TState* >* pVec )
 template <class TState>
 void CStateAtlas< TState >::ClearDataStructure()
 {
-  typename std::vector< TState* >::iterator iter;
-  for ( iter=this->m_vecIndividualStates.begin(); iter!=this->m_vecIndividualStates.end(); ++iter )
-    {
-      delete *iter;
-    }
   this->m_vecIndividualStates.clear();
 }
 
@@ -93,7 +88,7 @@ CStateAtlas< TState >::CreateUpsampledStateAndAllocateMemory( const VectorImageT
     std::vector< TState* >* ptrUpsampledState = new std::vector< TState* >;
 
     // upsample all the individual state components
-    typename std::vector< TState* >::iterator iter;
+    typename VectorIndividualStatesType::iterator iter;
     for ( iter = m_vecIndividualStates.begin(); iter != m_vecIndividualStates.end(); ++iter )
     {
       ptrUpsampledState->push_back( iter->CreateUpsampledStateAndAllocateMemory( pGraftImage ) );
@@ -120,8 +115,8 @@ CStateAtlas< TState >::operator=(const CStateAtlas & p )
       // already memory of appropriate size allocated, so just copy
       // iterate and copy
       
-      typename std::vector< TState* >::const_iterator iterSource;
-      typename std::vector< TState* >::iterator iterTarget;
+      typename VectorIndividualStatesType::const_iterator iterSource;
+      typename VectorIndividualStatesType::iterator iterTarget;
       for ( iterSource = p.m_vecIndividualStates.begin(), iterTarget = m_vecIndividualStates.begin(); 
             iterSource != p.m_vecIndividualStates.end(), iterTarget != m_vecIndividualStates.end(); 
             ++iterSource, ++iterTarget )
@@ -136,10 +131,10 @@ CStateAtlas< TState >::operator=(const CStateAtlas & p )
       std::cerr << "WARNING: reallocating memory, should already have been assigned." << std::endl;
       ClearDataStructure();
 
-      typename std::vector< TState* >::const_iterator iter;
+      typename VectorIndividualStatesType::const_iterator iter;
       for ( iter=p.m_vecIndividualStates.begin(); iter!=p.m_vecIndividualStates.end(); ++iter )
         {
-          TState *pCopiedState = new TState( *iter );
+          typename TState::Pointer pCopiedState = new TState( *iter );
           this->m_vecIndividualStates.push_back( pCopiedState );
         }
       }
@@ -160,8 +155,8 @@ CStateAtlas< TState >::operator+=(const CStateAtlas & p )
     throw std::runtime_error( "Size mismatch of state vectors. ABORT." );
     }
 
-  typename std::vector< TState >::const_iterator iterSource;
-  typename std::vector< TState >::iterator iterTarget;
+  typename VectorIndividualStatesType::const_iterator iterSource;
+  typename VectorIndividualStatesType::iterator iterTarget;
   for ( iterSource = p.m_vecIndividualStates.begin(), iterTarget = m_vecIndividualStates.begin(); 
         iterSource != p.m_vecIndividualStates.end(), iterTarget != m_vecIndividualStates.end(); 
         ++iterSource, ++iterTarget )
@@ -184,8 +179,8 @@ CStateAtlas< TState >::operator-=(const CStateAtlas & p )
     return;
     }
 
-  typename std::vector< TState >::const_iterator iterSource;
-  typename std::vector< TState >::iterator iterTarget;
+  typename VectorIndividualStatesType::const_iterator iterSource;
+  typename VectorIndividualStatesType::iterator iterTarget;
   for ( iterSource = p.m_vecIndividualStates.begin(), iterTarget = m_vecIndividualStates.begin(); 
         iterSource != p.m_vecIndividualStates.end(), iterTarget != m_vecIndividualStates.end(); 
         ++iterSource, ++iterTarget )
@@ -202,7 +197,7 @@ CStateAtlas< TState > &
 CStateAtlas< TState >::operator*=(const T & p )
 {
 
-  typename std::vector< TState >::iterator iterTarget;
+  typename VectorIndividualStatesType::iterator iterTarget;
   for ( iterTarget = m_vecIndividualStates.begin(); iterTarget != m_vecIndividualStates.end(); ++iterTarget )
     {
     // multiply by the value
@@ -261,7 +256,7 @@ T CStateAtlas< TState >::SquaredNorm()
 {
   T dSquaredNorm = 0;
 
-  typename std::vector< TState* >::iterator iter;
+  typename VectorIndividualStatesType::iterator iter;
   for ( iter = m_vecIndividualStates.begin(); iter != m_vecIndividualStates.end(); ++iter )
   {
     dSquaredNorm += (*iter)->SquaredNorm();

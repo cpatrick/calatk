@@ -46,15 +46,13 @@ int DoIt( int argc, char **argv )
   const VectorFieldType* ptrMapIn = static_cast< VectorFieldType* >( ptrMapInVecIm ); 
   const VectorImageType* ptrImSource = VectorImageUtilsType::readFileITK( sourceImage );
 
-  VectorImageType* ptrImTarget = new VectorImageType( ptrImSource );
+  typename VectorImageType::Pointer ptrImTarget = new VectorImageType( ptrImSource );
 
   LDDMMUtilsType::applyMap( ptrMapIn, ptrImSource, ptrImTarget );
 
   // write out the result
 
   VectorImageUtilsType::writeFileITK( ptrImTarget, targetImage );
-
-  delete ptrImTarget;
 
   return EXIT_SUCCESS;
 

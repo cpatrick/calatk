@@ -32,10 +32,13 @@ class CLDDMMSpatioTemporalVelocityFieldObjectiveFunction
     : public CVelocityFieldObjectiveFunctionWithMomentum<  TState >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CLDDMMSpatioTemporalVelocityFieldObjectiveFunction    Self;
+  typedef CVelocityFieldObjectiveFunctionWithMomentum< TState > Superclass;
+  typedef itk::SmartPointer< Self >                             Pointer;
+  typedef itk::SmartPointer< const Self >                       ConstPointer;
   
   /* some useful typedefs */
-
-  typedef CVelocityFieldObjectiveFunction< TState > Superclass;
   typedef typename Superclass::CEnergyValues CEnergyValues;
 
   typedef typename TState::TFloat T;
@@ -61,14 +64,14 @@ public:
 protected:
 
   /* Some useful protected datatypes */
-  typedef VectorFieldType* VectorFieldPointerType;
+  typedef typename VectorFieldType::Pointer      VectorFieldPointerType;
   typedef std::vector< VectorFieldPointerType >* VectorPointerToVectorFieldPointerType;
 
-  typedef VectorImageType* VectorImagePointerType;
+  typedef typename VectorImageType::Pointer      VectorImagePointerType;
   typedef std::vector< VectorImagePointerType >* VectorPointerToVectorImagePointerType;
 
-  typedef CImageManager< T, TState::VImageDimension > ImageManagerType;
-  typedef typename ImageManagerType::SImageInformation SImageInformation;
+  typedef CImageManager< T, TState::VImageDimension >       ImageManagerType;
+  typedef typename ImageManagerType::SImageInformation      SImageInformation;
   typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
 
   typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;
@@ -77,8 +80,8 @@ protected:
   void InitializeDataStructuresFromState( TState* pState );
 
   // methods which delete and create possible auxiliary dynamic structures
-  virtual void DeleteAuxiliaryStructures() = 0;
   virtual void CreateAuxiliaryStructures() = 0;
+  virtual void DeleteAuxiliaryStructures() = 0;
 
   void DeleteData();
 

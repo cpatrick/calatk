@@ -40,10 +40,13 @@ template <class T, unsigned int VImageDimension=3 >
 class CImageManagerMultiScale : public CImageManagerFullScale< T, VImageDimension >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CImageManagerMultiScale                       Self;
+  typedef CImageManagerFullScale< T, VImageDimension >  Superclass;
+  typedef itk::SmartPointer< Self >                     Pointer;
+  typedef itk::SmartPointer< const Self >               ConstPointer;
 
   /* Some useful typedefs */
-
-  typedef CImageManagerFullScale< T, VImageDimension > Superclass;
   typedef CResampler< T, VImageDimension > ResamplerType;
   
   typedef typename Superclass::SImageInformation SImageInformation;
@@ -85,12 +88,9 @@ public:
 protected:
 
   void SetDefaultResamplerPointer();
-  void DeleteDefaultResampler();
   void SetScale( SImageInformation* pCurrentImInfo );
 
 private:
-
-  bool m_bSetDefaultResampler;
 
   unsigned int m_uiCurrentlySelectedScale;
   std::vector< T > m_ScaleVector;
@@ -99,7 +99,7 @@ private:
   // disallow any changing of the scales once images were read
   bool m_bImagesWereRead;
 
-  ResamplerType* m_ptrResampler;
+  typename ResamplerType::Pointer m_ptrResampler;
 
   T m_Sigma;
   const T DefaultSigma;

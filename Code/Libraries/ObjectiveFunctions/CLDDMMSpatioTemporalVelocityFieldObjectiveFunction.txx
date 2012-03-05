@@ -30,15 +30,8 @@ CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CLDDMMSpatioTempor
 template < class TState >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::DeleteData()
 {
-  
-  this->m_ptrKernel->DeallocateMemory();
-
   m_vecTimeIncrements.clear();
   m_vecTimeDiscretization.clear();
-
-  SaveDelete< TState* >::Pointer( this->m_pState );
-  SaveDelete< TState* >::Pointer( this->m_pGradient );
-
 }
 
 template < class TState >
@@ -67,7 +60,7 @@ template < class TState >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateTimeDiscretization()
 {
 
-  if ( this->m_ptrImageManager == NULL )
+  if ( this->m_ptrImageManager.GetPointer() == NULL )
     {
     throw std::runtime_error( "ERROR: No image manager specified." );
     return;
@@ -89,7 +82,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateNewStat
   // Images and adjoints will be saved at all time-points
   // velcoity fields have one less entry (because they 'live' in between the measurement points)
 
-  assert( this->m_pState == NULL );
+  assert( this->m_pState.GetPointer() == NULL );
   assert( m_vecTimeDiscretization.size() > 1 );
 
   const VectorImageType* pGraftIm = this->m_ptrImageManager->GetGraftImagePointer();
@@ -114,7 +107,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateNewStat
 template < class TState >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateNewGradientStructures()
 {
-  assert( this->m_pGradient == NULL );
+  assert( this->m_pGradient.GetPointer() == NULL );
   assert( m_vecTimeDiscretization.size() > 1 );
 
   const VectorImageType* pGraftIm = this->m_ptrImageManager->GetGraftImagePointer();
@@ -140,7 +133,7 @@ template < class TState >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::ShallowCopyStateStructures( TState* pState )
 {
 
-  assert( this->m_pState == NULL );
+  assert( this->m_pState.GetPointer() == NULL );
 
   std::vector< VectorFieldPointerType > vecState;
     
@@ -159,46 +152,42 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::ShallowCopySt
 template < class TState >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::InitializeDataStructuresFromState( TState* pState )
 {
+  this->DeleteAuxiliaryStructures();
 
-  DeleteAuxiliaryStructures();
+  this->DeleteData();
 
-  DeleteData();
-
-  CreateTimeDiscretization();
+  this->CreateTimeDiscretization();
   
   // shallow copy (i.e., we just take over the externally allocated memory)
-  ShallowCopyStateStructures( pState );
+  this->ShallowCopyStateStructures( pState );
 
   // new geadient structures
-  CreateNewGradientStructures();
+  this->CreateNewGradientStructures();
 
   // gradient and everything else
-  CreateAuxiliaryStructures();
-
+  this->CreateAuxiliaryStructures();
 }
 
 template < class TState >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::InitializeDataStructures()
 {
+  this->DeleteAuxiliaryStructures();
 
-  DeleteAuxiliaryStructures();
+  this->DeleteData();
 
-  DeleteData();
+  assert( this->m_pGradient.GetPointer() == NULL );
+  assert( this->m_pState.GetPointer() == NULL );
 
-  assert( this->m_pGradient == NULL );
-  assert( this->m_pState == NULL );
-
-  CreateTimeDiscretization();
+  this->CreateTimeDiscretization();
 
   // allocate state structures
-  CreateNewStateStructures();
+  this->CreateNewStateStructures();
 
   // allocate new gradient strcutures
-  CreateNewGradientStructures();
+  this->CreateNewGradientStructures();
 
   // gradient and everything else
-  CreateAuxiliaryStructures();
-
+  this->CreateAuxiliaryStructures();
 }
 
 template < class TState >
@@ -215,7 +204,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::GetMapFromTo(
         ptrMap,
         dTimeFrom,
         dTimeTo,
-        m_vecTimeDiscretization,
+        this->m_vecTimeDiscretization,
         this->m_pState->GetVectorPointerToVectorFieldPointer(),
         this->m_ptrEvolver );
 }

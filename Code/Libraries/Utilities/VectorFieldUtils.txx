@@ -1128,7 +1128,7 @@ void VectorFieldUtils< T, VImageDimension >::affineITKtoMap( typename ITKAffineT
   // TODO: Check that this is correctly implemented
 
   // set up the identity
-  VectorFieldType* id = new VectorFieldType(mapOut);
+  typename VectorFieldType::Pointer id = new VectorFieldType(mapOut);
   VectorFieldUtils< T, VImageDimension >::identityMap(id);
 
   // transform the identity
@@ -1193,13 +1193,9 @@ void VectorFieldUtils< T, VImageDimension >::affineITKtoMap( typename ITKAffineT
           mapOut->setY(x,y, id->getY(0,(unsigned int)yStart));
           }
         }
-      
+
       }
     }
-  
-  // clean up
-  delete id;
-
 }
 
 //
@@ -1217,7 +1213,7 @@ void VectorFieldUtils< T, VImageDimension >::affineITKtoMap( typename ITKAffineT
   // identified as problematic
   
   // set mapOut to the identity
-  VectorFieldType* id = new VectorFieldType(mapOut);
+  typename VectorFieldType::Pointer id = new VectorFieldType(mapOut);
   VectorFieldUtils< T, VImageDimension >::identityMap(id);
   
   // transform the identity
@@ -1309,10 +1305,6 @@ void VectorFieldUtils< T, VImageDimension >::affineITKtoMap( typename ITKAffineT
         }
       }
     }
-  
-  // clean up
-  delete id;
-    
 }
 
 

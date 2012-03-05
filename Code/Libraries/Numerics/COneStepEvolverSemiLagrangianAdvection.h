@@ -34,7 +34,9 @@ namespace CALATK
 {
 
 /**
- * COneStepEvolverSemiLagrangianAdvection.h -- implementation of a one-step advection evolver using a semi-lagrangian approach
+ * \class COneStepEvolverSemiLagrangianAdvection
+ *
+ * \brief Implementation of a one-step advection evolver using a semi-lagrangian approach
  *
  * The assumption is that the underlying velocity field is static for this step.
  * The approach followed is then a simplified version of the approach described by Stanisforth and Cote in
@@ -48,14 +50,15 @@ namespace CALATK
  * This will then require a modified Semi-Lagrangian solver.
  *
  */
-
 template <class T, unsigned int VImageDimension=3 >
 class COneStepEvolverSemiLagrangianAdvection : public COneStepEvolver< T, VImageDimension >
 {
-
 public:
-
-  typedef COneStepEvolver< T, VImageDimension > Superclass;
+  /** Standard class typedefs. */
+  typedef COneStepEvolverSemiLagrangianAdvection  Self;
+  typedef COneStepEvolver< T, VImageDimension >   Superclass;
+  typedef itk::SmartPointer< Self >               Pointer;
+  typedef itk::SmartPointer< const Self >         ConstPointer;
 
   typedef typename Superclass::VectorFieldType VectorFieldType;
   typedef typename Superclass::VectorImageType VectorImageType;
@@ -89,8 +92,8 @@ private:
 
   void ComputeAdjustedVectorFieldIfRequired( const VectorFieldType* v, T dt );
 
-  VectorFieldType* ptrAdjustedVectorField; ///< Vector field which should be used because it points back to the point of origin for each grid point
-  VectorFieldType* ptrTmpVectorField; ///< holds intermediate iteration results
+  typename VectorFieldType::Pointer m_ptrAdjustedVectorField; ///< Vector field which should be used because it points back to the point of origin for each grid point
+  typename VectorFieldType::Pointer m_ptrTmpVectorField; ///< holds intermediate iteration results
 
   T m_TimeStepFactor; ///< multiplier for the CFL timestep (timstep can be larger for a semi-Lagrangian scheme)
   const T DefaultTimeStepFactor;

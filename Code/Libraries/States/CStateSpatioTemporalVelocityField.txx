@@ -61,15 +61,6 @@ CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::CStateSpat
 template <class T, unsigned int VImageDimension, class TResampler >
 void CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler >::ClearDataStructure()
 {
-  typename std::vector< VectorFieldPointerType >::iterator iter;
-  for ( iter = m_vecPtrSTVelocityField.begin(); iter != m_vecPtrSTVelocityField.end(); ++iter )
-    {
-    // delete vector field
-    if ( *iter != NULL )
-      {
-      delete *iter;
-      }
-    }
   m_vecPtrSTVelocityField.clear();
 }
 
@@ -156,7 +147,7 @@ unsigned int CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  
 // returns the pointer to a particular vector field
 //
 template <class T, unsigned int VImageDimension, class TResampler >
-typename CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::VectorFieldPointerType
+typename CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::VectorFieldType *
 CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::GetVectorFieldPointer( unsigned int iI )
 {
   assert( iI>=0 && iI<m_vecPtrSTVelocityField.size() );
@@ -177,7 +168,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::GetVectorP
 // sets a vector field as an element of the spatio temporal velocity field data structure
 //
 template <class T, unsigned int VImageDimension, class TResampler >
-void CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::SetVectorFieldPointer( unsigned int iI, VectorFieldPointerType ptrVecField )
+void CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::SetVectorFieldPointer( unsigned int iI, VectorFieldType * ptrVecField )
 {
   assert( iI>=0 && iI<m_vecPtrSTVelocityField.size() );
   m_vecPtrSTVelocityField[ iI ] = ptrVecField;

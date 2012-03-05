@@ -43,107 +43,107 @@ class CLDDMMAdjointGeodesicShootingObjectiveFunction
     : public CLDDMMGeodesicShootingObjectiveFunction< TState >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CLDDMMAdjointGeodesicShootingObjectiveFunction    Self;
+  typedef CLDDMMGeodesicShootingObjectiveFunction< TState > Superclass;
+  typedef itk::SmartPointer< Self >                         Pointer;
+  typedef itk::SmartPointer< const Self >                   ConstPointer;
 
-    /* Some useful typedefs */
+  /* Some useful typedefs */
+  typedef typename TState::TFloat T;
 
-    typedef CLDDMMGeodesicShootingObjectiveFunction< TState > Superclass;
+  typedef typename Superclass::CEnergyValues CEnergyValues;
 
-    typedef typename TState::TFloat T;
+  typedef typename Superclass::VectorImageType VectorImageType;
+  typedef typename Superclass::VectorFieldType VectorFieldType;
 
-    typedef typename Superclass::CEnergyValues CEnergyValues;
+  CLDDMMAdjointGeodesicShootingObjectiveFunction();
+  virtual ~CLDDMMAdjointGeodesicShootingObjectiveFunction();
 
-    typedef typename Superclass::VectorImageType VectorImageType;
-    typedef typename Superclass::VectorFieldType VectorFieldType;
+  void InitializeState();
+  void InitializeState( TState* pState );
 
-    CLDDMMAdjointGeodesicShootingObjectiveFunction();
-    virtual ~CLDDMMAdjointGeodesicShootingObjectiveFunction();
+  void GetImage( VectorImageType* ptrIm, T dTime );
+  void GetMomentum( VectorImageType* ptrMomentum, T dTime );
 
-    void InitializeState();
-    void InitializeState( TState* pState );
+  void GetMap( VectorFieldType* ptrMap, T dTime );
+  void GetMapFromTo(VectorFieldType *ptrMap, T dTimeFrom, T dTimeTo);
 
-    void GetImage( VectorImageType* ptrIm, T dTime );
-    void GetMomentum( VectorImageType* ptrMomentum, T dTime );
+  CEnergyValues GetCurrentEnergy();
+  void ComputeGradient();
+  void ComputeInitialUnsmoothedVelocityGradient( VectorFieldType *ptrInitialUnsmoothedVelocityGradient, unsigned int uiNumberOfKernel = 0 );
 
-    void GetMap( VectorFieldType* ptrMap, T dTime );
-    void GetMapFromTo(VectorFieldType *ptrMap, T dTimeFrom, T dTimeTo);
-
-    CEnergyValues GetCurrentEnergy();
-    void ComputeGradient();
-    void ComputeInitialUnsmoothedVelocityGradient( VectorFieldType *ptrInitialUnsmoothedVelocityGradient, unsigned int uiNumberOfKernel = 0 );
-
-    void OutputStateInformation( unsigned int uiIter, std::string outputPrefix="" );
+  void OutputStateInformation( unsigned int uiIter, std::string outputPrefix="" );
 
 protected:
+  /** Some useful protected typedefs */
 
-    /** Some useful protected typedefs */
+  typedef std::vector< typename VectorFieldType::Pointer >* VectorPointerToVectorFieldPointerType;
 
-    typedef VectorFieldType* VectorFieldPointerType;
-    typedef std::vector< VectorFieldPointerType >* VectorPointerToVectorFieldPointerType;
+  typedef std::vector< typename VectorImageType::Pointer >* VectorPointerToVectorImagePointerType;
 
-    typedef VectorImageType* VectorImagePointerType;
-    typedef std::vector< VectorImagePointerType >* VectorPointerToVectorImagePointerType;
+  void InitializeDataStructures();
+  void InitializeDataStructuresFromState( TState* pState );
 
-    void InitializeDataStructures();
-    void InitializeDataStructuresFromState( TState* pState );
+  void DeleteData();
 
-    void DeleteData();
+  void CreateNewStateStructures();
+  void ShallowCopyStateStructures( TState* pState );
+  void CreateGradientAndAuxiliaryStructures();
 
-    void CreateNewStateStructures();
-    void ShallowCopyStateStructures( TState* pState );
-    void CreateGradientAndAuxiliaryStructures();
+  void ComputeImageMomentumForward();
+  void ComputeAdjointsBackward();
+  void ComputeVelocityAdjoint( const VectorImageType * ptrI, const VectorImageType * ptrP, const VectorImageType * ptrLambdaI, const VectorImageType * ptrLambdaP, VectorFieldType * LambdaVOut);
 
-    void ComputeImageMomentumForward();
-    void ComputeAdjointsBackward();
-    void ComputeVelocityAdjoint(VectorImagePointerType ptrI, VectorImagePointerType ptrP, VectorImagePointerType ptrLambdaI, VectorImagePointerType ptrLambdaP, VectorFieldPointerType LambdaVOut);
+  void CreateTimeDiscretization();
 
-    void CreateTimeDiscretization();
+  typedef CImageManager< T, TState::VImageDimension > ImageManagerType;
+  typedef typename ImageManagerType::SImageInformation SImageInformation;
+  typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
 
-    typedef CImageManager< T, TState::VImageDimension > ImageManagerType;
-    typedef typename ImageManagerType::SImageInformation SImageInformation;
-    typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
-
-    typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;
+  typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;
 
 private:
+  typedef typename VectorFieldType::Pointer VectorFieldPointerType;
+  typedef typename VectorImageType::Pointer VectorImagePointerType;
 
-    VectorFieldPointerType m_ptrMapIn; // map for the numerical solution
-    VectorFieldPointerType m_ptrMapOut; // map for the numerical solution
-    VectorFieldPointerType m_ptrMapTmp; // map for the numerical solution
-    VectorFieldPointerType m_ptrMapIdentity; // stores the identity map
-    VectorFieldPointerType m_ptrMapIncremental; // stores the incremental map for the source terms of the adjoint PDEs
+  VectorFieldPointerType m_ptrMapIn; // map for the numerical solution
+  VectorFieldPointerType m_ptrMapOut; // map for the numerical solution
+  VectorFieldPointerType m_ptrMapTmp; // map for the numerical solution
+  VectorFieldPointerType m_ptrMapIdentity; // stores the identity map
+  VectorFieldPointerType m_ptrMapIncremental; // stores the incremental map for the source terms of the adjoint PDEs
 
-    VectorImagePointerType m_ptrCurrentAdjointIDifference;
-    VectorImagePointerType m_ptrDeterminantOfJacobian;
+  VectorImagePointerType m_ptrCurrentAdjointIDifference;
+  VectorImagePointerType m_ptrDeterminantOfJacobian;
 
-    // temporary storage memory managed by this class
-    VectorFieldPointerType m_ptrTmpField;
-    VectorFieldPointerType m_ptrTmpFieldConv;
-    VectorImagePointerType m_ptrTmpScalarImage;
-    VectorImagePointerType m_ptrTmpImage;
+  // temporary storage memory managed by this class
+  VectorFieldPointerType m_ptrTmpField;
+  VectorFieldPointerType m_ptrTmpFieldConv;
+  VectorImagePointerType m_ptrTmpScalarImage;
+  VectorImagePointerType m_ptrTmpImage;
 
-    VectorImagePointerType m_ptrDI;
-    VectorImagePointerType m_ptrDP;
+  VectorImagePointerType m_ptrDI;
+  VectorImagePointerType m_ptrDP;
 
-    VectorPointerToVectorImagePointerType m_ptrI; // image
-    VectorPointerToVectorImagePointerType m_ptrP; // momentum
+  VectorPointerToVectorImagePointerType m_ptrI; // image
+  VectorPointerToVectorImagePointerType m_ptrP; // momentum
 
-    // just for testing, remove later
-    VectorPointerToVectorImagePointerType tstLamI;
-    VectorPointerToVectorImagePointerType tstLamP;
+  // just for testing, remove later
+  VectorPointerToVectorImagePointerType tstLamI;
+  VectorPointerToVectorImagePointerType tstLamP;
 
-    VectorImagePointerType m_ptrCurrentLambdaI; // adjoint 1
-    VectorImagePointerType m_ptrCurrentLambdaP; // adjoint 2
-    VectorFieldPointerType m_ptrCurrentLambdaV; // adjoint 3
+  VectorImagePointerType m_ptrCurrentLambdaI; // adjoint 1
+  VectorImagePointerType m_ptrCurrentLambdaP; // adjoint 2
+  VectorFieldPointerType m_ptrCurrentLambdaV; // adjoint 3
 
-    VectorPointerToVectorFieldPointerType m_ptrVelocityField;
+  VectorPointerToVectorFieldPointerType m_ptrVelocityField;
 
-    std::vector< T > m_vecMeasurementTimepoints;
+  std::vector< T > m_vecMeasurementTimepoints;
 
-    // bookkeeping structure, which keeps track of what measurements need to be compared to what estimated images
+  // bookkeeping structure, which keeps track of what measurements need to be compared to what estimated images
 
-    std::vector< STimePoint > m_vecTimeDiscretization;
-    std::vector< T > m_vecTimeIncrements;
-
+  std::vector< STimePoint > m_vecTimeDiscretization;
+  std::vector< T > m_vecTimeIncrements;
 };
 
 #include "CLDDMMAdjointGeodesicShootingObjectiveFunction.txx"
