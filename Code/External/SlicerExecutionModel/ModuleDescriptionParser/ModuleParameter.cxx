@@ -135,6 +135,8 @@ ModuleParameter& ModuleParameter::operator=(const ModuleParameter& parameter)
   this->FileExtensions = parameter.FileExtensions;
   this->Elements = parameter.Elements;
   this->CoordinateSystem = parameter.CoordinateSystem;
+
+  return *this;
 }
 
 //-----------------------------------------------------------------------------

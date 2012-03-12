@@ -87,6 +87,8 @@ ModuleDescription& ModuleDescription::operator=(const ModuleDescription &md)
   this->ParameterGroups = md.ParameterGroups;
   this->ProcessInformation = md.ProcessInformation;
   this->Logo = md.Logo;
+
+  return *this;
 }
 
 //----------------------------------------------------------------------------

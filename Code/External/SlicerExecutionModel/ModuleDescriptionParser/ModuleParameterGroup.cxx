@@ -31,6 +31,8 @@ ModuleParameterGroup
   this->Description = parameters.Description;
   this->Parameters = parameters.Parameters;
   this->Advanced = parameters.Advanced;
+
+  return *this;
 }
 
 std::ostream & operator<<(std::ostream &os, const ModuleParameterGroup &group)
