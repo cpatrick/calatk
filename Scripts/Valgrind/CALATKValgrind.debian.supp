@@ -775,3 +775,17 @@
    fun:_ZNSt8_Rb_treeIN4Json5Value8CZStringESt4pairIKS2_S1_ESt10_Select1stIS5_ESt4lessIS2_ESaIS5_EE11_M_get_nodeEv
    ...
 }
+{
+   json_4
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZN4JsonL20duplicateStringValueEPKcj
+   ...
+}
+{
+   json_5
+   Memcheck:Leak
+   fun:_Znam
+   fun:_ZN4Json5Value10setCommentEPKcNS_16CommentPlacementE
+   ...
+}
