@@ -24,17 +24,14 @@
 // Constructors and Destructors //
 //////////////////////////////////
 
-//
-// empty constructor
-//
 template <class T, unsigned int VImageDimension>
 VectorArray<T, VImageDimension>::VectorArray() :
-  __sizeX(0),
-  __sizeY(0),
-  __sizeZ(0),
-  __dim(0),
-  __length(0),
-  __dataPtr(0)
+  m_SizeX(0),
+  m_SizeY(0),
+  m_SizeZ(0),
+  m_Dimension(0),
+  m_Length(0),
+  m_DataPtr(0)
 {}
 
 //
@@ -42,14 +39,14 @@ VectorArray<T, VImageDimension>::VectorArray() :
 //
 template <class T, unsigned int VImageDimension>
 VectorArray<T, VImageDimension>::VectorArray(unsigned int dim) :
-  __sizeX(1),
-  __sizeY(1),
-  __sizeZ(1),
-  __dim(dim),
-  __length(__dim),
-  __dataPtr(0)
+  m_SizeX(1),
+  m_SizeY(1),
+  m_SizeZ(1),
+  m_Dimension(dim),
+  m_Length(m_Dimension),
+  m_DataPtr(0)
 {
-  this->__allocate();
+  this->Allocate();
 }
 
 //
@@ -57,14 +54,14 @@ VectorArray<T, VImageDimension>::VectorArray(unsigned int dim) :
 //
 template <class T, unsigned int VImageDimension>
 VectorArray<T, VImageDimension>::VectorArray(unsigned int sizeX, unsigned int dim) :
-  __sizeX(sizeX),
-  __sizeY(1),
-  __sizeZ(1),
-  __dim(dim),
-  __length(__sizeX*__dim),
-  __dataPtr(0)
+  m_SizeX(sizeX),
+  m_SizeY(1),
+  m_SizeZ(1),
+  m_Dimension(dim),
+  m_Length(m_SizeX*m_Dimension),
+  m_DataPtr(0)
 {
-  this->__allocate();
+  this->Allocate();
 }
 
 
@@ -73,124 +70,115 @@ VectorArray<T, VImageDimension>::VectorArray(unsigned int sizeX, unsigned int di
 //
 template <class T, unsigned int VImageDimension>
 VectorArray<T, VImageDimension>::VectorArray(unsigned int sizeX, unsigned int sizeY, unsigned int dim) :
-  __sizeX(sizeX),
-  __sizeY(sizeY),
-  __sizeZ(1),
-  __dim(dim),
-  __length(__sizeX*__sizeY*__dim),
-  __dataPtr(0)
+  m_SizeX(sizeX),
+  m_SizeY(sizeY),
+  m_SizeZ(1),
+  m_Dimension(dim),
+  m_Length(m_SizeX*m_SizeY*m_Dimension),
+  m_DataPtr(0)
 {
-  this->__allocate();
+  this->Allocate();
 }
+
 
 //
 // 3D size and dim constructor
 //
 template <class T, unsigned int VImageDimension>
 VectorArray<T, VImageDimension>::VectorArray(unsigned int sizeX, unsigned int sizeY, unsigned int sizeZ, unsigned int dim) :
-  __sizeX(sizeX),
-  __sizeY(sizeY),
-  __sizeZ(sizeZ),
-  __dim(dim),
-  __length(__sizeX*__sizeY*__sizeZ*__dim),
-  __dataPtr(0)
+  m_SizeX(sizeX),
+  m_SizeY(sizeY),
+  m_SizeZ(sizeZ),
+  m_Dimension(dim),
+  m_Length(m_SizeX*m_SizeY*m_SizeZ*m_Dimension),
+  m_DataPtr(0)
 {
-  this->__allocate();
+  this->Allocate();
 }
 
-//
-// copy constructor
-//
 template <class T, unsigned int VImageDimension>
 VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, VImageDimension>* source) :
-  __sizeX(source->getSizeX()),
-  __sizeY(source->getSizeY()),
-  __sizeZ(source->getSizeZ()),
-  __dim(source->getDim()),
-  __length(__sizeX*__sizeY*__sizeZ*__dim),
-  __dataPtr(0)
+  m_SizeX(source->GetSizeX()),
+  m_SizeY(source->GetSizeY()),
+  m_SizeZ(source->GetSizeZ()),
+  m_Dimension(source->GetDimension()),
+  m_Length(m_SizeX*m_SizeY*m_SizeZ*m_Dimension),
+  m_DataPtr(0)
 {
-  this->__allocate();
+  this->Allocate();
 
   // copy the data, just based on linear indexing for efficiency
-  for (unsigned int uiIndx = 0; uiIndx < __length; ++uiIndx )
+  for (unsigned int uiIndx = 0; uiIndx < m_Length; ++uiIndx )
     {
-    __dataPtr[ uiIndx ] = source->getValue( uiIndx );
+    m_DataPtr[ uiIndx ] = source->GetValue( uiIndx );
     }
 
 }
 
-//
-// copy constructor
-//
+
 template <class T, unsigned int VImageDimension>
 VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, VImageDimension>* source, T dVal ) :
-  __sizeX(source->getSizeX()),
-  __sizeY(source->getSizeY()),
-  __sizeZ(source->getSizeZ()),
-  __dim(source->getDim()),
-  __length(__sizeX*__sizeY*__sizeZ*__dim),
-  __dataPtr(0)
+  m_SizeX(source->GetSizeX()),
+  m_SizeY(source->GetSizeY()),
+  m_SizeZ(source->GetSizeZ()),
+  m_Dimension(source->GetDimension()),
+  m_Length(m_SizeX*m_SizeY*m_SizeZ*m_Dimension),
+  m_DataPtr(0)
 {
-  this->__allocate();
+  this->Allocate();
 
   // copy the data, just based on linear indexing for efficiency
-  for (unsigned int uiIndx = 0; uiIndx < __length; ++uiIndx )
+  for (unsigned int uiIndx = 0; uiIndx < m_Length; ++uiIndx )
     {
-    __dataPtr[ uiIndx ] = dVal;
+    m_DataPtr[ uiIndx ] = dVal;
     }
 
 }
 
 
-//
-// copy constructor
-//
 template <class T, unsigned int VImageDimension>
 VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, 1>* source, T dVal, unsigned int uiNumDim ) :
-  __sizeX(source->getSizeX()),
-  __sizeY(source->getSizeY()),
-  __sizeZ(source->getSizeZ()),
-  __dim(uiNumDim),
-  __length(__sizeX*__sizeY*__sizeZ*uiNumDim),
-  __dataPtr(0)
+  m_SizeX(source->GetSizeX()),
+  m_SizeY(source->GetSizeY()),
+  m_SizeZ(source->GetSizeZ()),
+  m_Dimension(uiNumDim),
+  m_Length(m_SizeX*m_SizeY*m_SizeZ*uiNumDim),
+  m_DataPtr(0)
 {
-  __allocate();
+  Allocate();
 
   // copy the data, just for the first uiNumDim dimensions
-  assert( source->getDim()>=uiNumDim );
+  assert( source->GetDimension()>=uiNumDim );
 
-  unsigned int szX = source->getSizeX();
+  unsigned int szX = source->GetSizeX();
 
   for ( unsigned int x = 0; x < szX; ++x )
   {
     for ( unsigned int d = 0; d < uiNumDim; ++ d )
     {
-      this->setValue(x, d, dVal );
+      this->SetValue(x, d, dVal );
     }
   }
 
 }
 
-//
-// copy constructor
-//
+
 template <class T, unsigned int VImageDimension>
 VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, 2>* source, T dVal, unsigned int uiNumDim ) :
-  __sizeX(source->getSizeX()),
-  __sizeY(source->getSizeY()),
-  __sizeZ(source->getSizeZ()),
-  __dim(uiNumDim),
-  __length(__sizeX*__sizeY*__sizeZ*uiNumDim),
-  __dataPtr(0)
+  m_SizeX(source->GetSizeX()),
+  m_SizeY(source->GetSizeY()),
+  m_SizeZ(source->GetSizeZ()),
+  m_Dimension(uiNumDim),
+  m_Length(m_SizeX*m_SizeY*m_SizeZ*uiNumDim),
+  m_DataPtr(0)
 {
-  this->__allocate();
+  this->Allocate();
 
   // copy the data, just for the first uiNumDim dimensions
-  assert( source->getDim()>=uiNumDim );
+  assert( source->GetDimension()>=uiNumDim );
 
-  unsigned int szX = source->getSizeX();
-  unsigned int szY = source->getSizeY();
+  unsigned int szX = source->GetSizeX();
+  unsigned int szY = source->GetSizeY();
 
   for ( unsigned int y = 0; y < szY; ++y )
   {
@@ -198,7 +186,7 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, 2>* source, T
     {
       for ( unsigned int d = 0; d < uiNumDim; ++ d )
       {
-        this->setValue(x, y, d, dVal );
+        this->SetValue(x, y, d, dVal );
       }
     }
   }
@@ -210,21 +198,21 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, 2>* source, T
 //
 template <class T, unsigned int VImageDimension>
 VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, 3>* source, T dVal, unsigned int uiNumDim ) :
-  __sizeX(source->getSizeX()),
-  __sizeY(source->getSizeY()),
-  __sizeZ(source->getSizeZ()),
-  __dim(uiNumDim),
-  __length(__sizeX*__sizeY*__sizeZ*uiNumDim),
-  __dataPtr(0)
+  m_SizeX(source->GetSizeX()),
+  m_SizeY(source->GetSizeY()),
+  m_SizeZ(source->GetSizeZ()),
+  m_Dimension(uiNumDim),
+  m_Length(m_SizeX*m_SizeY*m_SizeZ*uiNumDim),
+  m_DataPtr(0)
 {
-  this->__allocate();
+  this->Allocate();
 
   // copy the data, just for the first uiNumDim dimensions
-  assert( source->getDim()>=uiNumDim );
+  assert( source->GetDimension()>=uiNumDim );
 
-  unsigned int szX = source->getSizeX();
-  unsigned int szY = source->getSizeY();
-  unsigned int szZ = source->getSizeZ();
+  unsigned int szX = source->GetSizeX();
+  unsigned int szY = source->GetSizeY();
+  unsigned int szZ = source->GetSizeZ();
 
   for ( unsigned int z = 0; z < szZ; ++z )
   {
@@ -234,7 +222,7 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, 3>* source, T
       {
         for ( unsigned int d = 0; d < uiNumDim; ++ d )
         {
-          this->setValue(x, y, d, dVal );
+          this->SetValue(x, y, d, dVal );
         }
       }
     }
@@ -248,7 +236,7 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, 3>* source, T
 template <class T, unsigned int VImageDimension>
 VectorArray<T, VImageDimension>::~VectorArray()
 {
-  __deallocate();
+  Deallocate();
 }
 
 
@@ -260,35 +248,35 @@ VectorArray<T, VImageDimension>::~VectorArray()
 // get value, 0D
 //
 template <class T, unsigned int VImageDimension>
-inline T& VectorArray<T, VImageDimension>::getValue(unsigned int d) const
+inline T& VectorArray<T, VImageDimension>::GetValue(unsigned int d) const
 {
 
 #ifdef DEBUG
   // throw exception if there is no data
-  if (__dataPtr == NULL) {
+  if (m_DataPtr == NULL) {
     throw std::runtime_error("No Data");
   }
 
   // throw exception if out of bounds
-  if (d >= __length || d < 0) {
+  if (d >= m_Length || d < 0) {
     throw std::out_of_range("d subscript out of range");
   }
 #endif
 
   // if nothing wrong, return the data
-  return __dataPtr[ d ];
+  return m_DataPtr[ d ];
 }
 
 //
 // get value, 1D
 //
 template <class T, unsigned int VImageDimension>
-inline T& VectorArray<T, VImageDimension>::getValue(unsigned int x, unsigned int d) const
+inline T& VectorArray<T, VImageDimension>::GetValue(unsigned int x, unsigned int d) const
 {
 
 #ifdef DEBUG
   // throw exception if there is no data
-  if (__dataPtr == NULL) {
+  if (m_DataPtr == NULL) {
     throw std::runtime_error("No Data");
   }
 
@@ -298,29 +286,29 @@ inline T& VectorArray<T, VImageDimension>::getValue(unsigned int x, unsigned int
     }
 
   // throw exception if out of bounds
-  if (x >= __sizeX || x < 0) {
+  if (x >= m_SizeX || x < 0) {
     throw std::out_of_range("x subscript out of range");
   }
 
-  if (d >= __dim || d < 0) {
+  if (d >= m_Dimension || d < 0) {
     throw std::out_of_range("d subscript out of range");
   }
 #endif
 
   // if nothing wrong, return the data
-  return __dataPtr[__sub2ind1D(x,d)];
+  return m_DataPtr[ToLinearIndex1D(x,d)];
 }
 
 //
 // get value, 2D
 //
 template <class T, unsigned int VImageDimension>
-inline T& VectorArray<T, VImageDimension>::getValue(unsigned int x, unsigned int y, unsigned int d) const
+inline T& VectorArray<T, VImageDimension>::GetValue(unsigned int x, unsigned int y, unsigned int d) const
 {
 
 #ifdef DEBUG
   // throw exception if there is no data
-  if (__dataPtr == NULL) {
+  if (m_DataPtr == NULL) {
     throw std::runtime_error("No Data");
   }
 
@@ -330,31 +318,31 @@ inline T& VectorArray<T, VImageDimension>::getValue(unsigned int x, unsigned int
     }
 
   // throw exception if out of bounds
-  if (x >= __sizeX || x < 0) {
+  if (x >= m_SizeX || x < 0) {
     throw std::out_of_range("x subscript out of range");
   }
-  if (y >= __sizeY || y < 0) {
+  if (y >= m_SizeY || y < 0) {
     throw std::out_of_range("y subscript out of range");
   }
-  if (d >= __dim || d < 0) {
+  if (d >= m_Dimension || d < 0) {
     throw std::out_of_range("d subscript out of range");
   }
 #endif
 
   // if nothing wrong, return the data
-  return __dataPtr[__sub2ind2D(x,y,d)];
+  return m_DataPtr[ToLinearIndex2D(x,y,d)];
 }
 
 //
 // get value, 3D
 //
 template <class T, unsigned int VImageDimension>
-inline T& VectorArray<T, VImageDimension>::getValue(unsigned int x, unsigned int y, unsigned int z, unsigned int d) const
+inline T& VectorArray<T, VImageDimension>::GetValue(unsigned int x, unsigned int y, unsigned int z, unsigned int d) const
 {
 
 #ifdef DEBUG
   // throw exception if there is no data
-  if (__dataPtr == NULL) {
+  if (m_DataPtr == NULL) {
     throw std::runtime_error("No Data");
   }
 
@@ -364,56 +352,56 @@ inline T& VectorArray<T, VImageDimension>::getValue(unsigned int x, unsigned int
     }
 
   // throw exception if out of bounds
-  if (x >= __sizeX || x < 0) {
+  if (x >= m_SizeX || x < 0) {
     throw std::out_of_range("x subscript out of range");
   }
-  if (y >= __sizeY || y < 0) {
+  if (y >= m_SizeY || y < 0) {
     throw std::out_of_range("y subscript out of range");
   }
-  if (z >= __sizeZ || z < 0) {
+  if (z >= m_SizeZ || z < 0) {
     throw std::out_of_range("z subscript out of range");
   }
-  if (d >= __dim || d < 0) {
+  if (d >= m_Dimension || d < 0) {
     throw std::out_of_range("d subscript out of range");
   }
 #endif
 
   // if nothing wrong, return the data
-  return __dataPtr[__sub2ind3D(x,y,z,d)];
+  return m_DataPtr[ToLinearIndex3D(x,y,z,d)];
 }
 
 //
 // set value 0D
 //
 template <class T, unsigned int VImageDimension>
-void VectorArray<T, VImageDimension>::setValue(unsigned int d, T value)
+void VectorArray<T, VImageDimension>::SetValue(unsigned int d, T value)
 {
 
 #ifdef DEBUG
   // throw exception if there is no data
-  if (__dataPtr == NULL) {
+  if (m_DataPtr == NULL) {
     throw std::runtime_error("No Data");
   }
 
-  if (d >= __length || d < 0) {
+  if (d >= m_Length || d < 0) {
     throw std::out_of_range("d subscript out of range");
   }
 #endif
 
   // if nothing wrong, set the data
-  __dataPtr[ d ] = value;
+  m_DataPtr[ d ] = value;
 }
 
 //
 // set value 1D
 //
 template <class T, unsigned int VImageDimension>
-void VectorArray<T, VImageDimension>::setValue(unsigned int x, unsigned int d, T value)
+void VectorArray<T, VImageDimension>::SetValue(unsigned int x, unsigned int d, T value)
 {
 
 #ifdef DEBUG
   // throw exception if there is no data
-  if (__dataPtr == NULL) {
+  if (m_DataPtr == NULL) {
     throw std::runtime_error("No Data");
   }
 
@@ -423,28 +411,28 @@ void VectorArray<T, VImageDimension>::setValue(unsigned int x, unsigned int d, T
     }
 
   // throw exception if out of bounds
-  if (x >= __sizeX || x < 0) {
+  if (x >= m_SizeX || x < 0) {
     throw std::out_of_range("x subscript out of range");
   }
-  if (d >= __dim || d < 0) {
+  if (d >= m_Dimension || d < 0) {
     throw std::out_of_range("d subscript out of range");
   }
 #endif
 
   // if nothing wrong, set the data
-  __dataPtr[__sub2ind1D(x,d)] = value;
+  m_DataPtr[ToLinearIndex1D(x,d)] = value;
 }
 
 //
 // set value 2D
 //
 template <class T, unsigned int VImageDimension>
-void VectorArray<T, VImageDimension>::setValue(unsigned int x, unsigned int y, unsigned int d, T value)
+void VectorArray<T, VImageDimension>::SetValue(unsigned int x, unsigned int y, unsigned int d, T value)
 {
 
 #ifdef DEBUG
   // throw exception if there is no data
-  if (__dataPtr == NULL) {
+  if (m_DataPtr == NULL) {
     throw std::runtime_error("No Data");
   }
 
@@ -454,31 +442,31 @@ void VectorArray<T, VImageDimension>::setValue(unsigned int x, unsigned int y, u
     }
 
   // throw exception if out of bounds
-  if (x >= __sizeX || x < 0) {
+  if (x >= m_SizeX || x < 0) {
     throw std::out_of_range("x subscript out of range");
   }
-  if (y >= __sizeY || y < 0) {
+  if (y >= m_SizeY || y < 0) {
     throw std::out_of_range("y subscript out of range");
   }
-  if (d >= __dim || d < 0) {
+  if (d >= m_Dimension || d < 0) {
     throw std::out_of_range("d subscript out of range");
   }
 #endif
 
   // if nothing wrong, set the data
-  __dataPtr[__sub2ind2D(x,y,d)] = value;
+  m_DataPtr[ToLinearIndex2D(x,y,d)] = value;
 }
 
 //
 // set value 3D
 //
 template <class T, unsigned int VImageDimension>
-void VectorArray<T, VImageDimension>::setValue(unsigned int x, unsigned int y, unsigned int z, unsigned int d, T value)
+void VectorArray<T, VImageDimension>::SetValue(unsigned int x, unsigned int y, unsigned int z, unsigned int d, T value)
 {
 
 #ifdef DEBUG
   // throw exception if there is no data
-  if (__dataPtr == NULL) {
+  if (m_DataPtr == NULL) {
     throw std::runtime_error("No Data");
   }
 
@@ -488,57 +476,53 @@ void VectorArray<T, VImageDimension>::setValue(unsigned int x, unsigned int y, u
     }
 
   // throw exception if out of bounds
-  if (x >= __sizeX || x < 0) {
+  if (x >= m_SizeX || x < 0) {
     throw std::out_of_range("x subscript out of range");
   }
-  if (y >= __sizeY || y < 0) {
+  if (y >= m_SizeY || y < 0) {
     throw std::out_of_range("y subscript out of range");
   }
-  if (z >= __sizeZ || z < 0) {
+  if (z >= m_SizeZ || z < 0) {
     throw std::out_of_range("z subscript out of range");
   }
-  if (d >= __dim || d < 0) {
+  if (d >= m_Dimension || d < 0) {
     throw std::out_of_range("d subscript out of range");
   }
 #endif
 
   // if nothing wrong, set the data
-  __dataPtr[__sub2ind3D(x,y,z,d)] = value;
+  m_DataPtr[ToLinearIndex3D(x,y,z,d)] = value;
 }
 
-//
-// multCellwise
-//
+
 template <class T, unsigned int VImageDimension >
-void VectorArray< T, VImageDimension >::multCellwise(VectorArray* im)
+void VectorArray< T, VImageDimension >::MultiplyCellwise(VectorArray* im)
 {
 
 #ifdef DEBUG
   // make sure they are the same size
-  if (im->getSizeX() != __sizeX || im->getSizeY() != __sizeY || im->getSizeZ() != __sizeZ || im->getDim() != __dim) {
+  if (im->GetSizeX() != m_SizeX || im->GetSizeY() != m_SizeY || im->GetSizeZ() != m_SizeZ || im->GetDimension() != m_Dimension) {
   throw std::invalid_argument("Images are of different sizes");
   }
 #endif
 
-  for ( unsigned int uiI = 0; uiI < __length; ++uiI )
+  for ( unsigned int uiI = 0; uiI < m_Length; ++uiI )
     {
-    this->setValue( uiI, this->getValue( uiI ) * im->getValue( uiI ) );
+    this->SetValue( uiI, this->GetValue( uiI ) * im->GetValue( uiI ) );
     }
 
 }
 
-//
-// multElementwise
-//
-template <class T, unsigned int VImageDimension >
-void VectorArray< T, VImageDimension >::multElementwise(VectorArray* im)
-{
-  assert( im->getDim()==1 ); // make sure that the elements of the image have only one dimension
 
-  unsigned int szX = __sizeX;
-  unsigned int szY = __sizeY;
-  unsigned int szZ = __sizeZ;
-  unsigned int dim = __dim;
+template <class T, unsigned int VImageDimension >
+void VectorArray< T, VImageDimension >::MultiplyElementwise(VectorArray* im)
+{
+  assert( im->GetDimension()==1 ); // make sure that the elements of the image have only one dimension
+
+  unsigned int szX = m_SizeX;
+  unsigned int szY = m_SizeY;
+  unsigned int szZ = m_SizeZ;
+  unsigned int dim = m_Dimension;
 
   for ( unsigned z = 0; z<szZ; ++z )
   {
@@ -548,8 +532,8 @@ void VectorArray< T, VImageDimension >::multElementwise(VectorArray* im)
       {
         for ( unsigned d = 0; d<dim; ++d )
         {
-          T val = this->getValue( x, y, z, d )*im->getValue( x, y, z, 0 );
-          this->setValue( x, y, z, d, val );
+          T val = this->GetValue( x, y, z, d )*im->GetValue( x, y, z, 0 );
+          this->SetValue( x, y, z, d, val );
         }
       }
     }
@@ -557,39 +541,35 @@ void VectorArray< T, VImageDimension >::multElementwise(VectorArray* im)
 
 }
 
-//
-// addCellwise
-//
+
 template <class T, unsigned int VImageDimension >
-void VectorArray< T, VImageDimension >::addCellwise(VectorArray* im)
+void VectorArray< T, VImageDimension >::AddCellwise(VectorArray* im)
 {
 
 #ifdef DEBUG
   // make sure they are the same size
-  if (im->getSizeX() != __sizeX || im->getSizeY() != __sizeY || im->getSizeZ() != __sizeZ || im->getDim() != __dim) {
+  if (im->GetSizeX() != m_SizeX || im->GetSizeY() != m_SizeY || im->GetSizeZ() != m_SizeZ || im->GetDimension() != m_Dimension) {
     throw std::invalid_argument("Images are of different sizes");
   }
 #endif
 
-  for ( unsigned int uiI = 0; uiI < __length; ++uiI )
+  for ( unsigned int uiI = 0; uiI < m_Length; ++uiI )
     {
-    this->setValue( uiI, this->getValue( uiI ) + im->getValue( uiI ) );
+    this->SetValue( uiI, this->GetValue( uiI ) + im->GetValue( uiI ) );
     }
 
 }
 
-//
-// addElementwise
-//
-template <class T, unsigned int VImageDimension >
-void VectorArray< T, VImageDimension >::addElementwise(VectorArray* im)
-{
-  assert( im->getDim()==1 ); // make sure that the elements of the image have only one dimension
 
-  unsigned int szX = __sizeX;
-  unsigned int szY = __sizeY;
-  unsigned int szZ = __sizeZ;
-  unsigned int dim = __dim;
+template <class T, unsigned int VImageDimension >
+void VectorArray< T, VImageDimension >::AddElementwise(VectorArray* im)
+{
+  assert( im->GetDimension()==1 ); // make sure that the elements of the image have only one dimension
+
+  unsigned int szX = m_SizeX;
+  unsigned int szY = m_SizeY;
+  unsigned int szZ = m_SizeZ;
+  unsigned int dim = m_Dimension;
 
   for ( unsigned z = 0; z<szZ; ++z )
   {
@@ -599,8 +579,8 @@ void VectorArray< T, VImageDimension >::addElementwise(VectorArray* im)
       {
         for ( unsigned d = 0; d<dim; ++d )
         {
-          T val = this->getValue( x, y, z, d ) + im->getValue( x, y, z, 0 );
-          this->setValue( x, y, z, d, val );
+          T val = this->GetValue( x, y, z, d ) + im->GetValue( x, y, z, 0 );
+          this->SetValue( x, y, z, d, val );
         }
       }
     }
@@ -609,40 +589,34 @@ void VectorArray< T, VImageDimension >::addElementwise(VectorArray* im)
 }
 
 
-//
-// addCellwiseMultiple
-//
 template <class T, unsigned int VImageDimension >
-void VectorArray< T, VImageDimension >::addCellwiseMultiple(VectorArray* im, T val)
+void VectorArray< T, VImageDimension >::AddCellwiseMultiply(VectorArray* im, T val)
 {
 
 #ifdef DEBUG
   // make sure they are the same size
-  if (im->getSizeX() != __sizeX || im->getSizeY() != __sizeY || im->getSizeZ() != __sizeZ || im->getDim() != __dim) {
+  if (im->GetSizeX() != m_SizeX || im->GetSizeY() != m_SizeY || im->GetSizeZ() != m_SizeZ || im->GetDimension() != m_Dimension) {
     throw std::invalid_argument("Images are of different sizes");
   }
 #endif
 
-  for ( unsigned int uiI = 0; uiI < __length; ++uiI )
+  for ( unsigned int uiI = 0; uiI < m_Length; ++uiI )
     {
-    this->setValue( uiI, this->getValue( uiI ) + im->getValue( uiI )*val );
+    this->SetValue( uiI, this->GetValue( uiI ) + im->GetValue( uiI )*val );
     }
 
 }
 
 
-//
-// addElementwiseMultiple
-//
 template <class T, unsigned int VImageDimension >
-void VectorArray< T, VImageDimension >::addElementwiseMultiple(VectorArray* im, T multVal)
+void VectorArray< T, VImageDimension >::AddElementwiseMultiply(VectorArray* im, T multVal)
 {
-  assert( im->getDim()==1 ); // make sure that the elements of the image have only one dimension
+  assert( im->GetDimension()==1 ); // make sure that the elements of the image have only one dimension
 
-  unsigned int szX = __sizeX;
-  unsigned int szY = __sizeY;
-  unsigned int szZ = __sizeZ;
-  unsigned int dim = __dim;
+  unsigned int szX = m_SizeX;
+  unsigned int szY = m_SizeY;
+  unsigned int szZ = m_SizeZ;
+  unsigned int dim = m_Dimension;
 
   for ( unsigned z = 0; z<szZ; ++z )
   {
@@ -652,8 +626,8 @@ void VectorArray< T, VImageDimension >::addElementwiseMultiple(VectorArray* im, 
       {
         for ( unsigned d = 0; d<dim; ++d )
         {
-          T val = this->getValue( x, y, z, d ) + multVal*im->getValue( x, y, z, 0 );
-          this->setValue( x, y, z, d, val );
+          T val = this->GetValue( x, y, z, d ) + multVal*im->GetValue( x, y, z, 0 );
+          this->SetValue( x, y, z, d, val );
         }
       }
     }
@@ -662,39 +636,36 @@ void VectorArray< T, VImageDimension >::addElementwiseMultiple(VectorArray* im, 
 }
 
 
-//
-// subtractCellwise
-//
 template <class T, unsigned int VImageDimension >
-void VectorArray< T, VImageDimension >::subtractCellwise(VectorArray* im)
+void VectorArray< T, VImageDimension >::SubtractCellwise(VectorArray* im)
 {
 
 #ifdef DEBUG
   // make sure they are the same size
-  if (im->getSizeX() != __sizeX || im->getSizeY() != __sizeY || im->getSizeZ() != __sizeZ || im->getDim() != __dim) {
+  if (im->GetSizeX() != m_SizeX || im->GetSizeY() != m_SizeY || im->GetSizeZ() != m_SizeZ || im->GetDimension() != m_Dimension) {
     throw std::invalid_argument("Images are of different sizes");
   }
 #endif
 
-  for ( unsigned int uiI = 0; uiI < __length; ++uiI )
+  for ( unsigned int uiI = 0; uiI < m_Length; ++uiI )
     {
-    this->setValue( uiI, this->getValue( uiI ) - im->getValue( uiI ) );
+    this->SetValue( uiI, this->GetValue( uiI ) - im->GetValue( uiI ) );
     }
 
 }
 
 //
-// subtractElementwise
+// SubtractElementwise
 //
 template <class T, unsigned int VImageDimension >
-void VectorArray< T, VImageDimension >::subtractElementwise(VectorArray* im)
+void VectorArray< T, VImageDimension >::SubtractElementwise(VectorArray* im)
 {
-  assert( im->getDim()==1 ); // make sure that the elements of the image have only one dimension
+  assert( im->GetDimension()==1 ); // make sure that the elements of the image have only one dimension
 
-  unsigned int szX = __sizeX;
-  unsigned int szY = __sizeY;
-  unsigned int szZ = __sizeZ;
-  unsigned int dim = __dim;
+  unsigned int szX = m_SizeX;
+  unsigned int szY = m_SizeY;
+  unsigned int szZ = m_SizeZ;
+  unsigned int dim = m_Dimension;
 
   for ( unsigned z = 0; z<szZ; ++z )
   {
@@ -704,8 +675,8 @@ void VectorArray< T, VImageDimension >::subtractElementwise(VectorArray* im)
       {
         for ( unsigned d = 0; d<dim; ++d )
         {
-          T val = this->getValue( x, y, z, d )-im->getValue( x, y, z, 0 );
-          this->setValue( x, y, z, d, val );
+          T val = this->GetValue( x, y, z, d )-im->GetValue( x, y, z, 0 );
+          this->SetValue( x, y, z, d, val );
         }
       }
     }
@@ -714,73 +685,62 @@ void VectorArray< T, VImageDimension >::subtractElementwise(VectorArray* im)
 }
 
 
-//
-// addConst
-//
 template <class T, unsigned int VImageDimension >
-void VectorArray< T, VImageDimension >::addConst(T c)
+void VectorArray< T, VImageDimension >::AddConstant(T c)
 {
 
-  for ( unsigned int uiI = 0; uiI < __length; ++uiI )
+  for ( unsigned int uiI = 0; uiI < m_Length; ++uiI )
     {
-    this->setValue( uiI, this->getValue( uiI ) + c );
+    this->SetValue( uiI, this->GetValue( uiI ) + c );
     }
 
 }
 
-//
-// multConst
-//
 template <class T, unsigned int VImageDimension >
-void VectorArray< T, VImageDimension >::multConst(T c)
+void VectorArray< T, VImageDimension >::MultiplyByConstant(T c)
 {
 
-  for ( unsigned int uiI = 0; uiI < __length; ++uiI )
+  for ( unsigned int uiI = 0; uiI < m_Length; ++uiI )
     {
-    this->setValue( uiI, this->getValue( uiI ) * c );
-    }
-
-}
-
-//
-// setConst
-//
-template <class T, unsigned int VImageDimension >
-void VectorArray< T, VImageDimension >::setConst(T c)
-{
-
-  for ( unsigned int uiI = 0; uiI < __length; ++uiI )
-    {
-    this->setValue( uiI, c );
+    this->SetValue( uiI, this->GetValue( uiI ) * c );
     }
 
 }
 
 
-//
-// copy
-//
+template <class T, unsigned int VImageDimension >
+void VectorArray< T, VImageDimension >::SetToConstant(T c)
+{
+
+  for ( unsigned int uiI = 0; uiI < m_Length; ++uiI )
+    {
+    this->SetValue( uiI, c );
+    }
+
+}
+
+
 template <class T, unsigned int VImageDimension>
-void VectorArray<T, VImageDimension>::copy(const VectorArray<T, VImageDimension>* source)
+void VectorArray<T, VImageDimension>::Copy(const VectorArray<T, VImageDimension>* source)
 {
 
 #ifdef DEBUG
   // throw exception if there is no data
-  if (__dataPtr == NULL) {
+  if (m_DataPtr == NULL) {
     throw std::runtime_error("No Data");
   }
 
   // check to make sure dimensions match
-  if (source->getSizeX() != __sizeX) {
+  if (source->GetSizeX() != m_SizeX) {
     throw std::invalid_argument("x size doesn't match");
   }
-  if (source->getSizeY() != __sizeY) {
+  if (source->GetSizeY() != m_SizeY) {
     throw std::invalid_argument("y size doesn't match");
   }
-  if (source->getSizeZ() != __sizeZ) {
+  if (source->GetSizeZ() != m_SizeZ) {
     throw std::invalid_argument("z size doesn't match");
   }
-  if (source->getDim() != __dim) {
+  if (source->GetDimension() != m_Dimension) {
     throw std::invalid_argument("vector dimension doesn't match");
   }
 #endif
@@ -788,64 +748,52 @@ void VectorArray<T, VImageDimension>::copy(const VectorArray<T, VImageDimension>
   // if nothing wrong, do the copy
 
   // copy the data, just based on linear indexing for efficiency
-  for (unsigned int uiIndx = 0; uiIndx < __length; ++uiIndx )
+  for (unsigned int uiIndx = 0; uiIndx < m_Length; ++uiIndx )
     {
-    __dataPtr[ uiIndx ] = source->getValue( uiIndx );
+    m_DataPtr[ uiIndx ] = source->GetValue( uiIndx );
     }
 }
 
-//
-// getSizeX
-//
+
 template <class T, unsigned int VImageDimension>
-inline unsigned int VectorArray<T, VImageDimension>::getSizeX() const
+inline unsigned int VectorArray<T, VImageDimension>::GetSizeX() const
 {
-  return __sizeX;
+  return m_SizeX;
 }
 
-//
-// getSizeY
-//
+
 template <class T, unsigned int VImageDimension>
-inline unsigned int VectorArray<T, VImageDimension>::getSizeY() const
+inline unsigned int VectorArray<T, VImageDimension>::GetSizeY() const
 {
-  return __sizeY;
+  return m_SizeY;
 }
 
-//
-// getSizeZ
-//
+
 template <class T, unsigned int VImageDimension>
-inline unsigned int VectorArray<T, VImageDimension>::getSizeZ() const
+inline unsigned int VectorArray<T, VImageDimension>::GetSizeZ() const
 {
-  return __sizeZ;
+  return m_SizeZ;
 }
 
-//
-// getDim
-//
+
 template <class T, unsigned int VImageDimension>
-inline unsigned int VectorArray<T, VImageDimension>::getDim() const
+inline unsigned int VectorArray<T, VImageDimension>::GetDimension() const
 {
-  return __dim;
+  return m_Dimension;
 }
 
-//
-// getLength
-//
+
 template <class T, unsigned int VImageDimension>
-inline unsigned int VectorArray<T, VImageDimension>::getLength() const
+inline unsigned int VectorArray<T, VImageDimension>::GetLength() const
 {
-  return __length;
+  return m_Length;
 }
 
-//
-// getDataPtr
-//
+
 template <class T, unsigned int VImageDimension>
-T* VectorArray<T, VImageDimension>::getDataPointer()
+T* VectorArray<T, VImageDimension>::GetDataPointer()
 {
-  return __dataPtr;
+  return m_DataPtr;
 }
 
 
@@ -853,33 +801,28 @@ T* VectorArray<T, VImageDimension>::getDataPointer()
 // Protected Methods //
 ///////////////////////
 
-//
-// allocate data
-//
 template <class T, unsigned int VImageDimension>
-void VectorArray<T, VImageDimension>::__allocate()
+void VectorArray<T, VImageDimension>::Allocate()
 {
 
-  if ( __dataPtr != 0 )
+  if ( m_DataPtr != 0 )
     {
     throw std::logic_error("Tried to re-allocate memory");
     }
 
-  __dataPtr = new T [__length];
+  m_DataPtr = new T [m_Length];
 
 }
 
-//
-// deallocate data
-//
+
 template <class T, unsigned int VImageDimension>
-void VectorArray<T, VImageDimension>::__deallocate()
+void VectorArray<T, VImageDimension>::Deallocate()
 {
 
-  if(__dataPtr != 0) {
-    delete [] __dataPtr;
+  if(m_DataPtr != 0) {
+    delete [] m_DataPtr;
   }
-  __dataPtr = NULL;
+  m_DataPtr = NULL;
 
 }
 

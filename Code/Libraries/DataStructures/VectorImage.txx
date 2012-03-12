@@ -26,17 +26,17 @@
 template <class T, unsigned int VImageDimension >
 VectorImage< T, VImageDimension >::VectorImage()
 {
-  Superclass::__sizeX = 0;
-  Superclass::__sizeY = 0;
-  Superclass::__sizeZ = 0;
-  Superclass::__dim = 0;
-  Superclass::__length = 0;
-  Superclass::__dataPtr = 0;
-  __spaceX = 0;
-  __spaceY = 0;
-  __spaceZ = 0;
-  __origin.Fill(0);
-  __direction.SetIdentity();
+  Superclass::m_SizeX = 0;
+  Superclass::m_SizeY = 0;
+  Superclass::m_SizeZ = 0;
+  Superclass::m_Dimension = 0;
+  Superclass::m_Length = 0;
+  Superclass::m_DataPtr = 0;
+  m_SpacingX = 0;
+  m_SpacingY = 0;
+  m_SpacingZ = 0;
+  m_Origin.Fill(0);
+  m_Direction.SetIdentity();
 }
 
 //
@@ -47,11 +47,11 @@ VectorImage< T, VImageDimension >::VectorImage( unsigned int dim)
   : VectorArray<T,VImageDimension>::VectorArray( dim )
 {
   // all the other data is filled in by the constructor of the superclass
-  __spaceX = 0.0;
-  __spaceY = 0.0;
-  __spaceZ = 0.0;
-  __origin.Fill(0);
-  __direction.SetIdentity();
+  m_SpacingX = 0.0;
+  m_SpacingY = 0.0;
+  m_SpacingZ = 0.0;
+  m_Origin.Fill(0);
+  m_Direction.SetIdentity();
 }
 
 //
@@ -62,11 +62,11 @@ VectorImage< T, VImageDimension >::VectorImage(unsigned int sizeX, unsigned int 
   : VectorArray<T,VImageDimension>::VectorArray( sizeX, dim )
 {
   // all the other data is filled in by the constructor of the superclass
-  __spaceX = 1.0;
-  __spaceY = 0.0;
-  __spaceZ = 0.0;
-  __origin.Fill(0);
-  __direction.SetIdentity();
+  m_SpacingX = 1.0;
+  m_SpacingY = 0.0;
+  m_SpacingZ = 0.0;
+  m_Origin.Fill(0);
+  m_Direction.SetIdentity();
 }
 
 //
@@ -77,11 +77,11 @@ VectorImage< T, VImageDimension >::VectorImage(unsigned int sizeX, unsigned int 
   : VectorArray<T,VImageDimension>::VectorArray( sizeX, sizeY, dim )
 {
   // all the other data is filled in by the constructor of the superclass
-  __spaceX = 1.0;
-  __spaceY = 1.0;
-  __spaceZ = 0.0;
-  __origin.Fill(0);
-  __direction.SetIdentity();
+  m_SpacingX = 1.0;
+  m_SpacingY = 1.0;
+  m_SpacingZ = 0.0;
+  m_Origin.Fill(0);
+  m_Direction.SetIdentity();
 }
 
 //
@@ -92,66 +92,54 @@ VectorImage< T, VImageDimension >::VectorImage(unsigned int sizeX, unsigned int 
   : VectorArray<T,VImageDimension>::VectorArray( sizeX, sizeY, sizeZ, dim )
 {
   // all the other data is filled in by the constructor of the superclass
-  __spaceX = 1.0;
-  __spaceY = 1.0;
-  __spaceZ = 1.0;
-  __origin.Fill(0);
-  __direction.SetIdentity();
+  m_SpacingX = 1.0;
+  m_SpacingY = 1.0;
+  m_SpacingZ = 1.0;
+  m_Origin.Fill(0);
+  m_Direction.SetIdentity();
 }
 
-//
-// copy constructor
-//
 template <class T, unsigned int VImageDimension >
 VectorImage< T, VImageDimension >::VectorImage( const VectorImage* source)
   : VectorArray<T,VImageDimension>::VectorArray( source )
 {
-  __spaceX = source->getSpaceX();
-  __spaceY = source->getSpaceY();
-  __spaceZ = source->getSpaceZ();
-  __origin = source->getOrigin();
-  __direction = source->getDirection();
+  m_SpacingX = source->GetSpacingX();
+  m_SpacingY = source->GetSpacingY();
+  m_SpacingZ = source->GetSpacingZ();
+  m_Origin = source->GetOrigin();
+  m_Direction = source->GetDirection();
 
 }
 
-//
-// copy constructor
-//
 template <class T, unsigned int VImageDimension >
 VectorImage< T, VImageDimension >::VectorImage( const VectorImage* source, T dVal )
   : VectorArray<T,VImageDimension>::VectorArray( source, dVal )
 {
-  __spaceX = source->getSpaceX();
-  __spaceY = source->getSpaceY();
-  __spaceZ = source->getSpaceZ();
-  __origin = source->getOrigin();
-  __direction = source->getDirection();
+  m_SpacingX = source->GetSpacingX();
+  m_SpacingY = source->GetSpacingY();
+  m_SpacingZ = source->GetSpacingZ();
+  m_Origin = source->GetOrigin();
+  m_Direction = source->GetDirection();
 
 }
 
-//
-// copy constructor
-//
 template <class T, unsigned int VImageDimension >
 VectorImage< T, VImageDimension >::VectorImage( const VectorImage* source, T dVal, unsigned int uiNumDim )
   : VectorArray<T,VImageDimension>::VectorArray( source, dVal, uiNumDim )
 {
-  __spaceX = source->getSpaceX();
-  __spaceY = source->getSpaceY();
-  __spaceZ = source->getSpaceZ();
-  __origin = source->getOrigin();
-  __direction = source->getDirection();
+  m_SpacingX = source->GetSpacingX();
+  m_SpacingY = source->GetSpacingY();
+  m_SpacingZ = source->GetSpacingZ();
+  m_Origin = source->GetOrigin();
+  m_Direction = source->GetDirection();
 
 }
 
 
-//
-// destructor
-//
 template <class T, unsigned int VImageDimension >
 VectorImage< T, VImageDimension >::~VectorImage() {
 
-  Superclass::__deallocate();
+  Superclass::Deallocate();
 }
 
 
@@ -159,78 +147,75 @@ VectorImage< T, VImageDimension >::~VectorImage() {
 // Public Methods //
 ////////////////////
 
-//
-// copy
-//
 template <class T, unsigned int VImageDimension >
-void VectorImage< T, VImageDimension >::copy(const VectorImage* source)
+void VectorImage< T, VImageDimension >::Copy(const VectorImage* source)
 {
-  VectorArray<T,VImageDimension>::copy( source );
-  __spaceX = source->getSpaceX();
-  __spaceY = source->getSpaceY();
-  __spaceZ = source->getSpaceZ();
-  __origin = source->getOrigin();
-  __direction = source->getDirection();
+  VectorArray<T,VImageDimension>::Copy( source );
+  m_SpacingX = source->GetSpacingX();
+  m_SpacingY = source->GetSpacingY();
+  m_SpacingZ = source->GetSpacingZ();
+  m_Origin = source->GetOrigin();
+  m_Direction = source->GetDirection();
 
 }
 
 //
-// setSpaceX
+// SetSpacingX
 //
 template <class T, unsigned int VImageDimension >
-void VectorImage< T, VImageDimension >::setSpaceX(T spaceX) {
-  __spaceX = spaceX;
+void VectorImage< T, VImageDimension >::SetSpacingX(T spaceX) {
+  m_SpacingX = spaceX;
 }
 
 //
-// setSpaceY
+// SetSpacingY
 //
 template <class T, unsigned int VImageDimension >
-void VectorImage< T, VImageDimension >::setSpaceY(T spaceY) {
-  __spaceY = spaceY;
+void VectorImage< T, VImageDimension >::SetSpacingY(T spaceY) {
+  m_SpacingY = spaceY;
 }
 
 //
-// setSpaceZ
+// SetSpacingZ
 //
 template <class T, unsigned int VImageDimension >
-void VectorImage< T, VImageDimension >::setSpaceZ(T spaceZ) {
-  __spaceZ = spaceZ;
+void VectorImage< T, VImageDimension >::SetSpacingZ(T spaceZ) {
+  m_SpacingZ = spaceZ;
 }
 
 //
-// setOrigin
+// SetOrigin
 //
 template <class T, unsigned int VImageDimension >
-void VectorImage< T, VImageDimension >::setOrigin( typename ITKVectorImage< T, VImageDimension >::Type::PointType origin) {
-  __origin = origin;
+void VectorImage< T, VImageDimension >::SetOrigin( typename ITKVectorImage< T, VImageDimension >::Type::PointType origin) {
+  m_Origin = origin;
 }
 
 //
-// setDirection
+// SetDirection
 //
 template <class T, unsigned int VImageDimension >
-void VectorImage< T, VImageDimension >::setDirection( typename ITKVectorImage< T, VImageDimension>::Type::DirectionType direction)
+void VectorImage< T, VImageDimension >::SetDirection( typename ITKVectorImage< T, VImageDimension>::Type::DirectionType direction)
 {
-  __direction = direction;
+  m_Direction = direction;
 }
 
 //
-// getElementVolume
+// GetElementVolume
 //
 template <class T, unsigned int VImageDimension >
-T VectorImage< T, VImageDimension >::getElementVolume() const
+T VectorImage< T, VImageDimension >::GetElementVolume() const
 {
   switch ( VImageDimension )
     {
     case 1:
-      return this->getSpaceX();
+      return this->GetSpacingX();
       break;
     case 2:
-      return this->getSpaceX()*this->getSpaceY();
+      return this->GetSpacingX()*this->GetSpacingY();
       break;
     case 3:
-      return this->getSpaceX()*this->getSpaceY()*this->getSpaceZ();
+      return this->GetSpacingX()*this->GetSpacingY()*this->GetSpacingZ();
       break;
     default:
       throw std::runtime_error( "Unsupported dimension of image element." );
@@ -239,19 +224,19 @@ T VectorImage< T, VImageDimension >::getElementVolume() const
 
 
 //
-// computeSquareNorm
+// ComputeSquaredNorm
 //
 template <class T, unsigned int VImageDimension >
-T VectorImage< T, VImageDimension>::computeSquareNorm()
+T VectorImage< T, VImageDimension>::ComputeSquaredNorm()
 {
   // now square over all elements
   T dSquareNorm = 0;
-  for ( unsigned int uiI = 0; uiI < this->getLength(); ++uiI )
+  for ( unsigned int uiI = 0; uiI < this->GetLength(); ++uiI )
     {
-    T dCurrentValue = this->getValue( uiI );
+    T dCurrentValue = this->GetValue( uiI );
     dSquareNorm += dCurrentValue*dCurrentValue;
     } 
-  dSquareNorm *= this->getElementVolume();
+  dSquareNorm *= this->GetElementVolume();
 
   return dSquareNorm;
 }
@@ -260,12 +245,12 @@ T VectorImage< T, VImageDimension>::computeSquareNorm()
 // compute maximal square norm
 //
 template <class T, unsigned int VImageDimension >
-T VectorImage< T, VImageDimension>::computeMaximalSquareNorm()
+T VectorImage< T, VImageDimension>::ComputeMaximalSquaredNorm()
 {
-  unsigned int szX = this->getSizeX();
-  unsigned int szY = this->getSizeY();
-  unsigned int szZ = this->getSizeZ();
-  unsigned int dim = this->getDim();
+  unsigned int szX = this->GetSizeX();
+  unsigned int szY = this->GetSizeY();
+  unsigned int szZ = this->GetSizeZ();
+  unsigned int dim = this->GetDimension();
 
   T dLargestSquareVal = std::numeric_limits< T >::min();
 
@@ -278,7 +263,7 @@ T VectorImage< T, VImageDimension>::computeMaximalSquareNorm()
         T dCurrentSquareVal = 0;
         for ( unsigned d = 0; d<dim; ++d )
         {
-          dCurrentSquareVal += this->getValue( x, y, z, d )*this->getValue( x, y, z, d );
+          dCurrentSquareVal += this->GetValue( x, y, z, d )*this->GetValue( x, y, z, d );
         }
         if ( dCurrentSquareVal > dLargestSquareVal )
         {
@@ -293,63 +278,63 @@ T VectorImage< T, VImageDimension>::computeMaximalSquareNorm()
 }
 
 //
-// computeInnerProduct
+// ComputeInnerProduct
 //
 template <class T, unsigned int VImageDimension >
-T VectorImage< T, VImageDimension>::computeInnerProduct( const VectorImage* im ) const
+T VectorImage< T, VImageDimension>::ComputeInnerProduct( const VectorImage* im ) const
 {
   // now square over all elements
   T dInnerProduct = 0;
-  for ( unsigned int uiI = 0; uiI < this->getLength(); ++uiI )
+  for ( unsigned int uiI = 0; uiI < this->GetLength(); ++uiI )
     {
-    dInnerProduct += this->getValue( uiI )*im->getValue( uiI );
+    dInnerProduct += this->GetValue( uiI )*im->GetValue( uiI );
     } 
-  dInnerProduct *= this->getElementVolume();
+  dInnerProduct *= this->GetElementVolume();
 
   return dInnerProduct;
 }
 
 //
-// getSpaceX
+// GetSpacingX
 //
 template <class T, unsigned int VImageDimension >
-T VectorImage< T, VImageDimension >::getSpaceX() const
+T VectorImage< T, VImageDimension >::GetSpacingX() const
 {
-  return __spaceX;
+  return m_SpacingX;
 }
 
 //
-// getSpaceY
+// GetSpacingY
 //
 template <class T, unsigned int VImageDimension >
-T VectorImage< T, VImageDimension >::getSpaceY() const
+T VectorImage< T, VImageDimension >::GetSpacingY() const
 {
-  return __spaceY;
+  return m_SpacingY;
 }
 
 //
-// getSpaceZ
+// GetSpacingZ
 //
 template <class T, unsigned int VImageDimension >
-T VectorImage< T, VImageDimension >::getSpaceZ() const
+T VectorImage< T, VImageDimension >::GetSpacingZ() const
 {
-  return __spaceZ;
+  return m_SpacingZ;
 }
 
 //
-// getLargestSpacing
+// GetLargestSpacing
 //
 template <class T, unsigned int VImageDimension >
-T VectorImage< T, VImageDimension >::getLargestSpacing() const
+T VectorImage< T, VImageDimension >::GetLargestSpacing() const
 {
-  T dLargestSpacing = this->getSpaceX();
+  T dLargestSpacing = this->GetSpacingX();
   if ( VImageDimension>1 )
   {
-    dLargestSpacing = std::max( dLargestSpacing, this->getSpaceY() );
+    dLargestSpacing = std::max( dLargestSpacing, this->GetSpacingY() );
   }
   if ( VImageDimension>2 )
   {
-    dLargestSpacing = std::max( dLargestSpacing, this->getSpaceZ() );
+    dLargestSpacing = std::max( dLargestSpacing, this->GetSpacingZ() );
   }
   if ( VImageDimension>3 )
   {
@@ -359,19 +344,19 @@ T VectorImage< T, VImageDimension >::getLargestSpacing() const
 }
 
 //
-// getSmallestSpacing
+// GetSmallestSpacing
 //
 template <class T, unsigned int VImageDimension >
-T VectorImage< T, VImageDimension >::getSmallestSpacing() const
+T VectorImage< T, VImageDimension >::GetSmallestSpacing() const
 {
-  T dSmallestSpacing = this->getSpaceX();
+  T dSmallestSpacing = this->GetSpacingX();
   if ( VImageDimension>1 )
   {
-    dSmallestSpacing = std::min( dSmallestSpacing, this->getSpaceY() );
+    dSmallestSpacing = std::min( dSmallestSpacing, this->GetSpacingY() );
   }
   if ( VImageDimension>2 )
   {
-    dSmallestSpacing = std::min( dSmallestSpacing, this->getSpaceZ() );
+    dSmallestSpacing = std::min( dSmallestSpacing, this->GetSpacingZ() );
   }
   if ( VImageDimension>3 )
   {
@@ -382,21 +367,21 @@ T VectorImage< T, VImageDimension >::getSmallestSpacing() const
 
 
 //
-// getOrigin
+// GetOrigin
 //
 template <class T, unsigned int VImageDimension >
-typename ITKVectorImage< T, VImageDimension>::Type::PointType VectorImage< T, VImageDimension >::getOrigin() const
+typename ITKVectorImage< T, VImageDimension>::Type::PointType VectorImage< T, VImageDimension >::GetOrigin() const
 {
-  return __origin;
+  return m_Origin;
 }
 
 //
-// getDirection
+// GetDirection
 //
 template <class T, unsigned int VImageDimension >
-typename ITKVectorImage< T, VImageDimension>::Type::DirectionType VectorImage< T, VImageDimension >::getDirection() const
+typename ITKVectorImage< T, VImageDimension>::Type::DirectionType VectorImage< T, VImageDimension >::GetDirection() const
 {
-  return __direction;
+  return m_Direction;
 }
 
 
@@ -454,26 +439,30 @@ void VectorImage< T, VImageDimension >::print2D(std::ostream& output) {
 template <class T, unsigned int VImageDimension >
 void VectorImage< T, VImageDimension >::print3D(std::ostream& output) {
 
-  for (unsigned int z = 0; z < Superclass::__sizeZ; z++) {
-  
+  for (unsigned int z = 0; z < Superclass::m_SizeZ; z++)
+    {
+
   output << "**slice " << z << "**\n";
-  
+
     // store vectors as strings
-    std::vector<std::string> strings(Superclass::__sizeX * Superclass::__sizeY); //std::string strings[__sizeX * __sizeY];
+    std::vector<std::string> strings(Superclass::m_SizeX * Superclass::m_SizeY); //std::string strings[m_SizeX * m_SizeY];
     unsigned int maxLen= 0;
-    
-    for (unsigned int y = 0; y < Superclass::__sizeY; y++) {
-      for (unsigned int x = 0; x < Superclass::__sizeX; x++) {
-        
+
+    for (unsigned int y = 0; y < Superclass::m_SizeY; y++)
+      {
+      for (unsigned int x = 0; x < Superclass::m_SizeX; x++)
+        {
+
         // write the string for this entry
         std::ostringstream o;
-        unsigned int idx = y*(Superclass::__sizeX) + x;
-        
+        unsigned int idx = y*(Superclass::m_SizeX) + x;
+
         o << "[";
-        
-        for (unsigned int d = 0; d < Superclass::__dim; d++) {
-          o << this->getValue(x,y,z,d);
-          if (d < Superclass::__dim-1) {
+
+        for (unsigned int d = 0; d < Superclass::m_Dimension; d++)
+          {
+          o << this->GetValue(x,y,z,d);
+          if (d < Superclass::m_Dimension-1) {
             o << ",";
           }
         }
@@ -484,23 +473,25 @@ void VectorImage< T, VImageDimension >::print3D(std::ostream& output) {
         }
       }
     }
-    
+
     // output all strings of the max length
-    for (unsigned int y = 0; y < Superclass::__sizeY; y++) {
-      for (unsigned int x = 0; x < Superclass::__sizeX; x++) {
-        
-        std::string s(strings[y*Superclass::__sizeX + x]);
+    for (unsigned int y = 0; y < Superclass::m_SizeY; y++)
+      {
+      for (unsigned int x = 0; x < Superclass::m_SizeX; x++)
+        {
+
+        std::string s(strings[y*Superclass::m_SizeX + x]);
         while (s.length() < maxLen) {
           s.append(" ");
         }
         output << s;
-        
+
       }
       output << '\n';
     }
     output << '\n';
   }
-  
+
 }
 
 #endif

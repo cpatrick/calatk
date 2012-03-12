@@ -108,25 +108,25 @@ void CImageManagerFullScale< T, VImageDimension>::GetImage( SImageInformation* p
       switch ( VImageDimension )
         {
         case 2:
-          szX = pCurrentImInfo->pIm->getSizeX();
-          szY = pCurrentImInfo->pIm->getSizeY();
-          spX = pCurrentImInfo->pIm->getSpaceX();
-          spY = pCurrentImInfo->pIm->getSpaceY();
+          szX = pCurrentImInfo->pIm->GetSizeX();
+          szY = pCurrentImInfo->pIm->GetSizeY();
+          spX = pCurrentImInfo->pIm->GetSpacingX();
+          spY = pCurrentImInfo->pIm->GetSpacingY();
           mapTrans = new VectorFieldType( szX, szY );
-          mapTrans->setSpaceX( spX );
-          mapTrans->setSpaceY( spY );
+          mapTrans->SetSpacingX( spX );
+          mapTrans->SetSpacingY( spY );
           break;
         case 3:
-          szX = pCurrentImInfo->pIm->getSizeX();
-          szY = pCurrentImInfo->pIm->getSizeY();
-          szZ = pCurrentImInfo->pIm->getSizeZ();
-          spX = pCurrentImInfo->pIm->getSpaceX();
-          spY = pCurrentImInfo->pIm->getSpaceY();
-          spZ = pCurrentImInfo->pIm->getSpaceZ();
+          szX = pCurrentImInfo->pIm->GetSizeX();
+          szY = pCurrentImInfo->pIm->GetSizeY();
+          szZ = pCurrentImInfo->pIm->GetSizeZ();
+          spX = pCurrentImInfo->pIm->GetSpacingX();
+          spY = pCurrentImInfo->pIm->GetSpacingY();
+          spZ = pCurrentImInfo->pIm->GetSpacingZ();
           mapTrans = new VectorFieldType( szX, szY, szZ );
-          mapTrans->setSpaceX( spX );
-          mapTrans->setSpaceY( spY );
-          mapTrans->setSpaceZ( spZ );
+          mapTrans->SetSpacingX( spX );
+          mapTrans->SetSpacingY( spY );
+          mapTrans->SetSpacingZ( spZ );
           break;
         default:
           throw std::runtime_error( "Dimension not supported for transform" );

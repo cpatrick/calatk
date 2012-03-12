@@ -44,7 +44,7 @@ template < class T, unsigned int VImageDimension >
 void CObjectiveFunctionBase< T, VImageDimension >::ComputeInitialUnsmoothedVelocityGradient( VectorFieldType* ptrInitialUnsmoothedVelocityGradient, unsigned int uiKernelNumber )
 {
   std::cerr << "ComputeInitialUnsmoothedVelocityGradient has not been implemented. Returning 0." << std::endl;
-  ptrInitialUnsmoothedVelocityGradient->setConst( 0.0 );
+  ptrInitialUnsmoothedVelocityGradient->SetToConstant( 0.0 );
 }
 
 template < class T, unsigned int VImageDimension >

@@ -44,16 +44,16 @@ class VectorArray: public CObject
 {
 
 public:
-  
+
   /********************************
    * Constructors and Destructors *
    ********************************/
-  
+
   /**
    * Empty Constructor
    */
   VectorArray();
-  
+
    /**
    * 0D constructor that takes an x and y size and a vector dimension
    * size
@@ -80,7 +80,7 @@ public:
    * @param dim - the size of the vector dimension
    */
   VectorArray(unsigned int sizeX, unsigned int sizeY, unsigned int dim);
-  
+
   /**
    * 3D Constructor that takes an x, y, and z sizes and a vector dimension
    * size
@@ -130,7 +130,7 @@ public:
     * @param uiNumDim - the number of dimensions to copy
     */
   VectorArray( const VectorArray<T,2>* source, T dVal, unsigned int uiNumDim );
-  
+
   /**
     * Copy constructor that takes an existing 3D vector array and makes a
     * vector array with the same size with a given number of dimensions
@@ -147,19 +147,19 @@ public:
    * Destructor that frees up all memory
    */
   ~VectorArray();
-  
-  
+
+
   /******************
    * Public Methods *
    ******************/
-  
+
    /**
    * Method that returns the 0D data stored in the specified dimension of
    * the vector. Can also be used to for simple linear index accesss.
    *
    * @param d - vector dimension
    */
-  inline T& getValue(unsigned int d) const;
+  inline T& GetValue(unsigned int d) const;
 
    /**
    * Method that returns the 1D data stored in the specified dimension of
@@ -168,7 +168,7 @@ public:
    * @param x - x-coordinate
    * @param d - vector dimension
    */
-  inline T& getValue(unsigned int x, unsigned int d) const;
+  inline T& GetValue(unsigned int x, unsigned int d) const;
 
    /**
    * Method that returns the 2D data stored in the specified dimension of
@@ -178,7 +178,7 @@ public:
    * @param y - y-coordinate
    * @param d - vector dimension
    */
-  inline T& getValue(unsigned int x, unsigned int y, unsigned int d) const;
+  inline T& GetValue(unsigned int x, unsigned int y, unsigned int d) const;
 
   /**
    * Method that returns the 3D data stored in the specified dimension of
@@ -189,29 +189,29 @@ public:
    * @param z - z-coordinate
    * @param d - vector dimension
    */
-  inline T& getValue(unsigned int x, unsigned int y, unsigned int z, unsigned int d) const;
-  
+  inline T& GetValue(unsigned int x, unsigned int y, unsigned int z, unsigned int d) const;
+
    /**
-   * Method that sets the 0D data in the specified dimension of the vector 
+   * Method that sets the 0D data in the specified dimension of the vector
    * Can also be used for access with a linear index for all dimensions
    *
    * @param d - vector dimension
    * @param value - value to be put
    */
-  void setValue(unsigned int d, T value);
+  void SetValue(unsigned int d, T value);
 
    /**
-   * Method that sets the 1D data in the specified dimension of the vector 
+   * Method that sets the 1D data in the specified dimension of the vector
    * at the specified grid location
    *
    * @param x - x-coordinate
    * @param d - vector dimension
    * @param value - value to be put
    */
-  void setValue(unsigned int x, unsigned int d, T value);
+  void SetValue(unsigned int x, unsigned int d, T value);
 
    /**
-   * Method that sets the 2D data in the specified dimension of the vector 
+   * Method that sets the 2D data in the specified dimension of the vector
    * at the specified grid location
    *
    * @param x - x-coordinate
@@ -219,10 +219,10 @@ public:
    * @param d - vector dimension
    * @param value - value to be put
    */
-  void setValue(unsigned int x, unsigned int y, unsigned int d, T value);
+  void SetValue(unsigned int x, unsigned int y, unsigned int d, T value);
 
   /**
-   * Method that sets the 3D data in the specified dimension of the vector 
+   * Method that sets the 3D data in the specified dimension of the vector
    * at the specified grid location
    *
    * @param x - x-coordinate
@@ -231,14 +231,14 @@ public:
    * @param d - vector dimension
    * @param value - value to be put
    */
-  void setValue(unsigned int x, unsigned int y, unsigned int z, unsigned int d, T value);
-  
+  void SetValue(unsigned int x, unsigned int y, unsigned int z, unsigned int d, T value);
+
   /**
    * Method that alters the array's data to match that of the input array
    *
    * @param source - the source array to copy
    */
-  void copy(const VectorArray<T,VImageDimension>* source);
+  void Copy(const VectorArray<T,VImageDimension>* source);
 
 
   /**
@@ -246,40 +246,40 @@ public:
    *
    * @param c - constant factor to multiply by
    */
-  void multConst(T c);
+  void MultiplyByConstant(T c);
 
   /**
    * Method that sets the elements of the array to a constant
    *
    * @param c - constant to set the values to
    */
-  void setConst(T c);
-  
+  void SetToConstant(T c);
+
   /**
    * Method that multiplys the elements the array of by those of the input array (cellwise)
    *
    * @param im - the first array
    */
-  void multCellwise(VectorArray* im);
+  void MultiplyCellwise(VectorArray* im);
 
   /**
     * Method that multiplies each vector element with a scalar value from a scalar input array
     * @param im - the scalar array to multiply by
     */
-  void multElementwise(VectorArray* im);
+  void MultiplyElementwise(VectorArray* im);
 
   /**
    * Method that adds the elements of the array to those of the input array (cellwise)
    *
    * @param im - the first array
    */
-  void addCellwise(VectorArray* im);
+  void AddCellwise(VectorArray* im);
 
   /**
     * Method that adds to each vector element a scalar value from a scalar input array
     * @param im - the scalar array to add
     */
-  void addElementwise(VectorArray* im);
+  void AddElementwise(VectorArray* im);
 
   /**
    * Method that adds the elements of the array to those of the input array (cellwise)
@@ -287,7 +287,7 @@ public:
    * @param im - the first array
    * @param val - constant multiplier
    */
-  void addCellwiseMultiple(VectorArray* im, T val);
+  void AddCellwiseMultiply(VectorArray* im, T val);
 
   /**
    * Method that adds to each vector element a saclar value from a scalar input array
@@ -295,59 +295,59 @@ public:
    * @param im - the first array
    * @param val - constant multiplier
    */
-  void addElementwiseMultiple(VectorArray* im, T val);
+  void AddElementwiseMultiply(VectorArray* im, T val);
 
   /**
    * Method that subtracts the elements the of the input from the array  (cellwise)
    *
    * @param im - the first array
    */
-  void subtractCellwise(VectorArray* im);
+  void SubtractCellwise(VectorArray* im);
 
   /**
    * Method that subtracts from each vector element a sclar value from a scalar input array
    *
    * @param im - the first array
    */
-  void subtractElementwise(VectorArray* im);
+  void SubtractElementwise(VectorArray* im);
 
   /**
    * Method that adds a constant to the current image
    *
    * @param c - the constant to be add
    */
-  void addConst(T c);
+  void AddConstant(T c);
 
   
   /**
    * Method that returns the size in the x dimension
    */
-  inline unsigned int getSizeX() const;
+  inline unsigned int GetSizeX() const;
   
   /**
    * Method that returns the size in the y dimension
    */
-  inline unsigned int getSizeY() const;
+  inline unsigned int GetSizeY() const;
   
   /**
    * Method that returns the size in the z dimension
    */
-  inline unsigned int getSizeZ() const;
+  inline unsigned int GetSizeZ() const;
   
   /**
    * Method that returns the dimensionality of the vectors
    */
-  inline unsigned int getDim() const;
+  inline unsigned int GetDimension() const;
   
   /**
    * Method that returns the total length of the data
    */
-  inline unsigned int getLength() const;
+  inline unsigned int GetLength() const;
   
   /**
    * Method that gets a pointer to the data for IO purposes
    */
-  T* getDataPointer();
+  T* GetDataPointer();
   
   
 protected:
@@ -357,18 +357,18 @@ protected:
    ******************/  
 
   /** size in the x dimension */
-  unsigned int __sizeX;
+  unsigned int m_SizeX;
   /** size in the y dimension */
-  unsigned int __sizeY;
+  unsigned int m_SizeY;
   /** size in the z dimension */
-  unsigned int __sizeZ;
+  unsigned int m_SizeZ;
   /** vector dimensionality */
-  unsigned int __dim;
+  unsigned int m_Dimension;
   /** the length of the whole array */
-  unsigned int __length;
+  unsigned int m_Length;
   
   /** pointers to each element */
-  T *__dataPtr;
+  T *m_DataPtr;
   
   
   /*********************
@@ -376,28 +376,28 @@ protected:
    *********************/
   
   /** allocate space for the data */
-  void __allocate();
+  void Allocate();
   /** deallocate the class data */
-  void __deallocate();
+  void Deallocate();
 
 
   /** Indexing into the arrays **/
 
-  inline unsigned int __sub2ind1D( unsigned int x, unsigned int d ) const
+  inline unsigned int ToLinearIndex1D( unsigned int x, unsigned int d ) const
   {
-    return x*__dim + d;
+    return x*m_Dimension + d;
   };
 
 
-  inline unsigned int __sub2ind2D( unsigned int x, unsigned int y, unsigned int d ) const
+  inline unsigned int ToLinearIndex2D( unsigned int x, unsigned int y, unsigned int d ) const
   {
-    return ( y*__sizeX + x )*__dim + d;
+    return ( y*m_SizeX + x )*m_Dimension + d;
   };
 
   
-  inline unsigned int __sub2ind3D( unsigned int x, unsigned int y, unsigned int z, unsigned int d ) const
+  inline unsigned int ToLinearIndex3D( unsigned int x, unsigned int y, unsigned int z, unsigned int d ) const
   {
-    return ( ( z*__sizeY + y )*__sizeX + x )*__dim + d;
+    return ( ( z*m_SizeY + y )*m_SizeX + x )*m_Dimension + d;
   };
 
 };

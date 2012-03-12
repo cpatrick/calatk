@@ -20,19 +20,13 @@
 #ifndef C_STATE_SPATIO_TEMPORAL_VELOCITYFIELD_TXX
 #define C_STATE_SPATIO_TEMPORAL_VELOCITYFIELD_TXX
 
-//
-// empty constructor
-//
 template <class T, unsigned int VImageDimension, class TResampler >
 CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::CStateSpatioTemporalVelocityField()
 {
 }
 
-//
-// copy constructor
-//
-template <class T, unsigned int VImageDimension, class TResampler >  
-CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::CStateSpatioTemporalVelocityField( const CStateSpatioTemporalVelocityField & c ) 
+template <class T, unsigned int VImageDimension, class TResampler >
+CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::CStateSpatioTemporalVelocityField( const CStateSpatioTemporalVelocityField & c )
 {
   if ( this != &c )
     {
@@ -55,18 +49,12 @@ CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::CStateSpat
     }
 }
 
-//
-// clear data structure
-//
 template <class T, unsigned int VImageDimension, class TResampler >
 void CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler >::ClearDataStructure()
 {
   m_vecPtrSTVelocityField.clear();
 }
 
-//
-// copy data structures
-//
 template <class T, unsigned int VImageDimension, class TResampler >
 void CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler >::CopyDataStructure( ConstVectorPointerToVectorFieldPointerType ptrSource )
 {
@@ -199,7 +187,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::operator=(
             ++iterSource, ++iterTarget )
         {
         // copy the current vector field
-        (*iterTarget)->copy( *iterSource );
+        (*iterTarget)->Copy( *iterSource );
         }
       }
     else
@@ -234,7 +222,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::operator+=
         ++iterSource, ++iterTarget )
     {
     // add the source to the target
-    (*iterTarget)->addCellwise( *iterSource );
+    (*iterTarget)->AddCellwise( *iterSource );
     }
 
   return *this;
@@ -260,7 +248,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::operator-=
         ++iterSource, ++iterTarget )
     {
     // subtract the source from the target
-    iterTarget->subtractCellwise( *iterSource );
+    iterTarget->SubtractCellwise( *iterSource );
     }
 
   return *this;
@@ -275,7 +263,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::operator*=
   for ( iterTarget = m_vecPtrSTVelocityField.begin(); iterTarget != m_vecPtrSTVelocityField.end(); ++iterTarget )
     {
     // multiply by the value
-    (*iterTarget)->multConst( p );
+    (*iterTarget)->MultiplyByConstant( p );
     }
 
   return *this;
@@ -314,7 +302,7 @@ T CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler >::SquaredNo
   T dSquaredNorm = 0;
   for ( unsigned int iI=0; iI<m_vecPtrSTVelocityField.size(); ++iI )
     {
-    dSquaredNorm += m_vecPtrSTVelocityField[ iI ]->computeSquareNorm();
+    dSquaredNorm += m_vecPtrSTVelocityField[ iI ]->ComputeSquaredNorm();
     }
 
   return dSquaredNorm;

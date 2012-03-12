@@ -95,7 +95,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateNewStat
   for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size()-1; ++iI )
     {
     VectorFieldPointerType ptrCurrentVectorField = new VectorFieldType( pGraftIm );
-    ptrCurrentVectorField->setConst( 0 );
+    ptrCurrentVectorField->SetToConstant( 0 );
     vecState.push_back( ptrCurrentVectorField );
     }
 
@@ -120,7 +120,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateNewGrad
   for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size()-1; ++iI )
     {
     VectorFieldPointerType ptrCurrentVectorField = new VectorFieldType( pGraftIm );
-    ptrCurrentVectorField->setConst( 0 );
+    ptrCurrentVectorField->SetToConstant( 0 );
     vecGradient.push_back( ptrCurrentVectorField );
     }
   

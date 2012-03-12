@@ -51,7 +51,7 @@ void CResamplerLinear< T, VImageDimension >::Downsample( const VectorImageType* 
   else
   {
     // just copy the input to the output
-    ptrImOut->copy( ptrImIn );
+    ptrImOut->Copy( ptrImIn );
   }
 
 }

@@ -166,7 +166,7 @@ void CImageManagerMultiScale< T, VImageDimension >::GetImage( SImageInformation*
         if ( iI==0 && !m_BlurHighestResolutionImage )
         {
           std::cout << "NOT blurring the image of the highest resolution" << std::endl;
-          ptrResampledImage->copy( pCurrentImInfo->pImOrig );
+          ptrResampledImage->Copy( pCurrentImInfo->pImOrig );
         }
         else
         {
@@ -176,7 +176,7 @@ void CImageManagerMultiScale< T, VImageDimension >::GetImage( SImageInformation*
             }
 
           // convert the voxel sigma to a pyhysical sigma based on the largest voxel extent
-          T dLargestSpacing = pCurrentImInfo->pImOrig->getLargestSpacing();
+          T dLargestSpacing = pCurrentImInfo->pImOrig->GetLargestSpacing();
 
           std::cout << "Computing resampled image with sigma = " << dLargestSpacing*m_Sigma/m_ScaleVector[ iI ] << std::endl;
 

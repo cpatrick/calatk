@@ -115,7 +115,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::CreateAuxiliaryStructures()
 
   // storage for the determinant of Jacobian
   m_ptrDeterminantOfJacobian  = new VectorImageType( pGraftIm, 0.0, 1 );
-  assert( m_ptrDeterminantOfJacobian->getDim() == 1 );
+  assert( m_ptrDeterminantOfJacobian->GetDimension() == 1 );
 
   // storage for the negated velocity field
   m_ptrTmpVelocityField = new VectorFieldType( pGraftIm );
@@ -162,7 +162,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::GetImage( VectorImageType* pt
 template < class TState >
 void CLDDMMGrowthModelObjectiveFunction< TState >::GetInitialImage( VectorImageType* ptrIm )
 {
-  ptrIm->copy( m_ptrI0 );
+  ptrIm->Copy( m_ptrI0 );
 }
 
 template < class TState >
@@ -184,14 +184,14 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::GetMomentum( VectorImageType*
   LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapTmp, (*m_ptrLambda)[0], ptrMomentum );
   LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( m_ptrMapTmp, m_ptrDeterminantOfJacobian );
 
-  ptrMomentum->multElementwise( m_ptrDeterminantOfJacobian );
+  ptrMomentum->MultiplyElementwise( m_ptrDeterminantOfJacobian );
 
 }
 
 template < class TState >
 void CLDDMMGrowthModelObjectiveFunction< TState >::GetInitialMomentum( VectorImageType* ptrMomentum )
 {
-  ptrMomentum->copy( (*m_ptrLambda)[0] );
+  ptrMomentum->Copy( (*m_ptrLambda)[0] );
 }
 
 template  < class TState >
@@ -205,7 +205,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeImagesForward()
 {
   LDDMMUtils< T, TState::VImageDimension >::identityMap( m_ptrMapIn );
   // FIXME: This is just to make things easier and to support estimating the initial image (todo) later
-  (*m_ptrI)[ 0 ]->copy( m_ptrI0 );
+  (*m_ptrI)[ 0 ]->Copy( m_ptrI0 );
 
   for ( unsigned int iI = 0; iI < this->m_vecTimeDiscretization.size()-1; ++iI )
     {
@@ -213,7 +213,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeImagesForward()
     this->m_ptrEvolver->SolveForward( this->m_pState->GetVectorFieldPointer( iI ), m_ptrMapIn, m_ptrMapOut, m_ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
 
     // for next step, copy
-    m_ptrMapIn->copy( m_ptrMapOut );
+    m_ptrMapIn->Copy( m_ptrMapOut );
 
     // now compute the image by interpolation
     LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapIn, m_ptrI0, (*m_ptrI)[ iI+1 ] );
@@ -226,7 +226,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeAdjointBackward()
 {
   // create the final condition
 
-  m_ptrCurrentLambdaEnd->setConst( 0 );
+  m_ptrCurrentLambdaEnd->SetToConstant( 0 );
 
   unsigned int uiNrOfTimePoints = this->m_vecTimeDiscretization.size();
   unsigned int uiNrOfMeasuredImagesAtTimePoint = 0;
@@ -236,12 +236,12 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeAdjointBackward()
   for ( unsigned int iM = 0; iM <  uiNrOfMeasuredImagesAtTimePoint; ++iM )
     {
     this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, this->m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecEstimatedImages[0] , this->m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecMeasurementImages[ iM ] );
-    m_ptrCurrentAdjointDifference->multConst( 1.0/m_SigmaSqr );
-    m_ptrCurrentLambdaEnd->addCellwise( m_ptrCurrentAdjointDifference );
+    m_ptrCurrentAdjointDifference->MultiplyByConstant( 1.0/m_SigmaSqr );
+    m_ptrCurrentLambdaEnd->AddCellwise( m_ptrCurrentAdjointDifference );
     }
 
   // last adjoint; just for book-keeping, currently not really used in the algorithm
-  (*m_ptrLambda)[ uiNrOfTimePoints-1 ]->copy( m_ptrCurrentLambdaEnd );
+  (*m_ptrLambda)[ uiNrOfTimePoints-1 ]->Copy( m_ptrCurrentLambdaEnd );
 
   // reset the map to flow backwards
   LDDMMUtils< T, TState::VImageDimension>::identityMap( m_ptrMapIn );
@@ -250,8 +250,8 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeAdjointBackward()
     {
 
     // need to reverse the velocity field, because we are evolving in the backward direction
-    m_ptrTmpVelocityField->copy( this->m_pState->GetVectorFieldPointer( iI ) );
-    m_ptrTmpVelocityField->multConst( -1 );
+    m_ptrTmpVelocityField->Copy( this->m_pState->GetVectorFieldPointer( iI ) );
+    m_ptrTmpVelocityField->MultiplyByConstant( -1 );
 
     this->m_ptrEvolver->SolveForward( m_ptrTmpVelocityField, m_ptrMapIn, m_ptrMapOut, m_ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
 
@@ -261,10 +261,10 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeAdjointBackward()
     // compute det jacobian
     LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( m_ptrMapOut, m_ptrDeterminantOfJacobian );
     // multiply by the determinant of the Jacobian
-    (*m_ptrLambda)[ iI ]->multElementwise( m_ptrDeterminantOfJacobian );
+    (*m_ptrLambda)[ iI ]->MultiplyElementwise( m_ptrDeterminantOfJacobian );
 
     // for next step, copy
-    m_ptrMapIn->copy( m_ptrMapOut );
+    m_ptrMapIn->Copy( m_ptrMapOut );
 
     // update if we need to jump at the current time-point
     if ( this->m_vecTimeDiscretization[ iI ].bIsMeasurementPoint )
@@ -279,11 +279,11 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeAdjointBackward()
       for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM )
         {
         this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, this->m_vecTimeDiscretization[ iI ].vecEstimatedImages[0] , this->m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ] );
-        m_ptrCurrentAdjointDifference->multConst( 1.0/m_SigmaSqr );
-        (*m_ptrLambda)[iI]->addCellwise( m_ptrCurrentAdjointDifference );
+        m_ptrCurrentAdjointDifference->MultiplyByConstant( 1.0/m_SigmaSqr );
+        (*m_ptrLambda)[iI]->AddCellwise( m_ptrCurrentAdjointDifference );
         }
       // reset the current adjoint to the adjoint at current time point
-      m_ptrCurrentLambdaEnd->copy( (*m_ptrLambda)[ iI ] );
+      m_ptrCurrentLambdaEnd->Copy( (*m_ptrLambda)[ iI ] );
       }
     }
 }
@@ -302,19 +302,19 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeGradient()
   // \f$ E = 1/2 \int_0^1 \|v\|_L^2~dt + 1/(sigma^2)\|I(1)-I_1\|^2
   // and the gradient used is the Hilbert gradient
 
-  unsigned int dim = m_ptrI0->getDim();
+  unsigned int dim = m_ptrI0->GetDimension();
 
   for ( unsigned int iI = 0; iI < this->m_vecTimeDiscretization.size()-1; ++iI )
     {
     // initialize to 0
     VectorFieldType* ptrCurrentGradient = this->m_pGradient->GetVectorFieldPointer( iI );
-    ptrCurrentGradient->setConst( 0 );
+    ptrCurrentGradient->SetToConstant( 0 );
 
     for ( unsigned int iD = 0; iD<dim; ++iD )
       {
       VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( (*m_ptrI)[ iI ], iD, m_ptrTmpGradient );
       VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( (*m_ptrLambda)[ iI ], iD, m_ptrTmpGradient );
-      ptrCurrentGradient->addCellwise( m_ptrTmpGradient );
+      ptrCurrentGradient->AddCellwise( m_ptrTmpGradient );
       }
 
     //VectorImageUtils< T, VImageDimension >::writeFileITK( ptrCurrentGradient, "curGradBeforeConv.nrrd" );
@@ -325,7 +325,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeGradient()
 
     // add v
     VectorFieldType* ptrCurrentVelocity = this->m_pState->GetVectorFieldPointer( iI );
-    ptrCurrentGradient->addCellwise( ptrCurrentVelocity );
+    ptrCurrentGradient->AddCellwise( ptrCurrentVelocity );
 
     }
 
@@ -341,11 +341,11 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeInitialUnsmoothedVeloc
   // \f$ \nabla E = (\sum_i \lambda_i \nabla I_0 ) \f$
   // where the \lambda_i are the respective adjoints (based on the chosen metric)
 
-  unsigned int dim = m_ptrI0->getDim();
+  unsigned int dim = m_ptrI0->GetDimension();
 
   // compute the initial adjoint, assuming that there is only a zero velocity field
   typename VectorImageType::Pointer ptrLambda0 = new VectorImageType( m_ptrI0 );
-  ptrLambda0->setConst( 0.0 );
+  ptrLambda0->SetToConstant( 0.0 );
 
   typename VectorImageType::Pointer ptrCurrentAdjointDifference = new VectorImageType( m_ptrI0 );
 
@@ -359,21 +359,21 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeInitialUnsmoothedVeloc
       for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM )
         {
         this->m_pMetric->GetAdjointMatchingDifferenceImage( ptrCurrentAdjointDifference, m_ptrI0 , this->m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ] );
-        ptrCurrentAdjointDifference->multConst( 1.0/m_SigmaSqr );
-        ptrLambda0->addCellwise( ptrCurrentAdjointDifference );
+        ptrCurrentAdjointDifference->MultiplyByConstant( 1.0/m_SigmaSqr );
+        ptrLambda0->AddCellwise( ptrCurrentAdjointDifference );
         }
       }
     }
 
   // initialize to 0
   VectorFieldType* ptrCurrentGradient = ptrInitialUnsmoothedVelocityGradient;
-  ptrCurrentGradient->setConst( 0 );
+  ptrCurrentGradient->SetToConstant( 0 );
 
   for ( unsigned int iD = 0; iD<dim; ++iD )
     {
     VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( m_ptrI0, iD, m_ptrTmpGradient );
     VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrLambda0, iD, m_ptrTmpGradient );
-    ptrCurrentGradient->addCellwise( m_ptrTmpGradient );
+    ptrCurrentGradient->AddCellwise( m_ptrTmpGradient );
     }
 }
 
@@ -388,13 +388,13 @@ CLDDMMGrowthModelObjectiveFunction< TState >::GetCurrentEnergy()
   for ( unsigned int iI=0; iI < this->m_vecTimeDiscretization.size()-1; ++iI )
     {
     // copy current velocity field (of the state)
-    m_ptrTmpVelocityField->copy( this->m_pState->GetVectorFieldPointer( iI ) );
+    m_ptrTmpVelocityField->Copy( this->m_pState->GetVectorFieldPointer( iI ) );
 
     // convolve it with the inverse kernel, L^\dagger L v
     this->m_ptrKernel->ConvolveWithInverseKernel( m_ptrTmpVelocityField );
 
     // now multiply it with v
-    T dCurrentEnergy = 0.5*this->m_vecTimeIncrements[ iI ]*m_ptrTmpVelocityField->computeInnerProduct( this->m_pState->GetVectorFieldPointer( iI ) );
+    T dCurrentEnergy = 0.5*this->m_vecTimeIncrements[ iI ]*m_ptrTmpVelocityField->ComputeInnerProduct( this->m_pState->GetVectorFieldPointer( iI ) );
 
     // add energy increment, assuring that we have the correct spatio-temporal volume contribution
     dEnergy += dCurrentEnergy;
@@ -461,7 +461,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::OutputStateInformation( unsig
   // \f$ E = 1/2 \int_0^1 \|v\|_L^2~dt + 1/(sigma^2)\|I(1)-I_1\|^2
   // and the gradient used is the Hilbert gradient
 
-  unsigned int dim = m_ptrI0->getDim();
+  unsigned int dim = m_ptrI0->GetDimension();
 
   typename VectorFieldType::Pointer ptrCurrentGradient = new VectorFieldType( m_ptrTmpGradient );
 
@@ -473,7 +473,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::OutputStateInformation( unsig
   for ( unsigned int iI = 0; iI < this->m_vecTimeDiscretization.size()-1; ++iI )
     {
     // initialize to 0
-    ptrCurrentGradient->setConst( 0 );
+    ptrCurrentGradient->SetToConstant( 0 );
 
     VectorImageUtils< T, TState::VImageDimension >::writeFileITK( (*m_ptrI)[iI], outputPrefix + "I" + CreateIntegerString( iI, 3 ) + suffix );
     VectorImageUtils< T, TState::VImageDimension >::writeFileITK( (*m_ptrLambda)[iI], outputPrefix + "lam" + CreateIntegerString( iI, 3 ) + suffix );
@@ -486,7 +486,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::OutputStateInformation( unsig
       VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( (*m_ptrLambda)[ iI ], iD, m_ptrTmpGradient );
       VectorImageUtils< T, TState::VImageDimension >::writeFileITK( m_ptrTmpGradient, outputPrefix + "lam_x_gradI" + CreateIntegerString( iI, 3 ) + suffix );
 
-      ptrCurrentGradient->addCellwise( m_ptrTmpGradient );
+      ptrCurrentGradient->AddCellwise( m_ptrTmpGradient );
       }
 
     this->m_ptrKernel->ConvolveWithKernel( ptrCurrentGradient );
@@ -497,7 +497,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::OutputStateInformation( unsig
     VectorFieldType* ptrCurrentVelocity = this->m_pState->GetVectorFieldPointer( iI );
     VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrCurrentVelocity, outputPrefix + "v" + CreateIntegerString( iI, 3 ) + suffix );
 
-    ptrCurrentGradient->addCellwise( ptrCurrentVelocity );
+    ptrCurrentGradient->AddCellwise( ptrCurrentVelocity );
     VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrCurrentGradient, outputPrefix + "gradv" + CreateIntegerString( iI, 3 ) + suffix );
 
     }

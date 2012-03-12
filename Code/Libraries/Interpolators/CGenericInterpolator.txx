@@ -47,14 +47,14 @@ void CGenericInterpolator< T, VImageDimension >::Interpolate( const VectorImageT
   int* ptrIndxVals = new int[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
   T* ptrVals = new T[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
 
-  unsigned int dim = imIn->getDim();
+  unsigned int dim = imIn->GetDimension();
 
-  unsigned int szXnew = pos->getSizeX();
+  unsigned int szXnew = pos->GetSizeX();
 
-  T dx = imIn->getSpaceX();
+  T dx = imIn->GetSpacingX();
 
 #ifdef DEBUG
-  if (pos->getDim() != 1)
+  if (pos->GetDimension() != 1)
     {
     throw std::invalid_argument("CInterpolator -> invalid pos image");
     }
@@ -65,12 +65,12 @@ void CGenericInterpolator< T, VImageDimension >::Interpolate( const VectorImageT
     // interpolate the coordinates from the grid coordinates assuming origin 0
     // TODO: Add support for origin different than 0 here
 
-    T xPos = pos->getValue(x,0)/dx;
+    T xPos = pos->GetValue(x,0)/dx;
 
     for (unsigned int d = 0; d < dim; ++d)
       {
       // set the new value
-      imOut->setValue( x, d, InterpolatePosGridCoordinates( imIn, xPos, d, ptrIndxVals, ptrVals ) );
+      imOut->SetValue( x, d, InterpolatePosGridCoordinates( imIn, xPos, d, ptrIndxVals, ptrVals ) );
       }
     }
 
@@ -93,11 +93,11 @@ void CGenericInterpolator< T, VImageDimension >::InterpolateNegativeVelocityPos(
   int* ptrIndxVals = new int[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
   T* ptrVals = new T[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
 
-  unsigned int dim = imIn->getDim();
+  unsigned int dim = imIn->GetDimension();
 
-  unsigned int szXnew = imOut->getSizeX();
+  unsigned int szXnew = imOut->GetSizeX();
 
-  T dx = imIn->getSpaceX();
+  T dx = imIn->GetSpacingX();
   T dt_div_dx = dt/dx;
 
   for ( unsigned int x = 0; x < szXnew; ++x)
@@ -105,12 +105,12 @@ void CGenericInterpolator< T, VImageDimension >::InterpolateNegativeVelocityPos(
     // interpolate the coordinates from the grid coordinates assuming origin 0
     // TODO: Add support for origin different than 0 here, this is done relative with respect to the current velocity field
 
-    T xPos = x - v->getX(x)*dt_div_dx;
+    T xPos = x - v->GetX(x)*dt_div_dx;
 
     for (unsigned int d = 0; d < dim; ++d)
       {
       // set the new value
-      imOut->setValue( x, d, InterpolatePosGridCoordinates( imIn, xPos, d, ptrIndxVals, ptrVals ) );
+      imOut->SetValue( x, d, InterpolatePosGridCoordinates( imIn, xPos, d, ptrIndxVals, ptrVals ) );
       }
     }
 
@@ -136,16 +136,16 @@ void CGenericInterpolator< T, VImageDimension >::Interpolate( const VectorImageT
   T* ptrXVals = new T[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
   T* ptrYVals = new T[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
 
-  unsigned int dim = imIn->getDim();
+  unsigned int dim = imIn->GetDimension();
 
-  unsigned int szXnew = pos->getSizeX();
-  unsigned int szYnew = pos->getSizeY();
+  unsigned int szXnew = pos->GetSizeX();
+  unsigned int szYnew = pos->GetSizeY();
 
-  T dx = imIn->getSpaceX();
-  T dy = imIn->getSpaceY();
+  T dx = imIn->GetSpacingX();
+  T dy = imIn->GetSpacingY();
 
 #ifdef DEBUG
-  if (pos->getDim() != 2)
+  if (pos->GetDimension() != 2)
     {
     throw std::invalid_argument("CInterpolator -> invalid pos image");
     }
@@ -158,13 +158,13 @@ void CGenericInterpolator< T, VImageDimension >::Interpolate( const VectorImageT
       // interpolate the coordinates from the grid coordinates assuming origin 0
       // TODO: Add support for origin different than 0 here
 
-      T xPos = pos->getValue(x,y,0)/dx;
-      T yPos = pos->getValue(x,y,1)/dy;
+      T xPos = pos->GetValue(x,y,0)/dx;
+      T yPos = pos->GetValue(x,y,1)/dy;
 
       for (unsigned int d = 0; d < dim; ++d)
         {
         // set the new value
-        imOut->setValue( x, y, d, InterpolatePosGridCoordinates( imIn, xPos, yPos, d, ptrIndxXVals, ptrIndxYVals, ptrXVals, ptrYVals ) );
+        imOut->SetValue( x, y, d, InterpolatePosGridCoordinates( imIn, xPos, yPos, d, ptrIndxXVals, ptrIndxYVals, ptrXVals, ptrYVals ) );
         }
       }
     }
@@ -192,13 +192,13 @@ void CGenericInterpolator< T, VImageDimension >::InterpolateNegativeVelocityPos(
   T* ptrXVals = new T[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
   T* ptrYVals = new T[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
 
-  unsigned int dim = imIn->getDim();
+  unsigned int dim = imIn->GetDimension();
 
-  unsigned int szXnew = imOut->getSizeX();
-  unsigned int szYnew = imOut->getSizeY();
+  unsigned int szXnew = imOut->GetSizeX();
+  unsigned int szYnew = imOut->GetSizeY();
 
-  T dx = imIn->getSpaceX();
-  T dy = imIn->getSpaceY();
+  T dx = imIn->GetSpacingX();
+  T dy = imIn->GetSpacingY();
 
   T dt_div_dx = dt/dx;
   T dt_div_dy = dt/dy;
@@ -210,13 +210,13 @@ void CGenericInterpolator< T, VImageDimension >::InterpolateNegativeVelocityPos(
       // interpolate the coordinates from the grid coordinates assuming origin 0
       // TODO: Add support for origin different than 0 here, this is done relative with respect to the current velocity field
 
-      T xPos = x - v->getX(x,y)*dt_div_dx;
-      T yPos = y - v->getY(x,y)*dt_div_dy;
+      T xPos = x - v->GetX(x,y)*dt_div_dx;
+      T yPos = y - v->GetY(x,y)*dt_div_dy;
 
       for (unsigned int d = 0; d < dim; ++d)
         {
         // set the new value
-        imOut->setValue( x, y, d, InterpolatePosGridCoordinates( imIn, xPos, yPos, d, ptrIndxXVals, ptrIndxYVals, ptrXVals, ptrYVals ) );
+        imOut->SetValue( x, y, d, InterpolatePosGridCoordinates( imIn, xPos, yPos, d, ptrIndxXVals, ptrIndxYVals, ptrXVals, ptrYVals ) );
         }
       }
     }
@@ -247,18 +247,18 @@ void CGenericInterpolator< T, VImageDimension >::Interpolate( const VectorImageT
   T* ptrYVals = new T[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
   T* ptrZVals = new T[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
 
-  unsigned int dim = imIn->getDim();
+  unsigned int dim = imIn->GetDimension();
 
-  unsigned int szXnew = pos->getSizeX();
-  unsigned int szYnew = pos->getSizeY();
-  unsigned int szZnew = pos->getSizeZ();
+  unsigned int szXnew = pos->GetSizeX();
+  unsigned int szYnew = pos->GetSizeY();
+  unsigned int szZnew = pos->GetSizeZ();
 
-  T dx = imIn->getSpaceX();
-  T dy = imIn->getSpaceY();
-  T dz = imIn->getSpaceZ();
+  T dx = imIn->GetSpacingX();
+  T dy = imIn->GetSpacingY();
+  T dz = imIn->GetSpacingZ();
 
 #ifdef DEBUG
-  if (pos->getDim() != 3) {
+  if (pos->GetDimension() != 3) {
     throw std::invalid_argument("CInterpolator -> invalid pos image");
   }
 #endif
@@ -272,14 +272,14 @@ void CGenericInterpolator< T, VImageDimension >::Interpolate( const VectorImageT
 
         // interpolate the coordinates from the grid coordinates assuming origin 0
         // TODO: Add support for origin different than 0 here
-        T xPos = pos->getValue(x,y,z,0)/dx;
-        T yPos = pos->getValue(x,y,z,1)/dy;
-        T zPos = pos->getValue(x,y,z,2)/dz;
+        T xPos = pos->GetValue(x,y,z,0)/dx;
+        T yPos = pos->GetValue(x,y,z,1)/dy;
+        T zPos = pos->GetValue(x,y,z,2)/dz;
 
         for (unsigned int d = 0; d < dim; ++d)
           {
           // set the new value
-          imOut->setValue( x, y, z, d, InterpolatePosGridCoordinates(imIn, xPos, yPos, zPos, d, ptrIndxXVals, ptrIndxYVals, ptrIndxZVals, ptrXVals, ptrYVals, ptrZVals ) );
+          imOut->SetValue( x, y, z, d, InterpolatePosGridCoordinates(imIn, xPos, yPos, zPos, d, ptrIndxXVals, ptrIndxYVals, ptrIndxZVals, ptrXVals, ptrYVals, ptrZVals ) );
           }
         }
       }
@@ -312,15 +312,15 @@ void CGenericInterpolator< T, VImageDimension >::InterpolateNegativeVelocityPos(
   T* ptrYVals = new T[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
   T* ptrZVals = new T[ m_NrOfPointsNegative + m_NrOfPointsPositive ];
 
-  unsigned int dim = imIn->getDim();
+  unsigned int dim = imIn->GetDimension();
 
-  unsigned int szXnew = imOut->getSizeX();
-  unsigned int szYnew = imOut->getSizeY();
-  unsigned int szZnew = imOut->getSizeZ();
+  unsigned int szXnew = imOut->GetSizeX();
+  unsigned int szYnew = imOut->GetSizeY();
+  unsigned int szZnew = imOut->GetSizeZ();
 
-  T dx = imIn->getSpaceX();
-  T dy = imIn->getSpaceY();
-  T dz = imIn->getSpaceZ();
+  T dx = imIn->GetSpacingX();
+  T dy = imIn->GetSpacingY();
+  T dz = imIn->GetSpacingZ();
 
   T dt_div_dx = dt/dx;
   T dt_div_dy = dt/dy;
@@ -336,14 +336,14 @@ void CGenericInterpolator< T, VImageDimension >::InterpolateNegativeVelocityPos(
         // interpolate the coordinates from the grid coordinates assuming origin 0
         // TODO: Add support for origin different than 0 here, this is done relative with respect to the current velocity field
 
-        T xPos = x - v->getX(x,y,z)*dt_div_dx;
-        T yPos = y - v->getY(x,y,z)*dt_div_dy;
-        T zPos = z - v->getZ(x,y,z)*dt_div_dz;
+        T xPos = x - v->GetX(x,y,z)*dt_div_dx;
+        T yPos = y - v->GetY(x,y,z)*dt_div_dy;
+        T zPos = z - v->GetZ(x,y,z)*dt_div_dz;
 
         for (unsigned int d = 0; d < dim; ++d)
           {
           // set the new value
-          imOut->setValue( x, y, z, d, InterpolatePosGridCoordinates(imIn, xPos, yPos, zPos, d, ptrIndxXVals, ptrIndxYVals, ptrIndxZVals, ptrXVals, ptrYVals, ptrZVals ) );
+          imOut->SetValue( x, y, z, d, InterpolatePosGridCoordinates(imIn, xPos, yPos, zPos, d, ptrIndxXVals, ptrIndxYVals, ptrIndxZVals, ptrXVals, ptrYVals, ptrZVals ) );
           }
         }
       }
@@ -364,7 +364,7 @@ T CGenericInterpolator< T, VImageDimension >::InterpolatePosGridCoordinates( con
   const int m_NrOfPoints = m_NrOfPointsNegative + m_NrOfPointsPositive;
 
   // extracts the appropriate number of points for the virtual Interpolate function and generates the interpolate
-  unsigned int szX = imIn->getSizeX();
+  unsigned int szX = imIn->GetSizeX();
 
   // clamp to make sure there are no out-of-bound issues
   xPos = Clamp( xPos, 0, szX-1 );
@@ -374,7 +374,7 @@ T CGenericInterpolator< T, VImageDimension >::InterpolatePosGridCoordinates( con
   // get all the values at these indices and pass them to the interpolator
   for ( int iI=0; iI< m_NrOfPoints; ++iI )
   {
-    ptrVals[ iI ] = imIn->getValue( ptrIndxVals[iI], d );
+    ptrVals[ iI ] = imIn->GetValue( ptrIndxVals[iI], d );
   }
 
   return Interpolate( ptrVals, GetS( xPos ) );
@@ -386,8 +386,8 @@ T CGenericInterpolator< T, VImageDimension >::InterpolatePosGridCoordinates( con
   const int m_NrOfPoints = m_NrOfPointsNegative + m_NrOfPointsPositive;
 
   // extracts the appropriate number of points for the virtual Interpolate function and generates the interpolate
-  unsigned int szX = imIn->getSizeX();
-  unsigned int szY = imIn->getSizeY();
+  unsigned int szX = imIn->GetSizeX();
+  unsigned int szY = imIn->GetSizeY();
 
   // clamp to make sure there are no out-of-bound issues
   xPos = Clamp( xPos, 0, szX-1 );
@@ -401,7 +401,7 @@ T CGenericInterpolator< T, VImageDimension >::InterpolatePosGridCoordinates( con
     for ( int iY=0; iY < m_NrOfPoints; ++iY )
     {
       // constant x
-      ptrYVals[ iY ] = imIn->getValue( ptrIndxXVals[ iX ], ptrIndxYVals[ iY ], d );
+      ptrYVals[ iY ] = imIn->GetValue( ptrIndxXVals[ iX ], ptrIndxYVals[ iY ], d );
     }
     // evaluate at a particular y value for constant x
     ptrXVals[ iX ] = Interpolate( ptrYVals, GetS( yPos ) );
@@ -416,9 +416,9 @@ T CGenericInterpolator< T, VImageDimension >::InterpolatePosGridCoordinates( con
   const int m_NrOfPoints = m_NrOfPointsNegative + m_NrOfPointsPositive;
 
   // extracts the appropriate number of points for the virtual Interpolate function and generates the interpolate
-  unsigned int szX = imIn->getSizeX();
-  unsigned int szY = imIn->getSizeY();
-  unsigned int szZ = imIn->getSizeZ();
+  unsigned int szX = imIn->GetSizeX();
+  unsigned int szY = imIn->GetSizeY();
+  unsigned int szZ = imIn->GetSizeZ();
 
   // clamp to make sure there are no out-of-bound issues
   xPos = Clamp( xPos, 0, szX-1 );
@@ -436,7 +436,7 @@ T CGenericInterpolator< T, VImageDimension >::InterpolatePosGridCoordinates( con
       for ( int iZ=0; iZ< m_NrOfPoints; ++iZ )
       {
         // constant iX and iY
-        ptrZVals[ iZ ] = imIn->getValue( ptrIndxXVals[ iX ], ptrIndxYVals[ iY ], ptrIndxZVals[ iZ ], d );
+        ptrZVals[ iZ ] = imIn->GetValue( ptrIndxXVals[ iX ], ptrIndxYVals[ iY ], ptrIndxZVals[ iZ ], d );
       }
       // now we can compute the value at a particular z position for an x/y pair
       ptrYVals[ iY ] = Interpolate( ptrZVals, GetS( zPos ) );

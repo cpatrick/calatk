@@ -26,14 +26,14 @@
 template <class T, unsigned int VImageDimension >
 T VectorFieldUtils< T, VImageDimension >::maxAll( const VectorFieldType* in)
 {
-  unsigned int len = in->getLength();
+  unsigned int len = in->GetLength();
 
-  T m = in->getValue( 0 );
+  T m = in->GetValue( 0 );
 
   for ( unsigned int iI=0; iI<len; ++iI )
     {
-    T val = in->getValue(iI);
-    if (val > m) 
+    T val = in->GetValue(iI);
+    if (val > m)
       {
       m = val;
       }
@@ -48,14 +48,14 @@ T VectorFieldUtils< T, VImageDimension >::maxAll( const VectorFieldType* in)
 template <class T, unsigned int VImageDimension >
 T VectorFieldUtils< T, VImageDimension >::minAll( const VectorFieldType* in)
 {
-  unsigned int len = in->getLength();
-  
-  T m = in->getValue( 0 );
+  unsigned int len = in->GetLength();
+
+  T m = in->GetValue( 0 );
 
   for ( unsigned int iI=0; iI<len; ++iI )
     {
-    T val = in->getValue(iI);
-    if (val < m) 
+    T val = in->GetValue(iI);
+    if (val < m)
       {
       m = val;
       }
@@ -70,14 +70,14 @@ T VectorFieldUtils< T, VImageDimension >::minAll( const VectorFieldType* in)
 template <class T, unsigned int VImageDimension >
 T VectorFieldUtils< T, VImageDimension >::absMaxAll( const VectorFieldType* in)
 {
-  unsigned int len = in->getLength();
+  unsigned int len = in->GetLength();
 
-  T m = in->getValue( 0 );
+  T m = in->GetValue( 0 );
 
   for ( unsigned int iI=0; iI<len; ++iI )
     {
-    T val = std::abs( in->getValue(iI) );
-    if (val > m) 
+    T val = std::abs( in->GetValue(iI) );
+    if (val > m)
       {
       m = val;
       }
@@ -95,16 +95,16 @@ void VectorFieldUtils< T, VImageDimension >::identityMap(VectorFieldType1D* fld)
 
   // assumes origin (0), pixel centered
 
-  unsigned int szX = fld->getSizeX();
+  unsigned int szX = fld->GetSizeX();
 
-  T dx = fld->getSpaceX();
-  
+  T dx = fld->GetSpacingX();
+
   T xCur = 0;
 
-  for (unsigned int x = 0; x < szX; ++x) 
+  for (unsigned int x = 0; x < szX; ++x)
     {
-    fld->setX(x, xCur);
-      
+    fld->SetX(x, xCur);
+
     //update xCur
     xCur += dx;
     }
@@ -120,26 +120,26 @@ void VectorFieldUtils< T, VImageDimension >::identityMap(VectorFieldType2D* fld)
 
   // assumes origin (0,0), pixel centered
 
-  unsigned int szX = fld->getSizeX();
-  unsigned int szY = fld->getSizeY();
+  unsigned int szX = fld->GetSizeX();
+  unsigned int szY = fld->GetSizeY();
 
-  T dx = fld->getSpaceX();
-  T dy = fld->getSpaceY();
+  T dx = fld->GetSpacingX();
+  T dy = fld->GetSpacingY();
 
   T xCur = 0;
   T yCur = 0;
 
-  for (unsigned int y = 0; y < szY; ++y) 
+  for (unsigned int y = 0; y < szY; ++y)
     {
     // reset xCur
     xCur = 0;
 
-    for (unsigned int x = 0; x < szX; ++x) 
+    for (unsigned int x = 0; x < szX; ++x)
       {
 
-      fld->setX(x,y, xCur);
-      fld->setY(x,y, yCur);
-      
+      fld->SetX(x,y, xCur);
+      fld->SetY(x,y, yCur);
+
       //update xCur
       xCur += dx;
       }
@@ -156,35 +156,35 @@ template <class T, unsigned int VImageDimension >
 void VectorFieldUtils< T, VImageDimension >::identityMap(VectorFieldType3D* fld)
 {
 
-  unsigned int szX = fld->getSizeX();
-  unsigned int szY = fld->getSizeY();
-  unsigned int szZ = fld->getSizeZ();
-  
-  T dx = fld->getSpaceX();
-  T dy = fld->getSpaceY();
-  T dz = fld->getSpaceZ();
-  
+  unsigned int szX = fld->GetSizeX();
+  unsigned int szY = fld->GetSizeY();
+  unsigned int szZ = fld->GetSizeZ();
+
+  T dx = fld->GetSpacingX();
+  T dy = fld->GetSpacingY();
+  T dz = fld->GetSpacingZ();
+
   T xCur = 0;
   T yCur = 0;
   T zCur = 0;
-  
-  for (unsigned int z = 0; z < szZ; ++z) 
+
+  for (unsigned int z = 0; z < szZ; ++z)
     {
     // reset yCur
     yCur = 0;
-    
-    for (unsigned int y = 0; y < szY; ++y) 
+
+    for (unsigned int y = 0; y < szY; ++y)
       {
       // reset xCur
       xCur = 0;
-      
-      for (unsigned int x = 0; x < szX; ++x) 
+
+      for (unsigned int x = 0; x < szX; ++x)
         {
-        
-        fld->setX(x,y,z, xCur);
-        fld->setY(x,y,z, yCur);
-        fld->setZ(x,y,z, zCur);
-        
+
+        fld->SetX(x,y,z, xCur);
+        fld->SetY(x,y,z, yCur);
+        fld->SetZ(x,y,z, zCur);
+
         //update xCur
         xCur += dx;
         }
@@ -204,15 +204,15 @@ void VectorFieldUtils< T, VImageDimension >::applyMap( const VectorFieldType1D* 
 {
 
 #ifdef DEBUG
-  unsigned int szX = imIn->getSizeX();
+  unsigned int szX = imIn->GetSizeX();
 
   // make sure map and image are the same size
-  if (map->getSizeX() != szX || imOut->getSizeX() != szX) 
+  if (map->GetSizeX() != szX || imOut->GetSizeX() != szX)
     {
     throw std::invalid_argument("VectorFieldUtils::applyMap -> Dimension mismatch");
     }
 #endif
-  
+
   // interpolate
   VectorImageUtils< T, VImageDimension >::interpolate(imIn, map, imOut);
 
@@ -226,16 +226,16 @@ void VectorFieldUtils< T, VImageDimension >::applyMap( const VectorFieldType2D* 
 {
 
 #ifdef DEBUG
-  unsigned int szX = imIn->getSizeX();
-  unsigned int szY = imIn->getSizeY();
+  unsigned int szX = imIn->GetSizeX();
+  unsigned int szY = imIn->GetSizeY();
 
   // make sure map and image are the same size
-  if (map->getSizeX() != szX || map->getSizeY() != szY ||
-  imOut->getSizeX() != szX || imOut->getSizeY() != szY) {
+  if (map->GetSizeX() != szX || map->GetSizeY() != szY ||
+  imOut->GetSizeX() != szX || imOut->GetSizeY() != szY) {
   throw std::invalid_argument("VectorFieldUtils::applyMap -> Dimension mismatch");
   }
 #endif
-  
+
   // interpolate
   VectorImageUtils< T, VImageDimension >::interpolate(imIn, map, imOut);
 
@@ -249,17 +249,17 @@ void VectorFieldUtils< T, VImageDimension >::applyMap( const VectorFieldType3D* 
 {
 
 #ifdef DEBUG
-  unsigned int szX = imIn->getSizeX();
-  unsigned int szY = imIn->getSizeY();
-  unsigned int szZ = imIn->getSizeZ();
+  unsigned int szX = imIn->GetSizeX();
+  unsigned int szY = imIn->GetSizeY();
+  unsigned int szZ = imIn->GetSizeZ();
 
   // make sure map and image are the same size
-  if (map->getSizeX() != szX || map->getSizeY() != szY || map->getSizeZ() != szZ ||
-  imOut->getSizeX() != szX || imOut->getSizeY() != szY || imOut->getSizeZ() != szZ) {
+  if (map->GetSizeX() != szX || map->GetSizeY() != szY || map->GetSizeZ() != szZ ||
+  imOut->GetSizeX() != szX || imOut->GetSizeY() != szY || imOut->GetSizeZ() != szZ) {
   throw std::invalid_argument("VectorField2DUtils::applyMap -> Dimension mismatch");
   }
 #endif
-  
+
   // interpolate
   VectorImageUtils< T, VImageDimension  >::interpolate(imIn, map, imOut);
 
@@ -273,39 +273,39 @@ void VectorFieldUtils< T, VImageDimension >::computeDeterminantOfJacobian( const
 {
 
   // set up for the loop
-  unsigned int szX = fld->getSizeX();
+  unsigned int szX = fld->GetSizeX();
 
-  T dx = fld->getSpaceX();
+  T dx = fld->GetSpacingX();
 
   VectorImageType* D = imOut;
 
   // compute D for each pixel
-  for (unsigned int x = 0; x < szX; ++x) 
+  for (unsigned int x = 0; x < szX; ++x)
     {
 
     T fxDX;
 
     // X derivatives (handeling boundary cases)
-    if (szX == 1) 
+    if (szX == 1)
       {
       fxDX = 0;
-      } 
-    else if (x == 0) 
-      {
-      fxDX = (fld->getX(x+1) - fld->getX(x))/dx;
-      } 
-    else if (x == szX-1) 
-      {
-      fxDX = (fld->getX(x) - fld->getX(x-1))/dx;
-      } 
-    else 
-      {
-      fxDX = (fld->getX(x+1) - fld->getX(x-1))/(2*dx);
       }
-      
+    else if (x == 0)
+      {
+      fxDX = (fld->GetX(x+1) - fld->GetX(x))/dx;
+      }
+    else if (x == szX-1)
+      {
+      fxDX = (fld->GetX(x) - fld->GetX(x-1))/dx;
+      }
+    else
+      {
+      fxDX = (fld->GetX(x+1) - fld->GetX(x-1))/(2*dx);
+      }
+
     // compute and save the determinant
     T det = fxDX;
-    D->setValue(x,0, det);
+    D->SetValue(x,0, det);
     }
 
   // take the absolute value
@@ -321,69 +321,69 @@ void VectorFieldUtils< T, VImageDimension >::computeDeterminantOfJacobian( const
 {
 
   // set up for the loop
-  unsigned int szX = fld->getSizeX();
-  unsigned int szY = fld->getSizeY();
+  unsigned int szX = fld->GetSizeX();
+  unsigned int szY = fld->GetSizeY();
 
-  T dx = fld->getSpaceX();
-  T dy = fld->getSpaceY();
+  T dx = fld->GetSpacingX();
+  T dy = fld->GetSpacingY();
 
   VectorImageType* D = imOut;
 
   // compute D for each pixel
-  for (unsigned int y = 0; y < szY; ++y) 
+  for (unsigned int y = 0; y < szY; ++y)
     {
-    for (unsigned int x = 0; x < szX; ++x) 
+    for (unsigned int x = 0; x < szX; ++x)
       {
 
       T fxDX, fxDY, fyDX, fyDY;
 
       // X derivatives (handeling boundary cases)
-      if (szX == 1) 
+      if (szX == 1)
         {
         fxDX = 0;
         fyDX = 0;
-        } 
-      else if (x == 0) 
+        }
+      else if (x == 0)
         {
-        fxDX = (fld->getX(x+1,y) - fld->getX(x,y))/dx;
-        fyDX = (fld->getY(x+1,y) - fld->getY(x,y))/dx;
-        } 
-      else if (x == szX-1) 
+        fxDX = (fld->GetX(x+1,y) - fld->GetX(x,y))/dx;
+        fyDX = (fld->GetY(x+1,y) - fld->GetY(x,y))/dx;
+        }
+      else if (x == szX-1)
         {
-        fxDX = (fld->getX(x,y) - fld->getX(x-1,y))/dx;
-        fyDX = (fld->getY(x,y) - fld->getY(x-1,y))/dx;
-        } 
-      else 
+        fxDX = (fld->GetX(x,y) - fld->GetX(x-1,y))/dx;
+        fyDX = (fld->GetY(x,y) - fld->GetY(x-1,y))/dx;
+        }
+      else
         {
-        fxDX = (fld->getX(x+1,y) - fld->getX(x-1,y))/(2*dx);
-        fyDX = (fld->getY(x+1,y) - fld->getY(x-1,y))/(2*dx);
+        fxDX = (fld->GetX(x+1,y) - fld->GetX(x-1,y))/(2*dx);
+        fyDX = (fld->GetY(x+1,y) - fld->GetY(x-1,y))/(2*dx);
         }
 
       // Y derivatives (handeling boundary cases)
-      if (szY == 1) 
+      if (szY == 1)
         {
         fxDY = 0;
         fyDY = 0;
-        } 
-      else if (y == 0) 
+        }
+      else if (y == 0)
         {
-        fxDY = (fld->getX(x,y+1) - fld->getX(x,y))/dy;
-        fyDY = (fld->getY(x,y+1) - fld->getY(x,y))/dy;
-        } 
-      else if (y == szY-1) 
+        fxDY = (fld->GetX(x,y+1) - fld->GetX(x,y))/dy;
+        fyDY = (fld->GetY(x,y+1) - fld->GetY(x,y))/dy;
+        }
+      else if (y == szY-1)
         {
-        fxDY = (fld->getX(x,y) - fld->getX(x,y-1))/dy;
-        fyDY = (fld->getY(x,y) - fld->getY(x,y-1))/dy;
-        } 
-      else 
+        fxDY = (fld->GetX(x,y) - fld->GetX(x,y-1))/dy;
+        fyDY = (fld->GetY(x,y) - fld->GetY(x,y-1))/dy;
+        }
+      else
         {
-        fxDY = (fld->getX(x,y+1) - fld->getX(x,y-1))/(2*dy);
-        fyDY = (fld->getY(x,y+1) - fld->getY(x,y-1))/(2*dy);
+        fxDY = (fld->GetX(x,y+1) - fld->GetX(x,y-1))/(2*dy);
+        fyDY = (fld->GetY(x,y+1) - fld->GetY(x,y-1))/(2*dy);
         }
 
       // compute and save the determinant
       T det = fxDX * fyDY - fxDY * fyDX;
-      D->setValue(x,y,0, det);
+      D->SetValue(x,y,0, det);
 
     }
   }
@@ -399,116 +399,116 @@ void VectorFieldUtils< T, VImageDimension >::computeDeterminantOfJacobian( const
 template <class T, unsigned int VImageDimension >
 void VectorFieldUtils< T, VImageDimension >::computeDeterminantOfJacobian( const VectorFieldType3D* fld, VectorImageType3D *imOut )
 {
-  
-  // set up for the loop  
-  unsigned int szX = fld->getSizeX();
-  unsigned int szY = fld->getSizeY();
-  unsigned int szZ = fld->getSizeZ();
-  
-  T dx = fld->getSpaceX();
-  T dy = fld->getSpaceY();
-  T dz = fld->getSpaceZ();
+
+  // set up for the loop
+  unsigned int szX = fld->GetSizeX();
+  unsigned int szY = fld->GetSizeY();
+  unsigned int szZ = fld->GetSizeZ();
+
+  T dx = fld->GetSpacingX();
+  T dy = fld->GetSpacingY();
+  T dz = fld->GetSpacingZ();
 
   VectorImageType* D = imOut;
-  
+
   // compute D for each pixel
-  for (unsigned int z = 0; z < szZ; ++z) 
+  for (unsigned int z = 0; z < szZ; ++z)
     {
-    for (unsigned int y = 0; y < szY; ++y) 
+    for (unsigned int y = 0; y < szY; ++y)
       {
-      for (unsigned int x = 0; x < szX; ++x) 
+      for (unsigned int x = 0; x < szX; ++x)
         {
-        
+
         T fxDX, fxDY, fxDZ;
         T fyDX, fyDY, fyDZ;
         T fzDX, fzDY, fzDZ;
-        
+
         // X derivatives (handeling boundary cases)
-        if (szX == 1) 
-          { 
+        if (szX == 1)
+          {
           fxDX = 0;
           fyDX = 0;
           fzDX = 0;
-          } 
-        else if (x == 0) 
-          {
-          fxDX = (fld->getX(x+1,y,z) - fld->getX(x,y,z))/dx;
-          fyDX = (fld->getY(x+1,y,z) - fld->getY(x,y,z))/dx;
-          fzDX = (fld->getZ(x+1,y,z) - fld->getZ(x,y,z))/dx;
-          } 
-        else if (x == szX-1) 
-          {
-          fxDX = (fld->getX(x,y,z) - fld->getX(x-1,y,z))/dx;
-          fyDX = (fld->getY(x,y,z) - fld->getY(x-1,y,z))/dx;
-          fzDX = (fld->getZ(x,y,z) - fld->getZ(x-1,y,z))/dx;
-          } 
-        else 
-          {
-          fxDX = (fld->getX(x+1,y,z) - fld->getX(x-1,y,z))/(2*dx);
-          fyDX = (fld->getY(x+1,y,z) - fld->getY(x-1,y,z))/(2*dx);
-          fzDX = (fld->getZ(x+1,y,z) - fld->getZ(x-1,y,z))/(2*dx);
           }
-        
+        else if (x == 0)
+          {
+          fxDX = (fld->GetX(x+1,y,z) - fld->GetX(x,y,z))/dx;
+          fyDX = (fld->GetY(x+1,y,z) - fld->GetY(x,y,z))/dx;
+          fzDX = (fld->GetZ(x+1,y,z) - fld->GetZ(x,y,z))/dx;
+          }
+        else if (x == szX-1)
+          {
+          fxDX = (fld->GetX(x,y,z) - fld->GetX(x-1,y,z))/dx;
+          fyDX = (fld->GetY(x,y,z) - fld->GetY(x-1,y,z))/dx;
+          fzDX = (fld->GetZ(x,y,z) - fld->GetZ(x-1,y,z))/dx;
+          }
+        else
+          {
+          fxDX = (fld->GetX(x+1,y,z) - fld->GetX(x-1,y,z))/(2*dx);
+          fyDX = (fld->GetY(x+1,y,z) - fld->GetY(x-1,y,z))/(2*dx);
+          fzDX = (fld->GetZ(x+1,y,z) - fld->GetZ(x-1,y,z))/(2*dx);
+          }
+
         // Y derivatives (handeling boundary cases)
-        if (szY == 1) 
-          { 
+        if (szY == 1)
+          {
           fxDY = 0;
           fyDY = 0;
           fzDY = 0;
-          } 
-        else if (y == 0) 
-          {
-          fxDY = (fld->getX(x,y+1,z) - fld->getX(x,y,z))/dy;
-          fyDY = (fld->getY(x,y+1,z) - fld->getY(x,y,z))/dy;
-          fzDY = (fld->getZ(x,y+1,z) - fld->getZ(x,y,z))/dy;
-          } 
-        else if (y == szY-1) 
-          {
-          fxDY = (fld->getX(x,y,z) - fld->getX(x,y-1,z))/dy;
-          fyDY = (fld->getY(x,y,z) - fld->getY(x,y-1,z))/dy;
-          fzDY = (fld->getZ(x,y,z) - fld->getZ(x,y-1,z))/dy;
-          } 
-        else 
-          {
-          fxDY = (fld->getX(x,y+1,z) - fld->getX(x,y-1,z))/(2*dy);
-          fyDY = (fld->getY(x,y+1,z) - fld->getY(x,y-1,z))/(2*dy);
-          fzDY = (fld->getZ(x,y+1,z) - fld->getZ(x,y-1,z))/(2*dy);
           }
-        
+        else if (y == 0)
+          {
+          fxDY = (fld->GetX(x,y+1,z) - fld->GetX(x,y,z))/dy;
+          fyDY = (fld->GetY(x,y+1,z) - fld->GetY(x,y,z))/dy;
+          fzDY = (fld->GetZ(x,y+1,z) - fld->GetZ(x,y,z))/dy;
+          }
+        else if (y == szY-1)
+          {
+          fxDY = (fld->GetX(x,y,z) - fld->GetX(x,y-1,z))/dy;
+          fyDY = (fld->GetY(x,y,z) - fld->GetY(x,y-1,z))/dy;
+          fzDY = (fld->GetZ(x,y,z) - fld->GetZ(x,y-1,z))/dy;
+          }
+        else
+          {
+          fxDY = (fld->GetX(x,y+1,z) - fld->GetX(x,y-1,z))/(2*dy);
+          fyDY = (fld->GetY(x,y+1,z) - fld->GetY(x,y-1,z))/(2*dy);
+          fzDY = (fld->GetZ(x,y+1,z) - fld->GetZ(x,y-1,z))/(2*dy);
+          }
+
         // Z derivatives (handeling boundary cases)
-        if (szZ == 1) 
+        if (szZ == 1)
           {
           fxDZ = 0;
           fyDZ = 0;
           fzDZ = 0;
-          } 
-        else if (z == 0) 
-          {
-          fxDZ = (fld->getX(x,y,z+1) - fld->getX(x,y,z))/dz;
-          fyDZ = (fld->getY(x,y,z+1) - fld->getY(x,y,z))/dz;
-          fzDZ = (fld->getZ(x,y,z+1) - fld->getZ(x,y,z))/dz;
-          } 
-        else if (z == szZ-1) 
-          {
-          fxDZ = (fld->getX(x,y,z) - fld->getX(x,y,z-1))/dz;
-          fyDZ = (fld->getY(x,y,z) - fld->getY(x,y,z-1))/dz;
-          fzDZ = (fld->getZ(x,y,z) - fld->getZ(x,y,z-1))/dz;
-          } 
-        else 
-          {
-          fxDZ = (fld->getX(x,y,z+1) - fld->getX(x,y,z-1))/(2*dz);
-          fyDZ = (fld->getY(x,y,z+1) - fld->getY(x,y,z-1))/(2*dz);
-          fzDZ = (fld->getZ(x,y,z+1) - fld->getZ(x,y,z-1))/(2*dz);
           }
-        
+        else if (z == 0)
+          {
+          fxDZ = (fld->GetX(x,y,z+1) - fld->GetX(x,y,z))/dz;
+          fyDZ = (fld->GetY(x,y,z+1) - fld->GetY(x,y,z))/dz;
+          fzDZ = (fld->GetZ(x,y,z+1) - fld->GetZ(x,y,z))/dz;
+          }
+        else if (z == szZ-1)
+          {
+          fxDZ = (fld->GetX(x,y,z) - fld->GetX(x,y,z-1))/dz;
+          fyDZ = (fld->GetY(x,y,z) - fld->GetY(x,y,z-1))/dz;
+          fzDZ = (fld->GetZ(x,y,z) - fld->GetZ(x,y,z-1))/dz;
+          }
+        else
+          {
+          fxDZ = (fld->GetX(x,y,z+1) - fld->GetX(x,y,z-1))/(2*dz);
+          fyDZ = (fld->GetY(x,y,z+1) - fld->GetY(x,y,z-1))/(2*dz);
+          fzDZ = (fld->GetZ(x,y,z+1) - fld->GetZ(x,y,z-1))/(2*dz);
+          }
+
         // compute and save the determinant
         T det = fxDX * (fyDY*fzDZ - fyDZ*fzDY) + fxDY * (fyDZ*fzDX - fyDX*fzDZ) + fxDZ * (fyDX*fzDY - fyDY*fzDX);
-        D->setValue(x,y,z,0, det);
-        
+        D->SetValue(x,y,z,0, det);
+
       }
     }
   }
-  
+
   // take the absolute value
   VectorImageUtils< T, VImageDimension >::abs(D);
 
@@ -522,9 +522,9 @@ void VectorFieldUtils< T, VImageDimension >::computeDivergence( const VectorFiel
 {
 
   // set up for the loop
-  unsigned int szX = fld->getSizeX();
+  unsigned int szX = fld->GetSizeX();
 
-  T dx = fld->getSpaceX();
+  T dx = fld->GetSpacingX();
 
   VectorImageType* D = imOut;
 
@@ -541,19 +541,19 @@ void VectorFieldUtils< T, VImageDimension >::computeDivergence( const VectorFiel
       }
     else if (x == 0)
       {
-      fxDX = (fld->getX(x+1) - fld->getX(x))/dx;
+      fxDX = (fld->GetX(x+1) - fld->GetX(x))/dx;
       }
     else if (x == szX-1)
       {
-      fxDX = (fld->getX(x) - fld->getX(x-1))/dx;
+      fxDX = (fld->GetX(x) - fld->GetX(x-1))/dx;
       }
     else
       {
-      fxDX = (fld->getX(x+1) - fld->getX(x-1))/(2*dx);
+      fxDX = (fld->GetX(x+1) - fld->GetX(x-1))/(2*dx);
       }
 
     // compute and save the divergence
-    D->setValue(x,0, fxDX);
+    D->SetValue(x,0, fxDX);
     }
 }
 
@@ -566,11 +566,11 @@ void VectorFieldUtils< T, VImageDimension >::computeDivergence( const VectorFiel
 {
 
   // set up for the loop
-  unsigned int szX = fld->getSizeX();
-  unsigned int szY = fld->getSizeY();
+  unsigned int szX = fld->GetSizeX();
+  unsigned int szY = fld->GetSizeY();
 
-  T dx = fld->getSpaceX();
-  T dy = fld->getSpaceY();
+  T dx = fld->GetSpacingX();
+  T dy = fld->GetSpacingY();
 
   VectorImageType* D = imOut;
 
@@ -589,15 +589,15 @@ void VectorFieldUtils< T, VImageDimension >::computeDivergence( const VectorFiel
         }
       else if (x == 0)
         {
-        fxDX = (fld->getX(x+1,y) - fld->getX(x,y))/dx;
+        fxDX = (fld->GetX(x+1,y) - fld->GetX(x,y))/dx;
         }
       else if (x == szX-1)
         {
-        fxDX = (fld->getX(x,y) - fld->getX(x-1,y))/dx;
+        fxDX = (fld->GetX(x,y) - fld->GetX(x-1,y))/dx;
         }
       else
         {
-        fxDX = (fld->getX(x+1,y) - fld->getX(x-1,y))/(2*dx);
+        fxDX = (fld->GetX(x+1,y) - fld->GetX(x-1,y))/(2*dx);
         }
 
       // Y derivatives (handeling boundary cases)
@@ -607,19 +607,19 @@ void VectorFieldUtils< T, VImageDimension >::computeDivergence( const VectorFiel
         }
       else if (y == 0)
         {
-        fyDY = (fld->getY(x,y+1) - fld->getY(x,y))/dy;
+        fyDY = (fld->GetY(x,y+1) - fld->GetY(x,y))/dy;
         }
       else if (y == szY-1)
         {
-        fyDY = (fld->getY(x,y) - fld->getY(x,y-1))/dy;
+        fyDY = (fld->GetY(x,y) - fld->GetY(x,y-1))/dy;
         }
       else
         {
-        fyDY = (fld->getY(x,y+1) - fld->getY(x,y-1))/(2*dy);
+        fyDY = (fld->GetY(x,y+1) - fld->GetY(x,y-1))/(2*dy);
         }
 
       // compute and save the divergence
-      D->setValue(x,y,0, fxDX + fyDY );
+      D->SetValue(x,y,0, fxDX + fyDY );
 
     }
   }
@@ -633,13 +633,13 @@ void VectorFieldUtils< T, VImageDimension >::computeDivergence( const VectorFiel
 {
 
   // set up for the loop
-  unsigned int szX = fld->getSizeX();
-  unsigned int szY = fld->getSizeY();
-  unsigned int szZ = fld->getSizeZ();
+  unsigned int szX = fld->GetSizeX();
+  unsigned int szY = fld->GetSizeY();
+  unsigned int szZ = fld->GetSizeZ();
 
-  T dx = fld->getSpaceX();
-  T dy = fld->getSpaceY();
-  T dz = fld->getSpaceZ();
+  T dx = fld->GetSpacingX();
+  T dy = fld->GetSpacingY();
+  T dz = fld->GetSpacingZ();
 
   VectorImageType* D = imOut;
 
@@ -662,15 +662,15 @@ void VectorFieldUtils< T, VImageDimension >::computeDivergence( const VectorFiel
           }
         else if (x == 0)
           {
-          fxDX = (fld->getX(x+1,y,z) - fld->getX(x,y,z))/dx;
+          fxDX = (fld->GetX(x+1,y,z) - fld->GetX(x,y,z))/dx;
           }
         else if (x == szX-1)
           {
-          fxDX = (fld->getX(x,y,z) - fld->getX(x-1,y,z))/dx;
+          fxDX = (fld->GetX(x,y,z) - fld->GetX(x-1,y,z))/dx;
           }
         else
           {
-          fxDX = (fld->getX(x+1,y,z) - fld->getX(x-1,y,z))/(2*dx);
+          fxDX = (fld->GetX(x+1,y,z) - fld->GetX(x-1,y,z))/(2*dx);
           }
 
         // Y derivatives (handeling boundary cases)
@@ -680,15 +680,15 @@ void VectorFieldUtils< T, VImageDimension >::computeDivergence( const VectorFiel
           }
         else if (y == 0)
           {
-          fyDY = (fld->getY(x,y+1,z) - fld->getY(x,y,z))/dy;
+          fyDY = (fld->GetY(x,y+1,z) - fld->GetY(x,y,z))/dy;
           }
         else if (y == szY-1)
           {
-          fyDY = (fld->getY(x,y,z) - fld->getY(x,y-1,z))/dy;
+          fyDY = (fld->GetY(x,y,z) - fld->GetY(x,y-1,z))/dy;
           }
         else
           {
-          fyDY = (fld->getY(x,y+1,z) - fld->getY(x,y-1,z))/(2*dy);
+          fyDY = (fld->GetY(x,y+1,z) - fld->GetY(x,y-1,z))/(2*dy);
           }
 
         // Z derivatives (handeling boundary cases)
@@ -698,19 +698,19 @@ void VectorFieldUtils< T, VImageDimension >::computeDivergence( const VectorFiel
           }
         else if (z == 0)
           {
-          fzDZ = (fld->getZ(x,y,z+1) - fld->getZ(x,y,z))/dz;
+          fzDZ = (fld->GetZ(x,y,z+1) - fld->GetZ(x,y,z))/dz;
           }
         else if (z == szZ-1)
           {
-          fzDZ = (fld->getZ(x,y,z) - fld->getZ(x,y,z-1))/dz;
+          fzDZ = (fld->GetZ(x,y,z) - fld->GetZ(x,y,z-1))/dz;
           }
         else
           {
-          fzDZ = (fld->getZ(x,y,z+1) - fld->getZ(x,y,z-1))/(2*dz);
+          fzDZ = (fld->GetZ(x,y,z+1) - fld->GetZ(x,y,z-1))/(2*dz);
           }
 
         // compute and the divergence
-        D->setValue(x,y,z,0, fxDX + fyDY + fzDZ );
+        D->SetValue(x,y,z,0, fxDX + fyDY + fzDZ );
 
       }
     }
@@ -724,35 +724,35 @@ void VectorFieldUtils< T, VImageDimension >::computeDivergence( const VectorFiel
 template <class T, unsigned int VImageDimension >
 void VectorFieldUtils< T, VImageDimension >::computeCentralGradient( const VectorImageType1D* imIn, unsigned int d, VectorFieldType1D* fieldOut )
 {
-  unsigned int szX = imIn->getSizeX();
+  unsigned int szX = imIn->GetSizeX();
 
-  T dx = imIn->getSpaceX();
+  T dx = imIn->GetSpacingX();
 
-  for (unsigned int x = 0; x < szX; ++x) 
-    {   
+  for (unsigned int x = 0; x < szX; ++x)
+    {
     // compute gradients
     T Idx = 0;
-    
-    if (szX == 1) 
-      { 
+
+    if (szX == 1)
+      {
       Idx = 0;
-      } 
-    else if (x == 0) 
-      {
-      Idx = (imIn->getValue(x+1,d) - imIn->getValue(x,d))/dx;
-      } 
-    else if(x == szX-1) 
-      {
-      Idx = (imIn->getValue(x,d) - imIn->getValue(x-1,d))/dx;
-      } 
-    else 
-      {
-      Idx = (imIn->getValue(x+1,d) - imIn->getValue(x-1,d))/(2*dx);
       }
-                  
-    fieldOut->setX(x,Idx);
+    else if (x == 0)
+      {
+      Idx = (imIn->GetValue(x+1,d) - imIn->GetValue(x,d))/dx;
+      }
+    else if(x == szX-1)
+      {
+      Idx = (imIn->GetValue(x,d) - imIn->GetValue(x-1,d))/dx;
+      }
+    else
+      {
+      Idx = (imIn->GetValue(x+1,d) - imIn->GetValue(x-1,d))/(2*dx);
+      }
+
+    fieldOut->SetX(x,Idx);
     }
-      
+
 }
 
 
@@ -763,60 +763,60 @@ template <class T, unsigned int VImageDimension >
 void VectorFieldUtils< T, VImageDimension >::computeCentralGradient( const VectorImageType2D* imIn, unsigned int d, VectorFieldType2D* fieldOut )
 {
 
-  unsigned int szX = imIn->getSizeX();
-  unsigned int szY = imIn->getSizeY();
+  unsigned int szX = imIn->GetSizeX();
+  unsigned int szY = imIn->GetSizeY();
 
-  T dx = imIn->getSpaceX();
-  T dy = imIn->getSpaceY();
+  T dx = imIn->GetSpacingX();
+  T dy = imIn->GetSpacingY();
 
-  for (unsigned int x = 0; x < szX; ++x) 
-    {   
-    for (unsigned int y = 0; y < szY; ++y) 
-      {  
+  for (unsigned int x = 0; x < szX; ++x)
+    {
+    for (unsigned int y = 0; y < szY; ++y)
+      {
       // compute gradients
       T Idx = 0;
       T Idy = 0;
-      
-      if (szX == 1) 
-        { 
+
+      if (szX == 1)
+        {
         Idx = 0;
-        } 
-      else if (x == 0) 
-        {
-        Idx = (imIn->getValue(x+1,y,d) - imIn->getValue(x,y,d))/dx;
-        } 
-      else if(x == szX-1) 
-        {
-        Idx = (imIn->getValue(x,y,d) - imIn->getValue(x-1,y,d))/dx;
-        } 
-      else 
-        {
-        Idx = (imIn->getValue(x+1,y,d) - imIn->getValue(x-1,y,d))/(2*dx);
         }
-        
-      if (szY == 1) 
-        { 
+      else if (x == 0)
+        {
+        Idx = (imIn->GetValue(x+1,y,d) - imIn->GetValue(x,y,d))/dx;
+        }
+      else if(x == szX-1)
+        {
+        Idx = (imIn->GetValue(x,y,d) - imIn->GetValue(x-1,y,d))/dx;
+        }
+      else
+        {
+        Idx = (imIn->GetValue(x+1,y,d) - imIn->GetValue(x-1,y,d))/(2*dx);
+        }
+
+      if (szY == 1)
+        {
         Idy = 0;
-        } 
-      else if (y == 0) 
-        {
-        Idy = (imIn->getValue(x,y+1,d) - imIn->getValue(x,y,d))/dy;
-        } 
-      else if(y == szY-1) 
-        {
-        Idy = (imIn->getValue(x,y,d) - imIn->getValue(x,y-1,d))/dy;
-        } 
-      else 
-        {
-        Idy = (imIn->getValue(x,y+1,d) - imIn->getValue(x,y-1,d))/(2*dy);
         }
-                    
-      fieldOut->setX(x,y,Idx);
-      fieldOut->setY(x,y,Idy); 
+      else if (y == 0)
+        {
+        Idy = (imIn->GetValue(x,y+1,d) - imIn->GetValue(x,y,d))/dy;
+        }
+      else if(y == szY-1)
+        {
+        Idy = (imIn->GetValue(x,y,d) - imIn->GetValue(x,y-1,d))/dy;
+        }
+      else
+        {
+        Idy = (imIn->GetValue(x,y+1,d) - imIn->GetValue(x,y-1,d))/(2*dy);
+        }
+
+      fieldOut->SetX(x,y,Idx);
+      fieldOut->SetY(x,y,Idy);
 
       }
     }
-      
+
 }
 
 //
@@ -826,81 +826,81 @@ template <class T, unsigned int VImageDimension >
 void VectorFieldUtils< T, VImageDimension >::computeCentralGradient( const VectorImageType3D* imIn, unsigned int d, VectorFieldType3D* fieldOut )
 {
 
-  unsigned int szX = imIn->getSizeX();
-  unsigned int szY = imIn->getSizeY();
-  unsigned int szZ = imIn->getSizeZ();
+  unsigned int szX = imIn->GetSizeX();
+  unsigned int szY = imIn->GetSizeY();
+  unsigned int szZ = imIn->GetSizeZ();
 
-  T dx = imIn->getSpaceX();
-  T dy = imIn->getSpaceY();
-  T dz = imIn->getSpaceZ();
+  T dx = imIn->GetSpacingX();
+  T dy = imIn->GetSpacingY();
+  T dz = imIn->GetSpacingZ();
 
-  for (unsigned int x = 0; x < szX; ++x) 
-    {    
-    for (unsigned int y = 0; y < szY; ++y) 
-      {  
-      for (unsigned int z = 0; z < szZ; ++z) 
+  for (unsigned int x = 0; x < szX; ++x)
+    {
+    for (unsigned int y = 0; y < szY; ++y)
+      {
+      for (unsigned int z = 0; z < szZ; ++z)
         {
-        
+
         // compute gradients
         T Idx = 0;
         T Idy = 0;
         T Idz = 0;
-        if (szX == 1) 
-          { 
+        if (szX == 1)
+          {
           Idx = 0;
-          } 
-        else if (x == 0) 
+          }
+        else if (x == 0)
           {
-          Idx += (imIn->getValue(x+1,y,z,d) - imIn->getValue(x,y,z,d))/dx;
-          } 
-        else if(x == szX-1) 
+          Idx += (imIn->GetValue(x+1,y,z,d) - imIn->GetValue(x,y,z,d))/dx;
+          }
+        else if(x == szX-1)
           {
-          Idx += (imIn->getValue(x,y,z,d) - imIn->getValue(x-1,y,z,d))/dx;
-          } 
-        else 
+          Idx += (imIn->GetValue(x,y,z,d) - imIn->GetValue(x-1,y,z,d))/dx;
+          }
+        else
           {
-          Idx += (imIn->getValue(x+1,y,z,d) - imIn->getValue(x-1,y,z,d))/(2*dx);
+          Idx += (imIn->GetValue(x+1,y,z,d) - imIn->GetValue(x-1,y,z,d))/(2*dx);
           }
 
 
-        if (szY == 1) 
-          { 
+        if (szY == 1)
+          {
           Idy = 0;
-          } 
-        else if (y == 0) 
-          {
-          Idy += (imIn->getValue(x,y+1,z,d) - imIn->getValue(x,y,z,d))/dy;
-          } 
-        else if(y == szY-1) 
-          {
-          Idy += (imIn->getValue(x,y,z,d) - imIn->getValue(x,y-1,z,d))/dy;
-          } 
-        else 
-          {
-          Idy += (imIn->getValue(x,y+1,z,d) - imIn->getValue(x,y-1,z,d))/(2*dy);
           }
-        
-        if (szZ == 1) 
-          { 
+        else if (y == 0)
+          {
+          Idy += (imIn->GetValue(x,y+1,z,d) - imIn->GetValue(x,y,z,d))/dy;
+          }
+        else if(y == szY-1)
+          {
+          Idy += (imIn->GetValue(x,y,z,d) - imIn->GetValue(x,y-1,z,d))/dy;
+          }
+        else
+          {
+          Idy += (imIn->GetValue(x,y+1,z,d) - imIn->GetValue(x,y-1,z,d))/(2*dy);
+          }
+
+        if (szZ == 1)
+          {
           Idz = 0;
-          } 
-        else if (z == 0) 
-          {
-          Idz += (imIn->getValue(x,y,z+1,d) - imIn->getValue(x,y,z,d))/dz;
-          } 
-        else if(z == szZ-1) 
-          {
-          Idz += (imIn->getValue(x,y,z,d) - imIn->getValue(x,y,z-1,d))/dz;
-          } 
-        else 
-          {
-          Idz += (imIn->getValue(x,y,z+1,d) - imIn->getValue(x,y,z-1,d))/(2*dz);
           }
-         
-        fieldOut->setX(x,y,z,Idx);
-        fieldOut->setY(x,y,z,Idy);
-        fieldOut->setZ(x,y,z,Idz);
-        
+        else if (z == 0)
+          {
+          Idz += (imIn->GetValue(x,y,z+1,d) - imIn->GetValue(x,y,z,d))/dz;
+          }
+        else if(z == szZ-1)
+          {
+          Idz += (imIn->GetValue(x,y,z,d) - imIn->GetValue(x,y,z-1,d))/dz;
+          }
+        else
+          {
+          Idz += (imIn->GetValue(x,y,z+1,d) - imIn->GetValue(x,y,z-1,d))/(2*dz);
+          }
+
+        fieldOut->SetX(x,y,z,Idx);
+        fieldOut->SetY(x,y,z,Idy);
+        fieldOut->SetZ(x,y,z,Idz);
+
         }
       }
     }
@@ -918,8 +918,8 @@ template <class T, unsigned int VImageDimension >
 typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils< T, VImageDimension >::mapToITKDeformationField(VectorFieldType2D* inMap)
 {
 
-  unsigned int szX = inMap->getSizeX();
-  unsigned int szY = inMap->getSizeY();
+  unsigned int szX = inMap->GetSizeX();
+  unsigned int szY = inMap->GetSizeY();
 
   // initialize the ITK field
   typename ITKDeformationField<T,VImageDimension>::Type::Pointer outField = typename ITKDeformationField<T,VImageDimension>::Type::New();
@@ -939,8 +939,8 @@ typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils<
 
   // Set up the spacing
   typename ITKDeformationField<T,VImageDimension>::Type::SpacingType space;
-  space[0] = inMap->getSpaceX();
-  space[1] = inMap->getSpaceY();
+  space[0] = inMap->GetSpacingX();
+  space[1] = inMap->GetSpacingY();
   outField->SetSpacing(space);
 
   // Allocate region to image
@@ -948,9 +948,9 @@ typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils<
   outField->Allocate();
 
   // now dump data into the ITK field
-  for (unsigned int y = 0; y < szY; ++y) 
+  for (unsigned int y = 0; y < szY; ++y)
     {
-    for (unsigned int x = 0; x < szX; ++x) 
+    for (unsigned int x = 0; x < szX; ++x)
       {
 
       typename ITKDeformationField<T,VImageDimension>::Type::IndexType idx;
@@ -958,9 +958,9 @@ typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils<
       idx[1] = y;
 
       typename ITKDeformationPixel<T,VImageDimension>::Type px;
-      px[0] = inMap->getX(x,y);
-      px[1] = inMap->getY(x,y);
-      
+      px[0] = inMap->GetX(x,y);
+      px[1] = inMap->GetY(x,y);
+
       outField->SetPixel(idx, px);
       }
     }
@@ -973,8 +973,8 @@ typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils<
   outField = converter->GetOutput();
 
   // Copy origin and direction
-  outField->SetOrigin(VectorImageUtils< T, VImageDimension >::convertITKVectorOrigin(inMap->getOrigin()));
-  outField->SetDirection(VectorImageUtils< T, VImageDimension >::convertITKVectorDirection(inMap->getDirection()));
+  outField->SetOrigin(VectorImageUtils< T, VImageDimension >::convertITKVectorOrigin(inMap->GetOrigin()));
+  outField->SetDirection(VectorImageUtils< T, VImageDimension >::convertITKVectorDirection(inMap->GetDirection()));
 
   // return
   return outField;
@@ -987,63 +987,63 @@ typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils<
 template <class T, unsigned int VImageDimension >
 typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils< T, VImageDimension >::mapToITKDeformationField(VectorFieldType3D* inMap)
 {
-  
-  unsigned int szX = inMap->getSizeX();
-  unsigned int szY = inMap->getSizeY();
-  unsigned int szZ = inMap->getSizeZ();
-  
+
+  unsigned int szX = inMap->GetSizeX();
+  unsigned int szY = inMap->GetSizeY();
+  unsigned int szZ = inMap->GetSizeZ();
+
   // initialize the ITK field
   typename ITKDeformationField<T,VImageDimension>::Type::Pointer outField = ITKDeformationField<T,VImageDimension>::Type::New();
-  
+
   // Set up region
   typename ITKDeformationField<T,VImageDimension>::Type::IndexType start;
   start[0] = 0;
   start[1] = 0;
   start[2] = 0;
-  
+
   typename ITKDeformationField<T,VImageDimension>::Type::SizeType size;
   size[0] = szX;
   size[1] = szY;
   size[2] = szZ;
-  
+
   typename ITKDeformationField<T,VImageDimension>::Type::RegionType region;
   region.SetSize(size);
   region.SetIndex(start);
-  
+
   // Set up the spacing
   typename ITKDeformationField<T,VImageDimension>::Type::SpacingType space;
-  space[0] = inMap->getSpaceX();
-  space[1] = inMap->getSpaceY();
-  space[2] = inMap->getSpaceZ();
+  space[0] = inMap->GetSpacingX();
+  space[1] = inMap->GetSpacingY();
+  space[2] = inMap->GetSpacingZ();
   outField->SetSpacing(space);
-  
+
   // Allocate region to image
   outField->SetRegions(region);
   outField->Allocate();
-  
+
   // now dump data into the ITK field
-  for (unsigned int z = 0; z < szZ; ++z) 
+  for (unsigned int z = 0; z < szZ; ++z)
     {
-    for (unsigned int y = 0; y < szY; ++y) 
+    for (unsigned int y = 0; y < szY; ++y)
       {
-      for (unsigned int x = 0; x < szX; ++x) 
+      for (unsigned int x = 0; x < szX; ++x)
         {
-      
+
         typename ITKDeformationField<T,VImageDimension>::Type::IndexType idx;
         idx[0] = x;
         idx[1] = y;
         idx[2] = z;
-        
+
         typename ITKDeformationPixel<T,VImageDimension>::Type px;
-        px[0] = inMap->getX(x,y,z);
-        px[1] = inMap->getY(x,y,z);
-        px[2] = inMap->getZ(x,y,z);
-        
+        px[0] = inMap->GetX(x,y,z);
+        px[1] = inMap->GetY(x,y,z);
+        px[2] = inMap->GetZ(x,y,z);
+
         outField->SetPixel(idx, px);
         }
       }
     }
-  
+
   // now convert from an H Field to a deformation field
   typedef typename ITKDeformationField< T, VImageDimension >::Type ITKDeformationFieldType;
   typedef itk::HFieldToDeformationFieldImageFilter< ITKDeformationFieldType > DeformationConvertType;
@@ -1051,14 +1051,14 @@ typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils<
   converter->SetInput(outField);
   converter->Update();
   outField = converter->GetOutput();
-  
+
   // Copy origin and direction
-  outField->SetOrigin(VectorImageUtils<T,VImageDimension>::convertITKVectorOrigin(inMap->getOrigin()));
-  outField->SetDirection(VectorImageUtils<T,VImageDimension>::convertITKVectorDirection(inMap->getDirection()));
-  
+  outField->SetOrigin(VectorImageUtils<T,VImageDimension>::convertITKVectorOrigin(inMap->GetOrigin()));
+  outField->SetDirection(VectorImageUtils<T,VImageDimension>::convertITKVectorDirection(inMap->GetDirection()));
+
   // return
   return outField;
-  
+
 }
 
 //
@@ -1078,41 +1078,41 @@ void VectorFieldUtils< T, VImageDimension >::affineITKtoMap( typename ITKAffineT
   VectorImageUtils< T, VImageDimension >::applyAffineITK(itkAffine, id, mapOut, -1);
 
   // get original spacing for reference
-  T spX = mapOut->getSpaceX();
+  T spX = mapOut->GetSpacingX();
 
   // look for pixels that need fixing
-  unsigned int szX = mapOut->getSizeX();
+  unsigned int szX = mapOut->GetSizeX();
 
-  for (unsigned int x = 0; x < szX; ++x) 
-    { 
-    if (mapOut->getX(x) == -1) 
+  for (unsigned int x = 0; x < szX; ++x)
+    {
+    if (mapOut->GetX(x) == -1)
       {
       // figure out where this point came from
       typename ITKImage<T,VImageDimension>::Type::PointType transPoint;
       transPoint[0] = x*spX;
       typename ITKImage<T,VImageDimension>::Type::PointType startPoint = itkAffine->TransformPoint(transPoint);
-      
+
       T xStart = startPoint[0]/spX;
 
         // fix X coordinates
-      if (xStart < 0) 
+      if (xStart < 0)
         {
         // to the left, so pad with 0
-        mapOut->setX(x, 0);
-        } 
-      else if (xStart >= szX) 
+        mapOut->SetX(x, 0);
+        }
+      else if (xStart >= szX)
         {
         // to the right, so pad with 1
-        mapOut->setX(x, 1);
-        } 
-      else 
+        mapOut->SetX(x, 1);
+        }
+      else
         {
         // in the middle, so extend ID
-        mapOut->setX(x, id->getX((unsigned int)xStart,0));
+        mapOut->SetX(x, id->GetX((unsigned int)xStart,0));
         }
       }
     }
-  
+
   // clean up
   delete id;
 
@@ -1135,62 +1135,62 @@ void VectorFieldUtils< T, VImageDimension >::affineITKtoMap( typename ITKAffineT
   VectorImageUtils< T, VImageDimension >::applyAffineITK(itkAffine, id, mapOut, -1);
 
   // get original spacing for reference
-  T spX = mapOut->getSpaceX();
-  T spY = mapOut->getSpaceY();
+  T spX = mapOut->GetSpacingX();
+  T spY = mapOut->GetSpacingY();
 
   // look for pixels that need fixing
-  unsigned int szX = mapOut->getSizeX();
-  unsigned int szY = mapOut->getSizeY();
+  unsigned int szX = mapOut->GetSizeX();
+  unsigned int szY = mapOut->GetSizeY();
 
-  for (unsigned int y = 0; y < szY; ++y) 
+  for (unsigned int y = 0; y < szY; ++y)
     {
-    for (unsigned int x = 0; x < szX; ++x) 
+    for (unsigned int x = 0; x < szX; ++x)
       {
-      
-      if (mapOut->getX(x,y) == -1) 
+
+      if (mapOut->GetX(x,y) == -1)
         {
-        
+
         // figure out where this point came from
         typename ITKImage<T,VImageDimension>::Type::PointType transPoint;
         transPoint[0] = x*spX;
         transPoint[1] = y*spY;
         typename ITKImage<T,VImageDimension>::Type::PointType startPoint = itkAffine->TransformPoint(transPoint);
-        
+
         T xStart = startPoint[0]/spX;
         T yStart = startPoint[1]/spY;
 
           // fix X coordinates
-        if (xStart < 0) 
+        if (xStart < 0)
           {
           // to the left, so pad with 0
-          mapOut->setX(x,y, 0);
-          } 
-        else if (xStart >= szX) 
+          mapOut->SetX(x,y, 0);
+          }
+        else if (xStart >= szX)
           {
           // to the right, so pad with 1
-          mapOut->setX(x,y, 1);
-          } 
-        else 
+          mapOut->SetX(x,y, 1);
+          }
+        else
           {
           // in the middle, so extend ID
-          mapOut->setX(x,y, id->getX((unsigned int)xStart,0));
+          mapOut->SetX(x,y, id->GetX((unsigned int)xStart,0));
           }
 
         // fix Y coordinate
-        if (yStart < 0) 
+        if (yStart < 0)
           {
           // above, so pad with 0
-          mapOut->setY(x,y, 0);
-          } 
-        else if (yStart >= szY) 
+          mapOut->SetY(x,y, 0);
+          }
+        else if (yStart >= szY)
           {
           // below, so pad with 1
-          mapOut->setY(x,y, 1);
-          } 
-        else 
+          mapOut->SetY(x,y, 1);
+          }
+        else
           {
           // in the middle, so extend ID
-          mapOut->setY(x,y, id->getY(0,(unsigned int)yStart));
+          mapOut->SetY(x,y, id->GetY(0,(unsigned int)yStart));
           }
         }
 
@@ -1207,101 +1207,101 @@ void VectorFieldUtils< T, VImageDimension >::affineITKtoMap( typename ITKAffineT
 
 
   // TODO: Check that this is correctly implemented
-  
+
   // Note: need to deal with corners that have no info after transformation.
   // The idea is to transform the ID map and then fix the corners that are
   // identified as problematic
-  
+
   // set mapOut to the identity
   typename VectorFieldType::Pointer id = new VectorFieldType(mapOut);
   VectorFieldUtils< T, VImageDimension >::identityMap(id);
-  
+
   // transform the identity
   VectorImageUtils< T, VImageDimension >::applyAffineITK(itkAffine, id, mapOut, -1);
-    
+
   // look for pixels that need fixing
-  unsigned int szX = mapOut->getSizeX();
-  unsigned int szY = mapOut->getSizeY();
-  unsigned int szZ = mapOut->getSizeZ();
-  
+  unsigned int szX = mapOut->GetSizeX();
+  unsigned int szY = mapOut->GetSizeY();
+  unsigned int szZ = mapOut->GetSizeZ();
+
   // get original spacing for reference
-  T spX = mapOut->getSpaceX();
-  T spY = mapOut->getSpaceY();
-  T spZ = mapOut->getSpaceZ();
-    
-  for (unsigned int z = 0; z < szZ; ++z) 
+  T spX = mapOut->GetSpacingX();
+  T spY = mapOut->GetSpacingY();
+  T spZ = mapOut->GetSpacingZ();
+
+  for (unsigned int z = 0; z < szZ; ++z)
     {
-    for (unsigned int y = 0; y < szY; ++y) 
+    for (unsigned int y = 0; y < szY; ++y)
       {
-      for (unsigned int x = 0; x < szX; ++x) 
+      for (unsigned int x = 0; x < szX; ++x)
         {
-                
-        if (mapOut->getX(x,y,z) == -1) 
+
+        if (mapOut->GetX(x,y,z) == -1)
           {
-          
+
           // figure out where this point came from
           typename ITKImage<T,VImageDimension>::Type::PointType transPoint;
           transPoint[0] = spX*x;
           transPoint[1] = spY*y;
           transPoint[2] = spZ*z;
           typename ITKImage<T,VImageDimension>::Type::PointType startPoint = itkAffine->TransformPoint(transPoint);
-          
+
           T xStart = startPoint[0]/spX;
           T yStart = startPoint[1]/spY;
           T zStart = startPoint[2]/spZ;
-          
+
           // fix X coordinates
-          if (xStart < 0) 
+          if (xStart < 0)
             {
             // to the left, so pad with 0
-            mapOut->setX(x,y,z, 0);
-            } 
-          else if (xStart >= szX) 
+            mapOut->SetX(x,y,z, 0);
+            }
+          else if (xStart >= szX)
             {
             // to the right, so pad with 1
-            mapOut->setX(x,y,z, 1);
-            } 
-          else 
+            mapOut->SetX(x,y,z, 1);
+            }
+          else
             {
             // in the middle, so extend ID
-            mapOut->setX(x,y,z, id->getX((unsigned int)xStart,0,0));
+            mapOut->SetX(x,y,z, id->GetX((unsigned int)xStart,0,0));
             }
-          
+
           // fix Y coordinate
-          if (yStart < 0) 
+          if (yStart < 0)
             {
             // above, so pad with 0
-            mapOut->setY(x,y,z, 0);
-            } 
-          else if (yStart >= szY) 
-            {
-            // below, so pad with 1
-            mapOut->setY(x,y,z, 1);
-            } 
-          else 
-            {
-            // in the middle, so extend ID
-            mapOut->setY(x,y,z, id->getY(0,(unsigned int)yStart,0));
+            mapOut->SetY(x,y,z, 0);
             }
-          
-          // fix Z coordinate
-          if (zStart < 0) 
-            {
-            // above, so pad with 0
-            mapOut->setZ(x,y,z, 0);
-            } 
-          else if (zStart >= szZ) 
+          else if (yStart >= szY)
             {
             // below, so pad with 1
-            mapOut->setZ(x,y,z, 1);
-            } 
-          else 
+            mapOut->SetY(x,y,z, 1);
+            }
+          else
             {
             // in the middle, so extend ID
-            mapOut->setZ(x,y,z, id->getZ(0,0,(unsigned int)zStart));
+            mapOut->SetY(x,y,z, id->GetY(0,(unsigned int)yStart,0));
+            }
+
+          // fix Z coordinate
+          if (zStart < 0)
+            {
+            // above, so pad with 0
+            mapOut->SetZ(x,y,z, 0);
+            }
+          else if (zStart >= szZ)
+            {
+            // below, so pad with 1
+            mapOut->SetZ(x,y,z, 1);
+            }
+          else
+            {
+            // in the middle, so extend ID
+            mapOut->SetZ(x,y,z, id->GetZ(0,0,(unsigned int)zStart));
             }
           }
-        
+
         }
       }
     }
@@ -1351,7 +1351,7 @@ std::vector<T> VectorFieldUtils< T, VImageDimension >::transformPointITK( typena
 {
 
   // TODO: Check that this is correctly implemented
-  
+
   // Get the matrix from itkAffine
   typename ITKAffineTransform<T,VImageDimension>::Type::MatrixType matrix = itkAffine->GetMatrix();
   double m00 = matrix[0][0];
@@ -1363,25 +1363,25 @@ std::vector<T> VectorFieldUtils< T, VImageDimension >::transformPointITK( typena
   double m20 = matrix[2][0];
   double m21 = matrix[2][1];
   double m22 = matrix[2][2];
-  
+
   //DEBUG
   //std::cout << "Matrix: " << matrix << std::endl;
-  
+
   // Transform the point by the matrix
   std::vector<T> out(3);
   out[0] = (T)(coorVector[0] * m00 + coorVector[1] * m01 + coorVector[2] * m02);
   out[1] = (T)(coorVector[0] * m10 + coorVector[1] * m11 + coorVector[2] * m12);
   out[2] = (T)(coorVector[0] * m20 + coorVector[1] * m21 + coorVector[2] * m22);
-  
+
   // Add the translation
   typename ITKAffineTransform<T,VImageDimension>::Type::OutputVectorType translation = itkAffine->GetOffset();
   out[0] += (T)translation[0];
   out[1] += (T)translation[1];
   out[2] += (T)translation[2];
-  
+
   // return the result
   return out;
-  
+
 }
 
 template <class T, unsigned int VImageDimension >
@@ -1389,14 +1389,14 @@ bool VectorFieldUtils< T, VImageDimension >::writeTimeDependantImagesITK( const 
 {
   // convert this to a vector of VectorImageType and write it out
   std::vector< VectorImageType* > convIms;
-  
+
   typename std::vector< VectorFieldType* >::const_iterator iter;
   for ( iter = ims->begin(); iter != ims->end(); ++iter )
     {
     convIms.push_back( *iter );
     }
   return VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK( &convIms, filename );
-  
+
 
 }
 

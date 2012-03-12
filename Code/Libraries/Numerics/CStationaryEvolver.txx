@@ -51,7 +51,7 @@ void CStationaryEvolver< T, VImageDimension >::SolveForward( VectorFieldType* pV
 
   // copy the initial image into the storage space for the result
 
-  pTmpResults[ 0 ]->copy( pImIn );
+  pTmpResults[ 0 ]->Copy( pImIn );
 
   while ( dCurrentTime < dT )
     {
@@ -69,7 +69,7 @@ void CStationaryEvolver< T, VImageDimension >::SolveForward( VectorFieldType* pV
   if ( bResultToggle )
     {
     // need to copy, result is in pTmpResults[ 1 ]
-    pTmpResults[ 0 ]->copy( pTmpResults[ 1 ] );
+    pTmpResults[ 0 ]->Copy( pTmpResults[ 1 ] );
     }
 
 }

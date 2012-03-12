@@ -20,18 +20,12 @@
 #ifndef C_STATE_INITIAL_IMAGE_MOMENTUM_TXX
 #define C_STATE_INITIAL_IMAGE_MOMENTUM_TXX
 
-//
-// empty constructor
-//
 template<class T, unsigned int VImageDimension, class TResampler>
 CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMomentum()
   : m_ptrInitialImage( NULL ), m_ptrInitialMomentum( NULL )
 {
 }
 
-//
-// copy constructor
-//
 template<class T, unsigned int VImageDimension, class TResampler>
 CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMomentum( const CStateInitialImageMomentum & c)
   : m_ptrInitialImage( NULL ), m_ptrInitialMomentum( NULL )
@@ -58,9 +52,6 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMo
 
 }
 
-//
-// copy data structure
-//
 template <class T, unsigned int VImageDimension, class TResampler>
 void CStateInitialImageMomentum <T, VImageDimension, TResampler>::CopyDataStructure( const VectorImageType * ptrImage, const VectorImageType * ptrMomentum )
 {
@@ -77,9 +68,6 @@ void CStateInitialImageMomentum <T, VImageDimension, TResampler>::CopyDataStruct
     }
 }
 
-//
-// destructor
-//
 template <class T, unsigned int VImageDimension, class TResampler>
 CStateInitialImageMomentum <T, VImageDimension, TResampler>::~CStateInitialImageMomentum()
 {
@@ -157,9 +145,6 @@ void CStateInitialImageMomentum<T, VImageDimension, TResampler>::SetPointerToIni
 // the operators //
 ///////////////////
 
-//
-// operator=
-//
 template <class T, unsigned int VImageDimension, class TResampler>
 CStateInitialImageMomentum<T, VImageDimension, TResampler> &
 CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator=( const CStateInitialImageMomentum & p )
@@ -169,8 +154,8 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator=( const CSt
         VectorImageType * ptrImage = p.GetPointerToInitialImage();
         VectorImageType * ptrMomentum = p.GetPointerToInitialMomentum();
 
-        m_ptrInitialImage->copy(ptrImage);
-        m_ptrInitialMomentum->copy(ptrMomentum);
+        m_ptrInitialImage->Copy(ptrImage);
+        m_ptrInitialMomentum->Copy(ptrMomentum);
 
         return *this;
     }
@@ -190,8 +175,8 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator+=( const CS
     VectorImageType * ptrImage = p.GetPointerToInitialImage();
     VectorImageType * ptrMomentum = p.GetPointerToInitialMomentum();
 
-    m_ptrInitialImage->addCellwise(ptrImage);
-    m_ptrInitialMomentum->addCellwise(ptrMomentum);
+    m_ptrInitialImage->AddCellwise(ptrImage);
+    m_ptrInitialMomentum->AddCellwise(ptrMomentum);
 
     return *this;
 }
@@ -206,8 +191,8 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator-=( const CS
     VectorImageType * ptrImage = p.GetPointerToInitialImage();
     VectorImageType * ptrMomentum = p.GetPointerToInitialMomentum();
 
-    m_ptrInitialImage->subtractCellwise(ptrImage);
-    m_ptrInitialMomentum->subtractCellwise(ptrMomentum);
+    m_ptrInitialImage->SubtractCellwise(ptrImage);
+    m_ptrInitialMomentum->SubtractCellwise(ptrMomentum);
 
     return *this;
 }
@@ -219,8 +204,8 @@ template <class T, unsigned int VImageDimension, class TResampler>
 CStateInitialImageMomentum<T, VImageDimension, TResampler> &
 CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator*=( const T & p )
 {
-    m_ptrInitialImage->multConst(p);
-    m_ptrInitialMomentum->multConst(p);
+    m_ptrInitialImage->MultiplyByConstant(p);
+    m_ptrInitialMomentum->MultiplyByConstant(p);
 
     return *this;
 }
@@ -267,8 +252,8 @@ T CStateInitialImageMomentum< T, VImageDimension, TResampler >::SquaredNorm()
   T dSquaredNorm = 0;
 //  TODO: Is this the correct squared norm?
 
-  dSquaredNorm += m_ptrInitialImage->computeSquareNorm();
-  dSquaredNorm += m_ptrInitialMomentum->computeSquareNorm();
+  dSquaredNorm += m_ptrInitialImage->ComputeSquaredNorm();
+  dSquaredNorm += m_ptrInitialMomentum->ComputeSquaredNorm();
 
   return dSquaredNorm;
 

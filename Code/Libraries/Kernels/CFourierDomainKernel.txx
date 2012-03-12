@@ -114,9 +114,9 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures3D( un
 template <class T, unsigned int VImageDimension >
 void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures( VectorImageType* pVecIm )
 {
-  unsigned int szX = pVecIm->getSizeX();
-  unsigned int szY = pVecIm->getSizeY();
-  unsigned int szZ = pVecIm->getSizeZ();
+  unsigned int szX = pVecIm->GetSizeX();
+  unsigned int szY = pVecIm->GetSizeY();
+  unsigned int szZ = pVecIm->GetSizeZ();
 
   switch ( VImageDimension )
     {
@@ -168,11 +168,11 @@ T CFourierDomainKernel< T, VImageDimension >::GetFFromIndex( unsigned int iI, un
 template <class T, unsigned int VImageDimension >
 void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( VectorImageType1D* pVecImage, VectorImageType1D* pL )
 {
-  assert( pL->getDim() == 1 );
+  assert( pL->GetDimension() == 1 );
 
-  unsigned int szX = pVecImage->getSizeX();
+  unsigned int szX = pVecImage->GetSizeX();
 
-  unsigned int dim = pVecImage->getDim();
+  unsigned int dim = pVecImage->GetDimension();
 
 // doing the loop the slow way because fftw
 // requires row-major formatting
@@ -180,7 +180,7 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
   for ( unsigned int x = 0; x < szX; ++x )
     {
     // add to fftw matrix
-    fftwData->in[x] = pVecImage->getValue(x, 0);
+    fftwData->in[x] = pVecImage->GetValue(x, 0);
     }
 
   //
@@ -195,7 +195,7 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
   // multiply by L^2
   for ( unsigned int x = 0; x < szX; ++x )
     {
-    T lVal = pL->getValue(x,0);
+    T lVal = pL->GetValue(x,0);
 
     fftwData->out[x][0] = fftwData->out[x][0] * lVal;
     fftwData->out[x][1] = fftwData->out[x][1] * lVal;
@@ -214,7 +214,7 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
     // scale the fft results and calculate gradient
     T val = (fftwData->in[x])/szX;
 
-    pVecImage->setValue(x,0,val);
+    pVecImage->SetValue(x,0,val);
     }
 
 }
@@ -223,12 +223,12 @@ template <class T, unsigned int VImageDimension >
 void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( VectorImageType2D* pVecImage, VectorImageType2D* pL )
 {
 
-  assert( pL->getDim() == 1 );
+  assert( pL->GetDimension() == 1 );
 
-  unsigned int szX = pVecImage->getSizeX();
-  unsigned int szY = pVecImage->getSizeY();
+  unsigned int szX = pVecImage->GetSizeX();
+  unsigned int szY = pVecImage->GetSizeY();
 
-  unsigned int dim = pVecImage->getDim();
+  unsigned int dim = pVecImage->GetDimension();
 
 // doing the loop the slow way because fftw
 // requires row-major formatting
@@ -241,7 +241,7 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
         { 
         // add to fftw matrix
         unsigned int index = y + (szY * x);
-        fftwData->in[index] = pVecImage->getValue(x,y,d);
+        fftwData->in[index] = pVecImage->GetValue(x,y,d);
         }
       }
       
@@ -261,7 +261,7 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
         {
       
         unsigned int index = y + ((szY/2+1) * x);
-        T lVal = pL->getValue(x,y,0);
+        T lVal = pL->GetValue(x,y,0);
       
         fftwData->out[index][0] = fftwData->out[index][0] * lVal;
         fftwData->out[index][1] = fftwData->out[index][1] * lVal;
@@ -285,7 +285,7 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
         // scale the fft results and calculate gradient
         T val = (fftwData->in[index])/(szX*szY);
       
-        pVecImage->setValue(x,y,d,val);
+        pVecImage->SetValue(x,y,d,val);
         }
       }
 
@@ -296,13 +296,13 @@ template <class T, unsigned int VImageDimension >
 void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( VectorImageType3D* pVecImage, VectorImageType3D* pL )
 {
 
-  assert( pL->getDim() == 1 );
+  assert( pL->GetDimension() == 1 );
 
-  unsigned int szX = pVecImage->getSizeX();
-  unsigned int szY = pVecImage->getSizeY();
-  unsigned int szZ = pVecImage->getSizeZ();
+  unsigned int szX = pVecImage->GetSizeX();
+  unsigned int szY = pVecImage->GetSizeY();
+  unsigned int szZ = pVecImage->GetSizeZ();
 
-  unsigned int dim = pVecImage->getDim();
+  unsigned int dim = pVecImage->GetDimension();
 
   // doing the loop the slow way because fftw
   // requires row-major formatting
@@ -318,7 +318,7 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
           {
           // add to fftw matrix
           unsigned int index = z + szZ * (y + szY*x);
-          fftwData->in[index] = pVecImage->getValue(x,y,z,d);
+          fftwData->in[index] = pVecImage->GetValue(x,y,z,d);
           }
         }
       }
@@ -340,8 +340,8 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
         for ( unsigned int z = 0; z < szZ/2+1; ++z ) 
           {
           unsigned int index = z + (szZ/2+1) * (y + szY*x);
-          T lVal = pL->getValue(x,y,z,0);
-        
+          T lVal = pL->GetValue(x,y,z,0);
+
           fftwData->out[index][0] = fftwData->out[index][0] * lVal;
           fftwData->out[index][1] = fftwData->out[index][1] * lVal;
 
@@ -363,11 +363,11 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
         for (unsigned int z = 0; z < szZ; ++z ) 
           {
           unsigned int index = z + szZ * (y + szY*x);
-        
+
           T val = fftwData->in[index]/(szX*szY*szZ);
-        
-          pVecImage->setValue(x,y,z,d, val);
-        
+
+          pVecImage->SetValue(x,y,z,d, val);
+
           }
         }
       }
@@ -394,18 +394,18 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateMemoryAndComputeKernels
 
   assert( this->m_ptrL.GetPointer() != NULL );
 
-  if ( pVecImage->getSizeX() != this->m_ptrL->getSizeX() ||
-       pVecImage->getSizeY() != this->m_ptrL->getSizeY() ||
-       pVecImage->getSizeZ() != this->m_ptrL->getSizeZ() )
+  if ( pVecImage->GetSizeX() != this->m_ptrL->GetSizeX() ||
+       pVecImage->GetSizeY() != this->m_ptrL->GetSizeY() ||
+       pVecImage->GetSizeZ() != this->m_ptrL->GetSizeZ() )
     {
     throw std::runtime_error( "Kernel incompatible with velocity field size.");
     }
 
   assert( this->m_ptrLInv.GetPointer() != NULL );
   
-  if ( pVecImage->getSizeX() != this->m_ptrLInv->getSizeX() ||
-       pVecImage->getSizeY() != this->m_ptrLInv->getSizeY() ||
-       pVecImage->getSizeZ() != this->m_ptrLInv->getSizeZ() )
+  if ( pVecImage->GetSizeX() != this->m_ptrLInv->GetSizeX() ||
+       pVecImage->GetSizeY() != this->m_ptrLInv->GetSizeY() ||
+       pVecImage->GetSizeZ() != this->m_ptrLInv->GetSizeZ() )
     {
     throw std::runtime_error( "Kernel incompatible with velocity field size.");
     }

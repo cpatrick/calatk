@@ -81,7 +81,7 @@ bool CSolverLineSearchConstrained< TState>::SolvePreInitialized()
   CEnergyValues InitialEnergy;
 
   // initialize the values for the augmented Lagrangian
-  pObj->GetPointerToImageLagrangianMultiplier()->setConst( 0.0 );
+  pObj->GetPointerToImageLagrangianMultiplier()->SetToConstant( 0.0 );
   pObj->SetSquaredPenaltyScalarWeight( m_AugmentedLagrangianInitialMu );
 
   for ( unsigned int uiALIter = 0; uiALIter < this->m_AugmentedLagrangianNumberOfIterations; ++uiALIter )
@@ -191,8 +191,8 @@ bool CSolverLineSearchConstrained< TState>::SolvePreInitialized()
       */
 
     typename VectorImageType::Pointer ptrTmpImage = new VectorImageType( ptrCurrentImageResidual );
-    ptrTmpImage->multConst( -dMu );
-    ptrCurrentImageLagrangianMultiplier->addCellwise( ptrTmpImage );
+    ptrTmpImage->MultiplyByConstant( -dMu );
+    ptrCurrentImageLagrangianMultiplier->AddCellwise( ptrTmpImage );
     std::cout << "mu[k] = " << dMu << " -> mu[k+1] = " << dMu*this->m_AugmentedLagrangianPenaltyIncreaseFactor << std::endl;
     pObj->SetSquaredPenaltyScalarWeight( dMu*this->m_AugmentedLagrangianPenaltyIncreaseFactor );
   }

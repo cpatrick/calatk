@@ -99,7 +99,7 @@ struct ITKCharImageReader
 template <unsigned int VImageDimension>
 struct ITKCharImageWriter
 {
-  typedef itk::ImageFileWriter< typename ITKCharImage< VImageDimension >::Type > Type;  
+  typedef itk::ImageFileWriter< typename ITKCharImage< VImageDimension >::Type > Type;
 };
 
 template <class T, unsigned int VImageDimension>

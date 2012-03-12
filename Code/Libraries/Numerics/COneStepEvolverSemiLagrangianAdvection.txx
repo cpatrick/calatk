@@ -122,7 +122,7 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::ComputeAdjuste
     }
 
     // now that we have all the memory that is required do the computation
-    this->m_ptrAdjustedVectorField->copy( v );
+    this->m_ptrAdjustedVectorField->Copy( v );
 
     interpolator.SetNumberOfThreads( this->GetNumberOfThreads() );
 
@@ -167,19 +167,19 @@ T COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::ComputeMaximalUpd
   if ( vMax==0 ) vMax = 1; // if everything is zero use a default value
 
   // TODO: take this back out, just for testing
-  T dtx = dFact*v->getSpaceX()/vMax;
+  T dtx = dFact*v->GetSpacingX()/vMax;
 
   T dty = std::numeric_limits< T >::infinity();
   T dtz = std::numeric_limits< T >::infinity();
 
   if ( VImageDimension>1 )
     {
-    dty = dFact*v->getSpaceY()/vMax;
+    dty = dFact*v->GetSpacingY()/vMax;
     }
 
   if ( VImageDimension>2 )
     {
-    dtz = dFact*v->getSpaceZ()/vMax;
+    dtz = dFact*v->GetSpacingZ()/vMax;
     }
 
   T minDT = std::min( dtx, dty );

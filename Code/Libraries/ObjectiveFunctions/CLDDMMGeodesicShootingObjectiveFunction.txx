@@ -61,7 +61,7 @@ void CLDDMMGeodesicShootingObjectiveFunction< TState >::SetAutoConfiguration( Js
 template < class TState >
 void CLDDMMGeodesicShootingObjectiveFunction< TState >::GetInitialImage( VectorImageType* ptrIm )
 {
-  ptrIm->copy( this->m_pState->GetPointerToInitialImage() );
+  ptrIm->Copy( this->m_pState->GetPointerToInitialImage() );
 }
 
 template < class TState >
@@ -74,7 +74,7 @@ CLDDMMGeodesicShootingObjectiveFunction< TState >::GetPointerToInitialImage() co
 template < class TState >
 void CLDDMMGeodesicShootingObjectiveFunction< TState >::GetInitialMomentum( VectorImageType* ptrMomentum )
 {
-  ptrMomentum->copy( this->m_pState->GetPointerToInitialMomentum() );
+  ptrMomentum->Copy( this->m_pState->GetPointerToInitialMomentum() );
 }
 
 template < class TState >
@@ -88,18 +88,18 @@ void CLDDMMGeodesicShootingObjectiveFunction< TState >::ComputeVelocity( const V
     \f]
     */
 
-    unsigned int dim = ptrI->getDim();
-    ptrVout->setConst(0);
+    unsigned int dim = ptrI->GetDimension();
+    ptrVout->SetToConstant(0);
 
     for ( unsigned int iD = 0; iD<dim; iD++ )
     {
         VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( ptrI, iD, ptrTmpField );
         VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrP, iD, ptrTmpField );
-        ptrVout->addCellwise( ptrTmpField );
+        ptrVout->AddCellwise( ptrTmpField );
     }
 
     this->m_ptrKernel->ConvolveWithKernel( ptrVout );
-    ptrVout->multConst( -1.0 );
+    ptrVout->MultiplyByConstant( -1.0 );
 
 }
 

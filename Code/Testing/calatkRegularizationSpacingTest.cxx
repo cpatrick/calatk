@@ -64,19 +64,19 @@ int DoIt( int argc, char* argv[] )
     typename VectorImageType::Pointer pIm1 = VectorImageUtilsType::readFileITK( targetImage );
 
     // now artificially change the spacing
-    pIm0->setSpaceX( spacingFactor*pIm0->getSpaceX() );
+    pIm0->SetSpacingX( spacingFactor*pIm0->GetSpacingX() );
 
-    pIm1->setSpaceX( spacingFactor*pIm1->getSpaceX() );
+    pIm1->SetSpacingX( spacingFactor*pIm1->GetSpacingX() );
 
     if ( VImageDimension==2 )
     {
-        pIm0->setSpaceY( spacingFactor*pIm0->getSpaceY() );
-        pIm1->setSpaceY( spacingFactor*pIm1->getSpaceY() );;
+        pIm0->SetSpacingY( spacingFactor*pIm0->GetSpacingY() );
+        pIm1->SetSpacingY( spacingFactor*pIm1->GetSpacingY() );;
     }    
     else if ( VImageDimension==3 )
     {
-        pIm0->setSpaceZ( spacingFactor*pIm0->getSpaceZ() );
-        pIm1->setSpaceZ( spacingFactor*pIm1->getSpaceZ() );
+        pIm0->SetSpacingZ( spacingFactor*pIm0->GetSpacingZ() );
+        pIm1->SetSpacingZ( spacingFactor*pIm1->GetSpacingZ() );
     }
 
     ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm->GetImageManagerPointer() );

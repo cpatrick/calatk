@@ -269,7 +269,7 @@ void LDDMMUtils< T, VImageDimension >::GetMapFromToFromSpatioTemporalVelocityFie
         std::cout << "partially evolve for " << dTimeFrom - dCurrentTime << std::endl;
         ptrEvolver->SolveForward( (*ptrSpatioTemporalVelocityField)[ iI ], ptrMapIn, ptrMapOut, ptrMapTmp, dTimeFrom-dCurrentTime );
         // for next step, copy
-        ptrMapIn->copy( ptrMapOut );
+        ptrMapIn->Copy( ptrMapOut );
         uiStart = iI+1;
         dCurrentTime += dCurrentDT;
         break;
@@ -309,7 +309,7 @@ void LDDMMUtils< T, VImageDimension >::GetMapFromToFromSpatioTemporalVelocityFie
       break;
       }
     // for next step, copy
-    ptrMapIn->copy( ptrMapOut );
+    ptrMapIn->Copy( ptrMapOut );
     }
 }
 

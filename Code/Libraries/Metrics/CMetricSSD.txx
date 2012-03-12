@@ -33,17 +33,17 @@ CMetricSSD< T, VImageDimension >::~CMetricSSD()
 template <class T, unsigned int VImageDimension >
 T CMetricSSD< T, VImageDimension >::GetMetric( const VectorImageType* pI0, const VectorImageType* pI1 ) const
 {
-  assert( pI0->getLength() == pI1->getLength() );
-  
+  assert( pI0->GetLength() == pI1->GetLength() );
+
   T dMetric = 0;
-  for ( unsigned int uiI = 0; uiI < pI0->getLength(); ++uiI )
+  for ( unsigned int uiI = 0; uiI < pI0->GetLength(); ++uiI )
     {
-    T dCurrentDifference = pI0->getValue( uiI ) - pI1->getValue( uiI );
+    T dCurrentDifference = pI0->GetValue( uiI ) - pI1->GetValue( uiI );
     dMetric += dCurrentDifference*dCurrentDifference;
     }
 
   // needs to be a proper integral so multiply by volume of element
-  dMetric *= pI0->getElementVolume();
+  dMetric *= pI0->GetElementVolume();
 
   return dMetric;
 
@@ -52,24 +52,24 @@ T CMetricSSD< T, VImageDimension >::GetMetric( const VectorImageType* pI0, const
 template <class T, unsigned int VImageDimension >
 void CMetricSSD< T, VImageDimension >::GetLocalizedMetric( VectorImageType1D* pLocalizedMetric, const VectorImageType1D* pI0, const VectorImageType1D* pI1 )
 {
-  assert( pI0->getLength() == pI1->getLength() );
-  assert( pI0->getDim() == pI1->getDim() );
+  assert( pI0->GetLength() == pI1->GetLength() );
+  assert( pI0->GetDimension() == pI1->GetDimension() );
 
-  assert( pI0->getSizeX() == pLocalizedMetric->getSizeX());
+  assert( pI0->GetSizeX() == pLocalizedMetric->GetSizeX());
 
-  unsigned int szX = pI0->getSizeX();
-  unsigned int dim = pI0->getDim();
+  unsigned int szX = pI0->GetSizeX();
+  unsigned int dim = pI0->GetDimension();
 
   for ( unsigned int x=0; x<szX; ++x )
     {
     T dLocalizedMetric = 0;
     for ( unsigned int d=0; d<dim; ++d )
       {
-      T dCurrentDifference = pI0->getValue( x, d ) - pI1->getValue( x, d );
+      T dCurrentDifference = pI0->GetValue( x, d ) - pI1->GetValue( x, d );
       dLocalizedMetric += dCurrentDifference*dCurrentDifference;
       }
 
-    pLocalizedMetric->setValue( x, 0, dLocalizedMetric );
+    pLocalizedMetric->SetValue( x, 0, dLocalizedMetric );
 
     }
 }
@@ -77,14 +77,14 @@ void CMetricSSD< T, VImageDimension >::GetLocalizedMetric( VectorImageType1D* pL
 template <class T, unsigned int VImageDimension >
 void CMetricSSD< T, VImageDimension >::GetLocalizedMetric( VectorImageType2D* pLocalizedMetric, const VectorImageType2D* pI0, const VectorImageType2D* pI1 )
 {
-  assert( pI0->getLength() == pI1->getLength() );
-  assert( pI0->getDim() == pI1->getDim() );
+  assert( pI0->GetLength() == pI1->GetLength() );
+  assert( pI0->GetDimension() == pI1->GetDimension() );
 
-  assert( pI0->getSizeX() == pLocalizedMetric->getSizeX() && pI0->getSizeY() == pLocalizedMetric->getSizeY() );
+  assert( pI0->GetSizeX() == pLocalizedMetric->GetSizeX() && pI0->GetSizeY() == pLocalizedMetric->GetSizeY() );
 
-  unsigned int szX = pI0->getSizeX();
-  unsigned int szY = pI0->getSizeY();
-  unsigned int dim = pI0->getDim();
+  unsigned int szX = pI0->GetSizeX();
+  unsigned int szY = pI0->GetSizeY();
+  unsigned int dim = pI0->GetDimension();
 
   for ( unsigned int y=0; y<szY; ++y )
     {
@@ -93,11 +93,11 @@ void CMetricSSD< T, VImageDimension >::GetLocalizedMetric( VectorImageType2D* pL
       T dLocalizedMetric = 0;
       for ( unsigned int d=0; d<dim; ++d )
         {
-        T dCurrentDifference = pI0->getValue( x, y, d ) - pI1->getValue( x, y, d );
+        T dCurrentDifference = pI0->GetValue( x, y, d ) - pI1->GetValue( x, y, d );
         dLocalizedMetric += dCurrentDifference*dCurrentDifference;
         }
 
-      pLocalizedMetric->setValue( x, y, 0, dLocalizedMetric );
+      pLocalizedMetric->SetValue( x, y, 0, dLocalizedMetric );
 
       }
     }
@@ -107,17 +107,17 @@ void CMetricSSD< T, VImageDimension >::GetLocalizedMetric( VectorImageType2D* pL
 template <class T, unsigned int VImageDimension >
 void CMetricSSD< T, VImageDimension >::GetLocalizedMetric( VectorImageType3D* pLocalizedMetric, const VectorImageType3D* pI0, const VectorImageType3D* pI1 )
 {
-  assert( pI0->getLength() == pI1->getLength() );
-  assert( pI0->getDim() == pI1->getDim() );
+  assert( pI0->GetLength() == pI1->GetLength() );
+  assert( pI0->GetDimension() == pI1->GetDimension() );
 
-  assert( pI0->getSizeX() == pLocalizedMetric->getSizeX() && 
-          pI0->getSizeY() == pLocalizedMetric->getSizeY() &&
-          pI0->getSizeZ() == pLocalizedMetric->getSizeZ() );
+  assert( pI0->GetSizeX() == pLocalizedMetric->GetSizeX() &&
+          pI0->GetSizeY() == pLocalizedMetric->GetSizeY() &&
+          pI0->GetSizeZ() == pLocalizedMetric->GetSizeZ() );
 
-  unsigned int szX = pI0->getSizeX();
-  unsigned int szY = pI0->getSizeY();
-  unsigned int szZ = pI0->getSizeZ();
-  unsigned int dim = pI0->getDim();
+  unsigned int szX = pI0->GetSizeX();
+  unsigned int szY = pI0->GetSizeY();
+  unsigned int szZ = pI0->GetSizeZ();
+  unsigned int dim = pI0->GetDimension();
 
   for ( unsigned int z=0; z<szZ; ++z )
     {
@@ -128,11 +128,11 @@ void CMetricSSD< T, VImageDimension >::GetLocalizedMetric( VectorImageType3D* pL
         T dLocalizedMetric = 0;
         for ( unsigned int d=0; d<dim; ++d )
           {
-          T dCurrentDifference = pI0->getValue( x, y, z, d ) - pI1->getValue( x, y, z, d );
+          T dCurrentDifference = pI0->GetValue( x, y, z, d ) - pI1->GetValue( x, y, z, d );
           dLocalizedMetric += dCurrentDifference*dCurrentDifference;
           }
-        
-        pLocalizedMetric->setValue( x, y, z, 0, dLocalizedMetric );
+
+        pLocalizedMetric->SetValue( x, y, z, 0, dLocalizedMetric );
 
         }
       }
@@ -142,15 +142,15 @@ void CMetricSSD< T, VImageDimension >::GetLocalizedMetric( VectorImageType3D* pL
 template <class T, unsigned int VImageDimension >
 void CMetricSSD< T, VImageDimension >::GetAdjointMatchingDifferenceImage( VectorImageType* pAdjointDifference, const VectorImageType* pIEstimated, const VectorImageType* pIMeasured )
 {
-  assert( pIEstimated->getLength() == pIMeasured->getLength() );
-  assert( pAdjointDifference->getLength() == pIMeasured->getLength() );
+  assert( pIEstimated->GetLength() == pIMeasured->GetLength() );
+  assert( pAdjointDifference->GetLength() == pIMeasured->GetLength() );
 
   // TODO: check that this is the correct sign for the difference
 
-  for ( unsigned int uiI = 0; uiI < pIMeasured->getLength(); ++uiI )
+  for ( unsigned int uiI = 0; uiI < pIMeasured->GetLength(); ++uiI )
     {
-    T dAdjointDifferenceValue = 2*( pIMeasured->getValue( uiI ) - pIEstimated->getValue( uiI ) );
-    pAdjointDifference->setValue( uiI, dAdjointDifferenceValue );
+    T dAdjointDifferenceValue = 2*( pIMeasured->GetValue( uiI ) - pIEstimated->GetValue( uiI ) );
+    pAdjointDifference->SetValue( uiI, dAdjointDifferenceValue );
     }
 
 }

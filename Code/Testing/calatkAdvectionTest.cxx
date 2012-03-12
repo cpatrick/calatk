@@ -74,15 +74,15 @@ int calatkAdvectionTest( int argc, char* argv[] )
 
   VectorFieldType::Pointer pV = new VectorFieldType( pIm );
 
-  unsigned int sx = pV->getSizeX();
-  unsigned int sy = pV->getSizeY();
+  unsigned int sx = pV->GetSizeX();
+  unsigned int sy = pV->GetSizeY();
   
   for ( unsigned int iI=0; iI<sx; ++iI )
     {
     for ( unsigned int iJ=0; iJ<sy; ++iJ )
       {
-      pV->setX( iI, iJ, dvx );
-      pV->setY( iI, iJ, dvy );
+      pV->SetX( iI, iJ, dvx );
+      pV->SetY( iI, iJ, dvy );
       }
     }
 

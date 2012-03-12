@@ -82,11 +82,11 @@ void CAlgorithmBase< T, VImageDimension >::SetDefaultsIfNeeded()
 
   assert( this->m_ptrIm.GetPointer() == NULL );
   this->m_ptrIm = new VectorImageType( pImInfo->pIm );
-  this->m_ptrIm->setConst( 0 );
+  this->m_ptrIm->SetToConstant( 0 );
 
   assert( m_ptrMap.GetPointer() == NULL );
   this->m_ptrMap = new VectorFieldType( pImInfo->pIm );
-  this->m_ptrMap->setConst( 0 );
+  this->m_ptrMap->SetToConstant( 0 );
 }
 
 template < class T, unsigned int VImageDimension >
