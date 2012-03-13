@@ -54,6 +54,13 @@ ELSE(ITK_FOUND)
 ENDIF(ITK_FOUND)
 
 #
+# Shared libraries do not link correctly yet on Windows.
+#
+if(WIN32)
+  set(BUILD_SHARED_LIBS OFF)
+endif()
+
+#
 # Configure calatkConfigure.h.in
 #
 set(CALATK_SYSTEM_UNIX ${UNIX})
