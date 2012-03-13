@@ -34,7 +34,7 @@
 #include "JSONParameterUtils.h"
 
 template < class TFLOAT, unsigned int VImageDimension >
-int DoIt(std::string LDDMMType, char* sourceImage, char* targetImage, char* resultImage, std::string ConfigFileName)
+int DoIt(std::string LDDMMType, char* sourceImage, char* targetImage, char* resultImage, const std::string & configFileName)
 {
   //
   // HACK FROM LDDMM.cxx
@@ -92,7 +92,7 @@ int DoIt(std::string LDDMMType, char* sourceImage, char* targetImage, char* resu
   CALATK::CJSONConfiguration configOut( false );
   configOut.InitializeEmptyRoot();
 
-  bool parsingSuccessful = configIn.ReadJSONFile(ConfigFileName);
+  bool parsingSuccessful = configIn.ReadJSONFile(configFileName);
   if ( !parsingSuccessful )
     {
     configIn.InitializeEmptyRoot();
@@ -139,6 +139,6 @@ int DoIt(std::string LDDMMType, char* sourceImage, char* targetImage, char* resu
 
 int main(int argc, char **argv)
 {
-  std::string configFileName = argv[4];
-  return DoIt<float, 1>("simplifiedShooting", argv[1], argv[2], argv[3], argv[4]);
+  const std::string configFileName = argv[4];
+  return DoIt<float, 1>("simplifiedShooting", argv[1], argv[2], argv[3], configFileName);
 }

@@ -174,7 +174,14 @@ public:
   int   trueminpix, truemaxpix;
   int   orient;
 public:
-  anaimagedata  () {}
+  anaimagedata  ():
+    zsize(1), ysize(1), xsize(1),
+    zasp(1.0), yasp(1.0), xasp(1.0),
+    zpix(1.0), ypix(1.0), xpix(1.0),
+    minpix(1), maxpix(1),
+    trueminpix(1), truemaxpix(1),
+    orient(1)
+  {}
   ~anaimagedata () {}
 };
 

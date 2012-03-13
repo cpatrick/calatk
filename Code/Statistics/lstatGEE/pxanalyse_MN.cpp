@@ -268,7 +268,6 @@ read ANALYZE .hdr file
 int
 readanahdr(char *filename, anaimagedata *imdata)
 {
-  int  psize;
   char hdrfile[256];
 
   struct dsr hdr;

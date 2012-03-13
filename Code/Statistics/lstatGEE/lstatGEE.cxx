@@ -229,11 +229,11 @@ int main( int argc, const char * argv [] )
       std::cout << "done." << std::endl;
        
   } 
-  catch (itk::ExceptionObject e) 
+  catch (itk::ExceptionObject & e)
   {
     std::cerr << e << std::endl;
     return EXIT_FAILURE;
-  }  
+  }
 
 
   return EXIT_SUCCESS;

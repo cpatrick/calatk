@@ -849,12 +849,11 @@ void GEEestimatesHongtu(double *beta,
                         int *indxMI,
                         int *indxMI1)
 {                         //DimSPD==li????
-  double  diff, *oldbeta; //*oldxi;//mn:removed
+  double  *oldbeta;
   float **Corr1, **Corr2;
-  int     dii, dkk, djj, dmm, obsforonemax, mimax,  *Nrow,  Nrowtotal; //rankXX,NoP0;//mn:removed
+  int     dii, dkk, djj, dmm, obsforonemax, mimax,  *Nrow;
 
   Nrow = GEEUtilities::ivector_ht(1, nsample);
-  Nrowtotal = 0;
   mimax = 0;
 
   for ( dii = 1; dii <= nsample; dii++ )
@@ -864,7 +863,6 @@ void GEEestimatesHongtu(double *beta,
       {
       mimax = mi[dii];
       }
-    Nrowtotal += Nrow[dii];
     }
 
   obsforonemax = mimax * li;
@@ -1791,8 +1789,8 @@ void NEWinbtGEEHongtu(double *outputYYO,
                       int nsample,
                       int ncov)
 {
-  int i, j, k,  h, ni, *Irank, *Nrow, Nrowtotal, Nrowmax, mimax, dii; //ii,djj,dkk;//mn:removed
-  double tp, **SIG,  *XY, **PBB, **XD;                                //*s,**PBT,tempt;//mn:removed
+  int i, j, k,  h, ni, *Irank, *Nrow, mimax, dii;
+  double tp, **SIG,  *XY, **PBB, **XD;
 
   //float ***varMatrix2;//mn:removed
 
@@ -1870,20 +1868,18 @@ void NEWinbtGEEHongtu(double *outputYYO,
 
 void NEWinformbtGEEHongtu(double **AA, double **designXX, float ***varMatrix, int *mi, int li, int nsample, int ncov)
 {
-  int i, j, *Nrow, mimax, Nrowtotal, dii, djj, dkk, Nrowmax, position, dll, dmm;                      //ii,k,h,ni,l,*Irank;//mn:removed
+  int i, j, *Nrow, mimax, dii, djj, dkk, Nrowmax, position, dll, dmm;                      //ii,k,h,ni,l,*Irank;//mn:removed
   double **XXI,  *s, **designXXI, **designXXIT, **inter1, **inter2, **inter3, **term1, **varTEMatrix; //**SIG,tempt;//mn:removed
 
   Nrow = GEEUtilities::ivector_ht(1, nsample);
   s = GEEUtilities::dvector_ht(1, 2);
   XXI = GEEUtilities::dmatrix_ht(1, ncov, 1, ncov);
-  Nrowtotal = 0;
   mimax = 0;
 
   for ( dii = 1; dii <= nsample; dii++ )
     {
     Nrow[dii] = mi[dii] * li;
     if ( mi[dii] > mimax ) { mimax = mi[dii]; }
-    Nrowtotal += Nrow[dii];
     }
   Nrowmax = mimax * li;
 
@@ -1955,7 +1951,8 @@ double EstimateAR_rho(double **timeDresidD, int *indxMi, int djj, int N2total)
 {
   int dii; //dmm,dnn,dkk,dll;//mn:removed
   double **xxYmatrix = GEEUtilities::dmatrix_ht(1, N2total, 1, 2);
-  double fx, fb, fa, bx, ax, cx; //xx,xmin;//mn:removed
+  // this is broken -- does not get set, but is returned
+  double fb = 0.0;
 
   for ( dii = 1; dii <= N2total; dii++ )
     {
@@ -1968,7 +1965,7 @@ double EstimateAR_rho(double **timeDresidD, int *indxMi, int djj, int N2total)
 //   mnbrakHT(&ax, &cx, &bx, &fa, &fx, &fb,AR1_dim, xxYmatrix, N2total);
   fa = 1.0e-3;
 
-  fx = goldenHT(ax,  bx,  cx, AR1_dim,  fa, &fb,  xxYmatrix,  N2total);
+  // fx = goldenHT(ax,  bx,  cx, AR1_dim,  fa, &fb,  xxYmatrix,  N2total);
   GEEUtilities::free_dmatrix_ht(xxYmatrix, 1, N2total, 1, 2);
   return ( fb );
 } /* end */
@@ -2037,9 +2034,9 @@ float NEWScoreMUGEEHongtu(int noRow,
                           int nsample,
                           int ncov)
 {
-  int i, j, k,  h, ni, *Irank, dii, djj, dkk, *Nrow, Nrowmax, mimax = 0, Nrowtotal = 0; //ii,ll,mm;//mn:removed
+  int i, j, k,  h, ni, *Irank, dii, djj, dkk, *Nrow, Nrowmax, mimax = 0; //ii,ll,mm;//mn:removed
   double tp, **SIG,  *XY,  *PB, **MuIRR;
-  float scoretest, tempvalue,  **tempo, ***varMatrix2;
+  float scoretest, **tempo, ***varMatrix2;
   double *tt, **AA, **varMatrixI, **corrMatrixI, **inter1, **inter2; //medvalue;//mn:removed
   double **sqrtSIGMA, **IPP;
 
