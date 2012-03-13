@@ -23,7 +23,7 @@
 #include "json/json-forwards.h"
 #include "json/json.h"
 #include "CALATKCommon.h"
-#include "CObject.h"
+#include "CBase.h"
 #include "JSONParameterUtils.h"
 
 namespace CALATK
@@ -34,12 +34,12 @@ namespace CALATK
  * Base class for all classes that do processing (and have parameters)
  * so that they can provide functionality to auto-initialize based on a JSON configuration description
  */
-class CProcessBase: public CObject
+class CProcessBase: public CBase
 {
 public:
   /** Standard class typedefs. */
   typedef CProcessBase                    Self;
-  typedef CObject                         Superclass;
+  typedef CBase                         Superclass;
   typedef itk::SmartPointer< Self >       Pointer;
   typedef itk::SmartPointer< const Self > ConstPointer;
 

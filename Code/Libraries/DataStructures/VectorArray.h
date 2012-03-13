@@ -20,30 +20,33 @@
 #ifndef VECTOR_ARRAY_H
 #define VECTOR_ARRAY_H
 
-#include "CObject.h"
+#include "CBase.h"
 
 #include "CALATKCommon.h"
 #include <stdexcept>
 
+namespace CALATK
+{
+
 /**
- * VectorArray.h - An array class that stores vector-valued data
+ * \class VectorArray
+ * \brief An array class that stores vector-valued data
  * Supports multiple dimensions (currently 1D, 2D, 3D)
  *
  * This is the base class, so the format of the data is un-specified.  The
  * vectors at all grid locations will have a fixed length.  Technically,
  * therefore, this is a N+1-D array, but the last dimension is used to
  * store vector values, not a fourth grid dimension.
- *
  */
-
-namespace CALATK
-{
-
 template <class T, unsigned int VImageDimension=3>
-class VectorArray: public CObject
+class VectorArray: public CBase
 {
-
 public:
+  /** Standard class typedefs. */
+  typedef VectorArray                     Self;
+  typedef CBase                           Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
   /********************************
    * Constructors and Destructors *

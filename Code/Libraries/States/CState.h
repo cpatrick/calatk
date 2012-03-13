@@ -21,7 +21,7 @@
 #define C_STATE_H
 
 
-#include "CObject.h"
+#include "CBase.h"
 #include "itkSmartPointer.h"
 
 
@@ -35,7 +35,7 @@ namespace CALATK
  * May want to add more common functionality later.
  */
 template <class T, unsigned int DIM, class TResamplerType >
-class CState: public CObject
+class CState: public CBase
 {
 public:
 
@@ -46,6 +46,7 @@ public:
 
   /** Standard typedefs. */
   typedef CState                          Self;
+  typedef CBase                           Superclass;
   typedef itk::SmartPointer< Self >       Pointer;
   typedef itk::SmartPointer< const Self > ConstPointer;
 

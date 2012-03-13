@@ -17,7 +17,7 @@
 *
 */
 
-#include "CObject.h"
+#include "CBase.h"
 
 #if defined( __APPLE__ )
 // OSAtomic.h optimizations only used in 10.5 and later
@@ -43,38 +43,38 @@ using __gnu_cxx::__exchange_and_add;
 
 #endif
 
-CObject::CObject():
+CBase::CBase():
   m_ReferenceCount(1)
 {}
 
-void CObject::Delete()
+void CBase::Delete()
 {
   this->UnRegister();
 }
 
 #ifdef _WIN32
-void * CObject::operator new(size_t n)
+void * CBase::operator new(size_t n)
 {
   return new char[n];
 }
 
-void * CObject::operator new[](size_t n)
+void * CBase::operator new[](size_t n)
 {
   return new char[n];
 }
 
-void CObject::operator delete(void *m)
+void CBase::operator delete(void *m)
 {
   delete[] (char *)m;
 }
 
-void CObject::operator delete[](void *m, size_t)
+void CBase::operator delete[](void *m, size_t)
 {
   delete[] (char *)m;
 }
 #endif // _WIN32
 
-void CObject::Register() const
+void CBase::Register() const
 {
   // Windows optimization
 #if ( defined( WIN32 ) || defined( _WIN32 ) )
@@ -100,7 +100,7 @@ void CObject::Register() const
 #endif
 }
 
-void CObject::UnRegister() const
+void CBase::UnRegister() const
 {
   // As ReferenceCount gets unlocked, we may have a race condition
   // to delete the object.
@@ -146,7 +146,7 @@ void CObject::UnRegister() const
 #endif
 }
 
-CObject::~CObject()
+CBase::~CBase()
 {
   /**
    * warn user if reference counting is on and the object is being referenced
@@ -155,7 +155,7 @@ CObject::~CObject()
    * exception if one has been thrown already. This is likely to
    * happen when a subclass constructor (say B) is throwing an exception: at
    * that point, the stack unwinds by calling all superclass destructors back
-   * to this method (~CObject): since the ref count is still 1, an
+   * to this method (~CBase): since the ref count is still 1, an
    * exception would be thrown again, causing the system to abort()!
    */
   if ( this->m_ReferenceCount > 0 && !std::uncaught_exception() )

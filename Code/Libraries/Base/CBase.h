@@ -17,8 +17,8 @@
 *
 */
 
-#ifndef C_OBJECT_H
-#define C_OBJECT_H
+#ifndef C_BASE_H
+#define C_BASE_H
 
 #include "itkSimpleFastMutexLock.h"
 
@@ -35,15 +35,15 @@ namespace CALATK
 {
 
 /**
- * \class CObject
+ * \class CBase
  * Base class that does reference counting.  Defines Register() and UnRegister()
  * methods, so an itk::SmartPointer can be created from the class.
  */
-class CObject
+class CBase
 {
 public:
-  CObject();
-  virtual ~CObject();
+  CBase();
+  virtual ~CBase();
 
   /** Increase the reference count (mark as used by another object).  */
   virtual void Register() const;
