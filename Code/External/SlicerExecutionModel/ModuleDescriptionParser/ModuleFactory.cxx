@@ -2080,7 +2080,7 @@ ModuleFactory
               (const unsigned char *) words[3].c_str(),
               0,
               (unsigned char *) bin,
-              words[3].size());
+              (unsigned long) words[3].size());
             
             entry.XMLDescription =
               std::string((char *)bin, decodedLengthActual) ; 
@@ -2180,13 +2180,13 @@ ModuleFactory
             
           if ((*cit).second.XMLDescription != "None")
             {
-            int encodedLengthEstimate = 2*(*cit).second.XMLDescription.size();
+            size_t encodedLengthEstimate = 2*(*cit).second.XMLDescription.size();
             encodedLengthEstimate = ((encodedLengthEstimate / 4) + 1) * 4;
 
             char *bin = new char[encodedLengthEstimate];
             int encodedLengthActual = itksysBase64_Encode(
               (const unsigned char *) (*cit).second.XMLDescription.c_str(),
-              (*cit).second.XMLDescription.size(),
+              (unsigned long) (*cit).second.XMLDescription.size(),
               (unsigned char *) bin,
               0);
             std::string encodedDescription(bin, encodedLengthActual);

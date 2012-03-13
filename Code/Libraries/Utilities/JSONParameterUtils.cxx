@@ -175,7 +175,7 @@ CJSONConfiguration::GetFromKeyAsVector( Json::Value& vSubTree, std::string sKey,
   VectorFloatType vecF;
   for ( unsigned int iI=0; iI<vecRet.size(); ++iI )
   {
-    vecF.push_back( vecRet[ iI ] );
+    vecF.push_back( static_cast< float >( vecRet[ iI ] ));
   }
 
   return vecF;
