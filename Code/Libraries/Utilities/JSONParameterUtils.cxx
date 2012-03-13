@@ -386,13 +386,14 @@ bool CJSONConfiguration::ReadJSONFile( std::string sFileName )
     }
 
   m_ptrRoot = new Json::Value;
+  this->m_IsMasterNode = true;
 
   std::cout << "Parsing input file " << sFileName << " ... ";
-    
+
   Json::Reader reader;
   std::string config_doc = ReadFileContentIntoString( sFileName );
   bool parsingSuccessful = reader.parse( config_doc, *m_ptrRoot );
-  
+
   if ( !parsingSuccessful )
     {
     std::cout << "failed." << std::endl;
