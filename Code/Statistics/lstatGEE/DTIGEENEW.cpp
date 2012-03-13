@@ -896,5 +896,8 @@ int main(int argc, char *argv[])
   free_matrix_ht(x0x, 0, TotalImg - 1, 0, num_cov - 1);
   free_dvector_ht(Yresponse, 1, TotalImg * DimSPD);
 
+  delete[] fileName;
+  delete[] BetaName;
+
   return 1;
 } /* end */
