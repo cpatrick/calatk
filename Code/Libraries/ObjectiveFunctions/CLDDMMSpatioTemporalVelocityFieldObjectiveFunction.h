@@ -51,7 +51,7 @@ public:
   virtual ~CLDDMMSpatioTemporalVelocityFieldObjectiveFunction();
 
   void InitializeState();
-  void InitializeState( TState* pState );
+  void InitializeState( TState* ptrState );
 
   void GetMap( VectorFieldType* ptrMap, T dTime );
   void GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo );
@@ -77,7 +77,7 @@ protected:
   typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;
 
   void InitializeDataStructures();
-  void InitializeDataStructuresFromState( TState* pState );
+  void InitializeDataStructuresFromState( TState* ptrState );
 
   // methods which delete and create possible auxiliary dynamic structures
   virtual void CreateAuxiliaryStructures() = 0;
@@ -92,7 +92,7 @@ protected:
 
   void CreateNewStateStructures();
   void CreateNewGradientStructures();
-  void ShallowCopyStateStructures( TState* pState );
+  void ShallowCopyStateStructures( TState* ptrState );
 
   T m_NumberOfDiscretizationVolumesPerUnitTime;
 

@@ -79,15 +79,15 @@ void CAtlasObjectiveFunction< TState >::InitializeState()
   // all the pointers are aready stored in m_VectorObjectiveFunctionPtrs
 
   // associate the allocated memory with the atlas state
-  this->m_pState = new TState( &vecState );
+  this->m_ptrState = new TState( &vecState );
 
   // associate the allocated memory with the atlas gradient
-  this->m_pGradient = new TState( &vecGradient );
+  this->m_ptrGradient = new TState( &vecGradient );
 
 }
 
 template < class TState >
-void CAtlasObjectiveFunction< TState >::InitializeState( TState *pState )
+void CAtlasObjectiveFunction< TState >::InitializeState( TState *ptrState )
 {
   // need to initialize all the individual states (based on the input state) and then create a new joint state vector which will form the new atlas state
   // need to initialize the individual states and then create a new joint state vector which will form the new atlas state
@@ -95,7 +95,7 @@ void CAtlasObjectiveFunction< TState >::InitializeState( TState *pState )
   typename VectorObjectiveFunctionPointersType::iterator iter;
   for ( unsigned int iI=0, iter=m_VectorObjectiveFunctionPtrs.begin(); iter!=m_VectorObjectiveFunctionPtrs.end(); ++iI, ++iter )
     {
-      iter->InitializeState( *pState->GetIndividualStatePointer( iI ) );
+      iter->InitializeState( *ptrState->GetIndividualStatePointer( iI ) );
     }
 
   // now all of the individual objective functions are initialized
@@ -115,10 +115,10 @@ void CAtlasObjectiveFunction< TState >::InitializeState( TState *pState )
   // all the pointers are aready stored in m_VectorObjectiveFunctionPtrs
 
   // associate the allocated memory with the atlas state
-  this->m_pState = new TState( &vecState );
+  this->m_ptrState = new TState( &vecState );
 
   // associate the allocated memory with the atlas gradient
-  this->m_pGradient = new TState( &vecGradient );
+  this->m_ptrGradient = new TState( &vecGradient );
 
 }
 

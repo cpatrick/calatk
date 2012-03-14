@@ -61,7 +61,7 @@ public:
   virtual ~CLDDMMAdjointGeodesicShootingObjectiveFunction();
 
   void InitializeState();
-  void InitializeState( TState* pState );
+  void InitializeState( TState* ptrState );
 
   void GetImage( VectorImageType* ptrIm, T dTime );
   void GetMomentum( VectorImageType* ptrMomentum, T dTime );
@@ -83,12 +83,12 @@ protected:
   typedef std::vector< typename VectorImageType::Pointer >* VectorPointerToVectorImagePointerType;
 
   void InitializeDataStructures();
-  void InitializeDataStructuresFromState( TState* pState );
+  void InitializeDataStructuresFromState( TState * ptrState );
 
   void DeleteData();
 
   void CreateNewStateStructures();
-  void ShallowCopyStateStructures( TState* pState );
+  void ShallowCopyStateStructures( TState * ptrState );
   void CreateGradientAndAuxiliaryStructures();
 
   void ComputeImageMomentumForward();

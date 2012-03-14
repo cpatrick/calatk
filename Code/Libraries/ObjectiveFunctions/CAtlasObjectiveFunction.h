@@ -75,7 +75,7 @@ protected:
   void CreateAuxiliaryStructures();
 
   void InitializeState();
-  void InitializeState( TStateAtlas *pState );
+  void InitializeState( TStateAtlas * ptrState );
 
 private:
   // intentionally not implemented

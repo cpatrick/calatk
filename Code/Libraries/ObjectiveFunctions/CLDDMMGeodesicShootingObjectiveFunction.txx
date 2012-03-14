@@ -61,20 +61,20 @@ void CLDDMMGeodesicShootingObjectiveFunction< TState >::SetAutoConfiguration( Js
 template < class TState >
 void CLDDMMGeodesicShootingObjectiveFunction< TState >::GetInitialImage( VectorImageType* ptrIm )
 {
-  ptrIm->Copy( this->m_pState->GetPointerToInitialImage() );
+  ptrIm->Copy( this->m_ptrState->GetPointerToInitialImage() );
 }
 
 template < class TState >
 const typename CLDDMMGeodesicShootingObjectiveFunction< TState >::VectorImageType*
 CLDDMMGeodesicShootingObjectiveFunction< TState >::GetPointerToInitialImage() const
 {
-  return this->m_pState->GetPointerToInitialImage();
+  return this->m_ptrState->GetPointerToInitialImage();
 }
 
 template < class TState >
 void CLDDMMGeodesicShootingObjectiveFunction< TState >::GetInitialMomentum( VectorImageType* ptrMomentum )
 {
-  ptrMomentum->Copy( this->m_pState->GetPointerToInitialMomentum() );
+  ptrMomentum->Copy( this->m_ptrState->GetPointerToInitialMomentum() );
 }
 
 template < class TState >

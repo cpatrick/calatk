@@ -82,7 +82,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateNewStat
   // Images and adjoints will be saved at all time-points
   // velcoity fields have one less entry (because they 'live' in between the measurement points)
 
-  assert( this->m_pState.GetPointer() == NULL );
+  assert( this->m_ptrState.GetPointer() == NULL );
   assert( m_vecTimeDiscretization.size() > 1 );
 
   const VectorImageType* pGraftIm = this->m_ptrImageManager->GetGraftImagePointer();
@@ -100,14 +100,14 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateNewStat
     }
 
   // associate the allocated memory with the state
-  this->m_pState = new TState( &vecState );
+  this->m_ptrState = new TState( &vecState );
     
 }
 
 template < class TState >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateNewGradientStructures()
 {
-  assert( this->m_pGradient.GetPointer() == NULL );
+  assert( this->m_ptrGradient.GetPointer() == NULL );
   assert( m_vecTimeDiscretization.size() > 1 );
 
   const VectorImageType* pGraftIm = this->m_ptrImageManager->GetGraftImagePointer();
@@ -123,34 +123,34 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateNewGrad
     ptrCurrentVectorField->SetToConstant( 0 );
     vecGradient.push_back( ptrCurrentVectorField );
     }
-  
+
   // associate the allocated memory with the gradient
-  this->m_pGradient = new TState( &vecGradient );
+  this->m_ptrGradient = new TState( &vecGradient );
 
 }
 
 template < class TState >
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::ShallowCopyStateStructures( TState* pState )
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::ShallowCopyStateStructures( TState* ptrState )
 {
 
-  assert( this->m_pState.GetPointer() == NULL );
+  assert( this->m_ptrState.GetPointer() == NULL );
 
   std::vector< VectorFieldPointerType > vecState;
-    
+
   // -1, because these are velocity fields
   for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size()-1; ++iI )
     {
-    VectorFieldPointerType ptrCurrentVectorField = pState->GetVectorFieldPointer( iI );
+    VectorFieldPointerType ptrCurrentVectorField = ptrState->GetVectorFieldPointer( iI );
     vecState.push_back( ptrCurrentVectorField );
     }
-    
+
   // associate the allocated memory with the state
-  this->m_pState = new TState( &vecState );
+  this->m_ptrState = new TState( &vecState );
 
 }
 
 template < class TState >
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::InitializeDataStructuresFromState( TState* pState )
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::InitializeDataStructuresFromState( TState* ptrState )
 {
   this->DeleteAuxiliaryStructures();
 
@@ -159,7 +159,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::InitializeDat
   this->CreateTimeDiscretization();
   
   // shallow copy (i.e., we just take over the externally allocated memory)
-  this->ShallowCopyStateStructures( pState );
+  this->ShallowCopyStateStructures( ptrState );
 
   // new geadient structures
   this->CreateNewGradientStructures();
@@ -175,8 +175,8 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::InitializeDat
 
   this->DeleteData();
 
-  assert( this->m_pGradient.GetPointer() == NULL );
-  assert( this->m_pState.GetPointer() == NULL );
+  assert( this->m_ptrGradient.GetPointer() == NULL );
+  assert( this->m_ptrState.GetPointer() == NULL );
 
   this->CreateTimeDiscretization();
 
@@ -205,7 +205,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::GetMapFromTo(
         dTimeFrom,
         dTimeTo,
         this->m_vecTimeDiscretization,
-        this->m_pState->GetVectorPointerToVectorFieldPointer(),
+        this->m_ptrState->GetVectorPointerToVectorFieldPointer(),
         this->m_ptrEvolver );
 }
 
@@ -217,10 +217,10 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::InitializeSta
 }
 
 template < class TState >
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::InitializeState( TState* pState )
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::InitializeState( TState* ptrState )
 {
   // TODO: Set all the velocities to zero and the initial image to the first image of the time series
-  InitializeDataStructuresFromState( pState );
+  InitializeDataStructuresFromState( ptrState );
 }
 
 #endif

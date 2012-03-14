@@ -62,7 +62,7 @@ public:
   virtual ~CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction();
 
   void InitializeState();
-  void InitializeState( TState* pState );
+  void InitializeState( TState* ptrState );
 
   void GetImage( VectorImageType* ptrIm, T dTime );
   void GetMomentum( VectorImageType* ptrMomentum, T dTime );
@@ -91,9 +91,9 @@ public:
 protected:
 
   void CreateNewStateStructures();
-  void ShallowCopyStateStructures( TState* pState );
+  void ShallowCopyStateStructures( TState * ptrState );
   void CreateGradientAndAuxiliaryStructures();
-  void InitializeDataStructuresFromState( TState* pState );
+  void InitializeDataStructuresFromState( TState* ptrState );
   void InitializeDataStructures();
   void DeleteData();
 

@@ -55,32 +55,32 @@ public:
   virtual void InitializeState() = 0;
   virtual void InitializeState( TState* ) = 0;
 
-  void SetStatePointer( ptrStateType pState )
+  void SetStatePointer( ptrStateType ptrState )
   {
-    m_pState = pState;
+    m_ptrState = ptrState;
   };
 
   ptrStateType GetStatePointer() const
   {
-    return m_pState;
+    return m_ptrState;
   };
 
   void SetGradientPointer( ptrStateType pGradient )
   {
-    m_pGradient = pGradient;
+    m_ptrGradient = pGradient;
   };
 
   ptrStateType GetGradientPointer() const
   {
-    return m_pGradient;
+    return m_ptrGradient;
   };
 
   /** Compute the gradient of the objective function and store it in the gradient member variable */
   virtual void ComputeGradient();
 
 protected:
-  typename StateType::Pointer m_pState;
-  typename StateType::Pointer m_pGradient;
+  typename StateType::Pointer m_ptrState;
+  typename StateType::Pointer m_ptrGradient;
 
 };
 
