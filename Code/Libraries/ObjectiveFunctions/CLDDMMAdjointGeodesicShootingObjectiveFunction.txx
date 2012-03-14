@@ -65,17 +65,20 @@ CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::CLDDMMAdjointGeodesicS
 template< class TState >
 void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::DeleteData()
 {
-    this->m_ptrKernel->DeallocateMemory();
+  this->m_ptrKernel->DeallocateMemory();
 
-    m_vecMeasurementTimepoints.clear();
-    m_vecTimeDiscretization.clear();
-    m_vecTimeIncrements.clear();
+  m_vecMeasurementTimepoints.clear();
+  m_vecTimeDiscretization.clear();
+  m_vecTimeIncrements.clear();
+
+  this->m_ptrState = NULL;
+  this->m_ptrGradient = NULL;
 }
 
 template< class TState >
 CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::~CLDDMMAdjointGeodesicShootingObjectiveFunction()
 {
-    DeleteData();
+  DeleteData();
 }
 
 
@@ -221,30 +224,29 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::CreateGradientAndA
 template < class TState >
 void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::InitializeDataStructuresFromState( TState * ptrState )
 {
-    DeleteData();
+  DeleteData();
 
-    CreateTimeDiscretization();
+  CreateTimeDiscretization();
 
-    ShallowCopyStateStructures( ptrState );
+  ShallowCopyStateStructures( ptrState );
 
-    CreateGradientAndAuxiliaryStructures();
-
+  CreateGradientAndAuxiliaryStructures();
 }
 
 template < class TState >
 void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::InitializeDataStructures()
 {
-    DeleteData();
+  DeleteData();
 
-    assert (this->m_ptrGradient.GetPointer() == NULL );
+  assert (this->m_ptrGradient.GetPointer() == NULL );
 
-    CreateTimeDiscretization();
+  CreateTimeDiscretization();
 
-    // allocate state structures
-    CreateNewStateStructures();
+  // allocate state structures
+  CreateNewStateStructures();
 
-    // gradient and everything else
-    CreateGradientAndAuxiliaryStructures();
+  // gradient and everything else
+  CreateGradientAndAuxiliaryStructures();
 }
 
 template < class TState >

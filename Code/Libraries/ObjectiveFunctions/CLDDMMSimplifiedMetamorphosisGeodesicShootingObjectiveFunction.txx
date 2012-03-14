@@ -62,28 +62,6 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::D
 {
   this->m_ptrKernel->DeallocateMemory();
 
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapIn );
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapOut );
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapTmp );
-
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrDeterminantOfJacobian );
-
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrCurrentI );
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrCurrentP );
-
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrCurrentVelocity );
-
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrTmpField );
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrTmpFieldConv );
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrTmpImage );
-
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrCurrentBackMap );
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapIdentity );
-  SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapIncremental );
-
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrCurrentFinalAdjoint );
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrWarpedFinalToInitialAdjoint );
-
   ptrI0 = NULL;
   ptrI1 = NULL;
 
@@ -91,11 +69,8 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::D
   m_vecTimeDiscretization.clear();
   m_vecTimeIncrements.clear();
 
-  SaveDelete< TState* >::Pointer( this->m_ptrState );
-  SaveDelete< TState* >::Pointer( this->m_ptrGradient );
-
-  SaveDelete< VectorImagePointerType >::Pointer( m_ptrImageLagrangianMultiplier );
-
+  this->m_ptrState = NULL;
+  this->m_ptrGradient = NULL;
 }
 
 template < class TState >
@@ -220,30 +195,29 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState>::Cr
 template < class TState >
 void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState>::InitializeDataStructuresFromState( TState* ptrState )
 {
-    DeleteData();
+  DeleteData();
 
-    CreateTimeDiscretization();
+  CreateTimeDiscretization();
 
-    ShallowCopyStateStructures( ptrState );
+  ShallowCopyStateStructures( ptrState );
 
-    CreateGradientAndAuxiliaryStructures();
-
+  CreateGradientAndAuxiliaryStructures();
 }
 
 template < class TState >
 void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::InitializeDataStructures()
 {
-    DeleteData();
+  DeleteData();
 
-    assert (this->m_ptrGradient == NULL );
+  assert (this->m_ptrGradient == NULL );
 
-    CreateTimeDiscretization();
+  CreateTimeDiscretization();
 
-    // allocate state structures
-    CreateNewStateStructures();
+  // allocate state structures
+  CreateNewStateStructures();
 
-    // gradient and everything else
-    CreateGradientAndAuxiliaryStructures();
+  // gradient and everything else
+  CreateGradientAndAuxiliaryStructures();
 }
 
 template < class TState >

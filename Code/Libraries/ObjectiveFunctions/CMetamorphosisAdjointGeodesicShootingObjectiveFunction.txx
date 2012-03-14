@@ -30,94 +30,61 @@ CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::CMetamorphosis
     m_AugmentedLagrangianMu( 0.1 ),
     m_ptrImageLagrangianMultiplier( NULL )
 {
-    m_Rho = DefaultRho;
+  m_Rho = DefaultRho;
 
-    // storage for the map
-    m_ptrMapIn = NULL;
-    m_ptrMapOut = NULL;
-    m_ptrMapTmp = NULL;
+  // storage for the map
+  m_ptrMapIn = NULL;
+  m_ptrMapOut = NULL;
+  m_ptrMapTmp = NULL;
 
-    m_ptrMapIdentity = NULL;
-    m_ptrMapIncremental = NULL;
+  m_ptrMapIdentity = NULL;
+  m_ptrMapIncremental = NULL;
 
-    m_ptrCurrentAdjointIDifference = NULL;
+  m_ptrCurrentAdjointIDifference = NULL;
 
-    m_ptrDeterminantOfJacobian = NULL;
+  m_ptrDeterminantOfJacobian = NULL;
 
-    m_ptrI = NULL;
-    m_ptrP = NULL;
+  m_ptrI = NULL;
+  m_ptrP = NULL;
 
-    m_ptrCurrentLambdaI = NULL;
-    m_ptrCurrentLambdaP = NULL;
-    m_ptrCurrentLambdaV = NULL;
+  m_ptrCurrentLambdaI = NULL;
+  m_ptrCurrentLambdaP = NULL;
+  m_ptrCurrentLambdaV = NULL;
 
-    m_ptrVelocityField = NULL;
+  m_ptrVelocityField = NULL;
 
-    // temporary storage
-    m_ptrTmpField = NULL;
-    m_ptrTmpFieldConv = NULL;
-    m_ptrTmpScalarImage = NULL;
-    m_ptrTmpImage = NULL;
+  // temporary storage
+  m_ptrTmpField = NULL;
+  m_ptrTmpFieldConv = NULL;
+  m_ptrTmpScalarImage = NULL;
+  m_ptrTmpImage = NULL;
 
-    m_ptrDI = NULL;
-    m_ptrDP = NULL;
+  m_ptrDI = NULL;
+  m_ptrDP = NULL;
 
-    // just for testing, if EXTREME_DEBUGGING is defined it will store the full timecoarse of lamI and lamP
-    // this is very memory intensive for 3D, hence disabled by default.
-    tstLamI = NULL;
-    tstLamP = NULL;
+  // just for testing, if EXTREME_DEBUGGING is defined it will store the full timecoarse of lamI and lamP
+  // this is very memory intensive for 3D, hence disabled by default.
+  tstLamI = NULL;
+  tstLamP = NULL;
 }
 
 template< class TState >
 void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::DeleteData()
 {
-    this->m_ptrKernel->DeallocateMemory();
+  this->m_ptrKernel->DeallocateMemory();
 
-    SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapIn );
-    SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapOut );
-    SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapTmp );
+  m_vecMeasurementTimepoints.clear();
+  m_vecTimeDiscretization.clear();
+  m_vecTimeIncrements.clear();
 
-    SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapIncremental );
-    SaveDelete< VectorFieldPointerType >::Pointer( m_ptrMapIdentity );
-
-    SaveDelete< VectorImagePointerType >::Pointer( m_ptrDeterminantOfJacobian );
-    SaveDelete< VectorImagePointerType >::Pointer( m_ptrDeterminantOfJacobian );
-
-    SaveDelete< VectorFieldPointerType >::PointerVector( m_ptrVelocityField );
-
-    SaveDelete< VectorImagePointerType >::PointerVector( m_ptrI );
-    SaveDelete< VectorImagePointerType >::PointerVector( m_ptrP );
-
-    // just for testing
-    SaveDelete< VectorImagePointerType >::PointerVector( tstLamI );
-    SaveDelete< VectorImagePointerType >::PointerVector( tstLamP );
-
-    SaveDelete< VectorImagePointerType >::Pointer( m_ptrCurrentLambdaI );
-    SaveDelete< VectorImagePointerType >::Pointer( m_ptrCurrentLambdaP );
-    SaveDelete< VectorFieldPointerType >::Pointer( m_ptrCurrentLambdaV );
-
-    SaveDelete< VectorFieldPointerType >::Pointer( m_ptrTmpField );
-    SaveDelete< VectorFieldPointerType >::Pointer( m_ptrTmpFieldConv );
-    SaveDelete< VectorImagePointerType >::Pointer( m_ptrTmpScalarImage );
-    SaveDelete< VectorImagePointerType >::Pointer( m_ptrTmpImage );
-
-    SaveDelete< VectorImagePointerType >::Pointer( m_ptrDI );
-    SaveDelete< VectorImagePointerType >::Pointer( m_ptrDP );
-
-    m_vecMeasurementTimepoints.clear();
-    m_vecTimeDiscretization.clear();
-    m_vecTimeIncrements.clear();
-
-    SaveDelete< TState* >::Pointer( this->m_ptrState );
-    SaveDelete< TState* >::Pointer( this->m_ptrGradient );
-
-    SaveDelete< VectorImagePointerType >::Pointer( m_ptrImageLagrangianMultiplier );
+  this->m_ptrState = NULL;
+  this->m_ptrGradient = NULL;
 }
 
 template< class TState >
 CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::~CMetamorphosisAdjointGeodesicShootingObjectiveFunction()
 {
-    DeleteData();
+  DeleteData();
 }
 
 template < class TState >
@@ -280,30 +247,29 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState>::CreateGrad
 template < class TState >
 void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState>::InitializeDataStructuresFromState( TState* ptrState )
 {
-    DeleteData();
+  DeleteData();
 
-    CreateTimeDiscretization();
+  CreateTimeDiscretization();
 
-    ShallowCopyStateStructures( ptrState );
+  ShallowCopyStateStructures( ptrState );
 
-    CreateGradientAndAuxiliaryStructures();
-
+  CreateGradientAndAuxiliaryStructures();
 }
 
 template < class TState >
 void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::InitializeDataStructures()
 {
-    DeleteData();
+  DeleteData();
 
-    assert (this->m_ptrGradient == NULL );
+  assert (this->m_ptrGradient == NULL );
 
-    CreateTimeDiscretization();
+  CreateTimeDiscretization();
 
-    // allocate state structures
-    CreateNewStateStructures();
+  // allocate state structures
+  CreateNewStateStructures();
 
-    // gradient and everything else
-    CreateGradientAndAuxiliaryStructures();
+  // gradient and everything else
+  CreateGradientAndAuxiliaryStructures();
 }
 
 template < class TState >

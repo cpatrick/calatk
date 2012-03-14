@@ -60,6 +60,9 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::DeleteData()
   m_vecMeasurementTimepoints.clear();
   m_vecTimeDiscretization.clear();
   m_vecTimeIncrements.clear();
+
+  this->m_ptrState = NULL;
+  this->m_ptrGradient = NULL;
 }
 
 template < class TState >
