@@ -123,7 +123,7 @@ add_ctest_test(calatk1DTest
 			  ${test_input_dir}/1DCurveSource.nhdr
 			  ${test_input_dir}/1DCurveTarget.nhdr
 			  ${test_temp_dir}/1DCurveResult.nhdr
-			  ${CALATK_SOURCE_DIR}/ExampleJSONConfigurations/lddmmMultiScale.json
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatk1DTest.json
 			  --compare ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
 			            ${test_temp_dir}/1DCurveResult.nhdr
 			  )

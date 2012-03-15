@@ -168,7 +168,7 @@ unsigned int CImageManager< T, VImageDimension>::AddImage( VectorImageType* pIm,
 // Auxiliary function to get a multiset iterator from the dataset id
 //
 template <class T, unsigned int VImageDimension >
-bool CImageManager< T, VImageDimension>::getCurrentIteratorForId( SubjectInformationType*& pInfo, typename SubjectInformationType::iterator& iterRet, unsigned int uiId )
+bool CImageManager< T, VImageDimension>::getCurrentIteratorForId( SubjectInformationType *& pInfo, typename SubjectInformationType::iterator& iterRet, unsigned int uiId )
 {
   pInfo = NULL; // default return value
 
@@ -414,7 +414,7 @@ unsigned int CImageManager< T, VImageDimension>::GetNumberOfAvailableSubjectIndi
 // Allows access of image information in a time series by index
 //
 template <class T, unsigned int VImageDimension >
-void CImageManager< T, VImageDimension>::GetPointerToSubjectImageInformationBySubjectInformationAndIndex( SImageInformation*& pImInfo, SubjectInformationType* pInfo, unsigned int uiTimeIndex )
+void CImageManager< T, VImageDimension>::GetPointerToSubjectImageInformationBySubjectInformationAndIndex( SImageInformation *& pImInfo, SubjectInformationType* pInfo, unsigned int uiTimeIndex )
 {
   // TODO: There may be a quicker method to do this. For now we just assume that there are not 
   // a lot of elements, so we can just do a linear search
@@ -450,15 +450,15 @@ void CImageManager< T, VImageDimension>::GetPointerToSubjectImageInformationBySu
 // Allows access of image information in a time series by index
 //
 template <class T, unsigned int VImageDimension >
-void CImageManager< T, VImageDimension>::GetPointerToSubjectImageInformationByIndex( SImageInformation*& pImInfo, unsigned int uiSubjectIndex, unsigned int uiTimeIndex )
+void CImageManager< T, VImageDimension>::GetPointerToSubjectImageInformationByIndex( SImageInformation *& ptrImageInformation, unsigned int subjectIndex, unsigned int uiTimeIndex )
 {
   SubjectInformationType* pSubjectInfo;
-  this->GetImagesWithSubjectIndex( pSubjectInfo, uiSubjectIndex );
+  this->GetImagesWithSubjectIndex( pSubjectInfo, subjectIndex );
 
   assert( pSubjectInfo->size()>uiTimeIndex );
 
   // get information from the first image to figure out the dimensions
-  this->GetPointerToSubjectImageInformationBySubjectInformationAndIndex( pImInfo, pSubjectInfo, uiTimeIndex );
+  this->GetPointerToSubjectImageInformationBySubjectInformationAndIndex( ptrImageInformation, pSubjectInfo, uiTimeIndex );
 
 }
 
@@ -466,7 +466,7 @@ void CImageManager< T, VImageDimension>::GetPointerToSubjectImageInformationByIn
 // Returns the set of images for a particular subject index
 //
 template <class T, unsigned int VImageDimension >
-void CImageManager< T, VImageDimension>::GetImagesWithSubjectIndex( SubjectInformationType*& pImInfo, unsigned int uiSubjectIndex )
+void CImageManager< T, VImageDimension>::GetImagesWithSubjectIndex( SubjectInformationType *& pImInfo, unsigned int uiSubjectIndex )
 {
   // we actually load the images and the transforms
   // if they have been specified but are not in memory yet
@@ -535,8 +535,6 @@ void CImageManager< T, VImageDimension>::print( std::ostream& output )
       }
 
     }
-
-
 }
 
 #endif

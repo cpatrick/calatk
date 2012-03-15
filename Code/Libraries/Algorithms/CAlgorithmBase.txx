@@ -52,7 +52,7 @@ void CAlgorithmBase< T, VImageDimension >::SetDefaultsIfNeeded()
 
   if ( this->m_ptrEvolver.GetPointer() == NULL )
     {
-    SetDefaultEvolverPointer();
+    this->SetDefaultEvolverPointer();
     }
 
   this->m_ptrEvolver->SetPrintConfiguration( this->GetPrintConfiguration() );
@@ -61,7 +61,7 @@ void CAlgorithmBase< T, VImageDimension >::SetDefaultsIfNeeded()
 
   if ( this->m_ptrKernel.GetPointer() == NULL )
     {
-    SetDefaultKernelPointer();
+    this->SetDefaultKernelPointer();
     }
 
   this->m_ptrKernel->SetPrintConfiguration( this->GetPrintConfiguration() );
@@ -77,15 +77,15 @@ void CAlgorithmBase< T, VImageDimension >::SetDefaultsIfNeeded()
   this->m_ptrImageManager->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 
   // also create the memory for the map and the image, so we can use it to return a map and an image at any time
-  SImageInformation* pImInfo;
-  this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[ 0 ], 0 );
+  SImageInformation * ptrImageInformation;
+  this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( ptrImageInformation, vecSubjectIndices[ 0 ], 0 );
 
   assert( this->m_ptrIm.GetPointer() == NULL );
-  this->m_ptrIm = new VectorImageType( pImInfo->pIm );
+  this->m_ptrIm = new VectorImageType( ptrImageInformation->pIm );
   this->m_ptrIm->SetToConstant( 0 );
 
   assert( m_ptrMap.GetPointer() == NULL );
-  this->m_ptrMap = new VectorFieldType( pImInfo->pIm );
+  this->m_ptrMap = new VectorFieldType( ptrImageInformation->pIm );
   this->m_ptrMap->SetToConstant( 0 );
 }
 

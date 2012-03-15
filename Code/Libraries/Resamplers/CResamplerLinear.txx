@@ -45,7 +45,6 @@ void CResamplerLinear< T, VImageDimension >::Downsample( const VectorImageType* 
     this->m_GaussianKernel.ConvolveWithKernel( imBlurred.GetPointer() );
 
     // now downsample it
-
     VectorImageUtils< T, VImageDimension >::resize( imBlurred.GetPointer(), ptrImOut );
   }
   else

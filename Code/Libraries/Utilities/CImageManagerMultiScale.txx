@@ -161,7 +161,7 @@ void CImageManagerMultiScale< T, VImageDimension >::GetImage( SImageInformation*
       {
         std::cout << "Computing scale " << m_ScaleVector[iI] << " of: " << pCurrentImInfo->sImageFileName << std::endl;
         assert( m_ScaleVector[iI]>0 );
-        VectorImageType* ptrResampledImage = VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( pCurrentImInfo->pImOrig, m_ScaleVector[ iI ] );
+        typename VectorImageType::Pointer ptrResampledImage = VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( pCurrentImInfo->pImOrig, m_ScaleVector[ iI ] );
 
         if ( iI==0 && !m_BlurHighestResolutionImage )
         {

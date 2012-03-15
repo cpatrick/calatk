@@ -191,7 +191,7 @@ public:
    * @return pImInfo - the full subject information (a time-series for one subject)
    * @param uiSubjectIndex - subject index of the subject to be returned
    */
-  virtual void GetImagesWithSubjectIndex( SubjectInformationType*& pImInfo, unsigned int uiSubjectIndex ); 
+  virtual void GetImagesWithSubjectIndex( SubjectInformationType *& pImInfo, unsigned int uiSubjectIndex );
 
   /**
    * Loads image and potentially transform for a given image information structure
@@ -232,7 +232,7 @@ public:
    * @param pInfo - time series data structure for a subject
    * @param uiTimeIndex - desired time index from which information should be extracted.
    */
-  void GetPointerToSubjectImageInformationBySubjectInformationAndIndex( SImageInformation*& pImInfo, SubjectInformationType* pInfo, unsigned int uiTimeIndex );
+  void GetPointerToSubjectImageInformationBySubjectInformationAndIndex( SImageInformation *& ptrImageInformation, SubjectInformationType* pInfo, unsigned int uiTimeIndex );
 
   /**
    * Convenience method which returns a particular time-point of a specific subject specified by index
@@ -241,7 +241,7 @@ public:
    * @param uiSubjectIndex - desired subject index
    * @param uiTimIndex - desired time index
    */
-  void GetPointerToSubjectImageInformationByIndex( SImageInformation*& pImInfo, unsigned int uiSubjectIndex, unsigned int uiTimeIndex );
+  void GetPointerToSubjectImageInformationByIndex( SImageInformation *& ptrImageInformation, unsigned int subjectIndex, unsigned int uiTimeIndex );
 
   /**
    * Convenience method which returns a pointer to the first stored image. 
@@ -284,7 +284,7 @@ protected:
    * @param uiId - subject index
    * @return returns true if found and false otherwise
    */
-  bool getCurrentIteratorForId( SubjectInformationType*& pInfo, typename SubjectInformationType::iterator& iterRet, unsigned int uiId );
+  bool getCurrentIteratorForId( SubjectInformationType *& pInfo, typename SubjectInformationType::iterator& iterRet, unsigned int uiId );
 
 private:
 

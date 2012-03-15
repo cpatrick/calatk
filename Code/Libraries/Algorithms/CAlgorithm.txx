@@ -54,7 +54,6 @@ void CAlgorithm< TState >::SetDefaultsIfNeeded()
   this->m_ptrObjectiveFunction->SetPrintConfiguration( this->GetPrintConfiguration() );
   this->m_ptrObjectiveFunction->SetAllowHelpComments( this->GetAllowHelpComments() );
   this->m_ptrObjectiveFunction->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
-
 }
 
 template < class TState >
