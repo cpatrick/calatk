@@ -377,52 +377,52 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
 }
 
 template <class T, unsigned int VImageDimension >
-void CFourierDomainKernel< T, VImageDimension >::AllocateMemoryAndComputeKernelsIfNeeded( VectorImageType* pVecImage )
+void CFourierDomainKernel< T, VImageDimension >::AllocateMemoryAndComputeKernelsIfNeeded( VectorImageType* ptrVectorImage )
 {
   if ( !this->m_MemoryWasAllocated )
     {
-    this->AllocateMemoryForKernelAndInverseKernel( pVecImage );
-    AllocateFFTDataStructures( pVecImage );
+    this->AllocateMemoryForKernelAndInverseKernel( ptrVectorImage );
+    this->AllocateFFTDataStructures( ptrVectorImage );
     this->m_MemoryWasAllocated = true;
     }
 
   if ( this->m_KernelsNeedToBeComputed )
     {
-    this->ComputeKernelAndInverseKernel( pVecImage );
-    ConfirmKernelsWereComputed();
+    this->ComputeKernelAndInverseKernel( ptrVectorImage );
+    this->ConfirmKernelsWereComputed();
     }
 
   assert( this->m_ptrL.GetPointer() != NULL );
 
-  if ( pVecImage->GetSizeX() != this->m_ptrL->GetSizeX() ||
-       pVecImage->GetSizeY() != this->m_ptrL->GetSizeY() ||
-       pVecImage->GetSizeZ() != this->m_ptrL->GetSizeZ() )
+  if ( ptrVectorImage->GetSizeX() != this->m_ptrL->GetSizeX() ||
+       ptrVectorImage->GetSizeY() != this->m_ptrL->GetSizeY() ||
+       ptrVectorImage->GetSizeZ() != this->m_ptrL->GetSizeZ() )
     {
     throw std::runtime_error( "Kernel incompatible with velocity field size.");
     }
 
   assert( this->m_ptrLInv.GetPointer() != NULL );
   
-  if ( pVecImage->GetSizeX() != this->m_ptrLInv->GetSizeX() ||
-       pVecImage->GetSizeY() != this->m_ptrLInv->GetSizeY() ||
-       pVecImage->GetSizeZ() != this->m_ptrLInv->GetSizeZ() )
+  if ( ptrVectorImage->GetSizeX() != this->m_ptrLInv->GetSizeX() ||
+       ptrVectorImage->GetSizeY() != this->m_ptrLInv->GetSizeY() ||
+       ptrVectorImage->GetSizeZ() != this->m_ptrLInv->GetSizeZ() )
     {
     throw std::runtime_error( "Kernel incompatible with velocity field size.");
     }
 }
 
 template <class T, unsigned int VImageDimension >
-void CFourierDomainKernel< T, VImageDimension >::ConvolveWithKernel( VectorImageType* pVecImage )
+void CFourierDomainKernel< T, VImageDimension >::ConvolveWithKernel( VectorImageType* ptrVectorImage )
 {
-  AllocateMemoryAndComputeKernelsIfNeeded( pVecImage );
-  ConvolveInFourierDomain( pVecImage, this->m_ptrL );
+  AllocateMemoryAndComputeKernelsIfNeeded( ptrVectorImage );
+  ConvolveInFourierDomain( ptrVectorImage, this->m_ptrL );
 }
 
 template <class T, unsigned int VImageDimension >
-void CFourierDomainKernel< T, VImageDimension >::ConvolveWithInverseKernel( VectorImageType* pVecImage )
+void CFourierDomainKernel< T, VImageDimension >::ConvolveWithInverseKernel( VectorImageType* ptrVectorImage )
 {
-  AllocateMemoryAndComputeKernelsIfNeeded( pVecImage );
-  ConvolveInFourierDomain( pVecImage, this->m_ptrLInv );
+  AllocateMemoryAndComputeKernelsIfNeeded( ptrVectorImage );
+  ConvolveInFourierDomain( ptrVectorImage, this->m_ptrLInv );
 }
 
 template <class T, unsigned int VImageDimension >

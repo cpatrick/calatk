@@ -56,16 +56,15 @@ public:
   virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
 
 protected:
+  typedef  CGaussianKernel< T, VImageDimension > GaussianKernelType;
+  typename GaussianKernelType::Pointer          m_ptrGaussianKernel;
 
-  CGaussianKernel< T, VImageDimension > m_GaussianKernel;
   T m_Sigma;
 
 private:
-
   const T DefaultSigma;
   
   bool m_ExternallySetSigma;
-
 };
 
 #include "CResampler.txx"

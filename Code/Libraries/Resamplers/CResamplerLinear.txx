@@ -39,10 +39,10 @@ void CResamplerLinear< T, VImageDimension >::Downsample( const VectorImageType* 
     // create a new image, which will be blurred
     typename VectorImageType::Pointer imBlurred = new VectorImageType( ptrImIn );
 
-    this->m_GaussianKernel.SetSigma( this->m_Sigma );
+    this->m_ptrGaussianKernel->SetSigma( this->m_Sigma );
 
     // blur it
-    this->m_GaussianKernel.ConvolveWithKernel( imBlurred.GetPointer() );
+    this->m_ptrGaussianKernel->ConvolveWithKernel( imBlurred.GetPointer() );
 
     // now downsample it
     VectorImageUtils< T, VImageDimension >::resize( imBlurred.GetPointer(), ptrImOut );

@@ -459,7 +459,6 @@ void CImageManager< T, VImageDimension>::GetPointerToSubjectImageInformationByIn
 
   // get information from the first image to figure out the dimensions
   this->GetPointerToSubjectImageInformationBySubjectInformationAndIndex( ptrImageInformation, pSubjectInfo, uiTimeIndex );
-
 }
 
 //

@@ -193,8 +193,8 @@ public:
   CFourierDomainKernel();
   ~CFourierDomainKernel();
 
-  virtual void ConvolveWithKernel( VectorImageType* pVecImage );
-  virtual void ConvolveWithInverseKernel( VectorImageType* pVecImage );
+  virtual void ConvolveWithKernel( VectorImageType * ptrVecImage );
+  virtual void ConvolveWithInverseKernel( VectorImageType * ptrVecImage );
 
   virtual void DeallocateMemory();
 
