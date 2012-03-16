@@ -20,9 +20,6 @@
 #ifndef C_SOLVER_TXX
 #define C_SOLVER_TXX
 
-//
-// empty constructor
-//
 template < class TState >
 CSolver< TState >::CSolver()
   : DefaultOutputStateInformation( false ),
@@ -37,9 +34,7 @@ CSolver< TState >::CSolver()
   m_ExternalSolverState = DefaultExternalSolverState;
 }
 
-//
-// destructor
-//
+
 template < class TState >
 CSolver< TState >::~CSolver()
 {
@@ -52,7 +47,7 @@ void CSolver< TState >::OutputStateInformation( unsigned int uiIter, std::string
   {
     if ( uiIter % m_OutputStateInformationFrequency == 0 )
     {
-      m_pObjectiveFunction->OutputStateInformation( uiIter, prefix );
+      m_ObjectiveFunction->OutputStateInformation( uiIter, prefix );
     }
   }
 }
@@ -66,22 +61,21 @@ void CSolver< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Va
   Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
 }
 
-//
-// setting the objective function pointer
+
 template < class TState >
-void CSolver< TState >::SetObjectiveFunctionPointer( ptrObjectiveFunctionType pObj )
+void CSolver< TState >::SetObjectiveFunction( ObjectiveFunctionType * objectiveFunction )
 {
-  m_pObjectiveFunction = pObj;
+  m_ObjectiveFunction = objectiveFunction;
 }
 
 //
 // returning the objective function pointer
 //
 template < class TState >
-typename CSolver< TState >::ptrObjectiveFunctionType
-CSolver< TState >::GetObjectiveFunctionPointer()
+typename CSolver< TState >::ObjectiveFunctionType *
+CSolver< TState >::GetObjectiveFunction()
 {
-  return m_pObjectiveFunction;
+  return m_ObjectiveFunction.GetPointer();
 }
 
 //
@@ -90,14 +84,13 @@ CSolver< TState >::GetObjectiveFunctionPointer()
 template < class TState >
 bool CSolver< TState >::Solve()
 {
-  ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();
+  ObjectiveFunctionType * objectiveFunction = this->GetObjectiveFunction();
 
   // Initialize the objective function
-  pObj->InitializeState();
+  objectiveFunction->InitializeState();
   
   // now that everything is initialized, we can solve the problem
   return SolvePreInitialized();
-
 }
 
 #endif

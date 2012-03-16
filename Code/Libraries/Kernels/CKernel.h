@@ -74,8 +74,8 @@ public:
   }
 
   /// some kernel (like the multi-Gaussian one) need access to the data to estimate weights
-  void SetObjectiveFunctionPointer( ObjectiveFunctionBaseType* ptrObjectiveFunction );
-  ObjectiveFunctionBaseType* GetObjectiveFunctionPointer();
+  void SetObjectiveFunction( ObjectiveFunctionBaseType* ptrObjectiveFunction );
+  ObjectiveFunctionBaseType* GetObjectiveFunction();
 
   /// some objective functions (such as geometric metamorphosis) have multiple kernels.
   /// Weight estimation is then kernel-dependent and the right one needs to be selected.

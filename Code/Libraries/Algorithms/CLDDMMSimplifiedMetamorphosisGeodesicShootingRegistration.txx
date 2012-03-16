@@ -69,7 +69,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingRegistration< TState >::SetDef
   pMetamorphosis->SetImageManagerPointer( this->m_ptrImageManager );
 
   this->m_ptrObjectiveFunction = pMetamorphosis;
-  this->m_ptrKernel->SetObjectiveFunctionPointer( pMetamorphosis );
+  this->m_ptrKernel->SetObjectiveFunction( pMetamorphosis );
 
 }
 

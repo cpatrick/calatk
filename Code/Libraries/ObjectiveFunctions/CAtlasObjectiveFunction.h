@@ -59,7 +59,7 @@ public:
    * @param pObj - pointer to the objective function
    * @param dWeight - weight in the atlas building
    */
-  void SetObjectiveFunctionPointerAndWeight( const ObjectiveFunctionType* pObj, T dWeight );
+  void SetObjectiveFunctionAndWeight( const ObjectiveFunctionType* pObj, T dWeight );
 
   /**
    * @brief Deletes the data structures used to store the pointers to the objective functions

@@ -64,14 +64,14 @@ void CKernel< T, VImageDimension >::AllocateMemoryForKernelAndInverseKernel( con
 }
 
 template <class T, unsigned int VImageDimension >
-void CKernel< T, VImageDimension >::SetObjectiveFunctionPointer( ObjectiveFunctionBaseType* ptrObj )
+void CKernel< T, VImageDimension >::SetObjectiveFunction( ObjectiveFunctionBaseType* ptrObj )
 {
   this->m_ptrObjectiveFunction = ptrObj;
 }
 
 template <class T, unsigned int VImageDimension >
 typename CKernel< T, VImageDimension >::ObjectiveFunctionBaseType*
-CKernel< T, VImageDimension >::GetObjectiveFunctionPointer()
+CKernel< T, VImageDimension >::GetObjectiveFunction()
 {
   return this->m_ptrObjectiveFunction.GetPointer();
 }

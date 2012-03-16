@@ -37,9 +37,9 @@ public:
   typedef itk::SmartPointer< Self >       Pointer;
   typedef itk::SmartPointer< const Self > ConstPointer;
 
-  typedef typename TState::TFloat T;
-  typedef typename Superclass::ptrObjectiveFunctionType ptrObjectiveFunctionType;
-  typedef typename Superclass::CEnergyValues CEnergyValues;
+  typedef typename TState::TFloat                    T;
+  typedef typename Superclass::ObjectiveFunctionType ObjectiveFunctionType;
+  typedef typename Superclass::CEnergyValues         CEnergyValues;
 
   CSolverLineSearchUnconstrained();
 

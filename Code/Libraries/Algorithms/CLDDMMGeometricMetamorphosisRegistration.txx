@@ -132,9 +132,9 @@ void CLDDMMGeometricMetamorphosisRegistration< TState >::SetDefaultObjectiveFunc
 
   this->m_ptrObjectiveFunction = plddmm;
   // set the objective functions for the kernels and the kernel numbers
-  this->m_ptrKernel->SetObjectiveFunctionPointer( plddmm );
+  this->m_ptrKernel->SetObjectiveFunction( plddmm );
   this->m_ptrKernel->SetObjectiveFunctionKernelNumber( 0 );
-  this->m_ptrMaskKernel->SetObjectiveFunctionPointer( plddmm );
+  this->m_ptrMaskKernel->SetObjectiveFunction( plddmm );
   this->m_ptrMaskKernel->SetObjectiveFunctionKernelNumber( 1 );
 }
 

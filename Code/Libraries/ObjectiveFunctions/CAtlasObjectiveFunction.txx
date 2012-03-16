@@ -124,7 +124,7 @@ void CAtlasObjectiveFunction< TState >::InitializeState( TState *ptrState )
 
 template < class TState >
 void CAtlasObjectiveFunction< TState >
-::SetObjectiveFunctionPointerAndWeight( const ObjectiveFunctionType* pObj, T dWeight )
+::SetObjectiveFunctionAndWeight( const ObjectiveFunctionType* pObj, T dWeight )
 {
   m_VectorObjectiveFunctionPtrs.push_back( pObj );
   vecWeights.push_back( dWeight );

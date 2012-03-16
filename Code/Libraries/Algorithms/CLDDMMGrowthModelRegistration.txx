@@ -53,7 +53,7 @@ void CLDDMMGrowthModelRegistration< TState >::SetDefaultObjectiveFunctionPointer
   typedef CLDDMMGrowthModelObjectiveFunction< TState > CLDDMMType;
   CLDDMMType* plddmm = new CLDDMMType;
   this->m_ptrObjectiveFunction = plddmm;
-  this->m_ptrKernel->SetObjectiveFunctionPointer( plddmm );
+  this->m_ptrKernel->SetObjectiveFunction( plddmm );
   plddmm->SetEvolverPointer( this->m_ptrEvolver );
   plddmm->SetKernelPointer( this->m_ptrKernel );
   plddmm->SetMetricPointer( this->m_ptrMetric );

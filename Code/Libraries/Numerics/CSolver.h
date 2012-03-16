@@ -44,15 +44,15 @@ public:
 
   typedef typename TState::TFloat T;
 
-  typedef CObjectiveFunction< TState>* ptrObjectiveFunctionType;
+  typedef CObjectiveFunction< TState > ObjectiveFunctionType;
 
-  typedef typename CObjectiveFunction< TState >::CEnergyValues CEnergyValues;
+  typedef typename ObjectiveFunctionType::CEnergyValues CEnergyValues;
 
   CSolver();
   virtual ~CSolver();
 
-  virtual void SetObjectiveFunctionPointer( ptrObjectiveFunctionType pObjectiveFunction );
-  ptrObjectiveFunctionType GetObjectiveFunctionPointer();
+  virtual void SetObjectiveFunction( ObjectiveFunctionType * objectiveFunction );
+  ObjectiveFunctionType * GetObjectiveFunction();
 
   virtual bool Solve();
   virtual bool SolvePreInitialized() = 0;
@@ -72,7 +72,7 @@ public:
 
 protected:
 
-  ptrObjectiveFunctionType m_pObjectiveFunction;
+  typename ObjectiveFunctionType::Pointer m_ObjectiveFunction;
   bool m_OutputStateInformation;
   unsigned int m_OutputStateInformationFrequency;
 

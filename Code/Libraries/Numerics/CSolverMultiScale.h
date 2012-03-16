@@ -44,12 +44,10 @@ public:
 
   typedef typename Superclass::CEnergyValues CEnergyValues;
 
-  typedef CSolver< TState > SolverType;
-
-  typedef VectorImage< T, VImageDimension > VectorImageType;
-  typedef VectorImageUtils< T, VImageDimension > VectorImageUtilsType;
+  typedef VectorImage< T, VImageDimension >             VectorImageType;
+  typedef VectorImageUtils< T, VImageDimension >        VectorImageUtilsType;
   typedef CImageManagerMultiScale< T, VImageDimension > ImageManagerMultiScaleType;
-  typedef typename SolverType::ptrObjectiveFunctionType ptrObjectiveFunctionType;
+  typedef typename Superclass::ObjectiveFunctionType    ObjectiveFunctionType;
 
   CSolverMultiScale();
   virtual ~CSolverMultiScale();
@@ -57,8 +55,8 @@ public:
   // TODO: Make it such that we can have different solvers for the different scales
   // for now: One solver with identical settings
 
-  void SetSingleScaleSolverPointer( SolverType* ptrSolver );
-  const SolverType* GetSingleScaleSolverPointer() const;
+  void SetSingleScaleSolverPointer( Superclass* ptrSolver );
+  const Superclass* GetSingleScaleSolverPointer() const;
 
   // the objective function has an image manager associated with it
 
@@ -73,7 +71,7 @@ protected:
 
   void SetDefaultSingleScaleSolver();
 
-  typename SolverType::Pointer m_ptrSolver;
+  typename Superclass::Pointer m_ptrSolver;
 
 private:
 

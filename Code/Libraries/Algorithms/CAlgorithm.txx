@@ -63,20 +63,20 @@ void CAlgorithm< TState >::Solve()
   assert( this->m_ptrImageManager.GetPointer() != NULL );
   this->SetDefaultsIfNeeded();
 
-  this->m_ptrSolver->SetObjectiveFunctionPointer( this->m_ptrObjectiveFunction );
+  this->m_ptrSolver->SetObjectiveFunction( this->m_ptrObjectiveFunction );
   this->m_ptrSolver->Solve();
 }
 
 
 template < class TState >
-void CAlgorithm< TState >::SetObjectiveFunctionPointer( ObjectiveFunctionType * ptrObjectiveFunction )
+void CAlgorithm< TState >::SetObjectiveFunction( ObjectiveFunctionType * objectiveFunction )
 {
-  this->m_ptrObjectiveFunction = ptrObjectiveFunction;
+  this->m_ptrObjectiveFunction = objectiveFunction;
 }
 
 template < class TState >
 typename CAlgorithm< TState >::ObjectiveFunctionType *
-CAlgorithm< TState >::GetObjectiveFunctionPointer()
+CAlgorithm< TState >::GetObjectiveFunction()
 {
   if ( m_ptrObjectiveFunction.GetPointer() == NULL )
     {

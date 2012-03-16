@@ -145,8 +145,7 @@ void CSolverLineSearch< TState>::SetAutoConfiguration( Json::Value& ConfValueIn,
 template < class TState >
 bool CSolverLineSearch< TState>::LineSearchWithBacktracking( CEnergyValues CurrentEnergy, T dDesiredStepSize, T& dAlpha, CEnergyValues& ResultingEnergy, unsigned int& uiIter, TState* pTempState )
 {
-
-  ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();
+  ObjectiveFunctionType * objectiveFunction = this->GetObjectiveFunction();
 
   // get current energy
   CEnergyValues InitialEnergy = CurrentEnergy;
@@ -155,16 +154,16 @@ bool CSolverLineSearch< TState>::LineSearchWithBacktracking( CEnergyValues Curre
   T dAdjustedEnergy = std::numeric_limits< T >::infinity();
 
   // save the current state
-  *pTempState = *pObj->GetStatePointer();
+  *pTempState = *objectiveFunction->GetStatePointer();
   
   // get a pointer to the state (which will be updated throughout the iterations)
-  TState *pState = pObj->GetStatePointer();
+  TState *pState = objectiveFunction->GetStatePointer();
 
   // compute the current gradient
-  pObj->ComputeGradient();
+  objectiveFunction->ComputeGradient();
 
   // get current gradient
-  TState *pCurrentGradient = pObj->GetGradientPointer();
+  TState *pCurrentGradient = objectiveFunction->GetGradientPointer();
 
   // compute the norm of the gradient (required for line search with gradient descent)
   T dSquaredNorm = pCurrentGradient->SquaredNorm();
@@ -197,7 +196,7 @@ bool CSolverLineSearch< TState>::LineSearchWithBacktracking( CEnergyValues Curre
 
     // recompute the energy
 
-    ComputedEnergy = pObj->GetCurrentEnergy();
+    ComputedEnergy = objectiveFunction->GetCurrentEnergy();
 
     /*std::cout << "initE = " << dInitialEnergy << std::endl;
     std::cout << "dc = " << m_DecreaseConstant << std::endl;

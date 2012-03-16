@@ -58,7 +58,7 @@ void CLDDMMGeodesicShootingInitialImageMomentumRegistration< TState >::SetDefaul
   plddmm->SetImageManagerPointer( this->m_ptrImageManager );
 
   this->m_ptrObjectiveFunction = plddmm;
-  this->m_ptrKernel->SetObjectiveFunctionPointer( plddmm );
+  this->m_ptrKernel->SetObjectiveFunction( plddmm );
 
 }
 

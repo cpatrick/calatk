@@ -65,7 +65,7 @@ void CSolverLineSearchConstrained< TState>::SetAutoConfiguration( Json::Value& C
 template < class TState >
 bool CSolverLineSearchConstrained< TState>::SolvePreInitialized()
 {
-  ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();
+  ObjectiveFunctionType * objectiveFunction = this->GetObjectiveFunction();
 
   T dAlpha;
   CEnergyValues ResultingEnergy;
