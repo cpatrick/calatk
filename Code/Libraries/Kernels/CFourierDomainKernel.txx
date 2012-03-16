@@ -43,9 +43,11 @@ void CFourierDomainKernel< T, VImageDimension >::DeleteData()
     fftwData = NULL;
     }
 
-   this->m_MemoryWasAllocated = false;
-   this->m_KernelsNeedToBeComputed = true;
+  this->m_ptrL = NULL;
+  this->m_ptrLInv = NULL;
 
+  this->m_MemoryWasAllocated = false;
+  this->m_KernelsNeedToBeComputed = true;
 }
 
 template <class T, unsigned int VImageDimension >
