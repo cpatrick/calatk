@@ -108,7 +108,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::C
 
     // obtain image from which to graft the image information for the data structures
 
-    SImageInformation* pImInfo;
+    ImageInformation* pImInfo;
     // get information from the first image to figure out the dimensions and determine the source and target image
     this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
 
@@ -142,7 +142,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState>::Cr
 
     // obtain image from which to graft the image information for the data structures
     // and assign the convenience image pointer ptrI0, ptrI1
-    SImageInformation* pImInfo;
+    ImageInformation* pImInfo;
     // get information from the first image to figure out the dimensions and determine the source and target image
     this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
     ptrI0 = pImInfo->pIm;

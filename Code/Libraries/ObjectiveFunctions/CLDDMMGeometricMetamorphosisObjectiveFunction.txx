@@ -244,12 +244,12 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::CreateAuxiliaryStr
   // now make all the associations for the convenience pointers
   
   // mask image at different time-points
-  ptrT0 = pMaskInfo0->pIm;
-  ptrT2 = pMaskInfo1->pIm;
+  ptrT0 = pMaskInfo0->Image;
+  ptrT2 = pMaskInfo1->Image;
 
   // measured images at different time-points
-  ptrI0 = pImInfo0->pIm;
-  ptrI1 = pImInfo1->pIm;
+  ptrI0 = pImInfo0->Image;
+  ptrI1 = pImInfo1->Image;
 
   // estimates at different time-points (subjected to the velocity field)
   ptrEstI1 = (*m_ptrI)[ m_uiTimeIndexOfTimePoint1 ];

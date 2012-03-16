@@ -49,7 +49,7 @@ public:
   /* Some useful typedefs */
   typedef CResampler< T, VImageDimension > ResamplerType;
   
-  typedef typename Superclass::SImageInformation SImageInformation;
+  typedef typename Superclass::ImageInformation ImageInformation;
 
   typedef typename Superclass::VectorImageType VectorImageType;
 
@@ -67,7 +67,7 @@ public:
    * Returns vectors to the actual image data, needs to be implemented by a derived class.
    * Could just return an image, or a downsampled version, ... depending on implementation 
    */
-  virtual void GetImage( SImageInformation* pCurrentImInfo );
+  virtual void GetImage( ImageInformation* pCurrentImInfo );
 
   void SetResamplerPointer( ResamplerType* ptrResampler );
   const ResamplerType* GetResamplerPointer() const;
@@ -88,7 +88,7 @@ public:
 protected:
 
   void SetDefaultResamplerPointer();
-  void SetScale( SImageInformation* pCurrentImInfo );
+  void SetScale( ImageInformation* pCurrentImInfo );
 
 private:
 

@@ -116,7 +116,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::CreateNew
 
     // obtain image from which to graft the image information for the data structures
 
-    SImageInformation* pImInfo;
+    ImageInformation* pImInfo;
     // get information from the first image to figure out the dimensions
     this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
 
@@ -150,7 +150,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState>::CreateGrad
 
     // obtain image from which to graft the image information for the data structures
 
-    SImageInformation* pImInfo;
+    ImageInformation* pImInfo;
     // get information from the first image to figure out the dimensions
     this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
 

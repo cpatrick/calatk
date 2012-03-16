@@ -85,7 +85,7 @@ int main(int argc, char **argv)
   imageManager.print( std::cout );
 
   typedef CALATK::CImageManagerFullScale<double,DIMENSION> ImageManagerType;
-  typedef ImageManagerType::SImageInformation SImageInformation;
+  typedef ImageManagerType::ImageInformation ImageInformation;
   typedef ImageManagerType::SubjectInformationType SubjectInformationType;
  
   SubjectInformationType* pImInfo;

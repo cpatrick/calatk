@@ -98,7 +98,7 @@ protected:
   void CreateTimeDiscretization();
 
   typedef CImageManager< T, TState::VImageDimension > ImageManagerType;
-  typedef typename ImageManagerType::SImageInformation SImageInformation;
+  typedef typename ImageManagerType::ImageInformation ImageInformation;
   typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
 
   typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;

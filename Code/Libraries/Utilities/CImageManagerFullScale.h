@@ -49,7 +49,7 @@ public:
   typedef itk::SmartPointer< Self >            Pointer;
   typedef itk::SmartPointer< const Self >      ConstPointer;
 
-  typedef typename Superclass::SImageInformation      SImageInformation;
+  typedef typename Superclass::ImageInformation      ImageInformation;
   typedef typename Superclass::VectorFieldType        VectorFieldType;
   typedef typename Superclass::SubjectInformationType SubjectInformationType;
   typedef typename Superclass::SubjectCollectionInformationMapType SubjectCollectionInformationMapType;
@@ -72,7 +72,7 @@ public:
    * Returns vectors to the actual image data, needs to be implemented by a derived class.
    * Could just return an image, or a downsampled version, ... depending on implementation 
    */
-  virtual void GetImage( SImageInformation* pCurrentImInfo );
+  virtual void GetImage( ImageInformation* pCurrentImInfo );
 
   void SetSigma( T dSigma );
 

@@ -106,22 +106,22 @@ unsigned int CImageManager< T, VImageDimension>::AddImage( std::string filename,
   // now that we know that the multiset for the subject has been initialized 
   // we can create the element and enter it into the structure
 
-  SImageInformation* pCurrentImageInformation = new SImageInformation;
-  pCurrentImageInformation->sImageFileName = filename;
-  pCurrentImageInformation->sImageTransformationFileName = "";
-  pCurrentImageInformation->pIm = NULL;
-  pCurrentImageInformation->pImOrig = NULL;
-  pCurrentImageInformation->pTransform = NULL;
-  pCurrentImageInformation->timepoint = timepoint;
-  pCurrentImageInformation->uiId = m_uiCurrentRunningId++;
-  pCurrentImageInformation->uiSubjectId = uiSubjectIndex;
+  ImageInformation* imageInformation = new ImageInformation;
+  imageInformation->ImageFileName = filename;
+  imageInformation->ImageTransformationFileName = "";
+  imageInformation->Image = NULL;
+  imageInformation->OriginalImage = NULL;
+  imageInformation->pTransform = NULL;
+  imageInformation->timepoint = timepoint;
+  imageInformation->uiId = m_uiCurrentRunningId++;
+  imageInformation->uiSubjectId = uiSubjectIndex;
 
-  m_SubjectCollectionMapImageInformation[ uiSubjectIndex ]->insert( pCurrentImageInformation );
+  m_SubjectCollectionMapImageInformation[ uiSubjectIndex ]->insert( imageInformation );
 
   // keep track of which subject an id came from
-  m_MapIdToSubjectId[ pCurrentImageInformation->uiId ] = uiSubjectIndex;
+  m_MapIdToSubjectId[ imageInformation->uiId ] = uiSubjectIndex;
 
-  return pCurrentImageInformation->uiId;
+  return imageInformation->uiId;
 
 }
 
@@ -130,7 +130,7 @@ unsigned int CImageManager< T, VImageDimension>::AddImage( std::string filename,
 // Adds an individual image by specifying an actual image
 //
 template <class T, unsigned int VImageDimension >
-unsigned int CImageManager< T, VImageDimension>::AddImage( VectorImageType* pIm, T timepoint, unsigned int uiSubjectIndex )
+unsigned int CImageManager< T, VImageDimension>::AddImage( VectorImageType* image, T timepoint, unsigned int uiSubjectIndex )
 {
     // first check if an image from this subject has already been added
     typename SubjectCollectionInformationMapType::iterator iter = m_SubjectCollectionMapImageInformation.find( uiSubjectIndex );
@@ -145,22 +145,22 @@ unsigned int CImageManager< T, VImageDimension>::AddImage( VectorImageType* pIm,
     // now that we know that the multiset for the subject has been initialized
     // we can create the element and enter it into the structure
 
-    SImageInformation* pCurrentImageInformation = new SImageInformation;
-    pCurrentImageInformation->sImageFileName = "";
-    pCurrentImageInformation->sImageTransformationFileName = "";
-    pCurrentImageInformation->pIm = pIm;
-    pCurrentImageInformation->pImOrig = pIm;
-    pCurrentImageInformation->pTransform = NULL;
-    pCurrentImageInformation->timepoint = timepoint;
-    pCurrentImageInformation->uiId = m_uiCurrentRunningId++;
-    pCurrentImageInformation->uiSubjectId = uiSubjectIndex;
+    ImageInformation* imageInformation = new ImageInformation;
+    imageInformation->ImageFileName = "";
+    imageInformation->ImageTransformationFileName = "";
+    imageInformation->Image = image;
+    imageInformation->OriginalImage = image;
+    imageInformation->pTransform = NULL;
+    imageInformation->timepoint = timepoint;
+    imageInformation->uiId = m_uiCurrentRunningId++;
+    imageInformation->uiSubjectId = uiSubjectIndex;
 
-    m_SubjectCollectionMapImageInformation[ uiSubjectIndex ]->insert( pCurrentImageInformation );
+    m_SubjectCollectionMapImageInformation[ uiSubjectIndex ]->insert( imageInformation );
 
     // keep track of which subject an id came from
-    m_MapIdToSubjectId[ pCurrentImageInformation->uiId ] = uiSubjectIndex;
+    m_MapIdToSubjectId[ imageInformation->uiId ] = uiSubjectIndex;
 
-    return pCurrentImageInformation->uiId;
+    return imageInformation->uiId;
 
 }
 
@@ -219,7 +219,7 @@ CImageManager< T, VImageDimension >::GetOriginalImageById( unsigned int uiId )
 
   if ( bFound )
     {
-    return (*iterSet)->pImOrig.GetPointer();
+    return (*iterSet)->OriginalImage.GetPointer();
     }
   else
     {
@@ -243,9 +243,9 @@ bool CImageManager< T, VImageDimension>::AddImageTransform( std::string filename
 
   if ( bFound )
     {
-    SImageInformation* pImInfo = new SImageInformation;
+    ImageInformation* pImInfo = new ImageInformation;
     *pImInfo = *( *iterSet );
-    pImInfo->sImageTransformationFileName = filename;
+    pImInfo->ImageTransformationFileName = filename;
     pInfo->erase( iterSet );
     pInfo->insert( pImInfo );
     return true;
@@ -276,22 +276,22 @@ unsigned int CImageManager< T, VImageDimension>::AddImageAndTransform( std::stri
   // now that we know that the multiset for the subject has been initialized 
   // we can create the element and enter it into the structure
 
-  SImageInformation* pCurrentImageInformation = new SImageInformation;
-  pCurrentImageInformation->sImageFileName = filename;
-  pCurrentImageInformation->sImageTransformationFileName = transformFilename;
-  pCurrentImageInformation->pIm = NULL;
-  pCurrentImageInformation->pImOrig = NULL;
-  pCurrentImageInformation->pTransform = NULL;
-  pCurrentImageInformation->timepoint = timepoint;
-  pCurrentImageInformation->uiId = m_uiCurrentRunningId++;
-  pCurrentImageInformation->uiSubjectId = uiSubjectIndex;
+  ImageInformation* imageInformation = new ImageInformation;
+  imageInformation->ImageFileName = filename;
+  imageInformation->ImageTransformationFileName = transformFilename;
+  imageInformation->Image = NULL;
+  imageInformation->OriginalImage = NULL;
+  imageInformation->pTransform = NULL;
+  imageInformation->timepoint = timepoint;
+  imageInformation->uiId = m_uiCurrentRunningId++;
+  imageInformation->uiSubjectId = uiSubjectIndex;
 
-  m_SubjectCollectionMapImageInformation[ uiSubjectIndex ]->insert( pCurrentImageInformation );
+  m_SubjectCollectionMapImageInformation[ uiSubjectIndex ]->insert( imageInformation );
 
   // keep track of which subject an id came from
-  m_MapIdToSubjectId[ pCurrentImageInformation->uiId ] = uiSubjectIndex;
+  m_MapIdToSubjectId[ imageInformation->uiId ] = uiSubjectIndex;
 
-  return pCurrentImageInformation->uiId;
+  return imageInformation->uiId;
 
 }
 
@@ -311,7 +311,7 @@ bool CImageManager< T, VImageDimension>::RemoveImage( unsigned int uiId )
     {
     // we can delete it from the set after deleting the data content
     
-    (*iterSet)->pIm = NULL;
+    (*iterSet)->Image = NULL;
     (*iterSet)->pTransform = NULL;
 
     // now delete the set element
@@ -344,13 +344,13 @@ bool CImageManager< T, VImageDimension>::RemoveTransform( unsigned int uiId )
     
     (*iterSet)->pTransform = NULL;
     
-    SImageInformation* pImInfo = new SImageInformation;
-    *pImInfo = *( *iterSet );
-    pImInfo->pTransform = NULL;
-    pImInfo->sImageTransformationFileName = "";
+    ImageInformation* imageInformation = new ImageInformation;
+    *imageInformation = *( *iterSet );
+    imageInformation->pTransform = NULL;
+    imageInformation->ImageTransformationFileName = "";
 
     pInfo->erase( iterSet );
-    pInfo->insert( pImInfo );
+    pInfo->insert( imageInformation );
     // set element does not need to be deleted, because we still have the image
 
     return true; // was able to remove
@@ -414,12 +414,12 @@ unsigned int CImageManager< T, VImageDimension>::GetNumberOfAvailableSubjectIndi
 // Allows access of image information in a time series by index
 //
 template <class T, unsigned int VImageDimension >
-void CImageManager< T, VImageDimension>::GetPointerToSubjectImageInformationBySubjectInformationAndIndex( SImageInformation *& pImInfo, SubjectInformationType* pInfo, unsigned int uiTimeIndex )
+void CImageManager< T, VImageDimension>::GetPointerToSubjectImageInformationBySubjectInformationAndIndex( ImageInformation *& imageInformation, SubjectInformationType* pInfo, unsigned int uiTimeIndex )
 {
   // TODO: There may be a quicker method to do this. For now we just assume that there are not 
   // a lot of elements, so we can just do a linear search
 
-  pImInfo = NULL;
+  imageInformation = NULL;
 
   typename SubjectInformationType::iterator iter;
 
@@ -431,9 +431,9 @@ void CImageManager< T, VImageDimension>::GetPointerToSubjectImageInformationBySu
       {
       if ( uiCount==uiTimeIndex )
         {
-        pImInfo = (*iter);
+        imageInformation = (*iter);
         // load image of subject if necessary
-        this->GetImage( pImInfo );
+        this->GetImage( imageInformation );
         return;
         }
       ++uiCount;
@@ -450,7 +450,7 @@ void CImageManager< T, VImageDimension>::GetPointerToSubjectImageInformationBySu
 // Allows access of image information in a time series by index
 //
 template <class T, unsigned int VImageDimension >
-void CImageManager< T, VImageDimension>::GetPointerToSubjectImageInformationByIndex( SImageInformation *& ptrImageInformation, unsigned int subjectIndex, unsigned int uiTimeIndex )
+void CImageManager< T, VImageDimension>::GetPointerToSubjectImageInformationByIndex( ImageInformation *& ptrImageInformation, unsigned int subjectIndex, unsigned int uiTimeIndex )
 {
   SubjectInformationType* pSubjectInfo;
   this->GetImagesWithSubjectIndex( pSubjectInfo, subjectIndex );
@@ -478,7 +478,7 @@ void CImageManager< T, VImageDimension>::GetImagesWithSubjectIndex( SubjectInfor
 
   for ( iter = pImInfo->begin(); iter != pImInfo->end(); ++iter )
     {
-    SImageInformation* pCurrentImInfo = *iter;
+    ImageInformation* pCurrentImInfo = *iter;
     this->GetImage( pCurrentImInfo );
     }
 }
@@ -500,10 +500,10 @@ CImageManager< T, VImageDimension>::GetGraftImagePointer( unsigned int uiSubject
 
   assert( vecTimeIndices.size()>0 );
 
-  SImageInformation *pImInfo;
-  this->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[ uiSubjectIndex ], 0 );
+  ImageInformation *imageInformation;
+  this->GetPointerToSubjectImageInformationByIndex( imageInformation, vecSubjectIndices[ uiSubjectIndex ], 0 );
 
-  return pImInfo->pIm;
+  return imageInformation->Image;
 }
 
 //
@@ -526,8 +526,8 @@ void CImageManager< T, VImageDimension>::print( std::ostream& output )
       {
       output << std::endl;
       output << " t = " << (*iter)->timepoint << std::endl;
-      output << "     " << "image name     = " << (*iter)->sImageFileName << std::endl;
-      output << "     " << "transform name = " << (*iter)->sImageTransformationFileName << std::endl;
+      output << "     " << "image name     = " << (*iter)->ImageFileName << std::endl;
+      output << "     " << "transform name = " << (*iter)->ImageTransformationFileName << std::endl;
       output << "     " << "subject id     = " << (*iter)->uiSubjectId << std::endl;
       output << "     " << "dataset id     = " << (*iter)->uiId << std::endl;
       output << std::endl;

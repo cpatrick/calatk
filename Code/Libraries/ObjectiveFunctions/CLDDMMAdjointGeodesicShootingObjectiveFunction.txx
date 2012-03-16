@@ -96,12 +96,12 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::CreateNewStateStr
 
     // obtain image from which to graft the image information for the data structures
 
-    SImageInformation* pImInfo;
+    ImageInformation* pImInfo;
     // get information from the first image to figure out the dimensions
     this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
 
-    VectorImageType* ptrInitialImage = new VectorImageType( pImInfo->pIm );
-    VectorImageType* ptrInitialMomentum = new VectorImageType( pImInfo->pIm );
+    VectorImageType* ptrInitialImage = new VectorImageType( pImInfo->Image );
+    VectorImageType* ptrInitialMomentum = new VectorImageType( pImInfo->Image );
     ptrInitialMomentum->SetToConstant(0);
 
     this->m_ptrState = new TState( ptrInitialImage, ptrInitialMomentum );
@@ -130,15 +130,15 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::CreateGradientAndA
 
     // obtain image from which to graft the image information for the data structures
 
-    SImageInformation* pImInfo;
+    ImageInformation* pImInfo;
     // get information from the first image to figure out the dimensions
     this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
 
     // create the gradient
-    VectorImageType* ptrI0Gradient = new VectorImageType( pImInfo->pIm );
+    VectorImageType* ptrI0Gradient = new VectorImageType( pImInfo->Image );
     ptrI0Gradient->SetToConstant(0);
 
-    VectorImageType* ptrP0Gradient = new VectorImageType( pImInfo->pIm );
+    VectorImageType* ptrP0Gradient = new VectorImageType( pImInfo->Image );
     ptrP0Gradient->SetToConstant(0);
 
     this->m_ptrGradient = new TState( ptrI0Gradient, ptrP0Gradient );
@@ -156,28 +156,28 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::CreateGradientAndA
     tstLamP = new std::vector< VectorImagePointerType >;
 #endif
 
-    this->m_ptrCurrentLambdaI = new VectorImageType( pImInfo->pIm );
-    this->m_ptrCurrentLambdaP = new VectorImageType( pImInfo->pIm );
-    this->m_ptrCurrentLambdaV = new VectorFieldType( pImInfo->pIm );
+    this->m_ptrCurrentLambdaI = new VectorImageType( pImInfo->Image );
+    this->m_ptrCurrentLambdaP = new VectorImageType( pImInfo->Image );
+    this->m_ptrCurrentLambdaV = new VectorFieldType( pImInfo->Image );
 
     // one more than for the velocity fields
     for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size(); ++iI )
       {
-      VectorImagePointerType ptrCurrentVectorImage = new VectorImageType( pImInfo->pIm );
+      VectorImagePointerType ptrCurrentVectorImage = new VectorImageType( pImInfo->Image );
       m_ptrI->push_back( ptrCurrentVectorImage );
 
       // bookkeeping to simplify metric computations
       m_vecTimeDiscretization[ iI ].vecEstimatedImages.push_back( ptrCurrentVectorImage );
 
-      ptrCurrentVectorImage = new VectorImageType( pImInfo->pIm );
+      ptrCurrentVectorImage = new VectorImageType( pImInfo->Image );
       m_ptrP->push_back( ptrCurrentVectorImage );
 
 #ifdef EXTREME_DEBUGGING
       // for testing
-      ptrCurrentVectorImage = new VectorImageType( pImInfo->pIm );
+      ptrCurrentVectorImage = new VectorImageType( pImInfo->Image );
       tstLamI->push_back( ptrCurrentVectorImage );
 
-      ptrCurrentVectorImage = new VectorImageType( pImInfo->pIm );
+      ptrCurrentVectorImage = new VectorImageType( pImInfo->Image );
       tstLamP->push_back( ptrCurrentVectorImage );
 #endif
 
@@ -185,40 +185,38 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::CreateGradientAndA
 
     // storage for the maps
 
-    m_ptrMapIn = new VectorFieldType( pImInfo->pIm );
-    m_ptrMapOut = new VectorFieldType( pImInfo->pIm );
-    m_ptrMapTmp = new VectorFieldType( pImInfo->pIm );
+    m_ptrMapIn = new VectorFieldType( pImInfo->Image );
+    m_ptrMapOut = new VectorFieldType( pImInfo->Image );
+    m_ptrMapTmp = new VectorFieldType( pImInfo->Image );
 
-    m_ptrMapIncremental = new VectorFieldType( pImInfo->pIm );
-    m_ptrMapIdentity = new VectorFieldType( pImInfo->pIm );
+    m_ptrMapIncremental = new VectorFieldType( pImInfo->Image );
+    m_ptrMapIdentity = new VectorFieldType( pImInfo->Image );
 
     // temporary storage
-    m_ptrTmpField = new VectorFieldType( pImInfo->pIm );
-    m_ptrTmpFieldConv = new VectorFieldType( pImInfo->pIm );
+    m_ptrTmpField = new VectorFieldType( pImInfo->Image );
+    m_ptrTmpFieldConv = new VectorFieldType( pImInfo->Image );
 
-    m_ptrTmpScalarImage = new VectorImageType( pImInfo->pIm, 0.0, 1 );
-    m_ptrTmpImage = new VectorImageType( pImInfo->pIm );
+    m_ptrTmpScalarImage = new VectorImageType( pImInfo->Image, 0.0, 1 );
+    m_ptrTmpImage = new VectorImageType( pImInfo->Image );
 
-    m_ptrDI = new VectorImageType( pImInfo->pIm );
-    m_ptrDP = new VectorImageType( pImInfo->pIm );
+    m_ptrDI = new VectorImageType( pImInfo->Image );
+    m_ptrDP = new VectorImageType( pImInfo->Image );
 
     // storage for the adjoint difference
 
-    m_ptrCurrentAdjointIDifference = new VectorImageType( pImInfo->pIm );
+    m_ptrCurrentAdjointIDifference = new VectorImageType( pImInfo->Image );
 
     // storage for the determinant of Jacobian
-    m_ptrDeterminantOfJacobian  = new VectorImageType( pImInfo->pIm );
+    m_ptrDeterminantOfJacobian  = new VectorImageType( pImInfo->Image );
 
     // storage for the negated velocity field
     m_ptrVelocityField = new std::vector<VectorFieldPointerType>;
     for (unsigned int iI=0; iI < m_vecTimeDiscretization.size(); iI++)
     {
-        VectorFieldPointerType ptrCurrentVectorField = new VectorFieldType( pImInfo->pIm );
+        VectorFieldPointerType ptrCurrentVectorField = new VectorFieldType( pImInfo->Image );
         ptrCurrentVectorField->SetToConstant( 0 );
         m_ptrVelocityField->push_back( ptrCurrentVectorField );
-
     }
-
 }
 
 template < class TState >

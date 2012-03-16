@@ -133,25 +133,25 @@ void CImageManagerMultiScale< T, VImageDimension >::SelectScale( unsigned int ui
 }
 
 template <class T, unsigned int VImageDimension >
-void CImageManagerMultiScale< T, VImageDimension >::SetScale( SImageInformation* pCurrentImInfo )
+void CImageManagerMultiScale< T, VImageDimension >::SetScale( ImageInformation* imageInformation )
 {
-  pCurrentImInfo->pIm = pCurrentImInfo->pImsOfAllScales[ m_uiCurrentlySelectedScale ];
+  imageInformation->Image = imageInformation->pImsOfAllScales[ m_uiCurrentlySelectedScale ];
 }
 
 template <class T, unsigned int VImageDimension >
-void CImageManagerMultiScale< T, VImageDimension >::GetImage( SImageInformation* pCurrentImInfo )
+void CImageManagerMultiScale< T, VImageDimension >::GetImage( ImageInformation* imageInformation )
 {
   // get the image consistent with the scale, if image has not been loaded, load it and create the spatial pyramid
   // if any scales were altered since last time calling this, we need to reload also
 
-  if ( pCurrentImInfo->pImOrig.GetPointer() == NULL )
+  if ( imageInformation->OriginalImage.GetPointer() == NULL )
     {
     // load it and all information that comes with it (even transform)
-    Superclass::GetImage( pCurrentImInfo );
+    Superclass::GetImage( imageInformation );
     }
 
   // check if the scales have been created, if not, do so
-  if ( pCurrentImInfo->pImsOfAllScales.empty() )
+  if ( imageInformation->pImsOfAllScales.empty() )
     {
     // create all the scales
     unsigned int uiNrOfScales = this->GetNumberOfScales();
@@ -159,14 +159,14 @@ void CImageManagerMultiScale< T, VImageDimension >::GetImage( SImageInformation*
       {
       if ( m_ScaleWasSet[ iI ] )
       {
-        std::cout << "Computing scale " << m_ScaleVector[iI] << " of: " << pCurrentImInfo->sImageFileName << std::endl;
+        std::cout << "Computing scale " << m_ScaleVector[iI] << " of: " << imageInformation->ImageFileName << std::endl;
         assert( m_ScaleVector[iI]>0 );
-        typename VectorImageType::Pointer ptrResampledImage = VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( pCurrentImInfo->pImOrig, m_ScaleVector[ iI ] );
+        typename VectorImageType::Pointer ptrResampledImage = VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( imageInformation->OriginalImage, m_ScaleVector[ iI ] );
 
         if ( iI==0 && !m_BlurHighestResolutionImage )
         {
           std::cout << "NOT blurring the image of the highest resolution" << std::endl;
-          ptrResampledImage->Copy( pCurrentImInfo->pImOrig );
+          ptrResampledImage->Copy( imageInformation->OriginalImage );
         }
         else
         {
@@ -176,28 +176,28 @@ void CImageManagerMultiScale< T, VImageDimension >::GetImage( SImageInformation*
             }
 
           // convert the voxel sigma to a pyhysical sigma based on the largest voxel extent
-          T dLargestSpacing = pCurrentImInfo->pImOrig->GetLargestSpacing();
+          T dLargestSpacing = imageInformation->OriginalImage->GetLargestSpacing();
 
           std::cout << "Computing resampled image with sigma = " << dLargestSpacing*m_Sigma/m_ScaleVector[ iI ] << std::endl;
 
           m_ptrResampler->SetSigma( dLargestSpacing*m_Sigma/m_ScaleVector[ iI ] );
-          m_ptrResampler->Downsample( pCurrentImInfo->pImOrig, ptrResampledImage );
+          m_ptrResampler->Downsample( imageInformation->OriginalImage, ptrResampledImage );
           }
-        pCurrentImInfo->pImsOfAllScales.push_back( ptrResampledImage );
+        imageInformation->pImsOfAllScales.push_back( ptrResampledImage );
       }
       else
         {
         std::cout << "WARNING: scale " << iI << " was not set." << std::endl;
-        pCurrentImInfo->pImsOfAllScales.push_back( NULL );
+        imageInformation->pImsOfAllScales.push_back( NULL );
         }
       }
 
     }
   
-  if ( pCurrentImInfo->pIm.GetPointer() != NULL )
+  if ( imageInformation->Image.GetPointer() != NULL )
     {
     // was read
-    SetScale( pCurrentImInfo );
+    SetScale( imageInformation );
     m_bImagesWereRead = true; // disallow any future change of the images (implement some form of reset functionality)
     }
   else

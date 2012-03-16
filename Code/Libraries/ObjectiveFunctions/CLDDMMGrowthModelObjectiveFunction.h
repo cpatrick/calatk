@@ -77,7 +77,7 @@ protected:
   typedef typename Superclass::VectorPointerToVectorImagePointerType VectorPointerToVectorImagePointerType;
 
   typedef typename Superclass::ImageManagerType       ImageManagerType;
-  typedef typename Superclass::SImageInformation      SImageInformation;
+  typedef typename Superclass::ImageInformation      ImageInformation;
   typedef typename Superclass::SubjectInformationType SubjectInformationType;
 
   void ComputeImagesForward();

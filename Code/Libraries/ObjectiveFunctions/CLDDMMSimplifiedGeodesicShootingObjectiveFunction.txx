@@ -85,12 +85,12 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::CreateNewState
 
   // obtain image from which to graft the image information for the data structures
 
-  SImageInformation* pImInfo;
+  ImageInformation* pImInfo;
   // get information from the first image to figure out the dimensions and determine the source and target image
   this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
 
-  VectorImageType* ptrInitialImage = new VectorImageType( pImInfo->pIm );
-  VectorImageType* ptrInitialMomentum = new VectorImageType( pImInfo->pIm );
+  VectorImageType* ptrInitialImage = new VectorImageType( pImInfo->Image );
+  VectorImageType* ptrInitialMomentum = new VectorImageType( pImInfo->Image );
   ptrInitialMomentum->SetToConstant(0);
 
   this->m_ptrState = new TState( ptrInitialImage, ptrInitialMomentum );
@@ -119,47 +119,47 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::CreateGradientA
 
     // obtain image from which to graft the image information for the data structures
     // and assign the convenience image pointer ptrI0, ptrI1
-    SImageInformation* pImInfo;
+    ImageInformation* pImInfo;
     // get information from the first image to figure out the dimensions and determine the source and target image
     this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
-    ptrI0 = pImInfo->pIm;
+    ptrI0 = pImInfo->Image;
 
     this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 1 );
-    ptrI1 = pImInfo->pIm;
+    ptrI1 = pImInfo->Image;
 
     // create the gradient
-    VectorImageType* ptrI0Gradient = new VectorImageType( pImInfo->pIm );
+    VectorImageType* ptrI0Gradient = new VectorImageType( pImInfo->Image );
     ptrI0Gradient->SetToConstant(0);
 
-    VectorImageType* ptrP0Gradient = new VectorImageType( pImInfo->pIm );
+    VectorImageType* ptrP0Gradient = new VectorImageType( pImInfo->Image );
     ptrP0Gradient->SetToConstant(0);
 
     this->m_ptrGradient = new TState( ptrI0Gradient, ptrP0Gradient );
 
     // storage for the maps
 
-    m_ptrMapIn = new VectorFieldType( pImInfo->pIm );
-    m_ptrMapOut = new VectorFieldType( pImInfo->pIm );
-    m_ptrMapTmp = new VectorFieldType( pImInfo->pIm );
+    m_ptrMapIn = new VectorFieldType( pImInfo->Image );
+    m_ptrMapOut = new VectorFieldType( pImInfo->Image );
+    m_ptrMapTmp = new VectorFieldType( pImInfo->Image );
 
     // storage for the determinant of the Jacobian (is a scalar)
-    m_ptrDeterminantOfJacobian = new VectorImageType( pImInfo->pIm, 0.0, 1 );
+    m_ptrDeterminantOfJacobian = new VectorImageType( pImInfo->Image, 0.0, 1 );
 
     // storage for current state
-    m_ptrCurrentI = new VectorImageType( pImInfo->pIm );
-    m_ptrCurrentP = new VectorImageType( pImInfo->pIm );
-    m_ptrCurrentVelocity = new VectorFieldType( pImInfo->pIm );
+    m_ptrCurrentI = new VectorImageType( pImInfo->Image );
+    m_ptrCurrentP = new VectorImageType( pImInfo->Image );
+    m_ptrCurrentVelocity = new VectorFieldType( pImInfo->Image );
 
     // temporary storage
-    m_ptrTmpField = new VectorFieldType( pImInfo->pIm );
-    m_ptrTmpFieldConv = new VectorFieldType( pImInfo->pIm );
+    m_ptrTmpField = new VectorFieldType( pImInfo->Image );
+    m_ptrTmpFieldConv = new VectorFieldType( pImInfo->Image );
 
     // storage for the back map and the adjoint
-    m_ptrCurrentBackMap = new VectorFieldType( pImInfo->pIm );
-    m_ptrMapIdentity = new VectorFieldType( pImInfo->pIm );
+    m_ptrCurrentBackMap = new VectorFieldType( pImInfo->Image );
+    m_ptrMapIdentity = new VectorFieldType( pImInfo->Image );
 
-    m_ptrCurrentFinalAdjoint = new VectorImageType( pImInfo->pIm );
-    m_ptrWarpedFinalToInitialAdjoint = new VectorImageType( pImInfo->pIm );
+    m_ptrCurrentFinalAdjoint = new VectorImageType( pImInfo->Image );
+    m_ptrWarpedFinalToInitialAdjoint = new VectorImageType( pImInfo->Image );
 
 }
 

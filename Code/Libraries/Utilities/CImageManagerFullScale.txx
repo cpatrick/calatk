@@ -53,35 +53,35 @@ void CImageManagerFullScale< T, VImageDimension >::SetSigma( T dSigma )
 // Loads image and potentially transform for a given image information structure
 //
 template <class T, unsigned int VImageDimension >
-void CImageManagerFullScale< T, VImageDimension>::GetImage( SImageInformation* pCurrentImInfo )
+void CImageManagerFullScale< T, VImageDimension>::GetImage( ImageInformation* imageInformation )
 {
   // do we need to load the image?
-  if ( pCurrentImInfo->pIm.GetPointer() == NULL )
+  if ( imageInformation->Image.GetPointer() == NULL )
     {
-    if ( pCurrentImInfo->sImageFileName.compare("")!=0 ) // set to something
+    if ( imageInformation->ImageFileName.compare("")!=0 ) // set to something
       {
       // load it
-      std::cout << "Loading " << pCurrentImInfo->sImageFileName << " ... ";
-      pCurrentImInfo->pIm = VectorImageUtils< T, VImageDimension>::readFileITK( pCurrentImInfo->sImageFileName );
+      std::cout << "Loading " << imageInformation->ImageFileName << " ... ";
+      imageInformation->Image = VectorImageUtils< T, VImageDimension>::readFileITK( imageInformation->ImageFileName );
 
 
       if ( this->GetAutoScaleImages() )
       {
         std::cout << " auto-scaling ... ";
-        CALATK::VectorImageUtils< T, VImageDimension >::normalizeClampNegativeMaxOne( pCurrentImInfo->pIm );
+        CALATK::VectorImageUtils< T, VImageDimension >::normalizeClampNegativeMaxOne( imageInformation->Image );
       }
 
       // determine min max
-      T dMinVal = CALATK::VectorImageUtils< T, VImageDimension >::minAll( pCurrentImInfo->pIm );
-      T dMaxVal = CALATK::VectorImageUtils< T, VImageDimension >::maxAll( pCurrentImInfo->pIm );
+      T dMinVal = CALATK::VectorImageUtils< T, VImageDimension >::minAll( imageInformation->Image );
+      T dMaxVal = CALATK::VectorImageUtils< T, VImageDimension >::maxAll( imageInformation->Image );
 
       if ( m_BlurImage )
         {
         std::cout << "WARNING: blurring the original image" << std::endl;
-        this->m_GaussianKernel.ConvolveWithKernel( pCurrentImInfo->pIm );
+        this->m_GaussianKernel.ConvolveWithKernel( imageInformation->Image );
         }
 
-      pCurrentImInfo->pImOrig = pCurrentImInfo->pIm;
+      imageInformation->OriginalImage = imageInformation->Image;
       std::cout << "done. [" << dMinVal << "," << dMaxVal << "] " << std::endl;
 
       if ( dMinVal < 0 || dMaxVal > 1 )
@@ -93,13 +93,13 @@ void CImageManagerFullScale< T, VImageDimension>::GetImage( SImageInformation* p
     }
   
   // do we need to load the transform?
-  if ( pCurrentImInfo->pTransform.GetPointer() == NULL )
+  if ( imageInformation->pTransform.GetPointer() == NULL )
     {
-    if ( pCurrentImInfo->sImageTransformationFileName.compare("")!=0 ) // set to something
+    if ( imageInformation->ImageTransformationFileName.compare("")!=0 ) // set to something
       {
       // load it
       
-      assert( pCurrentImInfo->pIm.GetPointer() != NULL ); // image should have been loaded in previous step
+      assert( imageInformation->Image.GetPointer() != NULL ); // image should have been loaded in previous step
       
       typename VectorFieldType::Pointer mapTrans;
       unsigned int szX, szY, szZ;
@@ -108,21 +108,21 @@ void CImageManagerFullScale< T, VImageDimension>::GetImage( SImageInformation* p
       switch ( VImageDimension )
         {
         case 2:
-          szX = pCurrentImInfo->pIm->GetSizeX();
-          szY = pCurrentImInfo->pIm->GetSizeY();
-          spX = pCurrentImInfo->pIm->GetSpacingX();
-          spY = pCurrentImInfo->pIm->GetSpacingY();
+          szX = imageInformation->Image->GetSizeX();
+          szY = imageInformation->Image->GetSizeY();
+          spX = imageInformation->Image->GetSpacingX();
+          spY = imageInformation->Image->GetSpacingY();
           mapTrans = new VectorFieldType( szX, szY );
           mapTrans->SetSpacingX( spX );
           mapTrans->SetSpacingY( spY );
           break;
         case 3:
-          szX = pCurrentImInfo->pIm->GetSizeX();
-          szY = pCurrentImInfo->pIm->GetSizeY();
-          szZ = pCurrentImInfo->pIm->GetSizeZ();
-          spX = pCurrentImInfo->pIm->GetSpacingX();
-          spY = pCurrentImInfo->pIm->GetSpacingY();
-          spZ = pCurrentImInfo->pIm->GetSpacingZ();
+          szX = imageInformation->Image->GetSizeX();
+          szY = imageInformation->Image->GetSizeY();
+          szZ = imageInformation->Image->GetSizeZ();
+          spX = imageInformation->Image->GetSpacingX();
+          spY = imageInformation->Image->GetSpacingY();
+          spZ = imageInformation->Image->GetSpacingZ();
           mapTrans = new VectorFieldType( szX, szY, szZ );
           mapTrans->SetSpacingX( spX );
           mapTrans->SetSpacingY( spY );
@@ -136,10 +136,10 @@ void CImageManagerFullScale< T, VImageDimension>::GetImage( SImageInformation* p
       VectorFieldUtils<T, VImageDimension>::identityMap( mapTrans );
       
       std::cout << "Initializing affine map for source image" << std::endl;
-      typename ITKAffineTransform<T,VImageDimension>::Type::Pointer aTrans = VectorImageUtils< T, VImageDimension>::readAffineTransformITK( pCurrentImInfo->sImageTransformationFileName );
+      typename ITKAffineTransform<T,VImageDimension>::Type::Pointer aTrans = VectorImageUtils< T, VImageDimension>::readAffineTransformITK( imageInformation->ImageTransformationFileName );
       VectorFieldUtils< T, VImageDimension>::affineITKtoMap( aTrans, mapTrans );
       
-      pCurrentImInfo->pTransform = mapTrans;
+      imageInformation->pTransform = mapTrans;
       
       }
     }

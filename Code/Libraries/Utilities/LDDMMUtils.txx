@@ -196,7 +196,7 @@ unsigned int LDDMMUtils< T, VImageDimension >::DetermineTimeSeriesTimePointData(
       {
       // if there is a multiple measurement
       unsigned int uiLast = vecTimePointData.size()-1;
-      vecTimePointData[ uiLast ].vecMeasurementImages.push_back( (*iter)->pIm );
+      vecTimePointData[ uiLast ].vecMeasurementImages.push_back( (*iter)->Image );
       vecTimePointData[ uiLast ].vecMeasurementTransforms.push_back( (*iter)->pTransform );
       }
     else
@@ -205,7 +205,7 @@ unsigned int LDDMMUtils< T, VImageDimension >::DetermineTimeSeriesTimePointData(
       STimePoint timePoint;
       timePoint.bIsMeasurementPoint = true; // all of them are measurements
       timePoint.dTime = (*iter)->timepoint;
-      timePoint.vecMeasurementImages.push_back( (*iter)->pIm );
+      timePoint.vecMeasurementImages.push_back( (*iter)->Image );
       timePoint.vecMeasurementTransforms.push_back( (*iter)->pTransform );
 
       vecTimePointData.push_back( timePoint );

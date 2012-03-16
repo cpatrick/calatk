@@ -59,7 +59,7 @@ int main(int argc, char **argv)
   typedef CALATK::VectorImage< TFLOAT, DIMENSION > VectorImageType;
 
   typedef CALATK::CImageManagerMultiScale< TFLOAT, DIMENSION > ImageManagerMultiScaleType;
-  typedef CALATK::CImageManagerMultiScale< TFLOAT, DIMENSION >::SImageInformation SImageInformation;
+  typedef CALATK::CImageManagerMultiScale< TFLOAT, DIMENSION >::ImageInformation ImageInformation;
   
   CALATK::CImageManagerMultiScale<TFLOAT,DIMENSION> imageManager;
 
@@ -68,7 +68,7 @@ int main(int argc, char **argv)
   imageManager.AddScale( 0.5, 1 );
   imageManager.AddScale( 0.25, 2 );
 
-  SImageInformation* pImInfo;
+  ImageInformation* pImInfo;
 
   imageManager.SelectScale( 0 );
   imageManager.GetPointerToSubjectImageInformationByIndex( pImInfo, 0, 0 );

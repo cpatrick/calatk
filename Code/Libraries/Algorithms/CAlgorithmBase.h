@@ -63,7 +63,7 @@ public:
   typedef VectorImage< T, VImageDimension > VectorImageType;
   typedef VectorField< T, VImageDimension > VectorFieldType;
 
-  typedef typename CImageManager< T, VImageDimension >::SImageInformation SImageInformation;
+  typedef typename CImageManager< T, VImageDimension >::ImageInformation ImageInformation;
 
   CAlgorithmBase();
   virtual ~CAlgorithmBase();
