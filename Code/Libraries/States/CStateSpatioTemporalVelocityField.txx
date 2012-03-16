@@ -92,19 +92,20 @@ CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler >::CreateUpsam
   // create an upsampled version of the state with the dimensions of the graft image
   std::vector<VectorFieldPointerType>* ptrVecUpsampledStateData = new std::vector<VectorFieldPointerType>;
   
-  TResampler resampler;
+  typedef TResampler ResamplerType;
+  typename ResamplerType::Pointer resampler = new ResamplerType();
 
   typename std::vector<VectorFieldPointerType>::const_iterator iter;
   for ( iter=m_vecPtrSTVelocityField.begin(); iter!=m_vecPtrSTVelocityField.end(); ++iter )
     {
-    VectorFieldType* ptrResampledVectorField = new VectorFieldType( pGraftImage );
-    resampler.Upsample( *iter, ptrResampledVectorField );
+    typename VectorFieldType::Pointer ptrResampledVectorField = new VectorFieldType( pGraftImage );
+    resampler->Upsample( *iter, ptrResampledVectorField );
     ptrVecUpsampledStateData->push_back( ptrResampledVectorField );
     }
 
-  TState* pUpsampledState = new TState( ptrVecUpsampledStateData ); 
+  typename TState::Pointer pUpsampledState = new TState( ptrVecUpsampledStateData );
 
-  return pUpsampledState;
+  return pUpsampledState.GetPointer();
 
 }
 

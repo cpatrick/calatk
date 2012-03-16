@@ -85,7 +85,7 @@ template <class TState>
 typename CStateAtlas< TState >::SuperclassTState* 
 CStateAtlas< TState >::CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const
 {
-    std::vector< TState* >* ptrUpsampledState = new std::vector< TState* >;
+    VectorIndividualStatesType* ptrUpsampledState = new VectorIndividualStatesType;
 
     // upsample all the individual state components
     typename VectorIndividualStatesType::iterator iter;
@@ -94,7 +94,7 @@ CStateAtlas< TState >::CreateUpsampledStateAndAllocateMemory( const VectorImageT
       ptrUpsampledState->push_back( iter->CreateUpsampledStateAndAllocateMemory( pGraftImage ) );
     }
 
-  return pUpsampledState;
+  return ptrUpsampledState;
 
 }
 
