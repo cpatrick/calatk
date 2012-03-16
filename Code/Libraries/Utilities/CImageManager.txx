@@ -498,12 +498,12 @@ CImageManager< T, VImageDimension>::GetGraftImagePointer( unsigned int uiSubject
   std::vector< T > vecTimeIndices;
   this->GetTimepointsForSubjectIndex( vecTimeIndices, vecSubjectIndices[ uiSubjectIndex ] );
 
-  assert( vecTimeIndices.size()>0 );
+  assert( vecTimeIndices.size() > 0 );
 
   ImageInformation *imageInformation;
   this->GetPointerToSubjectImageInformationByIndex( imageInformation, vecSubjectIndices[ uiSubjectIndex ], 0 );
 
-  return imageInformation->Image;
+  return imageInformation->Image.GetPointer();
 }
 
 //
