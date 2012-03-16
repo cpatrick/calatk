@@ -154,15 +154,15 @@ void VectorImageUtils< T, VImageDimension >::abs( VectorImageType* in)
 //
 template <class T, unsigned int VImageDimension >
 typename VectorImageUtils< T, VImageDimension >::VectorImageType*
-VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, T dScale )
+VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( const VectorImageType* imageGraft, T scale )
 {
 
-  assert( dScale>0 );
+  assert( scale > 0.0 );
 
   // will only be approximate scale (up to the same integer)
-  unsigned int szxOrig = imGraft->GetSizeX();
-  unsigned int szyOrig = imGraft->GetSizeY();
-  unsigned int szzOrig = imGraft->GetSizeZ();
+  unsigned int szxOrig = imageGraft->GetSizeX();
+  unsigned int szyOrig = imageGraft->GetSizeY();
+  unsigned int szzOrig = imageGraft->GetSizeZ();
 
   unsigned int szxDesired = 0;
   unsigned int szyDesired = 0;
@@ -171,19 +171,19 @@ VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( cons
   switch ( VImageDimension )
     {
     case 1:
-      szxDesired = (unsigned int)ceil( dScale*szxOrig );
-      return AllocateMemoryForScaledVectorImage( imGraft, szxDesired );
+      szxDesired = (unsigned int)ceil( scale*szxOrig );
+      return AllocateMemoryForScaledVectorImage( imageGraft, szxDesired );
       break;
     case 2:
-      szxDesired = (unsigned int)ceil( dScale*szxOrig );
-      szyDesired = (unsigned int)ceil( dScale*szyOrig );
-      return AllocateMemoryForScaledVectorImage( imGraft, szxDesired, szyDesired );
+      szxDesired = (unsigned int)ceil( scale*szxOrig );
+      szyDesired = (unsigned int)ceil( scale*szyOrig );
+      return AllocateMemoryForScaledVectorImage( imageGraft, szxDesired, szyDesired );
       break;
     case 3:
-      szxDesired = (unsigned int)ceil( dScale*szxOrig );
-      szyDesired = (unsigned int)ceil( dScale*szyOrig );
-      szzDesired = (unsigned int)ceil( dScale*szzOrig );
-      return AllocateMemoryForScaledVectorImage( imGraft, szxDesired, szyDesired, szzDesired );
+      szxDesired = (unsigned int)ceil( scale*szxOrig );
+      szyDesired = (unsigned int)ceil( scale*szyOrig );
+      szzDesired = (unsigned int)ceil( scale*szzOrig );
+      return AllocateMemoryForScaledVectorImage( imageGraft, szxDesired, szyDesired, szzDesired );
       break;
     default:
       std::runtime_error("Unsupported dimension for memory allocation.");
@@ -197,21 +197,21 @@ VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( cons
 //
 template <class T, unsigned int VImageDimension >
 typename VectorImageUtils< T, VImageDimension >::VectorImageType*
-VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, unsigned int szx )
+VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( const VectorImageType* imageGraft, unsigned int szx )
 {
-  unsigned int dim = imGraft->GetDimension();
-  unsigned int szxOrig = imGraft->GetSizeX();
+  unsigned int dim = imageGraft->GetDimension();
+  unsigned int szxOrig = imageGraft->GetSizeX();
 
-  T dxOrig = imGraft->GetSpacingX();
+  T dxOrig = imageGraft->GetSpacingX();
 
   T invScaleX = (T)szxOrig/(T)szx;
 
-  VectorImageType* pNewIm = new VectorImageType( szx, dim );
-  pNewIm->SetSpacingX( dxOrig*invScaleX );
-  pNewIm->SetOrigin( imGraft->GetOrigin() );
-  pNewIm->SetDirection( imGraft->GetDirection() );
+  typename VectorImageType::Pointer newImage = new VectorImageType( szx, dim );
+  newImage->SetSpacingX( dxOrig*invScaleX );
+  newImage->SetOrigin( imageGraft->GetOrigin() );
+  newImage->SetDirection( imageGraft->GetDirection() );
 
-  return pNewIm;
+  return newImage.GetPointer();
 }
 
 //
@@ -219,25 +219,25 @@ VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( cons
 //
 template <class T, unsigned int VImageDimension >
 typename VectorImageUtils< T, VImageDimension >::VectorImageType*
-VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, unsigned int szx, unsigned int szy )
+VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( const VectorImageType* imageGraft, unsigned int szx, unsigned int szy )
 {
-  unsigned int dim = imGraft->GetDimension();
-  unsigned int szxOrig = imGraft->GetSizeX();
-  unsigned int szyOrig = imGraft->GetSizeY();
+  unsigned int dim = imageGraft->GetDimension();
+  unsigned int szxOrig = imageGraft->GetSizeX();
+  unsigned int szyOrig = imageGraft->GetSizeY();
 
-  T dxOrig = imGraft->GetSpacingX();
-  T dyOrig = imGraft->GetSpacingY();
+  T dxOrig = imageGraft->GetSpacingX();
+  T dyOrig = imageGraft->GetSpacingY();
 
   T invScaleX = (T)szxOrig/(T)szx;
   T invScaleY = (T)szyOrig/(T)szy;
 
-  typename VectorImageType::Pointer pNewIm = new VectorImageType( szx, szy, dim );
-  pNewIm->SetSpacingX( dxOrig*invScaleX );
-  pNewIm->SetSpacingY( dyOrig*invScaleY );
-  pNewIm->SetOrigin( imGraft->GetOrigin() );
-  pNewIm->SetDirection( imGraft->GetDirection() );
+  typename VectorImageType::Pointer newImage = new VectorImageType( szx, szy, dim );
+  newImage->SetSpacingX( dxOrig*invScaleX );
+  newImage->SetSpacingY( dyOrig*invScaleY );
+  newImage->SetOrigin( imageGraft->GetOrigin() );
+  newImage->SetDirection( imageGraft->GetDirection() );
 
-  return pNewIm.GetPointer();
+  return newImage.GetPointer();
 }
 
 //
@@ -245,29 +245,29 @@ VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( cons
 //
 template <class T, unsigned int VImageDimension >
 typename VectorImageUtils< T, VImageDimension >::VectorImageType*
-VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, unsigned int szx, unsigned int szy, unsigned int szz )
+VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( const VectorImageType* imageGraft, unsigned int szx, unsigned int szy, unsigned int szz )
 {
-  unsigned int dim = imGraft->GetDimension();
-  unsigned int szxOrig = imGraft->GetSizeX();
-  unsigned int szyOrig = imGraft->GetSizeY();
-  unsigned int szzOrig = imGraft->GetSizeZ();
+  unsigned int dim = imageGraft->GetDimension();
+  unsigned int szxOrig = imageGraft->GetSizeX();
+  unsigned int szyOrig = imageGraft->GetSizeY();
+  unsigned int szzOrig = imageGraft->GetSizeZ();
 
-  T dxOrig = imGraft->GetSpacingX();
-  T dyOrig = imGraft->GetSpacingY();
-  T dzOrig = imGraft->GetSpacingZ();
+  T dxOrig = imageGraft->GetSpacingX();
+  T dyOrig = imageGraft->GetSpacingY();
+  T dzOrig = imageGraft->GetSpacingZ();
 
   T invScaleX = (T)szxOrig/(T)szx;
   T invScaleY = (T)szyOrig/(T)szy;
   T invScaleZ = (T)szzOrig/(T)szz;
 
-  VectorImageType* pNewIm = new VectorImageType( szx, szy, szz, dim );
-  pNewIm->SetSpacingX( dxOrig*invScaleX );
-  pNewIm->SetSpacingY( dyOrig*invScaleY );
-  pNewIm->SetSpacingZ( dzOrig*invScaleZ );
-  pNewIm->SetOrigin( imGraft->GetOrigin() );
-  pNewIm->SetDirection( imGraft->GetDirection() );
+  typename VectorImageType::Pointer newImage = new VectorImageType( szx, szy, szz, dim );
+  newImage->SetSpacingX( dxOrig*invScaleX );
+  newImage->SetSpacingY( dyOrig*invScaleY );
+  newImage->SetSpacingZ( dzOrig*invScaleZ );
+  newImage->SetOrigin( imageGraft->GetOrigin() );
+  newImage->SetDirection( imageGraft->GetDirection() );
 
-  return pNewIm;
+  return newImage.GetPointer();
 }
 
 //
@@ -621,9 +621,7 @@ void VectorImageUtils< T, VImageDimension >::interpolateNegativeVelocityPos( con
     }
 }
 
-//
-// resize1D
-//
+
 template <class T, unsigned int VImageDimension >
 void VectorImageUtils< T, VImageDimension >::resize( const VectorImageType1D* imIn, VectorImageType1D* imOut)
 {
@@ -634,7 +632,7 @@ void VectorImageUtils< T, VImageDimension >::resize( const VectorImageType1D* im
 
   assert( szXnew>0 );
 
-  VectorImageType* pos = new VectorImageType(szXnew, 1);
+  typename VectorImageType::Pointer pos = new VectorImageType(szXnew, 1);
 
   // create the interpolation maps
   for (unsigned int x = 0; x < szXnew; ++x)
@@ -645,15 +643,9 @@ void VectorImageUtils< T, VImageDimension >::resize( const VectorImageType1D* im
 
   // interpolate
   VectorImageUtils< T, VImageDimension >::interpolate(imIn, pos, imOut);
-
-  // clean up
-  delete pos;
-
 }
 
-//
-// resize2D
-//
+
 template <class T, unsigned int VImageDimension >
 void VectorImageUtils< T, VImageDimension >::resize( const VectorImageType2D* imIn, VectorImageType2D* imOut)
 {
@@ -684,9 +676,7 @@ void VectorImageUtils< T, VImageDimension >::resize( const VectorImageType2D* im
   VectorImageUtils< T, VImageDimension >::interpolate(imIn, pos, imOut);
 }
 
-//
-// resize3D
-//
+
 template <class T, unsigned int VImageDimension >
 void VectorImageUtils< T, VImageDimension >::resize( const VectorImageType3D* imIn, VectorImageType3D* imOut)
 {
