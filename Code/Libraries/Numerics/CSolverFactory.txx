@@ -43,9 +43,6 @@ CSolverFactory< TState >::CreateNewSolver( NumericSolverType solver )
   case IpOpt:
     ptrSolver = new SolverIpOptType;
     break;
-  case NLOpt:
-    ptrSolver = new SolverNLOptType;
-    break;
   case LBFGS:
     ptrSolver = new SolverLBFGSType;
     break;
@@ -86,10 +83,6 @@ CSolverFactory< TState >::GetSolverTypeFromString( std::string sSolver )
   else if ( sSolverLowerCase == "ipopt" )
   {
     return IpOpt;
-  }
-  else if ( sSolverLowerCase == "nlopt" )
-  {
-    return NLOpt;
   }
   else if ( sSolverLowerCase == "lbfgs" )
   {

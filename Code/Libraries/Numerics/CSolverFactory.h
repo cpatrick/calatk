@@ -29,7 +29,7 @@
 #include "CSolverLineSearchConstrained.h"
 #include "CSolverIpOpt.h"
 #include "CSolverLBFGS.h"
-#include "CSolverNLOpt.h"
+//#include "CSolverNLOpt.h"  // unsupported solver
 
 #include <algorithm>
 
@@ -51,10 +51,9 @@ public:
   typedef CSolverLineSearchUnconstrained< TState > SolverLineSearchUnconstrainedType;
   typedef CSolverLineSearchConstrained< TState > SolverLineSearchConstrainedType;
   typedef CSolverIpOpt< TState > SolverIpOptType;
-  typedef CSolverNLOpt< TState > SolverNLOptType;
   typedef CSolverLBFGS< TState > SolverLBFGSType;
 
-  enum NumericSolverType { LineSearchUnconstrained, LineSearchConstrained, IpOpt, NLOpt, LBFGS };
+  enum NumericSolverType { LineSearchUnconstrained, LineSearchConstrained, IpOpt, LBFGS };
 
   CSolverFactory();
   ~CSolverFactory();
