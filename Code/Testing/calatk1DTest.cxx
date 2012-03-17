@@ -100,7 +100,7 @@ int DoIt(std::string LDDMMType, char* sourceImage, char* targetImage, char* resu
 
   ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( plddmm->GetImageManagerPointer() );
 
-  unsigned int uiI0 = ptrImageManager->AddImage( sourceImage, 0.0, 0 );
+  ptrImageManager->AddImage( sourceImage, 0.0, 0 );
   ptrImageManager->AddImage( targetImage, 1.0, 0 );
 
   // by default there will be only one scale

@@ -82,8 +82,8 @@ int main(int argc, char **argv)
   imageManager.GetPointerToSubjectImageInformationByIndex( pImInfo, 0, 0 );
   VectorImageUtilsType::writeFileITK( pImInfo->Image, "im-scale-2.nrrd" );
 
-  typename VectorImageType::Pointer image = VectorImageUtilsType::readFileITK( "I0_short.nhdr" );
-  typename VectorImageType::Pointer imageBlurred = new VectorImageType( image );
+  VectorImageType::Pointer image = VectorImageUtilsType::readFileITK( "I0_short.nhdr" );
+  VectorImageType::Pointer imageBlurred = new VectorImageType( image );
 
   typedef CALATK::CGaussianKernel< TFLOAT, DIMENSION > GaussianKernelType;
   GaussianKernelType gaussianKernel;

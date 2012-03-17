@@ -152,6 +152,12 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::DeleteAuxiliaryStr
   ptrEstI1 = NULL;
   ptrEstT1 = NULL;
   ptrEstT2 = NULL;
+
+ if ( m_ptrMaskKernel != NULL )
+   {
+   m_ptrMaskKernel->DeallocateMemory();
+   }
+
 }
 
 template < class TState >

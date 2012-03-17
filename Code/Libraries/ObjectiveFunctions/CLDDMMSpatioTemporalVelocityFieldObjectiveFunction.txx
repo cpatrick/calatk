@@ -30,6 +30,8 @@ CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CLDDMMSpatioTempor
 template < class TState >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::DeleteData()
 {
+  this->m_ptrKernel->DeallocateMemory();
+
   this->m_ptrState = NULL;
   this->m_ptrGradient = NULL;
 

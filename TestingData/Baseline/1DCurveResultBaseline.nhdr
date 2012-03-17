@@ -4,10 +4,10 @@ NRRD0004
 type: float
 dimension: 2
 space dimension: 2
-sizes: 10000 1
-space directions: (9.9999997473787516e-005,0) (0,1)
+sizes: 100 1
+space directions: (0.0099999997764825821,0) (0,1)
 kinds: domain domain
 endian: little
-encoding: raw
+encoding: gzip
 space origin: (0,0)
-data file: 1DCurveResult_withJSON.raw
+data file: 1DCurveResultBaseline.raw.gz
