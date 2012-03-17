@@ -69,19 +69,19 @@ int DoIt( int argc, char** argv )
   if ( sLDDMMSolverType.compare( "simplifiedShooting" ) == 0 )
   {
     plddmm = new regTypeInitialImageMomentum;
-    dynamic_cast< regTypeInitialImageMomentum* >( plddmm )->SetObjectiveFunction( "LDDMMSimplifiedGeodesicShooting" );
+    dynamic_cast< regTypeInitialImageMomentum* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMSimplifiedGeodesicShooting" );
     bIsInitialImageMomentumType = true;
   }
   else if ( sLDDMMSolverType.compare( "adjointShooting" ) == 0 )
   {
     plddmm = new regTypeInitialImageMomentum;
-    dynamic_cast< regTypeInitialImageMomentum* >( plddmm )->SetObjectiveFunction( "LDDMMAdjointGeodesicShooting" );
+    dynamic_cast< regTypeInitialImageMomentum* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMAdjointGeodesicShooting" );
     bIsInitialImageMomentumType = true;
   }
   else if ( sLDDMMSolverType.compare( "relaxation" ) == 0 )
   {
     plddmm = new regTypeSpatioTemporalVelocityField;
-    dynamic_cast< regTypeSpatioTemporalVelocityField* >( plddmm )->SetObjectiveFunction( "LDDMMGrowthModel" );
+    dynamic_cast< regTypeSpatioTemporalVelocityField* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMGrowthModel" );
     bIsSpatioTemporalVelocityType = true;
   }
   else
@@ -153,7 +153,7 @@ int DoIt( int argc, char** argv )
       }
     }
 
-  VectorFieldType::ConstPointer ptrMap1 = new VectorFieldType( plddmm->GetMap( 1.0 ) );
+  typename VectorFieldType::ConstPointer ptrMap1 = new VectorFieldType( plddmm->GetMap( 1.0 ) );
   VectorImageUtilsType::writeFileITK( ptrMap1, sourceToTargetMap );
 
   if ( warpedSourceImage.compare("None") != 0 )
@@ -170,12 +170,12 @@ int DoIt( int argc, char** argv )
     const VectorImageType* ptrI0 = NULL;
     if ( bIsInitialImageMomentumType )
     {
-      ptrI0 = dynamic_cast< regTypeInitialImageMomentum* >( plddmm )->GetInitialMomentum();
+      ptrI0 = dynamic_cast< regTypeInitialImageMomentum* >( plddmm.GetPointer() )->GetInitialMomentum();
       VectorImageUtilsType::writeFileITK( ptrI0, initialMomentumImage );
     }
     else if ( bIsSpatioTemporalVelocityType )
     {
-      ptrI0 = dynamic_cast< regTypeSpatioTemporalVelocityField* >( plddmm )->GetInitialMomentum();
+      ptrI0 = dynamic_cast< regTypeSpatioTemporalVelocityField* >( plddmm.GetPointer() )->GetInitialMomentum();
       VectorImageUtilsType::writeFileITK( ptrI0, initialMomentumImage );
     }
     else
