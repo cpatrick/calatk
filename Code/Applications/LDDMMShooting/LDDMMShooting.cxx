@@ -117,7 +117,7 @@ int DoIt( int argc, char** argv )
 
   if ( warpedSourceImage.compare("None") != 0 )
     {
-    VectorImageType* ptrI0Orig = ptrImageManager->GetOriginalImageById( uiI0 );
+    const VectorImageType* ptrI0Orig = ptrImageManager->GetOriginalImageById( uiI0 );
     typename VectorImageType::Pointer ptrI0W1 = new VectorImageType( ptrI0Orig );
     // generating warped image (not always written out)
     LDDMMUtilsType::applyMap( ptrMap1, ptrI0Orig, ptrI0W1 );
