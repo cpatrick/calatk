@@ -31,8 +31,8 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 #
 # What to compile
 #
-option(COMPILE_APPLICATIONS ON)
-option(BUILD_DOCUMENTATION ON)
+option(COMPILE_APPLICATIONS "Compile command line applications." ON)
+option(BUILD_DOCUMENTATION  "Build the documentation." OFF)
 
 
 #
