@@ -48,7 +48,7 @@ void CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TState >::S
 {
   // make sure that all we need has already been allocated
 
-  if ( this->m_ptrKernel == NULL )
+  if ( this->m_ptrKernel.GetPointer() == NULL )
     {
     throw std::runtime_error( "Kernel needs to be defined before default objective function can be created." );
     }
@@ -64,7 +64,7 @@ void CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TState >::S
     }
 
   typedef CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState > CMetamorphosisType;
-  CMetamorphosisType* pMetamorphosis = new CMetamorphosisType;
+  typename CMetamorphosisType::Pointer pMetamorphosis = new CMetamorphosisType;
   pMetamorphosis->SetEvolverPointer( this->m_ptrEvolver );
   pMetamorphosis->SetKernelPointer( this->m_ptrKernel );
   pMetamorphosis->SetMetricPointer( this->m_ptrMetric );

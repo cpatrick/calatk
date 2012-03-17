@@ -44,9 +44,6 @@ public:
   typedef itk::SmartPointer< const Self >                        ConstPointer;
 
   /* Some useful typedefs */
-
-  typedef CLDDMMGeodesicShootingObjectiveFunction< TState > Superclass;
-
   typedef typename TState::TFloat T;
 
   typedef typename Superclass::CEnergyValues CEnergyValues;
@@ -87,11 +84,9 @@ protected:
 
   /** Some useful protected typedefs */
 
-  typedef VectorFieldType* VectorFieldPointerType;
-  typedef std::vector< VectorFieldPointerType >* VectorPointerToVectorFieldPointerType;
+  typedef std::vector< typename VectorFieldType::Pointer >* VectorPointerToVectorFieldPointerType;
 
-  typedef VectorImageType* VectorImagePointerType;
-  typedef std::vector< VectorImagePointerType >* VectorPointerToVectorImagePointerType;
+  typedef std::vector< typename VectorImageType::Pointer >* VectorPointerToVectorImagePointerType;
 
   void InitializeDataStructures();
   void InitializeDataStructuresFromState( TState* ptrState );
@@ -104,7 +99,7 @@ protected:
 
   void ComputeImageMomentumForward();
   void ComputeAdjointsBackward();
-  void ComputeVelocityAdjoint(VectorImagePointerType ptrI, VectorImagePointerType ptrP, VectorImagePointerType ptrLambdaI, VectorImagePointerType ptrLambdaP, VectorFieldPointerType LambdaVOut);
+  void ComputeVelocityAdjoint(const VectorImageType * ptrI, const VectorImageType * ptrP, const VectorImageType * ptrLambdaI, const VectorImageType * ptrLambdaP, VectorFieldType * LambdaVOut);
 
   void CreateTimeDiscretization();
 
@@ -115,23 +110,23 @@ protected:
   typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;
 
 private:
-  VectorFieldPointerType m_ptrMapIn; // map for the numerical solution
-  VectorFieldPointerType m_ptrMapOut; // map for the numerical solution
-  VectorFieldPointerType m_ptrMapTmp; // map for the numerical solution
-  VectorFieldPointerType m_ptrMapIdentity; // stores the identity map
-  VectorFieldPointerType m_ptrMapIncremental; // stores the incremental map for the source terms of the adjoint PDEs
+  typename VectorFieldType::Pointer m_ptrMapIn; // map for the numerical solution
+  typename VectorFieldType::Pointer m_ptrMapOut; // map for the numerical solution
+  typename VectorFieldType::Pointer m_ptrMapTmp; // map for the numerical solution
+  typename VectorFieldType::Pointer m_ptrMapIdentity; // stores the identity map
+  typename VectorFieldType::Pointer m_ptrMapIncremental; // stores the incremental map for the source terms of the adjoint PDEs
 
-  VectorImagePointerType m_ptrCurrentAdjointIDifference;
-  VectorImagePointerType m_ptrDeterminantOfJacobian;
+  typename VectorImageType::Pointer m_ptrCurrentAdjointIDifference;
+  typename VectorImageType::Pointer m_ptrDeterminantOfJacobian;
 
   // temporary storage memory managed by this class
-  VectorFieldPointerType m_ptrTmpField;
-  VectorFieldPointerType m_ptrTmpFieldConv;
-  VectorImagePointerType m_ptrTmpScalarImage;
-  VectorImagePointerType m_ptrTmpImage;
+  typename VectorFieldType::Pointer m_ptrTmpField;
+  typename VectorFieldType::Pointer m_ptrTmpFieldConv;
+  typename VectorImageType::Pointer m_ptrTmpScalarImage;
+  typename VectorImageType::Pointer m_ptrTmpImage;
 
-  VectorImagePointerType m_ptrDI;
-  VectorImagePointerType m_ptrDP;
+  typename VectorImageType::Pointer m_ptrDI;
+  typename VectorImageType::Pointer m_ptrDP;
 
   VectorPointerToVectorImagePointerType m_ptrI; // image
   VectorPointerToVectorImagePointerType m_ptrP; // momentum
@@ -140,9 +135,9 @@ private:
   VectorPointerToVectorImagePointerType tstLamI;
   VectorPointerToVectorImagePointerType tstLamP;
 
-  VectorImagePointerType m_ptrCurrentLambdaI; // adjoint 1
-  VectorImagePointerType m_ptrCurrentLambdaP; // adjoint 2
-  VectorFieldPointerType m_ptrCurrentLambdaV; // adjoint 3
+  typename VectorImageType::Pointer m_ptrCurrentLambdaI; // adjoint 1
+  typename VectorImageType::Pointer m_ptrCurrentLambdaP; // adjoint 2
+  typename VectorFieldType::Pointer m_ptrCurrentLambdaV; // adjoint 3
 
   VectorPointerToVectorFieldPointerType m_ptrVelocityField;
 
@@ -162,7 +157,7 @@ private:
   // augmented Lagrangian
   T m_AugmentedLagrangianMu;
 
-  VectorImageType* m_ptrImageLagrangianMultiplier;
+  typename VectorImageType::Pointer m_ptrImageLagrangianMultiplier;
 
 };
 

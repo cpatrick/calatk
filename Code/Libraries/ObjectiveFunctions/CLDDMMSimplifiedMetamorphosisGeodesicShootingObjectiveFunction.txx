@@ -97,7 +97,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::S
 template < class TState >
 void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::CreateNewStateStructures()
 {
-    assert( this->m_ptrState == NULL );
+    assert( this->m_ptrState.GetPointer() == NULL );
     assert( m_vecTimeDiscretization.size() > 1 );
 
     // get the subject ids
@@ -112,8 +112,8 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::C
     // get information from the first image to figure out the dimensions and determine the source and target image
     this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
 
-    VectorImageType* ptrInitialImage = new VectorImageType( pImInfo->pIm );
-    VectorImageType* ptrInitialMomentum = new VectorImageType( pImInfo->pIm );
+    typename VectorImageType::Pointer ptrInitialImage = new VectorImageType( pImInfo->Image );
+    typename VectorImageType::Pointer ptrInitialMomentum = new VectorImageType( pImInfo->Image );
     ptrInitialMomentum->SetToConstant(0);
 
     this->m_ptrState = new TState( ptrInitialImage, ptrInitialMomentum );
@@ -122,7 +122,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::C
 template< class TState >
 void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::ShallowCopyStateStructures( TState* ptrState )
 {
-    assert ( this->m_ptrState == NULL );
+    assert ( this->m_ptrState.GetPointer() == NULL );
 
     VectorImageType* ptrInitialImage = ptrState->GetPointerToInitialImage();
     VectorImageType* ptrInitialMomentum = ptrState->GetPointerToInitialMomentum();
@@ -145,50 +145,50 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState>::Cr
     ImageInformation* pImInfo;
     // get information from the first image to figure out the dimensions and determine the source and target image
     this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
-    ptrI0 = pImInfo->pIm;
+    ptrI0 = pImInfo->Image;
 
     this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 1 );
-    ptrI1 = pImInfo->pIm;
+    ptrI1 = pImInfo->Image;
 
     // create the gradient
-    VectorImageType* ptrI0Gradient = new VectorImageType( pImInfo->pIm );
+    VectorImageType* ptrI0Gradient = new VectorImageType( pImInfo->Image );
     ptrI0Gradient->SetToConstant(0);
 
-    VectorImageType* ptrP0Gradient = new VectorImageType( pImInfo->pIm );
+    VectorImageType* ptrP0Gradient = new VectorImageType( pImInfo->Image );
     ptrP0Gradient->SetToConstant(0);
 
     this->m_ptrGradient = new TState( ptrI0Gradient, ptrP0Gradient );
 
     // storage for the maps
 
-    m_ptrMapIn = new VectorFieldType( pImInfo->pIm );
-    m_ptrMapOut = new VectorFieldType( pImInfo->pIm );
-    m_ptrMapTmp = new VectorFieldType( pImInfo->pIm );
+    m_ptrMapIn = new VectorFieldType( pImInfo->Image );
+    m_ptrMapOut = new VectorFieldType( pImInfo->Image );
+    m_ptrMapTmp = new VectorFieldType( pImInfo->Image );
 
     // storage for the determinant of the Jacobian
-    m_ptrDeterminantOfJacobian = new VectorImageType( pImInfo->pIm, 0.0, 1 );
+    m_ptrDeterminantOfJacobian = new VectorImageType( pImInfo->Image, 0.0, 1 );
 
     // storage for current state
-    m_ptrCurrentI = new VectorImageType( pImInfo->pIm );
-    m_ptrCurrentP = new VectorImageType( pImInfo->pIm );
-    m_ptrCurrentVelocity = new VectorFieldType( pImInfo->pIm );
+    m_ptrCurrentI = new VectorImageType( pImInfo->Image );
+    m_ptrCurrentP = new VectorImageType( pImInfo->Image );
+    m_ptrCurrentVelocity = new VectorFieldType( pImInfo->Image );
 
     // temporary storage
-    m_ptrTmpField = new VectorFieldType( pImInfo->pIm );
-    m_ptrTmpFieldConv = new VectorFieldType( pImInfo->pIm );
+    m_ptrTmpField = new VectorFieldType( pImInfo->Image );
+    m_ptrTmpFieldConv = new VectorFieldType( pImInfo->Image );
 
-    m_ptrTmpImage = new VectorImageType( pImInfo->pIm );
+    m_ptrTmpImage = new VectorImageType( pImInfo->Image );
 
     // storage for the back map and the adjoint
-    m_ptrCurrentBackMap = new VectorFieldType( pImInfo->pIm );
-    m_ptrMapIdentity = new VectorFieldType( pImInfo->pIm );
-    m_ptrMapIncremental = new VectorFieldType( pImInfo->pIm );
+    m_ptrCurrentBackMap = new VectorFieldType( pImInfo->Image );
+    m_ptrMapIdentity = new VectorFieldType( pImInfo->Image );
+    m_ptrMapIncremental = new VectorFieldType( pImInfo->Image );
 
-    m_ptrCurrentFinalAdjoint = new VectorImageType( pImInfo->pIm );
-    m_ptrWarpedFinalToInitialAdjoint = new VectorImageType( pImInfo->pIm );
+    m_ptrCurrentFinalAdjoint = new VectorImageType( pImInfo->Image );
+    m_ptrWarpedFinalToInitialAdjoint = new VectorImageType( pImInfo->Image );
 
     // augmented Lagrangian
-    m_ptrImageLagrangianMultiplier = new VectorImageType( pImInfo->pIm );
+    m_ptrImageLagrangianMultiplier = new VectorImageType( pImInfo->Image );
 
 }
 
@@ -209,7 +209,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::I
 {
   DeleteData();
 
-  assert (this->m_ptrGradient == NULL );
+  assert ( this->m_ptrGradient.GetPointer() == NULL );
 
   CreateTimeDiscretization();
 
@@ -297,7 +297,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::G
   {
     if ( ptrIm != NULL )
     {
-      ptrIm->copy( this->m_ptrState->GetPointerToInitialImage() );
+      ptrIm->Copy( this->m_ptrState->GetPointerToInitialImage() );
     }
     return;
   }
@@ -324,8 +324,8 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::G
   VectorImageType* ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
   VectorImageType* ptrInitialMomentum = this->m_ptrState->GetPointerToInitialMomentum();
 
-  ptrCurrentI->copy( ptrInitialImage );
-  ptrCurrentP->copy( ptrInitialMomentum );
+  ptrCurrentI->Copy( ptrInitialImage );
+  ptrCurrentP->Copy( ptrInitialMomentum );
 
   // first integrate all the way to the start
 
@@ -369,12 +369,12 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::G
     // if output map was initialized then also propagate it for this time interval
     if ( bInitializedMap )
     {
-      ptrMapTmp->copy( ptrMap );
+      ptrMapTmp->Copy( ptrMap );
       LDDMMUtils< T, TState::VImageDimension >::applyMap( ptrMapIncremental, ptrMapTmp, ptrMap );
     }
 
     // add p/rho*dt to I
-    ptrTmpImage->copy( ptrCurrentP );
+    ptrTmpImage->Copy( ptrCurrentP );
     ptrTmpImage->MultiplyByConstant( ( dCurrentDT )/m_Rho );
     ptrTmpImage->AddCellwise( ptrCurrentI );
 
@@ -384,7 +384,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::G
     LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( ptrMapOut, ptrDeterminantOfJacobian );
     ptrCurrentP->MultiplyElementwise( ptrDeterminantOfJacobian );
 
-    ptrMapIn->copy( ptrMapOut );
+    ptrMapIn->Copy( ptrMapOut );
 
     if ( ( m_vecTimeDiscretization[ iI+1 ].dTime > dTimeFrom ) && !bInitializedMap && ( ptrMap!=NULL ) )
     {
@@ -403,7 +403,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::G
 
   if ( ptrIm != NULL )
   {
-    ptrIm->copy( ptrCurrentI );
+    ptrIm->Copy( ptrCurrentI );
   }
 
   std::cout << "Overall time evolved for = " << dTimeEvolvedFor << std::endl;
@@ -413,7 +413,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::G
 template< class TState >
 void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::CreateTimeDiscretization()
 {
-    if ( this->m_ptrImageManager == NULL )
+    if ( this->m_ptrImageManager.GetPointer() == NULL )
     {
       throw std::runtime_error( "ERROR: No image manager specified." );
       return;
@@ -464,8 +464,8 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::C
 
   LDDMMUtils< T, TState::VImageDimension>::identityMap( m_ptrMapIn );
 
-  m_ptrCurrentI->copy( ptrInitialImage );
-  m_ptrCurrentP->copy( ptrInitialMomentum );
+  m_ptrCurrentI->Copy( ptrInitialImage );
+  m_ptrCurrentP->Copy( ptrInitialMomentum );
 
   LDDMMUtils< T, TState::VImageDimension>::identityMap( m_ptrCurrentBackMap );
   LDDMMUtils< T, TState::VImageDimension>::identityMap( m_ptrMapIdentity );
@@ -481,7 +481,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::C
       LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapIncremental, m_ptrMapIn, m_ptrMapOut );
 
       // add p/rho*dt to I
-      m_ptrTmpImage->copy( m_ptrCurrentP );
+      m_ptrTmpImage->Copy( m_ptrCurrentP );
       m_ptrTmpImage->MultiplyByConstant( ( this->m_vecTimeIncrements[ iI ] )/m_Rho );
       m_ptrTmpImage->AddCellwise( m_ptrCurrentI );
 
@@ -491,7 +491,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::C
       LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( m_ptrMapOut, m_ptrDeterminantOfJacobian );
       m_ptrCurrentP->MultiplyElementwise( m_ptrDeterminantOfJacobian );
 
-      m_ptrMapIn->copy( m_ptrMapOut );
+      m_ptrMapIn->Copy( m_ptrMapOut );
 
       // keep track of the backward map
       // negate the velocity field
@@ -500,7 +500,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::C
       // m_ptrMapOut here is the incremental part of the map within this time-step
       this->m_ptrEvolver->SolveForward( m_ptrCurrentVelocity, m_ptrMapIdentity, m_ptrMapIncremental, m_ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
 
-      m_ptrMapTmp->copy( m_ptrCurrentBackMap );
+      m_ptrMapTmp->Copy( m_ptrCurrentBackMap );
       LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapTmp, m_ptrMapIncremental, m_ptrCurrentBackMap );
   }
 
@@ -511,7 +511,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::C
   // the final condition here is: p(1) = r-\mu(I(1)-I_1)
 
   // I_1
-  m_ptrCurrentFinalAdjoint->copy( ptrI1 );
+  m_ptrCurrentFinalAdjoint->Copy( ptrI1 );
   // -I(1)
   m_ptrCurrentFinalAdjoint->AddCellwiseMultiply( m_ptrCurrentI, -1.0 );
   // \mu(I_1-I(1))
@@ -544,7 +544,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::C
   VectorImageType* ptrI0Gradient = this->m_ptrGradient->GetPointerToInitialImage();
   VectorImageType* ptrP0Gradient = this->m_ptrGradient->GetPointerToInitialMomentum();
 
-  ptrP0Gradient->copy( m_ptrWarpedFinalToInitialAdjoint );
+  ptrP0Gradient->Copy( m_ptrWarpedFinalToInitialAdjoint );
   ptrP0Gradient->MultiplyByConstant(-1);
 
   ptrP0Gradient->AddCellwise( ptrInitialMomentum );
@@ -572,7 +572,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::C
   ptrCurrentGradient->SetToConstant( 0 );
 
   // \mu(I_0-I_1)
-  m_ptrTmpImage->copy( ptrI0 );
+  m_ptrTmpImage->Copy( ptrI0 );
   m_ptrTmpImage->AddCellwiseMultiply( ptrI1, -1.0 );
   m_ptrTmpImage->MultiplyByConstant( m_AugmentedLagrangianMu );
 
@@ -616,7 +616,7 @@ CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState>::GetCurr
       VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrInitialMomentum, iD, m_ptrTmpField );
 
       // convolve with kernel, K*(pi\nabla I)
-      m_ptrTmpFieldConv->copy( m_ptrTmpField );
+      m_ptrTmpFieldConv->Copy( m_ptrTmpField );
       this->m_ptrKernel->ConvolveWithKernel( m_ptrTmpFieldConv );
 
       // now we need to compute the inner product
@@ -639,7 +639,7 @@ CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState>::GetCurr
   ComputeImageMomentumForwardAndFinalAdjointWarpedToInitialImage( m_ptrWarpedFinalToInitialAdjoint );
 
   // computing I(1)-I_1
-  m_ptrTmpImage->copy( ptrI1 );
+  m_ptrTmpImage->Copy( ptrI1 );
   m_ptrTmpImage->MultiplyByConstant( -1.0 );
   m_ptrTmpImage->AddCellwise( m_ptrCurrentI );
 
@@ -675,7 +675,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::O
 
   VectorImageType* ptrP0Gradient = this->m_ptrGradient->GetPointerToInitialMomentum();
 
-  ptrP0Gradient->copy( ptrInitialMomentum );
+  ptrP0Gradient->Copy( ptrInitialMomentum );
   ptrP0Gradient->MultiplyByConstant(-1);
 
   ptrP0Gradient->AddCellwise( m_ptrWarpedFinalToInitialAdjoint );
@@ -733,7 +733,7 @@ CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::GetPoi
   ComputeImageMomentumForwardAndFinalAdjointWarpedToInitialImage( m_ptrWarpedFinalToInitialAdjoint );
 
   // computing I(1)-I_1
-  m_ptrTmpImage->copy( ptrI1 );
+  m_ptrTmpImage->Copy( ptrI1 );
   m_ptrTmpImage->MultiplyByConstant( -1.0 );
   m_ptrTmpImage->AddCellwise( m_ptrCurrentI );
 
