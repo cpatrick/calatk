@@ -882,7 +882,7 @@ void GEEestimatesHongtu(double *beta,
         }
       }
     }
-  diff = 0.0;
+  double diff = 0.0;
   dmm = 1;
 
   do
@@ -1795,7 +1795,7 @@ void NEWinbtGEEHongtu(double *outputYYO,
   //float ***varMatrix2;//mn:removed
 
   Nrow = GEEUtilities::ivector_ht(1, nsample);
-  Nrowtotal = 0;
+  int Nrowtotal = 0;
   PBB = GEEUtilities::dmatrix_ht(1, ncov, 1, ncov);
   mimax = 0;
 
@@ -1805,7 +1805,7 @@ void NEWinbtGEEHongtu(double *outputYYO,
     if ( mi[dii] > mimax ) { mimax = mi[dii]; }
     Nrowtotal += Nrow[dii];
     }
-  Nrowmax = mimax * li;
+  int Nrowmax = mimax * li;
 
   NEWinformbtGEEHongtu(PBB, designXX, varMatrix, mi, li, nsample, ncov);
   for ( i = 1; i <= ncov; i++ )
@@ -1959,11 +1959,11 @@ double EstimateAR_rho(double **timeDresidD, int *indxMi, int djj, int N2total)
     xxYmatrix[dii][1] = timeDresidD[dii][1];
     xxYmatrix[dii][2] = timeDresidD[dii][djj + 1];
     }
-  ax = -0.5;
-  bx = 0.0;
-  cx = 0.8;
+  double ax = -0.5;
+  double bx = 0.0;
+  double cx = 0.8;
 //   mnbrakHT(&ax, &cx, &bx, &fa, &fx, &fb,AR1_dim, xxYmatrix, N2total);
-  fa = 1.0e-3;
+  double fa = 1.0e-3;
 
   // fx = goldenHT(ax,  bx,  cx, AR1_dim,  fa, &fb,  xxYmatrix,  N2total);
   GEEUtilities::free_dmatrix_ht(xxYmatrix, 1, N2total, 1, 2);
@@ -2057,7 +2057,6 @@ float NEWScoreMUGEEHongtu(int noRow,
       {
       mimax = mi[dii];
       }
-    Nrowtotal += Nrow[dii];
     }
 
   Nrowmax = mimax * li;
@@ -2222,7 +2221,6 @@ float NEWScoreMUGEEHongtu(int noRow,
       }
     }
 
-  tempvalue = newIVrank1(tempo,  Irank,  noRow, 1.0e-20);
   for ( i = 1; i <= noRow; i++ )
     {
     for ( j = 1; j <= noRow; j++ )
