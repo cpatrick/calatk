@@ -35,10 +35,10 @@ class CStateScalarExample : public CState< T, 0, T >
 {
 public:
   /* Standard class typedefs. */
-  typedef CStateScalarExample                           Self;
-  typedef itk::SmartPointer< Self >                     Pointer;
-  typedef itk::SmartPointer< const Self >               ConstPointer;
-  typedef CState< TState, VImageDimension, TResampler > Superclass;
+  typedef CStateScalarExample              Self;
+  typedef itk::SmartPointer< Self >        Pointer;
+  typedef itk::SmartPointer< const Self >  ConstPointer;
+  typedef CState< T, 0, T >                Superclass;
 
   CStateScalarExample()
   {
