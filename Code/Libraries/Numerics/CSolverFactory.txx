@@ -41,10 +41,28 @@ CSolverFactory< TState >::CreateNewSolver( NumericSolverType solver )
     ptrSolver = new SolverLineSearchConstrainedType;
     break;
   case IpOpt:
+#ifdef USE_IPOPT
     ptrSolver = new SolverIpOptType;
+#else
+    ptrSolver = NULL;
+    std::cerr << "ERROR: Requested IpOpt solver, but not compiled for support of IpOpt." << std::endl;
+#endif
     break;
   case LBFGS:
+#ifdef USE_LBFGS
     ptrSolver = new SolverLBFGSType;
+#else
+    ptrSolver = NULL;
+    std::cerr << "ERROR: Requested LBFGS solver, but not compiled for support of LBFGS." << std::endl;
+#endif
+    break;
+  case NLOPT:
+#ifdef USE_NLOPT
+    ptrSolver = new SolverNLOptType;
+#else
+    ptrSolver = NULL;
+    std::cerr << "ERROR: Requested NLOpt solver, but not compiled for support of NLOpt (and NLOpt is not a recommended solver -- use at your own risk)." << std::endl;
+#endif
     break;
   default:
     std::cout << "Unknown solver type = " << solver << "; defaulting to LineSearchUnconstrained." << std::endl;
@@ -87,6 +105,10 @@ CSolverFactory< TState >::GetSolverTypeFromString( std::string sSolver )
   else if ( sSolverLowerCase == "lbfgs" )
   {
     return LBFGS;
+  }
+  else if ( sSolverLowerCase == "nlopt" )
+  {
+    return NLOPT;
   }
   else
   {

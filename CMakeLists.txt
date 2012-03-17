@@ -3,10 +3,9 @@
 
 cmake_minimum_required(VERSION 2.6)
 
-#IF(COMMAND cmake_policy)
-#  CMAKE_POLICY(SET CMP0003 NEW)
-#ENDIF(COMMAND cmake_policy)
-
+IF(COMMAND cmake_policy)
+  CMAKE_POLICY(SET CMP0012 NEW)
+ENDIF(COMMAND cmake_policy)
 
 PROJECT(CALATK)
 
@@ -27,29 +26,50 @@ ENDIF(Verbose_Compilation)
 SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/bin)
 SET(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
-#
 # What to compile
 #
-OPTION(COMPILE_APPLICATIONS ON)
-OPTION(BUILD_DOCUMENTATION ON)
+option(COMPILE_APPLICATIONS "Compile command line applications." ON)
+option(BUILD_DOCUMENTATION  "Build the documentation." OFF)
 
+# option to use NLOPT as an optimizer
+OPTION(USE_NLOPT "Use NLOpt (not recommended)" OFF)
+IF(USE_NLOPT)
 # So that it finds nlopt
-FIND_LIBRARY(NLOPT_LIB nlopt)
+  FIND_LIBRARY(NLOPT_LIB nlopt)
+  ADD_DEFINITIONS(-DUSE_NLOPT)
+ELSE(USE_NLOPT)
+  SET(NLOPT_LIB "")
+ENDIF(USE_NLOPT)
 
-# Find the Ipopt library and includes
-FIND_PATH(IPOPT_PATH IpoptConfig.h DOC "where IpoptConfig.h is found")
-INCLUDE_DIRECTORIES(${IPOPT_PATH})
-FIND_PATH(IPOPT_LIB_PATH ipopt DOC "path where libipopt is located")
+# option to use LBFGS as an optimizer
+OPTION(USE_LBFGS "Use LBFGS" OFF)
+IF(USE_LBFGS)
+  ADD_DEFINITIONS(-DUSE_LBFGS)
+ENDIF(USE_LBFGS) 
 
-SET(IPOPT_LIBS 
-  ${IPOPT_LIB_PATH}/libcoinlapack.a
-  ${IPOPT_LIB_PATH}/libcoinblas.a
-  ${IPOPT_LIB_PATH}/libcoinasl.a 
-  ${IPOPT_LIB_PATH}/libipopt.a
-  ${IPOPT_LIB_PATH}/libipoptamplinterface.a
-  ${IPOPT_LIB_PATH}/libcoinmumps.a
-  -lgfortran
-)
+# option to use IPOPT as an optimizer
+OPTION(USE_IPOPT "Use IpOpt" OFF)
+IF(USE_IPOPT)
+  # Find the Ipopt library and includes
+  FIND_PATH(IPOPT_PATH IpoptConfig.h DOC "where IpoptConfig.h is found")
+  INCLUDE_DIRECTORIES(${IPOPT_PATH})
+  FIND_PATH(IPOPT_LIB_PATH ipopt DOC "path where libipopt is located")
+
+  SET(IPOPT_LIBS 
+    ${IPOPT_LIB_PATH}/libcoinlapack.a
+    ${IPOPT_LIB_PATH}/libcoinblas.a
+    ${IPOPT_LIB_PATH}/libcoinasl.a 
+    ${IPOPT_LIB_PATH}/libipopt.a
+    ${IPOPT_LIB_PATH}/libipoptamplinterface.a
+    ${IPOPT_LIB_PATH}/libcoinmumps.a
+    -lgfortran
+  )
+  
+  ADD_DEFINITIONS(-DUSE_IPOPT)
+
+ELSE(USE_IPOPT)
+  SET(IPOPT_LIBS "")
+ENDIF(USE_IPOPT)
 
 #
 # Include the fftw path
@@ -105,7 +125,7 @@ IF(USE_BOOST)
 	IF(NOT WIN32 OR CYGWIN)
 	  SET(BOOST_LIBRARIES boost_program_options)
 	ENDIF(NOT WIN32 OR CYGWIN)
-	SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DUSE_BOOST")
+	ADD_DEFINITIONS(-DUSE_BOOST)
 ENDIF(USE_BOOST)
 
 #
@@ -113,7 +133,7 @@ ENDIF(USE_BOOST)
 #
 OPTION(CHOOSE_FLOATING_POINT_TYPE "Choose floating point type on command line." ON)
 IF(CHOOSE_FLOATING_POINT_TYPE)
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DFLOATING_POINT_CHOICE")
+  ADD_DEFINITIONS(-DFLOATING_POINT_CHOICE)
 ENDIF(CHOOSE_FLOATING_POINT_TYPE)
 
 #
@@ -133,12 +153,19 @@ SET(CALATK_INCLUDE_DIRS
   ${CMAKE_SOURCE_DIR}/Code/Libraries/ObjectiveFunctions
   ${CMAKE_SOURCE_DIR}/Code/External/ITKTestingCommands
   ${CMAKE_SOURCE_DIR}/Code/External/jsoncpp
-  ${CMAKE_SOURCE_DIR}/Code/External/libbfgs
-  ${CMAKE_SOURCE_DIR}/Code/External/nlopt-2.2.4/api
   ${CMAKE_BINARY_DIR}
   # Casey's Code
   ${CMAKE_SOURCE_DIR}/Utilities/DTIProcess/Library
 )
+
+IF(USE_NLOPT)
+  INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/Code/External/nlopt-2.2.4/api)
+ENDIF(USE_NLOPT)
+
+IF(USE_LBFGS)
+  INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/Code/External/libbfgs)
+ENDIF(USE_LBFGS)
+
 INCLUDE_DIRECTORIES(${CALATK_INCLUDE_DIRS})
 
 
@@ -197,7 +224,7 @@ set (CPACK_PACKAGE_INSTALL_DIRECTORY "calatk-${CMake_VERSION_MAJOR}.${CMake_VERS
 
 include (CPack)
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DCALATK_VERSION_MAJOR=${CALATK_VERSION_MAJOR} -DCALATK_VERSION_MINOR=${CALATK_VERSION_MINOR}" CACHE INTERNAL "Flags to support versioned json headers")
+ADD_DEFINITIONS(-DCALATK_VERSION_MAJOR=${CALATK_VERSION_MAJOR} -DCALATK_VERSION_MINOR=${CALATK_VERSION_MINOR})
 
 #
 # Go to Code
