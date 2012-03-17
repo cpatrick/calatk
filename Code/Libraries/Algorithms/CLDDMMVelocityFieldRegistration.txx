@@ -110,7 +110,7 @@ const typename CLDDMMVelocityFieldRegistration< TState >::VectorImageType*
 CLDDMMVelocityFieldRegistration< TState >::GetImage( T dTime )
 {
   this->m_ptrObjectiveFunction->GetImage( this->m_ptrIm, dTime );
-  return this->m_ptrIm;
+  return this->m_ptrIm.GetPointer();
 }
 
 template < class TState >
@@ -118,7 +118,7 @@ const typename CLDDMMVelocityFieldRegistration< TState >::VectorImageType*
 CLDDMMVelocityFieldRegistration< TState >::GetInitialImage()
 {
   this->m_ptrObjectiveFunction->GetInitialImage( this->m_ptrIm );
-  return this->m_ptrIm;
+  return this->m_ptrIm.GetPointer();
 }
 
 #endif

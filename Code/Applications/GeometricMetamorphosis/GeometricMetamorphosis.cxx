@@ -40,15 +40,15 @@ int DoIt( int argc, char** argv )
   // define the type of state
   typedef CALATK::CStateSpatioTemporalVelocityField< TFLOAT, VImageDimension > TState;
   // define the registration method based on this state
-  typedef CALATK::CLDDMMGeometricMetamorphosisRegistration< TState > regType;
+  typedef CALATK::CLDDMMGeometricMetamorphosisRegistration< TState > RegistrationType;
 
   typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension > VectorImageUtilsType;
   typedef CALATK::CImageManagerMultiScale< TFLOAT, VImageDimension > ImageManagerMultiScaleType;
   typedef CALATK::LDDMMUtils< TFLOAT, VImageDimension > LDDMMUtilsType;
-  typedef typename regType::VectorFieldType VectorFieldType;
-  typedef typename regType::VectorImageType VectorImageType;
+  typedef typename RegistrationType::VectorFieldType VectorFieldType;
+  typedef typename RegistrationType::VectorImageType VectorImageType;
 
-  regType lddmm;
+  typename RegistrationType::Pointer lddmm = new RegistrationType();
 
   CALATK::CJSONConfiguration configIn( true );
   CALATK::CJSONConfiguration configOut( false );
@@ -64,7 +64,7 @@ int DoIt( int argc, char** argv )
     configIn.InitializeEmptyRoot();
     }
 
-  ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm.GetImageManagerPointer() );
+  ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm->GetImageManagerPointer() );
 
   std::string runCaseType = "run3";
 
@@ -98,12 +98,12 @@ int DoIt( int argc, char** argv )
     ptrImageManager->AddScale( dCurrentScale, iI );
     }
 
-  lddmm.SetAllowHelpComments( bCreateJSONHelp );
-  lddmm.SetAutoConfiguration( *configIn.GetRootPointer(), *configOut.GetRootPointer() );
+  lddmm->SetAllowHelpComments( bCreateJSONHelp );
+  lddmm->SetAutoConfiguration( *configIn.GetRootPointer(), *configOut.GetRootPointer() );
 
   ptrImageManager->print( std::cout );
 
-  lddmm.Solve();
+  lddmm->Solve();
 
   // write out the resulting JSON file if desired
   if ( configFileOut.compare("None") != 0 )
@@ -124,9 +124,9 @@ int DoIt( int argc, char** argv )
   const VectorImageType* ptrT0Orig = ptrImageManager->GetOriginalImageById( uiT0 );
   const VectorImageType* ptrT1Orig = ptrImageManager->GetOriginalImageById( uiT1 );
 
-  typename VectorFieldType::ConstPointer ptrMap1 = new VectorFieldType( lddmm.GetMap( 1.0 ) );
+  typename VectorFieldType::ConstPointer ptrMap1 = new VectorFieldType( lddmm->GetMap( 1.0 ) );
 
-  VectorImageType::Pointer ptrI0W1 = new VectorImageType( ptrI0Orig );
+  typename VectorImageType::Pointer ptrI0W1 = new VectorImageType( ptrI0Orig );
 
   VectorImageUtilsType::writeFileITK( ptrMap1, sourceToTargetMap );
 
@@ -140,19 +140,19 @@ int DoIt( int argc, char** argv )
 
   if ( initialMomentumImage.compare("None") !=0 )
   {
-    const VectorImageType* ptrI0 = lddmm.GetInitialMomentum();
+    const VectorImageType* ptrI0 = lddmm->GetInitialMomentum();
     VectorImageUtilsType::writeFileITK( ptrI0, initialMomentumImage );
   }
 
   if ( bWriteDetailedResults )
     {
-    typename VectorImageType::ConstPointer ptrIm = new VectorImageType( lddmm.GetImage( 1.0 ) );
-    typename VectorImageType::ConstPointer ptrT1 = new VectorImageType( lddmm.GetImageT( 1.0 ) );
-    typename VectorImageType::ConstPointer ptrT2 = new VectorImageType( lddmm.GetImageT( 2.0 ) );
-    typename VectorFieldType::ConstPointer ptrMap0 = new VectorFieldType( lddmm.GetMap( 0.0 ) );
+    typename VectorImageType::ConstPointer ptrIm = new VectorImageType( lddmm->GetImage( 1.0 ) );
+    typename VectorImageType::ConstPointer ptrT1 = new VectorImageType( lddmm->GetImageT( 1.0 ) );
+    typename VectorImageType::ConstPointer ptrT2 = new VectorImageType( lddmm->GetImageT( 2.0 ) );
+    typename VectorFieldType::ConstPointer ptrMap0 = new VectorFieldType( lddmm->GetMap( 0.0 ) );
 
-    typename VectorFieldType::ConstPointer ptrMap2 = new VectorFieldType( lddmm.GetMap( 2.0 ) );
-    typename VectorFieldType::ConstPointer ptrMapFT = new VectorFieldType( lddmm.GetMapFromTo( 1.0, 2.0 ) );
+    typename VectorFieldType::ConstPointer ptrMap2 = new VectorFieldType( lddmm->GetMap( 2.0 ) );
+    typename VectorFieldType::ConstPointer ptrMapFT = new VectorFieldType( lddmm->GetMapFromTo( 1.0, 2.0 ) );
 
     VectorImageUtilsType::writeFileITK( ptrIm, sDetailedResultFilePrefix + "-res-imOut.nrrd" );
     VectorImageUtilsType::writeFileITK( ptrMap0, sDetailedResultFilePrefix + "-res-map0Out.nrrd" );

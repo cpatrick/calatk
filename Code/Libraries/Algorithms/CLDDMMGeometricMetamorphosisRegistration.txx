@@ -77,8 +77,8 @@ template < class TState >
 const typename CLDDMMGeometricMetamorphosisRegistration< TState >::VectorImageType*
 CLDDMMGeometricMetamorphosisRegistration< TState >::GetImageT( T dTime )
 {
-  dynamic_cast< CLDDMMGeometricMetamorphosisObjectiveFunction< TState>* >(this->m_ptrObjectiveFunction)->GetImageT( this->m_ptrIm, dTime );
-  return this->m_ptrIm;
+  dynamic_cast< CLDDMMGeometricMetamorphosisObjectiveFunction< TState>* >(this->m_ptrObjectiveFunction.GetPointer() )->GetImageT( this->m_ptrIm, dTime );
+  return this->m_ptrIm.GetPointer();
 }
 
 template < class TState >
