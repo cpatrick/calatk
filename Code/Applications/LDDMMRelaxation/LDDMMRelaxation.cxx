@@ -41,15 +41,15 @@ int DoIt( int argc, char** argv )
   // define the type of state
   typedef CALATK::CStateSpatioTemporalVelocityField< TFLOAT, VImageDimension > TState;
   // defint the registration method based on this state
-  typedef CALATK::CLDDMMGrowthModelRegistration< TState > regType;
+  typedef CALATK::CLDDMMGrowthModelRegistration< TState > RegistrationType;
 
   typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension > VectorImageUtilsType;
   typedef CALATK::CImageManagerMultiScale< TFLOAT, VImageDimension > ImageManagerMultiScaleType;
   typedef CALATK::LDDMMUtils< TFLOAT, VImageDimension > LDDMMUtilsType;
-  typedef typename regType::VectorImageType VectorImageType;
-  typedef typename regType::VectorFieldType VectorFieldType;
+  typedef typename RegistrationType::VectorImageType VectorImageType;
+  typedef typename RegistrationType::VectorFieldType VectorFieldType;
 
-  typename regType::Pointer lddmm = new regType;
+  typename RegistrationType::Pointer lddmm = new RegistrationType;
 
   CALATK::CJSONConfiguration configIn( true );
   CALATK::CJSONConfiguration configOut( false );
@@ -65,7 +65,7 @@ int DoIt( int argc, char** argv )
     configIn.InitializeEmptyRoot();
     }
 
-  ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm.GetImageManagerPointer() );
+  typename ImageManagerMultiScaleType::Pointer ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm->GetImageManagerPointer() );
 
   unsigned int uiI0 = ptrImageManager->AddImage( sourceImage, 0.0, 0 );
   ptrImageManager->AddImage( targetImage, 1.0, 0 );
@@ -114,7 +114,7 @@ int DoIt( int argc, char** argv )
       }
     }
 
-  VectorFieldType::ConstPointer ptrMap1 = new VectorFieldType( lddmm->GetMap( 1.0 ) );
+  typename VectorFieldType::ConstPointer ptrMap1 = new VectorFieldType( lddmm->GetMap( 1.0 ) );
   VectorImageUtilsType::writeFileITK( ptrMap1, sourceToTargetMap );
 
   if ( warpedSourceImage.compare("None") != 0 )
