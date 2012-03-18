@@ -5,3 +5,4 @@ unreadVariable:*/Code/External/SlicerExecutionModel/ModuleDescriptionParser/Modu
 operatorEqRetRefThis:*/Code/External/SlicerExecutionModel/ModuleDescriptionParser/Module*.cxx
 toomanyconfigs:*/Code/External/jsoncpp/jsoncpp.cpp
 missingInclude:*
+*:*/Code/External/*
