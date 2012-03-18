@@ -38,7 +38,8 @@ IF(COMPILE_APPLICATIONS)
   
     # compile the program
 
-    ADD_EXECUTABLE(${appName} ${CLP}.cxx surallfileM10Y06_MN_JP.cpp pxanalyse_MN.cpp GEEutil_MN.cpp)
+#    ADD_EXECUTABLE(${appName} ${CLP}.cxx surallfileM10Y06_MN_JP.cpp pxanalyse_MN.cpp GEEutil_MN.cpp)
+    ADD_EXECUTABLE(${appName} ${CLP}.cxx surallfileM10Y06_MN_JP.cpp GEEutil_MN.cpp)
     TARGET_LINK_LIBRARIES( ${appName} CALATK ${libraries})
       
   ENDIF(compile_${appName})

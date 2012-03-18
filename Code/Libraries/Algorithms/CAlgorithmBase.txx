@@ -22,6 +22,12 @@
 
 template < class T, unsigned int VImageDimension >
 CAlgorithmBase< T, VImageDimension >::CAlgorithmBase()
+  : m_ConfigIn( true ),
+    m_ConfigOut( false ),
+    m_MainConfigurationFile( "" ),
+    m_bCreateJSONHelp( false ),
+    m_MSSigma( 1 ),
+    m_MSBlurHighestResolutionImage( true )
 {
   this->m_ptrMetric = NULL;
   this->m_ptrImageManager = NULL;
@@ -156,6 +162,132 @@ CAlgorithmBase< T, VImageDimension >::GetMetricPointer()
     this->SetDefaultMetricPointer();
     }
   return this->m_ptrMetric.GetPointer();
+}
+
+template < class T, unsigned int VImageDimension >
+void CAlgorithmBase< T, VImageDimension >::SetConfigurationFile( std::string sFileName )
+{
+  this->m_MainConfigurationFile = sFileName;
+}
+
+template < class T, unsigned int VImageDimension >
+std::string CAlgorithmBase< T, VImageDimension >::GetConfigurationFile()
+{
+  return this->m_MainConfigurationFile;
+}
+
+template < class T, unsigned int VImageDimension >
+void CAlgorithmBase< T, VImageDimension >::ParseMainConfigurationFile()
+{
+  std::string sConfigurationFile = this->GetConfigurationFile();
+
+  m_ConfigOut.InitializeEmptyRoot();
+
+  if ( sConfigurationFile.compare("") != 0 )
+    {
+    bool parsingSuccessful = m_ConfigIn.ReadJSONFile( sConfigurationFile );
+      if ( !parsingSuccessful )
+      {
+        throw std::runtime_error( "Could not parse the configuration file." );
+      }
+    }
+  else
+    {
+    m_ConfigIn.InitializeEmptyRoot();
+    }
+
+  // take care of the mult-resolution setup
+
+  // by default there will be only one scale
+  // which will be overwritten if there is a configuration file available
+
+  m_MSSigma = m_ConfigIn.GetFromKey( "MultiScaleSigmaInVoxels", 1.0 ).asDouble();
+  m_ConfigOut.GetFromKey( "MultiScaleSigmaInVoxels", m_MSSigma ).asDouble();
+  m_MSBlurHighestResolutionImage = m_ConfigIn.GetFromKey( "MultiScaleBlurHighestResolutionImage", true ).asBool();
+  m_ConfigOut.GetFromKey( "MultiScaleBlurHighestResolutionImage", m_MSBlurHighestResolutionImage ).asBool();
+
+  Json::Value& currentConfigurationIn = m_ConfigIn.GetFromKey( "MultiscaleSettings", Json::nullValue );
+  Json::Value& currentConfigurationOut = m_ConfigOut.GetFromKey( "MultiscaleSettings", Json::nullValue );
+
+  unsigned int uiMSNumberOfScales = currentConfigurationIn.size();
+  m_MSScales.clear();
+
+  std::cout << "Detected " << uiMSNumberOfScales << " scales." << std::endl;
+  // find the scales
+  for ( unsigned int iI=0; iI<uiMSNumberOfScales; ++iI )
+    {
+    Json::Value& currentSettings = m_ConfigIn.GetFromIndex( currentConfigurationIn, iI, Json::nullValue );
+    Json::Value& currentScaleSettings = m_ConfigIn.GetFromKey( currentSettings, "Downsample", Json::nullValue );
+    T dCurrentScale = m_ConfigIn.GetFromKey( currentScaleSettings, "Scale", 1 ).asDouble();
+    currentConfigurationOut[ iI ][ "Downsample" ][ "Scale" ] = dCurrentScale;
+    m_MSScales.push_back( dCurrentScale );
+    }
+
+  this->SetAllowHelpComments( m_bCreateJSONHelp );
+
+}
+
+template < class T, unsigned int VImageDimension >
+void CAlgorithmBase< T, VImageDimension >::ExecuteMainConfiguration()
+{
+  this->SetAutoConfiguration( *m_ConfigIn.GetRootPointer(), *m_ConfigOut.GetRootPointer() );
+}
+
+
+template < class T, unsigned int VImageDimension >
+void CAlgorithmBase< T, VImageDimension >::WriteCurrentCleanedConfigurationToJSONFile( std::string sConfigFileOut )
+{
+  m_ConfigOut.WriteCurrentConfigurationToJSONFile( sConfigFileOut, CALATK::GetCALATKJsonHeaderString() + "  -- CLEANED" );
+}
+
+template < class T, unsigned int VImageDimension >
+void CAlgorithmBase< T, VImageDimension >::WriteCurrentCombinedConfigurationToJSONFile( std::string sConfigFileOut )
+{
+  m_ConfigIn.WriteCurrentConfigurationToJSONFile( sConfigFileOut, CALATK::GetCALATKJsonHeaderString() );
+}
+
+template < class T, unsigned int VImageDimension >
+void CAlgorithmBase< T, VImageDimension >::SetAllowJSONHelpComments( bool bCreateJSONHelp )
+{
+  m_bCreateJSONHelp = bCreateJSONHelp;
+}
+
+template < class T, unsigned int VImageDimension >
+bool CAlgorithmBase< T, VImageDimension >::GetAllowJSONHelpComments()
+{
+  return m_bCreateJSONHelp;
+}
+
+template < class T, unsigned int VImageDimension >
+T CAlgorithmBase< T, VImageDimension >::GetMSSigma()
+{
+  return m_MSSigma;
+}
+
+template < class T, unsigned int VImageDimension >
+bool CAlgorithmBase< T, VImageDimension >::GetMSBlurHighestResolutionImage()
+{
+  return m_MSBlurHighestResolutionImage;
+}
+
+template < class T, unsigned int VImageDimension >
+unsigned int CAlgorithmBase< T, VImageDimension >::GetMSNumberOfScales()
+{
+  return m_MSScales.size();
+}
+
+template < class T, unsigned int VImageDimension >
+T CAlgorithmBase< T, VImageDimension >::GetMSScale( unsigned int uiScale )
+{
+  if ( uiScale >= m_MSScales.size() )
+  {
+    throw std::runtime_error( "Tried to access non-existing scale" );
+    return 0;
+  }
+  else
+  {
+  return m_MSScales[ uiScale ];
+  }
 }
 
 #endif

@@ -65,54 +65,13 @@ int DoIt( int argc, char** argv )
     plddmm = new regTypeSimplified;
   }
 
-  CALATK::CJSONConfiguration configIn( true );
-  CALATK::CJSONConfiguration configOut( false );
-  configOut.InitializeEmptyRoot();
-
-  if ( configFile.compare("None") != 0 )
-    {
-    bool parsingSuccessful = configIn.ReadJSONFile( configFile );
-    if ( !parsingSuccessful ) return EXIT_FAILURE;
-    }
-  else
-    {
-    configIn.InitializeEmptyRoot();
-    }
-
   ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( plddmm->GetImageManagerPointer() );
 
   ptrImageManager->AddImage( sourceImage, 0.0, 0 );
   ptrImageManager->AddImage( targetImage, 1.0, 0 );
 
-  // by default there will be only one scale
-  // which will be overwritten if there is a configuration file available
-
-  TFLOAT dSigma = configIn.GetFromKey( "MultiScaleSigmaInVoxels", 1.0 ).asDouble();
-  configOut.GetFromKey( "MultiScaleSigmaInVoxels", dSigma ).asDouble();
-  ptrImageManager->SetSigma( dSigma );
-  bool bBlurHighestResolutionImage = configIn.GetFromKey( "MultiScaleBlurHighestResolutionImage", true ).asBool();
-  configOut.GetFromKey( "MultiScaleBlurHighestResolutionImage", bBlurHighestResolutionImage ).asBool();
-  ptrImageManager->SetBlurHighestResolutionImage( bBlurHighestResolutionImage );
-
-  Json::Value& currentConfigurationIn = configIn.GetFromKey( "MultiscaleSettings", Json::nullValue );
-  Json::Value& currentConfigurationOut = configOut.GetFromKey( "MultiscaleSettings", Json::nullValue );
-
-  std::cout << "Detected " << currentConfigurationIn.size() << " scales." << std::endl;
-  // find the scales
-  for ( unsigned int iI=0; iI<currentConfigurationIn.size(); ++iI )
-    {
-    Json::Value& currentSettings = configIn.GetFromIndex( currentConfigurationIn, iI, Json::nullValue );
-    Json::Value& currentScaleSettings = configIn.GetFromKey( currentSettings, "Downsample", Json::nullValue );
-    TFLOAT dCurrentScale = configIn.GetFromKey( currentScaleSettings, "Scale", 1 ).asDouble();
-    currentConfigurationOut[ iI ][ "Downsample" ][ "Scale" ] = dCurrentScale;
-    ptrImageManager->AddScale( dCurrentScale, iI );
-    }
-
-  plddmm->SetAllowHelpComments( bCreateJSONHelp );
-  plddmm->SetAutoConfiguration( *configIn.GetRootPointer(), *configOut.GetRootPointer() );
-
-  ptrImageManager->print( std::cout );
-
+  plddmm->SetConfigurationFile( configFile );
+  plddmm->SetAllowJSONHelpComments( bCreateJSONHelp );
   plddmm->Solve();
 
   // write out the resulting JSON file if desired
@@ -120,11 +79,11 @@ int DoIt( int argc, char** argv )
     {
       if ( bCleanJSONConfigOutput )
       {
-      configOut.WriteCurrentConfigurationToJSONFile( configFileOut, CALATK::GetCALATKJsonHeaderString() + "  -- CLEANED" );
+        plddmm->WriteCurrentCleanedConfigurationToJSONFile( configFileOut );
       }
       else
       {
-      configIn.WriteCurrentConfigurationToJSONFile( configFileOut, CALATK::GetCALATKJsonHeaderString() );
+        plddmm->WriteCurrentCombinedConfigurationToJSONFile( configFileOut );
       }
     }
 

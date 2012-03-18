@@ -86,7 +86,29 @@ public:
   virtual const VectorFieldType* GetMapFromTo( T dTimeFrom, T dTimeTo ) = 0;
   virtual const VectorImageType* GetImage( T dTime ) = 0;
 
+  void SetAllowJSONHelpComments( bool bCreateJSONHelp );
+  bool GetAllowJSONHelpComments();
+
+  /**
+   * @brief Writes the internal JSON configuration to a file. Will only contain the values that were used (=cleaned JSON file).
+   *
+   * @param sConfigOutputFile : File to write to
+   */
+  void WriteCurrentCleanedConfigurationToJSONFile( std::string sConfigOutputFile );
+
+  /**
+   * @brief Writes the internal JSON configuration to a file. Contains all entries of the input JSON file and new ones that may have been created by the algorithm.
+   *
+   * @param sConfigOutputFile : File to write to
+   */
+  void WriteCurrentCombinedConfigurationToJSONFile( std::string sConfigOutputFile );
+
+  virtual void SetConfigurationFile( std::string sFileName );
+  std::string GetConfigurationFile();
+
 protected:
+
+  void ExecuteMainConfiguration();
 
   virtual void SetDefaultsIfNeeded() = 0;
 
@@ -102,6 +124,28 @@ protected:
 
   typename VectorImageType::Pointer m_ptrIm;
   typename VectorFieldType::Pointer m_ptrMap;
+
+  virtual void ParseMainConfigurationFile();
+
+  CALATK::CJSONConfiguration m_ConfigIn;
+  CALATK::CJSONConfiguration m_ConfigOut;
+
+  // main configuration file
+  std::string m_MainConfigurationFile;
+
+  // to create JSON help in output
+  bool m_bCreateJSONHelp;
+
+  T GetMSSigma();
+  bool GetMSBlurHighestResolutionImage();
+  unsigned int GetMSNumberOfScales();
+  T GetMSScale( unsigned int uiScale );
+
+  // Multi-scale settings for the image-manager
+  std::vector< T > m_MSScales;
+  T m_MSSigma;
+  bool m_MSBlurHighestResolutionImage;
+
 };
 
 #include "CAlgorithmBase.txx"

@@ -23,7 +23,7 @@
 # include "pointdef.h"
 # include <string>
 # include <fstream>
-# include "pxanalyse_MN.h"
+//# include "pxanalyse_MN.h"
 # include <stdlib.h>
 
 //using namespace std;

@@ -21,6 +21,7 @@
 #define C_ALGORITHM_H
 
 #include "CAlgorithmBase.h"
+#include "CImageManagerMultiScale.h"
 
 namespace CALATK
 {
@@ -72,6 +73,7 @@ protected:
 
   virtual void SetDefaultObjectiveFunctionPointer() = 0;
   virtual void SetDefaultSolverPointer() = 0;
+
 };
 
 #include "CAlgorithm.txx"

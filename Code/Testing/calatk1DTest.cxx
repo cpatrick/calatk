@@ -88,47 +88,12 @@ int DoIt(std::string LDDMMType, char* sourceImage, char* targetImage, char* resu
     return EXIT_FAILURE;
   }
 
-  CALATK::CJSONConfiguration configIn( true );
-  CALATK::CJSONConfiguration configOut( false );
-  configOut.InitializeEmptyRoot();
-
-  bool parsingSuccessful = configIn.ReadJSONFile(configFileName);
-  if ( !parsingSuccessful )
-    {
-    configIn.InitializeEmptyRoot();
-    }
-
   ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( plddmm->GetImageManagerPointer() );
 
   ptrImageManager->AddImage( sourceImage, 0.0, 0 );
   ptrImageManager->AddImage( targetImage, 1.0, 0 );
 
-  // by default there will be only one scale
-  // which will be overwritten if there is a configuration file available
-
-  TFLOAT dSigma = configIn.GetFromKey( "MultiScaleSigmaInVoxels", 1.0 ).asDouble();
-  configOut.GetFromKey( "MultiScaleSigmaInVoxels", dSigma ).asDouble();
-  ptrImageManager->SetSigma( dSigma );
-  bool bBlurHighestResolutionImage = configIn.GetFromKey( "MultiScaleBlurHighestResolutionImage", true ).asBool();
-  configOut.GetFromKey( "MultiScaleBlurHighestResolutionImage", bBlurHighestResolutionImage ).asBool();
-  ptrImageManager->SetBlurHighestResolutionImage( bBlurHighestResolutionImage );
-
-  Json::Value& currentConfigurationIn = configIn.GetFromKey( "MultiscaleSettings", Json::nullValue );
-  Json::Value& currentConfigurationOut = configOut.GetFromKey( "MultiscaleSettings", Json::nullValue );
-
-  std::cout << "Detected " << currentConfigurationIn.size() << " scales." << std::endl;
-  // find the scales
-  for ( unsigned int iI=0; iI<currentConfigurationIn.size(); ++iI )
-    {
-    Json::Value& currentSettings = configIn.GetFromIndex( currentConfigurationIn, iI, Json::nullValue );
-    Json::Value& currentScaleSettings = configIn.GetFromKey( currentSettings, "Downsample", Json::nullValue );
-    TFLOAT dCurrentScale = configIn.GetFromKey( currentScaleSettings, "Scale", 1 ).asDouble();
-    currentConfigurationOut[ iI ][ "Downsample" ][ "Scale" ] = dCurrentScale;
-    ptrImageManager->AddScale( dCurrentScale, iI );
-    }
-
-  plddmm->SetAutoConfiguration( *configIn.GetRootPointer(), *configOut.GetRootPointer() );
-
+  plddmm->SetConfigurationFile( configFileName );
   plddmm->Solve();
 
   const typename VectorFieldType::Pointer ptrMap1 = new VectorFieldType( plddmm->GetMap( 1.0 ) );

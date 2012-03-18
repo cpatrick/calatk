@@ -177,9 +177,6 @@ void
 Timer
 ::_ftime( timeb& theTime ) const
 {
-#ifndef DARWIN
-  ftime( &theTime );
-#else
   struct timeval timeVal;
   struct timezone timeZone;
   gettimeofday( &timeVal, &timeZone );
@@ -187,6 +184,5 @@ Timer
   theTime.millitm = timeVal.tv_usec / 1000;
   theTime.timezone = timeZone.tz_minuteswest;
   theTime.dstflag = timeZone.tz_dsttime;
-#endif
 }
 

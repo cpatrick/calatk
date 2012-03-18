@@ -59,14 +59,47 @@ void CAlgorithm< TState >::SetDefaultsIfNeeded()
 template < class TState >
 void CAlgorithm< TState >::Solve()
 {
+  // parse configuration file if one is available
+  this->ParseMainConfigurationFile();
+
   // image manager needs to be specified, so that data can be assigned
   assert( this->m_ptrImageManager.GetPointer() != NULL );
+
+  if ( this->m_ptrImageManager.GetPointer() == NULL )
+  {
+    throw std::runtime_error( "Image manager not initialized. Did you specify input images?" );
+    return;
+  }
+
+  typedef CImageManagerMultiScale< T, TState::VImageDimension > ImageManagerMultiScaleType;
+
+  // fill in multi-scale information if we have it
+  ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( this->m_ptrImageManager.GetPointer() );
+  // check if we have a valid cast
+  if ( ptrImageManager !=0 )
+  {
+    ptrImageManager->SetSigma( this->GetMSSigma() );
+    ptrImageManager->SetBlurHighestResolutionImage( this->GetMSBlurHighestResolutionImage() );
+
+    for ( unsigned int iI=0; iI < this->GetMSNumberOfScales(); ++iI )
+    {
+       ptrImageManager->AddScale( this->GetMSScale( iI ), iI );
+    }
+  }
+  else
+  {
+    std::cout << "INFO: Could not find any multi-resolution information. Using defaults." << std::endl;
+  }
+
+  this->ExecuteMainConfiguration();
+
+  this->m_ptrImageManager->print( std::cout );
+
   this->SetDefaultsIfNeeded();
 
   this->m_ptrSolver->SetObjectiveFunction( this->m_ptrObjectiveFunction );
   this->m_ptrSolver->Solve();
 }
-
 
 template < class TState >
 void CAlgorithm< TState >::SetObjectiveFunction( ObjectiveFunctionType * objectiveFunction )

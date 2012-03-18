@@ -60,6 +60,7 @@ public:
   bool GetAllowHelpComments();
 
 protected:
+
   CJSONConfiguration m_jsonConfigIn;
   CJSONConfiguration m_jsonConfigOut;
 
@@ -69,6 +70,7 @@ private:
 
   // if true help comments will be added to the JSON configuration file
   bool m_AllowHelpComments;
+
 };
 
 } // end namespace

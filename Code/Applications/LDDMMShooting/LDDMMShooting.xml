@@ -3,7 +3,7 @@
 
   <category>Registration</category>
     <title>LDDMM Image-to-Image Registration based on Geodesic Shooting</title>
-    <description>An implementation of Geodesic Shooting</description>
+    <description>An implementation of Geodesic Shooting (legacy, use the generic LDDMM application instead)</description>
     <version>1.0</version>
     <documentation-url></documentation-url>
     <license>Apache 2.0</license>

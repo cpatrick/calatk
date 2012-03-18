@@ -26,7 +26,7 @@
 # include <iostream>
 # include <string>
 # include <fstream>
-# include "pxanalyse_MN.h"
+//# include "pxanalyse_MN.h"
 
 double pythag(double a, double b)
 {
