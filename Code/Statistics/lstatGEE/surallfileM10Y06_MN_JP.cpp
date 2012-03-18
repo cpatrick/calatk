@@ -1795,7 +1795,6 @@ void NEWinbtGEEHongtu(double *outputYYO,
   //float ***varMatrix2;//mn:removed
 
   Nrow = GEEUtilities::ivector_ht(1, nsample);
-  int Nrowtotal = 0;
   PBB = GEEUtilities::dmatrix_ht(1, ncov, 1, ncov);
   mimax = 0;
 
@@ -1803,7 +1802,6 @@ void NEWinbtGEEHongtu(double *outputYYO,
     {
     Nrow[dii] = mi[dii] * li;
     if ( mi[dii] > mimax ) { mimax = mi[dii]; }
-    Nrowtotal += Nrow[dii];
     }
   // int Nrowmax = mimax * li; // unused, MN
 
