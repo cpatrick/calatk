@@ -29,7 +29,7 @@ ModuleLogo::ModuleLogo(const ModuleLogo& logo)
   this->Logo = logo.Logo;
 }
 
-void
+ModuleLogo&
 ModuleLogo::operator=(const ModuleLogo &logo)
 {
   this->Width = logo.Width;
@@ -38,6 +38,8 @@ ModuleLogo::operator=(const ModuleLogo &logo)
   this->BufferLength = logo.BufferLength;
   this->Options = logo.Options;
   this->Logo = logo.Logo;
+
+  return *this;
 }
 
 ModuleLogo::~ModuleLogo()

@@ -27,8 +27,9 @@ CLDDMMVelocityFieldRegistration< TState >::CLDDMMVelocityFieldRegistration()
     DefaultMetric( "SSD" ),
     m_ExternallySetMetric( false )
 {
-  m_Kernel = DefaultKernel;
-  m_Metric = DefaultMetric;
+  this->m_Kernel = DefaultKernel;
+  this->m_Metric = DefaultMetric;
+  this->m_OneStepDefaultEvolver = new OneStepDefaultEvolverType();
 }
 
 template < class TState >
@@ -69,17 +70,17 @@ void CLDDMMVelocityFieldRegistration< TState >::SetDefaultImageManagerPointer()
 template < class TState >
 void CLDDMMVelocityFieldRegistration< TState >::SetDefaultKernelPointer()
 {
-  this->m_ptrKernel = CKernelFactory< T, TState::VImageDimension >::CreateNewKernel( m_Kernel );
+  this->m_ptrKernel = CKernelFactory< T, TState::VImageDimension >::CreateNewKernel( this->m_Kernel );
 }
 
 template < class TState >
 void CLDDMMVelocityFieldRegistration< TState >::SetDefaultEvolverPointer()
 {
   this->m_ptrEvolver = new CStationaryEvolver< T, TState::VImageDimension >;
-  this->m_ptrEvolver->SetOneStepEvolverPointer( &oneStepDefaultEvolver );
-  oneStepDefaultEvolver.SetPrintConfiguration( this->GetPrintConfiguration() );
-  oneStepDefaultEvolver.SetAllowHelpComments( this->GetAllowHelpComments() );
-  oneStepDefaultEvolver.SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
+  this->m_ptrEvolver->SetOneStepEvolverPointer( this->m_OneStepDefaultEvolver );
+  this->m_OneStepDefaultEvolver->SetPrintConfiguration( this->GetPrintConfiguration() );
+  this->m_OneStepDefaultEvolver->SetAllowHelpComments( this->GetAllowHelpComments() );
+  this->m_OneStepDefaultEvolver->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
 }
 
 template < class TState >
@@ -109,7 +110,7 @@ const typename CLDDMMVelocityFieldRegistration< TState >::VectorImageType*
 CLDDMMVelocityFieldRegistration< TState >::GetImage( T dTime )
 {
   this->m_ptrObjectiveFunction->GetImage( this->m_ptrIm, dTime );
-  return this->m_ptrIm;
+  return this->m_ptrIm.GetPointer();
 }
 
 template < class TState >
@@ -117,7 +118,7 @@ const typename CLDDMMVelocityFieldRegistration< TState >::VectorImageType*
 CLDDMMVelocityFieldRegistration< TState >::GetInitialImage()
 {
   this->m_ptrObjectiveFunction->GetInitialImage( this->m_ptrIm );
-  return this->m_ptrIm;
+  return this->m_ptrIm.GetPointer();
 }
 
 #endif

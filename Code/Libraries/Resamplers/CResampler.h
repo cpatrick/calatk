@@ -34,10 +34,14 @@ template <class T, unsigned int VImageDimension=3 >
 class CResampler : public CProcessBase
 {
 public:
+  /** Standard class typedefs. */
+  typedef CResampler                      Self;
+  typedef CProcessBase                    Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
   /* Some useful typedefs */
   typedef VectorImage< T, VImageDimension > VectorImageType;
-  typedef CProcessBase Superclass;
 
   CResampler();
   virtual ~CResampler();
@@ -52,16 +56,15 @@ public:
   virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
 
 protected:
+  typedef  CGaussianKernel< T, VImageDimension > GaussianKernelType;
+  typename GaussianKernelType::Pointer          m_ptrGaussianKernel;
 
-  CGaussianKernel< T, VImageDimension > m_GaussianKernel;
   T m_Sigma;
 
 private:
-
   const T DefaultSigma;
   
   bool m_ExternallySetSigma;
-
 };
 
 #include "CResampler.txx"

@@ -25,7 +25,7 @@
 #include "CProcessBase.h"
 #include "JSONParameterUtils.h"
 
-/** 
+/**
  * Base class for the registration solvers.
  */
 
@@ -36,19 +36,23 @@ template < class TState >
 class CSolver : public CProcessBase
 {
 public:
+  /** Standard class typedefs. */
+  typedef CSolver                         Self;
+  typedef CProcessBase                    Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
   typedef typename TState::TFloat T;
-  typedef CProcessBase Superclass;
 
-  typedef CObjectiveFunction< TState>* ptrObjectiveFunctionType;
+  typedef CObjectiveFunction< TState > ObjectiveFunctionType;
 
-  typedef typename CObjectiveFunction< TState >::CEnergyValues CEnergyValues;
+  typedef typename ObjectiveFunctionType::CEnergyValues CEnergyValues;
 
   CSolver();
   virtual ~CSolver();
 
-  virtual void SetObjectiveFunctionPointer( ptrObjectiveFunctionType pObjectiveFunction );
-  ptrObjectiveFunctionType GetObjectiveFunctionPointer();
+  virtual void SetObjectiveFunction( ObjectiveFunctionType * objectiveFunction );
+  ObjectiveFunctionType * GetObjectiveFunction();
 
   // returns true if optimization was successful (or energy could be reduced)
   virtual bool Solve();
@@ -69,7 +73,7 @@ public:
 
 protected:
 
-  ptrObjectiveFunctionType m_pObjectiveFunction;
+  typename ObjectiveFunctionType::Pointer m_ObjectiveFunction;
   bool m_OutputStateInformation;
   unsigned int m_OutputStateInformationFrequency;
 

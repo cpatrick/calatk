@@ -13,6 +13,13 @@
 ==========================================================================*/
 #include "ModuleProcessInformation.h"
 
+ModuleProcessInformation
+::ModuleProcessInformation()
+{
+  this->ProgressCallbackFunction = NULL;
+  this->ProgressCallbackClientData = NULL;
+  this->Initialize();
+}
 
 std::ostream& operator<<(std::ostream &os, const ModuleProcessInformation &p)
 {

@@ -37,16 +37,16 @@ char *outputDir;
 
 int main(int argc, char *argv[])
 {
-  int    i, j, k, i1, j1, k1, ii, jj, kk, dimX, dimY, dimZ, dii, djj, dkk, dmm;
-  int    num_subjects, num_cov, noRow, num_const;
+  int    i, j, k, ii, jj, kk, dimX, dimY, dimZ, dii, djj, dkk;
+  int    num_subjects, num_cov, noRow;
   int    seed, SEEDY[12], flag;
-  int    Waldbeta,   pointINDX;
+  int    pointINDX;
   int    noiter;
   string tempo;
   FILE * dat2, *dat3;
 
   printf("Please enter the dimension of response NOW\n");
-  scanf("%d", &DimSPD);
+  scanf("%128d", &DimSPD);
   //DimSPD=6;
 
   seed = 17;
@@ -54,21 +54,21 @@ int main(int argc, char *argv[])
   init1(SEEDY);
 
   printf("Please enter No of Subjects NOW\n");
-  scanf("%d", &num_subjects);
+  scanf("%128d", &num_subjects);
   //num_subjects=15;
   printf("No of Subjects is: %d\n", num_subjects);
 
   printf("Please enter the maximum number of time points for all subjects NOW\n");
-  scanf("%d", &NOmaxTIMEs);
+  scanf("%128d", &NOmaxTIMEs);
   printf("The maximum number of time points is: %d\n", NOmaxTIMEs);
 
   printf("Please enter No of Covariates NOW\n");
-  scanf("%d", &num_cov);
+  scanf("%128d", &num_cov);
   //num_cov=3;
   printf("No of Covariates is: %d\n", num_cov);
 
   printf("Please enter dimesions (dimx, dimy, dimz) \n");
-  scanf("%d %d %d", &dimX, &dimY, &dimZ);
+  scanf("%128d %128d %128d", &dimX, &dimY, &dimZ);
   //dimX=128;
   //dimY=104;
   //dimZ=80;
@@ -123,7 +123,7 @@ int main(int argc, char *argv[])
   TotalImg = 0;
   for ( dii = 1; dii <= num_subjects; dii++ )
     {
-    fscanf(dat3, "%d", &allDimTime[dii]);
+    fscanf(dat3, "%128d", &allDimTime[dii]);
     TotalImg += allDimTime[dii];
     printf("%d ", allDimTime[dii]);
     }
@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
     {
     for ( djj = 1; djj <= allDimTime[dii]; djj++ )
       {
-      fscanf(dat3, "%f", &ExactTime[dii][djj]);
+      fscanf(dat3, "%128f", &ExactTime[dii][djj]);
       printf("%f ", ExactTime[dii][djj]);
       }
     }
@@ -167,7 +167,7 @@ int main(int argc, char *argv[])
     {
     for ( djj = 0; djj < num_cov; djj++ )
       {
-      fscanf(dat2, "%f", &x0x[dii][djj]);
+      fscanf(dat2, "%128f", &x0x[dii][djj]);
       }
     }
   fclose(dat2);
@@ -209,7 +209,7 @@ int main(int argc, char *argv[])
 
   printf("\n Enter linear constraints: LL*\beta=R0 \n");
   printf("Enter No of Rows\n");
-  scanf("%d", &noRow);
+  scanf("%128d", &noRow);
   //noRow=2;
   printf("No of Rows is: %d\n", noRow);
 
@@ -263,19 +263,19 @@ int main(int argc, char *argv[])
     {
     for ( djj = 0; djj < DimSPD * num_cov; djj++ )
       {
-      fscanf(dat2, "%f", &RR[dii][djj]);
+      fscanf(dat2, "%128f", &RR[dii][djj]);
       printf("%f", RR[dii][djj]);
       }
     }
   for ( dii = 0; dii < noRow; dii++ )
     {
-    fscanf(dat2, "%f", &rr00[dii]);
+    fscanf(dat2, "%128f", &rr00[dii]);
     printf("%f \n", rr00[dii]);
     }
 
   for ( dii = 0; dii < noRow; dii++ )
     {
-    fscanf(dat2, "%d", &CCID[dii]);
+    fscanf(dat2, "%128d", &CCID[dii]);
     //  printf("\n%d",CCID[dii]);
     CCID[dii] = CCID[dii] - 1;
     midRR[0][CCID[dii]] = 1;
@@ -365,7 +365,7 @@ int main(int argc, char *argv[])
       }
     }
 
-  float ht = DnewIVrank(INRRnewD, Irank, DimSPD * num_cov);
+  //float ht = DnewIVrank(INRRnewD, Irank, DimSPD * num_cov);
   for ( dii = 1; dii <= DimSPD * num_cov; dii++ )
     {
     for ( djj = 1; djj <= DimSPD * num_cov; djj++ )
@@ -379,27 +379,21 @@ int main(int argc, char *argv[])
   //get all the tensors into memory
   printf("\n Please enter the txt file containing image names\n");
   char *fileName = new char[200];
-  scanf("%s", fileName);
+  scanf("%192s", fileName);
 
   anaimagedata headerSrc;
-  int          swapped;
 
   // Marc start
 
   FILE *fp = fopen(fileName, "rt");
-  dmm = 0;
   for ( i = 0; i < TotalImg; i++ )
     {
     char *eachTensorFile = new char[100];
-    fscanf(fp, "%s", eachTensorFile);
+    fscanf(fp, "%100s", eachTensorFile);
     char *name_input_hdr = new char[100];
     char *name_input_img = new char[100];
     sprintf(name_input_hdr, "%s.hdr", eachTensorFile);
     sprintf(name_input_img, "%s.img", eachTensorFile);
-    if ( i == 0 )
-      {
-      swapped = readanahdr(name_input_hdr, &headerSrc);
-      }
     printf("reading %s\n", name_input_img);
     readAnalyzeDTI(name_input_img, dimZ, dimX, dimY, DimSPD, tensors);
     index = 1;
@@ -895,6 +889,9 @@ int main(int argc, char *argv[])
   free_vector_ht(Waldtest, 1, NopointSur);
   free_matrix_ht(x0x, 0, TotalImg - 1, 0, num_cov - 1);
   free_dvector_ht(Yresponse, 1, TotalImg * DimSPD);
+
+  delete[] fileName;
+  delete[] BetaName;
 
   return 1;
 } /* end */

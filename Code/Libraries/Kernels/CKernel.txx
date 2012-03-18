@@ -22,11 +22,9 @@
 
 template <class T, unsigned int VImageDimension >
 CKernel< T, VImageDimension >::CKernel()
-  : m_MemoryWasAllocated( false ),
-    m_KernelsNeedToBeComputed( true ),
+  : m_KernelsNeedToBeComputed( true ),
     m_ptrL( NULL ),
     m_ptrLInv( NULL ),
-    ptrObjectiveFunction( NULL ),
     m_KernelNumber( 0 )
 {
 }
@@ -34,49 +32,24 @@ CKernel< T, VImageDimension >::CKernel()
 template <class T, unsigned int VImageDimension >
 CKernel< T, VImageDimension >::~CKernel()
 {
-  DeallocateMemory();
 }
 
 template <class T, unsigned int VImageDimension >
-void CKernel< T, VImageDimension >::DeallocateMemory()
+void CKernel< T, VImageDimension >::AllocateMemoryForKernelAndInverseKernel( const VectorImageType * inputImage )
 {
-  DeallocateMemoryForKernelAndInverseKernel();
-}
+  unsigned int szX = inputImage->GetSizeX();
+  unsigned int szY = inputImage->GetSizeY();
+  unsigned int szZ = inputImage->GetSizeZ();
 
-
-template <class T, unsigned int VImageDimension >
-void CKernel< T, VImageDimension >::DeallocateMemoryForKernelAndInverseKernel()
-{
-  if ( this->m_ptrL != NULL )
-    {
-    delete this->m_ptrL;
-    this->m_ptrL = NULL;
-    }
-
-  if ( this->m_ptrLInv != NULL )
-    {
-    delete this->m_ptrLInv;
-    this->m_ptrLInv = NULL;
-    }
-
-  this->m_MemoryWasAllocated = false;
-  this->m_KernelsNeedToBeComputed = true;
-
-}
-
-template <class T, unsigned int VImageDimension >
-void CKernel< T, VImageDimension >::AllocateMemoryForKernelAndInverseKernel( VectorImageType* pVecImageGraft )
-{
-
-  unsigned int szX = pVecImageGraft->getSizeX();
-  unsigned int szY = pVecImageGraft->getSizeY();
-  unsigned int szZ = pVecImageGraft->getSizeZ();
-
-  assert( this->m_ptrL == NULL );
-  assert( this->m_ptrLInv == NULL );
+  assert( this->m_ptrL.GetPointer() == NULL );
+  assert( this->m_ptrLInv.GetPointer() == NULL );
 
   switch ( VImageDimension )
     {
+    case 1:
+      this->m_ptrL = new VectorImageType( szX, 1 );
+      this->m_ptrLInv = new VectorImageType( szX, 1 );
+      break;
     case 2:
       this->m_ptrL = new VectorImageType( szX, szY, 1 );
       this->m_ptrLInv = new VectorImageType( szX, szY, 1 );
@@ -91,16 +64,16 @@ void CKernel< T, VImageDimension >::AllocateMemoryForKernelAndInverseKernel( Vec
 }
 
 template <class T, unsigned int VImageDimension >
-void CKernel< T, VImageDimension >::SetObjectiveFunctionPointer( ObjectiveFunctionBaseType* ptrObj )
+void CKernel< T, VImageDimension >::SetObjectiveFunction( ObjectiveFunctionBaseType* ptrObj )
 {
-  ptrObjectiveFunction = ptrObj;
+  this->m_ptrObjectiveFunction = ptrObj;
 }
 
 template <class T, unsigned int VImageDimension >
 typename CKernel< T, VImageDimension >::ObjectiveFunctionBaseType*
-CKernel< T, VImageDimension >::GetObjectiveFunctionPointer()
+CKernel< T, VImageDimension >::GetObjectiveFunction()
 {
-  return ptrObjectiveFunction;
+  return this->m_ptrObjectiveFunction.GetPointer();
 }
 
 template <class T, unsigned int VImageDimension >

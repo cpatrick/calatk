@@ -364,26 +364,23 @@ ModuleFactory
 {
   // Load the module cache information
   this->LoadModuleCache();
-  
+
   // Scan for shared object modules first since they will be higher
   // performance than command line module
-  int numberOfShared, numberOfExecutables, numberOfPeekedExecutables, numberOfPython = 0, numberOfOtherFiles;
 
-  numberOfShared = this->ScanForSharedObjectModules();
-  numberOfPeekedExecutables = this->ScanForCommandLineModulesByPeeking();
-  numberOfExecutables = this->ScanForCommandLineModulesByExecuting();
+  const int numberOfShared = this->ScanForSharedObjectModules();
+  const int numberOfPeekedExecutables = this->ScanForCommandLineModulesByPeeking();
+  const int numberOfExecutables = this->ScanForCommandLineModulesByExecuting();
+  int numberOfPython = 0;
 #ifdef ModuleDescriptionParser_USE_PYTHON
   // Be sure that python is initialized
   Py_Initialize();
-  numberOfPython = this->ScanForPythonModulesByLoading();
+  int numberOfPython = this->ScanForPythonModulesByLoading();
 #endif
 
-  numberOfOtherFiles = this->ScanForNotAModuleFiles();
-  
   // Store the module cache information
   this->SaveModuleCache();
 
-  
   if (numberOfShared + numberOfExecutables + numberOfPeekedExecutables + numberOfPython == 0)
     {
     this->WarningMessage( ("No plugin modules found. Check your module search path and your " + this->Name + " installation.").c_str() );
@@ -528,7 +525,6 @@ ModuleFactory
 
     for ( unsigned int ii=0; ii < directory.GetNumberOfFiles(); ++ii)
       {
-      bool isAPlugin = true;
       const char *filename = directory.GetFile(ii);
       
       // skip any directories
@@ -655,14 +651,13 @@ ModuleFactory
 
                 // Set the target as the entry point to call
                 char entryPointAsText[256];
-                std::string entryPointAsString;
                 std::string lowerName = this->Name;
                 std::transform(lowerName.begin(), lowerName.end(),
                                lowerName.begin(),
                                (int (*)(int))std::tolower);
                 
                 sprintf(entryPointAsText, "%p", entryPoint);
-                entryPointAsString = lowerName + ":" + entryPointAsText;
+                // std::string entryPointAsString = lowerName + ":" + entryPointAsText;
                 // Set the target as "Unknown" and close the
                 // library forcing a lazy evaluation later should this
                 // module be used.
@@ -784,7 +779,6 @@ ModuleFactory
                 // not a plugin, no xml description, close the library
                 itksys::DynamicLoader::CloseLibrary(lib);
 
-                isAPlugin = false;
                 information << filename
                             << " is not a plugin (no XML description)."
                             << std::endl;
@@ -800,7 +794,6 @@ ModuleFactory
               // not a plugin, doesn't have the symbols, close the library
               itksys::DynamicLoader::CloseLibrary(lib);
 
-              isAPlugin = false;
               information << filename
                           << " is not a plugin (no entry points)."
                           << std::endl;
@@ -866,7 +859,6 @@ ModuleFactory
 
     for ( unsigned int ii=0; ii < directory.GetNumberOfFiles(); ++ii)
       {
-      bool isAPlugin = true;
       const char *filename = directory.GetFile(ii);
       
       // skip any directories
@@ -1005,7 +997,6 @@ ModuleFactory
               if (executable != NULL)
                 {
                 // includes the exec with the bare command name
-                std::string newcommand = std::string(executable) + std::string(" ") + commandName;
                 // std::cout << "ScanForCommandLineModulesByExecuting: Setting location to " << executable << ", target to " << newcommand.c_str() << "\n";
                 //module.SetTarget(newcommand);
                 // use location to point to the executable used to run the command in commandName
@@ -1104,18 +1095,15 @@ ModuleFactory
               }
             else
               {
-              isAPlugin = false;
               information << filename << " is not a plugin (did not generate an XML description)." << std::endl;
               }
             }
           else if (result == itksysProcess_State_Expired)
             {
-            isAPlugin = false;
             information << filename << " is not a plugin (timeout exceeded)." << std::endl;
             }
           else
             {
-            isAPlugin = false;
             information << filename << " is not a plugin (did not exit cleanly), command[0] = " << command[0] << ", [1] = " << command[1] << std::endl;
             }
 
@@ -1748,14 +1736,14 @@ ModuleFactory
       // exited with errors
       }
     }
-  else if (result == itksysProcess_State_Expired)
-    {
-    // timeout
-    }
-  else
-    {
-    // did not exit cleanly
-    }
+  //else if (result == itksysProcess_State_Expired)
+    //{
+    //// timeout
+    //}
+  //else
+    //{
+    //// did not exit cleanly
+    //}
   
   // clean up
   itksysProcess_Delete(process);
@@ -2092,7 +2080,7 @@ ModuleFactory
               (const unsigned char *) words[3].c_str(),
               0,
               (unsigned char *) bin,
-              words[3].size());
+              (unsigned long) words[3].size());
             
             entry.XMLDescription =
               std::string((char *)bin, decodedLengthActual) ; 
@@ -2126,7 +2114,7 @@ ModuleFactory
           }
         else
           {
-          if (words.size() > 0)
+          if (!words.empty())
             {
             information << "Invalid cache entry for " << words[0] << std::endl;
             }
@@ -2192,13 +2180,13 @@ ModuleFactory
             
           if ((*cit).second.XMLDescription != "None")
             {
-            int encodedLengthEstimate = 2*(*cit).second.XMLDescription.size();
+            size_t encodedLengthEstimate = 2*(*cit).second.XMLDescription.size();
             encodedLengthEstimate = ((encodedLengthEstimate / 4) + 1) * 4;
 
             char *bin = new char[encodedLengthEstimate];
             int encodedLengthActual = itksysBase64_Encode(
               (const unsigned char *) (*cit).second.XMLDescription.c_str(),
-              (*cit).second.XMLDescription.size(),
+              (unsigned long) (*cit).second.XMLDescription.size(),
               (unsigned char *) bin,
               0);
             std::string encodedDescription(bin, encodedLengthActual);
@@ -2410,7 +2398,7 @@ const char * ModuleFactory::GetExecutableForFileExtension(std::string ext)
   std::map<std::string, std::string>::iterator iter;
   for (iter = this->RegisteredExecutablesForFileExtensions.begin();
        iter != this->RegisteredExecutablesForFileExtensions.end();
-       iter++)
+       ++iter)
     {
     if (ext.compare(iter->first) == 0)
       {

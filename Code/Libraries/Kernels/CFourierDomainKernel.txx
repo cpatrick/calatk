@@ -21,7 +21,8 @@
 #define C_FOURIER_DOMAIN_KERNEL_TXX
 
 template <class T, unsigned int VImageDimension >
-CFourierDomainKernel< T, VImageDimension >::CFourierDomainKernel()
+CFourierDomainKernel< T, VImageDimension >::CFourierDomainKernel():
+  m_MemoryWasAllocated( false )
 {
   fftwData = NULL;
 }
@@ -42,21 +43,24 @@ void CFourierDomainKernel< T, VImageDimension >::DeleteData()
     fftwData = NULL;
     }
 
-   this->m_MemoryWasAllocated = false;
-   this->m_KernelsNeedToBeComputed = true;
+  this->m_ptrL = NULL;
+  this->m_ptrLInv = NULL;
 
+  this->m_MemoryWasAllocated = false;
+  this->m_KernelsNeedToBeComputed = true;
 }
 
 template <class T, unsigned int VImageDimension >
 void CFourierDomainKernel< T, VImageDimension >::DeallocateMemory()
 {
-  Superclass::DeallocateMemory();
-  DeleteData();
+  fftw_cleanup();
+  this->DeleteData();
 }
 
 template <class T, unsigned int VImageDimension >
 CFourierDomainKernel< T, VImageDimension >::~CFourierDomainKernel()
 {
+  fftw_cleanup();
   DeleteData();
 }
 
@@ -84,10 +88,10 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures2D( un
   // Set up the fftw data
   unsigned int numElts = szX*szY;
   fftwData = new CFFTDataType<T>();
-  
-  fftwData->in = (T*) fftw_malloc( sizeof(T) * numElts);
-  fftwData->out = (FFTComplexType*) fftw_malloc( sizeof(FFTComplexType) * numElts);
-  
+
+  fftwData->in = (T*) fftw_malloc( sizeof(T) * numElts );
+  fftwData->out = (FFTComplexType*) fftw_malloc( sizeof(FFTComplexType) * numElts );
+
   fftwData->fwd = CFFTDataType<T>::FFT_plan_dft_r2c_2d(szX, szY, fftwData->in, fftwData->out, FFTW_ESTIMATE);
   fftwData->bck = CFFTDataType<T>::FFT_plan_dft_c2r_2d(szX, szY, fftwData->out, fftwData->in, FFTW_ESTIMATE);
 
@@ -112,9 +116,9 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures3D( un
 template <class T, unsigned int VImageDimension >
 void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures( VectorImageType* pVecIm )
 {
-  unsigned int szX = pVecIm->getSizeX();
-  unsigned int szY = pVecIm->getSizeY();
-  unsigned int szZ = pVecIm->getSizeZ();
+  unsigned int szX = pVecIm->GetSizeX();
+  unsigned int szY = pVecIm->GetSizeY();
+  unsigned int szZ = pVecIm->GetSizeZ();
 
   switch ( VImageDimension )
     {
@@ -164,15 +168,72 @@ T CFourierDomainKernel< T, VImageDimension >::GetFFromIndex( unsigned int iI, un
 }
 
 template <class T, unsigned int VImageDimension >
+void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( VectorImageType1D* pVecImage, VectorImageType1D* pL )
+{
+  assert( pL->GetDimension() == 1 );
+
+  unsigned int szX = pVecImage->GetSizeX();
+
+  unsigned int dim = pVecImage->GetDimension();
+
+// doing the loop the slow way because fftw
+// requires row-major formatting
+
+  for ( unsigned int d = 0; d < dim; ++d )
+    {
+    for ( unsigned int x = 0; x < szX; ++x )
+      {
+      // add to fftw matrix
+      fftwData->in[x] = pVecImage->GetValue(x, d);
+      }
+
+    //
+    // do fourier domain operations
+    //
+
+    // tranform forward
+    CFFTDataType<T>::FFTExecute( fftwData->fwd );
+
+    // TODO: Assumption here is that we have a self-adjoint operator
+    // TODO: need to support complex cases and do it really with the actual adjoint
+  // multiply by L^2
+    for ( unsigned int x = 0; x < szX; ++x )
+      {
+      T lVal = pL->GetValue(x,0);
+
+      fftwData->out[x][0] = fftwData->out[x][0] * lVal;
+      fftwData->out[x][1] = fftwData->out[x][1] * lVal;
+      }
+
+    // transform backward
+    CFFTDataType<T>::FFTExecute( fftwData->bck );
+
+    //
+    // convolve to get result and convert back to our format
+    //
+
+    for ( unsigned int x = 0; x < szX; ++x )
+      {
+
+      // scale the fft results and calculate gradient
+      T val = (fftwData->in[x])/szX;
+
+      pVecImage->SetValue(x,d,val);
+      }
+
+    } // loop over dimension
+}
+
+template <class T, unsigned int VImageDimension >
 void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( VectorImageType2D* pVecImage, VectorImageType2D* pL )
 {
 
-  assert( pL->getDim() == 1 );
+  assert( pL->GetDimension() == 1 );
 
-  unsigned int szX = pVecImage->getSizeX();
-  unsigned int szY = pVecImage->getSizeY();
+  unsigned int szX = pVecImage->GetSizeX();
+  unsigned int szY = pVecImage->GetSizeY();
 
-  unsigned int dim = pVecImage->getDim();
+  unsigned int dim = pVecImage->GetDimension();
 
 // doing the loop the slow way because fftw
 // requires row-major formatting
@@ -185,7 +246,7 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
         { 
         // add to fftw matrix
         unsigned int index = y + (szY * x);
-        fftwData->in[index] = pVecImage->getValue(x,y,d);
+        fftwData->in[index] = pVecImage->GetValue(x,y,d);
         }
       }
       
@@ -205,7 +266,7 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
         {
       
         unsigned int index = y + ((szY/2+1) * x);
-        T lVal = pL->getValue(x,y,0);
+        T lVal = pL->GetValue(x,y,0);
       
         fftwData->out[index][0] = fftwData->out[index][0] * lVal;
         fftwData->out[index][1] = fftwData->out[index][1] * lVal;
@@ -229,7 +290,7 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
         // scale the fft results and calculate gradient
         T val = (fftwData->in[index])/(szX*szY);
       
-        pVecImage->setValue(x,y,d,val);
+        pVecImage->SetValue(x,y,d,val);
         }
       }
 
@@ -240,13 +301,13 @@ template <class T, unsigned int VImageDimension >
 void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( VectorImageType3D* pVecImage, VectorImageType3D* pL )
 {
 
-  assert( pL->getDim() == 1 );
+  assert( pL->GetDimension() == 1 );
 
-  unsigned int szX = pVecImage->getSizeX();
-  unsigned int szY = pVecImage->getSizeY();
-  unsigned int szZ = pVecImage->getSizeZ();
+  unsigned int szX = pVecImage->GetSizeX();
+  unsigned int szY = pVecImage->GetSizeY();
+  unsigned int szZ = pVecImage->GetSizeZ();
 
-  unsigned int dim = pVecImage->getDim();
+  unsigned int dim = pVecImage->GetDimension();
 
   // doing the loop the slow way because fftw
   // requires row-major formatting
@@ -262,7 +323,7 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
           {
           // add to fftw matrix
           unsigned int index = z + szZ * (y + szY*x);
-          fftwData->in[index] = pVecImage->getValue(x,y,z,d);
+          fftwData->in[index] = pVecImage->GetValue(x,y,z,d);
           }
         }
       }
@@ -284,8 +345,8 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
         for ( unsigned int z = 0; z < szZ/2+1; ++z ) 
           {
           unsigned int index = z + (szZ/2+1) * (y + szY*x);
-          T lVal = pL->getValue(x,y,z,0);
-        
+          T lVal = pL->GetValue(x,y,z,0);
+
           fftwData->out[index][0] = fftwData->out[index][0] * lVal;
           fftwData->out[index][1] = fftwData->out[index][1] * lVal;
 
@@ -307,11 +368,11 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
         for (unsigned int z = 0; z < szZ; ++z ) 
           {
           unsigned int index = z + szZ * (y + szY*x);
-        
+
           T val = fftwData->in[index]/(szX*szY*szZ);
-        
-          pVecImage->setValue(x,y,z,d, val);
-        
+
+          pVecImage->SetValue(x,y,z,d, val);
+
           }
         }
       }
@@ -321,58 +382,52 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
 }
 
 template <class T, unsigned int VImageDimension >
-void CFourierDomainKernel< T, VImageDimension >::AllocateMemoryAndComputeKernelsIfNeeded( VectorImageType* pVecImage )
+void CFourierDomainKernel< T, VImageDimension >::AllocateMemoryAndComputeKernelsIfNeeded( VectorImageType* ptrVectorImage )
 {
   if ( !this->m_MemoryWasAllocated )
     {
-    this->AllocateMemoryForKernelAndInverseKernel( pVecImage );
-    AllocateFFTDataStructures( pVecImage );
-    ConfirmMemoryWasAllocated();
+    this->AllocateMemoryForKernelAndInverseKernel( ptrVectorImage );
+    this->AllocateFFTDataStructures( ptrVectorImage );
+    this->m_MemoryWasAllocated = true;
     }
 
   if ( this->m_KernelsNeedToBeComputed )
     {
-    this->ComputeKernelAndInverseKernel( pVecImage );
-    ConfirmKernelsWereComputed();
+    this->ComputeKernelAndInverseKernel( ptrVectorImage );
+    this->ConfirmKernelsWereComputed();
     }
 
-  assert( this->m_ptrL != NULL );
+  assert( this->m_ptrL.GetPointer() != NULL );
 
-  if ( pVecImage->getSizeX() != this->m_ptrL->getSizeX() ||
-       pVecImage->getSizeY() != this->m_ptrL->getSizeY() ||
-       pVecImage->getSizeZ() != this->m_ptrL->getSizeZ() )
+  if ( ptrVectorImage->GetSizeX() != this->m_ptrL->GetSizeX() ||
+       ptrVectorImage->GetSizeY() != this->m_ptrL->GetSizeY() ||
+       ptrVectorImage->GetSizeZ() != this->m_ptrL->GetSizeZ() )
     {
     throw std::runtime_error( "Kernel incompatible with velocity field size.");
     }
 
-  assert( this->m_ptrLInv != NULL );
+  assert( this->m_ptrLInv.GetPointer() != NULL );
   
-  if ( pVecImage->getSizeX() != this->m_ptrLInv->getSizeX() ||
-       pVecImage->getSizeY() != this->m_ptrLInv->getSizeY() ||
-       pVecImage->getSizeZ() != this->m_ptrLInv->getSizeZ() )
+  if ( ptrVectorImage->GetSizeX() != this->m_ptrLInv->GetSizeX() ||
+       ptrVectorImage->GetSizeY() != this->m_ptrLInv->GetSizeY() ||
+       ptrVectorImage->GetSizeZ() != this->m_ptrLInv->GetSizeZ() )
     {
     throw std::runtime_error( "Kernel incompatible with velocity field size.");
     }
 }
 
 template <class T, unsigned int VImageDimension >
-void CFourierDomainKernel< T, VImageDimension >::ConvolveWithKernel( VectorImageType* pVecImage )
+void CFourierDomainKernel< T, VImageDimension >::ConvolveWithKernel( VectorImageType* ptrVectorImage )
 {
-  AllocateMemoryAndComputeKernelsIfNeeded( pVecImage );
-  ConvolveInFourierDomain( pVecImage, this->m_ptrL );
+  AllocateMemoryAndComputeKernelsIfNeeded( ptrVectorImage );
+  ConvolveInFourierDomain( ptrVectorImage, this->m_ptrL );
 }
 
 template <class T, unsigned int VImageDimension >
-void CFourierDomainKernel< T, VImageDimension >::ConvolveWithInverseKernel( VectorImageType* pVecImage )
+void CFourierDomainKernel< T, VImageDimension >::ConvolveWithInverseKernel( VectorImageType* ptrVectorImage )
 {
-  AllocateMemoryAndComputeKernelsIfNeeded( pVecImage );
-  ConvolveInFourierDomain( pVecImage, this->m_ptrLInv );
-}
-
-template <class T, unsigned int VImageDimension >
-void CFourierDomainKernel< T, VImageDimension >::ConfirmMemoryWasAllocated()
-{
-  this->m_MemoryWasAllocated = true;
+  AllocateMemoryAndComputeKernelsIfNeeded( ptrVectorImage );
+  ConvolveInFourierDomain( ptrVectorImage, this->m_ptrLInv );
 }
 
 template <class T, unsigned int VImageDimension >

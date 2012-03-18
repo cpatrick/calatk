@@ -37,8 +37,13 @@ class CLDDMMGenericRegistration
     : public CLDDMMVelocityFieldWithMomentumRegistration< TState >
 {
 public:
-  /* some useful typedefs */
+  /** Standard class typedefs. */
+  typedef CLDDMMGenericRegistration                             Self;
   typedef CLDDMMVelocityFieldWithMomentumRegistration< TState > Superclass;
+  typedef itk::SmartPointer< Self >                             Pointer;
+  typedef itk::SmartPointer< const Self >                       ConstPointer;
+
+  /* some useful typedefs */
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 

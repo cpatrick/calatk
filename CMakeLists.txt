@@ -7,25 +7,28 @@ IF(COMMAND cmake_policy)
   CMAKE_POLICY(SET CMP0012 NEW)
 ENDIF(COMMAND cmake_policy)
 
-PROJECT(CALATK)
+
+project(CALATK)
 
 # Version setup
-SET(CALATK_VERSION_MAJOR "0")
-SET(CALATK_VERSION_MINOR "1")
+set(CALATK_VERSION_MAJOR "0")
+set(CALATK_VERSION_MINOR "1")
 
-MARK_AS_ADVANCED(Verbose_Compilation)
-OPTION(Verbose_Compilation OFF)
-IF(Verbose_Compilation)
-  SET(CMAKE_VERBOSE_MAKEFILE ON)
-ENDIF(Verbose_Compilation)
+mark_as_advanced(Verbose_Compilation)
+option(Verbose_Compilation OFF)
+if(Verbose_Compilation)
+  set(CMAKE_VERBOSE_MAKEFILE ON)
+endif(Verbose_Compilation)
 
 #
 # Output path
 #
 
-SET(EXECUTABLE_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/bin)
-SET(LIBRARY_OUTPUT_PATH ${CMAKE_CURRENT_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 
+#
 # What to compile
 #
 option(COMPILE_APPLICATIONS "Compile command line applications." ON)
@@ -82,43 +85,50 @@ FIND_LIBRARY(FFTWF_LIB fftw3f)
 #
 # Find ITK (used for file IO)
 #
-FIND_PACKAGE(ITK REQUIRED)
-IF(ITK_FOUND)
-  INCLUDE(${ITK_USE_FILE})
+find_package(ITK REQUIRED)
+if(ITK_FOUND)
+  include(${ITK_USE_FILE})
 ELSE(ITK_FOUND)
   MESSAGE(FATAL_ERROR "ITK not found. Please set ITK_DIR.")
-ENDIF(ITK_FOUND)
+endif(ITK_FOUND)
+
+#
+# Shared libraries do not link correctly yet on Windows.
+#
+if(WIN32)
+  set(BUILD_SHARED_LIBS OFF)
+endif()
 
 #
 # Configure calatkConfigure.h.in
 #
-SET(CALATK_SYSTEM_UNIX ${UNIX})
-SET(CALATK_SYSTEM_WINDOWS ${WIN32})
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/calatkConfigure.h.in ${CMAKE_BINARY_DIR}/calatkConfigure.h)
+set(CALATK_SYSTEM_UNIX ${UNIX})
+set(CALATK_SYSTEM_WINDOWS ${WIN32})
+configure_file(${CMAKE_SOURCE_DIR}/calatkConfigure.h.in ${CMAKE_BINARY_DIR}/calatkConfigure.h)
 
 #
 # Add OpenMP flag
 #
 if(WIN32)
   if(CMAKE_GENERATOR MATCHES Visual* )
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" CACHE INTERNAL "Add custom c++ flag for openMP")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" CACHE INTERNAL "Add custom c++ flag for openMP")
   else()
-    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" CACHE INTERNAL "Add custom c++ flag for openMP")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" CACHE INTERNAL "Add custom c++ flag for openMP")
   endif()
 else()
-  SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp" CACHE INTERNAL "Add custom c++ flag for openMP")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp" CACHE INTERNAL "Add custom c++ flag for openMP")
 endif()
 
 #
 # Allow for boost support for some of the libraries (this is optional)
 # 
-OPTION(USE_BOOST "Use boost." OFF)
-IF(USE_BOOST)
+option(USE_BOOST "Use boost." OFF)
+if(USE_BOOST)
 	FIND_PATH(BOOST_INCLUDE_DIR boost/config.hpp)
 	FIND_PATH(BOOST_LIBRARY_DIR boost_date_time-vc71-mt.lib)
 	
 	LINK_DIRECTORIES(${BOOST_LIBRARY_DIR})
-	INCLUDE_DIRECTORIES(${BOOST_INCLUDE_DIR})
+	include_directories(${BOOST_INCLUDE_DIR})
 
 	# Win32 has automatic linking of boost libraries so only add boost
 	# libaries on unix
@@ -172,38 +182,38 @@ INCLUDE_DIRECTORIES(${CALATK_INCLUDE_DIRS})
 #
 # Configure CALATKConfig.cmake.in and UseCALATK.cmake.in for external projects
 #
-SET(CALATK_INCLUDE_DIRS_CONFIG ${CALATK_INCLUDE_DIRS} ${ITK_INCLUDE_DIRS})
-SET(CALATK_LIBRARY_DIRS_CONFIG ${LIBRARY_OUTPUT_PATH} ${ITK_LIBRARY_DIRS})
-SET(CALATK_USE_FILE ${CMAKE_BINARY_DIR}/UseCALATK.cmake)
+set(CALATK_INCLUDE_DIRS_CONFIG ${CALATK_INCLUDE_DIRS} ${ITK_INCLUDE_DIRS})
+set(CALATK_LIBRARY_DIRS_CONFIG ${CMAKE_LIBRARY_OUTPUT_DIRECTORY} ${ITK_LIBRARY_DIRS})
+set(CALATK_USE_FILE ${CMAKE_BINARY_DIR}/UseCALATK.cmake)
 
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/UseCALATK.cmake.in
+configure_file(${CMAKE_SOURCE_DIR}/UseCALATK.cmake.in
                ${CALATK_USE_FILE} COPYONLY IMMEDIATE)
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/CALATKConfig.cmake.in
+configure_file(${CMAKE_SOURCE_DIR}/CALATKConfig.cmake.in
                ${CMAKE_BINARY_DIR}/CALATKConfig.cmake)
 
 
 #
 # Create the documentation
 #
-IF(BUILD_DOCUMENTATION)
-  
-  #INCLUDE( ${CMAKE_ROOT}/Modules/FindDoxygen.cmake)
-  #CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
+if(BUILD_DOCUMENTATION)
+  #include( ${CMAKE_ROOT}/Modules/FindDoxygen.cmake)
+  #configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
   #         ${CMAKE_CURRENT_SOURCE_DIR}/documents
   #         @ONLY IMMEDIATE)
   
-  FIND_PACKAGE(Doxygen)
-  IF(DOXYGEN_FOUND)
-    CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/Doxyfile.in ${CMAKE_BINARY_DIR}/Doxyfile)
+  find_package(Doxygen)
+  if(DOXYGEN_FOUND)
+    configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.in ${CMAKE_BINARY_DIR}/Doxyfile)
     ADD_CUSTOM_TARGET(doc doxygen ${CMAKE_BINARY_DIR}/Doxyfile)
-  ENDIF(DOXYGEN_FOUND)   
-
-  
-ENDIF(BUILD_DOCUMENTATION)
+  endif(DOXYGEN_FOUND)
+endif(BUILD_DOCUMENTATION)
 
 # Set up for testing
 enable_testing()
 include (CTest)
+
+# For Cppcheck.
+set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CALATK_SOURCE_DIR}/Scripts/Cppcheck" )
 
 # Build a CPack driven installer package
 include (InstallRequiredSystemLibraries)
@@ -229,5 +239,11 @@ ADD_DEFINITIONS(-DCALATK_VERSION_MAJOR=${CALATK_VERSION_MAJOR} -DCALATK_VERSION_
 #
 # Go to Code
 #
-ADD_SUBDIRECTORY(${CMAKE_SOURCE_DIR}/Code)
+add_subdirectory(${CMAKE_SOURCE_DIR}/Code)
+
+#
+# Configure CTestCustom.cmake.in
+#
+configure_file(${CALATK_SOURCE_DIR}/Scripts/CTestCustom.cmake.in
+  ${CALATK_BINARY_DIR}/CTestCustom.cmake)
 

@@ -59,7 +59,7 @@ int main(int argc, char **argv)
   typedef CALATK::VectorImage< TFLOAT, DIMENSION > VectorImageType;
 
   typedef CALATK::CImageManagerMultiScale< TFLOAT, DIMENSION > ImageManagerMultiScaleType;
-  typedef CALATK::CImageManagerMultiScale< TFLOAT, DIMENSION >::SImageInformation SImageInformation;
+  typedef CALATK::CImageManagerMultiScale< TFLOAT, DIMENSION >::ImageInformation ImageInformation;
   
   CALATK::CImageManagerMultiScale<TFLOAT,DIMENSION> imageManager;
 
@@ -68,30 +68,30 @@ int main(int argc, char **argv)
   imageManager.AddScale( 0.5, 1 );
   imageManager.AddScale( 0.25, 2 );
 
-  SImageInformation* pImInfo;
+  ImageInformation* pImInfo;
 
   imageManager.SelectScale( 0 );
   imageManager.GetPointerToSubjectImageInformationByIndex( pImInfo, 0, 0 );
-  VectorImageUtilsType::writeFileITK( pImInfo->pIm, "im-scale-0.nrrd" );
+  VectorImageUtilsType::writeFileITK( pImInfo->Image, "im-scale-0.nrrd" );
 
   imageManager.SelectScale( 1 );
   imageManager.GetPointerToSubjectImageInformationByIndex( pImInfo, 0, 0 );
-  VectorImageUtilsType::writeFileITK( pImInfo->pIm, "im-scale-1.nrrd" );
+  VectorImageUtilsType::writeFileITK( pImInfo->Image, "im-scale-1.nrrd" );
 
   imageManager.SelectScale( 2 );
   imageManager.GetPointerToSubjectImageInformationByIndex( pImInfo, 0, 0 );
-  VectorImageUtilsType::writeFileITK( pImInfo->pIm, "im-scale-2.nrrd" );
+  VectorImageUtilsType::writeFileITK( pImInfo->Image, "im-scale-2.nrrd" );
 
-  VectorImageType* pIm = VectorImageUtilsType::readFileITK( "I0_short.nhdr" );
-  VectorImageType* pImBlurred = new VectorImageType( pIm );
+  VectorImageType::Pointer image = VectorImageUtilsType::readFileITK( "I0_short.nhdr" );
+  VectorImageType::Pointer imageBlurred = new VectorImageType( image );
 
   typedef CALATK::CGaussianKernel< TFLOAT, DIMENSION > GaussianKernelType;
   GaussianKernelType gaussianKernel;
 
   gaussianKernel.SetSigma( 0.1 );
-  gaussianKernel.ConvolveWithKernel( pImBlurred );
+  gaussianKernel.ConvolveWithKernel( imageBlurred );
 
-  VectorImageUtilsType::writeFileITK( pImBlurred, "imBlurred.nrrd" );
+  VectorImageUtilsType::writeFileITK( imageBlurred, "imBlurred.nrrd" );
   VectorImageUtilsType::writeFileITK( gaussianKernel.GetKernel(), "imKernel.nrrd" );
 
   return EXIT_SUCCESS;

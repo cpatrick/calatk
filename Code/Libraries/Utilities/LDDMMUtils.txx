@@ -196,7 +196,7 @@ unsigned int LDDMMUtils< T, VImageDimension >::DetermineTimeSeriesTimePointData(
       {
       // if there is a multiple measurement
       unsigned int uiLast = vecTimePointData.size()-1;
-      vecTimePointData[ uiLast ].vecMeasurementImages.push_back( (*iter)->pIm );
+      vecTimePointData[ uiLast ].vecMeasurementImages.push_back( (*iter)->Image );
       vecTimePointData[ uiLast ].vecMeasurementTransforms.push_back( (*iter)->pTransform );
       }
     else
@@ -205,7 +205,7 @@ unsigned int LDDMMUtils< T, VImageDimension >::DetermineTimeSeriesTimePointData(
       STimePoint timePoint;
       timePoint.bIsMeasurementPoint = true; // all of them are measurements
       timePoint.dTime = (*iter)->timepoint;
-      timePoint.vecMeasurementImages.push_back( (*iter)->pIm );
+      timePoint.vecMeasurementImages.push_back( (*iter)->Image );
       timePoint.vecMeasurementTransforms.push_back( (*iter)->pTransform );
 
       vecTimePointData.push_back( timePoint );
@@ -230,7 +230,7 @@ void LDDMMUtils< T, VImageDimension >::GetMapFromToFromSpatioTemporalVelocityFie
     T dTimeFrom,
     T dTimeTo,
     const std::vector< STimePoint >& vecTimeDiscretization,
-    const std::vector< VectorFieldType* >* ptrSpatioTemporalVelocityField,
+    ConstVectorPointerToVectorFieldPointerType ptrSpatioTemporalVelocityField,
     EvolverType* ptrEvolver )
 {
   assert( dTimeTo >= dTimeFrom );
@@ -245,8 +245,8 @@ void LDDMMUtils< T, VImageDimension >::GetMapFromToFromSpatioTemporalVelocityFie
   VectorFieldType* ptrMapOut = ptrMap;
 
   // create two additional maps to hold the solution
-  VectorFieldType* ptrMapIn = new VectorFieldType( ptrMap );
-  VectorFieldType* ptrMapTmp = new VectorFieldType( ptrMap );
+  typename VectorFieldType::Pointer ptrMapIn = new VectorFieldType( ptrMap );
+  typename VectorFieldType::Pointer ptrMapTmp = new VectorFieldType( ptrMap );
 
   // get the map between two time points
   LDDMMUtils< T, VImageDimension >::identityMap( ptrMapIn );
@@ -269,7 +269,7 @@ void LDDMMUtils< T, VImageDimension >::GetMapFromToFromSpatioTemporalVelocityFie
         std::cout << "partially evolve for " << dTimeFrom - dCurrentTime << std::endl;
         ptrEvolver->SolveForward( (*ptrSpatioTemporalVelocityField)[ iI ], ptrMapIn, ptrMapOut, ptrMapTmp, dTimeFrom-dCurrentTime );
         // for next step, copy
-        ptrMapIn->copy( ptrMapOut );
+        ptrMapIn->Copy( ptrMapOut );
         uiStart = iI+1;
         dCurrentTime += dCurrentDT;
         break;
@@ -309,13 +309,8 @@ void LDDMMUtils< T, VImageDimension >::GetMapFromToFromSpatioTemporalVelocityFie
       break;
       }
     // for next step, copy
-    ptrMapIn->copy( ptrMapOut );
+    ptrMapIn->Copy( ptrMapOut );
     }
-
-  // get rid of the temporary memory
-  delete ptrMapIn;
-  delete ptrMapTmp;
-
 }
 
 #endif

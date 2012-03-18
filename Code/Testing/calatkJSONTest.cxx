@@ -53,7 +53,7 @@ int main( int argc, char* argv[] )
   std::cout << valMultiScale;
 
   Json::Value& valObj = config.GetFromKey( "ObjectiveFunction", Json::nullValue );
-  
+
   valObj[0]["test"]=1;
   valObj[1]["test"]=2;
 
@@ -66,7 +66,7 @@ int main( int argc, char* argv[] )
 
   CALATK::CJSONConfiguration subConfig;
   subConfig.SetRootReference( valObj );
-  
+
   std::cout << "SubConfig = " << std::endl;
   std::cout << *subConfig.GetRootPointer();
 

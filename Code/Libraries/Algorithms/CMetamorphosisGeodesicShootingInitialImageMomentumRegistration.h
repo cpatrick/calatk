@@ -25,7 +25,6 @@
 #include "CLDDMMVelocityFieldWithMomentumRegistration.h"
 #include "CStateInitialImageMomentum.h"
 #include "CGaussianKernel.h"
-#include "CMetricSSD.h"
 #include "COneStepEvolverSemiLagrangianAdvection.h"
 #include "CStationaryEvolver.h"
 #include "CImageManagerMultiScale.h"
@@ -45,9 +44,13 @@ class CMetamorphosisGeodesicShootingInitialImageMomentumRegistration
     : public CLDDMMVelocityFieldWithMomentumRegistration< TState >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CMetamorphosisGeodesicShootingInitialImageMomentumRegistration  Self;
+  typedef CLDDMMVelocityFieldWithMomentumRegistration< TState >           Superclass;
+  typedef itk::SmartPointer< Self >                                       Pointer;
+  typedef itk::SmartPointer< const Self >                                 ConstPointer;
 
   /* some useful typedefs */
-  typedef CLDDMMVelocityFieldWithMomentumRegistration< TState > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 
@@ -55,15 +58,12 @@ public:
   ~CMetamorphosisGeodesicShootingInitialImageMomentumRegistration();
 
 protected:
-
   virtual void SetDefaultSolverPointer();
   virtual void SetDefaultObjectiveFunctionPointer();
-
-private:
 };
 
-#include "CMetamorphosisGeodesicShootingInitialImageMomentumRegistration.txx"
-
 } // end namespace
+
+#include "CMetamorphosisGeodesicShootingInitialImageMomentumRegistration.txx"
 
 #endif // C_METAMORPHOSIS_GEODESIC_SHOOTING_INITIAL_IMAGE_MOMENTUM_REGISTRATION_H

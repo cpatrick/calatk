@@ -34,6 +34,18 @@ int main(int argc, char **argv)
   // create a 2D vector array
   CALATK::VectorArray< double, 2 > array2D(10,10,1);
 
+  //
+  // Test 1D
+  //
+
+  // create a 1D vector array
+  CALATK::VectorArray< double, 1 > array1D(10,1);
+
+  // create a 1D image
+  CALATK::VectorImage< int, 1> image(10,1);
+  
+  // create a 1D image
+  CALATK::VectorField< char, 1> field(2);
 
   return EXIT_SUCCESS;
   // return EXIT_FAILURE;

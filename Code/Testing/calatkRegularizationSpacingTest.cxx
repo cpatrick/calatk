@@ -49,64 +49,63 @@ int DoIt( int argc, char* argv[] )
     // define the type of state
     typedef CALATK::CStateSpatioTemporalVelocityField< TFLOAT, VImageDimension > TState;
     // define the registration method based on this state
-    typedef CALATK::CLDDMMGrowthModelRegistration< TState > regType;
+    typedef CALATK::CLDDMMGrowthModelRegistration< TState > RegistrationType;
 
     typedef CALATK::CImageManagerMultiScale< TFLOAT, VImageDimension > ImageManagerMultiScaleType;
-    typedef typename regType::VectorImageType VectorImageType;
-    typedef typename regType::VectorFieldType VectorFieldType;
-    typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension > VectorImageUtilsType;
-    typedef CALATK::LDDMMUtils< TFLOAT, VImageDimension > LDDMMUtilsType;
+    typedef typename RegistrationType::VectorImageType                          VectorImageType;
+    typedef typename RegistrationType::VectorFieldType                          VectorFieldType;
+    typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension >        VectorImageUtilsType;
+    typedef CALATK::LDDMMUtils< TFLOAT, VImageDimension >              LDDMMUtilsType;
 
-    regType lddmm;
+    typename RegistrationType::Pointer lddmm = new RegistrationType;
 
     // if registered externally, those images get automatically deallocated by the image manager
-    VectorImageType *pIm0 = VectorImageUtilsType::readFileITK( sourceImage );
-    VectorImageType *pIm1 = VectorImageUtilsType::readFileITK( targetImage );
+    typename VectorImageType::Pointer pIm0 = VectorImageUtilsType::readFileITK( sourceImage );
+    typename VectorImageType::Pointer pIm1 = VectorImageUtilsType::readFileITK( targetImage );
 
     // now artificially change the spacing
-    pIm0->setSpaceX( spacingFactor*pIm0->getSpaceX() );
-    pIm0->setSpaceY( spacingFactor*pIm0->getSpaceY() );
+    pIm0->SetSpacingX( spacingFactor*pIm0->GetSpacingX() );
 
-    pIm1->setSpaceX( spacingFactor*pIm1->getSpaceX() );
-    pIm1->setSpaceY( spacingFactor*pIm1->getSpaceY() );
+    pIm1->SetSpacingX( spacingFactor*pIm1->GetSpacingX() );
 
-    if ( VImageDimension==3 )
+    if ( VImageDimension==2 )
     {
-        pIm0->setSpaceZ( spacingFactor*pIm0->getSpaceZ() );
-        pIm1->setSpaceZ( spacingFactor*pIm1->getSpaceZ() );
+        pIm0->SetSpacingY( spacingFactor*pIm0->GetSpacingY() );
+        pIm1->SetSpacingY( spacingFactor*pIm1->GetSpacingY() );;
+    }    
+    else if ( VImageDimension==3 )
+    {
+        pIm0->SetSpacingZ( spacingFactor*pIm0->GetSpacingZ() );
+        pIm1->SetSpacingZ( spacingFactor*pIm1->GetSpacingZ() );
     }
 
-    ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm.GetImageManagerPointer() );
+    ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm->GetImageManagerPointer() );
 
     unsigned int uiI0 = ptrImageManager->AddImage( pIm0, 0.0, 0 );
     ptrImageManager->AddImage( pIm1, 1.0, 0 );
 
     typedef CALATK::CHelmholtzKernel< TFLOAT, VImageDimension > KernelType;
-    KernelType*  pKernel = new KernelType;
+    typename KernelType::Pointer pKernel = new KernelType;
     pKernel->SetAlpha( (0.05*spacingFactor*spacingFactor)/spacingFactor );
     pKernel->SetGamma( 1.0/spacingFactor );
 
     // registration takes over the memory management, so need to pass a pointer to an object on the heap!
-    lddmm.SetKernelPointer( pKernel );
+    lddmm->SetKernelPointer( pKernel );
 
-    lddmm.Solve();
+    lddmm->Solve();
 
     // create warped source image
 
-    const VectorFieldType* ptrMap1 = new VectorFieldType( lddmm.GetMap( 1.0 ) );
+    typename VectorFieldType::ConstPointer ptrMap1 = new VectorFieldType( lddmm->GetMap( 1.0 ) );
     VectorImageUtilsType::writeFileITK( ptrMap1, sourceToTargetMap );
 
-    const VectorImageType* ptrI0Orig = ptrImageManager->GetOriginalImageById( uiI0 );
-    VectorImageType* ptrI0W1 = new VectorImageType( ptrI0Orig );
+    typename  VectorImageType::ConstPointer ptrI0Orig = ptrImageManager->GetOriginalImageById( uiI0 );
+    typename VectorImageType::Pointer ptrI0W1 = new VectorImageType( ptrI0Orig );
 
     LDDMMUtilsType::applyMap( ptrMap1, ptrI0Orig, ptrI0W1 );
     VectorImageUtilsType::writeFileITK( ptrI0W1, warpedSourceImage );
 
-    delete ptrI0W1;
-    delete ptrMap1;
-
     return EXIT_SUCCESS;
-
 }
 
 int main( int argc, char **argv )
@@ -131,6 +130,9 @@ int main( int argc, char **argv )
 
     switch ( uiSourceImageDimension )
       {
+      case 1:
+        return DoIt<1>( argc, argv );
+        break;
       case 2:
         return DoIt<2>( argc, argv );
         break;

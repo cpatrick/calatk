@@ -30,8 +30,8 @@
  * VectorField.h - a ND vector field of ND vectors
  * Supported dimensions: 1, 2, 3
  *
- * This is an implementation of VectorArray that limits 
- * the vectors to be of the dimensionality of the array.  
+ * This is an implementation of VectorArray that limits
+ * the vectors to be of the dimensionality of the array.
  * It is intended to be used with VectorFieldUtils.
  */
 
@@ -46,8 +46,11 @@ public:
 
   // standard typedef
 
+  typedef VectorField                       Self;
+  typedef itk::SmartPointer< Self >         Pointer;
+  typedef itk::SmartPointer< const Self >   ConstPointer;
   typedef VectorImage< T, VImageDimension > VectorImageType;
-  typedef VectorImageType Superclass;
+  typedef VectorImageType                   Superclass;
 
   /********************************
    * Constructors and Destructors *
@@ -115,7 +118,7 @@ public:
    *
    * @param x - x-coordinate
    */
-  T getX(unsigned int x) const;
+  T GetX(unsigned int x) const;
 
   /**
    * 2D Method that returns the value stored in the x dimension of the
@@ -124,7 +127,7 @@ public:
    * @param x - x-coordinate
    * @param y - y-coordinate
    */
-  T getX(unsigned int x, unsigned int y) const;
+  T GetX(unsigned int x, unsigned int y) const;
 
   /**
    * 3D Method that returns the value stored in the x dimension of the
@@ -134,7 +137,7 @@ public:
    * @param y - y-coordinate
    * @param z - z-coordinate
    */
-  T getX(unsigned int x, unsigned int y, unsigned int z) const;
+  T GetX(unsigned int x, unsigned int y, unsigned int z) const;
 
   /**
    * 2D Method that returns the value stored in the y dimension of the
@@ -143,7 +146,7 @@ public:
    * @param x - x-coordinate
    * @param y - y-coordinate
    */
-  T getY(unsigned int x, unsigned int y) const;
+  T GetY(unsigned int x, unsigned int y) const;
 
   /**
    * 3D Method that returns the value stored in the y dimension of the
@@ -153,7 +156,7 @@ public:
    * @param y - y-coordinate
    * @param z - z-coordinate
    */
-  T getY(unsigned int x, unsigned int y, unsigned int z) const;
+  T GetY(unsigned int x, unsigned int y, unsigned int z) const;
 
   /**
    * 3D Method that returns the value stored in the z dimension of the
@@ -163,7 +166,7 @@ public:
    * @param y - y-coordinate
    * @param z - z-coordinate
    */
-  T getZ(unsigned int x, unsigned int y, unsigned int z) const;
+  T GetZ(unsigned int x, unsigned int y, unsigned int z) const;
 
   /**
    * 1D Method that puts the value in the x dimension of the vector at the
@@ -172,7 +175,7 @@ public:
    * @param x - x-coordinate
    * @param value - value to be put
    */
-  void setX(unsigned int x, T value);
+  void SetX(unsigned int x, T value);
 
   /**
    * 2D Method that puts the value in the x dimension of the vector at the
@@ -182,7 +185,7 @@ public:
    * @param y - y-coordinate
    * @param value - value to be put
    */
-  void setX(unsigned int x, unsigned int y, T value);
+  void SetX(unsigned int x, unsigned int y, T value);
 
   /**
    * 3D Method that puts the value in the x dimension of the vector at the
@@ -193,7 +196,7 @@ public:
    * @param z - z-coordinate
    * @param value - value to be put
    */
-  void setX(unsigned int x, unsigned int y, unsigned int z, T value);
+  void SetX(unsigned int x, unsigned int y, unsigned int z, T value);
 
   /**
    * 2D Method that puts the value in the y dimension of the vector at the
@@ -203,7 +206,7 @@ public:
    * @param y - y-coordinate
    * @param value - value to be put
    */
-  void setY(unsigned int x, unsigned int y, T value);
+  void SetY(unsigned int x, unsigned int y, T value);
 
   /**
    * 3D Method that puts the value in the y dimension of the vector at the
@@ -214,7 +217,7 @@ public:
    * @param z - z-coordinate
    * @param value - value to be put
    */
-  void setY(unsigned int x, unsigned int y, unsigned int z, T value);
+  void SetY(unsigned int x, unsigned int y, unsigned int z, T value);
 
   /**
    * 3D Method that puts the value in the z dimension of the vector at the
@@ -225,7 +228,7 @@ public:
    * @param z - z-coordinate
    * @param value - value to be put
    */
-  void setZ(unsigned int x, unsigned int y, unsigned int z, T value);
+  void SetZ(unsigned int x, unsigned int y, unsigned int z, T value);
 
 };
 

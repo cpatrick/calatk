@@ -46,30 +46,30 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingRegistration< TState >::SetDef
 {
   // make sure that all we need has already been allocated
 
-  if ( this->m_ptrKernel == NULL )
+  if ( this->m_ptrKernel.GetPointer() == NULL )
     {
     throw std::runtime_error( "Kernel needs to be defined before default objective function can be created." );
     }
 
-  if ( this->m_ptrMetric == NULL )
+  if ( this->m_ptrMetric.GetPointer() == NULL )
     {
     throw std::runtime_error( "Metric needs to be defined before default objective function can be created." );
     }
 
-  if ( this->m_ptrImageManager == NULL )
+  if ( this->m_ptrImageManager.GetPointer() == NULL )
     {
     throw std::runtime_error( "Image manager needs to be defined before default objective function can be created." );
     }
 
   typedef CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState > CMetamorphosisType;
-  CMetamorphosisType* pMetamorphosis = new CMetamorphosisType;
+  typename CMetamorphosisType::Pointer pMetamorphosis = new CMetamorphosisType;
   pMetamorphosis->SetEvolverPointer( this->m_ptrEvolver );
   pMetamorphosis->SetKernelPointer( this->m_ptrKernel );
   pMetamorphosis->SetMetricPointer( this->m_ptrMetric );
   pMetamorphosis->SetImageManagerPointer( this->m_ptrImageManager );
 
   this->m_ptrObjectiveFunction = pMetamorphosis;
-  this->m_ptrKernel->SetObjectiveFunctionPointer( pMetamorphosis );
+  this->m_ptrKernel->SetObjectiveFunction( pMetamorphosis );
 
 }
 

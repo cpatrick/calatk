@@ -114,14 +114,17 @@ public:
    * Method that allocates memory for an image which is spatially scaled with respect to a given reference image.
    * To be used in conjunction with upsampling and downsampling image filters.
    *
-   * @param imGraft - image to get the dimensions of
-   * @param dScale - scaling factor for the image
+   * @param imageGraft - image to get the dimensions of
+   * @param scale - scaling factor for the image
    */
-  static VectorImageType* AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, T dScale );
-
-  static VectorImageType* AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, unsigned int szx, unsigned int szy );
+  static VectorImageType* AllocateMemoryForScaledVectorImage( const VectorImageType* imageGraft, T scale );
   
-  static VectorImageType* AllocateMemoryForScaledVectorImage( const VectorImageType* imGraft, unsigned int szx, unsigned int szy, unsigned int szz );
+  //Count on the fact that the image isn't in unsigned int
+  static VectorImageType* AllocateMemoryForScaledVectorImage( const VectorImageType* imageGraft, unsigned int szx );
+  
+  static VectorImageType* AllocateMemoryForScaledVectorImage( const VectorImageType* imageGraft, unsigned int szx, unsigned int szy );
+  
+  static VectorImageType* AllocateMemoryForScaledVectorImage( const VectorImageType* imageGraft, unsigned int szx, unsigned int szy, unsigned int szz );
 
   /**
    * Method that performs interpolation on a single point in 1D, using I coordinates
@@ -221,6 +224,14 @@ public:
     * @param uiNrOfThreads -- number of threads used
     */
   static void interpolateNegativeVelocityPos( const VectorImageType3D* imIn, const VectorFieldType3D* v, T dt, VectorImageType3D* imOut, unsigned int uiNrOfThreads = 1 );
+  
+  /**
+   * 1D Method to resize the array in both dimensions
+   *
+   * @param im - the image to be resized
+   * @param imOut - return parameter for resized image
+   */
+  static void resize( const VectorImageType1D* im, VectorImageType1D* imOut);
 
   /**
    * 2D Method to resize the array in both dimensions
@@ -265,6 +276,16 @@ public:
   static void meanPixelwise(std::vector<VectorImageType*> imList, unsigned int numIms, VectorImageType* imOut);
 
   /**
+   * 1D function to multiply a vector image by a scalar image (specified by a dimension of a vectorimage)
+   * All the dimensions of the vector image will be multiplied by the scalar image!!
+   *
+   * @param imIn - input vector image
+   * @param dim - dimension of the input vector image which will be used for multiplication
+   * @param imOut - image which will be multiplied
+   */
+  static void multiplyVectorByImageDimensionInPlace(const VectorImageType1D* imIn, unsigned int dim, VectorImageType1D* imOut );
+
+  /**
    * 2D function to multiply a vector image by a scalar image (specified by a dimension of a vectorimage)
    * All the dimensions of the vector image will be multiplied by the scalar image!!
    *
@@ -283,6 +304,16 @@ public:
    * @param imOut - image which will be multiplied
    */
   static void multiplyVectorByImageDimensionInPlace(const VectorImageType3D* imIn, unsigned int dim, VectorImageType3D* imOut );
+
+  /**
+    * 1D function which computes the element-wise inner product for vector-valued images
+    *
+    * @param im1 - first vector-valued input image
+    * @param im2 - second vector-valued input image
+    * @param imOut - output image, holding the result
+    */
+  static void multiplyVectorByVectorInnerProductElementwise(const VectorImageType1D* im1, const VectorImageType1D* im2, VectorImageType1D* imOut );
+
 
   /**
     * 2D function which computes the element-wise inner product for vector-valued images
@@ -308,6 +339,16 @@ public:
    * @param imIn - input scalar image
    * @param imOut - image to which which will be added
    * @param dim - dimension to which will be added
+   */
+  static void addScalarImageToVectorImageAtDimensionInPlace( const VectorImageType1D* imIn, VectorImageType1D* imOut, unsigned int dim );
+
+
+  /**
+   * 2D function to add a scalar image to a vector image (for a specific dimension of the vector image)
+   *
+   * @param imIn - input scalar image
+   * @param imOut - image to which which will be added
+   * @param dim - dimension to which will be added
  */
   static void addScalarImageToVectorImageAtDimensionInPlace( const VectorImageType2D* imIn, VectorImageType2D* imOut, unsigned int dim );
 
@@ -319,6 +360,20 @@ public:
    * @param dim - dimension to which will be added
    */
   static void addScalarImageToVectorImageAtDimensionInPlace( const VectorImageType3D* imIn, VectorImageType3D* imOut, unsigned int dim );
+  
+  /**
+   * Method that applies an ITK affine transformation to a 2D VectorImageType
+   *
+   * @param itkAffine - the affine transform
+   * @param imIn - the image to be transformed
+   * @param imOut - the output image
+   * @param originX - the x coordinate of the origin (default = 0)
+   * @param originY - the y coordinate of the origin (default = 0)
+   * @param originZ - the z coordinate of the origin (default = 0)
+   * @param defaultPixelValue - the value for background pixels
+   */
+  static void applyAffineITK(typename ITKAffineTransform<T,1>::Type* itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue = 0, T originX = 0);
+
 
   /**
    * Method that applies an ITK affine transformation to a 2D VectorImageType
@@ -331,7 +386,7 @@ public:
    * @param originZ - the z coordinate of the origin (default = 0)
    * @param defaultPixelValue - the value for background pixels
    */
-  static void applyAffineITK(typename ITKAffineTransform<T,2>::Type::Pointer itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue = 0, T originX = 0, T originY = 0);
+  static void applyAffineITK(typename ITKAffineTransform<T,2>::Type* itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue = 0, T originX = 0, T originY = 0);
 
   /**
    * Method that applies an ITK affine transformation to a 3D VectorImageType
@@ -344,7 +399,7 @@ public:
    * @param originZ - the z coordinate of the origin (default = 0)
    * @param defaultPixelValue - the value for background pixels
    */
-  static void applyAffineITK(typename ITKAffineTransform<T,3>::Type::Pointer itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue = 0, T originX = 0, T originY = 0, T originZ = 0);
+  static void applyAffineITK(typename ITKAffineTransform<T,3>::Type* itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue = 0, T originX = 0, T originY = 0, T originZ = 0);
 
 
   /**
@@ -371,6 +426,16 @@ public:
   }
 
   /**
+   * 1D Method that takes a VectorImageType and returns an ITK image.  The returned
+   * image is actually a 4 dimensional image with the first dimension used to
+   * store the x dimension, the second for the y dimension, the third for the z,
+   * dimension and the fourth for the vector dimension.
+   *
+   * @param im - the input image
+   */
+  static typename ITKVectorImage<T,VImageDimension>::Type::Pointer convertToITK( const VectorImageType1D* im);
+
+  /**
    * 2D Method that takes a VectorImageType and returns an ITK image.  The returned
    * image is actually a 4 dimensional image with the first dimension used to
    * store the x dimension, the second for the y dimension, the third for the z,
@@ -389,6 +454,15 @@ public:
    * @param im - the input image
    */
   static typename ITKVectorImage<T,VImageDimension>::Type::Pointer convertToITK( const VectorImageType3D* im);
+  
+  /**
+   * 2D Method that converts a single dimension of a VectorImageType to an ITK
+   * non-vector image.
+   *
+   * @param im - the image to convert
+   * @param dim - the dimension to use
+   */
+  static typename ITKImage<T,VImageDimension>::Type::Pointer convertDimToITK( const VectorImageType1D* im, unsigned int dim );
 
   /**
    * 2D Method that converts a single dimension of a VectorImageType to an ITK
@@ -416,7 +490,7 @@ public:
    *
    * @param itkIm - the input image
    */
-  static VectorImageType* convertFromITK( typename ITKVectorImage<T,2>::Type::Pointer itkIm);
+  static VectorImageType* convertFromITK( typename ITKVectorImage<T,1>::Type* itkIm);
 
   /**
    * Method that takes an itk::Image<T, 4> and returns a VectorImageType.
@@ -426,7 +500,27 @@ public:
    *
    * @param itkIm - the input image
    */
-  static VectorImageType* convertFromITK( typename ITKVectorImage<T,3>::Type::Pointer itkIm);
+  static VectorImageType* convertFromITK( typename ITKVectorImage<T,2>::Type* itkIm);
+
+  /**
+   * Method that takes an itk::Image<T, 4> and returns a VectorImageType.
+   * The input image should be formatted such that the first dimension is the
+   * x dimension, the second is the y dimension, the third is the z dimension,
+   * and the fourth is the vector dimension.
+   *
+   * @param itkIm - the input image
+   */
+  static VectorImageType* convertFromITK( typename ITKVectorImage<T,3>::Type* itkIm);
+
+  /**
+   * 1D Method that converts a non-vector ITK image into a single dimension
+   * of a VectorImageType.
+   *
+   * @param itkIm - the ITK image
+   * @param dim - the dimension in which to place the converted image
+   * @param imOut - the VectorImageType to be updated
+   */
+  static void convertDimFromITK( typename ITKImage<T,1>::Type* itkIm, unsigned int dim, VectorImageType1D* imOut);
 
   /**
    * 2D Method that converts a non-vector ITK image into a single dimension
@@ -436,7 +530,7 @@ public:
    * @param dim - the dimension in which to place the converted image
    * @param imOut - the VectorImageType to be updated
    */
-  static void convertDimFromITK( typename ITKImage<T,2>::Type::Pointer itkIm, unsigned int dim, VectorImageType2D* imOut);
+  static void convertDimFromITK( typename ITKImage<T,2>::Type* itkIm, unsigned int dim, VectorImageType2D* imOut);
 
   /**
    * 3D Method that converts a non-vector ITK image into a single dimension
@@ -446,7 +540,7 @@ public:
    * @param dim - the dimension in which to place the converted image
    * @param imOut - the VectorImageType to be updated
    */
-  static void convertDimFromITK( typename ITKImage<T,3>::Type::Pointer itkIm, unsigned int dim, VectorImageType3D* imOut);
+  static void convertDimFromITK( typename ITKImage<T,3>::Type* itkIm, unsigned int dim, VectorImageType3D* imOut);
 
   /**
    * Method that converts an ITKVectorImage3D's origin (which has 4 dimensions)
@@ -495,7 +589,15 @@ public:
    * @param im - the image to write
    * @param filename - the name of the file to write to
    */
-  static bool writeTextFile(VectorImageType* im, std::string filename);
+  static bool writeTextFile(VectorImageType* im, const std::string& filename);
+
+  /**
+   * 1D Method that uses ITK to write the image out
+   *
+   * @param im - the image to write
+   * @param filename - the name of the file to write to
+   */
+  static bool writeFileITK(const VectorImageType1D* im, const std::string& filename);
 
   /**
    * 2D Method that uses ITK to write the image out
@@ -503,7 +605,7 @@ public:
    * @param im - the image to write
    * @param filename - the name of the file to write to
    */
-  static bool writeFileITK(const VectorImageType2D* im, std::string filename);
+  static bool writeFileITK(const VectorImageType2D* im, const std::string& filename);
 
   /**
    * 3D Method that uses ITK to write the image out
@@ -511,7 +613,7 @@ public:
    * @param im - the image to write
    * @param filename - the name of the file to write to
    */
-  static bool writeFileITK(const VectorImageType3D* im, std::string filename);
+  static bool writeFileITK(const VectorImageType3D* im, const std::string& filename);
 
   /**
    * 2D Method that uses ITK to write the time dependant image set out
@@ -520,7 +622,16 @@ public:
    * @param numTimes - the number of time discretized images
    * @param filename - the name of the file to write to
    */
-  static bool writeTimeDependantImagesITK2D( const std::vector< VectorImageType* >* ims, std::string filename);
+  static bool writeTimeDependantImagesITK1D( const std::vector< VectorImageType* >* ims, const std::string& filename);
+
+  /**
+   * 2D Method that uses ITK to write the time dependant image set out
+   *
+   * @param ims - the image to write
+   * @param numTimes - the number of time discretized images
+   * @param filename - the name of the file to write to
+   */
+  static bool writeTimeDependantImagesITK2D( const std::vector< VectorImageType* >* ims, const std::string& filename);
 
   /**
    * 3D Method that uses ITK to write the time dependant image set out
@@ -529,7 +640,7 @@ public:
    * @param numTimes - the number of time discretized images
    * @param filename - the name of the file to write to
    */
-  static bool writeTimeDependantImagesITK3D( const std::vector< VectorImageType* >* ims, std::string filename);
+  static bool writeTimeDependantImagesITK3D( const std::vector< VectorImageType* >* ims, const std::string& filename);
 
   /**
    * Method that uses ITK to write the time dependant image set out
@@ -538,21 +649,21 @@ public:
    * @param numTimes - the number of time discretized images
    * @param filename - the name of the file to write to
    */
-  static bool writeTimeDependantImagesITK( const std::vector< VectorImageType* >* ims, std::string filename);
+  static bool writeTimeDependantImagesITK( const std::vector< VectorImageType* >* ims, const std::string& filename);
 
   /**
    * Method that uses ITK to read a file in
    *
    * @param filename - the name of the file to write to
    */
-  static VectorImageType* readFileITK(std::string filename);
+  static VectorImageType* readFileITK(const std::string& filename);
 
   /**
    * Method that reads an ITK affine transform from a file
    *
    * @param filename - the name of the file to read
    */
-  static typename ITKAffineTransform<T,VImageDimension>::Type::Pointer readAffineTransformITK(std::string filename);
+  static typename ITKAffineTransform<T,VImageDimension>::Type::Pointer readAffineTransformITK(const std::string& filename);
 
 };
 

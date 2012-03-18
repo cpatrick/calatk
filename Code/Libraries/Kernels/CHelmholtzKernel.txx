@@ -70,9 +70,9 @@ void CHelmholtzKernel< T, VImageDimension >::SetGamma( T dGamma )
 template <class T, unsigned int VImageDimension >
 void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType1D* pVecImageGraft )
 {
-  unsigned int szX = pVecImageGraft->getSizeX();
+  unsigned int szX = pVecImageGraft->GetSizeX();
 
-  T dx = pVecImageGraft->getSpaceX();
+  T dx = pVecImageGraft->GetSpacingX();
 
   T pi = (T)CALATK::PI;
 
@@ -82,19 +82,19 @@ void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vect
     {
     f1Eff = GetFFromIndex( x, szX, dx );
     T val = m_Gamma + 2*m_Alpha*( (1 - std::cos(2*pi*f1Eff*dx))/(dx*dx) );
-    this->m_ptrLInv->setValue(x,0, val*val );
-    this->m_ptrL->setValue(x,0,1.0/(val*val) );
+    this->m_ptrLInv->SetValue(x,0, val*val );
+    this->m_ptrL->SetValue(x,0,1.0/(val*val) );
     }
 }
 
 template <class T, unsigned int VImageDimension >
 void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType2D* pVecImageGraft )
 {
-  unsigned int szX = pVecImageGraft->getSizeX();
-  unsigned int szY = pVecImageGraft->getSizeY();
+  unsigned int szX = pVecImageGraft->GetSizeX();
+  unsigned int szY = pVecImageGraft->GetSizeY();
 
-  T dx = pVecImageGraft->getSpaceX();
-  T dy = pVecImageGraft->getSpaceY();
+  T dx = pVecImageGraft->GetSpacingX();
+  T dy = pVecImageGraft->GetSpacingY();
 
   T pi = (T)CALATK::PI;
 
@@ -110,8 +110,8 @@ void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vect
       T val = m_Gamma + 2*m_Alpha*( 
         (1 - std::cos(2*pi*f1Eff*dx))/(dx*dx) + 
         (1 - std::cos(2*pi*f2Eff*dy))/(dy*dy) );
-      this->m_ptrLInv->setValue(x,y,0, val*val );
-      this->m_ptrL->setValue(x,y,0,1.0/(val*val) );
+      this->m_ptrLInv->SetValue(x,y,0, val*val );
+      this->m_ptrL->SetValue(x,y,0,1.0/(val*val) );
       }
     }
 
@@ -121,13 +121,13 @@ template <class T, unsigned int VImageDimension >
 void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType3D* pVecImageGraft )
 {
 
-  unsigned int szX = pVecImageGraft->getSizeX();
-  unsigned int szY = pVecImageGraft->getSizeY();
-  unsigned int szZ = pVecImageGraft->getSizeZ();
+  unsigned int szX = pVecImageGraft->GetSizeX();
+  unsigned int szY = pVecImageGraft->GetSizeY();
+  unsigned int szZ = pVecImageGraft->GetSizeZ();
 
-  T dx = pVecImageGraft->getSpaceX();
-  T dy = pVecImageGraft->getSpaceY();
-  T dz = pVecImageGraft->getSpaceZ();
+  T dx = pVecImageGraft->GetSpacingX();
+  T dy = pVecImageGraft->GetSpacingY();
+  T dz = pVecImageGraft->GetSpacingZ();
 
   T pi = (T)CALATK::PI;
 
@@ -148,8 +148,8 @@ void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vect
           (1 - std::cos(2*pi*f1Eff*dx))/(dx*dx) + 
           (1 - std::cos(2*pi*f2Eff*dy))/(dy*dy) + 
           (1 - std::cos(2*pi*f3Eff*dz))/(dz*dz) );
-        this->m_ptrLInv->setValue(x,y,z,0, (val*val) );
-        this->m_ptrL->setValue(x,y,z,0,1.0/(val*val) );
+        this->m_ptrLInv->SetValue(x,y,z,0, (val*val) );
+        this->m_ptrL->SetValue(x,y,z,0,1.0/(val*val) );
         }
       }
     }

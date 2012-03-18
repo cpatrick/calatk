@@ -32,11 +32,15 @@ class CAtlasObjectiveFunction
     : public CObjectiveFunction< TState >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CAtlasObjectiveFunction          Self;
+  typedef CObjectiveFunction< TState >     Superclass;
+  typedef itk::SmartPointer< Self >        Pointer;
+  typedef itk::SmartPointer< const Self >  ConstPointer;
 
   /* Some useful typedefs */
 
   typedef CObjectiveFunction< TState > ObjectiveFunctionType;
-  typedef ObjectiveFunctionType Superclass;
 
   typedef typename TState::TFloat T;
   typedef typename TState::TIndividualState TIndividualState;
@@ -55,7 +59,7 @@ public:
    * @param pObj - pointer to the objective function
    * @param dWeight - weight in the atlas building
    */
-  void SetObjectiveFunctionPointerAndWeight( const ObjectiveFunctionType* pObj, T dWeight );
+  void SetObjectiveFunctionAndWeight( const ObjectiveFunctionType* pObj, T dWeight );
 
   /**
    * @brief Deletes the data structures used to store the pointers to the objective functions
@@ -71,7 +75,7 @@ protected:
   void CreateAuxiliaryStructures();
 
   void InitializeState();
-  void InitializeState( TStateAtlas *pState );
+  void InitializeState( TStateAtlas * ptrState );
 
 private:
   // intentionally not implemented
@@ -79,7 +83,8 @@ private:
   CAtlasObjectiveFunction& operator=( const CAtlasObjectiveFunction & );
 
   std::vector< T > vecWeights; ///< Contains the weights for each subject to atlas registration
-  std::vector< ObjectiveFunctionType* > vecObjectiveFunctionPtrs;
+  typedef std::vector< typename ObjectiveFunctionType::Pointer > VectorObjectiveFunctionPointersType;
+  VectorObjectiveFunctionPointersType  m_VectorObjectiveFunctionPtrs;
 };
 
 #include "CAtlasObjectiveFunction.txx"

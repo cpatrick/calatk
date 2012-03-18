@@ -20,6 +20,9 @@
 #ifndef C_METAMORPHOSIS_GEODESIC_SHOOTING_INITIAL_IMAGE_MOMENTUM_REGISTRATION_TXX
 #define C_METAMORPHOSIS_GEODESIC_SHOOTING_INITIAL_IMAGE_MOMENTUM_REGISTRATION_TXX
 
+namespace CALATK
+{
+
 template < class TState >
 CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TState >::CMetamorphosisGeodesicShootingInitialImageMomentumRegistration()
 {
@@ -45,32 +48,33 @@ void CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TState >::S
 {
   // make sure that all we need has already been allocated
 
-  if ( this->m_ptrKernel == NULL )
+  if ( this->m_ptrKernel.GetPointer() == NULL )
     {
     throw std::runtime_error( "Kernel needs to be defined before default objective function can be created." );
     }
 
-  if ( this->m_ptrMetric == NULL )
+  if ( this->m_ptrMetric.GetPointer() == NULL )
     {
     throw std::runtime_error( "Metric needs to be defined before default objective function can be created." );
     }
 
-  if ( this->m_ptrImageManager == NULL )
+  if ( this->m_ptrImageManager.GetPointer() == NULL )
     {
     throw std::runtime_error( "Image manager needs to be defined before default objective function can be created." );
     }
 
   typedef CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState > CMetamorphosisType;
-  CMetamorphosisType* pMetamorphosis = new CMetamorphosisType;
+  typename CMetamorphosisType::Pointer pMetamorphosis = new CMetamorphosisType;
   pMetamorphosis->SetEvolverPointer( this->m_ptrEvolver );
   pMetamorphosis->SetKernelPointer( this->m_ptrKernel );
   pMetamorphosis->SetMetricPointer( this->m_ptrMetric );
   pMetamorphosis->SetImageManagerPointer( this->m_ptrImageManager );
 
   this->m_ptrObjectiveFunction = pMetamorphosis;
-  this->m_ptrKernel->SetObjectiveFunctionPointer( pMetamorphosis );
+  this->m_ptrKernel->SetObjectiveFunction( pMetamorphosis );
 
 }
 
+} // end namespace CALATK
 
 #endif

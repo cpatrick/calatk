@@ -44,38 +44,41 @@ template <class T, unsigned int VImageDimension=3 >
 class CImageManager : public CProcessBase
 {
 public:
+  /** Standard class typedefs. */
+  typedef CImageManager                   Self;
+  typedef CProcessBase                    Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
   typedef VectorImage< T, VImageDimension > VectorImageType; /**< Image type of given dimension and floating point format. */
   typedef VectorField< T, VImageDimension > VectorFieldType; /**< Vector field type of given dimension and floating point format. */
 
-  typedef CProcessBase Superclass;
-
   /**
    * Data structure keeping all the image information
    *
-   * @param sImageFileName - file name of the image
-   * @param sImageTransformationFileName - file name for the associated image transformation
+   * @param ImageFileName - file name of the image
+   * @param ImageTransformationFileName - file name for the associated image transformation
    * @param pIm - pointer to image, provided by derived class
    * @param pTransform - pointer to transformation, provided by derived class
-   * @param T - time point associated with the dataset
+   * @param timepoint - time point associated with the dataset
    * @param uiSubjectId - subject id of the image
    * @param uiId - internal dataset id, unique identifier for the registered datasets
    */
-  struct SImageInformation
+  struct ImageInformation
   {
-    std::string sImageFileName;
-    std::string sImageTransformationFileName;
-    VectorImageType *pIm;
-    VectorImageType *pImOrig;
-    VectorFieldType *pTransform;
+    std::string ImageFileName;
+    std::string ImageTransformationFileName;
+    typename VectorImageType::Pointer Image;
+    typename VectorImageType::Pointer OriginalImage;
+    typename VectorFieldType::Pointer pTransform;
     T timepoint;
     unsigned int uiSubjectId;
     unsigned int uiId;
 
-    std::vector< VectorImageType* > pImsOfAllScales;
+    std::vector< typename VectorImageType::Pointer > pImsOfAllScales;
 
     // define operator for sorting
-    bool operator<( const SImageInformation& other ) const
+    bool operator<( const ImageInformation& other ) const
     {
       return (timepoint) < (other.timepoint);
     }
@@ -87,7 +90,7 @@ public:
   /** Custom compare method which makes sure that the datasets will be sorted with respect to time.*/
   struct CompareMethod
   {
-    bool operator()(SImageInformation* const & a, SImageInformation* const & b) const
+    bool operator()(ImageInformation* const & a, ImageInformation* const & b) const
     {
       return a->timepoint < b->timepoint;
     }
@@ -96,9 +99,9 @@ public:
   /********************************
    * Typedefs *
    ********************************/
-  
+
   /** All the image information of one subject */
-  typedef std::multiset< SImageInformation*, CompareMethod > SubjectInformationType;
+  typedef std::multiset< ImageInformation*, CompareMethod > SubjectInformationType;
   /** The image information of <b>all</b> the subjects */
   typedef std::map< unsigned int, SubjectInformationType* > SubjectCollectionInformationMapType;
 
@@ -143,7 +146,7 @@ public:
    * @param uiId - id of a registered image
    * @return image with given id
    */
-  const VectorImageType* GetOriginalImageById( unsigned int uiId ); 
+  const VectorImageType* GetOriginalImageById( unsigned int uiId );
 
   /**
    * @brief Registers the filename of an image transform for a given image
@@ -188,7 +191,7 @@ public:
    * @return pImInfo - the full subject information (a time-series for one subject)
    * @param uiSubjectIndex - subject index of the subject to be returned
    */
-  virtual void GetImagesWithSubjectIndex( SubjectInformationType*& pImInfo, unsigned int uiSubjectIndex ); 
+  virtual void GetImagesWithSubjectIndex( SubjectInformationType *& pImInfo, unsigned int uiSubjectIndex );
 
   /**
    * Loads image and potentially transform for a given image information structure
@@ -196,7 +199,7 @@ public:
    *
    * @param pCurrentImInfo - structure that holds the information of the image to be loaded
    */
-  virtual void GetImage( SImageInformation* pCurrentImInfo ) = 0; 
+  virtual void GetImage( ImageInformation* pCurrentImInfo ) = 0;
 
   /**
    * Returns vectors of the time points for a specific subject.
@@ -222,14 +225,14 @@ public:
   unsigned int GetNumberOfAvailableSubjectIndices();
 
   /**
-   * Convenience method which returns a pointer to SImageInformation structure
+   * Convenience method which returns a pointer to ImageInformation structure
    * of a particular index, given a pointer to the multiset
    *
    * @return pImInfo - pointer to image information specified by subject information (ie., the full timeseries) and a time index.
    * @param pInfo - time series data structure for a subject
    * @param uiTimeIndex - desired time index from which information should be extracted.
    */
-  void GetPointerToSubjectImageInformationBySubjectInformationAndIndex( SImageInformation*& pImInfo, SubjectInformationType* pInfo, unsigned int uiTimeIndex );
+  void GetPointerToSubjectImageInformationBySubjectInformationAndIndex( ImageInformation *& ptrImageInformation, SubjectInformationType* pInfo, unsigned int uiTimeIndex );
 
   /**
    * Convenience method which returns a particular time-point of a specific subject specified by index
@@ -238,10 +241,10 @@ public:
    * @param uiSubjectIndex - desired subject index
    * @param uiTimIndex - desired time index
    */
-  void GetPointerToSubjectImageInformationByIndex( SImageInformation*& pImInfo, unsigned int uiSubjectIndex, unsigned int uiTimeIndex );
+  void GetPointerToSubjectImageInformationByIndex( ImageInformation *& ptrImageInformation, unsigned int subjectIndex, unsigned int uiTimeIndex );
 
   /**
-   * Convenience method which returns a pointer to the first stored image. 
+   * Convenience method which returns a pointer to the first stored image.
    * This can be used for example to initialize data sizes for upsampling
    *
    * @param uiSubjectIndex - desired subject index
@@ -249,7 +252,7 @@ public:
    */
   const VectorImageType* GetGraftImagePointer( unsigned int uiSubjectIndex = 0 );
 
-  /** 
+  /**
    * Prints the state of the image manager
    */
   void print( std::ostream& output );
@@ -274,14 +277,14 @@ protected:
   SubjectCollectionInformationMapType m_SubjectCollectionMapImageInformation;
 
   /**
-   * Auxiliary function. Given a unqique id it returns the corresponding iterator for the multiset containing it 
+   * Auxiliary function. Given a unqique id it returns the corresponding iterator for the multiset containing it
    *
    * @return pInfo - time series structure for a desired subject (as specified by subject id)
    * @return iterRet - multiset iterator for the subject
    * @param uiId - subject index
    * @return returns true if found and false otherwise
    */
-  bool getCurrentIteratorForId( SubjectInformationType*& pInfo, typename SubjectInformationType::iterator& iterRet, unsigned int uiId );
+  bool getCurrentIteratorForId( SubjectInformationType *& pInfo, typename SubjectInformationType::iterator& iterRet, unsigned int uiId );
 
 private:
 

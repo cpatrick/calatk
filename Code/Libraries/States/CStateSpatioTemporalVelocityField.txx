@@ -20,19 +20,13 @@
 #ifndef C_STATE_SPATIO_TEMPORAL_VELOCITYFIELD_TXX
 #define C_STATE_SPATIO_TEMPORAL_VELOCITYFIELD_TXX
 
-//
-// empty constructor
-//
 template <class T, unsigned int VImageDimension, class TResampler >
 CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::CStateSpatioTemporalVelocityField()
 {
 }
 
-//
-// copy constructor
-//
-template <class T, unsigned int VImageDimension, class TResampler >  
-CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::CStateSpatioTemporalVelocityField( const CStateSpatioTemporalVelocityField & c ) 
+template <class T, unsigned int VImageDimension, class TResampler >
+CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::CStateSpatioTemporalVelocityField( const CStateSpatioTemporalVelocityField & c )
 {
   if ( this != &c )
     {
@@ -55,27 +49,12 @@ CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::CStateSpat
     }
 }
 
-//
-// clear data structure
-//
 template <class T, unsigned int VImageDimension, class TResampler >
 void CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler >::ClearDataStructure()
 {
-  typename std::vector< VectorFieldPointerType >::iterator iter;
-  for ( iter = m_vecPtrSTVelocityField.begin(); iter != m_vecPtrSTVelocityField.end(); ++iter )
-    {
-    // delete vector field
-    if ( *iter != NULL )
-      {
-      delete *iter;
-      }
-    }
   m_vecPtrSTVelocityField.clear();
 }
 
-//
-// copy data structures
-//
 template <class T, unsigned int VImageDimension, class TResampler >
 void CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler >::CopyDataStructure( ConstVectorPointerToVectorFieldPointerType ptrSource )
 {
@@ -113,19 +92,20 @@ CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler >::CreateUpsam
   // create an upsampled version of the state with the dimensions of the graft image
   std::vector<VectorFieldPointerType>* ptrVecUpsampledStateData = new std::vector<VectorFieldPointerType>;
   
-  TResampler resampler;
+  typedef TResampler ResamplerType;
+  typename ResamplerType::Pointer resampler = new ResamplerType();
 
   typename std::vector<VectorFieldPointerType>::const_iterator iter;
   for ( iter=m_vecPtrSTVelocityField.begin(); iter!=m_vecPtrSTVelocityField.end(); ++iter )
     {
-    VectorFieldType* ptrResampledVectorField = new VectorFieldType( pGraftImage );
-    resampler.Upsample( *iter, ptrResampledVectorField );
+    typename VectorFieldType::Pointer ptrResampledVectorField = new VectorFieldType( pGraftImage );
+    resampler->Upsample( *iter, ptrResampledVectorField );
     ptrVecUpsampledStateData->push_back( ptrResampledVectorField );
     }
 
-  TState* pUpsampledState = new TState( ptrVecUpsampledStateData ); 
+  typename TState::Pointer pUpsampledState = new TState( ptrVecUpsampledStateData );
 
-  return pUpsampledState;
+  return pUpsampledState.GetPointer();
 
 }
 
@@ -156,7 +136,7 @@ unsigned int CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  
 // returns the pointer to a particular vector field
 //
 template <class T, unsigned int VImageDimension, class TResampler >
-typename CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::VectorFieldPointerType
+typename CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::VectorFieldType *
 CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::GetVectorFieldPointer( unsigned int iI )
 {
   assert( iI>=0 && iI<m_vecPtrSTVelocityField.size() );
@@ -177,7 +157,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::GetVectorP
 // sets a vector field as an element of the spatio temporal velocity field data structure
 //
 template <class T, unsigned int VImageDimension, class TResampler >
-void CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::SetVectorFieldPointer( unsigned int iI, VectorFieldPointerType ptrVecField )
+void CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::SetVectorFieldPointer( unsigned int iI, VectorFieldType * ptrVecField )
 {
   assert( iI>=0 && iI<m_vecPtrSTVelocityField.size() );
   m_vecPtrSTVelocityField[ iI ] = ptrVecField;
@@ -208,7 +188,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::operator=(
             ++iterSource, ++iterTarget )
         {
         // copy the current vector field
-        (*iterTarget)->copy( *iterSource );
+        (*iterTarget)->Copy( *iterSource );
         }
       }
     else
@@ -243,7 +223,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::operator+=
         ++iterSource, ++iterTarget )
     {
     // add the source to the target
-    (*iterTarget)->addCellwise( *iterSource );
+    (*iterTarget)->AddCellwise( *iterSource );
     }
 
   return *this;
@@ -269,7 +249,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::operator-=
         ++iterSource, ++iterTarget )
     {
     // subtract the source from the target
-    iterTarget->subtractCellwise( *iterSource );
+    iterTarget->SubtractCellwise( *iterSource );
     }
 
   return *this;
@@ -284,7 +264,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::operator*=
   for ( iterTarget = m_vecPtrSTVelocityField.begin(); iterTarget != m_vecPtrSTVelocityField.end(); ++iterTarget )
     {
     // multiply by the value
-    (*iterTarget)->multConst( p );
+    (*iterTarget)->MultiplyByConstant( p );
     }
 
   return *this;
@@ -323,7 +303,7 @@ T CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler >::SquaredNo
   T dSquaredNorm = 0;
   for ( unsigned int iI=0; iI<m_vecPtrSTVelocityField.size(); ++iI )
     {
-    dSquaredNorm += m_vecPtrSTVelocityField[ iI ]->computeSquareNorm();
+    dSquaredNorm += m_vecPtrSTVelocityField[ iI ]->ComputeSquaredNorm();
     }
 
   return dSquaredNorm;

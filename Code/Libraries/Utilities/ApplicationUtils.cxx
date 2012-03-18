@@ -252,27 +252,30 @@ std::string ApplicationUtils::removeLastSlash(std::string path) {
 //
 // makeDirIfNeeded
 //
-bool ApplicationUtils::makeDirIfNeeded(std::string& path) {
+bool ApplicationUtils::makeDirIfNeeded(std::string& path)
+{
   path = removeDoubleSlashes(path);
-  std::string outpath = removeLastSlash(path);
-  bool dirCreated;
-  if (!dirExists(outpath)) {
+  const std::string outpath = removeLastSlash(path);
+  if (!dirExists(outpath))
+    {
+    bool dirCreated = false;
 #if CALATK_SYSTEM_UNIX
     dirCreated = (mkdir(outpath.c_str(), 0755) == 0);
 #elif CALATK_SYSTEM_WINDOWS
-	dirCreated = (_mkdir(outpath.c_str()) == 0);
+    dirCreated = (_mkdir(outpath.c_str()) == 0);
 #else
     itkGenericExceptionMacro("Unkown Operating System. Cannot make directory");
-
 #endif
-	if (!dirCreated)
-	{
-		path = "";
-		return false;
-	}
-	else 
-		return true;
-  }
+    if (!dirCreated)
+      {
+      path = "";
+      return false;
+      }
+    else
+      {
+      return true;
+      }
+    }
   return true;
 }
 

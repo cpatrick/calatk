@@ -40,15 +40,15 @@ int DoIt( int argc, char** argv )
   // define the type of state
   typedef CALATK::CStateSpatioTemporalVelocityField< TFLOAT, VImageDimension > TState;
   // define the registration method based on this state
-  typedef CALATK::CLDDMMGeometricMetamorphosisRegistration< TState > regType;
+  typedef CALATK::CLDDMMGeometricMetamorphosisRegistration< TState > RegistrationType;
 
   typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension > VectorImageUtilsType;
   typedef CALATK::CImageManagerMultiScale< TFLOAT, VImageDimension > ImageManagerMultiScaleType;
   typedef CALATK::LDDMMUtils< TFLOAT, VImageDimension > LDDMMUtilsType;
-  typedef typename regType::VectorFieldType VectorFieldType;
-  typedef typename regType::VectorImageType VectorImageType;
+  typedef typename RegistrationType::VectorFieldType VectorFieldType;
+  typedef typename RegistrationType::VectorImageType VectorImageType;
 
-  regType lddmm;
+  typename RegistrationType::Pointer lddmm = new RegistrationType();
 
   CALATK::CJSONConfiguration configIn( true );
   CALATK::CJSONConfiguration configOut( false );
@@ -64,7 +64,7 @@ int DoIt( int argc, char** argv )
     configIn.InitializeEmptyRoot();
     }
 
-  ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm.GetImageManagerPointer() );
+  ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm->GetImageManagerPointer() );
 
   std::string runCaseType = "run3";
 
@@ -73,7 +73,7 @@ int DoIt( int argc, char** argv )
 
   unsigned int uiT0 = ptrImageManager->AddImage( sourceMask, 0.0, 1 );
   unsigned int uiT1 = ptrImageManager->AddImage( targetMask, 1.0, 1 );
-  
+
   // by default there will be only one scale
   // which will be overwritten if there is a configuration file available
 
@@ -96,14 +96,14 @@ int DoIt( int argc, char** argv )
     TFLOAT dCurrentScale = configIn.GetFromKey( currentScaleSettings, "Scale", 1 ).asDouble();
     currentConfigurationOut[ iI ][ "Downsample" ][ "Scale" ] = dCurrentScale;
     ptrImageManager->AddScale( dCurrentScale, iI );
-    }  
+    }
 
-  lddmm.SetAllowHelpComments( bCreateJSONHelp );
-  lddmm.SetAutoConfiguration( *configIn.GetRootPointer(), *configOut.GetRootPointer() );
+  lddmm->SetAllowHelpComments( bCreateJSONHelp );
+  lddmm->SetAutoConfiguration( *configIn.GetRootPointer(), *configOut.GetRootPointer() );
 
   ptrImageManager->print( std::cout );
 
-  lddmm.Solve();
+  lddmm->Solve();
 
   // write out the resulting JSON file if desired
   if ( configFileOut.compare("None") != 0 )
@@ -124,12 +124,12 @@ int DoIt( int argc, char** argv )
   const VectorImageType* ptrT0Orig = ptrImageManager->GetOriginalImageById( uiT0 );
   const VectorImageType* ptrT1Orig = ptrImageManager->GetOriginalImageById( uiT1 );
 
-  const VectorFieldType* ptrMap1 = new VectorFieldType( lddmm.GetMap( 1.0 ) );
+  typename VectorFieldType::ConstPointer ptrMap1 = new VectorFieldType( lddmm->GetMap( 1.0 ) );
 
-  VectorImageType* ptrI0W1 = new VectorImageType( ptrI0Orig );
+  typename VectorImageType::Pointer ptrI0W1 = new VectorImageType( ptrI0Orig );
 
   VectorImageUtilsType::writeFileITK( ptrMap1, sourceToTargetMap );
-  
+
   // generating warped image (not always written out)
   LDDMMUtilsType::applyMap( ptrMap1, ptrI0Orig, ptrI0W1 );
 
@@ -137,65 +137,51 @@ int DoIt( int argc, char** argv )
     {
     VectorImageUtilsType::writeFileITK( ptrI0W1, warpedSourceImage );
     }
-  
+
   if ( initialMomentumImage.compare("None") !=0 )
   {
-    const VectorImageType* ptrI0 = lddmm.GetInitialMomentum();
+    const VectorImageType* ptrI0 = lddmm->GetInitialMomentum();
     VectorImageUtilsType::writeFileITK( ptrI0, initialMomentumImage );
   }
 
   if ( bWriteDetailedResults )
     {
-    const VectorImageType* ptrIm = new VectorImageType( lddmm.GetImage( 1.0 ) );
-    const VectorImageType* ptrT1 = new VectorImageType( lddmm.GetImageT( 1.0 ) );
-    const VectorImageType* ptrT2 = new VectorImageType( lddmm.GetImageT( 2.0 ) );
-    const VectorFieldType* ptrMap0 = new VectorFieldType( lddmm.GetMap( 0.0 ) );
-    
-    const VectorFieldType* ptrMap2 = new VectorFieldType( lddmm.GetMap( 2.0 ) );
-    const VectorFieldType* ptrMapFT = new VectorFieldType( lddmm.GetMapFromTo( 1.0, 2.0 ) );
+    typename VectorImageType::ConstPointer ptrIm = new VectorImageType( lddmm->GetImage( 1.0 ) );
+    typename VectorImageType::ConstPointer ptrT1 = new VectorImageType( lddmm->GetImageT( 1.0 ) );
+    typename VectorImageType::ConstPointer ptrT2 = new VectorImageType( lddmm->GetImageT( 2.0 ) );
+    typename VectorFieldType::ConstPointer ptrMap0 = new VectorFieldType( lddmm->GetMap( 0.0 ) );
+
+    typename VectorFieldType::ConstPointer ptrMap2 = new VectorFieldType( lddmm->GetMap( 2.0 ) );
+    typename VectorFieldType::ConstPointer ptrMapFT = new VectorFieldType( lddmm->GetMapFromTo( 1.0, 2.0 ) );
 
     VectorImageUtilsType::writeFileITK( ptrIm, sDetailedResultFilePrefix + "-res-imOut.nrrd" );
     VectorImageUtilsType::writeFileITK( ptrMap0, sDetailedResultFilePrefix + "-res-map0Out.nrrd" );
     VectorImageUtilsType::writeFileITK( ptrMap1, sDetailedResultFilePrefix + "-res-map1Out.nrrd" );
     VectorImageUtilsType::writeFileITK( ptrMap2, sDetailedResultFilePrefix + "-res-map2Out.nrrd" );
     VectorImageUtilsType::writeFileITK( ptrMapFT, sDetailedResultFilePrefix + "-res-map12.nrrd" );
-    
+
     VectorImageUtilsType::writeFileITK( ptrT1, sDetailedResultFilePrefix + "-res-T1.nrrd" );
     VectorImageUtilsType::writeFileITK( ptrT2, sDetailedResultFilePrefix + "-res-T2.nrrd" );
-    
+
     // apply the map to the original images and output
-    
-    VectorImageType* ptrT0W1 = new VectorImageType( ptrT0Orig );
-    VectorImageType* ptrT0W2 = new VectorImageType( ptrT0Orig );
-    
+
+    typename VectorImageType::Pointer ptrT0W1 = new VectorImageType( ptrT0Orig );
+    typename VectorImageType::Pointer ptrT0W2 = new VectorImageType( ptrT0Orig );
+
     LDDMMUtilsType::applyMap( ptrMap1, ptrT0Orig, ptrT0W1 );
     LDDMMUtilsType::applyMap( ptrMap2, ptrT0Orig, ptrT0W2 );
-    
+
     VectorImageUtilsType::writeFileITK( ptrI0W1, sDetailedResultFilePrefix + "-res-orig-EstI1.nrrd" );
     VectorImageUtilsType::writeFileITK( ptrT0W1, sDetailedResultFilePrefix + "-res-orig-EstT1.nrrd" );
     VectorImageUtilsType::writeFileITK( ptrT0W2, sDetailedResultFilePrefix + "-res-orig-EstT2.nrrd" );
-    
+
     VectorImageUtilsType::writeFileITK( ptrI0Orig, sDetailedResultFilePrefix + "-res-I0-orig.nrrd" );
     VectorImageUtilsType::writeFileITK( ptrI1Orig, sDetailedResultFilePrefix + "-res-I1-orig.nrrd" );
     VectorImageUtilsType::writeFileITK( ptrT0Orig, sDetailedResultFilePrefix + "-res-T0-orig.nrrd" );
     VectorImageUtilsType::writeFileITK( ptrT1Orig, sDetailedResultFilePrefix + "-res-T1-orig.nrrd" );
-    
-    delete ptrIm;
-    delete ptrT0W1;
-    delete ptrT0W2;
-    delete ptrT1;
-    delete ptrT2;
-    delete ptrMap0;
-    delete ptrMap2;
-    delete ptrMapFT;
-
     }
 
-  delete ptrI0W1;  
-  delete ptrMap1;
-  
   return EXIT_SUCCESS;
-
 }
 
 int main(int argc, char **argv)

@@ -28,31 +28,16 @@ COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::COneStepEvolverSemi
   : DefaultTimeStepFactor( 1 ), m_ExternallySetTimeStepFactor( false ),
     DefaultNumberOfIterationsToDetermineFlowField( 2 ), m_ExternallySetNumberOfIterationsToDetermineFlowField( false )
 {
-  m_TimeStepFactor = DefaultTimeStepFactor;
-  m_NumberOfIterationsToDetermineFlowField = DefaultNumberOfIterationsToDetermineFlowField;
+  this->m_TimeStepFactor = DefaultTimeStepFactor;
+  this->m_NumberOfIterationsToDetermineFlowField = DefaultNumberOfIterationsToDetermineFlowField;
 
-  ptrAdjustedVectorField = NULL;
-  ptrTmpVectorField = NULL;
-
+  this->m_ptrAdjustedVectorField = NULL;
+  this->m_ptrTmpVectorField = NULL;
 }
 
-//
-// destructor to get rid of the dynamically allocated memory
-//
 template <class T, unsigned int VImageDimension >
 COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::~COneStepEvolverSemiLagrangianAdvection()
 {
-  if ( ptrAdjustedVectorField != NULL )
-  {
-    delete ptrAdjustedVectorField;
-    ptrAdjustedVectorField = NULL;
-  }
-
-  if ( ptrTmpVectorField != NULL )
-  {
-    delete ptrTmpVectorField;
-    ptrTmpVectorField = NULL;
-  }
 }
 
 template <class T, unsigned int VImageDimension >
@@ -112,7 +97,7 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::PerformStepWit
 {
   ComputeAdjustedVectorFieldIfRequired( v, dt );
   interpolator.SetNumberOfThreads( this->GetNumberOfThreads() );
-  interpolator.InterpolateNegativeVelocityPos( In, ptrAdjustedVectorField, dt, Inp1 );
+  interpolator.InterpolateNegativeVelocityPos( In, this->m_ptrAdjustedVectorField, dt, Inp1 );
 }
 
 template <class T, unsigned int VImageDimension >
@@ -123,8 +108,8 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::ComputeAdjuste
   // 2) memory has not been allocated
   // 3) the initialization state is set to true
 
-  bool bIsSameSize = ( VectorImageUtilsType::IsSameSize( v, ptrAdjustedVectorField ) ) &&
-                     ( VectorImageUtilsType::IsSameSize( v, ptrTmpVectorField ) );
+  bool bIsSameSize = ( VectorImageUtilsType::IsSameSize( v, this->m_ptrAdjustedVectorField ) ) &&
+                     ( VectorImageUtilsType::IsSameSize( v, this->m_ptrTmpVectorField ) );
 
   bool bRecompute =  ( this->GetInitializeOneStepEvolverState() ) || ( !bIsSameSize );
 
@@ -132,34 +117,23 @@ void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::ComputeAdjuste
   {
     if ( !bIsSameSize )
     {
-      // allocate or reallocate the fields
-      if ( ptrAdjustedVectorField != NULL )
-      {
-        delete ptrAdjustedVectorField;
-      }
-      ptrAdjustedVectorField = new VectorFieldType( v );
-
-      if ( ptrTmpVectorField != NULL )
-      {
-        delete ptrTmpVectorField;
-      }
-      ptrTmpVectorField = new VectorFieldType( v );
-
+      this->m_ptrAdjustedVectorField = new VectorFieldType( v );
+      this->m_ptrTmpVectorField = new VectorFieldType( v );
     }
 
     // now that we have all the memory that is required do the computation
-    ptrAdjustedVectorField->copy( v );
+    this->m_ptrAdjustedVectorField->Copy( v );
 
     interpolator.SetNumberOfThreads( this->GetNumberOfThreads() );
 
     for ( unsigned int iI=0; iI < m_NumberOfIterationsToDetermineFlowField; ++iI )
     {
-      interpolator.InterpolateNegativeVelocityPos( ptrAdjustedVectorField, v, dt*0.5, ptrTmpVectorField );
+      interpolator.InterpolateNegativeVelocityPos( this->m_ptrAdjustedVectorField, v, dt*0.5, this->m_ptrTmpVectorField );
 
       // swap the pointers, so we have the updated result in ptrAdjustedVectorField
-      VectorFieldType* ptrSwap = ptrAdjustedVectorField;
-      ptrAdjustedVectorField = ptrTmpVectorField;
-      ptrTmpVectorField = ptrSwap;
+      typename VectorFieldType::Pointer ptrSwap = this->m_ptrAdjustedVectorField;
+      this->m_ptrAdjustedVectorField = this->m_ptrTmpVectorField;
+      this->m_ptrTmpVectorField = ptrSwap;
     }
 
   }
@@ -193,19 +167,19 @@ T COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::ComputeMaximalUpd
   if ( vMax==0 ) vMax = 1; // if everything is zero use a default value
 
   // TODO: take this back out, just for testing
-  T dtx = dFact*v->getSpaceX()/vMax;
+  T dtx = dFact*v->GetSpacingX()/vMax;
 
   T dty = std::numeric_limits< T >::infinity();
   T dtz = std::numeric_limits< T >::infinity();
 
   if ( VImageDimension>1 )
     {
-    dty = dFact*v->getSpaceY()/vMax;
+    dty = dFact*v->GetSpacingY()/vMax;
     }
 
   if ( VImageDimension>2 )
     {
-    dtz = dFact*v->getSpaceZ()/vMax;
+    dtz = dFact*v->GetSpacingZ()/vMax;
     }
 
   T minDT = std::min( dtx, dty );

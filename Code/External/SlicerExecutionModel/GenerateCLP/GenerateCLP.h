@@ -98,7 +98,9 @@ char *GetXMLModuleDescription()
 #define GENERATE_XML \
   if (argc >= 2 && (strcmp(argv[1],"--xml") == 0)) \
     { \
-    std::cout << GetXMLModuleDescription(); \
+    char * description = GetXMLModuleDescription(); \
+    std::cout << description; \
+    delete [] description; \
     return EXIT_SUCCESS; \
     }
 #define GENERATE_TCLAP \
@@ -110,12 +112,12 @@ char *GetXMLModuleDescription()
     bool echoSwitch = false; \
     bool xmlSwitch = false; \
     std::string processInformationAddressString = "0"; \
-try \
-  { \
     TCLAP::CmdLine commandLine ( \
       "Generates C++ code that will parse command lines", \
        ' ', \
       "1.0" ); \
+try \
+  { \
  \
       itksys_ios::ostringstream msg; \
     msg.str("");msg << "Generate TCLAP Code (default: " << UseTCLAP << ")"; \
@@ -145,21 +147,21 @@ try \
     xmlSwitch = xmlSwitchArg.getValue(); \
     processInformationAddressString = processInformationAddressStringArg.getValue(); \
       { /* Assignment for logoFiles */ \
-      for (unsigned int _i = 0; _i < (unsigned int)logoFilesTemp.size(); _i++) \
+      for (size_t _i = 0; _i < logoFilesTemp.size(); _i++) \
         { \
         std::vector<std::string> words; \
         std::vector<std::string> elements; \
         words.clear(); \
       std::string sep(","); \
         splitString(logoFilesTemp[_i], sep, words); \
-        for (unsigned int _j= 0; _j < (unsigned int)words.size(); _j++) \
+        for (size_t _j= 0; _j < words.size(); _j++) \
           { \
             logoFiles.push_back((words[_j].c_str())); \
           } \
         } \
       } \
       } \
-catch ( TCLAP::ArgException e ) \
+catch ( const TCLAP::ArgException & e ) \
   { \
   std::cerr << "error: " << e.error() << " for arg " << e.argId() << std::endl; \
   return ( EXIT_FAILURE ); \
@@ -169,14 +171,14 @@ if (echoSwitch) \
 { \
 std::cout << "Command Line Arguments" << std::endl; \
 std::cout << "    UseTCLAP: " << UseTCLAP << std::endl; \
-for (unsigned int _i= 0; _i < (unsigned int)logoFilesTemp.size(); _i++) \
+for (size_t _i= 0; _i < logoFilesTemp.size(); _i++) \
 { \
 std::cout << "logoFiles[" << _i << "]: "; \
 std::vector<std::string> words; \
 words.clear(); \
       std::string sep(","); \
 splitString(logoFilesTemp[_i], sep, words); \
-for (unsigned int _j= 0; _j < (unsigned int)words.size(); _j++) \
+for (size_t _j= 0; _j < words.size(); _j++) \
 { \
 std::cout <<  words[_j] << " "; \
 } \
@@ -192,6 +194,6 @@ std::cout << "    processInformationAddressString: " << processInformationAddres
 ModuleProcessInformation *CLPProcessInformation = 0; \
 if (processInformationAddressString != "") \
 { \
-sscanf(processInformationAddressString.c_str(), "%p", &CLPProcessInformation); \
+sscanf(processInformationAddressString.c_str(), "%66p", &CLPProcessInformation); \
 }
 #define PARSE_ARGS GENERATE_XML;GENERATE_TCLAP;GENERATE_ECHOARGS;GENERATE_ProcessInformationAddressDecoding;

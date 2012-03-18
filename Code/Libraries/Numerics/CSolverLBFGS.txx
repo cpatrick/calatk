@@ -87,12 +87,12 @@ void CSolverLBFGS< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Jso
 template < class TState >
 bool CSolverLBFGS< TState >::SolvePreInitialized()
 {
-  ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();
+  ObjectiveFunctionType* ptrObj = this->GetObjectiveFunction();
 
   // initialize
 
-  T *ptrCurrentState = pObj->GetStatePointer()->GetPointerToStateVectorElementsToEstimate();
-  long int liNumberOfStateVectorElements = pObj->GetStatePointer()->GetNumberOfStateVectorElementsToEstimate();
+  T *ptrCurrentState = ptrObj->GetStatePointer()->GetPointerToStateVectorElementsToEstimate();
+  long int liNumberOfStateVectorElements = ptrObj->GetStatePointer()->GetNumberOfStateVectorElementsToEstimate();
 
   T *ptrMX = new T[ liNumberOfStateVectorElements ];
 
@@ -284,11 +284,11 @@ CSolverLBFGS< TState >::evaluate(  const T *x,
 
   // evaluate gradient and function value
 
-  ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();
+  ObjectiveFunctionType* ptrObj = this->GetObjectiveFunction();
   // initialize
-  T *ptrCurrentState = pObj->GetStatePointer()->GetPointerToStateVectorElementsToEstimate();
+  T *ptrCurrentState = ptrObj->GetStatePointer()->GetPointerToStateVectorElementsToEstimate();
 
-  long int liNumberOfStateVectorElements = pObj->GetStatePointer()->GetNumberOfStateVectorElementsToEstimate();
+  long int liNumberOfStateVectorElements = ptrObj->GetStatePointer()->GetNumberOfStateVectorElementsToEstimate();
 
   // copy it
   for ( long int iI=0; iI<liNumberOfStateVectorElements; ++iI )
@@ -297,10 +297,10 @@ CSolverLBFGS< TState >::evaluate(  const T *x,
   }
 
   // compute gradient
-  pObj->ComputeGradient();
+  ptrObj->ComputeGradient();
 
   // get current gradient
-  TState *pCurrentGradient = pObj->GetGradientPointer();
+  TState *pCurrentGradient = ptrObj->GetGradientPointer();
   T* ptrCurrentGradient = pCurrentGradient->GetPointerToStateVectorElementsToEstimate();
 
   // copy it
@@ -310,7 +310,7 @@ CSolverLBFGS< TState >::evaluate(  const T *x,
   }
 
   // determine current energy
-  CEnergyValues ComputedEnergy = pObj->GetCurrentEnergy();
+  CEnergyValues ComputedEnergy = ptrObj->GetCurrentEnergy();
 
   return ComputedEnergy.dEnergy;
 }

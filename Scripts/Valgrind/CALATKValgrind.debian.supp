@@ -1,0 +1,791 @@
+{
+   tclap_CmdLine_constructor
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN5TCLAP7CmdLine12_constructorEv
+   fun:_ZN5TCLAP7CmdLineC1ERKSscS2_b
+   fun:main
+}
+{
+   tclap_CmdLine_constructor2
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4_Rep9_S_create*
+   fun:_ZNSs12_S_constructIP*
+   fun:_ZNSsC1EPKcRKSaIcE
+   fun:_ZN5TCLAP7CmdLine12_constructorEv
+   fun:_ZN5TCLAP7CmdLine*
+   fun:main
+}
+{
+   tclap_CmdLine_constructor3
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4_*
+   fun:_ZNSs12_S_construct*
+   fun:_ZNSs*
+   fun:_ZN5TCLAP3Arg*
+   fun:_ZN5TCLAP9SwitchArg*
+   fun:_ZN5TCLAP7CmdLine12_constructorEv
+   fun:_ZN5TCLAP7CmdLine*
+   fun:main
+}
+{
+   tclap_CmdLine_constructor4
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4_Rep9_S_create*
+   fun:_ZNSs12_S_construct*
+   fun:_ZNSs*
+   fun:_ZN5TCLAP3Arg*
+   fun:_ZN5TCLAP7CmdLine*
+   fun:_ZN5TCLAP7CmdLine*
+   fun:main
+}
+{
+   tclap_CmdLine_parse
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocatorISsE8allocateEmPKv
+   fun:_ZNSt12_Vector_baseISsSaISsEE11_M_allocateEm
+   fun:_ZNSt6vectorISsSaISsEE13_M_insert_auxEN9__gnu_cxx17__normal_iteratorIPSsS1_EERKSs
+   fun:_ZNSt6vectorISsSaISsEE9push_backERKSs
+   fun:_ZN5TCLAP7CmdLine5parseEiPPc
+   fun:main
+}
+{
+   tclap_ValuesConstraint
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocator*
+   fun:_ZNSt12_Vector_base*
+   fun:_ZNSt12_Vector_base*
+   fun:_ZNSt6vector*
+   fun:_ZN5TCLAP16ValuesConstraint*
+   fun:main
+}
+{
+   tclap_vector_pushback
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocator*
+   fun:_ZNSt12_Vector_base
+   fun:_ZNSt6vector
+   fun:_ZNSt6vector
+   fun:main
+}
+{
+   tclap_UnlabeledValueArg
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocatorISt10_List_nodeIPN5TCLAP3ArgEEE8allocateEmPKv
+   fun:_ZNSt10_List_baseIPN5TCLAP3ArgESaIS2_EE11_M_get_nodeEv
+   fun:_ZNSt4listIPN5TCLAP3ArgESaIS2_EE14_M_create_nodeERKS2_
+   fun:_ZNSt4listIPN5TCLAP3ArgESaIS2_EE9_M_insertESt14_List_iteratorIS2_ERKS2_
+   fun:_ZNSt4listIPN5TCLAP3ArgESaIS2_EE9push_backERKS2_
+   fun:_ZNK5TCLAP17UnlabeledValueArgISsE9addToListERSt4listIPNS_3ArgESaIS4_EE
+   fun:_ZN5TCLAP7CmdLine3addEPNS_3ArgE
+   fun:_ZN5TCLAP17UnlabeledValueArgISsEC1ERKSsS3_bSsS3_RNS_16CmdLineInterfaceEbPNS_7VisitorE
+   fun:main
+}
+{
+   tclap_UnlabeledValueArg
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4_Rep9_S_create*
+   fun:_ZNSs12_S_construct*
+   fun:_ZNSs*
+   fun:_ZN5TCLAP3Arg*
+   fun:_ZN5TCLAP8ValueArg*
+   fun:_ZN5TCLAP17UnlabeledValueArg*
+   fun:main
+}
+{
+   tclap_pushback1
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocatorISsE8allocateEmPKv
+   fun:_ZNSt12_Vector_baseISsSaISsEE11_M_allocateEm
+   fun:_ZNSt6vectorISsSaISsEE13_M_insert_auxEN9__gnu_cxx17__normal_iteratorIPSsS1_EERKSs
+   fun:_ZNSt6vectorISsSaISsEE9push_backERKSs
+   fun:main
+}
+{
+   tclap_pushback2
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocatorIiE8allocateEmPKv
+   fun:_ZNSt12_Vector_baseIiSaIiEE11_M_allocateEm
+   fun:_ZNSt6vectorIiSaIiEE13_M_insert_auxEN9__gnu_cxx17__normal_iteratorIPiS1_EERKi
+   fun:_ZNSt6vectorIiSaIiEE9push_backERKi
+   fun:main
+}
+{
+   tclap_pushback3
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocatorIPcE8allocateEmPKv
+   fun:_ZNSt12_Vector_baseIPcSaIS0_EE11_M_allocateEm
+   fun:_ZNSt6vectorIPcSaIS0_EE13_M_insert_auxEN9__gnu_cxx17__normal_iteratorIPS0_S2_EERKS0_
+   fun:_ZNSt6vectorIPcSaIS0_EE9push_backERKS0_
+   fun:main
+}
+{
+   tclap_Arg_addToList
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocatorISt10_List_node*
+   fun:_ZNSt10_List_base*
+   fun:_ZNSt4listIPN5TCLAP3ArgESaIS2*
+   fun:_ZNSt4listIPN5TCLAP3ArgESaIS2*
+   fun:_ZNSt4listIPN5TCLAP3ArgESaIS2*
+   fun:_ZNK5TCLAP3Arg9addToList*
+   fun:_ZN5TCLAP7CmdLine3addEPNS_3ArgE
+   fun:_ZN5TCLAP9SwitchArgC1ERKSsS2_S2_RNS_16CmdLineInterfaceEbPNS_7VisitorE
+   fun:main
+}
+{
+   tclap_Arg_addToList2
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocatorISt10_List_nodeIPN5TCLAP3ArgEEE8allocateEmPKv
+   fun:_ZNSt10_List_baseIPN5TCLAP3ArgESaIS2_EE11_M_get_nodeEv
+   fun:_ZNSt4listIPN5TCLAP3ArgESaIS2_EE14_M_create_nodeERKS2_
+   fun:_ZNSt4listIPN5TCLAP3ArgESaIS2_EE9_M_insertESt14_List_iteratorIS2_ERKS2_
+   fun:_ZNSt4listIPN5TCLAP3ArgESaIS2_EE10push_frontERKS2_
+   fun:_ZNK5TCLAP3Arg9addToListERSt4listIPS0_SaIS2_EE
+   fun:_ZN5TCLAP7CmdLine3addEPNS_3ArgE
+   fun:_ZN5TCLAP7CmdLine12_constructorEv
+   fun:_ZN5TCLAP7CmdLineC1ERKSscS2_b
+   fun:main
+}
+{
+   tclap_Arg_addToList3
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocatorISt10_List_node*
+   fun:_ZNSt10_List_baseIPN5TCLAP3Arg*
+   fun:_ZNSt4listIPN5TCLAP3Arg*
+   fun:_ZNSt4listIPN5TCLAP3Arg*
+   fun:_ZNSt4listIPN5TCLAP3Arg*
+   fun:_ZNK5TCLAP3Arg9addToList*
+   fun:_ZN5TCLAP7CmdLine3add*
+   fun:_ZN5TCLAP8ValueArg*
+   fun:main
+}
+{
+   tclap_CmdLine_deleteOnExit
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocatorISt10_List_node*
+   fun:_ZNSt10_List_baseIPN5TCLAP*
+   fun:_ZNSt4listIPN5TCLAP*
+   fun:_ZNSt4listIPN5TCLAP*
+   fun:_ZNSt4listIPN5TCLAP*
+   fun:_ZN5TCLAP7CmdLine12deleteOnExit*
+   fun:_ZN5TCLAP7CmdLine12_constructorEv
+   fun:_ZN5TCLAP7CmdLineC1ERKSscS2_b
+   fun:main
+}
+{
+   tclap_main
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4_Rep9_S_createEmmRKSaIcE
+   fun:_ZNSs12_S_constructIPKcEEPcT_S3_RKSaIcESt20forward_iterator_tag
+   fun:_ZNSsC1EPKcRKSaIcE
+   fun:main
+}
+{
+   tclap_main2
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4_Rep9_S_createEmmRKSaIcE
+   fun:_ZNSs12_S_constructIPcEES0_T_S1_RKSaIcESt20forward_iterator_tag
+   fun:_ZNSsC1IPcEET_S1_RKSaIcE
+   fun:_ZNKSt19basic_ostringstreamIcSt11char_traitsIcESaIcEE3strEv
+   fun:main
+}
+{
+   tclap_main3
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4_Rep9_S_createEmmRKSaIcE
+   fun:_ZNSs4_Rep8_M_cloneERKSaIcEm
+   fun:_ZNSs7reserveEm
+   fun:_ZNSs6appendEPKcm
+   fun:main
+}
+{
+   tclap_main4
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4_Rep9_S_createEmmRKSaIcE
+   fun:_ZNSs4_Rep8_M_cloneERKSaIcEm
+   fun:_ZNSs7reserveEm
+   fun:_ZNSt15basic_stringbufIcSt11char_traitsIcESaIcEE8overflowEi
+   fun:_ZNSt15basic_streambufIcSt11char_traitsIcEE6xsputnEPKcl
+   fun:_ZSt16__ostream_insertIcSt11char_traitsIcEERSt13basic_ostreamIT_T0_ES6_PKS3_l
+   fun:_ZStlsISt11char_traitsIcEERSt13basic_ostreamIcT_ES5_PKc
+   fun:main
+}
+{
+   tclap_Arg_flagStartString
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4_Rep9_S_create*
+   fun:_ZNSs12_S_construct*
+   fun:_ZNSsC1EPKcRKSaIcE
+   fun:_ZN5TCLAP3Arg15flagStartStringEv
+   fun:_ZN5TCLAP7CmdLine12_constructorEv
+   fun:_ZN5TCLAP7CmdLine*
+   fun:main
+}
+{
+   tclap_CmdLine_parse
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4_Rep9_S_create*
+   fun:_ZNSs12_S_construct*
+   fun:_ZNSs*
+   fun:_ZN5TCLAP7CmdLine5parse*
+   fun:main
+}
+{
+   tclap_Arg_Visitor
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4_Rep9_S_create*
+   fun:_ZNSs12_S_construct*
+   fun:_ZNSsC1EPKcRKSaIcE
+   fun:_ZN5TCLAP*
+   fun:_ZN5TCLAP9SwitchArg*
+   fun:main
+}
+{
+   tclap_ValueArg
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4_Rep9_S_create*
+   fun:_ZNSs12_S_construct*
+   fun:_ZNSs*
+   fun:_ZN5TCLAP3Arg*
+   fun:_ZN5TCLAP8ValueArg*
+   fun:main
+}
+{
+   tclap_ValuesConstraint
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4_Rep9_S_create*
+   fun:_ZNSs4_Rep8_M_clone*
+   fun:_ZNSs7reserve*
+   fun:_ZNSs6append*
+   fun:_ZN5TCLAP16ValuesConstraint*
+   fun:main
+}
+{
+   tclap_CmdLine_parse
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZNSs4*
+   fun:_ZNSs9*
+   fun:_ZNSs15*
+   fun:_ZN5TCLAP7CmdLine5parse*
+   fun:main
+}
+{
+   nvidia_libGL_1
+   Memcheck:Leak
+   fun:calloc
+   fun:_dlerror_run
+   fun:dlsym
+   obj:/usr/lib/x86_64-linux-gnu/nvidia/current/libGL.so.*
+   obj:/usr/lib/x86_64-linux-gnu/nvidia/current/libGL.so.*
+   obj:*
+}
+{
+   nvidia_libGL_2
+   Memcheck:Leak
+   fun:calloc
+   fun:_dlerror_run
+   fun:dlclose
+   obj:/usr/lib/x86_64-linux-gnu/nvidia/current/libGL.so.*
+   obj:*
+   obj:*
+   obj:*
+}
+{
+   nvidia_libGL_3
+   Memcheck:Leak
+   fun:malloc
+   fun:_dl_map_object_deps
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   fun:_dl_catch_error
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_*
+   obj:/usr/lib/x86_64-linux-gnu/nvidia/current/libGL.so.*
+   obj:/usr/lib/x86_64-linux-gnu/nvidia/current/libGL.so.*
+   obj:*
+}
+{
+   nvidia_libGL_4
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/nvidia/current/libGL.so.*
+   ...
+}
+{
+   nrrd_1
+   Memcheck:Addr8
+   fun:*strspn*
+   fun:itk_airStrtok
+   fun:itk_airParseStrZ
+   fun:itk__nrrdReadNrrdParse_sizes
+   ...
+}
+{
+   nrrd_2
+   Memcheck:Addr8
+   fun:*strspn*
+   fun:itk_airStrtok
+   fun:itk_airStrntok
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   ...
+}
+{
+   nrrd_3
+   Memcheck:Addr8
+   fun:*strspn*
+   fun:itk_airStrtok
+   fun:itk_airParseStrD
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_4
+   Memcheck:Cond
+   fun:*strspn*
+   fun:itk_airStrtok
+   fun:itk_airStrntok
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_5
+   Memcheck:Cond
+   fun:*strspn*
+   fun:itk_airStrtok
+   fun:itk_airStrntok
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_6
+   Memcheck:Value8
+   fun:itk_airStrtok
+   fun:itk_airStrntok
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_7
+   Memcheck:Value8
+   fun:strcspn
+   fun:itk_airStrtok
+   fun:itk_airStrntok
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_8
+   Memcheck:Value8
+   fun:strcspn
+   fun:itk_airStrtok
+   fun:itk_airStrntok
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_9
+   Memcheck:Value8
+   fun:strcspn
+   fun:itk_airStrtok
+   fun:itk_airStrntok
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_10
+   Memcheck:Cond
+   fun:itk_airStrlen
+   fun:itk_airStrtok
+   fun:itk_airStrntok
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_11
+   Memcheck:Cond
+   fun:itk_airStrntok
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_12
+   Memcheck:Value8
+   fun:itk_airStrlen
+   fun:itk_airStrtok
+   fun:itk_airStrntok
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_13
+   Memcheck:Value8
+   fun:__strspn_*
+   fun:itk_airStrtok
+   fun:itk_airStrntok
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_14
+   Memcheck:Cond
+   fun:*strspn*
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_15
+   Memcheck:Value8
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_16
+   Memcheck:Value8
+   fun:strstr
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_17
+   Memcheck:Cond
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_18
+   Memcheck:Cond
+   fun:itk_airStrdup
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_19
+   Memcheck:Value8
+   fun:itk_airStrdup
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_20
+   Memcheck:Cond
+   fun:itk_airStrdup
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_21
+   Memcheck:Value8
+   fun:itk_airStrdup
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_22
+   Memcheck:Value8
+   fun:strcpy
+   fun:itk_airStrdup
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_23
+   Memcheck:Value8
+   fun:strcpy
+   fun:itk_airStrdup
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_24
+   Memcheck:Cond
+   fun:strcpy
+   fun:itk_airStrdup
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_25
+   Memcheck:Value8
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_26
+   Memcheck:Value8
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_27
+   Memcheck:Cond
+   fun:*strspn*
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_28
+   Memcheck:Value8
+   fun:*strspn*
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_29
+   Memcheck:Cond
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_30
+   Memcheck:Value8
+   fun:itk_airStrtok
+   fun:itk_airStrntok
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_origin
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_31
+   Memcheck:Cond
+   fun:itk_airStrntok
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_origin
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_32
+   Memcheck:Value8
+   fun:strlen
+   fun:itk_airStrdup
+   fun:itk__nrrdSpaceVectorParse
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   nrrd_33
+   Memcheck:Value8
+   fun:strlen
+   fun:itk__nrrdReadNrrdParse_space_directions
+   fun:itk__nrrdFormatNRRD_read
+   fun:itk__nrrdRead
+   fun:itk_nrrdRead
+   fun:itk_nrrdLoad
+   ...
+}
+{
+   libgomp_1
+   Memcheck:Leak
+   fun:malloc
+   obj:/usr/lib/x86_64-linux-gnu/libgomp.so.1.0.0
+   obj:/usr/lib/x86_64-linux-gnu/libgomp.so.1.0.0
+   ...
+}
+{
+   json_1
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZN4JsonL20duplicateStringValue*
+   fun:_ZN4Json5Value8CZString*
+   ...
+}
+{
+   json_2
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN4Json5Value*
+   fun:_ZN4Json5Value*
+   ...
+}
+{
+   json_3
+   Memcheck:Leak
+   fun:_Znwm
+   fun:_ZN9__gnu_cxx13new_allocatorISt13_Rb_tree_nodeISt4pairIKN4Json5Value8CZStringES4_EEE8allocateEmPKv
+   fun:_ZNSt8_Rb_treeIN4Json5Value8CZStringESt4pairIKS2_S1_ESt10_Select1stIS5_ESt4lessIS2_ESaIS5_EE11_M_get_nodeEv
+   ...
+}
+{
+   json_4
+   Memcheck:Leak
+   fun:malloc
+   fun:_ZN4JsonL20duplicateStringValueEPKcj
+   ...
+}
+{
+   json_5
+   Memcheck:Leak
+   fun:_Znam
+   fun:_ZN4Json5Value10setCommentEPKcNS_16CommentPlacementE
+   ...
+}

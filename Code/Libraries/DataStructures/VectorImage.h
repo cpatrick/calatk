@@ -22,6 +22,7 @@
 
 #include "CALATKCommon.h"
 #include "VectorArray.h"
+#include "itkSmartPointer.h"
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -30,8 +31,7 @@
  * VectorImage.h - A vector-valued image class
  * Supports mutliple dimensions (currently 1D, 2D, 3D)
  *
- * This is an implementation of the VectorImage class.  
- * It provides reading and writing methods.
+ * This is an implementation of the VectorImage class.
  * It is intended to be used with VectorImageUtils.
  */
 
@@ -41,10 +41,13 @@ namespace CALATK
 template <class T, unsigned int VImageDimension=3 >
 class VectorImage : public VectorArray<T,VImageDimension>
 {
-
 public:
+  typedef VectorImage                     Self;
+  typedef VectorArray<T,VImageDimension>  Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
-  typedef VectorArray<T,VImageDimension> Superclass;
+  typedef T TFloat;
 
   /********************************
    * Constructors and Destructors *
@@ -54,14 +57,14 @@ public:
    * Empty Constructor
    */
   VectorImage();
-  
+
   /**
    * 0D Constructor that takes an a vector dimension size
    *
    * @param dim - the size of the vector dimension
    */
   VectorImage(unsigned int dim);
-  
+
   /**
    * 1D Constructor that takes an x size and a vector dimension size
    *
@@ -132,115 +135,107 @@ public:
    * Destructor that frees up all memory
    */
   virtual ~VectorImage();
-  
-  
+
+
   /******************
    * Public Methods *
    ******************/
-  
+
   /**
    * Method that implements copy with spacing
    *
    * @param source - the source image to copy from
    */
-  void copy(const VectorImage* source);
-  
-  /** 
+  void Copy(const VectorImage* source);
+
+  /**
    * Method which returns the physical size of a volume element
    */
-  T getElementVolume() const;
+  T GetElementVolume() const;
 
   /**
    * Method to set the original x spacing
    *
    * @param spaceX - the spacing in the x dimension
    */
-  void setSpaceX(T spaceX);
-  
+  void SetSpacingX(T spaceX);
+
   /**
    * Method to set the original y spacing
    *
    * @param spaceY - the spacing in the y dimension
    */
-  void setSpaceY(T spaceY);
-  
+  void SetSpacingY(T spaceY);
+
   /**
    * Method to set the z spacing
    *
    * @param spaceZ - the original spacing in the z dimension
    */
-  void setSpaceZ(T spaceZ);
-  
+  void SetSpacingZ(T spaceZ);
+
   /**
    * Method to set the origin
    */
-  void setOrigin( typename ITKVectorImage<T,VImageDimension>::Type::PointType origin);
-  
+  void SetOrigin( typename ITKVectorImage<T,VImageDimension>::Type::PointType origin);
+
   /**
    * Method to set the direction
    */
-  void setDirection( typename ITKVectorImage<T,VImageDimension>::Type::DirectionType direction);
-  
+  void SetDirection( typename ITKVectorImage<T,VImageDimension>::Type::DirectionType direction);
+
   /**
    * Method to get the x spacing
    */
-  T getSpaceX() const;
-  
+  T GetSpacingX() const;
+
   /**
    * Method to get the y spacing
    */
-  T getSpaceY() const;
-  
+  T GetSpacingY() const;
+
   /**
    * Method to get the z spacing
    */
-  T getSpaceZ() const;
-  
+  T GetSpacingZ() const;
+
   /**
     * Method to get the largest spacing
     */
-  T getLargestSpacing() const;
+  T GetLargestSpacing() const;
 
   /**
     * Method to get the smallest spacing
     */
-  T getSmallestSpacing() const;
+  T GetSmallestSpacing() const;
 
   /**
    * Computes the squared norm of a vector image;  takes proper accound of spacing
    *
    */
-  T computeSquareNorm();
+  T ComputeSquaredNorm();
 
   /**
     * Computes the maximum square norm over the image (for the vector-valued pixels/voxels)
     *
     */
-  T computeMaximalSquareNorm();
+  T ComputeMaximalSquaredNorm();
 
   /**
    * Computes the inner product with another image
    *
    */
-  T computeInnerProduct( const VectorImage* im ) const;
-  
+  T ComputeInnerProduct( const VectorImage* im ) const;
+
   /**
    * Method to get the origin
    */
-  typename ITKVectorImage< T, VImageDimension >::Type::PointType getOrigin() const;
-  
+  typename ITKVectorImage< T, VImageDimension >::Type::PointType GetOrigin() const;
+
   /**
    * Method to get the direction
    */
-  typename ITKVectorImage< T, VImageDimension >::Type::DirectionType getDirection() const;
-  
-  /**
-   * Method that writes the contents of the image to a file
-   * NOT IMPLEMENTED YET
-   *
-   * @param filename - file name to write to
-   */
-   void write(std::string filename);
+  typename ITKVectorImage< T, VImageDimension >::Type::DirectionType GetDirection() const;
 
   /**
    * Method that prints the contents of the image to an ostream
@@ -260,15 +255,15 @@ protected:
    ******************/
 
   /** The original pixel spacing for the x dimension from the image file */
-  T __spaceX;
+  TFloat m_SpacingX;
   /** The original pixel spacing for the y dimension from the image file */
-  T __spaceY;
+  TFloat m_SpacingY;
   /** The original pixel spacing for the z dimension from the image file */
-  T __spaceZ;
+  TFloat m_SpacingZ;
 
   /** ITK Image meta-data */
-  typename ITKVectorImage< T, VImageDimension >::Type::PointType __origin;
-  typename ITKVectorImage< T, VImageDimension >::Type::DirectionType __direction;
+  typename ITKVectorImage< T, VImageDimension >::Type::PointType     m_Origin;
+  typename ITKVectorImage< T, VImageDimension >::Type::DirectionType m_Direction;
 };
 
 #include "VectorImage.txx"

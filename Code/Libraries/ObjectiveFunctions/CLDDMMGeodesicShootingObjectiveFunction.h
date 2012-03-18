@@ -36,11 +36,13 @@ class CLDDMMGeodesicShootingObjectiveFunction
     : public CVelocityFieldObjectiveFunctionWithMomentum< TState >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CLDDMMGeodesicShootingObjectiveFunction                Self;
+  typedef CVelocityFieldObjectiveFunctionWithMomentum< TState >  Superclass;
+  typedef itk::SmartPointer< Self >                              Pointer;
+  typedef itk::SmartPointer< const Self >                        ConstPointer;
 
   /* Some useful typedefs */
-
-  typedef CVelocityFieldObjectiveFunctionWithMomentum< TState > Superclass;
-
   typedef typename TState::TFloat T;
 
   typedef typename Superclass::CEnergyValues CEnergyValues;

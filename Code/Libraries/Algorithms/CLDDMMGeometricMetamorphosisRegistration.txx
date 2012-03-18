@@ -27,21 +27,11 @@ CLDDMMGeometricMetamorphosisRegistration< TState >::CLDDMMGeometricMetamorphosis
   m_MaskKernel = DefaultMaskKernel;
 
   m_ptrMaskKernel = NULL;
-  m_bSetDefaultMaskKernel = false;
 }
 
 template < class TState >
 CLDDMMGeometricMetamorphosisRegistration< TState >::~CLDDMMGeometricMetamorphosisRegistration()
 {
-  if ( m_bSetDefaultMaskKernel )
-    {
-    delete m_ptrMaskKernel;
-    m_ptrMaskKernel = NULL;
-    // unregister it from the objective function
-    typedef CLDDMMGeometricMetamorphosisObjectiveFunction< TState > CLDDMMType;
-    CLDDMMType* plddmm = dynamic_cast< CLDDMMType *>( this->m_ptrObjectiveFunction );
-    plddmm->SetMaskKernelPointer( this->m_ptrMaskKernel );    
-    }
 }
 
 template< class TState >
@@ -61,21 +51,20 @@ void CLDDMMGeometricMetamorphosisRegistration< TState >::SetAutoConfiguration( J
 }
 
 template < class TState >
-void CLDDMMGeometricMetamorphosisRegistration< TState >::SetMaskKernelPointer( ptrKernelType ptrKernel )
+void CLDDMMGeometricMetamorphosisRegistration< TState >::SetMaskKernelPointer( KernelType * ptrKernel )
 {
-  m_ptrMaskKernel = ptrKernel;
+  this->m_ptrMaskKernel = ptrKernel;
 }
 
 template < class TState >
 CKernel< typename TState::TFloat, TState::VImageDimension >*
 CLDDMMGeometricMetamorphosisRegistration< TState >::GetMaskKernelPointer()
 {
-  if ( m_ptrMaskKernel == NULL )
+  if ( m_ptrMaskKernel.GetPointer() == NULL )
     {
     this->SetDefaultMaskKernelPointer();
-    m_bSetDefaultMaskKernel = true;
     }
-  return m_ptrMaskKernel;
+  return this->m_ptrMaskKernel.GetPointer();
 }
 
 template < class TState >
@@ -88,18 +77,17 @@ template < class TState >
 const typename CLDDMMGeometricMetamorphosisRegistration< TState >::VectorImageType*
 CLDDMMGeometricMetamorphosisRegistration< TState >::GetImageT( T dTime )
 {
-  dynamic_cast< CLDDMMGeometricMetamorphosisObjectiveFunction< TState>* >(this->m_ptrObjectiveFunction)->GetImageT( this->m_ptrIm, dTime );
-  return this->m_ptrIm;
+  dynamic_cast< CLDDMMGeometricMetamorphosisObjectiveFunction< TState>* >(this->m_ptrObjectiveFunction.GetPointer() )->GetImageT( this->m_ptrIm, dTime );
+  return this->m_ptrIm.GetPointer();
 }
 
 template < class TState >
 void CLDDMMGeometricMetamorphosisRegistration< TState >::SetDefaultsIfNeeded()
 {
   std::cout << "Called the default mask kernel function" << std::endl;
-  if ( m_ptrMaskKernel == NULL )
+  if ( m_ptrMaskKernel.GetPointer() == NULL )
     {
     SetDefaultMaskKernelPointer();
-    m_bSetDefaultMaskKernel = true;
     }
 
   this->m_ptrMaskKernel->SetPrintConfiguration( this->GetPrintConfiguration() );
@@ -114,28 +102,28 @@ void CLDDMMGeometricMetamorphosisRegistration< TState >::SetDefaultObjectiveFunc
 {
   // make sure that all we need has already been allocated
 
-  if ( this->m_ptrKernel == NULL )
+  if ( this->m_ptrKernel.GetPointer() == NULL )
     {
     throw std::runtime_error( "Kernel needs to be defined before default objective function can be created." );
     }
 
-  if ( this->m_ptrMaskKernel == NULL )
+  if ( this->m_ptrMaskKernel.GetPointer() == NULL )
     {
     throw std::runtime_error( "Mask kernel needs to be defined before default objective function can be created." );
     }
 
-  if ( this->m_ptrMetric == NULL )
+  if ( this->m_ptrMetric.GetPointer() == NULL )
     {
     throw std::runtime_error( "Metric needs to be defined before default objective function can be created." );
     }
 
-  if ( this->m_ptrImageManager == NULL )
+  if ( this->m_ptrImageManager.GetPointer() == NULL )
     {
     throw std::runtime_error( "Image manager needs to be defined before default objective function can be created." );
     }
 
   typedef CLDDMMGeometricMetamorphosisObjectiveFunction< TState > CLDDMMType;
-  CLDDMMType* plddmm = new CLDDMMType;
+  typename CLDDMMType::Pointer plddmm = new CLDDMMType;
   plddmm->SetEvolverPointer( this->m_ptrEvolver );
   plddmm->SetKernelPointer( this->m_ptrKernel );
   plddmm->SetMaskKernelPointer( this->m_ptrMaskKernel );
@@ -144,9 +132,9 @@ void CLDDMMGeometricMetamorphosisRegistration< TState >::SetDefaultObjectiveFunc
 
   this->m_ptrObjectiveFunction = plddmm;
   // set the objective functions for the kernels and the kernel numbers
-  this->m_ptrKernel->SetObjectiveFunctionPointer( plddmm );
+  this->m_ptrKernel->SetObjectiveFunction( plddmm );
   this->m_ptrKernel->SetObjectiveFunctionKernelNumber( 0 );
-  this->m_ptrMaskKernel->SetObjectiveFunctionPointer( plddmm );
+  this->m_ptrMaskKernel->SetObjectiveFunction( plddmm );
   this->m_ptrMaskKernel->SetObjectiveFunctionKernelNumber( 1 );
 }
 

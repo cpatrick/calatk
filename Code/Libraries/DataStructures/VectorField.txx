@@ -24,61 +24,53 @@
 // Constructors and Destructors //
 //////////////////////////////////
 
-//
-// empty constructor
-//
 template <class T, unsigned int VImageDimension >
 VectorField< T, VImageDimension >::VectorField() : VectorImage<T, VImageDimension >::VectorImage()
 {}
 
-//
-// just size constructors
-//
 
 template <class T, unsigned int VImageDimension >
 VectorField< T, VImageDimension >::VectorField(unsigned int sizeX)
   : VectorImage<T, VImageDimension >::VectorImage(sizeX, 1) {}
 
+
 template <class T, unsigned int VImageDimension >
 VectorField< T, VImageDimension >::VectorField(unsigned int sizeX, unsigned int sizeY )
   : VectorImage<T, VImageDimension >::VectorImage(sizeX, sizeY, 2) {}
+
 
 template <class T, unsigned int VImageDimension >
 VectorField< T, VImageDimension >::VectorField(unsigned int sizeX, unsigned int sizeY, unsigned int sizeZ)
   : VectorImage<T, VImageDimension >::VectorImage(sizeX, sizeY, sizeZ, 3) {}
 
-//
-// copy constructor
-//
+
 template <class T, unsigned int VImageDimension >
 VectorField< T, VImageDimension >::VectorField( const VectorField* source )
   : VectorImage<T, VImageDimension >::VectorImage(source) {}
 
-//
-// copy constructor from vector image
-//
+
 template <class T, unsigned int VImageDimension >
 VectorField< T, VImageDimension >::VectorField( const VectorImageType* source, T dVal )
 {
-  this->__sizeX = source->getSizeX();
-  this->__sizeY = source->getSizeY();
-  this->__sizeZ = source->getSizeZ();
-  this->__dim = VImageDimension;
-  this->__length = this->__sizeX*this->__sizeY*this->__sizeZ*this->__dim;
-  this->__dataPtr = NULL;
-  this->__allocate();
-  
-  this->__spaceX = source->getSpaceX();
-  this->__spaceY = source->getSpaceY();
-  this->__spaceZ = source->getSpaceZ();
+  this->m_SizeX = source->GetSizeX();
+  this->m_SizeY = source->GetSizeY();
+  this->m_SizeZ = source->GetSizeZ();
+  this->m_Dimension = VImageDimension;
+  this->m_Length = this->m_SizeX*this->m_SizeY*this->m_SizeZ*this->m_Dimension;
+  this->m_DataPtr = NULL;
+  this->Allocate();
 
-  this->setOrigin( source->getOrigin() );
-  this->setDirection( source->getDirection() );
+  this->m_SpacingX = source->GetSpacingX();
+  this->m_SpacingY = source->GetSpacingY();
+  this->m_SpacingZ = source->GetSpacingZ();
+
+  this->SetOrigin( source->GetOrigin() );
+  this->SetDirection( source->GetDirection() );
 
    // initialize everthing with zero, vector image is just used to get the dimensions and spacings
-  for (unsigned int uiIndx = 0; uiIndx < this->__length; ++uiIndx )
+  for (unsigned int uiIndx = 0; uiIndx < this->m_Length; ++uiIndx )
     {
-    this->__dataPtr[ uiIndx ] = dVal;
+    this->m_DataPtr[ uiIndx ] = dVal;
     }
 
 }
@@ -91,108 +83,108 @@ VectorField< T, VImageDimension >::VectorField( const VectorImageType* source, T
 // 1D get x
 //
 template <class T, unsigned int VImageDimension >
-T VectorField< T, VImageDimension >::getX(unsigned int x) const
+T VectorField< T, VImageDimension >::GetX(unsigned int x) const
 {
-  return this->getValue(x,0);
+  return this->GetValue(x,0);
 }
 
 //
 // 2D get x
 //
 template <class T, unsigned int VImageDimension >
-T VectorField< T, VImageDimension  >::getX(unsigned int x, unsigned int y) const
+T VectorField< T, VImageDimension  >::GetX(unsigned int x, unsigned int y) const
 {
-  return this->getValue(x,y,0);
+  return this->GetValue(x,y,0);
 }
 
 //
 // 3D get x
 //
 template <class T, unsigned int VImageDimension >
-T VectorField< T, VImageDimension >::getX(unsigned int x, unsigned int y, unsigned int z) const
+T VectorField< T, VImageDimension >::GetX(unsigned int x, unsigned int y, unsigned int z) const
 {
-  return this->getValue(x,y,z,0);
+  return this->GetValue(x,y,z,0);
 }
 
 //
 // 2D get y
 //
 template <class T, unsigned int VImageDimension >
-T VectorField< T, VImageDimension >::getY(unsigned int x, unsigned int y) const
+T VectorField< T, VImageDimension >::GetY(unsigned int x, unsigned int y) const
 {
-  return this->getValue(x,y,1);
+  return this->GetValue(x,y,1);
 }
 
 //
 // 3D get y
 //
 template <class T, unsigned int VImageDimension >
-T VectorField< T, VImageDimension >::getY(unsigned int x, unsigned int y, unsigned int z) const
+T VectorField< T, VImageDimension >::GetY(unsigned int x, unsigned int y, unsigned int z) const
 {
-  return this->getValue(x,y,z,1);
+  return this->GetValue(x,y,z,1);
 }
 
 //
 // 3D get z
 //
 template <class T, unsigned int VImageDimension >
-T VectorField< T, VImageDimension >::getZ(unsigned int x, unsigned int y, unsigned int z) const
+T VectorField< T, VImageDimension >::GetZ(unsigned int x, unsigned int y, unsigned int z) const
 {
-  return this->getValue(x,y,z,2);
+  return this->GetValue(x,y,z,2);
 }
 
 //
 // 1D set x
 //
 template <class T, unsigned int VImageDimension >
-void VectorField< T, VImageDimension  >::setX(unsigned int x, T value) {
+void VectorField< T, VImageDimension  >::SetX(unsigned int x, T value) {
 
-  this->setValue(x,0, value);
+  this->SetValue(x,0, value);
 }
 
 //
 // 2D set x
 //
 template <class T, unsigned int VImageDimension >
-void VectorField< T, VImageDimension >::setX(unsigned int x, unsigned int y, T value) {
+void VectorField< T, VImageDimension >::SetX(unsigned int x, unsigned int y, T value) {
 
-  this->setValue(x,y,0, value);
+  this->SetValue(x,y,0, value);
 }
 
 //
 // 3D set x
 //
 template <class T, unsigned int VImageDimension >
-void VectorField< T, VImageDimension >::setX(unsigned int x, unsigned int y, unsigned int z, T value) {
+void VectorField< T, VImageDimension >::SetX(unsigned int x, unsigned int y, unsigned int z, T value) {
 
-  this->setValue(x,y,z,0, value);
+  this->SetValue(x,y,z,0, value);
 }
 
 //
 // 2D set y
 //
 template <class T, unsigned int VImageDimension >
-void VectorField< T, VImageDimension >::setY(unsigned int x, unsigned int y, T value) {
+void VectorField< T, VImageDimension >::SetY(unsigned int x, unsigned int y, T value) {
 
-  this->setValue(x,y,1, value);
+  this->SetValue(x,y,1, value);
 }
 
 //
 // 3D set y
 //
 template <class T, unsigned int VImageDimension >
-void VectorField< T, VImageDimension >::setY(unsigned int x, unsigned int y, unsigned int z, T value) {
+void VectorField< T, VImageDimension >::SetY(unsigned int x, unsigned int y, unsigned int z, T value) {
 
-  this->setValue(x,y,z,1, value);
+  this->SetValue(x,y,z,1, value);
 }
 
 //
 // 3D set z
 //
 template <class T, unsigned int VImageDimension >
-void VectorField< T, VImageDimension >::setZ(unsigned int x, unsigned int y, unsigned int z, T value) {
+void VectorField< T, VImageDimension >::SetZ(unsigned int x, unsigned int y, unsigned int z, T value) {
 
-  this->setValue(x,y,z,2, value);
+  this->SetValue(x,y,z,2, value);
 }
 
 #endif

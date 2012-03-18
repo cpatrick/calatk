@@ -25,6 +25,9 @@
 // in a lookup table.   By including this file, it creates a main function
 // that calls RegisterTests() then looks up the function pointer for the test
 // specified on the command line.
+//
+
+#include "itkConfigure.h"
 #include "itkWin32Header.h"
 #include <map>
 #include <string>
@@ -39,7 +42,11 @@
 #include "itkSubtractImageFilter.h"
 #include "itkRescaleIntensityImageFilter.h"
 #include "itkExtractImageFilter.h"
-#include "itkDifferenceImageFilter.h"
+#if ITK_VERSION_MAJOR == 3
+  #include "itkDifferenceImageFilter.h"
+#else
+  #include "itkTestingComparisonImageFilter.h"
+#endif
 #include "itkImageRegion.h"
 #include "itksys/SystemTools.hxx"
 
@@ -292,7 +299,11 @@ int RegressionTestImage (const char *testImageFilename,
     }
 
   // Now compare the two images
+#if ITK_VERSION_MAJOR == 3
   typedef itk::DifferenceImageFilter<ImageType,ImageType> DiffType;
+#else
+  typedef itk::Testing::ComparisonImageFilter<ImageType,ImageType> DiffType;
+#endif
   DiffType::Pointer diff = DiffType::New();
     diff->SetValidInput(baselineReader->GetOutput());
     diff->SetTestInput(testReader->GetOutput());
@@ -344,7 +355,7 @@ int RegressionTestImage (const char *testImageFilename,
     std::cout << status;
     std::cout <<  "</DartMeasurement>" << std::endl;
 
-    ::itk::OStringStream diffName;
+    std::ostringstream diffName;
       diffName << testImageFilename << ".diff.png";
     try
       {
@@ -379,7 +390,7 @@ int RegressionTestImage (const char *testImageFilename,
     std::cout << diffName.str();
     std::cout << "</DartMeasurementFile>" << std::endl;
 
-    ::itk::OStringStream baseName;
+    std::ostringstream baseName;
     baseName << testImageFilename << ".base.png";
     try
       {
@@ -414,7 +425,7 @@ int RegressionTestImage (const char *testImageFilename,
     std::cout << baseName.str();
     std::cout << "</DartMeasurementFile>" << std::endl;
 
-    ::itk::OStringStream testName;
+    std::ostringstream testName;
     testName << testImageFilename << ".test.png";
     try
       {
@@ -479,7 +490,7 @@ std::map<std::string,int> RegressionTestBaselines (char *baselineFilename)
     }
   while (++x)
     {
-    ::itk::OStringStream filename;
+    std::ostringstream filename;
     filename << originalBaseline << "." << x << suffix;
     std::ifstream filestream(filename.str().c_str());
     if (!filestream)
@@ -492,7 +503,9 @@ std::map<std::string,int> RegressionTestBaselines (char *baselineFilename)
   return baselines;
 }
 
+#if ITK_VERSION_MAJOR == 3
 // Needed for explicit instantiation
 #include "itkDifferenceImageFilter.txx"
+#endif
 
 #endif

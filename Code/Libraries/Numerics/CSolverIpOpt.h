@@ -43,7 +43,7 @@ public:
 
   typedef typename TState::TFloat T;
   typedef CSolver< TState > Superclass;
-  typedef typename Superclass::ptrObjectiveFunctionType ptrObjectiveFunctionType;
+  typedef typename Superclass::ObjectiveFunctionType ObjectiveFunctionType;
   typedef typename Superclass::CEnergyValues CEnergyValues;
 
   CSolverIpOpt();

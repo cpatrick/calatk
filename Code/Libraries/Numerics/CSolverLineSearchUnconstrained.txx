@@ -23,7 +23,7 @@
 template < class TState >
 CSolverLineSearchUnconstrained< TState >::CSolverLineSearchUnconstrained()
 {
-  pTempState = NULL;
+  this->m_TempState = NULL;
 }
 
 //
@@ -32,12 +32,12 @@ CSolverLineSearchUnconstrained< TState >::CSolverLineSearchUnconstrained()
 template < class TState >
 bool CSolverLineSearchUnconstrained< TState>::SolvePreInitialized()
 {
-  ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();
+  ObjectiveFunctionType * objectiveFunction = this->GetObjectiveFunction();
 
   unsigned int uiNrOfIterationsWithImmediateDecrease = 0;
   unsigned int uiNrOfIterationsWithoutImmediateDecrease = 0;
 
-  CEnergyValues InitialEnergy = pObj->GetCurrentEnergy();
+  CEnergyValues InitialEnergy = objectiveFunction->GetCurrentEnergy();
   std::cout << "Initial energy = " << InitialEnergy.dEnergy << std::endl;
 
   T dDesiredStepSize = this->m_InitialStepSize;
@@ -45,7 +45,7 @@ bool CSolverLineSearchUnconstrained< TState>::SolvePreInitialized()
   CEnergyValues ResultingEnergy;
 
   // creating new temp state
-  pTempState = new TState( *pObj->GetStatePointer() );
+  this->m_TempState = new TState( *objectiveFunction->GetStatePointer() );
 
   std::string sStatePrefix = "S" + CreateIntegerString( (int)this->GetExternalSolverState() ) + "-";
 
@@ -58,7 +58,7 @@ bool CSolverLineSearchUnconstrained< TState>::SolvePreInitialized()
     {
 
     unsigned int uiRequiredIterations;
-    bool bSufficientlyDecreasedEnergy = this->LineSearchWithBacktracking( CurrentEnergy, dDesiredStepSize, dAlpha, ResultingEnergy, uiRequiredIterations, pTempState );
+    bool bSufficientlyDecreasedEnergy = this->LineSearchWithBacktracking( CurrentEnergy, dDesiredStepSize, dAlpha, ResultingEnergy, uiRequiredIterations, this->m_TempState );
 
     if ( bSufficientlyDecreasedEnergy )
       {
@@ -135,8 +135,6 @@ bool CSolverLineSearchUnconstrained< TState>::SolvePreInitialized()
     }
 
   // clean up
-
-  delete pTempState;
 
   if ( ResultingEnergy.dEnergy < InitialEnergy.dEnergy )
     {

@@ -62,7 +62,7 @@ public:
 
 /** Getting effective image dimensions (i.e., number of non-singleton dimensions), so that we can instantiate objects of the right dimension */
 
-unsigned int GetNonSingletonImageDimensionFromFile( std::string sourceImage );
+unsigned int GetNonSingletonImageDimensionFromFile( const std::string & sourceImage );
 
 /** ND simulated templated typdefs */
 
@@ -99,7 +99,7 @@ struct ITKCharImageReader
 template <unsigned int VImageDimension>
 struct ITKCharImageWriter
 {
-  typedef itk::ImageFileWriter< typename ITKCharImage< VImageDimension >::Type > Type;  
+  typedef itk::ImageFileWriter< typename ITKCharImage< VImageDimension >::Type > Type;
 };
 
 template <class T, unsigned int VImageDimension>
@@ -124,7 +124,6 @@ template <class T, unsigned int VImageDimension>
 struct ITKAffineTransform
 {
   typedef itk::AffineTransform< T, VImageDimension > Type;
-  typedef typename Type::Pointer Pointer;
 };
 
 template <class T, unsigned int VImageDimension>
@@ -273,41 +272,6 @@ struct ITKDeformationField3D
   typedef itk::Image< typename ITKDeformationPixel3D<T>::Type, 3> Type;
 };
 
-template <class T>
-struct SaveDelete
-{
-  static void Pointer( T& ptr )
-  {
-    if ( ptr != NULL ) delete ptr;
-    ptr = NULL;
-  }
-
-  static void PointerVector( std::vector< T >& ptrVec )
-  {
-    typename std::vector< T >::iterator iter;
-    if ( ptrVec != NULL )
-      {
-      for ( iter=ptrVec.begin(); iter != ptrVec.end(); ++iter )
-        {
-        SaveDelete< T >::Pointer( *iter );
-        }
-      ptrVec.clear();
-      }
-  }
-
-  static void PointerVector( std::vector< T >*& ptrVec )
-  {
-    typename std::vector< T >::iterator iter;
-    if ( ptrVec != NULL )
-      {
-      for ( iter=ptrVec->begin(); iter != ptrVec->end(); ++iter )
-        {
-        SaveDelete< T >::Pointer( *iter );
-        }
-      ptrVec->clear();
-      }
-  }
-};
 
 /* Output functionality */
 

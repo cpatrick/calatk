@@ -24,7 +24,9 @@ template <class T, unsigned int VImageDimension >
 CResampler< T, VImageDimension >::CResampler()
   : DefaultSigma( 0.05 ), m_ExternallySetSigma( false )
 {
-  SetSigma( DefaultSigma );
+  this->m_ptrGaussianKernel = new GaussianKernelType();
+
+  this->SetSigma( DefaultSigma );
 }
 
 template <class T, unsigned int VImageDimension >
@@ -51,7 +53,7 @@ template <class T, unsigned int VImageDimension >
 void CResampler< T, VImageDimension >::SetSigma( T dSigma )
 {
   m_Sigma = dSigma;
-  m_GaussianKernel.SetSigma( m_Sigma );
+  m_ptrGaussianKernel->SetSigma( m_Sigma );
 }
 
 #endif

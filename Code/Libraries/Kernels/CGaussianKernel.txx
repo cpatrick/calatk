@@ -59,9 +59,9 @@ void CGaussianKernel< T, VImageDimension >::SetSigma( T dSigma )
 template <class T, unsigned int VImageDimension >
 void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType1D* pVecImageGraft )
 {
-  unsigned int szX = pVecImageGraft->getSizeX();
+  unsigned int szX = pVecImageGraft->GetSizeX();
 
-  T dx = pVecImageGraft->getSpaceX();
+  T dx = pVecImageGraft->GetSpacingX();
 
   T pi = (T)CALATK::PI;
 
@@ -72,16 +72,16 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vecto
     f1Eff = GetFFromIndex( x, szX, dx );
 
     T val = exp( -m_Sigma*m_Sigma*( 4*pi*pi*(f1Eff*f1Eff)/2 ) );
-    this->m_ptrL->setValue(x,0, val );
+    this->m_ptrL->SetValue(x,0, val );
 
     // avoid division by zero!!
     if ( val <= std::numeric_limits<T>::epsilon() )
       {
-      this->m_ptrLInv->setValue(x,0,1.0/std::numeric_limits<T>::epsilon() );
+      this->m_ptrLInv->SetValue(x,0,1.0/std::numeric_limits<T>::epsilon() );
       }
     else
       {
-      this->m_ptrLInv->setValue(x,0,1.0/(val) );
+      this->m_ptrLInv->SetValue(x,0,1.0/(val) );
       }
     }
 
@@ -90,11 +90,11 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vecto
 template <class T, unsigned int VImageDimension >
 void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType2D* pVecImageGraft )
 {
-  unsigned int szX = pVecImageGraft->getSizeX();
-  unsigned int szY = pVecImageGraft->getSizeY();
+  unsigned int szX = pVecImageGraft->GetSizeX();
+  unsigned int szY = pVecImageGraft->GetSizeY();
 
-  T dx = pVecImageGraft->getSpaceX();
-  T dy = pVecImageGraft->getSpaceY();
+  T dx = pVecImageGraft->GetSpacingX();
+  T dy = pVecImageGraft->GetSpacingY();
 
   T pi = (T)CALATK::PI;
 
@@ -109,16 +109,16 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vecto
       f1Eff = GetFFromIndex( x, szX, dx );
 
       T val = exp( -m_Sigma*m_Sigma*( 4*pi*pi*(f1Eff*f1Eff + f2Eff*f2Eff )/2 ) );
-      this->m_ptrL->setValue(x,y,0, val );
+      this->m_ptrL->SetValue(x,y,0, val );
 
       // avoid division by zero!!
       if ( val <= std::numeric_limits<T>::epsilon() )
         {
-        this->m_ptrLInv->setValue(x,y,0,1.0/std::numeric_limits<T>::epsilon() );
+        this->m_ptrLInv->SetValue(x,y,0,1.0/std::numeric_limits<T>::epsilon() );
         }
       else
         {
-        this->m_ptrLInv->setValue(x,y,0,1.0/(val) );
+        this->m_ptrLInv->SetValue(x,y,0,1.0/(val) );
         }
       }
     }
@@ -129,13 +129,13 @@ template <class T, unsigned int VImageDimension >
 void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType3D* pVecImageGraft )
 {
 
-  unsigned int szX = pVecImageGraft->getSizeX();
-  unsigned int szY = pVecImageGraft->getSizeY();
-  unsigned int szZ = pVecImageGraft->getSizeZ();
+  unsigned int szX = pVecImageGraft->GetSizeX();
+  unsigned int szY = pVecImageGraft->GetSizeY();
+  unsigned int szZ = pVecImageGraft->GetSizeZ();
 
-  T dx = pVecImageGraft->getSpaceX();
-  T dy = pVecImageGraft->getSpaceY();
-  T dz = pVecImageGraft->getSpaceZ();
+  T dx = pVecImageGraft->GetSpacingX();
+  T dy = pVecImageGraft->GetSpacingY();
+  T dz = pVecImageGraft->GetSpacingZ();
 
   T pi = (T)CALATK::PI;
 
@@ -153,16 +153,16 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vecto
         {
         f1Eff = GetFFromIndex( x, szX, dx );
         T val = exp( -m_Sigma*m_Sigma*( 4*pi*pi*( f1Eff*f1Eff + f2Eff*f2Eff + f3Eff*f3Eff)/2 ) );
-        this->m_ptrL->setValue(x,y,z,0, val );
+        this->m_ptrL->SetValue(x,y,z,0, val );
 
         // avoid division by zero!!
         if ( val <= std::numeric_limits<T>::epsilon() )
           {
-          this->m_ptrLInv->setValue(x,y,z,0,1.0/std::numeric_limits<T>::epsilon() );
+          this->m_ptrLInv->SetValue(x,y,z,0,1.0/std::numeric_limits<T>::epsilon() );
           }
         else
           {
-          this->m_ptrLInv->setValue(x,y,z,0,1.0/(val) );
+          this->m_ptrLInv->SetValue(x,y,z,0,1.0/(val) );
           }
 
         }

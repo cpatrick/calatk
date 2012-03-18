@@ -30,9 +30,13 @@ template <class T, unsigned int VImageDimension=3 >
 class CResamplerLinear : public CResampler< T, VImageDimension >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CResamplerLinear                Self;
+  typedef CResampler< T, VImageDimension> Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
   /* Some useful typedefs */
-  typedef CResampler< T, VImageDimension > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
 
   CResamplerLinear();

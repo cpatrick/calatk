@@ -28,7 +28,7 @@ extern "C" {
   {
     /** Inputs from calling application to the module **/
     unsigned char Abort;
-    
+
     /** Outputs from the module to the calling application **/
     float Progress;      /// Overall progress
     float StageProgress; /// Progress of a single stage in an algorithm
@@ -41,7 +41,8 @@ extern "C" {
     void Initialize()
       {
         Abort = 0;
-        Progress = 0;
+        Progress = 0.0f;
+        StageProgress = 0.0f;
         strcpy(ProgressMessage, "");
         ElapsedTime = 0.0;
       };
@@ -51,6 +52,8 @@ extern "C" {
         ProgressCallbackFunction = fun;
         ProgressCallbackClientData = who;
       };
+
+    ModuleProcessInformation();
   };
 };
 

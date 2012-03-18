@@ -33,19 +33,21 @@ template < class TState >
 class CSolverMultiScale : public CSolver< TState >
 {
 public:
-  
+  /** Standard class typedefs. */
+  typedef CSolverMultiScale               Self;
+  typedef CSolver< TState >               Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
+
   typedef typename TState::TFloat T;
   static const unsigned int VImageDimension = TState::VImageDimension;
 
-  typedef CSolver< TState > Superclass;
   typedef typename Superclass::CEnergyValues CEnergyValues;
 
-  typedef CSolver< TState > SolverType;
-
-  typedef VectorImage< T, VImageDimension > VectorImageType;
-  typedef VectorImageUtils< T, VImageDimension > VectorImageUtilsType;
+  typedef VectorImage< T, VImageDimension >             VectorImageType;
+  typedef VectorImageUtils< T, VImageDimension >        VectorImageUtilsType;
   typedef CImageManagerMultiScale< T, VImageDimension > ImageManagerMultiScaleType;
-  typedef typename SolverType::ptrObjectiveFunctionType ptrObjectiveFunctionType;
+  typedef typename Superclass::ObjectiveFunctionType    ObjectiveFunctionType;
 
   CSolverMultiScale();
   virtual ~CSolverMultiScale();
@@ -53,8 +55,8 @@ public:
   // TODO: Make it such that we can have different solvers for the different scales
   // for now: One solver with identical settings
 
-  void SetSingleScaleSolverPointer( SolverType* ptrSolver );
-  const SolverType* GetSingleScaleSolverPointer() const;
+  void SetSingleScaleSolverPointer( Superclass* ptrSolver );
+  const Superclass* GetSingleScaleSolverPointer() const;
 
   // the objective function has an image manager associated with it
 
@@ -71,9 +73,8 @@ public:
 protected:
 
   void SetDefaultSingleScaleSolver();
-  void DeleteDefaultSingleScaleSolver();
 
-  SolverType* m_ptrSolver;
+  typename Superclass::Pointer m_ptrSolver;
 
 private:
 

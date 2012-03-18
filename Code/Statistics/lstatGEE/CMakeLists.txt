@@ -5,9 +5,9 @@ PROJECT(lstatGEE)
 #
 
 IF(USE_BOOST)
-  SET(libraries ITKCommon ITKAlgorithms ITKBasicFilters ITKIO ${BOOST_LIBRARIES})
+  SET(libraries ${ITK_LIBRARIES} ${BOOST_LIBRARIES})
 ELSE(USE_BOOST)
-  SET(libraries ITKCommon ITKAlgorithms ITKBasicFilters ITKIO)
+  SET(libraries ${ITK_LIBRARIES})
 ENDIF(USE_BOOST) 
 
 # Need to manually set up CLP here, because we have multiple source files

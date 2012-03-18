@@ -26,56 +26,52 @@ namespace CALATK
 {
 
 /** 
- * CAlgorithm.h -- Base class for all the registration algorithms which introduces state dependency.
+ * \class CAlgorithm
+ *
+ * \brief Base class for all the registration algorithms which introduces state dependency.
+ *
  * Provides the interface for the solver and the objective function.
  * amd takes care of deleting default settings if they were allocated.
  *
  */
-
 template < class TState >
-class CAlgorithm
-    : public CAlgorithmBase< typename TState::TFloat, TState::VImageDimension >
+class CAlgorithm : public CAlgorithmBase< typename TState::TFloat, TState::VImageDimension >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CAlgorithm                                                         Self;
+  typedef CAlgorithmBase< typename TState::TFloat, TState::VImageDimension > Superclass;
+  typedef itk::SmartPointer< Self >                                          Pointer;
+  typedef itk::SmartPointer< const Self >                                    ConstPointer;
 
   /* some useful typedefs */
-
   typedef typename TState::TFloat T;
 
-  typedef CObjectiveFunction< TState >* ptrObjectiveFunctionType;
-  typedef CSolver< TState >* ptrSolverType;
+  typedef CObjectiveFunction< TState >  ObjectiveFunctionType;
+  typedef CSolver< TState >             SolverType;
 
   typedef VectorImage< T, TState::VImageDimension > VectorImageType;
   typedef VectorField< T, TState::VImageDimension > VectorFieldType;
 
-  typedef CAlgorithmBase< T, TState::VImageDimension > Superclass;
-
   CAlgorithm();
   virtual ~CAlgorithm();
 
-  void SetObjectiveFunctionPointer( ptrObjectiveFunctionType ptrObjectiveFunction );
-  ptrObjectiveFunctionType GetObjectiveFunctionPointer();
+  void SetObjectiveFunction( ObjectiveFunctionType * objectiveFunction );
+  ObjectiveFunctionType * GetObjectiveFunction();
 
-  void SetSolverPointer( ptrSolverType ptrSolver );
-  ptrSolverType GetSolverPointer();
+  void SetSolverPointer( SolverType * ptrSolver );
+  SolverType * GetSolverPointer();
 
   virtual void Solve();
 
 protected:
-
   virtual void SetDefaultsIfNeeded();
 
-  ptrObjectiveFunctionType m_ptrObjectiveFunction;
-  ptrSolverType m_ptrSolver;
+  typename ObjectiveFunctionType::Pointer m_ptrObjectiveFunction;
+  typename SolverType::Pointer            m_ptrSolver;
 
   virtual void SetDefaultObjectiveFunctionPointer() = 0;
   virtual void SetDefaultSolverPointer() = 0;
-
-private:
-
-  bool m_bSetDefaultObjectiveFunction;
-  bool m_bSetDefaultSolver;
-
 };
 
 #include "CAlgorithm.txx"

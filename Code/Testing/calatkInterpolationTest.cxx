@@ -55,15 +55,15 @@ int calatkInterpolationTest( int argc, char* argv[] )
 
   // load the input image
 
-  VectorImageType* pIm = VectorImageUtilsType::readFileITK( argv[1] );
+  VectorImageType::Pointer pIm = VectorImageUtilsType::readFileITK( argv[1] );
 
   // load the map
   VectorImageType* ptrMapInVecIm = VectorImageUtilsType::readFileITK( argv[2] );
-  const VectorFieldType* pV = static_cast< VectorFieldType* >( ptrMapInVecIm ); 
+  const VectorFieldType::Pointer pV = static_cast< VectorFieldType* >( ptrMapInVecIm );
 
   // get memory for the output image and for the temporary image
-  VectorImageType* pImOutLinear = new VectorImageType( pIm );
-  VectorImageType* pImOutCubic = new VectorImageType( pIm );
+  VectorImageType::Pointer pImOutLinear = new VectorImageType( pIm );
+  VectorImageType::Pointer pImOutCubic = new VectorImageType( pIm );
 
   // now interpolate it
   CALATK::CLinearInterpolator< TFLOAT, DIMENSION > interpolator;
@@ -74,15 +74,7 @@ int calatkInterpolationTest( int argc, char* argv[] )
   VectorImageUtilsType::writeFileITK( pImOutLinear, argv[3] );
   VectorImageUtilsType::writeFileITK( pImOutCubic, argv[4] );
 
-  // free memory
-
-  delete pImOutLinear;
-  delete pImOutCubic;
-  delete pIm;
-  delete pV;
-
   return EXIT_SUCCESS;
-
 }
 
 

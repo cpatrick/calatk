@@ -31,7 +31,7 @@ public:
   ModuleDescription();
   ModuleDescription(const ModuleDescription &md);
 
-  void operator=(const ModuleDescription &md);
+  ModuleDescription& operator=(const ModuleDescription &md);
 
   void SetCategory(const std::string &cat)
   {

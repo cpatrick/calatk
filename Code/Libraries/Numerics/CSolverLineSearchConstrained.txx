@@ -65,13 +65,13 @@ void CSolverLineSearchConstrained< TState>::SetAutoConfiguration( Json::Value& C
 template < class TState >
 bool CSolverLineSearchConstrained< TState>::SolvePreInitialized()
 {
-  ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();
+  ObjectiveFunctionType * objectiveFunction = this->GetObjectiveFunction();
 
   T dAlpha;
   CEnergyValues ResultingEnergy;
 
   // creating new temp state
-  pTempState = new TState( *pObj->GetStatePointer() );
+  typename TState::Pointer state = new TState( *objectiveFunction->GetStatePointer() );
 
   std::string sStatePrefix = "S" + CreateIntegerString( (int)this->GetExternalSolverState() ) + "-";
 
@@ -81,8 +81,8 @@ bool CSolverLineSearchConstrained< TState>::SolvePreInitialized()
   CEnergyValues InitialEnergy;
 
   // initialize the values for the augmented Lagrangian
-  pObj->GetPointerToImageLagrangianMultiplier()->setConst( 0.0 );
-  pObj->SetSquaredPenaltyScalarWeight( m_AugmentedLagrangianInitialMu );
+  objectiveFunction->GetPointerToImageLagrangianMultiplier()->SetToConstant( 0.0 );
+  objectiveFunction->SetSquaredPenaltyScalarWeight( m_AugmentedLagrangianInitialMu );
 
   for ( unsigned int uiALIter = 0; uiALIter < this->m_AugmentedLagrangianNumberOfIterations; ++uiALIter )
   {
@@ -93,7 +93,7 @@ bool CSolverLineSearchConstrained< TState>::SolvePreInitialized()
 
     std::cout << "Augmented Lagrangian iteration " << uiALIter << "/" << m_AugmentedLagrangianNumberOfIterations << std::endl;
 
-    InitialEnergy = pObj->GetCurrentEnergy();
+    InitialEnergy = objectiveFunction->GetCurrentEnergy();
     std::cout << "Initial energy = " << InitialEnergy.dEnergy << std::endl;
 
     CEnergyValues CurrentEnergy = InitialEnergy;
@@ -101,7 +101,7 @@ bool CSolverLineSearchConstrained< TState>::SolvePreInitialized()
     for ( unsigned int uiIter = 0; uiIter < this->m_MaxNumberOfIterations; ++uiIter )
       {
       unsigned int uiRequiredIterations;
-      bool bSufficientlyDecreasedEnergy = this->LineSearchWithBacktracking( CurrentEnergy, dDesiredStepSize, dAlpha, ResultingEnergy, uiRequiredIterations, pTempState );
+      bool bSufficientlyDecreasedEnergy = this->LineSearchWithBacktracking( CurrentEnergy, dDesiredStepSize, dAlpha, ResultingEnergy, uiRequiredIterations, state );
 
       if ( bSufficientlyDecreasedEnergy )
         {
@@ -179,10 +179,10 @@ bool CSolverLineSearchConstrained< TState>::SolvePreInitialized()
 
     // do the augmented Lagrangian up-date step (this is based on an image)
 
-    VectorImageType* ptrCurrentImageLagrangianMultiplier = pObj->GetPointerToImageLagrangianMultiplier();
-    const VectorImageType* ptrCurrentImageResidual = pObj->GetPointerToCurrentImageResidual();
+    VectorImageType* ptrCurrentImageLagrangianMultiplier = objectiveFunction->GetPointerToImageLagrangianMultiplier();
+    const VectorImageType* ptrCurrentImageResidual = objectiveFunction->GetPointerToCurrentImageResidual();
 
-    T dMu = pObj->GetSquaredPenaltyScalarWeight();
+    T dMu = objectiveFunction->GetSquaredPenaltyScalarWeight();
 
     /**
       \f[
@@ -190,16 +190,12 @@ bool CSolverLineSearchConstrained< TState>::SolvePreInitialized()
       \f]
       */
 
-    VectorImageType* ptrTmpImage = new VectorImageType( ptrCurrentImageResidual );
-    ptrTmpImage->multConst( -dMu );
-    ptrCurrentImageLagrangianMultiplier->addCellwise( ptrTmpImage );
+    typename VectorImageType::Pointer ptrTmpImage = new VectorImageType( ptrCurrentImageResidual );
+    ptrTmpImage->MultiplyByConstant( -dMu );
+    ptrCurrentImageLagrangianMultiplier->AddCellwise( ptrTmpImage );
     std::cout << "mu[k] = " << dMu << " -> mu[k+1] = " << dMu*this->m_AugmentedLagrangianPenaltyIncreaseFactor << std::endl;
-    pObj->SetSquaredPenaltyScalarWeight( dMu*this->m_AugmentedLagrangianPenaltyIncreaseFactor );
-    delete ptrTmpImage;
+    objectiveFunction->SetSquaredPenaltyScalarWeight( dMu*this->m_AugmentedLagrangianPenaltyIncreaseFactor );
   }
-  // clean up
-
-  delete pTempState;
 
   if ( ResultingEnergy.dEnergy < InitialEnergy.dEnergy )
     {

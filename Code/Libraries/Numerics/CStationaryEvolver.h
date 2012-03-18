@@ -30,13 +30,16 @@ namespace CALATK
 {
 
 template <class T, unsigned int VImageDimension=3 >
-class CStationaryEvolver : public CEvolver< T, VImageDimension > {
-
+class CStationaryEvolver : public CEvolver< T, VImageDimension >
+{
 public:
+  /** Standard class typedefs. */
+  typedef CStationaryEvolver              Self;
+  typedef CEvolver< T, VImageDimension >  Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
   /** Some useful typedefs */
-
-  typedef CEvolver< T, VImageDimension > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 

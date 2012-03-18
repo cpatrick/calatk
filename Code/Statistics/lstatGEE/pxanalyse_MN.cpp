@@ -268,7 +268,6 @@ read ANALYZE .hdr file
 int
 readanahdr(char *filename, anaimagedata *imdata)
 {
-  int  psize;
   char hdrfile[256];
 
   struct dsr hdr;
@@ -285,7 +284,6 @@ readanahdr(char *filename, anaimagedata *imdata)
   if ( ( fp = fopen (hdrfile, "rb") ) == 0 )
     {
     printf("unable to read: %s\n", hdrfile);
-    psize = 0;
     }
   else
     {
@@ -307,7 +305,6 @@ readanahdr(char *filename, anaimagedata *imdata)
       imdata->minpix = (int)swap ( (int)hdr.dime.glmin );
       imdata->maxpix = (int)swap ( (int)hdr.dime.glmax );
       imdata->orient = hdr.hist.orient;
-      psize          = (int)swap ( (unsigned short)hdr.dime.bitpix );
       }
     else
       {
@@ -320,7 +317,6 @@ readanahdr(char *filename, anaimagedata *imdata)
       imdata->minpix = hdr.dime.glmin;
       imdata->maxpix = hdr.dime.glmax;
       imdata->orient = hdr.hist.orient;
-      psize          = hdr.dime.bitpix;
       }
 
     fclose (fp);

@@ -75,7 +75,6 @@
 bool NeedsTemp(const ModuleParameter &parameter)
 {
   std::string type = parameter.GetCPPType();
-  std::string multi = parameter.GetMultiple();
   return (((type == "std::vector<int>" ||
            type == "std::vector<float>" ||
            type == "std::vector<double>" ||
@@ -188,6 +187,7 @@ main(int argc, char *argv[])
   if (parser.Parse(XML, module))
     {
     std::cerr << "GenerateCLP: One or more errors detected. Code generation aborted." << std::endl;
+    delete [] XML;
     return EXIT_FAILURE;
     }
 
@@ -207,11 +207,13 @@ main(int argc, char *argv[])
     {
     std::cerr << argv[0] << ": Cannot open " << OutputCxx << " for output" << std::endl;
     perror(argv[0]);
+    delete [] XML;
     return EXIT_FAILURE;
     }
-  if (logoFiles.size() > 0 && !itksys::SystemTools::FileExists(logoFiles[0].c_str()))
+  if (!logoFiles.empty() && !itksys::SystemTools::FileExists(logoFiles[0].c_str()))
     {
     std::cerr << argv[0] << ": Cannot open " << logoFiles[0] << " as a logo file" << std::endl;
+    delete [] XML;
     return EXIT_FAILURE;
     }
 
@@ -230,6 +232,7 @@ main(int argc, char *argv[])
   GeneratePost(sout);
   sout.close();
 
+  delete [] XML;
   return (EXIT_SUCCESS);
 }
 
@@ -413,8 +416,6 @@ void GeneratePluginProcedures(std::ofstream &sout, std::vector<std::string> &log
 {
   if (logos.size() == 1)
     {
-    std::string logo = logos[0];
-    std::string fileName = itksys::SystemTools::GetFilenameWithoutExtension (logo);
     sout << "unsigned char *GetModuleLogo(int *width," << std::endl;
     sout << "                             int *height," << std::endl;
     sout << "                             int *pixel_size," << std::endl;
@@ -439,7 +440,7 @@ void GeneratePluginProcedures(std::ofstream &sout, std::vector<std::string> &log
 
 void GenerateLOGO(std::ofstream &sout, std::vector<std::string> &logos)
 {
-  if (logos.size() > 0)
+  if (!logos.empty())
     {
     std::string EOL(" \\");
 
@@ -503,7 +504,7 @@ void GenerateEchoArgs(std::ofstream &sout, ModuleDescription &module)
              << pit->GetName()
              << ": \";"
              << EOL << std::endl;
-        sout << "for (unsigned int _i =0; _i < "
+        sout << "for (size_t _i =0; _i < "
              << pit->GetName()
              << ".size(); _i++)"
              << EOL << std::endl;
@@ -522,7 +523,7 @@ void GenerateEchoArgs(std::ofstream &sout, ModuleDescription &module)
         }
       else if (NeedsTemp(*pit) && pit->GetMultiple() == "true")
         {
-        sout << "for (unsigned int _i= 0; _i < " << pit->GetName() << "Temp.size(); _i++)" << EOL << std::endl;
+        sout << "for (size_t _i= 0; _i < " << pit->GetName() << "Temp.size(); _i++)" << EOL << std::endl;
         sout << "{" << EOL << std::endl;
         sout << "std::cout << \"" << pit->GetName() << "[\" << _i << \"]: \";" << EOL << std::endl;
         sout << "std::vector<std::string> words;" << EOL << std::endl;
@@ -536,7 +537,7 @@ void GenerateEchoArgs(std::ofstream &sout, ModuleDescription &module)
           sout << "      std::string sep(\",\");" << EOL << std::endl;
           sout << "splitString(" << pit->GetName() << "Temp[_i], sep, words);" << EOL << std::endl;
           }
-        sout << "for (unsigned int _j= 0; _j < words.size(); _j++)" << EOL << std::endl;
+        sout << "for (size_t _j= 0; _j < words.size(); _j++)" << EOL << std::endl;
         sout << "{" << EOL << std::endl;
         sout << "std::cout <<  words[_j] << \" \";" << EOL << std::endl;
         sout << "}" << EOL << std::endl;
@@ -550,7 +551,7 @@ void GenerateEchoArgs(std::ofstream &sout, ModuleDescription &module)
              << pit->GetName()
              << ": \";"
              << EOL << std::endl;
-        sout << "for (unsigned int _i =0; _i < "
+        sout << "for (size_t _i =0; _i < "
              << pit->GetName()
              << ".size(); _i++)"
              << EOL << std::endl;
@@ -740,7 +741,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
              << "std::vector<" << pit->GetCPPType() << "> "
              <<  pit->GetName() << "Allowed;"
              << EOL << std::endl;
-        for (unsigned int e = 0; e < (pit->GetElements()).size(); e++)
+        for (size_t e = 0; e < (pit->GetElements()).size(); e++)
           {
           sout << "    "
                << pit->GetName() << "Allowed.push_back(";
@@ -1219,7 +1220,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
                << "words);"
                << EOL << std::endl;
           }
-        sout << "      for (unsigned int _j = 0; _j < words.size(); _j++)"
+        sout << "      for (size_t _j = 0; _j < words.size(); _j++)"
              << EOL << std::endl;
         sout << "        {"
              << EOL << std::endl;
@@ -1236,7 +1237,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
       else if (NeedsTemp(*pit) && pit->GetMultiple() == "true")
         {
         sout << "      { " << "/* Assignment for " << pit->GetName() << " */" << EOL << std::endl;
-        sout << "      for (unsigned int _i = 0; _i < ";
+        sout << "      for (size_t _i = 0; _i < ";
         sout << pit->GetName() << "Temp.size(); _i++)" << EOL << std::endl;
         sout << "        {" << EOL << std::endl;
         sout << "        std::vector<std::string> words;" << EOL << std::endl;
@@ -1253,7 +1254,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
           }
         if (IsVectorOfVectors(*pit))
           {
-          sout << "        for (unsigned int _j= 0; _j < words.size(); _j++)" << EOL << std::endl;
+          sout << "        for (size_t _j= 0; _j < words.size(); _j++)" << EOL << std::endl;
           sout << "          {" << EOL << std::endl;
           sout << "          elements.push_back("
                << pit->GetStringToType()
@@ -1265,7 +1266,7 @@ void GenerateTCLAP(std::ofstream &sout, ModuleDescription &module)
           }
         else
           {
-          sout << "        for (unsigned int _j= 0; _j < words.size(); _j++)" << EOL << std::endl;
+          sout << "        for (size_t _j= 0; _j < words.size(); _j++)" << EOL << std::endl;
           sout << "          {" << EOL << std::endl;
           sout << "            " << pit->GetName() << ".push_back("
                << pit->GetStringToType()

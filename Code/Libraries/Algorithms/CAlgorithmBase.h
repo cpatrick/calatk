@@ -48,35 +48,37 @@ template < class T, unsigned int VImageDimension >
 class CAlgorithmBase : public CProcessBase
 {
 public:
+  /** Standard class typedefs. */
+  typedef CAlgorithmBase                  Self;
+  typedef CProcessBase                    Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
   /* some useful typedefs */
-
-  typedef CEvolver< T, VImageDimension >* ptrEvolverType;
-  typedef CKernel< T, VImageDimension >* ptrKernelType;
-  typedef CMetric< T, VImageDimension >* ptrMetricType;
-  typedef CImageManager< T, VImageDimension >* ptrImageManagerType;
+  typedef CEvolver< T, VImageDimension >       EvolverType;
+  typedef CKernel< T, VImageDimension >        KernelType;
+  typedef CMetric< T, VImageDimension >        MetricType;
+  typedef CImageManager< T, VImageDimension >  ImageManagerType;
 
   typedef VectorImage< T, VImageDimension > VectorImageType;
   typedef VectorField< T, VImageDimension > VectorFieldType;
 
-  typedef CProcessBase Superclass;
-
-  typedef typename CImageManager< T, VImageDimension >::SImageInformation SImageInformation;
+  typedef typename CImageManager< T, VImageDimension >::ImageInformation ImageInformation;
 
   CAlgorithmBase();
   virtual ~CAlgorithmBase();
 
-  void SetImageManagerPointer( ptrImageManagerType ptrImageManager );
-  ptrImageManagerType GetImageManagerPointer();
+  void SetImageManagerPointer( ImageManagerType * ptrImageManager );
+  ImageManagerType * GetImageManagerPointer();
 
-  void SetKernelPointer( ptrKernelType ptrKernel );
-  ptrKernelType GetKernelPointer();
+  void SetKernelPointer( KernelType * ptrKernel );
+  KernelType * GetKernelPointer();
 
-  void SetEvolverPointer( ptrEvolverType ptrEvolver );
-  ptrEvolverType GetEvolverPointer();
+  void SetEvolverPointer( EvolverType * ptrEvolver );
+  EvolverType * GetEvolverPointer();
 
-  void SetMetricPointer( ptrMetricType ptrMetric );
-  ptrMetricType GetMetricPointer();
+  void SetMetricPointer( MetricType * ptrMetric );
+  MetricType * GetMetricPointer();
 
   virtual void Solve() = 0;
 
@@ -88,26 +90,18 @@ protected:
 
   virtual void SetDefaultsIfNeeded() = 0;
 
-  ptrMetricType m_ptrMetric;
-  ptrImageManagerType m_ptrImageManager;
-  ptrEvolverType m_ptrEvolver;
-  ptrKernelType m_ptrKernel;
+  typename MetricType::Pointer       m_ptrMetric;
+  typename ImageManagerType::Pointer m_ptrImageManager;
+  typename EvolverType::Pointer      m_ptrEvolver;
+  typename KernelType::Pointer       m_ptrKernel;
 
   virtual void SetDefaultMetricPointer() = 0;
   virtual void SetDefaultImageManagerPointer() = 0;
   virtual void SetDefaultKernelPointer() = 0;
   virtual void SetDefaultEvolverPointer() = 0;
 
-  VectorImageType* m_ptrIm;
-  VectorFieldType* m_ptrMap;
-
-private:
-
-  bool m_bSetDefaultMetric;
-  bool m_bSetDefaultImageManager;
-  bool m_bSetDefaultEvolver;
-  bool m_bSetDefaultKernel;
-
+  typename VectorImageType::Pointer m_ptrIm;
+  typename VectorFieldType::Pointer m_ptrMap;
 };
 
 #include "CAlgorithmBase.txx"

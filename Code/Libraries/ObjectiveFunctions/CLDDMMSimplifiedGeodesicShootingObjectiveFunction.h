@@ -42,11 +42,13 @@ class CLDDMMSimplifiedGeodesicShootingObjectiveFunction
     : public CLDDMMGeodesicShootingObjectiveFunction< TState >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CLDDMMSimplifiedGeodesicShootingObjectiveFunction    Self;
+  typedef CLDDMMGeodesicShootingObjectiveFunction< TState >    Superclass;
+  typedef itk::SmartPointer< Self >                            Pointer;
+  typedef itk::SmartPointer< const Self >                      ConstPointer;
 
   /* Some useful typedefs */
-
-  typedef CLDDMMGeodesicShootingObjectiveFunction< TState > Superclass;
-
   typedef typename TState::TFloat T;
 
   typedef typename Superclass::CEnergyValues CEnergyValues;
@@ -60,7 +62,7 @@ public:
   virtual ~CLDDMMSimplifiedGeodesicShootingObjectiveFunction();
 
   void InitializeState();
-  void InitializeState( TState* pState );
+  void InitializeState( TState* ptrState );
 
   void GetImage( VectorImageType* ptrIm, T dTime );
   void GetMomentum( VectorImageType* ptrMomentum, T dTime );
@@ -77,9 +79,9 @@ public:
 protected:
 
   void CreateNewStateStructures();
-  void ShallowCopyStateStructures( TState* pState );
+  void ShallowCopyStateStructures( TState* ptrState );
   void CreateGradientAndAuxiliaryStructures();
-  void InitializeDataStructuresFromState( TState* pState );
+  void InitializeDataStructuresFromState( TState* ptrState );
   void InitializeDataStructures();
   void DeleteData();
 
@@ -88,7 +90,7 @@ protected:
   void ComputeImageMomentumForwardAndFinalAdjointWarpedToInitialImage( VectorImageType* ptrWarpedFinalToInitialAdjoint );
 
   typedef CImageManager< T, TState::VImageDimension > ImageManagerType;
-  typedef typename ImageManagerType::SImageInformation SImageInformation;
+  typedef typename ImageManagerType::ImageInformation ImageInformation;
   typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
 
   typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;

@@ -175,7 +175,7 @@ CJSONConfiguration::GetFromKeyAsVector( Json::Value& vSubTree, std::string sKey,
   VectorFloatType vecF;
   for ( unsigned int iI=0; iI<vecRet.size(); ++iI )
   {
-    vecF.push_back( vecRet[ iI ] );
+    vecF.push_back( static_cast< float >( vecRet[ iI ] ));
   }
 
   return vecF;
@@ -363,7 +363,6 @@ std::string CJSONConfiguration::ReadFileContentIntoString( std::string sFileName
   else
     {
     throw std::runtime_error( "Could not open file " + sFileName );
-    outputString = "";
     }
 
   return outputString;
@@ -387,13 +386,14 @@ bool CJSONConfiguration::ReadJSONFile( std::string sFileName )
     }
 
   m_ptrRoot = new Json::Value;
+  this->m_IsMasterNode = true;
 
   std::cout << "Parsing input file " << sFileName << " ... ";
-    
+
   Json::Reader reader;
   std::string config_doc = ReadFileContentIntoString( sFileName );
   bool parsingSuccessful = reader.parse( config_doc, *m_ptrRoot );
-  
+
   if ( !parsingSuccessful )
     {
     std::cout << "failed." << std::endl;

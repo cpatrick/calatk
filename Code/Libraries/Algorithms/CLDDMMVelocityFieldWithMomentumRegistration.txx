@@ -35,14 +35,14 @@ const typename CLDDMMVelocityFieldWithMomentumRegistration< TState >::VectorImag
 CLDDMMVelocityFieldWithMomentumRegistration< TState >::GetMomentum( T dTime )
 {
   dynamic_cast< CVelocityFieldObjectiveFunctionWithMomentumType* >( this->m_ptrObjectiveFunction )->GetMomentum( this->m_ptrIm, dTime );
-  return this->m_ptrIm;
+  return this->m_ptrIm.GetPointer();
 }
 
 template < class TState >
 const typename CLDDMMVelocityFieldWithMomentumRegistration< TState >::VectorImageType*
 CLDDMMVelocityFieldWithMomentumRegistration< TState >::GetInitialMomentum()
 {
-  dynamic_cast< CVelocityFieldObjectiveFunctionWithMomentumType* >( this->m_ptrObjectiveFunction )->GetInitialMomentum( this->m_ptrIm );
+  dynamic_cast< CVelocityFieldObjectiveFunctionWithMomentumType* >( this->m_ptrObjectiveFunction.GetPointer() )->GetInitialMomentum( this->m_ptrIm.GetPointer() );
   return this->m_ptrIm;
 }
 

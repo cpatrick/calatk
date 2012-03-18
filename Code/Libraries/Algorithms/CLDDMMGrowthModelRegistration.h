@@ -36,11 +36,15 @@ class CLDDMMGrowthModelRegistration
     : public CLDDMMVelocityFieldWithMomentumRegistration< TState >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CLDDMMGrowthModelRegistration                         Self;
+  typedef CLDDMMVelocityFieldWithMomentumRegistration< TState > Superclass;
+  typedef itk::SmartPointer< Self >                             Pointer;
+  typedef itk::SmartPointer< const Self >                       ConstPointer;
 
   /* some useful typedefs */
-  typedef CLDDMMVelocityFieldWithMomentumRegistration< TState > Superclass;
-  typedef typename Superclass::VectorImageType VectorImageType;
-  typedef typename Superclass::VectorFieldType VectorFieldType;
+  typedef typename                                              Superclass::VectorImageType VectorImageType;
+  typedef typename                                              Superclass::VectorFieldType VectorFieldType;
 
   CLDDMMGrowthModelRegistration();
   ~CLDDMMGrowthModelRegistration();

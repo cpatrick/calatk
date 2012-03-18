@@ -1,21 +1,21 @@
 /*
-*
-*  Copyright 2011 by the CALATK development team
-*
-*   Licensed under the Apache License, Version 2.0 (the "License");
-*   you may not use this file except in compliance with the License.
-*   You may obtain a copy of the License at
-*
-*     http://www.apache.org/licenses/LICENSE-2.0
-*
-*   Unless required by applicable law or agreed to in writing, software
-*   distributed under the License is distributed on an "AS IS" BASIS,
-*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-*   See the License for the specific language governing permissions and
-*   limitations under the License.
-*
-*
-*/
+ *
+ *  Copyright 2011 by the CALATK development team
+ *
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ *
+ *
+ */
 
 #ifndef C_LDDMM_GROWTH_MODEL_OBJECTIVE_FUNCTION_H
 #define C_LDDMM_GROWTH_MODEL_OBJECTIVE_FUNCTION_H
@@ -25,16 +25,20 @@
 namespace CALATK
 {
 
+/** \class CLDDMMGrowthModelObjectiveFunction
+ */
 template < class TState >
 class CLDDMMGrowthModelObjectiveFunction
-    : public CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >
+: public CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CLDDMMGrowthModelObjectiveFunction                            Self;
+  typedef CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >  Superclass;
+  typedef itk::SmartPointer< Self >                                     Pointer;
+  typedef itk::SmartPointer< const Self >                               ConstPointer;
 
   /* some useful typedefs */
-
-  typedef CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState > Superclass;
-
   typedef typename TState::TFloat T;
 
   typedef typename Superclass::CEnergyValues CEnergyValues;
@@ -66,14 +70,14 @@ protected:
 
   /** Some useful protected typedefs */
 
-  typedef typename Superclass::STimePoint STimePoint;
-  typedef typename Superclass::VectorFieldPointerType VectorFieldPointerType;
-  typedef typename Superclass::VectorImagePointerType VectorImagePointerType;
+  typedef typename Superclass::STimePoint                            STimePoint;
+  typedef typename Superclass::VectorFieldPointerType                VectorFieldPointerType;
+  typedef typename Superclass::VectorImagePointerType                VectorImagePointerType;
   typedef typename Superclass::VectorPointerToVectorFieldPointerType VectorPointerToVectorFieldPointerType;
   typedef typename Superclass::VectorPointerToVectorImagePointerType VectorPointerToVectorImagePointerType;
-  
-  typedef typename Superclass::ImageManagerType ImageManagerType;
-  typedef typename Superclass::SImageInformation SImageInformation;
+
+  typedef typename Superclass::ImageManagerType       ImageManagerType;
+  typedef typename Superclass::ImageInformation      ImageInformation;
   typedef typename Superclass::SubjectInformationType SubjectInformationType;
 
   void ComputeImagesForward();
@@ -81,8 +85,8 @@ protected:
 
   void DetermineTimePointData( std::vector< STimePoint >& vecTimePointData );
 
-  void DeleteAuxiliaryStructures();
-  void CreateAuxiliaryStructures();
+  virtual void CreateAuxiliaryStructures();
+  virtual void DeleteAuxiliaryStructures();
 
 private:
 

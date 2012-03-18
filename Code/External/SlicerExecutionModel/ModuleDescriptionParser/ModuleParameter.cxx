@@ -99,7 +99,7 @@ ModuleParameter::ModuleParameter(const ModuleParameter& parameter)
   this->CoordinateSystem = parameter.CoordinateSystem;
 }
 
-void ModuleParameter::operator=(const ModuleParameter& parameter)
+ModuleParameter& ModuleParameter::operator=(const ModuleParameter& parameter)
 {
   this->Tag = parameter.Tag;
   this->Name = parameter.Name;
@@ -135,6 +135,8 @@ void ModuleParameter::operator=(const ModuleParameter& parameter)
   this->FileExtensions = parameter.FileExtensions;
   this->Elements = parameter.Elements;
   this->CoordinateSystem = parameter.CoordinateSystem;
+
+  return *this;
 }
 
 //-----------------------------------------------------------------------------

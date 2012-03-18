@@ -26,15 +26,12 @@ CSolverMultiScale< TState >::CSolverMultiScale()
     m_ExternallySetSingleScaleSolver( false )
 {
   m_SingleScaleSolver = DefaultSingleScaleSolver;
-
-  m_ptrSolver = NULL;
-  m_bSetDefaultSingleScaleSolver = false;
+  this->m_ptrSolver = NULL;
 }
 
 template < class TState >
 CSolverMultiScale< TState >::~CSolverMultiScale()
 {
-  DeleteDefaultSingleScaleSolver();
 }
 
 template < class TState >
@@ -69,65 +66,50 @@ void CSolverMultiScale< TState >::SetAutoConfiguration( Json::Value &ConfValueIn
 template < class TState >
 void CSolverMultiScale< TState >::SetDefaultSingleScaleSolver()
 {
-  DeleteDefaultSingleScaleSolver();
-  m_ptrSolver = CSolverFactory< TState >::CreateNewSolver( m_SingleScaleSolver );
-
-  m_bSetDefaultSingleScaleSolver = true;
+  this->m_ptrSolver = CSolverFactory< TState >::CreateNewSolver( m_SingleScaleSolver );
 }
 
 template < class TState >
-void CSolverMultiScale< TState >::DeleteDefaultSingleScaleSolver()
+void CSolverMultiScale< TState >::SetSingleScaleSolverPointer( Superclass* ptrSolver )
 {
-  if ( m_bSetDefaultSingleScaleSolver )
-    {
-    if ( m_ptrSolver != NULL ) delete m_ptrSolver;
-    m_ptrSolver = NULL;
-    m_bSetDefaultSingleScaleSolver = NULL;
-    }
+  this->m_ptrSolver = ptrSolver;
 }
 
 template < class TState >
-void CSolverMultiScale< TState >::SetSingleScaleSolverPointer( SolverType* ptrSolver )
-{
-  DeleteDefaultSingleScaleSolver();
-  m_ptrSolver = ptrSolver;
-}
-
-template < class TState >
-const typename CSolverMultiScale< TState >::SolverType*
+const typename CSolverMultiScale< TState >::Superclass*
 CSolverMultiScale< TState >::GetSingleScaleSolverPointer() const
 {
-  return m_ptrSolver;
+  return this->m_ptrSolver.GetPointer();
 }
 
 template < class TState >
 bool CSolverMultiScale< TState >::SolvePreInitialized()
 {
   // there is not pre-initialization here necessary (because this is the multi-scale solver), so just call solve
-  return Solve();
+  return this->Solve();
 }
 
 template < class TState >
 bool CSolverMultiScale< TState >::Solve()
 {
-  bool bReducedEnergy = false;
+  bool reducedEnergy = false;
 
   // get the objective function which should be minimized and holds the data
-  ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();
+  ObjectiveFunctionType * objectiveFunction = this->GetObjectiveFunction();
 
-  assert( pObj != NULL );
+  assert( objectiveFunction != NULL );
 
-  if ( m_ptrSolver == NULL )
+  if ( m_ptrSolver.GetPointer() == NULL )
     {
     SetDefaultSingleScaleSolver();
     }
 
-  assert( m_ptrSolver != NULL );
+  assert( m_ptrSolver.GetPointer() != NULL );
 
-  this->m_ptrSolver->SetObjectiveFunctionPointer( this->GetObjectiveFunctionPointer() );
+  this->m_ptrSolver->SetObjectiveFunction( this->GetObjectiveFunction() );
 
   // get it's image manager
-  ImageManagerMultiScaleType* ptrImageManager = dynamic_cast< ImageManagerMultiScaleType* >( pObj->GetImageManagerPointer() );
+  ImageManagerMultiScaleType* ptrImageManager = dynamic_cast< ImageManagerMultiScaleType* >( objectiveFunction->GetImageManagerPointer() );
 
   if ( !ptrImageManager->SupportsMultiScaling() )
     {
@@ -141,7 +123,7 @@ bool CSolverMultiScale< TState >::Solve()
 
   std::string sSolutionPrefix = "MS-Sol-";
 
-  bool bHasBeenInitialized = false;
+  bool hasBeenInitialized = false;
 
   Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "MultiscaleSettings", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "MultiscaleSettings", Json::nullValue );
@@ -163,38 +145,36 @@ bool CSolverMultiScale< TState >::Solve()
 
     std::cout << "Solving multiscale level " << iI+1 << "/" << uiNrOfScales << std::endl;
 
-    if ( !bHasBeenInitialized )
+    if ( !hasBeenInitialized )
       {
       std::cout << "Initializing multi-scale solution." << std::endl;
-      bReducedEnergy = m_ptrSolver->Solve();
-      bHasBeenInitialized = true;
-
+      reducedEnergy = m_ptrSolver->Solve();
+      hasBeenInitialized = true;
       }
     else
       {
       // has solution from previous iteration
       // get state, upsample it and then use if for initialization
-      const TState* pCurrentState = pObj->GetStatePointer();
+      const TState* pCurrentState = objectiveFunction->GetStatePointer();
 
       std::cout << "Upsampling state for multi-scale solver." << std::endl;
 
       TState* pUpsampledState = dynamic_cast< TState* >( pCurrentState->CreateUpsampledStateAndAllocateMemory( ptrImageManager->GetGraftImagePointer() ) );
       
-      pObj->InitializeState( pUpsampledState );
-      bReducedEnergy = m_ptrSolver->SolvePreInitialized();
+      objectiveFunction->InitializeState( pUpsampledState );
+      reducedEnergy = m_ptrSolver->SolvePreInitialized();
 
       }
 
     // output the solution at this level
     if ( this->m_OutputStateInformation )
       {
-      pObj->OutputStateInformation( iI, sSolutionPrefix );
+      objectiveFunction->OutputStateInformation( iI, sSolutionPrefix );
       }
 
     }
   
-  return bReducedEnergy;
-
+  return reducedEnergy;
 }
 
 #endif

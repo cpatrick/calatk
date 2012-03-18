@@ -30,15 +30,18 @@ namespace CALATK
   * TIndividualState = CStateSpatioTemporalVelocityField< T, VImageDimension >
   *
   */
-
 template < class TIndividualState,
            class TState = CStateAtlas< TIndividualState > >
 class CAtlasBuilder : public CLDDMMSpatioTemporalVelocityFieldRegistration< TState >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CAtlasBuilder                                           Self;
+  typedef CLDDMMSpatioTemporalVelocityFieldRegistration< TState > Superclass;
+  typedef itk::SmartPointer< Self >                               Pointer;
+  typedef itk::SmartPointer< const Self >                         ConstPointer;
 
   /* some useful typedefs */
-  typedef CLDDMMSpatioTemporalVelocityFieldRegistration< TState > Superclass;
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 

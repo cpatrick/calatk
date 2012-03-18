@@ -67,41 +67,34 @@ int calatkAdvectionTest( int argc, char* argv[] )
 
   // load the input image
 
-  VectorImageType* pIm = VectorImageUtilsType::readFileITK( argv[1] );
+  VectorImageType::Pointer pIm = VectorImageUtilsType::readFileITK( argv[1] );
 
   // create a vector field of the same dimension and initialize it
   // with the given velocities in the x and the y directions
 
-  VectorFieldType* pV = new VectorFieldType( pIm );
+  VectorFieldType::Pointer pV = new VectorFieldType( pIm );
 
-  unsigned int sx = pV->getSizeX();
-  unsigned int sy = pV->getSizeY();
+  unsigned int sx = pV->GetSizeX();
+  unsigned int sy = pV->GetSizeY();
   
   for ( unsigned int iI=0; iI<sx; ++iI )
     {
     for ( unsigned int iJ=0; iJ<sy; ++iJ )
       {
-      pV->setX( iI, iJ, dvx );
-      pV->setY( iI, iJ, dvy );
+      pV->SetX( iI, iJ, dvx );
+      pV->SetY( iI, iJ, dvy );
       }
     }
 
   // get memory for the output image and for the temporary image
-  VectorImageType* pImOut = new VectorImageType( pIm );
-  VectorImageType* pImTmp = new VectorImageType( pIm );
+  VectorImageType::Pointer pImOut = new VectorImageType( pIm );
+  VectorImageType::Pointer pImTmp = new VectorImageType( pIm );
 
   // now evolve it
 
   evolver.SolveForward( pV, pIm, pImOut, pImTmp, dTime );
   
   VectorImageUtilsType::writeFileITK( pImOut, argv[2] );
-
-  // free memory
-
-  delete pImOut;
-  delete pImTmp;
-  delete pIm;
-  delete pV;
 
   return EXIT_SUCCESS;
 

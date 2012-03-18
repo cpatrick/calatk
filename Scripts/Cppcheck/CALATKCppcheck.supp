@@ -1,0 +1,7 @@
+unreadVariable:*/Code/External/SlicerExecutionModel/ModuleDescriptionParser/CMake/TestBFD.cxx
+uninitVar:*/Code/External/SlicerExecutionModel/ModuleDescriptionParser/ModuleDescription.cxx
+operatorEqRetRefThis:*/Code/External/SlicerExecutionModel/ModuleDescriptionParser/ModuleDescription.cxx
+unreadVariable:*/Code/External/SlicerExecutionModel/ModuleDescriptionParser/ModuleFactory.cxx:374
+operatorEqRetRefThis:*/Code/External/SlicerExecutionModel/ModuleDescriptionParser/Module*.cxx
+toomanyconfigs:*/Code/External/jsoncpp/jsoncpp.cpp
+missingInclude:*

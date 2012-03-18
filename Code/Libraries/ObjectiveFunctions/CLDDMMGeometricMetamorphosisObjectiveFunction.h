@@ -31,11 +31,13 @@ class CLDDMMGeometricMetamorphosisObjectiveFunction
     : public CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >
 {
 public:
+  /** Standard class typedefs. */
+  typedef CLDDMMGeometricMetamorphosisObjectiveFunction                 Self;
+  typedef CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >  Superclass;
+  typedef itk::SmartPointer< Self >                                     Pointer;
+  typedef itk::SmartPointer< const Self >                               ConstPointer;
 
   /* Some useful typedefs */
-
-  typedef CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState > Superclass;
-
   typedef typename TState::TFloat T;
 
   typedef typename Superclass::CEnergyValues CEnergyValues;
@@ -86,7 +88,7 @@ protected:
   typedef typename Superclass::VectorPointerToVectorImagePointerType VectorPointerToVectorImagePointerType;
   
   typedef typename Superclass::ImageManagerType ImageManagerType;
-  typedef typename Superclass::SImageInformation SImageInformation;
+  typedef typename Superclass::ImageInformation ImageInformation;
   typedef typename Superclass::SubjectInformationType SubjectInformationType;
 
   void ComputeImagesForward();
@@ -105,11 +107,11 @@ private:
 
   unsigned int m_uiTimeIndexOfTimePoint1;
 
-  SImageInformation* pImInfo0;
-  SImageInformation* pImInfo1;
+  ImageInformation* pImInfo0;
+  ImageInformation* pImInfo1;
 
-  SImageInformation* pMaskInfo0;
-  SImageInformation* pMaskInfo1;
+  ImageInformation* pMaskInfo0;
+  ImageInformation* pMaskInfo1;
 
   // just convenience pointers to make writing the algorithms easier
   // memory pointed to is taken care of by the imageManager (it there a way to make them const?)

@@ -107,12 +107,12 @@ void CSolverIpOpt< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Jso
 template < class TState >
 bool CSolverIpOpt< TState >::SolvePreInitialized()
 {
-  ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();
+  ObjectiveFunctionType* ptrObj = this->GetObjectiveFunction();
 
   // initialize
 
-  T *ptrCurrentState = pObj->GetStatePointer()->GetPointerToStateVectorElementsToEstimate();
-  long int liNumberOfStateVectorElements = pObj->GetStatePointer()->GetNumberOfStateVectorElementsToEstimate();
+  T *ptrCurrentState = ptrObj->GetStatePointer()->GetPointerToStateVectorElementsToEstimate();
+  long int liNumberOfStateVectorElements = ptrObj->GetStatePointer()->GetNumberOfStateVectorElementsToEstimate();
 
   // Probably no need to copy here. TODO, make this more efficient
   T *ptrMX = new T[ liNumberOfStateVectorElements ];
@@ -344,11 +344,11 @@ Bool CSolverIpOpt< TState >::eval_f(Index n, T* x, Bool new_x, T* obj_value, Use
   //assert(n == 4);
 
   // get pointer to the objective function
-  ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();
-  long int liNumberOfStateVectorElements = pObj->GetStatePointer()->GetNumberOfStateVectorElementsToEstimate();
+  ObjectiveFunctionType* ptrObj = this->GetObjectiveFunction();
+  long int liNumberOfStateVectorElements = ptrObj->GetStatePointer()->GetNumberOfStateVectorElementsToEstimate();
 
   // initialize
-  T *ptrCurrentState = pObj->GetStatePointer()->GetPointerToStateVectorElementsToEstimate();
+  T *ptrCurrentState = ptrObj->GetStatePointer()->GetPointerToStateVectorElementsToEstimate();
   // copy it
   for ( long int iI=0; iI<liNumberOfStateVectorElements; ++iI )
   {
@@ -356,7 +356,7 @@ Bool CSolverIpOpt< TState >::eval_f(Index n, T* x, Bool new_x, T* obj_value, Use
   }
 
   // determine current energy
-  CEnergyValues ComputedEnergy = pObj->GetCurrentEnergy();
+  CEnergyValues ComputedEnergy = ptrObj->GetCurrentEnergy();
 
   //std::cout << "E = " << ComputedEnergy.dEnergy << std::endl;
 
@@ -372,11 +372,11 @@ Bool CSolverIpOpt< TState >::eval_grad_f(Index n, T* x, Bool new_x, T* grad_f, U
 
   // evaluate gradient
 
-  ptrObjectiveFunctionType pObj = this->GetObjectiveFunctionPointer();
-  long int liNumberOfStateVectorElements = pObj->GetStatePointer()->GetNumberOfStateVectorElementsToEstimate();
+  ObjectiveFunctionType* ptrObj = this->GetObjectiveFunction();
+  long int liNumberOfStateVectorElements = ptrObj->GetStatePointer()->GetNumberOfStateVectorElementsToEstimate();
 
   // initialize
-  T *ptrCurrentState = pObj->GetStatePointer()->GetPointerToStateVectorElementsToEstimate();
+  T *ptrCurrentState = ptrObj->GetStatePointer()->GetPointerToStateVectorElementsToEstimate();
   // copy it
   for ( long int iI=0; iI<liNumberOfStateVectorElements; ++iI )
   {
@@ -384,10 +384,10 @@ Bool CSolverIpOpt< TState >::eval_grad_f(Index n, T* x, Bool new_x, T* grad_f, U
   }
 
   // compute gradient
-  pObj->ComputeGradient();
+  ptrObj->ComputeGradient();
 
   // get current gradient
-  TState *pCurrentGradient = pObj->GetGradientPointer();
+  TState *pCurrentGradient = ptrObj->GetGradientPointer();
   T* ptrCurrentGradient = pCurrentGradient->GetPointerToStateVectorElementsToEstimate();
 
   // copy it

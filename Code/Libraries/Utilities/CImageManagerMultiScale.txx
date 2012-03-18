@@ -27,7 +27,6 @@ CImageManagerMultiScale< T, VImageDimension >::CImageManagerMultiScale()
 {
   m_uiCurrentlySelectedScale = 0;
   m_bImagesWereRead = false;
-  m_bSetDefaultResampler = false;
   m_ptrResampler = NULL;
 
   m_Sigma = DefaultSigma;
@@ -41,25 +40,11 @@ CImageManagerMultiScale< T, VImageDimension >::CImageManagerMultiScale()
 template <class T, unsigned int VImageDimension >
 CImageManagerMultiScale< T, VImageDimension >::~CImageManagerMultiScale()
 {
-  DeleteDefaultResampler();
-  // Upsampled images will be deleted by the base class if they have been allocated
-}
-
-template <class T, unsigned int VImageDimension >
-void CImageManagerMultiScale< T, VImageDimension >::DeleteDefaultResampler()
-{
-  if ( m_bSetDefaultResampler )
-    {
-    if ( m_ptrResampler != NULL ) delete m_ptrResampler;
-    m_ptrResampler = NULL;
-    m_bSetDefaultResampler = false;
-    }
 }
 
 template <class T, unsigned int VImageDimension >
 void CImageManagerMultiScale< T, VImageDimension >::SetResamplerPointer( ResamplerType* ptrResampler )
 {
-  DeleteDefaultResampler();  
   this->m_ptrResampler = ptrResampler;
 }
 
@@ -67,9 +52,7 @@ void CImageManagerMultiScale< T, VImageDimension >::SetResamplerPointer( Resampl
 template <class T, unsigned int VImageDimension >
 void CImageManagerMultiScale< T, VImageDimension >::SetDefaultResamplerPointer()
 {
-  DeleteDefaultResampler();
-  m_ptrResampler = new CResamplerLinear< T, VImageDimension >;
-  m_bSetDefaultResampler = true;
+  this->m_ptrResampler = new CResamplerLinear< T, VImageDimension >;
 }
 
 template <class T, unsigned int VImageDimension >
@@ -150,25 +133,25 @@ void CImageManagerMultiScale< T, VImageDimension >::SelectScale( unsigned int ui
 }
 
 template <class T, unsigned int VImageDimension >
-void CImageManagerMultiScale< T, VImageDimension >::SetScale( SImageInformation* pCurrentImInfo )
+void CImageManagerMultiScale< T, VImageDimension >::SetScale( ImageInformation* imageInformation )
 {
-  pCurrentImInfo->pIm = pCurrentImInfo->pImsOfAllScales[ m_uiCurrentlySelectedScale ];
+  imageInformation->Image = imageInformation->pImsOfAllScales[ m_uiCurrentlySelectedScale ];
 }
 
 template <class T, unsigned int VImageDimension >
-void CImageManagerMultiScale< T, VImageDimension >::GetImage( SImageInformation* pCurrentImInfo )
+void CImageManagerMultiScale< T, VImageDimension >::GetImage( ImageInformation* imageInformation )
 {
   // get the image consistent with the scale, if image has not been loaded, load it and create the spatial pyramid
   // if any scales were altered since last time calling this, we need to reload also
 
-  if ( pCurrentImInfo->pImOrig == NULL )
+  if ( imageInformation->OriginalImage.GetPointer() == NULL )
     {
     // load it and all information that comes with it (even transform)
-    Superclass::GetImage( pCurrentImInfo );
+    Superclass::GetImage( imageInformation );
     }
 
   // check if the scales have been created, if not, do so
-  if ( pCurrentImInfo->pImsOfAllScales.empty() )
+  if ( imageInformation->pImsOfAllScales.empty() )
     {
     // create all the scales
     unsigned int uiNrOfScales = this->GetNumberOfScales();
@@ -176,42 +159,45 @@ void CImageManagerMultiScale< T, VImageDimension >::GetImage( SImageInformation*
       {
       if ( m_ScaleWasSet[ iI ] )
       {
-        std::cout << "Computing scale " << m_ScaleVector[iI] << " of: " << pCurrentImInfo->sImageFileName << std::endl;
+        std::cout << "Computing scale " << m_ScaleVector[iI] << " of: " << imageInformation->ImageFileName << std::endl;
         assert( m_ScaleVector[iI]>0 );
-        VectorImageType* ptrResampledImage = VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( pCurrentImInfo->pImOrig, m_ScaleVector[ iI ] );
+        typename VectorImageType::Pointer ptrResampledImage = VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( imageInformation->OriginalImage, m_ScaleVector[ iI ] );
 
         if ( iI==0 && !m_BlurHighestResolutionImage )
         {
           std::cout << "NOT blurring the image of the highest resolution" << std::endl;
-          ptrResampledImage->copy( pCurrentImInfo->pImOrig );
+          ptrResampledImage->Copy( imageInformation->OriginalImage );
         }
         else
         {
-          if ( m_ptrResampler == NULL ) SetDefaultResamplerPointer();
+          if ( m_ptrResampler.GetPointer() == NULL )
+            {
+            this->SetDefaultResamplerPointer();
+            }
 
           // convert the voxel sigma to a pyhysical sigma based on the largest voxel extent
-          T dLargestSpacing = pCurrentImInfo->pImOrig->getLargestSpacing();
+          T dLargestSpacing = imageInformation->OriginalImage->GetLargestSpacing();
 
           std::cout << "Computing resampled image with sigma = " << dLargestSpacing*m_Sigma/m_ScaleVector[ iI ] << std::endl;
 
           m_ptrResampler->SetSigma( dLargestSpacing*m_Sigma/m_ScaleVector[ iI ] );
-          m_ptrResampler->Downsample( pCurrentImInfo->pImOrig, ptrResampledImage );
+          m_ptrResampler->Downsample( imageInformation->OriginalImage, ptrResampledImage );
           }
-        pCurrentImInfo->pImsOfAllScales.push_back( ptrResampledImage );
+        imageInformation->pImsOfAllScales.push_back( ptrResampledImage );
       }
       else
         {
         std::cout << "WARNING: scale " << iI << " was not set." << std::endl;
-        pCurrentImInfo->pImsOfAllScales.push_back( NULL );
+        imageInformation->pImsOfAllScales.push_back( NULL );
         }
       }
 
     }
   
-  if ( pCurrentImInfo->pIm != NULL )
+  if ( imageInformation->Image.GetPointer() != NULL )
     {
     // was read
-    SetScale( pCurrentImInfo );
+    SetScale( imageInformation );
     m_bImagesWereRead = true; // disallow any future change of the images (implement some form of reset functionality)
     }
   else

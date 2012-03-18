@@ -54,9 +54,13 @@ public:
   typedef VectorImage< T, VImageDimension > VectorImageType;
   typedef VectorField< T, VImageDimension > VectorFieldType;
 
+  typedef typename VectorFieldType::Pointer             VectorFieldPointerType;
+  typedef std::vector< VectorFieldPointerType > *       VectorPointerToVectorFieldPointerType;
+  typedef const std::vector< VectorFieldPointerType >*  ConstVectorPointerToVectorFieldPointerType;
+
   typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;
   typedef CImageManager< T, VImageDimension > ImageManagerType;
-  typedef typename ImageManagerType::SImageInformation SImageInformation;
+  typedef typename ImageManagerType::ImageInformation ImageInformation;
   typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
 
   typedef CEvolver< T, VImageDimension > EvolverType;
@@ -127,9 +131,8 @@ public:
       T dTimeFrom,
       T dTimeTo,
       const std::vector< STimePoint >& vecTimeDiscretization,
-      const std::vector< VectorFieldType* >* ptrSpatioTemporalVelocityField,
+      ConstVectorPointerToVectorFieldPointerType ptrSpatioTemporalVelocityField,
       EvolverType* ptrEvolver );
-
 
 };
 
@@ -138,34 +141,3 @@ public:
 } // end namespace
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

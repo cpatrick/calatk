@@ -30,25 +30,30 @@
 
 #include "COneStepEvolver.h"
 
-/**
- * CEvolver.h -- Base class that defines the general interface to solve a PDE
- * for a finite time duration using a given one-step-evolver (for example finite differences, semi-Lagrangian, etc.)
- * 
- * Memory allocation is assumed to be external so it can be optimized.
- * The classes just define a convenient general solver interface.
- */
-
 namespace CALATK
 {
 
+/**
+ * \class CEvolver
+ *
+ * Base class that defines the general interface to solve a PDE for a finite
+ * time duration using a given one-step-evolver (for example finite differences,
+ * semi-Lagrangian, etc.)
+ *
+ * Memory allocation is assumed to be external so it can be optimized.  The
+ * classes just define a convenient general solver interface.
+ */
 template <class T, unsigned int VImageDimension=3 >
 class CEvolver : public CProcessBase
 {
-
 public:
+  /** Standard class typedefs. */
+  typedef CEvolver                        Self;
+  typedef CProcessBase                    Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
 
   /* Some useful typedefs */
-
   typedef COneStepEvolver< T, VImageDimension >* ptrOneStepEvolverType;
   typedef VectorImage< T, VImageDimension > VectorImageType;
   typedef VectorField< T, VImageDimension > VectorFieldType;
@@ -56,7 +61,7 @@ public:
   CEvolver();
   virtual ~CEvolver();
 
-  void SetOneStepEvolverPointer( ptrOneStepEvolverType pOneStepEvolver ); 
+  void SetOneStepEvolverPointer( ptrOneStepEvolverType pOneStepEvolver );
   ptrOneStepEvolverType GetOneStepEvolverPointer();
 
   /**
