@@ -222,6 +222,14 @@ add_ctest_subtest_testdriver_image_compare(calatkLDDMMTest relaxation1DDouble ${
                           )
 
 
+add_test_executable(GenerateBullseyes ${ITK_LIBRARIES})
+if(BUILD_TESTING AND compile_GenerateBullseyes)
+  add_test(GenerateBullseyes ${CMAKE_COMMAND}
+    -DGenerateBullseyes_output_dir:PATH=${test_temp_dir}
+    -DGenerateBullseyes_executable:FILEPATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/GenerateBullseyes
+    -P ${CALATK_SOURCE_DIR}/Code/Testing/GenerateBullseyesIfNeeded.cmake
+    )
+endif()
 #add_ctest_test(writeFileITKTest
 #  # 2D input
 #  ${test_input_dir}/2Dsample.mha
