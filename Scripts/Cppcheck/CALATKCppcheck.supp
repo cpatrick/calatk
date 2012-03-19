@@ -4,5 +4,3 @@ operatorEqRetRefThis:*/Code/External/SlicerExecutionModel/ModuleDescriptionParse
 unreadVariable:*/Code/External/SlicerExecutionModel/ModuleDescriptionParser/ModuleFactory.cxx:374
 operatorEqRetRefThis:*/Code/External/SlicerExecutionModel/ModuleDescriptionParser/Module*.cxx
 toomanyconfigs:*/Code/External/jsoncpp/jsoncpp.cpp
-missingInclude:*
-*:*/Code/External/*

@@ -377,7 +377,11 @@ option( CALATK_USE_CPPCHECK
   "Create a test that does static code analysis with cppcheck." OFF )
 if( CALATK_USE_CPPCHECK )
   find_package( Cppcheck REQUIRED )
-  set( cppcheck_paths_to_check "${CALATK_SOURCE_DIR}/Code" )
+  set( cppcheck_paths_to_check
+    "${CALATK_SOURCE_DIR}/Code/Applications"
+    "${CALATK_SOURCE_DIR}/Code/Libraries"
+    "${CALATK_SOURCE_DIR}/Code/Testing"
+    )
   set( cppcheck_suppressions_file "${CALATK_SOURCE_DIR}/Scripts/Cppcheck/CALATKCppcheck.supp" )
   set( cppcheck_cmd_prefix "${CPPCHECK_EXECUTABLE}" -q --xml --suppressions "${cppcheck_suppressions_file}" )
   add_test( CppcheckStyle ${cppcheck_cmd_prefix} --enable=style ${cppcheck_paths_to_check} )
