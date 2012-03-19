@@ -25,7 +25,7 @@
 #include <string>
 #include <sstream>
 
-#ifdef DARWIN
+#if defined( DARWIN ) || defined( __unix__ )
 #include <sys/time.h>
 #endif
 
