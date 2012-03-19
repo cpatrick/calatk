@@ -6,10 +6,11 @@ set(test_input_dir ${CALATK_SOURCE_DIR}/TestingData)
 set(test_bin_dir ${CALATK_BINARY_DIR}/Code/Testing)
 
 set(ALGORITHMS_TESTS_FILTERING ${test_bin_dir}/testDriverFiltering)
-set(ALGORITHMS_TESTS_FILTERING ${test_bin_dir}/testDriverPDESolver)
+set(ALGORITHMS_TESTS_PDESOLVER ${test_bin_dir}/testDriverPDESolver)
+set(ALGORITHMS_TESTS_ALGORITHMS ${test_bin_dir}/testDriverAlgorithms)
 
 #
-# Define a function for adding a test with an optional set of lbraries to link against
+# Define a function for adding a test with an optional set of libraries to link against
 #
 function(add_test_executable testName)
 
@@ -52,21 +53,39 @@ function(add_ctest_test testName)
   endif(BUILD_TESTING AND compile_${testName})
 endfunction(add_ctest_test)
 
+function(add_ctest_subtest testName subtestName)
+  if(BUILD_TESTING AND compile_${testName})
+    add_test(${testName}_${subtestName} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${testName} ${ARGN})
+  endif(BUILD_TESTING AND compile_${testName})
+endfunction(add_ctest_subtest)
 #
 # Define a function that adds a ctest test with image comparison only if the executable is turned on
 #
-function(add_ctest_test_image_compare testName testDriver imIn imOut imBaseline)
-  if(BUILD_TESTING AND compile_${testName})
+function(add_ctest_test_testdriver_image_compare testName testDriver imBaseline imResult)
+  if(BUILD_TESTING)
     add_test(${testName} ${testDriver}
-      --compare ${test_input_dir}/Baseline/${imBaseline}
-                ${test_temp_dir}/${imOut}
+      --compare ${imBaseline}
+                ${imResult}
       ${testName}
-      ${test_input_dir}/${imIn}
-      ${test_temp_dir}/${imOut}
       ${ARGN}
       )
-  endif(BUILD_TESTING AND compile_${testName})
-endfunction(add_ctest_test_image_compare)
+  endif(BUILD_TESTING)
+endfunction(add_ctest_test_testdriver_image_compare)
+
+#
+# Define a function with comparison option with subtests
+#
+function(add_ctest_subtest_testdriver_image_compare testName subtestName testDriver imBaseline imResult)
+  if(BUILD_TESTING)
+    add_test(${testName}_${subtestName} ${testDriver}
+      --compare ${imBaseline}
+                ${imResult}
+      ${testName}
+      ${ARGN}
+      )
+  endif(BUILD_TESTING)
+endfunction(add_ctest_subtest_testdriver_image_compare)
+
 
 #------------------------------------------------------------------------------
 # New tests, added during the redevelopment of FRAT -> CALATK
@@ -83,19 +102,39 @@ calatkAdvectionTest.cxx
 calatkInterpolationTest.cxx
 )
 
+set(testDriverAlgorithms_SRCS
+calatkLDDMMTest.cxx
+)
+
 add_executable(testDriverFiltering testDriverFiltering.cxx ${testDriverFiltering_SRCS})
 target_link_libraries(testDriverFiltering CALATK ${ITK_LIBRARIES})
 
-add_ctest_test_image_compare(calatkGaussianBlurringTest ${ALGORITHMS_TESTS_FILTERING} I0_short.nhdr I0_blurred.nrrd I0-blurred-sig01-baseline.nrrd)
+add_ctest_test_testdriver_image_compare(calatkGaussianBlurringTest ${ALGORITHMS_TESTS_FILTERING}
+    ${test_input_dir}/Baseline/I0-blurred-sig01-baseline.nrrd
+    ${test_temp_dir}/I0_blurred.nrrd
+    ${test_input_dir}/I0_short.nhdr ${test_temp_dir}/I0_blurred.nrrd
+)
 
 add_executable(testDriverPDESolver testDriverPDESolver.cxx ${testDriverPDESolver_SRCS})
 target_link_libraries(testDriverPDESolver CALATK ${ITK_LIBRARIES})
 
-add_ctest_test_image_compare(calatkAdvectionTest ${ALGORITHMS_TESTS_PDESOLVER} I0_short.nhdr I0_advected.nrrd I0-advected-baseline-x.nrrd 1 0 0.25)
+add_ctest_subtest_testdriver_image_compare(calatkAdvectionTest xtranslation ${ALGORITHMS_TESTS_PDESOLVER}
+    ${test_input_dir}/Baseline/I0-advected-baseline-x.nrrd
+    ${test_temp_dir}/I0_advected.nrrd
+    ${test_input_dir}/I0_short.nhdr ${test_temp_dir}/I0_advected.nrrd 1 0 0.25
+)
 
-add_ctest_test_image_compare(calatkAdvectionTest ${ALGORITHMS_TESTS_PDESOLVER} I0_short.nhdr I0_advected.nrrd I0-advected-baseline-y.nrrd 0 1 0.25)
+add_ctest_subtest_testdriver_image_compare(calatkAdvectionTest ytranslation ${ALGORITHMS_TESTS_PDESOLVER}
+    ${test_input_dir}/Baseline/I0-advected-baseline-y.nrrd
+    ${test_temp_dir}/I0_advected.nrrd
+    ${test_input_dir}/I0_short.nhdr ${test_temp_dir}/I0_advected.nrrd 0 1 0.25
+)
 
-add_ctest_test_image_compare(calatkAdvectionTest ${ALGORITHMS_TESTS_PDESOLVER} I0_short.nhdr I0_advected.nrrd I0-advected-baseline-diagonal.nrrd 1 1 0.25)
+add_ctest_subtest_testdriver_image_compare(calatkAdvectionTest xytranslation ${ALGORITHMS_TESTS_PDESOLVER}
+    ${test_input_dir}/Baseline/I0-advected-baseline-diagonal.nrrd
+    ${test_temp_dir}/I0_advected.nrrd
+    ${test_input_dir}/I0_short.nhdr ${test_temp_dir}/I0_advected.nrrd 1 1 0.25
+)
 
 # Set up all the test which go through the standard (non-test-driver) testing mechanism
 
@@ -117,16 +156,71 @@ add_ctest_test(calatkRegularizationSpacingTest
   ${test_temp_dir}/calatkRegularizationSpacingTest_target_map.mha
   )
 
+# LDDMM tests
+add_executable(testDriverAlgorithms testDriverAlgorithms.cxx ${testDriverAlgorithms_SRCS})
+target_link_libraries(testDriverAlgorithms CALATK ${ITK_LIBRARIES})
 
-add_test_executable(calatk1DTest CALATK)
-add_ctest_test(calatk1DTest
+# Add 1D Tests for different solvers
+add_ctest_subtest_testdriver_image_compare(calatkLDDMMTest simplifiedShooting1DFloat ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
+                          ${test_temp_dir}/1DCurveResult.nhdr
+                          simplifiedShooting 1 float
 			  ${test_input_dir}/1DCurveSource.nhdr
 			  ${test_input_dir}/1DCurveTarget.nhdr
 			  ${test_temp_dir}/1DCurveResult.nhdr
                           ${CALATK_SOURCE_DIR}/Code/Testing/calatk1DTest.json
-			  --compare ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
-			            ${test_temp_dir}/1DCurveResult.nhdr
 			  )
+
+add_ctest_subtest_testdriver_image_compare(calatkLDDMMTest adjointShooting1DFloat ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
+                          ${test_temp_dir}/1DCurveResult.nhdr
+                          adjointShooting 1 float
+                          ${test_input_dir}/1DCurveSource.nhdr
+                          ${test_input_dir}/1DCurveTarget.nhdr
+                          ${test_temp_dir}/1DCurveResult.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatk1DTest.json
+                          )
+
+add_ctest_subtest_testdriver_image_compare(calatkLDDMMTest relaxation1DFloat ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
+                          ${test_temp_dir}/1DCurveResult.nhdr
+                          relaxation 1 float
+                          ${test_input_dir}/1DCurveSource.nhdr
+                          ${test_input_dir}/1DCurveTarget.nhdr
+                          ${test_temp_dir}/1DCurveResult.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatk1DTest.json
+                          )
+
+add_ctest_subtest_testdriver_image_compare(calatkLDDMMTest simplifiedShooting1DDouble ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
+                          ${test_temp_dir}/1DCurveResult.nhdr
+                          simplifiedShooting 1 double
+                          ${test_input_dir}/1DCurveSource.nhdr
+                          ${test_input_dir}/1DCurveTarget.nhdr
+                          ${test_temp_dir}/1DCurveResult.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatk1DTest.json
+                          )
+
+add_ctest_subtest_testdriver_image_compare(calatkLDDMMTest adjointShooting1DDouble ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
+                          ${test_temp_dir}/1DCurveResult.nhdr
+                          adjointShooting 1 double
+                          ${test_input_dir}/1DCurveSource.nhdr
+                          ${test_input_dir}/1DCurveTarget.nhdr
+                          ${test_temp_dir}/1DCurveResult.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatk1DTest.json
+                          )
+
+add_ctest_subtest_testdriver_image_compare(calatkLDDMMTest relaxation1DDouble ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
+                          ${test_temp_dir}/1DCurveResult.nhdr
+                          relaxation 1 double
+                          ${test_input_dir}/1DCurveSource.nhdr
+                          ${test_input_dir}/1DCurveTarget.nhdr
+                          ${test_temp_dir}/1DCurveResult.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatk1DTest.json
+                          )
+
 
 #add_ctest_test(writeFileITKTest
 #  # 2D input

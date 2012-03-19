@@ -18,7 +18,7 @@
 */
 
 /**
-  * Tests the behavior of LDDMM on 1D Images.
+  * Tests the behavior of LDDMM on ND Images.
   */
 
 
@@ -31,15 +31,13 @@
 #include "VectorImageUtils.h"
 #include "CImageManagerMultiScale.h"
 
+#include <stdlib.h>
+
 #include "JSONParameterUtils.h"
 
 template < class TFLOAT, unsigned int VImageDimension >
 int DoIt(std::string LDDMMType, char* sourceImage, char* targetImage, char* resultImage, const std::string & configFileName)
 {
-  //
-  // HACK FROM LDDMM.cxx
-  //
-
   // define the type of state
   typedef CALATK::CStateInitialImageMomentum< TFLOAT, VImageDimension > TStateInitialImageMomentum;
   typedef CALATK::CStateSpatioTemporalVelocityField< TFLOAT, VImageDimension > TStateSpatioTemporalVelocityField;
@@ -102,8 +100,63 @@ int DoIt(std::string LDDMMType, char* sourceImage, char* targetImage, char* resu
   return EXIT_SUCCESS;
 }
 
-int main(int argc, char **argv)
+int calatkLDDMMTest(int argc, char * argv[] )
 {
-  const std::string configFileName = argv[4];
-  return DoIt<float, 1>("simplifiedShooting", argv[1], argv[2], argv[3], configFileName);
+  const std::string configFileName = argv[7];
+  const std::string lddmmType = argv[1];
+  const std::string dimStr = argv[2];
+  std::string sFloatingPointType = argv[3];
+
+  if ( argc !=8 )
+  {
+    std::cout << "Found " << argc << " arguments." << std::endl;
+    std::cout << "Usage: calatkLDDMMTest lddmmType dim floatType sourceImage targetImage resultingImage" << std::endl;
+    return EXIT_FAILURE;
+  }
+
+  int iImageDimension = atoi( dimStr.c_str() );
+
+  std::for_each( sFloatingPointType.begin(), sFloatingPointType.end(), ::tolower); \
+  if ( sFloatingPointType.compare( "float" )==0 )
+  {
+    switch ( iImageDimension )
+    {
+    case 1:
+      return DoIt<float, 1>( lddmmType, argv[4], argv[5], argv[6], configFileName);
+      break;
+    case 2:
+      return DoIt<float, 2>( lddmmType, argv[4], argv[5], argv[6], configFileName);
+      break;
+    case 3:
+      return DoIt<float, 3>( lddmmType, argv[4], argv[5], argv[6], configFileName);
+      break;
+    default:
+      std::cerr << "Unsupported image dimension = " << iImageDimension << std::endl;
+    }
+  }
+  else if ( sFloatingPointType.compare( "double" )==0 )
+  {
+    switch ( iImageDimension )
+    {
+    case 1:
+      return DoIt<double, 1>( lddmmType, argv[4], argv[5], argv[6], configFileName);
+      break;
+    case 2:
+      return DoIt<double, 2>( lddmmType, argv[4], argv[5], argv[6], configFileName);
+      break;
+    case 3:
+      return DoIt<double, 3>( lddmmType, argv[4], argv[5], argv[6], configFileName);
+      break;
+    default:
+      std::cerr << "Unsupported image dimension = " << iImageDimension << std::endl;
+    }
+
+  }
+  else
+  {
+    std::cerr << "Unsupported floating point type = " << sFloatingPointType << std::endl;
+  }
+
+  return EXIT_FAILURE;
+
 }
