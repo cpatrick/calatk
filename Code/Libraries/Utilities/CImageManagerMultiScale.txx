@@ -22,19 +22,18 @@
 
 template <class T, unsigned int VImageDimension >
 CImageManagerMultiScale< T, VImageDimension >::CImageManagerMultiScale()
-  : DefaultSigma( 0.5 ), m_ExternallySetSigma( false ),
-    DefaultBlurHighestResolutionImage( true ), m_ExternallySetBlurHighestResolutionImage( false )
+  : m_ExternallySetSigma( false ),
+    m_ExternallySetBlurHighestResolutionImage( false )
 {
   m_uiCurrentlySelectedScale = 0;
-  m_bImagesWereRead = false;
+  m_ImagesWereRead = false;
   m_ptrResampler = NULL;
 
   m_Sigma = DefaultSigma;
   m_BlurHighestResolutionImage = DefaultBlurHighestResolutionImage;
 
   // add default scale, the original blurred image at the original resolution
-  AddScale( 1.0, 0 );
-
+  this->AddScale( 1.0, 0 );
 }
 
 template <class T, unsigned int VImageDimension >
@@ -56,59 +55,41 @@ void CImageManagerMultiScale< T, VImageDimension >::SetDefaultResamplerPointer()
 }
 
 template <class T, unsigned int VImageDimension >
-void CImageManagerMultiScale< T, VImageDimension >::AddScale( T dScale, unsigned int uiScaleIndx )
+void CImageManagerMultiScale< T, VImageDimension >::AddScale( T dScale, unsigned int scaleIdx )
 {
 
-  if ( m_bImagesWereRead )
+  if ( this->m_ImagesWereRead )
     {
     std::runtime_error("Scales cannot be changed after images have been read.");
     return;
     }
 
-  if ( uiScaleIndx < 0 )
-    {
-    std::runtime_error("Negative scale index is not allowed." );
-    return;
-    }
-
-  if ( (int)m_ScaleVector.size() <= (int)uiScaleIndx )
+  if ( static_cast< unsigned int >( m_ScaleVector.size() ) < scaleIdx + 1 )
     {
     // increase size of vector
-    for ( int iI=0; iI <= (int)(uiScaleIndx-m_ScaleVector.size()); ++iI )
-      {
-      m_ScaleVector.push_back( 0 );
-      m_ScaleWasSet.push_back( false );
-      }
+    this->m_ScaleVector.resize( scaleIdx + 1, 0.0 );
+    this->m_ScaleWasSet.resize( scaleIdx + 1, false );
     }
 
-  assert( m_ScaleVector.size() >= uiScaleIndx+1 );
-  // now we know that we can access the element
-  m_ScaleVector[ uiScaleIndx ] = dScale;
-  m_ScaleWasSet[ uiScaleIndx ] = true;
+  this->m_ScaleVector[ scaleIdx ] = dScale;
+  this->m_ScaleWasSet[ scaleIdx ] = true;
 }
 
 template <class T, unsigned int VImageDimension >
-void CImageManagerMultiScale< T, VImageDimension >::RemoveScale( unsigned int uiScaleIndx )
+void CImageManagerMultiScale< T, VImageDimension >::RemoveScale( unsigned int scaleIdx )
 {
 
-  if ( m_bImagesWereRead )
+  if ( this->m_ImagesWereRead )
     {
     std::runtime_error("Scales cannot be changed after images have been read.");
     return;
     }
 
-  if ( !( uiScaleIndx < 0 || uiScaleIndx >= m_ScaleVector.size() ) )
+  if ( !( scaleIdx >= m_ScaleVector.size() ) )
     {
     // valid range, otherwise don't do anything
-    m_ScaleVector[ uiScaleIndx ] = 0;
-    m_ScaleWasSet[ uiScaleIndx ] = false;
-
-    // if it is the last element, just pop it
-    if ( uiScaleIndx == m_ScaleVector.size()-1 )
-      {
-      m_ScaleVector.pop_back();
-      m_ScaleWasSet.pop_back();
-      }
+    m_ScaleVector[ scaleIdx ] = 0.0;
+    m_ScaleWasSet[ scaleIdx ] = false;
     }
 }
 
@@ -120,16 +101,15 @@ unsigned int CImageManagerMultiScale< T, VImageDimension >::GetNumberOfScales()
 }
 
 template <class T, unsigned int VImageDimension >
-void CImageManagerMultiScale< T, VImageDimension >::SelectScale( unsigned int uiScaleIndx )
+void CImageManagerMultiScale< T, VImageDimension >::SelectScale( unsigned int scaleIdx )
 {
-  assert( uiScaleIndx>=0 && uiScaleIndx<m_ScaleVector.size() );
-  if ( !( uiScaleIndx>=0 && uiScaleIndx<m_ScaleVector.size() ) )
+  assert( scaleIdx < m_ScaleVector.size() );
+  if ( !( scaleIdx < m_ScaleVector.size() ) )
     {
     throw std::runtime_error("Scale selection index out of range.");
     }
 
-  m_uiCurrentlySelectedScale = uiScaleIndx;
-
+  m_uiCurrentlySelectedScale = scaleIdx;
 }
 
 template <class T, unsigned int VImageDimension >
@@ -155,7 +135,7 @@ void CImageManagerMultiScale< T, VImageDimension >::GetImage( ImageInformation* 
     {
     // create all the scales
     unsigned int uiNrOfScales = this->GetNumberOfScales();
-    for ( unsigned int iI=0; iI<uiNrOfScales; ++iI )
+    for ( unsigned int iI=0; iI < uiNrOfScales; ++iI )
       {
       if ( m_ScaleWasSet[ iI ] )
       {
@@ -198,7 +178,7 @@ void CImageManagerMultiScale< T, VImageDimension >::GetImage( ImageInformation* 
     {
     // was read
     SetScale( imageInformation );
-    m_bImagesWereRead = true; // disallow any future change of the images (implement some form of reset functionality)
+    m_ImagesWereRead = true; // disallow any future change of the images (implement some form of reset functionality)
     }
   else
     {
