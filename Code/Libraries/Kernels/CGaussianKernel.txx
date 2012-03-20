@@ -59,13 +59,13 @@ void CGaussianKernel< T, VImageDimension >::SetSigma( T dSigma )
 template <class T, unsigned int VImageDimension >
 void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType1D* pVecImageGraft )
 {
-  unsigned int szX = pVecImageGraft->GetSizeX();
+  const unsigned int szX = pVecImageGraft->GetSizeX();
 
-  T dx = pVecImageGraft->GetSpacingX();
+  const T dx = pVecImageGraft->GetSpacingX();
 
-  T pi = (T)CALATK::PI;
+  const T pi = (T)CALATK::PI;
 
-  T f1Eff = 0;
+  T f1Eff = 0.0;
 
   for (unsigned int x = 0; x < szX; ++x)
     {
@@ -90,13 +90,13 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vecto
 template <class T, unsigned int VImageDimension >
 void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType2D* pVecImageGraft )
 {
-  unsigned int szX = pVecImageGraft->GetSizeX();
-  unsigned int szY = pVecImageGraft->GetSizeY();
+  const unsigned int szX = pVecImageGraft->GetSizeX();
+  const unsigned int szY = pVecImageGraft->GetSizeY();
 
-  T dx = pVecImageGraft->GetSpacingX();
-  T dy = pVecImageGraft->GetSpacingY();
+  const T dx = pVecImageGraft->GetSpacingX();
+  const T dy = pVecImageGraft->GetSpacingY();
 
-  T pi = (T)CALATK::PI;
+  const T pi = (T)CALATK::PI;
 
   T f1Eff = 0;
   T f2Eff = 0;
@@ -128,16 +128,15 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vecto
 template <class T, unsigned int VImageDimension >
 void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType3D* pVecImageGraft )
 {
+  const unsigned int szX = pVecImageGraft->GetSizeX();
+  const unsigned int szY = pVecImageGraft->GetSizeY();
+  const unsigned int szZ = pVecImageGraft->GetSizeZ();
 
-  unsigned int szX = pVecImageGraft->GetSizeX();
-  unsigned int szY = pVecImageGraft->GetSizeY();
-  unsigned int szZ = pVecImageGraft->GetSizeZ();
+  const T dx = pVecImageGraft->GetSpacingX();
+  const T dy = pVecImageGraft->GetSpacingY();
+  const T dz = pVecImageGraft->GetSpacingZ();
 
-  T dx = pVecImageGraft->GetSpacingX();
-  T dy = pVecImageGraft->GetSpacingY();
-  T dz = pVecImageGraft->GetSpacingZ();
-
-  T pi = (T)CALATK::PI;
+  const T pi = (T)CALATK::PI;
 
   T f1Eff = 0;
   T f2Eff = 0;
