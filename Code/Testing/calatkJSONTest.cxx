@@ -23,7 +23,7 @@
 
 #include "CALATKCommon.h"
 #include <iostream>
-#include "JSONParameterUtils.h"
+#include "CJSONConfiguration.h"
 #include <fstream>
 
 typedef float TFLOAT;

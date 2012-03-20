@@ -33,7 +33,7 @@
 
 #include <stdlib.h>
 
-#include "JSONParameterUtils.h"
+#include "CJSONConfiguration.h"
 
 template < class TFLOAT, unsigned int VImageDimension >
 int DoIt(std::string LDDMMType, char* sourceImage, char* targetImage, char* resultImage, const std::string & configFileName)

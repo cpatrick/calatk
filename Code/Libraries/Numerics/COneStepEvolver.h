@@ -23,7 +23,7 @@
 #include <stdexcept>
 
 #include "CProcessBase.h"
-#include "JSONParameterUtils.h"
+#include "CJSONConfiguration.h"
 
 #include "VectorImage.h"
 #include "VectorField.h"

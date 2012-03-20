@@ -20,7 +20,7 @@
 #ifndef C_KERNEL_FACTORY_H
 #define C_KERNEL_FACTORY_H
 
-#include "JSONParameterUtils.h"
+#include "CJSONConfiguration.h"
 #include "CALATKCommon.h"
 #include "CKernel.h"
 #include "CProcessBase.h"

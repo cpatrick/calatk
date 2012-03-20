@@ -24,7 +24,7 @@
 #include "json/json.h"
 #include "CALATKCommon.h"
 #include "CBase.h"
-#include "JSONParameterUtils.h"
+#include "CJSONConfiguration.h"
 
 namespace CALATK
 {

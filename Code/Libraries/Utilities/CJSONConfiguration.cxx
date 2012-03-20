@@ -17,7 +17,7 @@
 *
 */
 
-#include "JSONParameterUtils.h"
+#include "CJSONConfiguration.h"
 #include <iomanip>
 
 namespace CALATK
@@ -374,7 +374,6 @@ bool CJSONConfiguration::ReadJSONFile( std::string sFileName )
     {
     if ( m_IsMasterNode )
       {
-      // delete 
       delete m_ptrRoot;
       m_ptrRoot = NULL;
       }

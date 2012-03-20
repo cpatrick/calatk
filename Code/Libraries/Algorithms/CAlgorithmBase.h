@@ -32,7 +32,7 @@
 #include "VectorField.h"
 
 #include "CProcessBase.h"
-#include "JSONParameterUtils.h"
+#include "CJSONConfiguration.h"
 
 namespace CALATK
 {

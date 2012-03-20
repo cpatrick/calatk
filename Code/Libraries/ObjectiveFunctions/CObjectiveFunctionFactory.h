@@ -20,7 +20,7 @@
 #ifndef C_OBJECTIVE_FUNCTION_FACTORY_H
 #define C_OBJECTIVE_FUNCTION_FACTORY_H
 
-#include "JSONParameterUtils.h"
+#include "CJSONConfiguration.h"
 #include "CALATKCommon.h"
 #include "CObjectiveFunctionBase.h"
 #include "CProcessBase.h"

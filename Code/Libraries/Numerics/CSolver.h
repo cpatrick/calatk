@@ -23,7 +23,7 @@
 #include "CObjectiveFunction.h"
 #include "CALATKCommon.h"
 #include "CProcessBase.h"
-#include "JSONParameterUtils.h"
+#include "CJSONConfiguration.h"
 
 /**
  * Base class for the registration solvers.

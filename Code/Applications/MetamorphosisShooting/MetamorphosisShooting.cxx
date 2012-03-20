@@ -30,7 +30,7 @@
 #include "VectorImageUtils.h"
 #include "CImageManagerMultiScale.h"
 
-#include "JSONParameterUtils.h"
+#include "CJSONConfiguration.h"
 
 #include "MetamorphosisShootingCLP.h"
 

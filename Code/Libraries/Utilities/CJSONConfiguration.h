@@ -17,8 +17,8 @@
 *
 */
 
-#ifndef JSON_PARAMETER_UTILS
-#define JSON_PARAMETER_UTILS
+#ifndef C_JSON_CONFIGURATION
+#define C_JSON_CONFIGURATION
 
 #include "json/json-forwards.h"
 #include "json/json.h"
@@ -34,7 +34,7 @@ namespace CALATK
 
 /**
  * @brief Implements ways to extract information from a JSON data description.
- * This can be used to keep track of paramters and to read in configuration files.
+ * This can be used to keep track of parameters and to read in configuration files.
  *
  */
 class CJSONConfiguration

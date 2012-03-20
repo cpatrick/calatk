@@ -22,7 +22,7 @@
 
 #include "VectorImage.h"
 #include "CProcessBase.h"
-#include "JSONParameterUtils.h"
+#include "CJSONConfiguration.h"
 
 /**
  * Base class for the metric
