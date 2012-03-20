@@ -243,6 +243,8 @@ endif()
 # Add test executables without ctest tests
 #
 
+add_test_executable(gaussianBlurringTest CALATK ${ITK_LIBRARIES})
+
 ## conservationTest
 #add_test_executable(conservationTest CALATK ${ITK_LIBRARIES})
 
