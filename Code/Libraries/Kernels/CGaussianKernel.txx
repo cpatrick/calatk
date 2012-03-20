@@ -69,7 +69,7 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vecto
 
   for (unsigned int x = 0; x < szX; ++x)
     {
-    f1Eff = GetFFromIndex( x, szX, dx );
+    f1Eff = GetFrequencyFromIndex( x, szX, dx );
 
     T val = exp( -m_Sigma*m_Sigma*( 4*pi*pi*(f1Eff*f1Eff)/2 ) );
     this->m_ptrL->SetValue(x,0, val );
@@ -103,10 +103,10 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vecto
 
   for (unsigned int y = 0; y < szY; ++y) 
     {
-    f2Eff = GetFFromIndex( y, szY, dy );
+    f2Eff = GetFrequencyFromIndex( y, szY, dy );
     for (unsigned int x = 0; x < szX; ++x) 
       {
-      f1Eff = GetFFromIndex( x, szX, dx );
+      f1Eff = GetFrequencyFromIndex( x, szX, dx );
 
       T val = exp( -m_Sigma*m_Sigma*( 4*pi*pi*(f1Eff*f1Eff + f2Eff*f2Eff )/2 ) );
       this->m_ptrL->SetValue(x,y,0, val );
@@ -144,13 +144,13 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vecto
 
   for (unsigned int z = 0; z < szZ; ++z) 
     {
-    f3Eff = GetFFromIndex( z, szZ, dz );
+    f3Eff = GetFrequencyFromIndex( z, szZ, dz );
     for (unsigned int y = 0; y < szY; ++y) 
       {
-      f2Eff = GetFFromIndex( y, szY, dy );
+      f2Eff = GetFrequencyFromIndex( y, szY, dy );
       for (unsigned int x = 0; x < szX; ++x) 
         {
-        f1Eff = GetFFromIndex( x, szX, dx );
+        f1Eff = GetFrequencyFromIndex( x, szX, dx );
         T val = exp( -m_Sigma*m_Sigma*( 4*pi*pi*( f1Eff*f1Eff + f2Eff*f2Eff + f3Eff*f3Eff)/2 ) );
         this->m_ptrL->SetValue(x,y,z,0, val );
 

@@ -179,7 +179,7 @@ void CMultiGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( 
 
   for (unsigned int x = 0; x < szX; ++x)
     {
-    f1Eff = GetFFromIndex( x, szX, dx );
+    f1Eff = GetFrequencyFromIndex( x, szX, dx );
 
     T val = 0;
 
@@ -233,10 +233,10 @@ void CMultiGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( 
 
   for (unsigned int y = 0; y < szY; ++y)
     {
-    f2Eff = GetFFromIndex( y, szY, dy );
+    f2Eff = GetFrequencyFromIndex( y, szY, dy );
     for (unsigned int x = 0; x < szX; ++x)
       {
-      f1Eff = GetFFromIndex( x, szX, dx );
+      f1Eff = GetFrequencyFromIndex( x, szX, dx );
 
       T val = 0;
 
@@ -294,13 +294,13 @@ void CMultiGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( 
 
   for (unsigned int z = 0; z < szZ; ++z)
     {
-    f3Eff = GetFFromIndex( z, szZ, dz );
+    f3Eff = GetFrequencyFromIndex( z, szZ, dz );
     for (unsigned int y = 0; y < szY; ++y)
       {
-      f2Eff = GetFFromIndex( y, szY, dy );
+      f2Eff = GetFrequencyFromIndex( y, szY, dy );
       for (unsigned int x = 0; x < szX; ++x)
         {
-        f1Eff = GetFFromIndex( x, szX, dx );
+        f1Eff = GetFrequencyFromIndex( x, szX, dx );
 
         T val = 0;
 

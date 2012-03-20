@@ -136,7 +136,7 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures( Vect
 }
 
 template <class T, unsigned int VImageDimension >
-T CFourierDomainKernel< T, VImageDimension >::GetFFromIndex( unsigned int iI, unsigned int iM, T dx )
+T CFourierDomainKernel< T, VImageDimension >::GetFrequencyFromIndex( unsigned int iI, unsigned int iM, T dx )
 {
   // results in the frequency f = w/(2*pi)
 

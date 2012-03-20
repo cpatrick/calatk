@@ -204,7 +204,7 @@ protected:
    * Converts from a linear index to the frequency f
    * Properly handles even and odd index lengths (to be used with the FFT)
    */
-  static T GetFFromIndex( unsigned int iI, unsigned int iM, T dx );
+  static T GetFrequencyFromIndex( unsigned int iI, unsigned int iM, T dx );
   
   void ConfirmKernelsWereComputed();
 
