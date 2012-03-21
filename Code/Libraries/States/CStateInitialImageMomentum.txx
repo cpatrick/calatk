@@ -171,14 +171,14 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::CreateUpsampledState
   typename VectorImageType::Pointer ptrInitialImage = new VectorImageType( ptrGraftImage, ptrNewRawData );
   typename VectorImageType::Pointer ptrInitialMomentum = new VectorImageType( ptrGraftImage, ptrNewRawData + uiLengthOfNewImage );
   
-  TResampler resampler;
+  typename TResampler::Pointer resampler = new TResampler;
   
-  resampler.Upsample( m_ptrInitialImage, ptrInitialImage );
-  resampler.Upsample( m_ptrInitialMomentum, ptrInitialMomentum );
+  resampler->Upsample( m_ptrInitialImage, ptrInitialImage );
+  resampler->Upsample( m_ptrInitialMomentum, ptrInitialMomentum );
   
-  typename TState::Pointer upsampledState = new TState( ptrNewRawData, ptrInitialImage, ptrInitialMomentum );
+  TState * upsampledState = new TState( ptrNewRawData, ptrInitialImage, ptrInitialMomentum );
   
-  return upsampledState.GetPointer();
+  return upsampledState;
 }
 
 //

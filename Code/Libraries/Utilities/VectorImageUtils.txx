@@ -160,9 +160,9 @@ VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( cons
   assert( scale > 0.0 );
 
   // will only be approximate scale (up to the same integer)
-  unsigned int szxOrig = imageGraft->GetSizeX();
-  unsigned int szyOrig = imageGraft->GetSizeY();
-  unsigned int szzOrig = imageGraft->GetSizeZ();
+  const unsigned int szxOrig = imageGraft->GetSizeX();
+  const unsigned int szyOrig = imageGraft->GetSizeY();
+  const unsigned int szzOrig = imageGraft->GetSizeZ();
 
   unsigned int szxDesired = 0;
   unsigned int szyDesired = 0;
@@ -199,19 +199,21 @@ template <class T, unsigned int VImageDimension >
 typename VectorImageUtils< T, VImageDimension >::VectorImageType*
 VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( const VectorImageType* imageGraft, unsigned int szx )
 {
-  unsigned int dim = imageGraft->GetDimension();
-  unsigned int szxOrig = imageGraft->GetSizeX();
+  const unsigned int dim = imageGraft->GetDimension();
+  const unsigned int szxOrig = imageGraft->GetSizeX();
 
   T dxOrig = imageGraft->GetSpacingX();
 
   T invScaleX = (T)szxOrig/(T)szx;
 
-  typename VectorImageType::Pointer newImage = new VectorImageType( szx, dim );
+  // An exception to the rule -- since we an generating this new image, we do
+  // not assign to a smart pointer.
+  VectorImageType * newImage = new VectorImageType( szx, dim );
   newImage->SetSpacingX( dxOrig*invScaleX );
   newImage->SetOrigin( imageGraft->GetOrigin() );
   newImage->SetDirection( imageGraft->GetDirection() );
 
-  return newImage.GetPointer();
+  return newImage;
 }
 
 //
@@ -221,23 +223,25 @@ template <class T, unsigned int VImageDimension >
 typename VectorImageUtils< T, VImageDimension >::VectorImageType*
 VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( const VectorImageType* imageGraft, unsigned int szx, unsigned int szy )
 {
-  unsigned int dim = imageGraft->GetDimension();
-  unsigned int szxOrig = imageGraft->GetSizeX();
-  unsigned int szyOrig = imageGraft->GetSizeY();
+  const unsigned int dim = imageGraft->GetDimension();
+  const unsigned int szxOrig = imageGraft->GetSizeX();
+  const unsigned int szyOrig = imageGraft->GetSizeY();
 
-  T dxOrig = imageGraft->GetSpacingX();
-  T dyOrig = imageGraft->GetSpacingY();
+  const T dxOrig = imageGraft->GetSpacingX();
+  const T dyOrig = imageGraft->GetSpacingY();
 
-  T invScaleX = (T)szxOrig/(T)szx;
-  T invScaleY = (T)szyOrig/(T)szy;
+  const T invScaleX = (T)szxOrig/(T)szx;
+  const T invScaleY = (T)szyOrig/(T)szy;
 
-  typename VectorImageType::Pointer newImage = new VectorImageType( szx, szy, dim );
+  // An exception to the rule -- since we an generating this new image, we do
+  // not assign to a smart pointer.
+  VectorImageType * newImage = new VectorImageType( szx, szy, dim );
   newImage->SetSpacingX( dxOrig*invScaleX );
   newImage->SetSpacingY( dyOrig*invScaleY );
   newImage->SetOrigin( imageGraft->GetOrigin() );
   newImage->SetDirection( imageGraft->GetDirection() );
 
-  return newImage.GetPointer();
+  return newImage;
 }
 
 //
@@ -247,27 +251,29 @@ template <class T, unsigned int VImageDimension >
 typename VectorImageUtils< T, VImageDimension >::VectorImageType*
 VectorImageUtils< T, VImageDimension >::AllocateMemoryForScaledVectorImage( const VectorImageType* imageGraft, unsigned int szx, unsigned int szy, unsigned int szz )
 {
-  unsigned int dim = imageGraft->GetDimension();
-  unsigned int szxOrig = imageGraft->GetSizeX();
-  unsigned int szyOrig = imageGraft->GetSizeY();
-  unsigned int szzOrig = imageGraft->GetSizeZ();
+  const unsigned int dim = imageGraft->GetDimension();
+  const unsigned int szxOrig = imageGraft->GetSizeX();
+  const unsigned int szyOrig = imageGraft->GetSizeY();
+  const unsigned int szzOrig = imageGraft->GetSizeZ();
 
-  T dxOrig = imageGraft->GetSpacingX();
-  T dyOrig = imageGraft->GetSpacingY();
-  T dzOrig = imageGraft->GetSpacingZ();
+  const T dxOrig = imageGraft->GetSpacingX();
+  const T dyOrig = imageGraft->GetSpacingY();
+  const T dzOrig = imageGraft->GetSpacingZ();
 
-  T invScaleX = (T)szxOrig/(T)szx;
-  T invScaleY = (T)szyOrig/(T)szy;
-  T invScaleZ = (T)szzOrig/(T)szz;
+  const T invScaleX = (T)szxOrig/(T)szx;
+  const T invScaleY = (T)szyOrig/(T)szy;
+  const T invScaleZ = (T)szzOrig/(T)szz;
 
-  typename VectorImageType::Pointer newImage = new VectorImageType( szx, szy, szz, dim );
+  // An exception to the rule -- since we an generating this new image, we do
+  // not assign to a smart pointer.
+  VectorImageType * newImage = new VectorImageType( szx, szy, szz, dim );
   newImage->SetSpacingX( dxOrig*invScaleX );
   newImage->SetSpacingY( dyOrig*invScaleY );
   newImage->SetSpacingZ( dzOrig*invScaleZ );
   newImage->SetOrigin( imageGraft->GetOrigin() );
   newImage->SetDirection( imageGraft->GetDirection() );
 
-  return newImage.GetPointer();
+  return newImage;
 }
 
 //
@@ -1696,7 +1702,9 @@ VectorImageUtils< T, VImageDimension >::convertFromITK( typename ITKVectorImage<
   unsigned int szX = size[0];
   unsigned int dim = size[1];
 
-  VectorImageType* outImage = new VectorImageType(szX, dim);
+  // An exception to the rule -- since we an generating this new image, we do
+  // not assign to a smart pointer.
+  VectorImageType * outImage = new VectorImageType(szX, dim);
   outImage->SetSpacingX( space[0] );
 
   for (unsigned int x = 0; x < szX; ++x)
@@ -1726,7 +1734,6 @@ template <class T, unsigned int VImageDimension >
 typename VectorImageUtils< T, VImageDimension >::VectorImageType*
 VectorImageUtils< T, VImageDimension >::convertFromITK( typename ITKVectorImage<T,2>::Type* itkIm)
 {
-
   if ( VImageDimension!= 2 )
     {
     throw std::runtime_error( "ConvertFromITK2D can only be used in 2D." );
@@ -1740,7 +1747,9 @@ VectorImageUtils< T, VImageDimension >::convertFromITK( typename ITKVectorImage<
   unsigned int szY = size[1];
   unsigned int dim = size[2];
 
-  typename VectorImageType::Pointer outImage = new VectorImageType(szX, szY, dim );
+  // An exception to the rule -- since we an generating this new image, we do
+  // not assign to a smart pointer.
+  VectorImageType * outImage = new VectorImageType(szX, szY, dim );
   outImage->SetSpacingX( space[0] );
   outImage->SetSpacingY( space[1] );
 
@@ -1764,7 +1773,7 @@ VectorImageUtils< T, VImageDimension >::convertFromITK( typename ITKVectorImage<
   outImage->SetOrigin(itkIm->GetOrigin());
   outImage->SetDirection(itkIm->GetDirection());
 
-  return outImage.GetPointer();
+  return outImage;
 }
 
 
@@ -1789,7 +1798,9 @@ VectorImageUtils< T, VImageDimension >::convertFromITK( typename ITKVectorImage<
   unsigned int szZ = size[2];
   unsigned int dim = size[3];
 
-  VectorImageType* outImage = new VectorImageType(szX, szY, szZ, dim );
+  // An exception to the rule -- since we an generating this new image, we do
+  // not assign to a smart pointer.
+  VectorImageType * outImage = new VectorImageType(szX, szY, szZ, dim );
   outImage->SetSpacingX( space[0] );
   outImage->SetSpacingY( space[1] );
   outImage->SetSpacingZ( space[2] );

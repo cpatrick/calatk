@@ -57,19 +57,19 @@ void CGaussianKernel< T, VImageDimension >::SetSigma( T dSigma )
 }
 
 template <class T, unsigned int VImageDimension >
-void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType1D* pVecImageGraft )
+void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( const VectorImageType1D* pVecImageGraft )
 {
-  unsigned int szX = pVecImageGraft->GetSizeX();
+  const unsigned int szX = pVecImageGraft->GetSizeX();
 
-  T dx = pVecImageGraft->GetSpacingX();
+  const T dx = pVecImageGraft->GetSpacingX();
 
-  T pi = (T)CALATK::PI;
+  const T pi = (T)CALATK::PI;
 
-  T f1Eff = 0;
+  T f1Eff = 0.0;
 
   for (unsigned int x = 0; x < szX; ++x)
     {
-    f1Eff = GetFFromIndex( x, szX, dx );
+    f1Eff = GetFrequencyFromIndex( x, szX, dx );
 
     T val = exp( -m_Sigma*m_Sigma*( 4*pi*pi*(f1Eff*f1Eff)/2 ) );
     this->m_ptrL->SetValue(x,0, val );
@@ -88,25 +88,25 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vecto
 }
 
 template <class T, unsigned int VImageDimension >
-void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType2D* pVecImageGraft )
+void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( const VectorImageType2D* pVecImageGraft )
 {
-  unsigned int szX = pVecImageGraft->GetSizeX();
-  unsigned int szY = pVecImageGraft->GetSizeY();
+  const unsigned int szX = pVecImageGraft->GetSizeX();
+  const unsigned int szY = pVecImageGraft->GetSizeY();
 
-  T dx = pVecImageGraft->GetSpacingX();
-  T dy = pVecImageGraft->GetSpacingY();
+  const T dx = pVecImageGraft->GetSpacingX();
+  const T dy = pVecImageGraft->GetSpacingY();
 
-  T pi = (T)CALATK::PI;
+  const T pi = (T)CALATK::PI;
 
   T f1Eff = 0;
   T f2Eff = 0;
 
   for (unsigned int y = 0; y < szY; ++y) 
     {
-    f2Eff = GetFFromIndex( y, szY, dy );
+    f2Eff = GetFrequencyFromIndex( y, szY, dy );
     for (unsigned int x = 0; x < szX; ++x) 
       {
-      f1Eff = GetFFromIndex( x, szX, dx );
+      f1Eff = GetFrequencyFromIndex( x, szX, dx );
 
       T val = exp( -m_Sigma*m_Sigma*( 4*pi*pi*(f1Eff*f1Eff + f2Eff*f2Eff )/2 ) );
       this->m_ptrL->SetValue(x,y,0, val );
@@ -126,18 +126,17 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vecto
 }
 
 template <class T, unsigned int VImageDimension >
-void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType3D* pVecImageGraft )
+void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( const VectorImageType3D* pVecImageGraft )
 {
+  const unsigned int szX = pVecImageGraft->GetSizeX();
+  const unsigned int szY = pVecImageGraft->GetSizeY();
+  const unsigned int szZ = pVecImageGraft->GetSizeZ();
 
-  unsigned int szX = pVecImageGraft->GetSizeX();
-  unsigned int szY = pVecImageGraft->GetSizeY();
-  unsigned int szZ = pVecImageGraft->GetSizeZ();
+  const T dx = pVecImageGraft->GetSpacingX();
+  const T dy = pVecImageGraft->GetSpacingY();
+  const T dz = pVecImageGraft->GetSpacingZ();
 
-  T dx = pVecImageGraft->GetSpacingX();
-  T dy = pVecImageGraft->GetSpacingY();
-  T dz = pVecImageGraft->GetSpacingZ();
-
-  T pi = (T)CALATK::PI;
+  const T pi = (T)CALATK::PI;
 
   T f1Eff = 0;
   T f2Eff = 0;
@@ -145,13 +144,13 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vecto
 
   for (unsigned int z = 0; z < szZ; ++z) 
     {
-    f3Eff = GetFFromIndex( z, szZ, dz );
+    f3Eff = GetFrequencyFromIndex( z, szZ, dz );
     for (unsigned int y = 0; y < szY; ++y) 
       {
-      f2Eff = GetFFromIndex( y, szY, dy );
+      f2Eff = GetFrequencyFromIndex( y, szY, dy );
       for (unsigned int x = 0; x < szX; ++x) 
         {
-        f1Eff = GetFFromIndex( x, szX, dx );
+        f1Eff = GetFrequencyFromIndex( x, szX, dx );
         T val = exp( -m_Sigma*m_Sigma*( 4*pi*pi*( f1Eff*f1Eff + f2Eff*f2Eff + f3Eff*f3Eff)/2 ) );
         this->m_ptrL->SetValue(x,y,z,0, val );
 

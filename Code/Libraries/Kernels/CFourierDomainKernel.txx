@@ -32,7 +32,6 @@ void CFourierDomainKernel< T, VImageDimension >::DeleteData()
 {
   if ( fftwData != NULL )
     {
-
     // clean up fftw data
     CFFTDataType<T>::FFTDestroyPlan( fftwData->fwd );
     CFFTDataType<T>::FFTDestroyPlan( fftwData->bck );
@@ -41,10 +40,11 @@ void CFourierDomainKernel< T, VImageDimension >::DeleteData()
 
     delete fftwData;
     fftwData = NULL;
+    fftw_cleanup();
     }
 
-  this->m_ptrL = NULL;
-  this->m_ptrLInv = NULL;
+  //this->m_ptrL = NULL;
+  //this->m_ptrLInv = NULL;
 
   this->m_MemoryWasAllocated = false;
   this->m_KernelsNeedToBeComputed = true;
@@ -53,15 +53,13 @@ void CFourierDomainKernel< T, VImageDimension >::DeleteData()
 template <class T, unsigned int VImageDimension >
 void CFourierDomainKernel< T, VImageDimension >::DeallocateMemory()
 {
-  fftw_cleanup();
   this->DeleteData();
 }
 
 template <class T, unsigned int VImageDimension >
 CFourierDomainKernel< T, VImageDimension >::~CFourierDomainKernel()
 {
-  fftw_cleanup();
-  DeleteData();
+  this->DeleteData();
 }
 
 template <class T, unsigned int VImageDimension >
@@ -70,7 +68,7 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures1D( un
   typedef typename CFFTDataType<T>::FFTComplexType FFTComplexType;
 
   // Set up the fftw data
-  unsigned int numElts = szX;
+  const unsigned int numElts = szX;
   fftwData = new CFFTDataType<T>();
 
   fftwData->in = (T*) fftw_malloc( sizeof(T) * numElts);
@@ -86,7 +84,7 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures2D( un
   typedef typename CFFTDataType<T>::FFTComplexType FFTComplexType;
 
   // Set up the fftw data
-  unsigned int numElts = szX*szY;
+  const unsigned int numElts = szX*szY;
   fftwData = new CFFTDataType<T>();
 
   fftwData->in = (T*) fftw_malloc( sizeof(T) * numElts );
@@ -94,8 +92,8 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures2D( un
 
   fftwData->fwd = CFFTDataType<T>::FFT_plan_dft_r2c_2d(szX, szY, fftwData->in, fftwData->out, FFTW_ESTIMATE);
   fftwData->bck = CFFTDataType<T>::FFT_plan_dft_c2r_2d(szX, szY, fftwData->out, fftwData->in, FFTW_ESTIMATE);
-
 }
+
 
 template <class T, unsigned int VImageDimension >
 void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures3D( unsigned int szX, unsigned int szY, unsigned int szZ )
@@ -103,9 +101,9 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures3D( un
   typedef typename CFFTDataType<T>::FFTComplexType FFTComplexType;
 
  // Set up the fftw data
-  unsigned int numElts = szX*szY*szZ;
+  const unsigned int numElts = szX*szY*szZ;
   fftwData = new CFFTDataType<T>();
-  
+
   fftwData->in = (T*) fftw_malloc( sizeof(T) * numElts );
   fftwData->out = (FFTComplexType*) fftw_malloc( sizeof(FFTComplexType) * numElts);
 
@@ -114,16 +112,17 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures3D( un
 }
 
 template <class T, unsigned int VImageDimension >
-void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures( VectorImageType* pVecIm )
+void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures( const VectorImageType* pVecIm )
 {
-  unsigned int szX = pVecIm->GetSizeX();
-  unsigned int szY = pVecIm->GetSizeY();
-  unsigned int szZ = pVecIm->GetSizeZ();
+  const unsigned int szX = pVecIm->GetSizeX();
+  const unsigned int szY = pVecIm->GetSizeY();
+  const unsigned int szZ = pVecIm->GetSizeZ();
 
   switch ( VImageDimension )
     {
     case 1:
       AllocateFFTDataStructures1D( szX );
+      break;
     case 2:
       AllocateFFTDataStructures2D( szX, szY );
       break;
@@ -136,7 +135,7 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures( Vect
 }
 
 template <class T, unsigned int VImageDimension >
-T CFourierDomainKernel< T, VImageDimension >::GetFFromIndex( unsigned int iI, unsigned int iM, T dx )
+T CFourierDomainKernel< T, VImageDimension >::GetFrequencyFromIndex( unsigned int iI, unsigned int iM, T dx )
 {
   // results in the frequency f = w/(2*pi)
 
@@ -172,9 +171,9 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
 {
   assert( pL->GetDimension() == 1 );
 
-  unsigned int szX = pVecImage->GetSizeX();
+  const unsigned int szX = pVecImage->GetSizeX();
 
-  unsigned int dim = pVecImage->GetDimension();
+  const unsigned int dim = pVecImage->GetDimension();
 
 // doing the loop the slow way because fftw
 // requires row-major formatting
@@ -230,10 +229,10 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
 
   assert( pL->GetDimension() == 1 );
 
-  unsigned int szX = pVecImage->GetSizeX();
-  unsigned int szY = pVecImage->GetSizeY();
+  const unsigned int szX = pVecImage->GetSizeX();
+  const unsigned int szY = pVecImage->GetSizeY();
 
-  unsigned int dim = pVecImage->GetDimension();
+  const unsigned int dim = pVecImage->GetDimension();
 
 // doing the loop the slow way because fftw
 // requires row-major formatting
@@ -303,11 +302,11 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
 
   assert( pL->GetDimension() == 1 );
 
-  unsigned int szX = pVecImage->GetSizeX();
-  unsigned int szY = pVecImage->GetSizeY();
-  unsigned int szZ = pVecImage->GetSizeZ();
+  const unsigned int szX = pVecImage->GetSizeX();
+  const unsigned int szY = pVecImage->GetSizeY();
+  const unsigned int szZ = pVecImage->GetSizeZ();
 
-  unsigned int dim = pVecImage->GetDimension();
+  const unsigned int dim = pVecImage->GetDimension();
 
   // doing the loop the slow way because fftw
   // requires row-major formatting
@@ -382,7 +381,7 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
 }
 
 template <class T, unsigned int VImageDimension >
-void CFourierDomainKernel< T, VImageDimension >::AllocateMemoryAndComputeKernelsIfNeeded( VectorImageType* ptrVectorImage )
+void CFourierDomainKernel< T, VImageDimension >::AllocateMemoryAndComputeKernelsIfNeeded( const VectorImageType* ptrVectorImage )
 {
   if ( !this->m_MemoryWasAllocated )
     {
@@ -419,15 +418,15 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateMemoryAndComputeKernels
 template <class T, unsigned int VImageDimension >
 void CFourierDomainKernel< T, VImageDimension >::ConvolveWithKernel( VectorImageType* ptrVectorImage )
 {
-  AllocateMemoryAndComputeKernelsIfNeeded( ptrVectorImage );
-  ConvolveInFourierDomain( ptrVectorImage, this->m_ptrL );
+  this->AllocateMemoryAndComputeKernelsIfNeeded( ptrVectorImage );
+  this->ConvolveInFourierDomain( ptrVectorImage, this->m_ptrL );
 }
 
 template <class T, unsigned int VImageDimension >
 void CFourierDomainKernel< T, VImageDimension >::ConvolveWithInverseKernel( VectorImageType* ptrVectorImage )
 {
-  AllocateMemoryAndComputeKernelsIfNeeded( ptrVectorImage );
-  ConvolveInFourierDomain( ptrVectorImage, this->m_ptrLInv );
+  this->AllocateMemoryAndComputeKernelsIfNeeded( ptrVectorImage );
+  this->ConvolveInFourierDomain( ptrVectorImage, this->m_ptrLInv );
 }
 
 template <class T, unsigned int VImageDimension >

@@ -159,7 +159,7 @@ bool CSolverMultiScale< TState >::Solve()
 
       std::cout << "Upsampling state for multi-scale solver." << std::endl;
 
-      TState* pUpsampledState = dynamic_cast< TState* >( pCurrentState->CreateUpsampledStateAndAllocateMemory( ptrImageManager->GetGraftImagePointer() ) );
+      typename TState::Pointer pUpsampledState = dynamic_cast< TState* >( pCurrentState->CreateUpsampledStateAndAllocateMemory( ptrImageManager->GetGraftImagePointer() ) );
       
       objectiveFunction->InitializeState( pUpsampledState );
       reducedEnergy = m_ptrSolver->SolvePreInitialized();

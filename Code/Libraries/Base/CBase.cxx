@@ -44,7 +44,7 @@ using __gnu_cxx::__exchange_and_add;
 #endif
 
 CBase::CBase():
-  m_ReferenceCount(1)
+  m_ReferenceCount(0)
 {}
 
 void CBase::Delete()

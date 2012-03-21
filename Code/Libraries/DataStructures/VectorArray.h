@@ -158,8 +158,7 @@ public:
   /**
    * Destructor that frees up all memory
    */
-  ~VectorArray();
-
+  virtual ~VectorArray();
 
   /******************
    * Public Methods *

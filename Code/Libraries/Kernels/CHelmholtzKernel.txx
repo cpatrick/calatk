@@ -68,7 +68,7 @@ void CHelmholtzKernel< T, VImageDimension >::SetGamma( T dGamma )
 }
 
 template <class T, unsigned int VImageDimension >
-void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType1D* pVecImageGraft )
+void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( const VectorImageType1D* pVecImageGraft )
 {
   unsigned int szX = pVecImageGraft->GetSizeX();
 
@@ -80,7 +80,7 @@ void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vect
 
   for (unsigned int x = 0; x < szX; ++x)
     {
-    f1Eff = GetFFromIndex( x, szX, dx );
+    f1Eff = GetFrequencyFromIndex( x, szX, dx );
     T val = m_Gamma + 2*m_Alpha*( (1 - std::cos(2*pi*f1Eff*dx))/(dx*dx) );
     this->m_ptrLInv->SetValue(x,0, val*val );
     this->m_ptrL->SetValue(x,0,1.0/(val*val) );
@@ -88,7 +88,7 @@ void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vect
 }
 
 template <class T, unsigned int VImageDimension >
-void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType2D* pVecImageGraft )
+void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( const VectorImageType2D* pVecImageGraft )
 {
   unsigned int szX = pVecImageGraft->GetSizeX();
   unsigned int szY = pVecImageGraft->GetSizeY();
@@ -103,10 +103,10 @@ void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vect
 
   for (unsigned int y = 0; y < szY; ++y) 
     {
-    f2Eff = GetFFromIndex( y, szY, dy );
+    f2Eff = GetFrequencyFromIndex( y, szY, dy );
     for (unsigned int x = 0; x < szX; ++x) 
       {
-      f1Eff = GetFFromIndex( x, szX, dx );
+      f1Eff = GetFrequencyFromIndex( x, szX, dx );
       T val = m_Gamma + 2*m_Alpha*( 
         (1 - std::cos(2*pi*f1Eff*dx))/(dx*dx) + 
         (1 - std::cos(2*pi*f2Eff*dy))/(dy*dy) );
@@ -118,7 +118,7 @@ void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vect
 }
 
 template <class T, unsigned int VImageDimension >
-void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType3D* pVecImageGraft )
+void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( const VectorImageType3D* pVecImageGraft )
 {
 
   unsigned int szX = pVecImageGraft->GetSizeX();
@@ -137,13 +137,13 @@ void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vect
 
   for (unsigned int z = 0; z < szZ; ++z) 
     {
-    f3Eff = GetFFromIndex( z, szZ, dz );
+    f3Eff = GetFrequencyFromIndex( z, szZ, dz );
     for (unsigned int y = 0; y < szY; ++y) 
       {
-      f2Eff = GetFFromIndex( y, szY, dy );
+      f2Eff = GetFrequencyFromIndex( y, szY, dy );
       for (unsigned int x = 0; x < szX; ++x) 
         {
-        f1Eff = GetFFromIndex( x, szX, dx );
+        f1Eff = GetFrequencyFromIndex( x, szX, dx );
         T val = m_Gamma + 2*m_Alpha*( 
           (1 - std::cos(2*pi*f1Eff*dx))/(dx*dx) + 
           (1 - std::cos(2*pi*f2Eff*dy))/(dy*dy) + 

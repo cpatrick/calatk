@@ -79,7 +79,7 @@ int DoIt( int argc, char* argv[] )
         pIm1->SetSpacingZ( spacingFactor*pIm1->GetSpacingZ() );
     }
 
-    ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm->GetImageManagerPointer() );
+    typename ImageManagerMultiScaleType::Pointer ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm->GetImageManagerPointer() );
 
     unsigned int uiI0 = ptrImageManager->AddImage( pIm0, 0.0, 0 );
     ptrImageManager->AddImage( pIm1, 1.0, 0 );

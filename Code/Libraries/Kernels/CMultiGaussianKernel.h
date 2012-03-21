@@ -59,7 +59,7 @@ public:
   typedef VectorField< T, VImageDimension > VectorFieldType;
 
   CMultiGaussianKernel();
-  ~CMultiGaussianKernel();
+  virtual ~CMultiGaussianKernel();
 
   void SetSigmasAndEffectiveWeights( std::vector<T> Sigmas, std::vector<T> EffectiveWeights );
   void SetGamma( T dGamma );
@@ -85,9 +85,9 @@ public:
 
 protected:
 
-  void ComputeKernelAndInverseKernel( VectorImageType1D* pVecImageGraft );
-  void ComputeKernelAndInverseKernel( VectorImageType2D* pVecImageGraft );
-  void ComputeKernelAndInverseKernel( VectorImageType3D* pVecImageGraft );
+  void ComputeKernelAndInverseKernel( const VectorImageType1D* pVecImageGraft );
+  void ComputeKernelAndInverseKernel( const VectorImageType2D* pVecImageGraft );
+  void ComputeKernelAndInverseKernel( const VectorImageType3D* pVecImageGraft );
 
   void ConfirmKernelsNeedToBeComputed();
 

@@ -51,17 +51,17 @@ public:
   
   typedef typename Superclass::ImageInformation ImageInformation;
 
-  typedef typename Superclass::VectorImageType VectorImageType;
+  typedef typename Superclass::VectorImageType   VectorImageType;
 
   CImageManagerMultiScale();
   ~CImageManagerMultiScale();
 
-  void AddScale( T dScale, unsigned int uiScaleIndx );
-  void RemoveScale( unsigned int uiScaleIndx );
+  void AddScale( T dScale, unsigned int scaleIdx );
+  void RemoveScale( unsigned int scaleIdx );
 
   unsigned int GetNumberOfScales();
 
-  void SelectScale( unsigned int uiScaleIndx );
+  void SelectScale( unsigned int scaleIdx );
 
   /**
    * Returns vectors to the actual image data, needs to be implemented by a derived class.
@@ -93,20 +93,20 @@ protected:
 private:
 
   unsigned int m_uiCurrentlySelectedScale;
-  std::vector< T > m_ScaleVector;
+  std::vector< T >    m_ScaleVector;
   std::vector< bool > m_ScaleWasSet;
 
   // disallow any changing of the scales once images were read
-  bool m_bImagesWereRead;
+  bool m_ImagesWereRead;
 
   typename ResamplerType::Pointer m_ptrResampler;
 
   T m_Sigma;
-  const T DefaultSigma;
+  static const T DefaultSigma = 0.5;
   bool m_ExternallySetSigma;
 
   bool m_BlurHighestResolutionImage;
-  const bool DefaultBlurHighestResolutionImage;
+  static const bool DefaultBlurHighestResolutionImage = true;
   bool m_ExternallySetBlurHighestResolutionImage;
 
 };
