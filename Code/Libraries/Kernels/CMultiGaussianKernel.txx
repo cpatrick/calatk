@@ -167,13 +167,13 @@ void CMultiGaussianKernel< T, VImageDimension >::SetGamma( T dGamma )
 }
 
 template <class T, unsigned int VImageDimension >
-void CMultiGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType1D* pVecImageGraft )
+void CMultiGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( const VectorImageType1D* pVecImageGraft )
 {
-  unsigned int szX = pVecImageGraft->GetSizeX();
+  const unsigned int szX = pVecImageGraft->GetSizeX();
 
-  T dx = pVecImageGraft->GetSpacingX();
+  const T dx = pVecImageGraft->GetSpacingX();
 
-  T pi = (T)CALATK::PI;
+  const T pi = (T)CALATK::PI;
 
   T f1Eff = 0;
 
@@ -218,15 +218,15 @@ void CMultiGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( 
 
 
 template <class T, unsigned int VImageDimension >
-void CMultiGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType2D* pVecImageGraft )
+void CMultiGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( const VectorImageType2D* pVecImageGraft )
 {
-  unsigned int szX = pVecImageGraft->GetSizeX();
-  unsigned int szY = pVecImageGraft->GetSizeY();
+  const unsigned int szX = pVecImageGraft->GetSizeX();
+  const unsigned int szY = pVecImageGraft->GetSizeY();
 
-  T dx = pVecImageGraft->GetSpacingX();
-  T dy = pVecImageGraft->GetSpacingY();
+  const T dx = pVecImageGraft->GetSpacingX();
+  const T dy = pVecImageGraft->GetSpacingY();
 
-  T pi = (T)CALATK::PI;
+  const T pi = (T)CALATK::PI;
 
   T f1Eff = 0;
   T f2Eff = 0;
@@ -275,18 +275,18 @@ void CMultiGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( 
 }
 
 template <class T, unsigned int VImageDimension >
-void CMultiGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType3D* pVecImageGraft )
+void CMultiGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( const VectorImageType3D* pVecImageGraft )
 {
 
-  unsigned int szX = pVecImageGraft->GetSizeX();
-  unsigned int szY = pVecImageGraft->GetSizeY();
-  unsigned int szZ = pVecImageGraft->GetSizeZ();
+  const unsigned int szX = pVecImageGraft->GetSizeX();
+  const unsigned int szY = pVecImageGraft->GetSizeY();
+  const unsigned int szZ = pVecImageGraft->GetSizeZ();
 
-  T dx = pVecImageGraft->GetSpacingX();
-  T dy = pVecImageGraft->GetSpacingY();
-  T dz = pVecImageGraft->GetSpacingZ();
+  const T dx = pVecImageGraft->GetSpacingX();
+  const T dy = pVecImageGraft->GetSpacingY();
+  const T dz = pVecImageGraft->GetSpacingZ();
 
-  T pi = (T)CALATK::PI;
+  const T pi = (T)CALATK::PI;
 
   T f1Eff = 0;
   T f2Eff = 0;

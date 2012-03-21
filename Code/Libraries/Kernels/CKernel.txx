@@ -37,9 +37,9 @@ CKernel< T, VImageDimension >::~CKernel()
 template <class T, unsigned int VImageDimension >
 void CKernel< T, VImageDimension >::AllocateMemoryForKernelAndInverseKernel( const VectorImageType * inputImage )
 {
-  unsigned int szX = inputImage->GetSizeX();
-  unsigned int szY = inputImage->GetSizeY();
-  unsigned int szZ = inputImage->GetSizeZ();
+  const unsigned int szX = inputImage->GetSizeX();
+  const unsigned int szY = inputImage->GetSizeY();
+  const unsigned int szZ = inputImage->GetSizeZ();
 
   assert( this->m_ptrL.GetPointer() == NULL );
   assert( this->m_ptrLInv.GetPointer() == NULL );

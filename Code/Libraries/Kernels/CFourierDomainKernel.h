@@ -201,7 +201,7 @@ public:
 protected:
 
   /** 
-   * Converts from a linear index to the frequency f
+   * Converts from a linear index to the frequency f.
    * Properly handles even and odd index lengths (to be used with the FFT)
    */
   static T GetFrequencyFromIndex( unsigned int iI, unsigned int iM, T dx );
@@ -212,8 +212,8 @@ protected:
   void ConvolveInFourierDomain( VectorImageType2D* pVecImage, VectorImageType2D* pL );
   void ConvolveInFourierDomain( VectorImageType3D* pVecImage, VectorImageType3D* pL );
 
-  void AllocateFFTDataStructures( VectorImageType* pVecIm );
-  void AllocateMemoryAndComputeKernelsIfNeeded( VectorImageType* pVecImage );
+  void AllocateFFTDataStructures( const VectorImageType* pVecIm );
+  void AllocateMemoryAndComputeKernelsIfNeeded( const VectorImageType* pVecImage );
 
 private:
   void DeleteData();

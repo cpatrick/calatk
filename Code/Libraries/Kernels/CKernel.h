@@ -87,7 +87,7 @@ public:
 protected:
 
   virtual void AllocateMemoryForKernelAndInverseKernel( const VectorImageType * inputImage );
-  virtual void ComputeKernelAndInverseKernel( VectorImageType* ) = 0;
+  virtual void ComputeKernelAndInverseKernel( const VectorImageType* ) = 0;
   // to force that these variables are set 
   virtual void ConfirmKernelsWereComputed() = 0;
   virtual void ConfirmKernelsNeedToBeComputed() = 0;

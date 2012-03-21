@@ -69,7 +69,7 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures1D( un
   typedef typename CFFTDataType<T>::FFTComplexType FFTComplexType;
 
   // Set up the fftw data
-  unsigned int numElts = szX;
+  const unsigned int numElts = szX;
   fftwData = new CFFTDataType<T>();
 
   fftwData->in = (T*) fftw_malloc( sizeof(T) * numElts);
@@ -85,7 +85,7 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures2D( un
   typedef typename CFFTDataType<T>::FFTComplexType FFTComplexType;
 
   // Set up the fftw data
-  unsigned int numElts = szX*szY;
+  const unsigned int numElts = szX*szY;
   fftwData = new CFFTDataType<T>();
 
   fftwData->in = (T*) fftw_malloc( sizeof(T) * numElts );
@@ -102,7 +102,7 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures3D( un
   typedef typename CFFTDataType<T>::FFTComplexType FFTComplexType;
 
  // Set up the fftw data
-  unsigned int numElts = szX*szY*szZ;
+  const unsigned int numElts = szX*szY*szZ;
   fftwData = new CFFTDataType<T>();
 
   fftwData->in = (T*) fftw_malloc( sizeof(T) * numElts );
@@ -113,11 +113,11 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures3D( un
 }
 
 template <class T, unsigned int VImageDimension >
-void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures( VectorImageType* pVecIm )
+void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures( const VectorImageType* pVecIm )
 {
-  unsigned int szX = pVecIm->GetSizeX();
-  unsigned int szY = pVecIm->GetSizeY();
-  unsigned int szZ = pVecIm->GetSizeZ();
+  const unsigned int szX = pVecIm->GetSizeX();
+  const unsigned int szY = pVecIm->GetSizeY();
+  const unsigned int szZ = pVecIm->GetSizeZ();
 
   switch ( VImageDimension )
     {
@@ -382,7 +382,7 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
 }
 
 template <class T, unsigned int VImageDimension >
-void CFourierDomainKernel< T, VImageDimension >::AllocateMemoryAndComputeKernelsIfNeeded( VectorImageType* ptrVectorImage )
+void CFourierDomainKernel< T, VImageDimension >::AllocateMemoryAndComputeKernelsIfNeeded( const VectorImageType* ptrVectorImage )
 {
   if ( !this->m_MemoryWasAllocated )
     {

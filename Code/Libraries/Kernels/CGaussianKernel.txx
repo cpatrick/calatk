@@ -57,7 +57,7 @@ void CGaussianKernel< T, VImageDimension >::SetSigma( T dSigma )
 }
 
 template <class T, unsigned int VImageDimension >
-void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType1D* pVecImageGraft )
+void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( const VectorImageType1D* pVecImageGraft )
 {
   const unsigned int szX = pVecImageGraft->GetSizeX();
 
@@ -88,7 +88,7 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vecto
 }
 
 template <class T, unsigned int VImageDimension >
-void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType2D* pVecImageGraft )
+void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( const VectorImageType2D* pVecImageGraft )
 {
   const unsigned int szX = pVecImageGraft->GetSizeX();
   const unsigned int szY = pVecImageGraft->GetSizeY();
@@ -126,7 +126,7 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( Vecto
 }
 
 template <class T, unsigned int VImageDimension >
-void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( VectorImageType3D* pVecImageGraft )
+void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( const VectorImageType3D* pVecImageGraft )
 {
   const unsigned int szX = pVecImageGraft->GetSizeX();
   const unsigned int szY = pVecImageGraft->GetSizeY();
