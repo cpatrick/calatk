@@ -55,7 +55,7 @@ public:
   virtual int GetReferenceCount() const
   { return static_cast< int >( m_ReferenceCount ); }
 
-  /** Delete an itk object.  This method should always be used to delete an
+  /** Delete an object.  This method should always be used to delete an
    *  object when the new operator was used to create it. Using the C++
    *  delete method will not work with reference counting.  */
   virtual void Delete();

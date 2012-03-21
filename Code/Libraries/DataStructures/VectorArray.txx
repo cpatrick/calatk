@@ -31,7 +31,7 @@ VectorArray<T, VImageDimension>::VectorArray() :
   m_SizeZ(0),
   m_Dimension(0),
   m_Length(0),
-  m_DataPtr(0),
+  m_DataPtr(NULL),
   m_ManageMemory( true )
 {}
 
@@ -45,7 +45,7 @@ VectorArray<T, VImageDimension>::VectorArray(unsigned int dim) :
   m_SizeZ(1),
   m_Dimension(dim),
   m_Length(m_Dimension),
-  m_DataPtr(0),
+  m_DataPtr(NULL),
   m_ManageMemory( true )
 {
   this->Allocate();
@@ -61,7 +61,7 @@ VectorArray<T, VImageDimension>::VectorArray(unsigned int sizeX, unsigned int di
   m_SizeZ(1),
   m_Dimension(dim),
   m_Length(m_SizeX*m_Dimension),
-  m_DataPtr(0),
+  m_DataPtr(NULL),
   m_ManageMemory( true )
 {
   this->Allocate();
@@ -78,7 +78,7 @@ VectorArray<T, VImageDimension>::VectorArray(unsigned int sizeX, unsigned int si
   m_SizeZ(1),
   m_Dimension(dim),
   m_Length(m_SizeX*m_SizeY*m_Dimension),
-  m_DataPtr(0),
+  m_DataPtr(NULL),
   m_ManageMemory( true )
 {
   this->Allocate();
@@ -95,7 +95,7 @@ VectorArray<T, VImageDimension>::VectorArray(unsigned int sizeX, unsigned int si
   m_SizeZ(sizeZ),
   m_Dimension(dim),
   m_Length(m_SizeX*m_SizeY*m_SizeZ*m_Dimension),
-  m_DataPtr(0),
+  m_DataPtr(NULL),
   m_ManageMemory( true )
 {
   this->Allocate();
@@ -108,7 +108,7 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, VImageDimensi
   m_SizeZ(source->GetSizeZ()),
   m_Dimension(source->GetDimension()),
   m_Length(m_SizeX*m_SizeY*m_SizeZ*m_Dimension),
-  m_DataPtr(0),
+  m_DataPtr(NULL),
   m_ManageMemory( true )
 {
   this->Allocate();
@@ -152,7 +152,7 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, VImageDimensi
   m_SizeZ(source->GetSizeZ()),
   m_Dimension(source->GetDimension()),
   m_Length(m_SizeX*m_SizeY*m_SizeZ*m_Dimension),
-  m_DataPtr(0),
+  m_DataPtr(NULL),
   m_ManageMemory( true )
 {
   this->Allocate();
@@ -173,7 +173,7 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, 1>* source, T
   m_SizeZ(source->GetSizeZ()),
   m_Dimension(uiNumDim),
   m_Length(m_SizeX*m_SizeY*m_SizeZ*uiNumDim),
-  m_DataPtr(0)
+  m_DataPtr(NULL)
 {
   Allocate();
 
@@ -200,7 +200,7 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, 2>* source, T
   m_SizeZ(source->GetSizeZ()),
   m_Dimension(uiNumDim),
   m_Length(m_SizeX*m_SizeY*m_SizeZ*uiNumDim),
-  m_DataPtr(0),
+  m_DataPtr(NULL),
   m_ManageMemory( true )
 {
   this->Allocate();
@@ -234,7 +234,7 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, 3>* source, T
   m_SizeZ(source->GetSizeZ()),
   m_Dimension(uiNumDim),
   m_Length(m_SizeX*m_SizeY*m_SizeZ*uiNumDim),
-  m_DataPtr(0),
+  m_DataPtr(NULL),
   m_ManageMemory( true )
 {
   this->Allocate();
@@ -268,7 +268,7 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, 3>* source, T
 template <class T, unsigned int VImageDimension>
 VectorArray<T, VImageDimension>::~VectorArray()
 {
-  Deallocate();
+  this->Deallocate();
 }
 
 
@@ -837,7 +837,7 @@ template <class T, unsigned int VImageDimension>
 void VectorArray<T, VImageDimension>::Allocate()
 {
 
-  if ( m_DataPtr != 0 )
+  if ( m_DataPtr != NULL )
     {
     throw std::logic_error("Tried to re-allocate memory");
     }
@@ -852,7 +852,7 @@ void VectorArray<T, VImageDimension>::Deallocate()
 {
   if ( m_ManageMemory )
     {
-    if(m_DataPtr != 0) 
+    if( m_DataPtr != NULL )
       {
       delete [] m_DataPtr;
       }

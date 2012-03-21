@@ -103,9 +103,9 @@ CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler >::CreateUpsam
     ptrVecUpsampledStateData->push_back( ptrResampledVectorField );
     }
 
-  typename TState::Pointer pUpsampledState = new TState( ptrVecUpsampledStateData );
+  TState * pUpsampledState = new TState( ptrVecUpsampledStateData );
 
-  return pUpsampledState.GetPointer();
+  return pUpsampledState;
 
 }
 

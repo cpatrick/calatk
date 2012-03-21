@@ -48,7 +48,7 @@ int calatkGaussianBlurringTest( int argc, char* argv[] )
   typename VectorImageType::Pointer pImBlurred = new VectorImageType( pIm );
 
   typedef CALATK::CGaussianKernel< TFLOAT, DIMENSION > GaussianKernelType;
-  typename GaussianKernelType::Pointer gaussianKernel = new GaussianKernelType;
+  typename GaussianKernelType::Pointer gaussianKernel = new GaussianKernelType();
 
   gaussianKernel->SetSigma( 0.1 );
   gaussianKernel->ConvolveWithKernel( pImBlurred );
@@ -56,5 +56,4 @@ int calatkGaussianBlurringTest( int argc, char* argv[] )
   VectorImageUtilsType::writeFileITK( pImBlurred, argv[2] );
 
   return EXIT_SUCCESS;
-
 }

@@ -186,7 +186,7 @@ public:
   typedef typename Superclass::VectorImageType3D VectorImageType3D;
 
   CFourierDomainKernel();
-  ~CFourierDomainKernel();
+  virtual ~CFourierDomainKernel();
 
   virtual void ConvolveWithKernel( VectorImageType * ptrVecImage );
   virtual void ConvolveWithInverseKernel( VectorImageType * ptrVecImage );

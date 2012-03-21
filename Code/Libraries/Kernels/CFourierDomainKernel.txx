@@ -32,7 +32,6 @@ void CFourierDomainKernel< T, VImageDimension >::DeleteData()
 {
   if ( fftwData != NULL )
     {
-
     // clean up fftw data
     CFFTDataType<T>::FFTDestroyPlan( fftwData->fwd );
     CFFTDataType<T>::FFTDestroyPlan( fftwData->bck );
@@ -44,8 +43,8 @@ void CFourierDomainKernel< T, VImageDimension >::DeleteData()
     fftw_cleanup();
     }
 
-  this->m_ptrL = NULL;
-  this->m_ptrLInv = NULL;
+  //this->m_ptrL = NULL;
+  //this->m_ptrLInv = NULL;
 
   this->m_MemoryWasAllocated = false;
   this->m_KernelsNeedToBeComputed = true;
@@ -172,9 +171,9 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
 {
   assert( pL->GetDimension() == 1 );
 
-  unsigned int szX = pVecImage->GetSizeX();
+  const unsigned int szX = pVecImage->GetSizeX();
 
-  unsigned int dim = pVecImage->GetDimension();
+  const unsigned int dim = pVecImage->GetDimension();
 
 // doing the loop the slow way because fftw
 // requires row-major formatting
@@ -230,10 +229,10 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
 
   assert( pL->GetDimension() == 1 );
 
-  unsigned int szX = pVecImage->GetSizeX();
-  unsigned int szY = pVecImage->GetSizeY();
+  const unsigned int szX = pVecImage->GetSizeX();
+  const unsigned int szY = pVecImage->GetSizeY();
 
-  unsigned int dim = pVecImage->GetDimension();
+  const unsigned int dim = pVecImage->GetDimension();
 
 // doing the loop the slow way because fftw
 // requires row-major formatting
@@ -303,11 +302,11 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
 
   assert( pL->GetDimension() == 1 );
 
-  unsigned int szX = pVecImage->GetSizeX();
-  unsigned int szY = pVecImage->GetSizeY();
-  unsigned int szZ = pVecImage->GetSizeZ();
+  const unsigned int szX = pVecImage->GetSizeX();
+  const unsigned int szY = pVecImage->GetSizeY();
+  const unsigned int szZ = pVecImage->GetSizeZ();
 
-  unsigned int dim = pVecImage->GetDimension();
+  const unsigned int dim = pVecImage->GetDimension();
 
   // doing the loop the slow way because fftw
   // requires row-major formatting

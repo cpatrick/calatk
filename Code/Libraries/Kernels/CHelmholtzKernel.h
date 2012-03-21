@@ -47,7 +47,7 @@ public:
   typedef typename Superclass::VectorImageType3D VectorImageType3D;
 
   CHelmholtzKernel();
-  ~CHelmholtzKernel();
+  virtual ~CHelmholtzKernel();
 
   void SetAlpha( T dAlpha );
   void SetGamma( T dGamma );

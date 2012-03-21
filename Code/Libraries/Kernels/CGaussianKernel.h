@@ -47,7 +47,7 @@ public:
   typedef typename Superclass::VectorImageType3D VectorImageType3D;
 
   CGaussianKernel();
-  ~CGaussianKernel();
+  virtual ~CGaussianKernel();
 
   void SetSigma( T dSigma );
   SetJSONMacro( Sigma, T );

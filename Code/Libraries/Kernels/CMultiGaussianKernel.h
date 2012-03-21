@@ -59,7 +59,7 @@ public:
   typedef VectorField< T, VImageDimension > VectorFieldType;
 
   CMultiGaussianKernel();
-  ~CMultiGaussianKernel();
+  virtual ~CMultiGaussianKernel();
 
   void SetSigmasAndEffectiveWeights( std::vector<T> Sigmas, std::vector<T> EffectiveWeights );
   void SetGamma( T dGamma );

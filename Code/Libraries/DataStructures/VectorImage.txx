@@ -154,8 +154,8 @@ VectorImage< T, VImageDimension >::VectorImage( const VectorImage* source, T dVa
 // destructor
 //
 template <class T, unsigned int VImageDimension >
-VectorImage< T, VImageDimension >::~VectorImage() {
-
+VectorImage< T, VImageDimension >::~VectorImage()
+{
   Superclass::Deallocate();
 }
 

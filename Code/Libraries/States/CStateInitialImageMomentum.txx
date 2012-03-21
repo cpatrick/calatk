@@ -176,9 +176,9 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::CreateUpsampledState
   resampler->Upsample( m_ptrInitialImage, ptrInitialImage );
   resampler->Upsample( m_ptrInitialMomentum, ptrInitialMomentum );
   
-  typename TState::Pointer upsampledState = new TState( ptrNewRawData, ptrInitialImage, ptrInitialMomentum );
+  TState * upsampledState = new TState( ptrNewRawData, ptrInitialImage, ptrInitialMomentum );
   
-  return upsampledState.GetPointer();
+  return upsampledState;
 }
 
 //
