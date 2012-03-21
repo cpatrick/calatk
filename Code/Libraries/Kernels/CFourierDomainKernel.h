@@ -27,18 +27,13 @@ namespace CALATK
 {
 
 /**
- * fftwData2D
+ * CFFTDataType
  *
  * A class that holds the necessary fftw data structures for the LDDMM Fourier domain operations
  */
 
 template < class TFloat >
-class CFFTDataType
-{
-public:
-  CFFTDataType() {};
-  ~CFFTDataType() {};
-};
+class CFFTDataType;
 
 template < >
 class CFFTDataType< float >
