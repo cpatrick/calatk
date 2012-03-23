@@ -43,7 +43,6 @@ namespace CALATK
  * \brief Base class for all the registration algorithms which is still unaware of the state type.
  *
  * Provides the interface for automatic instantiation of default metrics, solvers, ...
- * and takes care of deleting these default settings if they were allocated.
  */
 template < class T, unsigned int VImageDimension >
 class CAlgorithmBase : public CProcessBase
@@ -128,8 +127,8 @@ protected:
 
   virtual void ParseMainConfigurationFile();
 
-  CALATK::CJSONConfiguration m_ConfigIn;
-  CALATK::CJSONConfiguration m_ConfigOut;
+  CJSONConfiguration m_ConfigIn;
+  CJSONConfiguration m_ConfigOut;
 
   // main configuration file
   std::string m_MainConfigurationFile;

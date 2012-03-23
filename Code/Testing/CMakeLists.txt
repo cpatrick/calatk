@@ -58,8 +58,20 @@ function(add_ctest_subtest testName subtestName)
     add_test(${testName}_${subtestName} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${testName} ${ARGN})
   endif(BUILD_TESTING AND compile_${testName})
 endfunction(add_ctest_subtest)
+
 #
-# Define a function that adds a ctest test with image comparison only if the executable is turned on
+# Define a function that adds a ctest test with image comparison
+#
+function(add_ctest_test_testdriver testName testDriver)
+  if(BUILD_TESTING)
+    add_test(${testName} ${testDriver}
+      ${testName}
+      ${ARGN}
+      )
+  endif(BUILD_TESTING)
+endfunction(add_ctest_test_testdriver)
+#
+# Define a function that adds a ctest test with image comparison
 #
 function(add_ctest_test_testdriver_image_compare testName testDriver imBaseline imResult)
   if(BUILD_TESTING)
@@ -94,16 +106,20 @@ endfunction(add_ctest_subtest_testdriver_image_compare)
 # Set up source code files for all the tests which are processed by the testDriver
 
 set(testDriverFiltering_SRCS
-calatkGaussianBlurringTest.cxx
+  calatkGaussianBlurringTest.cxx
 )
 
 set(testDriverPDESolver_SRCS
-calatkAdvectionTest.cxx
-calatkInterpolationTest.cxx
+  calatkAdvectionTest.cxx
+  calatkInterpolationTest.cxx
 )
 
 set(testDriverAlgorithms_SRCS
-calatkLDDMMTest.cxx
+  calatkLDDMMTest.cxx
+)
+
+set(testDriverInterfaces_SRCS
+  calatkApplicationImageFileNamesGivenTest.cxx
 )
 
 add_executable(testDriverFiltering testDriverFiltering.cxx ${testDriverFiltering_SRCS})
@@ -222,6 +238,11 @@ add_ctest_subtest_testdriver_image_compare(calatkLDDMMTest relaxation1DDouble ${
                           )
 
 
+# Tests for the high level interface to the library and visualization/analysis
+# interfaces.
+add_executable(testDriverInterfaces testDriverInterfaces.cxx ${testDriverInterfaces_SRCS})
+target_link_libraries(testDriverInterfaces CALATK ${ITK_LIBRARIES})
+
 add_test_executable(GenerateBullseyes ${ITK_LIBRARIES})
 if(BUILD_TESTING AND compile_GenerateBullseyes)
   add_test(GenerateBullseyes ${CMAKE_COMMAND}
@@ -229,6 +250,42 @@ if(BUILD_TESTING AND compile_GenerateBullseyes)
     -DGenerateBullseyes_executable:FILEPATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/GenerateBullseyes
     -P ${CALATK_SOURCE_DIR}/Code/Testing/GenerateBullseyesIfNeeded.cmake
     )
+
+  get_target_property(CALATKCommandLine_dir CALATKCommandLine
+    RUNTIME_OUTPUT_DIRECTORY)
+  set(CALATKCommandLine_path ${CALATKCommandLine_dir}/CALATKCommandLine)
+
+  add_test(CALATKCommandLineNoArgs ${CALATKCommandLine_path})
+  add_test(CALATKCommandLineHelp ${CALATKCommandLine_path} -h)
+  add_test(CALATKCommandInsufficientArgs ${CALATKCommandLine_path}
+    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfig.json
+    ${test_temp_dir}/Bullseye1DTimePoint0.mha
+    )
+  set_tests_properties(CALATKCommandLineNoArgs
+    CALATKCommandLineHelp
+    CALATKCommandInsufficientArgs
+    PROPERTIES WILL_FAIL TRUE
+    )
+
+  add_test(CALATKCommandLineBullseyes1D ${CALATKCommandLine_path}
+    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfig.json
+    ${test_temp_dir}/Bullseye1DTimePoint0.mha
+    ${test_temp_dir}/Bullseye1DTimePoint1.mha
+    ${test_temp_dir}/CALATKCommandLineBullseyes1D_AlgorithmConfig.json
+    ${test_temp_dir}/CALATKCommandLineBullseyes1D_DataConfig.json
+    )
+
+  add_ctest_test_testdriver(calatkApplicationImageFileNamesGivenTest
+    testDriverInterfaces
+    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfig.json
+    ${test_temp_dir}/Bullseye2DTimePoint0.mha
+    ${test_temp_dir}/Bullseye2DTimePoint1.mha
+    ${test_temp_dir}/calatkApplicationImageFileNamesGivenTests_AlgorithmConfig.json
+    )
+
+  set_tests_properties(calatkApplicationImageFileNamesGivenTest
+    CALATKCommandLineBullseyes1D
+    PROPERTIES DEPENDS GenerateBullseyes)
 endif()
 #add_ctest_test(writeFileITKTest
 #  # 2D input

@@ -170,6 +170,7 @@ set(CALATK_INCLUDE_DIRS
   ${CMAKE_SOURCE_DIR}/Code/Libraries/Kernels
   ${CMAKE_SOURCE_DIR}/Code/Libraries/States
   ${CMAKE_SOURCE_DIR}/Code/Libraries/Resamplers
+  ${CMAKE_SOURCE_DIR}/Code/Libraries/Interfaces
   ${CMAKE_SOURCE_DIR}/Code/Libraries/Interpolators
   ${CMAKE_SOURCE_DIR}/Code/Libraries/ObjectiveFunctions
   ${CMAKE_SOURCE_DIR}/Code/External/ITKTestingCommands

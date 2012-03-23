@@ -8,7 +8,7 @@ IF(USE_BOOST)
   SET(libraries ${ITK_LIBRARIES} ${BOOST_LIBRARIES})
 ELSE(USE_BOOST)
   SET(libraries ${ITK_LIBRARIES})
-ENDIF(USE_BOOST) 
+ENDIF(USE_BOOST)
 
 # Need to manually set up CLP here, because we have multiple source files
 
@@ -19,11 +19,11 @@ SET(mainFile lstatGEE)
 IF(NOT COMPILE_APPLICATIONS)
   SET(force_application${appName} ON CACHE INTERNAL "temp variable for application switches" FORCE)
 ENDIF(NOT COMPILE_APPLICATIONS)
-  
+
 # set up the option and mark it as advanced
 MARK_AS_ADVANCED( compile_${appName} )
 OPTION(compile_${appName} "Compile ${appName}" ON)
-  
+
 # only turn the test on if COMPILE_APPLICATIONS was just turned on
 IF(COMPILE_APPLICATIONS)
   IF(force_application${appName})
@@ -31,19 +31,21 @@ IF(COMPILE_APPLICATIONS)
     SET(force_application${appName} OFF CACHE INTERNAL "temp variable for application switches" FORCE)
   ENDIF(force_application${appName})
 
-  IF(compile_${appName})
-    SET(CLP ${mainFile})
-    SET( ${CLP}_SOURCE ${CLP}.cxx )
-    GENERATECLP(${CLP}_SOURCE ${CLP}.xml "")
-  
-    # compile the program
+  IF(COMPILE_CLP_MODULES)
+    IF(compile_${appName})
+      SET(CLP ${mainFile})
+      SET( ${CLP}_SOURCE ${CLP}.cxx )
+      GENERATECLP(${CLP}_SOURCE ${CLP}.xml "")
 
-#    ADD_EXECUTABLE(${appName} ${CLP}.cxx surallfileM10Y06_MN_JP.cpp pxanalyse_MN.cpp GEEutil_MN.cpp)
-    ADD_EXECUTABLE(${appName} ${CLP}.cxx surallfileM10Y06_MN_JP.cpp GEEutil_MN.cpp)
-    TARGET_LINK_LIBRARIES( ${appName} CALATK ${libraries})
-      
-  ENDIF(compile_${appName})
-  
+      # compile the program
+
+  #    ADD_EXECUTABLE(${appName} ${CLP}.cxx surallfileM10Y06_MN_JP.cpp pxanalyse_MN.cpp GEEutil_MN.cpp)
+      ADD_EXECUTABLE(${appName} ${CLP}.cxx surallfileM10Y06_MN_JP.cpp GEEutil_MN.cpp)
+      TARGET_LINK_LIBRARIES( ${appName} CALATK ${libraries})
+
+    ENDIF(compile_${appName})
+  ENDIF(COMPILE_CLP_MODULES)
+
   # if COMPILE_APPLICATIONS is off, force the test to turn on next time COMPILE_APPLICATIONS is turned on
 ELSE(COMPILE_APPLICATIONS)
   SET(compile_${appName} OFF CACHE BOOL "Compile ${appName}" FORCE)

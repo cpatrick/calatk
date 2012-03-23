@@ -43,11 +43,15 @@ set(CALATK_Numerics_sources
 set(CALATK_ObjectiveFunctions_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/ObjectiveFunctions/CObjectiveFunctionFactory.cxx
   )
+# Set up sources for Interfaces
+set(CALATK_Interfaces_sources
+  ${CMAKE_CURRENT_SOURCE_DIR}/Interfaces/CApplication.cxx
+  )
 # Set up sources for Utilities
 set(CALATK_Utilities_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/Timer.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/ApplicationUtils.cxx
-  ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/JSONParameterUtils.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/CJSONConfiguration.cxx
   )
 set(CALATK_sources
   ${CALATK_Algorithms_sources}

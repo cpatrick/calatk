@@ -40,7 +40,7 @@ namespace CALATK
 class CJSONConfiguration
 {
 public:
-  CJSONConfiguration( bool bPrintConfiguration = false );
+  CJSONConfiguration( bool printSettings = false );
   ~CJSONConfiguration();
 
   typedef std::vector< double > VectorType;
@@ -71,19 +71,19 @@ public:
   /**
    * @brief Reads a given JSON file and initializes the root node to point to the parsed content of this file.
    *
-   * @param sFileName Input filename
-   * @return bool Returns true if file could be read and false otherwise.
+   * @param fileName Input filename
    */
-  bool ReadJSONFile( std::string sFileName );
+  void ReadJSONFile( const std::string & fileName );
 
   /**
    * @brief Writes the JSON description (relative to the root) to a file.
    *
-   * @param sFileName File to write to
-   * @param comment header comment (first line)
-   * @return bool Returns true if the writing was successful and false otherwise.
+   * @param fileName File to write to
+   * @param rootCommentString header comment (first line)
+   *
+   * Throws an exception if an error occurs.
    */
-  bool WriteCurrentConfigurationToJSONFile( std::string sFileName, std::string commentString="" );
+  void  WriteCurrentConfigurationToJSONFile( const std::string & fileName, const std::string & rootCommentString="" );
 
   Json::Value& GetFromKey( std::string sKey, Json::Value vDefault = Json::nullValue );
   Json::Value& GetFromKey( Json::Value& vSubTree, std::string sKey, Json::Value vDefault = Json::nullValue, bool bUseIndent = true );

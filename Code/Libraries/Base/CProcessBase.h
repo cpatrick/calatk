@@ -39,7 +39,7 @@ class CProcessBase: public CBase
 public:
   /** Standard class typedefs. */
   typedef CProcessBase                    Self;
-  typedef CBase                         Superclass;
+  typedef CBase                           Superclass;
   typedef itk::SmartPointer< Self >       Pointer;
   typedef itk::SmartPointer< const Self > ConstPointer;
 

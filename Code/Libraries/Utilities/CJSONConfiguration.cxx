@@ -19,17 +19,18 @@
 
 #include "CJSONConfiguration.h"
 #include <iomanip>
+#include <sstream>
 
 namespace CALATK
 {
 
-CJSONConfiguration::CJSONConfiguration( bool bPrintConfiguration )
+CJSONConfiguration::CJSONConfiguration( bool printSettings )
   : m_Indent( 2 ),
     m_IsMasterNode( false ),
     m_AllowHelpComments( false ),
     m_ptrRoot( NULL )
 {
-  m_PrintSettings = bPrintConfiguration;
+  m_PrintSettings = printSettings;
 }
 
 CJSONConfiguration::~CJSONConfiguration()
@@ -94,7 +95,7 @@ void CJSONConfiguration::SetRootReference( Json::Value& vRoot )
         std::cerr << "Writing the root node." << std::endl;
         }
         // we can just overwrite it, because everything is ruled by the master root node
-        m_ptrRoot = &vRoot;
+    m_ptrRoot = &vRoot;
     }
   else
     {
@@ -103,23 +104,24 @@ void CJSONConfiguration::SetRootReference( Json::Value& vRoot )
     }
 }
 
-bool CJSONConfiguration::WriteCurrentConfigurationToJSONFile( std::string sFileName, std::string commentString )
+void CJSONConfiguration::WriteCurrentConfigurationToJSONFile( const std::string & fileName, const std::string & rootCommentString )
 {
   std::ofstream outFile;
-  outFile.open( sFileName.c_str() );
+  outFile.open( fileName.c_str() );
 
   if ( !outFile )
     {
-    std::cerr << "Could not open " << sFileName << " for writing." << std::endl;
-    return false;
+    std::ostringstream ostrm;
+    ostrm << "Could not open " << fileName << " for writing.";
+    throw std::runtime_error( ostrm.str().c_str() );
     }
 
   // write a header unless there is already some form of it
-  if ( !commentString.empty() )
+  if ( !rootCommentString.empty() )
   {
     if ( !m_ptrRoot->hasComment( Json::commentBefore) )
     {
-      m_ptrRoot->setComment( commentString, Json::commentBefore );
+      m_ptrRoot->setComment( rootCommentString, Json::commentBefore );
     }
   }
 
@@ -129,8 +131,6 @@ bool CJSONConfiguration::WriteCurrentConfigurationToJSONFile( std::string sFileN
     }
 
   outFile.close();
-
-  return true;
 }
 
 Json::Value* CJSONConfiguration::GetRootPointer()
@@ -368,7 +368,7 @@ std::string CJSONConfiguration::ReadFileContentIntoString( std::string sFileName
   return outputString;
 }
 
-bool CJSONConfiguration::ReadJSONFile( std::string sFileName )
+void CJSONConfiguration::ReadJSONFile( const std::string & fileName )
 {
   if ( m_ptrRoot != NULL )
     {
@@ -379,33 +379,27 @@ bool CJSONConfiguration::ReadJSONFile( std::string sFileName )
       }
     else
       {
-      std::cerr << "Trying to read file into non-master node. FORBIDDEN." << std::endl;
-      return false;
+      const std::string errorMessage = "Trying to read file into non-master node. FORBIDDEN.";
+      throw std::logic_error( errorMessage.c_str() );
       }
     }
 
   m_ptrRoot = new Json::Value;
   this->m_IsMasterNode = true;
 
-  std::cout << "Parsing input file " << sFileName << " ... ";
+  std::cout << "Parsing input file " << fileName << " ... ";
 
   Json::Reader reader;
-  std::string config_doc = ReadFileContentIntoString( sFileName );
+  std::string config_doc = ReadFileContentIntoString( fileName );
   bool parsingSuccessful = reader.parse( config_doc, *m_ptrRoot );
 
   if ( !parsingSuccessful )
     {
-    std::cout << "failed." << std::endl;
-
-    // report to the user the failure and their locations in the document.
-    std::cout  << "Failed to parse configuration\n"
-               << reader.getFormattedErrorMessages();
-
-    return false;
+    const std::string errorMessage = "\nFailure to parse configuration\n" +
+      reader.getFormattedErrorMessages();
+    throw std::runtime_error( errorMessage.c_str() );
     }
   std::cout << "succeeded." << std::endl;
-
-  return true;
 }
 
 } // end namespace

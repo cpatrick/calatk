@@ -40,10 +40,13 @@ int main( int argc, char* argv[] )
   const std::string config_file( argv[1] );
 
   CALATK::CJSONConfiguration config;
-  const bool parsingSuccessful = config.ReadJSONFile( config_file );
-
-  if ( !parsingSuccessful )
+  try
     {
+    config.ReadJSONFile( config_file );
+    }
+  catch( const std::exception & e )
+    {
+    std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -62,7 +65,15 @@ int main( int argc, char* argv[] )
   objectiveFunction.setComment( "// sets the objective function; comment after on same line", Json::commentAfterOnSameLine );
   objectiveFunction.setComment( "// sets the objective function; comment before", Json::commentBefore );
 
-  config.WriteCurrentConfigurationToJSONFile( argv[2] );
+  try
+    {
+    config.WriteCurrentConfigurationToJSONFile( argv[2] );
+    }
+  catch( const std::exception & e )
+    {
+    std::cerr << e.what() << std::endl;
+    return EXIT_FAILURE;
+    }
 
   CALATK::CJSONConfiguration subConfig;
   subConfig.SetRootReference( objectiveFunction );
@@ -71,6 +82,5 @@ int main( int argc, char* argv[] )
   std::cout << *subConfig.GetRootPointer();
 
   return EXIT_SUCCESS;
-
 }
 

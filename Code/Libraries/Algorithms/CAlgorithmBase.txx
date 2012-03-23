@@ -190,11 +190,7 @@ void CAlgorithmBase< T, VImageDimension >::ParseMainConfigurationFile()
 
   if ( sConfigurationFile.compare("") != 0 )
     {
-    bool parsingSuccessful = m_ConfigIn.ReadJSONFile( sConfigurationFile );
-      if ( !parsingSuccessful )
-      {
-        throw std::runtime_error( "Could not parse the configuration file." );
-      }
+    m_ConfigIn.ReadJSONFile( sConfigurationFile );
     }
   else
     {
