@@ -38,12 +38,13 @@ namespace CALATK
 {
 
 /**
- * CAlgorithm.h -- Base class for all the registration algorithms which is still unaware of the state type.
+ * \class CAlgorithmBase
+ *
+ * \brief Base class for all the registration algorithms which is still unaware of the state type.
+ *
  * Provides the interface for automatic instantiation of default metrics, solvers, ...
  * and takes care of deleting these default settings if they were allocated.
- *
  */
-
 template < class T, unsigned int VImageDimension >
 class CAlgorithmBase : public CProcessBase
 {
