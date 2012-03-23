@@ -37,10 +37,10 @@ int main( int argc, char* argv[] )
     return EXIT_FAILURE;
     }
 
-  std::string config_file( argv[1] );
+  const std::string config_file( argv[1] );
 
   CALATK::CJSONConfiguration config;
-  bool parsingSuccessful = config.ReadJSONFile( config_file );
+  const bool parsingSuccessful = config.ReadJSONFile( config_file );
 
   if ( !parsingSuccessful )
     {
@@ -52,20 +52,20 @@ int main( int argc, char* argv[] )
   std::cout << "Multiscale settings = " << std::endl;
   std::cout << valMultiScale;
 
-  Json::Value& valObj = config.GetFromKey( "ObjectiveFunction", Json::nullValue );
+  Json::Value& objectiveFunction = config.GetFromKey( "ObjectiveFunction", Json::nullValue );
 
-  valObj[0]["test"]=1;
-  valObj[1]["test"]=2;
+  objectiveFunction[0]["test"]=1;
+  objectiveFunction[1]["test"]=2;
 
-  valObj[0]["test"].setComment("// one value", Json::commentAfterOnSameLine );
+  objectiveFunction[0]["test"].setComment("// one value", Json::commentAfterOnSameLine );
 
-  valObj.setComment( "// sets the objective function; comment after on same line", Json::commentAfterOnSameLine );
-  valObj.setComment( "// sets the objective function; comment before", Json::commentBefore );
+  objectiveFunction.setComment( "// sets the objective function; comment after on same line", Json::commentAfterOnSameLine );
+  objectiveFunction.setComment( "// sets the objective function; comment before", Json::commentBefore );
 
   config.WriteCurrentConfigurationToJSONFile( argv[2] );
 
   CALATK::CJSONConfiguration subConfig;
-  subConfig.SetRootReference( valObj );
+  subConfig.SetRootReference( objectiveFunction );
 
   std::cout << "SubConfig = " << std::endl;
   std::cout << *subConfig.GetRootPointer();
