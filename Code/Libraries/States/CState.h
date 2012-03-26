@@ -78,16 +78,7 @@ private:
   // copy constructor private
   CState( const CState & c ) {}
   
-  // operators private
-  CState & operator=(const CState &p ) { }
-  CState & operator+=(const CState &p ) { }
-  CState & operator-=(const CState &p ) { }
-  CState operator+(const CState &p ) const { }
-  CState operator-(const CState &p ) const { }
-  CState operator*(const T &p ) const { }
-
   virtual T SquaredNorm() = 0;
-
 };
 
 } // end namespace
