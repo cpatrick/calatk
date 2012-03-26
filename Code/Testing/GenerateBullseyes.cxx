@@ -107,7 +107,7 @@ public:
       typename ImageType::PointType point;
       this->Image->TransformIndexToPhysicalPoint( index, point );
       double radius = sqrt( point[0] * point[0] + point[1] * point[1] + point[2] * point[2] );
-      if( radius < this->Radius1 || radius > this->Radius2 && radius < this->Radius3 )
+      if( radius < this->Radius1 || (radius > this->Radius2 && radius < this->Radius3) )
         {
         it.Set( 255 );
         }

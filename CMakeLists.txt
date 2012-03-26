@@ -106,7 +106,7 @@ set(CALATK_SYSTEM_UNIX ${UNIX})
 set(CALATK_SYSTEM_WINDOWS ${WIN32})
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
-  ADD_DEFINITIONS(-DDARWIN)
+  add_definitions(-DDARWIN)
 endif()
 
 configure_file(${CMAKE_SOURCE_DIR}/calatkConfigure.h.in ${CMAKE_BINARY_DIR}/calatkConfigure.h)
