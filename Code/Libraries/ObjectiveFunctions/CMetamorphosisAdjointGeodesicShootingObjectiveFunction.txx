@@ -439,7 +439,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ComputeIm
   for ( unsigned int iI = 0; iI < m_vecTimeDiscretization.size()-1; iI++ )
   {
       // compute the current velocity field
-      ComputeVelocity( (*m_ptrI)[ iI ], (*m_ptrP)[iI], (*m_ptrVelocityField)[iI], m_ptrTmpField );
+      this->ComputeVelocity( (*m_ptrI)[ iI ], (*m_ptrP)[iI], (*m_ptrVelocityField)[iI], m_ptrTmpField );
 
       // compute the incremental map update
       this->m_ptrEvolver->SolveForward( (*m_ptrVelocityField)[iI], m_ptrMapIdentity, m_ptrMapIncremental, m_ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
@@ -537,7 +537,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ComputeAd
       // this introduces a slight assymmetry in the solution (because ideally we would like to compute it at i)
       // compute K*\lambda_v; first lambda_v
 
-      ComputeVelocityAdjoint( (*m_ptrI)[ iI+1 ], (*m_ptrP)[ iI+1 ], m_ptrCurrentLambdaI, m_ptrCurrentLambdaP, ptrCurrentKLambdaV );
+      this->ComputeVelocityAdjoint( (*m_ptrI)[ iI+1 ], (*m_ptrP)[ iI+1 ], m_ptrCurrentLambdaI, m_ptrCurrentLambdaP, ptrCurrentKLambdaV );
 
       // compute K*\lambda_v
       this->m_ptrKernel->ConvolveWithKernel( ptrCurrentKLambdaV );

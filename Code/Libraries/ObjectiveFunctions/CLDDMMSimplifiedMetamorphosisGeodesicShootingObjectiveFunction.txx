@@ -346,7 +346,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::G
       dCurrentDT = this->m_vecTimeIncrements[ iI ];
     }
 
-    ComputeVelocity( ptrCurrentI, ptrCurrentP, ptrCurrentVelocity, ptrMapOut );
+    this->ComputeVelocity( ptrCurrentI, ptrCurrentP, ptrCurrentVelocity, ptrMapOut );
 
     // incremental map
     this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMapIdentity, ptrMapIncremental, ptrMapTmp, dCurrentDT );
@@ -462,7 +462,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::C
 
   for ( unsigned int iI = 0; iI < m_vecTimeDiscretization.size()-1; iI++ )
   {
-      ComputeVelocity( m_ptrCurrentI, m_ptrCurrentP, m_ptrCurrentVelocity, m_ptrMapOut );
+      this->ComputeVelocity( m_ptrCurrentI, m_ptrCurrentP, m_ptrCurrentVelocity, m_ptrMapOut );
 
       // incremental map
       this->m_ptrEvolver->SolveForward( m_ptrCurrentVelocity, m_ptrMapIdentity, m_ptrMapIncremental, m_ptrMapTmp, this->m_vecTimeIncrements[ iI ] );

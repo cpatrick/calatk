@@ -420,7 +420,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeImageMo
 
   for ( unsigned int iI = 0; iI < m_vecTimeDiscretization.size()-1; iI++ )
   {
-      ComputeVelocity( m_ptrCurrentI, m_ptrCurrentP, m_ptrCurrentVelocity, m_ptrMapOut );
+      this->ComputeVelocity( m_ptrCurrentI, m_ptrCurrentP, m_ptrCurrentVelocity, m_ptrMapOut );
 
       this->m_ptrEvolver->SolveForward( m_ptrCurrentVelocity, m_ptrMapIn, m_ptrMapOut, m_ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
 

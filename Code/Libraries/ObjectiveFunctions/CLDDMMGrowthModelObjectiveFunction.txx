@@ -154,7 +154,7 @@ template < class TState >
 void CLDDMMGrowthModelObjectiveFunction< TState >::GetImage( VectorImageType* ptrIm, T dTime )
 {
   // TODO: account for appearance changes, based on closeby images
-  GetMap( m_ptrMapTmp, dTime );
+  this->GetMap( m_ptrMapTmp, dTime );
   // now compute the image by interpolation
   LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapTmp, m_ptrI0, ptrIm );
 }
@@ -179,7 +179,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::GetMomentum( VectorImageType*
   ComputeImagesForward();
   ComputeAdjointBackward();
 
-  GetMap( m_ptrMapTmp, dTime );
+  this->GetMap( m_ptrMapTmp, dTime );
   // now compute the image by interpolation
   LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapTmp, (*m_ptrLambda)[0], ptrMomentum );
   LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( m_ptrMapTmp, m_ptrDeterminantOfJacobian );

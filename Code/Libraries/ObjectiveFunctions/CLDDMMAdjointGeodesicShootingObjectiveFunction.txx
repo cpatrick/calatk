@@ -374,7 +374,7 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ComputeImageMomen
 
   for ( unsigned int iI = 0; iI < m_vecTimeDiscretization.size()-1; iI++ )
   {
-      ComputeVelocity( (*m_ptrI)[ iI ], (*m_ptrP)[iI], (*m_ptrVelocityField)[iI], m_ptrTmpField );
+      this->ComputeVelocity( (*m_ptrI)[ iI ], (*m_ptrP)[iI], (*m_ptrVelocityField)[iI], m_ptrTmpField );
       this->m_ptrEvolver->SolveForward( (*m_ptrVelocityField)[iI], m_ptrMapIn, m_ptrMapOut, m_ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
 
       LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapOut, ptrInitialImage, (*m_ptrI) [ iI +1 ]);

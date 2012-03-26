@@ -184,7 +184,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::operator=(
       typename std::vector< VectorFieldPointerType >::const_iterator iterSource;
       typename std::vector< VectorFieldPointerType >::iterator iterTarget;
       for ( iterSource = ptrSource->begin(), iterTarget = m_vecPtrSTVelocityField.begin(); 
-            iterSource != ptrSource->end(), iterTarget != m_vecPtrSTVelocityField.end(); 
+            iterTarget != m_vecPtrSTVelocityField.end();
             ++iterSource, ++iterTarget )
         {
         // copy the current vector field
@@ -219,7 +219,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler  >::operator+=
   typename std::vector< VectorFieldPointerType >::const_iterator iterSource;
   typename std::vector< VectorFieldPointerType >::iterator iterTarget;
   for ( iterSource = ptrSource->begin(), iterTarget = m_vecPtrSTVelocityField.begin(); 
-        iterSource != ptrSource->end(), iterTarget != m_vecPtrSTVelocityField.end(); 
+        iterSource != ptrSource->end();
         ++iterSource, ++iterTarget )
     {
     // add the source to the target
