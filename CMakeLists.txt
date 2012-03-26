@@ -116,12 +116,18 @@ configure_file(${CMAKE_SOURCE_DIR}/calatkConfigure.h.in ${CMAKE_BINARY_DIR}/cala
 #
 if(WIN32)
   if(CMAKE_GENERATOR MATCHES Visual* )
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" CACHE INTERNAL "Add custom c++ flag for openMP")
-  else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}" CACHE INTERNAL "Add custom c++ flag for openMP")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /openmp")
+    set(COMPILER_HAS_OPENMP TRUE)
+  #else()
+    #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}"
   endif()
-else()
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp" CACHE INTERNAL "Add custom c++ flag for openMP")
+else(CMAKE_COMPILER_IS_GNUCC)
+  include(CheckCXXSourceCompiles)
+  set(CMAKE_REQUIRED_FLAGS "-fopenmp -Werror")
+  check_cxx_source_compiles("int main() { return 0; }" COMPILER_HAS_OPENMP)
+  if(COMPILER_HAS_OPENMP)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
+  endif()
 endif()
 
 #
