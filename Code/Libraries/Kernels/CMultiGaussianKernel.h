@@ -120,8 +120,6 @@ private:
   std::vector<T> m_GradientScalingFactors;
 };
 
-#include "CMultiGaussianKernel.txx"
-
 } // end namespace
 
 #endif // C_MULTI_GAUSSIAN_KERNEL_H

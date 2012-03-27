@@ -20,6 +20,11 @@
 #ifndef C_GAUSSIAN_KERNEL_TXX
 #define C_GAUSSIAN_KERNEL_TXX
 
+#include "CGaussianKernel.h"
+
+namespace CALATK
+{
+
 template <class T, unsigned int VImageDimension >
 CGaussianKernel< T, VImageDimension >::CGaussianKernel()
   : DefaultSigma( 1 ), m_ExternallySetSigma( false )
@@ -174,5 +179,7 @@ void CGaussianKernel< T, VImageDimension >::ConfirmKernelsNeedToBeComputed()
 {
   this->m_KernelsNeedToBeComputed = true;
 }
+
+} // end namespace CALATK
 
 #endif

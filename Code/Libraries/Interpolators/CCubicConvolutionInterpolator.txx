@@ -20,6 +20,11 @@
 #ifndef C_CUBIC_CONVOLUTION_INTERPOLATOR_TXX
 #define C_CUBIC_CONVOLUTION_INTERPOLATOR_TXX
 
+#include "CCubicConvolutionInterpolator.h"
+
+namespace CALATK
+{
+
 template < class T, unsigned int VImageDimension >
 CCubicConvolutionInterpolator< T, VImageDimension >::CCubicConvolutionInterpolator()
 {
@@ -74,5 +79,7 @@ T CCubicConvolutionInterpolator< T, VImageDimension >::Interpolate( T* vals, T d
     return dVal;
   }
 }
+
+} // end namespace CALATK
 
 #endif

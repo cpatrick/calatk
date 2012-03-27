@@ -106,8 +106,6 @@ private:
   CFastLinearInterpolator< T, VImageDimension > interpolator;
 };
 
-#include "COneStepEvolverSemiLagrangianAdvection.txx"
-
 } // end namespace
 
 #endif

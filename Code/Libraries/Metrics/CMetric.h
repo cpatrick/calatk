@@ -92,8 +92,6 @@ protected:
 private:
 };
 
-//#include "CMetric.txx"
-
 } // end namespace
 
 #endif

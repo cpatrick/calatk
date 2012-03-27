@@ -160,7 +160,7 @@ ENDIF(CHOOSE_FLOATING_POINT_TYPE)
 #
 # Include directories
 #
-SET(CALATK_INCLUDE_DIRS
+set(CALATK_INCLUDE_DIRS
   ${CMAKE_SOURCE_DIR}/Code/Libraries/Algorithms
   ${CMAKE_SOURCE_DIR}/Code/Libraries/Base
   ${CMAKE_SOURCE_DIR}/Code/Libraries/DataStructures
@@ -179,15 +179,15 @@ SET(CALATK_INCLUDE_DIRS
   ${CMAKE_SOURCE_DIR}/Utilities/DTIProcess/Library
 )
 
-IF(USE_NLOPT)
-  INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/Code/External/nlopt-2.2.4/api)
-ENDIF(USE_NLOPT)
+if(USE_NLOPT)
+  include_directories(${CMAKE_SOURCE_DIR}/Code/External/nlopt-2.2.4/api)
+endif(USE_NLOPT)
 
-IF(USE_LBFGS)
-  INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/Code/External/libbfgs)
-ENDIF(USE_LBFGS)
+if(USE_LBFGS)
+  include_directories(${CMAKE_SOURCE_DIR}/Code/External/libbfgs)
+endif(USE_LBFGS)
 
-INCLUDE_DIRECTORIES(${CALATK_INCLUDE_DIRS})
+include_directories(${CALATK_INCLUDE_DIRS})
 
 
 #

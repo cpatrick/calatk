@@ -20,6 +20,11 @@
 #ifndef C_HELMHOLTZ_KERNEL_TXX
 #define C_HELMHOLTZ_KERNEL_TXX
 
+#include "CHelmholtzKernel.h"
+
+namespace CALATK
+{
+
 template <class T, unsigned int VImageDimension >
 CHelmholtzKernel< T, VImageDimension >::CHelmholtzKernel()
   : DefaultAlpha( 0.05 ), DefaultGamma( 1 ), m_ExternallySetAlpha( false ), m_ExternallySetGamma( false )
@@ -159,5 +164,7 @@ void CHelmholtzKernel< T, VImageDimension >::ConfirmKernelsNeedToBeComputed()
 {
   this->m_KernelsNeedToBeComputed = true;
 }
+
+} // end namespace CALATK
 
 #endif

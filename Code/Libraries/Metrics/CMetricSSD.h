@@ -20,13 +20,16 @@
 #ifndef C_METRIC_SSD_H
 #define C_METRIC_SSD_H
 
-/**
- * Sum of squared intensity difference similarity metric.
- */
+#include "CMetric.h"
 
 namespace CALATK
 {
 
+/**
+ * \class CMetricSSD
+ *
+ * \brief Sum of squared intensity difference similarity metric.
+ */
 template <class T, unsigned int VImageDimension = 3 >
 class CMetricSSD : public CMetric< T, VImageDimension >
 {
@@ -57,8 +60,6 @@ protected:
 
 private:
 };
-
-#include "CMetricSSD.txx"
 
 } // end namespace
 

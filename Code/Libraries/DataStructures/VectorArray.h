@@ -415,21 +415,6 @@ protected:
 
 };
 
-#include "VectorArray.txx"
-
 } // end namespace CALATK
 
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-

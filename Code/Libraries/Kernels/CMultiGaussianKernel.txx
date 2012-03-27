@@ -20,6 +20,12 @@
 #ifndef C_MULTI_GAUSSIAN_KERNEL_TXX
 #define C_MULTI_GAUSSIAN_KERNEL_TXX
 
+#include "CGaussianKernel.h"
+#include "CMultiGaussianKernel.h"
+
+namespace CALATK
+{
+
 template <class T, unsigned int VImageDimension >
 CMultiGaussianKernel< T, VImageDimension >::CMultiGaussianKernel()
   : DefaultGamma( 1.0 ),
@@ -374,11 +380,12 @@ std::vector< T > CMultiGaussianKernel< T, VImageDimension >::ComputeDataDependen
       std::cout << "Computing multi-Gaussian kernel weight for sigma = " << m_Sigmas[ iI ] << " ... ";
 
       // instantiate a Gaussian kernel with appropriate sigma
-      CGaussianKernel< T, VImageDimension > gaussianKernel;
-      gaussianKernel.SetSigma( m_Sigmas[ iI ] );
+      typedef CGaussianKernel< T, VImageDimension > GaussianKernelType;
+      typename GaussianKernelType::Pointer gaussianKernel = new GaussianKernelType;
+      gaussianKernel->SetSigma( m_Sigmas[ iI ] );
 
       ptrSmoothedGradient->Copy( ptrGradient );
-      gaussianKernel.ConvolveWithKernel( ptrSmoothedGradient );
+      gaussianKernel->ConvolveWithKernel( ptrSmoothedGradient );
 
       // now determine what the maximal magnitude of the vectors is
       T dMaximalNorm = sqrt( ptrSmoothedGradient->ComputeMaximalSquaredNorm() );
@@ -436,5 +443,7 @@ void CMultiGaussianKernel< T, VImageDimension >::ConfirmKernelsNeedToBeComputed(
 {
   this->m_KernelsNeedToBeComputed = true;
 }
+
+} // end namespace CALATK
 
 #endif

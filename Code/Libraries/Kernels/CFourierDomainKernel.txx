@@ -20,6 +20,11 @@
 #ifndef C_FOURIER_DOMAIN_KERNEL_TXX
 #define C_FOURIER_DOMAIN_KERNEL_TXX
 
+#include "CFourierDomainKernel.h"
+
+namespace CALATK
+{
+
 template <class T, unsigned int VImageDimension >
 CFourierDomainKernel< T, VImageDimension >::CFourierDomainKernel():
   m_MemoryWasAllocated( false )
@@ -434,5 +439,7 @@ void CFourierDomainKernel< T, VImageDimension >::ConfirmKernelsWereComputed()
 {
   this->m_KernelsNeedToBeComputed = false;
 }
+
+} // end namespace CALATK
 
 #endif

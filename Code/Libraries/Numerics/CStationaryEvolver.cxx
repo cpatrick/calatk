@@ -17,27 +17,16 @@
 *
 */
 
-#ifndef C_LINEAR_INTERPOLATOR_H
-#define C_LINEAR_INTERPOLATOR_H
-
-#include "CGenericInterpolator.h"
+#include "CStationaryEvolver.txx"
 
 namespace CALATK
 {
-/**
-  * Implements simple linear interpolation
-  */
-template < class T, unsigned int VImageDimension=3 >
-class CLinearInterpolator :
-    public CGenericInterpolator< T, VImageDimension >
-{
-public:
-  CLinearInterpolator();
-  ~CLinearInterpolator();
-protected:
-  virtual T Interpolate( T* vals, T dS );
-};
 
-} // end namespace
+template class CStationaryEvolver< float, 1 >;
+template class CStationaryEvolver< float, 2 >;
+template class CStationaryEvolver< float, 3 >;
+template class CStationaryEvolver< double, 1 >;
+template class CStationaryEvolver< double, 2 >;
+template class CStationaryEvolver< double, 3 >;
 
-#endif // C_LINEAR_INTERPOLATOR_H
+} // namespace CALATK

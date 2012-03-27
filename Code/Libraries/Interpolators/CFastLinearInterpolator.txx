@@ -20,6 +20,11 @@
 #ifndef C_FAST_LINEAR_INTERPOLATOR_TXX
 #define C_FAST_LINEAR_INTERPOLATOR_TXX
 
+#include "CFastLinearInterpolator.h"
+
+namespace CALATK
+{
+
 template < class T, unsigned int VImageDimension >
 CFastLinearInterpolator< T, VImageDimension >::CFastLinearInterpolator()
 {
@@ -65,5 +70,7 @@ void CFastLinearInterpolator< T, VImageDimension >::InterpolateNegativeVelocityP
 {
   VectorImageUtilsType::interpolateNegativeVelocityPos( imIn, v, dt, imOut, this->GetNumberOfThreads() );
 }
+
+} // end namespace CALATK
 
 #endif

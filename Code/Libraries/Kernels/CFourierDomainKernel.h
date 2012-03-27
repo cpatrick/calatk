@@ -222,8 +222,6 @@ private:
   bool m_MemoryWasAllocated;
 };
 
-#include "CFourierDomainKernel.txx"
-
 }
 
 #endif

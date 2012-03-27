@@ -20,9 +20,11 @@
 #ifndef C_ONESTEPEVOLVER_SEMILAGRANGIAN_ADVECTION_TXX
 #define C_ONESTEPEVOLVER_SEMILAGRANGIAN_ADVECTION_TXX
 
-//
-// empty constructor
-//
+#include "COneStepEvolverSemiLagrangianAdvection.h"
+
+namespace CALATK
+{
+
 template <class T, unsigned int VImageDimension >
 COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::COneStepEvolverSemiLagrangianAdvection()
   : DefaultTimeStepFactor( 1 ), m_ExternallySetTimeStepFactor( false ),
@@ -188,6 +190,6 @@ T COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::ComputeMaximalUpd
   return minDT;
 }
 
-
+} // end namespace CALATK
 
 #endif

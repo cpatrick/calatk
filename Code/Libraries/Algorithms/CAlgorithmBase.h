@@ -148,8 +148,6 @@ protected:
 
 };
 
-#include "CAlgorithmBase.txx"
-
 } // end namespace
 
 

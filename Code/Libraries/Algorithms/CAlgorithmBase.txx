@@ -20,6 +20,11 @@
 #ifndef C_ALGORITHM_BASE_TXX
 #define C_ALGORITHM_BASE_TXX
 
+#include "CAlgorithmBase.h"
+
+namespace CALATK
+{
+
 template < class T, unsigned int VImageDimension >
 CAlgorithmBase< T, VImageDimension >::CAlgorithmBase()
   : m_ConfigIn( true ),
@@ -289,5 +294,7 @@ T CAlgorithmBase< T, VImageDimension >::GetMSScale( unsigned int uiScale )
   return m_MSScales[ uiScale ];
   }
 }
+
+} // end namespace CALATK
 
 #endif

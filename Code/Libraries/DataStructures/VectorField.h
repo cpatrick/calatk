@@ -232,8 +232,6 @@ public:
 
 };
 
-#include "VectorField.txx"
-
 } // end namespace CALATK
 
 #endif

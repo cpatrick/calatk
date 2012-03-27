@@ -45,8 +45,6 @@ class CCubicConvolutionInterpolator :
     virtual T Interpolate( T* vals, T dS );
 };
 
-#include "CCubicConvolutionInterpolator.txx"
-
 } // end namespace
 
 #endif // C_CUBIC_CONVOLUTION_INTERPOLATOR_H

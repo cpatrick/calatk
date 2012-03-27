@@ -80,8 +80,6 @@ private:
 
 };
 
-#include "CHelmholtzKernel.txx"
-
 } // end namespace
 
 #endif

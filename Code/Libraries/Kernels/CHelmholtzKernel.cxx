@@ -17,27 +17,16 @@
 *
 */
 
-#ifndef C_LINEAR_INTERPOLATOR_H
-#define C_LINEAR_INTERPOLATOR_H
-
-#include "CGenericInterpolator.h"
+#include "CHelmholtzKernel.txx"
 
 namespace CALATK
 {
-/**
-  * Implements simple linear interpolation
-  */
-template < class T, unsigned int VImageDimension=3 >
-class CLinearInterpolator :
-    public CGenericInterpolator< T, VImageDimension >
-{
-public:
-  CLinearInterpolator();
-  ~CLinearInterpolator();
-protected:
-  virtual T Interpolate( T* vals, T dS );
-};
 
-} // end namespace
+template class CHelmholtzKernel< float, 1 >;
+template class CHelmholtzKernel< float, 2 >;
+template class CHelmholtzKernel< float, 3 >;
+template class CHelmholtzKernel< double, 1 >;
+template class CHelmholtzKernel< double, 2 >;
+template class CHelmholtzKernel< double, 3 >;
 
-#endif // C_LINEAR_INTERPOLATOR_H
+} // namespace CALATK

@@ -22,13 +22,14 @@
 
 #include "CEvolver.h"
 
-/**
- * CStationaryEvolver.h -- Assumes that a given velocity field is stationary for a finite integration time.
- */
-
 namespace CALATK
 {
 
+/**
+ * \class CStationaryEvolver
+ *
+ * \brief Assumes that a given velocity field is stationary for a finite integration time.
+ */
 template <class T, unsigned int VImageDimension=3 >
 class CStationaryEvolver : public CEvolver< T, VImageDimension >
 {
@@ -62,8 +63,6 @@ protected:
 private:
 
 };
-
-#include "CStationaryEvolver.txx"
 
 } // end namespace
 

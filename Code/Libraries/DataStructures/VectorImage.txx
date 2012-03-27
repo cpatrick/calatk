@@ -20,6 +20,11 @@
 #ifndef VECTOR_IMAGE_TXX
 #define VECTOR_IMAGE_TXX
 
+#include "VectorImage.h"
+
+namespace CALATK
+{
+
 //
 // empty constructor
 //
@@ -510,5 +515,7 @@ void VectorImage< T, VImageDimension >::print3D(std::ostream& output) {
   }
 
 }
+
+} // end namespace CALATK
 
 #endif

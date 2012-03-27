@@ -70,8 +70,6 @@ protected:
   static NumericObjectiveFunctionType GetObjectiveFunctionTypeFromString( std::string sObjectiveFunction );
 };
 
-#include "CObjectiveFunctionFactory.txx"
-
 } // end namespace
 
 #endif // C_OBJECTIVE_FUNCTION_FACTORY_H

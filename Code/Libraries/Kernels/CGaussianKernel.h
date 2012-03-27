@@ -73,8 +73,6 @@ private:
   bool m_ExternallySetSigma;
 };
 
-#include "CGaussianKernel.txx"
-
 } // end namespace
 
 #endif

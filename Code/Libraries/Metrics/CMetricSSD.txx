@@ -20,6 +20,11 @@
 #ifndef C_METRIC_SSD_TXX
 #define C_METRIC_SSD_TXX
 
+#include "CMetricSSD.h"
+
+namespace CALATK
+{
+
 template <class T, unsigned int VImageDimension >
 CMetricSSD< T, VImageDimension >::CMetricSSD()
 {
@@ -155,5 +160,6 @@ void CMetricSSD< T, VImageDimension >::GetAdjointMatchingDifferenceImage( Vector
 
 }
 
+} // end namespace CALATK
 
 #endif

@@ -20,6 +20,11 @@
 #ifndef VECTOR_ARRAY_TXX
 #define VECTOR_ARRAY_TXX
 
+#include "VectorArray.h"
+
+namespace CALATK
+{
+
 //////////////////////////////////
 // Constructors and Destructors //
 //////////////////////////////////
@@ -860,17 +865,6 @@ void VectorArray<T, VImageDimension>::Deallocate()
     }
 }
 
+} // end namespace CALATK
+
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-

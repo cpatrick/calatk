@@ -20,6 +20,11 @@
 #ifndef C_OBJECTIVE_FUNCTION_FACTORY_TXX
 #define C_OBJECTIVE_FUNCTION_FACTORY_TXX
 
+#include "CObjectiveFunctionFactory.h"
+
+namespace CALATK
+{
+
 template < class T, unsigned int VImageDimension >
 CObjectiveFunctionFactory< T, VImageDimension >::CObjectiveFunctionFactory()
 {
@@ -94,5 +99,7 @@ CObjectiveFunctionFactory< T, VImageDimension >::GetObjectiveFunctionTypeFromStr
     return LDDMMGrowthModel;
   }
 }
+
+} // end namespace CALATK
 
 #endif
