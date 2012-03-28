@@ -67,19 +67,19 @@ set(CALATK_sources
   ${CALATK_jsoncpp_source}
   )
 
-IF(USE_LBFGS)
+if(USE_LBFGS)
   # Set up source for LBFGS
   set(CALATK_libbfgs_source ${CMAKE_SOURCE_DIR}/Code/External/libbfgs/lbfgs.c)
   set(CALATK_sources
     ${CALATK_sources}
     ${CALATK_libbfgs_source}
     )
-ENDIF(USE_LBFGS)
+endif(USE_LBFGS)
 
 add_library(CALATK ${CALATK_sources})
 target_link_libraries(CALATK ${FFTW_LIB} ${FFTWF_LIB} ${ITK_LIBRARIES} ${NLOPT_LIB} ${IPOPT_LIBS})
 
-INSTALL( TARGETS CALATK 
+install( TARGETS CALATK
 	 RUNTIME DESTINATION bin
 	 LIBRARY DESTINATION lib
 	 ARCHIVE DESTINATION lib/static)

@@ -281,12 +281,24 @@ if(BUILD_TESTING AND compile_GenerateBullseyes)
     ${test_temp_dir}/Bullseye2DTimePoint0.mha
     ${test_temp_dir}/Bullseye2DTimePoint1.mha
     ${test_temp_dir}/calatkApplicationImageFileNamesGivenTests_AlgorithmConfig.json
+    ${test_temp_dir}/calatkApplicationImageFileNamesGivenTests_DataConfig.json
     )
+  add_executable(DefaultInputConfigVerification
+    calatkDefaultInputConfigVerification.cxx
+    )
+  target_link_libraries(DefaultInputConfigVerification CALATK)
+  add_test(calatkDefaultInputConfigVerificationTest
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/DefaultInputConfigVerification
+    ${test_temp_dir}/calatkApplicationImageFileNamesGivenTests_DataConfig.json
+    )
+  set_tests_properties(calatkDefaultInputConfigVerificationTest
+    PROPERTIES DEPENDS calatkApplicationImageFileNamesGivenTest)
 
   set_tests_properties(calatkApplicationImageFileNamesGivenTest
     CALATKCommandLineBullseyes1D
     PROPERTIES DEPENDS GenerateBullseyes)
 endif()
+
 #add_ctest_test(writeFileITKTest
 #  # 2D input
 #  ${test_input_dir}/2Dsample.mha

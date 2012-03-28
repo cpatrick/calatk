@@ -46,6 +46,26 @@ int calatkApplicationImageFileNamesGivenTest( int argc, char ** argv )
     return EXIT_FAILURE;
     }
 
+  calatkApplication->SetGivenSourceAndTargetImageFiles( argv[2], argv[3] );
+
+  std::string usedAlgorithmConfigurationFile( argv[4] );
+  std::cout << "UsedAlgorithmConfigurationFile: " << usedAlgorithmConfigurationFile << std::endl;
+  calatkApplication->SetUsedAlgorithmConfigurationFile( usedAlgorithmConfigurationFile );
+  if( calatkApplication->GetUsedAlgorithmConfigurationFile().compare( argv[4] ) )
+    {
+    std::cerr << "UsedAlgorithmConfigurationFile did not match expected value." << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  std::string usedDataConfigurationFile( argv[5] );
+  std::cout << "UsedDataConfigurationFile: " << usedDataConfigurationFile << std::endl;
+  calatkApplication->SetUsedDataConfigurationFile( usedDataConfigurationFile );
+  if( calatkApplication->GetUsedDataConfigurationFile().compare( argv[5] ) )
+    {
+    std::cerr << "UsedDataConfigurationFile did not match expected value." << std::endl;
+    return EXIT_FAILURE;
+    }
+
   try
     {
     calatkApplication->Solve();
