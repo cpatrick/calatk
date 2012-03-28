@@ -170,7 +170,7 @@ public:
    *
    * @param d - vector dimension
    */
-  inline T& GetValue(unsigned int d) const;
+  T& GetValue(unsigned int d) const;
 
    /**
    * Method that returns the 1D data stored in the specified dimension of
@@ -179,7 +179,7 @@ public:
    * @param x - x-coordinate
    * @param d - vector dimension
    */
-  inline T& GetValue(unsigned int x, unsigned int d) const;
+  T& GetValue(unsigned int x, unsigned int d) const;
 
    /**
    * Method that returns the 2D data stored in the specified dimension of
@@ -189,7 +189,7 @@ public:
    * @param y - y-coordinate
    * @param d - vector dimension
    */
-  inline T& GetValue(unsigned int x, unsigned int y, unsigned int d) const;
+  T& GetValue(unsigned int x, unsigned int y, unsigned int d) const;
 
   /**
    * Method that returns the 3D data stored in the specified dimension of
@@ -200,7 +200,7 @@ public:
    * @param z - z-coordinate
    * @param d - vector dimension
    */
-  inline T& GetValue(unsigned int x, unsigned int y, unsigned int z, unsigned int d) const;
+  T& GetValue(unsigned int x, unsigned int y, unsigned int z, unsigned int d) const;
 
    /**
    * Method that sets the 0D data in the specified dimension of the vector
@@ -333,27 +333,27 @@ public:
   /**
    * Method that returns the size in the x dimension
    */
-  inline unsigned int GetSizeX() const;
+  unsigned int GetSizeX() const;
   
   /**
    * Method that returns the size in the y dimension
    */
-  inline unsigned int GetSizeY() const;
+  unsigned int GetSizeY() const;
   
   /**
    * Method that returns the size in the z dimension
    */
-  inline unsigned int GetSizeZ() const;
+  unsigned int GetSizeZ() const;
   
   /**
    * Method that returns the dimensionality of the vectors
    */
-  inline unsigned int GetDimension() const;
+  unsigned int GetDimension() const;
   
   /**
    * Method that returns the total length of the data
    */
-  inline unsigned int GetLength() const;
+  unsigned int GetLength() const;
   
   /**
    * Method that gets a pointer to the data for IO purposes
