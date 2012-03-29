@@ -39,7 +39,7 @@ namespace CALATK
   *
   */
 
-template < class T, unsigned int VImageDimension=3 >
+template < class TFloat, unsigned int VImageDimension=3 >
 class CKernelFactory : public CProcessBase
 {
 public:
@@ -50,25 +50,23 @@ public:
   typedef itk::SmartPointer< const Self > ConstPointer;
 
   // all the kernel typedefs
-  typedef CKernel< T, VImageDimension > KernelType;
+  typedef CKernel< TFloat, VImageDimension >              KernelType;
 
-  typedef CHelmholtzKernel< T, VImageDimension >     HelmholtzKernelType;
-  typedef CGaussianKernel< T, VImageDimension >      GaussianKernelType;
-  typedef CMultiGaussianKernel< T, VImageDimension > MultiGaussianKernelType;
+  typedef CHelmholtzKernel< TFloat, VImageDimension >     HelmholtzKernelType;
+  typedef CGaussianKernel< TFloat, VImageDimension >      GaussianKernelType;
+  typedef CMultiGaussianKernel< TFloat, VImageDimension > MultiGaussianKernelType;
 
   enum NumericKernelType { HelmholtzKernel, GaussianKernel, MultiGaussianKernel };
 
   CKernelFactory();
   ~CKernelFactory();
 
-  static KernelType* CreateNewKernel( std::string sKernel );
+  static KernelType* CreateNewKernel( const std::string & kernelName );
   static KernelType* CreateNewKernel( NumericKernelType kernel );
 
 protected:
-  static NumericKernelType GetKernelTypeFromString( std::string sKernel );
+  static NumericKernelType GetKernelTypeFromString( const std::string & kernelName );
 };
-
-#include "CKernelFactory.txx"
 
 } // end namespace
 

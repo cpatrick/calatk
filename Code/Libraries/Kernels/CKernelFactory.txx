@@ -20,6 +20,11 @@
 #ifndef C_KERNEL_FACTORY_TXX
 #define C_KERNEL_FACTORY_TXX
 
+#include "CKernelFactory.h"
+
+namespace CALATK
+{
+
 template < class T, unsigned int VImageDimension >
 CKernelFactory< T, VImageDimension >::CKernelFactory()
 {
@@ -32,40 +37,41 @@ CKernelFactory< T, VImageDimension >::~CKernelFactory()
 
 template < class T, unsigned int VImageDimension >
 typename CKernelFactory< T, VImageDimension >::KernelType*
-CKernelFactory< T, VImageDimension >::CreateNewKernel( NumericKernelType kernel )
+CKernelFactory< T, VImageDimension >::CreateNewKernel( NumericKernelType kernelType )
 {
-  KernelType* ptrKernel = NULL;
-  switch ( kernel )
+  KernelType * kernel = NULL;
+  switch ( kernelType )
   {
   case HelmholtzKernel:
-    ptrKernel = new HelmholtzKernelType;
+    kernel = new HelmholtzKernelType;
     break;
   case GaussianKernel:
-    ptrKernel = new GaussianKernelType;
+    kernel = new GaussianKernelType;
+    break;
+  case MultiGaussianKernel:
+    kernel = new MultiGaussianKernelType;
     break;
   default:
     std::cout << "Unknown kernel type = " << kernel << "; defaulting to a multi-Gaussian kernel." << std::endl;
-  case MultiGaussianKernel:
-    ptrKernel = new MultiGaussianKernelType;
-    break;
+    kernel = new MultiGaussianKernelType;
   }
 
-  return ptrKernel;
+  return kernel;
 }
 
 template < class T, unsigned int VImageDimension >
 typename CKernelFactory< T, VImageDimension >::KernelType*
-CKernelFactory< T, VImageDimension >::CreateNewKernel( std::string sKernel )
+CKernelFactory< T, VImageDimension >::CreateNewKernel( const std::string & kernelName )
 {
-  NumericKernelType kernelType = GetKernelTypeFromString( sKernel );
+  NumericKernelType kernelType = GetKernelTypeFromString( kernelName );
   return CreateNewKernel( kernelType );
 }
 
 template < class T, unsigned int VImageDimension >
 typename CKernelFactory< T, VImageDimension >::NumericKernelType
-CKernelFactory< T, VImageDimension >::GetKernelTypeFromString( std::string sKernel )
+CKernelFactory< T, VImageDimension >::GetKernelTypeFromString( const std::string & kernelName )
 {
-  std::string sKernelLowerCase = sKernel;
+  std::string sKernelLowerCase = kernelName;
   // convert to all lower case
   std::transform( sKernelLowerCase.begin(), sKernelLowerCase.end(), sKernelLowerCase.begin(), ::tolower );
 
@@ -83,10 +89,11 @@ CKernelFactory< T, VImageDimension >::GetKernelTypeFromString( std::string sKern
   }
   else
   {
-    std::cout << "Unknown kernel type " << sKernel << "; defaulting to a multi-Gaussian kernel." << std::endl;
+    std::cout << "Unknown kernel type " << kernelName << "; defaulting to a multi-Gaussian kernel." << std::endl;
     return MultiGaussianKernel;
   }
 }
 
-#endif
+} // end namespace CALATK
 
+#endif

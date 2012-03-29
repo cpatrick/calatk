@@ -286,7 +286,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension >
 CStateSpatioTemporalVelocityField< T, VImageDimension >::operator*(const T & p ) const
 {
   CStateSpatioTemporalVelocityField r = *this;
-  return r*= p;
+  return r *= p;
 }
 
 

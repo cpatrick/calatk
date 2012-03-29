@@ -29,6 +29,7 @@ set(CALATK_Kernels_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/Kernels/CGaussianKernel.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Kernels/CHelmholtzKernel.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Kernels/CMultiGaussianKernel.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/Kernels/CKernelFactory.cxx
   )
 # Set up sources for Metrics
 set(CALATK_Metrics_sources
