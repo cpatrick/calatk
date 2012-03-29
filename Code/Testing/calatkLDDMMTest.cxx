@@ -35,24 +35,24 @@
 
 #include "CJSONConfiguration.h"
 
-template < class TFLOAT, unsigned int VImageDimension >
-int DoIt(std::string LDDMMType, char* sourceImage, char* targetImage, char* resultImage, const std::string & configFileName)
+template < class TFloat, unsigned int VImageDimension >
+int DoIt(std::string LDDMMType, const char* sourceImage, const char* targetImage, const char* resultImage, const std::string & configFileName)
 {
   // define the type of state
-  typedef CALATK::CStateInitialImageMomentum< TFLOAT, VImageDimension > TStateInitialImageMomentum;
-  typedef CALATK::CStateSpatioTemporalVelocityField< TFLOAT, VImageDimension > TStateSpatioTemporalVelocityField;
+  typedef CALATK::CStateInitialImageMomentum< TFloat, VImageDimension >        TStateInitialImageMomentum;
+  typedef CALATK::CStateSpatioTemporalVelocityField< TFloat, VImageDimension > TStateSpatioTemporalVelocityField;
   // define the registration method based on this state
-  typedef CALATK::CLDDMMGenericRegistration< TStateInitialImageMomentum > regTypeInitialImageMomentum;
+  typedef CALATK::CLDDMMGenericRegistration< TStateInitialImageMomentum >        regTypeInitialImageMomentum;
   typedef CALATK::CLDDMMGenericRegistration< TStateSpatioTemporalVelocityField > regTypeSpatioTemporalVelocityField;
 
   // general typedefs
-  typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension > VectorImageUtilsType;
-  typedef CALATK::CImageManagerMultiScale< TFLOAT, VImageDimension > ImageManagerMultiScaleType;
-  typedef CALATK::LDDMMUtils< TFLOAT, VImageDimension > LDDMMUtilsType;
-  typedef CALATK::VectorImage< TFLOAT, VImageDimension > VectorImageType;
-  typedef CALATK::VectorField< TFLOAT, VImageDimension > VectorFieldType;
+  typedef CALATK::VectorImageUtils< TFloat, VImageDimension >        VectorImageUtilsType;
+  typedef CALATK::CImageManagerMultiScale< TFloat, VImageDimension > ImageManagerMultiScaleType;
+  typedef CALATK::LDDMMUtils< TFloat, VImageDimension >              LDDMMUtilsType;
+  typedef CALATK::VectorImage< TFloat, VImageDimension >             VectorImageType;
+  typedef CALATK::VectorField< TFloat, VImageDimension >             VectorFieldType;
 
-  typedef CALATK::CAlgorithmBase< TFLOAT, VImageDimension > TReg;
+  typedef CALATK::CAlgorithmBase< TFloat, VImageDimension > TReg;
 
   typename TReg::Pointer plddmm = NULL;
   bool bIsInitialImageMomentumType = false;
@@ -158,5 +158,4 @@ int calatkLDDMMTest(int argc, char * argv[] )
   }
 
   return EXIT_FAILURE;
-
 }

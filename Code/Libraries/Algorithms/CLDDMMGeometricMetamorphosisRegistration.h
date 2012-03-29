@@ -29,7 +29,7 @@ namespace CALATK
 
 /**
   * A reasonable default value for the state is
-  * TState = CStateSpatioTemporalVelocityField< T, VImageDimension >
+  * TState = CStateSpatioTemporalVelocityField< T, ImageDimension >
   *
   */
 template < class TState >
@@ -44,11 +44,12 @@ public:
   typedef itk::SmartPointer< const Self >                       ConstPointer;
 
   /* some useful typedefs */
-  typedef typename TState::TFloat T;
+  typedef typename TState::FloatType T;
 
   typedef typename Superclass::VectorImageType  VectorImageType;
   typedef typename Superclass::VectorFieldType  VectorFieldType;
-  typedef CKernel< T, TState::VImageDimension > KernelType;
+
+  typedef CKernel< T, TState::ImageDimension >  KernelType;
 
   CLDDMMGeometricMetamorphosisRegistration();
   ~CLDDMMGeometricMetamorphosisRegistration();

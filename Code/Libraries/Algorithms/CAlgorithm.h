@@ -36,23 +36,23 @@ namespace CALATK
  *
  */
 template < class TState >
-class CAlgorithm : public CAlgorithmBase< typename TState::TFloat, TState::VImageDimension >
+class CAlgorithm : public CAlgorithmBase< typename TState::FloatType, TState::ImageDimension >
 {
 public:
   /** Standard class typedefs. */
-  typedef CAlgorithm                                                         Self;
-  typedef CAlgorithmBase< typename TState::TFloat, TState::VImageDimension > Superclass;
-  typedef itk::SmartPointer< Self >                                          Pointer;
-  typedef itk::SmartPointer< const Self >                                    ConstPointer;
+  typedef CAlgorithm                                                           Self;
+  typedef CAlgorithmBase< typename TState::FloatType, TState::ImageDimension > Superclass;
+  typedef itk::SmartPointer< Self >                                            Pointer;
+  typedef itk::SmartPointer< const Self >                                      ConstPointer;
 
   /* some useful typedefs */
-  typedef typename TState::TFloat T;
+  typedef typename TState::FloatType T;
 
   typedef CObjectiveFunction< TState >  ObjectiveFunctionType;
   typedef CSolver< TState >             SolverType;
 
-  typedef VectorImage< T, TState::VImageDimension > VectorImageType;
-  typedef VectorField< T, TState::VImageDimension > VectorFieldType;
+  typedef VectorImage< T, TState::ImageDimension > VectorImageType;
+  typedef VectorField< T, TState::ImageDimension > VectorFieldType;
 
   CAlgorithm();
   virtual ~CAlgorithm();

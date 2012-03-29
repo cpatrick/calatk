@@ -44,7 +44,8 @@ public:
   typedef itk::SmartPointer< const Self >                        ConstPointer;
 
   /* Some useful typedefs */
-  typedef typename TState::TFloat T;
+  typedef typename TState::FloatType T;
+  typedef typename TState::FloatType FloatType;
 
   typedef typename Superclass::CEnergyValues CEnergyValues;
 
@@ -88,6 +89,9 @@ protected:
 
   typedef std::vector< typename VectorImageType::Pointer >* VectorPointerToVectorImagePointerType;
 
+  typedef typename Superclass::VectorFieldUtilsType VectorFieldUtilsType;
+  typedef typename Superclass::VectorImageUtilsType VectorImageUtilsType;
+
   void InitializeDataStructures();
   void InitializeDataStructuresFromState( TState* ptrState );
 
@@ -103,8 +107,8 @@ protected:
 
   void CreateTimeDiscretization();
 
-  typedef CImageManager< T, TState::VImageDimension > ImageManagerType;
-  typedef typename ImageManagerType::ImageInformation ImageInformation;
+  typedef CImageManager< T, TState::ImageDimension >        ImageManagerType;
+  typedef typename ImageManagerType::ImageInformation       ImageInformation;
   typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
 
   typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;

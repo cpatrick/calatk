@@ -83,11 +83,11 @@ CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::CLDDMMGeometricMetamorp
   m_ptrTmpGradient = NULL;
 
   // pointers to measured image information
-  pImInfo0 = NULL;
-  pImInfo1 = NULL;
+  m_ptrImageInformation0 = NULL;
+  m_ptrImageInformation1 = NULL;
 
-  pMaskInfo0 = NULL;
-  pMaskInfo1 = NULL;
+  m_ptrMaskInformation0 = NULL;
+  m_ptrMaskInformation1 = NULL;
 
   // kernel pointer
   m_ptrMaskKernel = NULL;
@@ -97,7 +97,6 @@ CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::CLDDMMGeometricMetamorp
 template < class TState >
 CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::~CLDDMMGeometricMetamorphosisObjectiveFunction()
 {
-  DeleteAuxiliaryStructures();
 }
 
 template < class TState >
@@ -122,13 +121,13 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::SetAutoConfigurati
 }
 
 template < class TState >
-void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::SetMaskKernelPointer( ptrKernelType pKernel )
+void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::SetMaskKernelPointer( KernelType * pKernel )
 {
   m_ptrMaskKernel = pKernel;
 }
 
 template < class TState >
-CKernel< typename TState::TFloat, TState::VImageDimension >*
+typename CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::KernelType *
 CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetMaskKernelPointer()
 {
   return m_ptrMaskKernel;
@@ -137,27 +136,6 @@ CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetMaskKernelPointer()
 template < class TState >
 void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::DeleteAuxiliaryStructures()
 {
-  // set all the externally controlled pointers to NULL
-
-  pImInfo0 = NULL;
-  pImInfo1 = NULL;
-
-  pMaskInfo0 = NULL;
-  pMaskInfo1 = NULL;
-
-  ptrT0 = NULL;
-  ptrT2 = NULL;
-  ptrI0 = NULL;
-  ptrI1 = NULL;
-  ptrEstI1 = NULL;
-  ptrEstT1 = NULL;
-  ptrEstT2 = NULL;
-
- if ( m_ptrMaskKernel != NULL )
-   {
-   m_ptrMaskKernel->DeallocateMemory();
-   }
-
 }
 
 template < class TState >
@@ -177,11 +155,11 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::CreateAuxiliaryStr
   SubjectInformationType* pSubjectInfoMask;
   this->m_ptrImageManager->GetImagesWithSubjectIndex( pSubjectInfoMask, 1 );
 
-  this->m_ptrImageManager->GetPointerToSubjectImageInformationBySubjectInformationAndIndex( pImInfo0, pSubjectInfoImage, 0 );
-  this->m_ptrImageManager->GetPointerToSubjectImageInformationBySubjectInformationAndIndex( pImInfo1, pSubjectInfoImage, 1 );
+  this->m_ptrImageManager->GetPointerToSubjectImageInformationBySubjectInformationAndIndex( m_ptrImageInformation0, pSubjectInfoImage, 0 );
+  this->m_ptrImageManager->GetPointerToSubjectImageInformationBySubjectInformationAndIndex( m_ptrImageInformation1, pSubjectInfoImage, 1 );
 
-  this->m_ptrImageManager->GetPointerToSubjectImageInformationBySubjectInformationAndIndex( pMaskInfo0, pSubjectInfoMask, 0 );
-  this->m_ptrImageManager->GetPointerToSubjectImageInformationBySubjectInformationAndIndex( pMaskInfo1, pSubjectInfoMask, 1 );
+  this->m_ptrImageManager->GetPointerToSubjectImageInformationBySubjectInformationAndIndex( m_ptrMaskInformation0, pSubjectInfoMask, 0 );
+  this->m_ptrImageManager->GetPointerToSubjectImageInformationBySubjectInformationAndIndex( m_ptrMaskInformation1, pSubjectInfoMask, 1 );
 
   m_uiTimeIndexOfTimePoint1 = DetermineTimeIndexOfTimePoint1();
 
@@ -250,12 +228,12 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::CreateAuxiliaryStr
   // now make all the associations for the convenience pointers
   
   // mask image at different time-points
-  ptrT0 = pMaskInfo0->Image;
-  ptrT2 = pMaskInfo1->Image;
+  ptrT0 = m_ptrMaskInformation0->Image;
+  ptrT2 = m_ptrMaskInformation1->Image;
 
   // measured images at different time-points
-  ptrI0 = pImInfo0->Image;
-  ptrI1 = pImInfo1->Image;
+  ptrI0 = m_ptrImageInformation0->Image;
+  ptrI1 = m_ptrImageInformation1->Image;
 
   // estimates at different time-points (subjected to the velocity field)
   ptrEstI1 = (*m_ptrI)[ m_uiTimeIndexOfTimePoint1 ];
@@ -269,7 +247,7 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetImage( VectorIm
 {
   this->GetMap( m_ptrMapTmp, dTime );
   // now compute the image by interpolation
-  LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapTmp, ptrI0, ptrIm );
+  LDDMMUtils< T, TState::ImageDimension >::applyMap( m_ptrMapTmp, ptrI0, ptrIm );
 }
 
 template < class TState >
@@ -293,8 +271,8 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetMomentum( Vecto
 
   this->GetMap( m_ptrMapTmp, dTime );
   // now compute the image by interpolation
-  LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapTmp, (*m_ptrLambda)[0], ptrMomentum );
-  LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( m_ptrMapTmp, m_ptrDeterminantOfJacobian );
+  LDDMMUtils< T, TState::ImageDimension >::applyMap( m_ptrMapTmp, (*m_ptrLambda)[0], ptrMomentum );
+  LDDMMUtils< T, TState::ImageDimension >::computeDeterminantOfJacobian( m_ptrMapTmp, m_ptrDeterminantOfJacobian );
 
   ptrMomentum->MultiplyElementwise( m_ptrDeterminantOfJacobian );
 }
@@ -310,7 +288,7 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetImageT( VectorI
 {
   this->GetMap( m_ptrMapTmp, dTime );
   // now compute the image by interpolation
-  LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapTmp, ptrT0, ptrIm );
+  LDDMMUtils< T, TState::ImageDimension >::applyMap( m_ptrMapTmp, ptrT0, ptrIm );
 }
 
 template < class TState >
@@ -386,7 +364,8 @@ unsigned int CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::DetermineT
 template < class TState >
 void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeImagesForward()
 {
-  LDDMMUtils< T, TState::VImageDimension >::identityMap( m_ptrMapIn );
+  typedef LDDMMUtils< T, TState::ImageDimension > LDDMMUtilsType;
+  LDDMMUtilsType::identityMap( m_ptrMapIn );
   // FIXME: This is just to make things easier and to support estimating the initial image (todo) later
   (*m_ptrI)[ 0 ]->Copy( ptrI0 );
   (*m_ptrT)[ 0 ]->Copy( ptrT0 );
@@ -401,10 +380,10 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeImagesForwa
     m_ptrMapIn->Copy( m_ptrMapOut );
 
     // now compute the image by interpolation
-    LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapIn, ptrI0, (*m_ptrI)[ iI+1 ] );
+    LDDMMUtilsType::applyMap( m_ptrMapIn, ptrI0, (*m_ptrI)[ iI+1 ] );
 
     // now compute the mask image by interpolation
-    LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapIn, ptrT0, (*m_ptrT)[ iI+1 ] );
+    LDDMMUtilsType::applyMap( m_ptrMapIn, ptrT0, (*m_ptrT)[ iI+1 ] );
     }
 
 
@@ -418,7 +397,7 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeImagesForwa
     m_ptrMapIn->Copy( m_ptrMapOut );
 
     // now compute the mask image by interpolation
-    LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapIn, ptrT0, (*m_ptrT)[ iI+1 ] );
+    LDDMMUtilsType::applyMap( m_ptrMapIn, ptrT0, (*m_ptrT)[ iI+1 ] );
     }
 
 }
@@ -435,8 +414,9 @@ template < class TState >
 void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeCompositedImage( const VectorImageType* ptrImIn, const VectorImageType* ptrInvMask1, const VectorImageType* ptrInvMask2, VectorImageType* ptrImComp )
 {
   ptrImComp->Copy( ptrImIn );
-  VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrInvMask1, 0, ptrImComp );
-  VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrInvMask2, 0, ptrImComp );
+  typedef VectorImageUtils< T, TState::ImageDimension > VectorImageUtilsType;
+  VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( ptrInvMask1, 0, ptrImComp );
+  VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( ptrInvMask2, 0, ptrImComp );
 }
 
 template < class TState >
@@ -462,7 +442,8 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeAdjointBack
   // now propagate it backward until timepoint 1
 
   // reset the map to flow backwards
-  LDDMMUtils< T, TState::VImageDimension >::identityMap( m_ptrMapIn );
+  typedef LDDMMUtils< T, TState::ImageDimension > LDDMMUtilsType;
+  LDDMMUtilsType::identityMap( m_ptrMapIn );
 
   for ( int iI = (int)this->m_vecTimeDiscretization.size()-1-1; iI >= (int)m_uiTimeIndexOfTimePoint1; --iI )
     {
@@ -474,10 +455,10 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeAdjointBack
     this->m_ptrEvolver->SolveForward( m_ptrTmpVelocityField, m_ptrMapIn, m_ptrMapOut, m_ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
 
     // now compute the adjoint by interpolation and exploiting the determinant of the Jacobian
-    LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapOut, m_ptrCurrentLambdaTEnd, (*m_ptrLambdaT)[ iI ] );
+    LDDMMUtilsType::applyMap( m_ptrMapOut, m_ptrCurrentLambdaTEnd, (*m_ptrLambdaT)[ iI ] );
 
     // compute det jacobian
-    LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( m_ptrMapOut, m_ptrDeterminantOfJacobian );
+    LDDMMUtilsType::computeDeterminantOfJacobian( m_ptrMapOut, m_ptrDeterminantOfJacobian );
     // multiply by the determinant of the Jacobian
     (*m_ptrLambdaT)[iI]->MultiplyElementwise( m_ptrDeterminantOfJacobian );
 
@@ -501,9 +482,10 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeAdjointBack
   m_ptrCurrentAdjointDifferenceT->MultiplyByConstant( 1.0/m_Sigma1Sqr );
   
   // now multiply it with (T2-1)^2 and (IT(1)-1) to get the final desired result for \lambda(1)
-  VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrT2M1, 0, m_ptrCurrentAdjointDifferenceT );
-  VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrT2M1, 0, m_ptrCurrentAdjointDifferenceT );
-  VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrEstT1M1, 0, m_ptrCurrentAdjointDifferenceT );
+  typedef VectorImageUtils< T, TState::ImageDimension > VectorImageUtilsType;
+  VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( m_ptrT2M1, 0, m_ptrCurrentAdjointDifferenceT );
+  VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( m_ptrT2M1, 0, m_ptrCurrentAdjointDifferenceT );
+  VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( m_ptrEstT1M1, 0, m_ptrCurrentAdjointDifferenceT );
 
   // add this to the currentLambdaTEnd to get the lambdaT with jump
   m_ptrCurrentLambdaTEnd->AddCellwise( m_ptrCurrentAdjointDifferenceT );
@@ -514,16 +496,16 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeAdjointBack
   m_ptrCurrentAdjointDifference->MultiplyByConstant( 1.0/m_Sigma1Sqr );
 
   // now multiply it with (T2-1)^2 and (IT(1)-1)^2 to get the final desired result for \lambda(1)
-  VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrT2M1, 0, m_ptrCurrentAdjointDifference );
-  VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrT2M1, 0, m_ptrCurrentAdjointDifference );
-  VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrEstT1M1, 0, m_ptrCurrentAdjointDifference );
-  VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrEstT1M1, 0, m_ptrCurrentAdjointDifference );
+  VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( m_ptrT2M1, 0, m_ptrCurrentAdjointDifference );
+  VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( m_ptrT2M1, 0, m_ptrCurrentAdjointDifference );
+  VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( m_ptrEstT1M1, 0, m_ptrCurrentAdjointDifference );
+  VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( m_ptrEstT1M1, 0, m_ptrCurrentAdjointDifference );
 
   // copy this to curentLambdaEnd to get the initial condition 
   m_ptrCurrentLambdaEnd->AddCellwise( m_ptrCurrentAdjointDifference );
 
   // reset the map to flow backwards, because we updated the current adjoint
-  LDDMMUtils< T, TState::VImageDimension >::identityMap( m_ptrMapIn );
+  LDDMMUtilsType::identityMap( m_ptrMapIn );
 
   // now propagate from timepoint 1 back to timepoint 0 for both adjoints (for image and the mask)
   for ( int iI = (int)m_uiTimeIndexOfTimePoint1-1; iI >=0; --iI )
@@ -536,11 +518,11 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeAdjointBack
     this->m_ptrEvolver->SolveForward( m_ptrTmpVelocityField, m_ptrMapIn, m_ptrMapOut, m_ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
     
     // now compute the adjoints by interpolation and exploiting the determinant of the Jacobian
-    LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapOut, m_ptrCurrentLambdaTEnd, (*m_ptrLambdaT)[ iI ] );
-    LDDMMUtils< T, TState::VImageDimension >::applyMap( m_ptrMapOut, m_ptrCurrentLambdaEnd, (*m_ptrLambda)[ iI ] );
+    LDDMMUtilsType::applyMap( m_ptrMapOut, m_ptrCurrentLambdaTEnd, (*m_ptrLambdaT)[ iI ] );
+    LDDMMUtilsType::applyMap( m_ptrMapOut, m_ptrCurrentLambdaEnd, (*m_ptrLambda)[ iI ] );
     
     // compute det jacobian
-    LDDMMUtils< T, TState::VImageDimension >::computeDeterminantOfJacobian( m_ptrMapOut, m_ptrDeterminantOfJacobian );
+    LDDMMUtilsType::computeDeterminantOfJacobian( m_ptrMapOut, m_ptrDeterminantOfJacobian );
     // multiply by the determinant of the Jacobian
     // TODO: Change the cellwise multiplication to support vector-valued adjoints
     (*m_ptrLambdaT)[iI]->MultiplyElementwise( m_ptrDeterminantOfJacobian );
@@ -571,6 +553,8 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeGradient()
 
   unsigned int dim = ptrI0->GetDimension();
 
+  typedef VectorFieldUtils< T, TState::ImageDimension > VectorFieldUtilsType;
+  typedef VectorImageUtils< T, TState::ImageDimension > VectorImageUtilsType;
   // first the inverval from [0,1)
   for ( unsigned int iI = 0; iI < m_uiTimeIndexOfTimePoint1; ++iI )
     {
@@ -582,14 +566,14 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeGradient()
     // first add the components from the image
     for ( unsigned int iD = 0; iD<dim; ++iD )
       {
-      VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( (*m_ptrI)[ iI ], iD, m_ptrTmpGradient );
-      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( (*m_ptrLambda)[ iI ], iD, m_ptrTmpGradient );
+      VectorFieldUtilsType::computeCentralGradient( (*m_ptrI)[ iI ], iD, m_ptrTmpGradient );
+      VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( (*m_ptrLambda)[ iI ], iD, m_ptrTmpGradient );
       ptrCurrentGradient->AddCellwise( m_ptrTmpGradient );
       }
 
     // now the one from the mask
-    VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( (*m_ptrT)[ iI ], 0, m_ptrTmpGradient );
-    VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( (*m_ptrLambdaT)[ iI ], 0, m_ptrTmpGradient );
+    VectorFieldUtilsType::computeCentralGradient( (*m_ptrT)[ iI ], 0, m_ptrTmpGradient );
+    VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( (*m_ptrLambdaT)[ iI ], 0, m_ptrTmpGradient );
     ptrCurrentGradient->AddCellwise( m_ptrTmpGradient );
 
     this->m_ptrKernel->ConvolveWithKernel( ptrCurrentGradient );
@@ -605,14 +589,13 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeGradient()
   // now the inverval from [1,2]
   for ( unsigned int iI = m_uiTimeIndexOfTimePoint1; iI < this->m_vecTimeDiscretization.size()-1; ++iI )
     {
-
     // initialize to 0
     VectorFieldType* ptrCurrentGradient = this->m_ptrGradient->GetVectorFieldPointer( iI );
     ptrCurrentGradient->SetToConstant( 0 );
 
     // influence of the mask
-    VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( (*m_ptrT)[ iI ], 0, m_ptrTmpGradient );
-    VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( (*m_ptrLambdaT)[ iI ], 0, m_ptrTmpGradient );
+    VectorFieldUtilsType::computeCentralGradient( (*m_ptrT)[ iI ], 0, m_ptrTmpGradient );
+    VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( (*m_ptrLambdaT)[ iI ], 0, m_ptrTmpGradient );
     ptrCurrentGradient->AddCellwise( m_ptrTmpGradient );
 
     this->m_ptrMaskKernel->ConvolveWithKernel( ptrCurrentGradient );
@@ -622,9 +605,7 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeGradient()
     m_ptrTmpGradient->Copy( ptrCurrentVelocity );
     m_ptrTmpGradient->MultiplyByConstant( 2*m_W );
     ptrCurrentGradient->AddCellwise( m_ptrTmpGradient );
-
     }
-
 }
 
 
@@ -637,6 +618,8 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeInitialUnsm
   // shorthand for convenience
   VectorFieldType* ptrGradient = ptrInitialUnsmoothedVelocityGradient;
 
+  typedef VectorFieldUtils< T, TState::ImageDimension > VectorFieldUtilsType;
+  typedef VectorImageUtils< T, TState::ImageDimension > VectorImageUtilsType;
   if ( uiKernelNumber == 0 )
     {
       /** This is for the image-kernel.
@@ -668,28 +651,28 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeInitialUnsm
       ComputeInvertedMask( ptrT0, ptrTmp );
 
       // multiply with (T1-1)^2
-      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrTmp, 0, m_ptrCurrentAdjointDifference );
-      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrTmp, 0, m_ptrCurrentAdjointDifference );
+      VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( ptrTmp, 0, m_ptrCurrentAdjointDifference );
+      VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( ptrTmp, 0, m_ptrCurrentAdjointDifference );
 
       // compute the mask contribution: (T2-1)
       ComputeInvertedMask( ptrT2, ptrTmp );
 
       // multiply with (T2-1)^2
-      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrTmp, 0, m_ptrCurrentAdjointDifference );
-      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrTmp, 0, m_ptrCurrentAdjointDifference );
+      VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( ptrTmp, 0, m_ptrCurrentAdjointDifference );
+      VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( ptrTmp, 0, m_ptrCurrentAdjointDifference );
 
       // now do the multiplication dimension by dimension
       for ( unsigned int iD = 0; iD<dim; ++iD )
         {
-        VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( ptrI0, iD, m_ptrTmpGradient );
-        VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrCurrentAdjointDifference, iD, m_ptrTmpGradient );
+        VectorFieldUtilsType::computeCentralGradient( ptrI0, iD, m_ptrTmpGradient );
+        VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( m_ptrCurrentAdjointDifference, iD, m_ptrTmpGradient );
         ptrGradient->AddCellwise( m_ptrTmpGradient );
         }
 
       // now add the mask component, i.e., [2/\sigma1^2(I_0-I_1)^2(1-T_2)^2(1-T_1)-2/\sigma_2^2(T_1-T_2)]\nabla T_1
       VectorFieldType* m_ptrTmpGradient2 = m_ptrTmpVelocityField; // convenience mapping
 
-      VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( ptrT0, 0, m_ptrTmpGradient );
+      VectorFieldUtilsType::computeCentralGradient( ptrT0, 0, m_ptrTmpGradient );
       m_ptrTmpGradient2->Copy( m_ptrTmpGradient );
 
       // now compute the final condition for \lambda
@@ -697,7 +680,7 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeInitialUnsm
       this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifferenceT, ptrT0, ptrT2 );
       m_ptrCurrentAdjointDifferenceT->MultiplyByConstant( 1.0/m_Sigma2Sqr );
 
-      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrCurrentAdjointDifferenceT, 0, m_ptrTmpGradient2 );
+      VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( m_ptrCurrentAdjointDifferenceT, 0, m_ptrTmpGradient2 );
 
       ptrGradient->AddCellwise( m_ptrTmpGradient2 );
 
@@ -711,11 +694,11 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeInitialUnsm
       m_ptrCurrentAdjointDifferenceT->MultiplyByConstant( 1.0/m_Sigma1Sqr );
 
       // now multiply it with (T2-1)^2 and (IT(1)-1) to get the final desired result for \lambda(1)
-      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrT2M1, 0, m_ptrCurrentAdjointDifferenceT );
-      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrT2M1, 0, m_ptrCurrentAdjointDifferenceT );
-      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrEstT1M1, 0, m_ptrCurrentAdjointDifferenceT );
+      VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( m_ptrT2M1, 0, m_ptrCurrentAdjointDifferenceT );
+      VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( m_ptrT2M1, 0, m_ptrCurrentAdjointDifferenceT );
+      VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( m_ptrEstT1M1, 0, m_ptrCurrentAdjointDifferenceT );
 
-      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrCurrentAdjointDifferenceT, 0, m_ptrTmpGradient );
+      VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( m_ptrCurrentAdjointDifferenceT, 0, m_ptrTmpGradient );
 
       ptrGradient->AddCellwise( m_ptrTmpGradient );
 
@@ -729,14 +712,14 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeInitialUnsm
       \f]
       */
       // influence of the mask
-      VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( ptrT0, 0, ptrGradient );
+      VectorFieldUtilsType::computeCentralGradient( ptrT0, 0, ptrGradient );
 
       // now compute the final condition for \lambda
       // \lambda(1) = -2/sigma2^2*(T1-T2)
       this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifferenceT, ptrT0, ptrT2 );
       m_ptrCurrentAdjointDifferenceT->MultiplyByConstant( 1.0/m_Sigma2Sqr );
 
-      VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( m_ptrCurrentAdjointDifferenceT, 0, ptrGradient );
+      VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( m_ptrCurrentAdjointDifferenceT, 0, ptrGradient );
     }
   else
     {
@@ -836,15 +819,16 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::OutputStateInforma
 {
   ComputeImagesForward();
   std::string sGeometrRes = "geometRes-";
-  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrEstT1, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-Est-T1.nrrd" ) );
-  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrEstT2, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-Est-T2.nrrd" ) );
-  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrEstI1, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-Est-I1.nrrd" ) );
+  typedef VectorImageUtils< T, TState::ImageDimension > VectorImageUtilsType;
+  VectorImageUtilsType::writeFileITK( ptrEstT1, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-Est-T1.nrrd" ) );
+  VectorImageUtilsType::writeFileITK( ptrEstT2, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-Est-T2.nrrd" ) );
+  VectorImageUtilsType::writeFileITK( ptrEstI1, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-Est-I1.nrrd" ) );
 
   // blurred images and masks
-  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrI0, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-I0-saved-orig.nrrd" ) );
-  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrI1, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-I1-saved-orig.nrrd" ) );
-  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrT0, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-T0-saved-orig.nrrd" ) );
-  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( ptrT2, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-T2-saved-orig.nrrd" ) );
+  VectorImageUtilsType::writeFileITK( ptrI0, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-I0-saved-orig.nrrd" ) );
+  VectorImageUtilsType::writeFileITK( ptrI1, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-I1-saved-orig.nrrd" ) );
+  VectorImageUtilsType::writeFileITK( ptrT0, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-T0-saved-orig.nrrd" ) );
+  VectorImageUtilsType::writeFileITK( ptrT2, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-T2-saved-orig.nrrd" ) );
 
   // compute the mask contributions: (T2-1) and (IT(1)-1)
   ComputeInvertedMask( ptrT2, m_ptrT2M1 );
@@ -854,11 +838,8 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::OutputStateInforma
   ComputeCompositedImage( ptrI1, m_ptrEstT1M1, m_ptrT2M1, m_ptrI1Comp );
   ComputeCompositedImage( ptrEstI1, m_ptrEstT1M1, m_ptrT2M1, m_ptrEstI1Comp );
 
-  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( m_ptrI1Comp, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-I1-comp.nrrd" ) );
-  VectorImageUtils< T, TState::VImageDimension >::writeFileITK( m_ptrEstI1Comp, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-Est-I1-comp.nrrd" ) );
-
-
-
+  VectorImageUtilsType::writeFileITK( m_ptrI1Comp, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-I1-comp.nrrd" ) );
+  VectorImageUtilsType::writeFileITK( m_ptrEstI1Comp, outputPrefix + CreateNumberedFileName( sGeometrRes, uiIter, "-Est-I1-comp.nrrd" ) );
 }
 
 #endif

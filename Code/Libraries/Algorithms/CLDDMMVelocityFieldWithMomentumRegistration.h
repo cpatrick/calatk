@@ -47,7 +47,7 @@ public:
   typedef itk::SmartPointer< const Self >              ConstPointer;
 
   /* some useful typedefs */
-  typedef typename TState::TFloat T;
+  typedef typename TState::FloatType T;
 
   typedef typename Superclass::EvolverType           EvolverType;
   typedef typename Superclass::KernelType            KernelType;

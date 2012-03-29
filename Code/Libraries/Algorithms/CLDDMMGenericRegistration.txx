@@ -75,7 +75,7 @@ void CLDDMMGenericRegistration< TState >::SetDefaultObjectiveFunctionPointer()
   typedef CVelocityFieldObjectiveFunctionWithMomentum< TState > LDDMMVelocityFieldObjectiveFunctionWithMomentumType;
   LDDMMVelocityFieldObjectiveFunctionWithMomentumType* plddmm = NULL;
 
-  plddmm = dynamic_cast< LDDMMVelocityFieldObjectiveFunctionWithMomentumType * >( CObjectiveFunctionFactory< typename TState::TFloat, TState::VImageDimension >::CreateNewObjectiveFunction( m_ObjectiveFunction ) );
+  plddmm = dynamic_cast< LDDMMVelocityFieldObjectiveFunctionWithMomentumType * >( CObjectiveFunctionFactory< typename TState::FloatType, TState::ImageDimension >::CreateNewObjectiveFunction( m_ObjectiveFunction ) );
 
   if ( plddmm == NULL )
   {

@@ -71,7 +71,7 @@ void CAlgorithm< TState >::Solve()
     return;
   }
 
-  typedef CImageManagerMultiScale< T, TState::VImageDimension > ImageManagerMultiScaleType;
+  typedef CImageManagerMultiScale< T, TState::ImageDimension > ImageManagerMultiScaleType;
 
   // fill in multi-scale information if we have it
   ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( this->m_ptrImageManager.GetPointer() );

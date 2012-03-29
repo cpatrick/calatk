@@ -37,7 +37,7 @@ public:
   typedef itk::SmartPointer< Self >       Pointer;
   typedef itk::SmartPointer< const Self > ConstPointer;
 
-  typedef typename TState::TFloat                    T;
+  typedef typename TState::FloatType                 T;
   typedef typename Superclass::ObjectiveFunctionType ObjectiveFunctionType;
   typedef typename Superclass::CEnergyValues         CEnergyValues;
 

@@ -42,7 +42,7 @@ public:
   typedef itk::SmartPointer< Self >       Pointer;
   typedef itk::SmartPointer< const Self > ConstPointer;
 
-  typedef typename TState::TFloat T;
+  typedef typename TState::FloatType T;
 
   typedef CObjectiveFunction< TState > ObjectiveFunctionType;
 

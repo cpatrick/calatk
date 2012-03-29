@@ -20,10 +20,8 @@
 #ifndef C_STATE_H
 #define C_STATE_H
 
-
 #include "CBase.h"
 #include "itkSmartPointer.h"
-
 
 namespace CALATK
 {
@@ -34,15 +32,14 @@ namespace CALATK
  * Base class for a state. So far does not do much other than declaring certain operators private
  * May want to add more common functionality later.
  */
-template <class T, unsigned int DIM, class TResamplerType >
+template <class TFloat, unsigned int VImageDimension, class TResampler >
 class CState: public CBase
 {
 public:
-
   /* Useful typedefs and constants */
-  typedef T                 TFloat;
-  typedef TResamplerType    TResampler;
-  static const unsigned int VImageDimension = DIM;
+  typedef TFloat            FloatType;
+  typedef TResampler        ResamplerType;
+  static const unsigned int ImageDimension = VImageDimension;
 
   /** Standard typedefs. */
   typedef CState                          Self;
@@ -64,24 +61,25 @@ public:
     return 0;
   }
 
-  virtual T* GetPointerToStateVector()
+  virtual TFloat* GetPointerToStateVector()
   {
     return NULL;
   };
 
-  virtual T* GetPointerToStateVectorElementsToEstimate()
+  virtual TFloat* GetPointerToStateVectorElementsToEstimate()
   {
     return NULL;
   };
+
+protected:
+  virtual TFloat SquaredNorm() = 0;
 
 private:
   // copy constructor private
   CState( const CState & c ) {}
   
-  virtual T SquaredNorm() = 0;
 };
 
 } // end namespace
-
 
 #endif

@@ -39,7 +39,7 @@ public:
   typedef itk::SmartPointer< const Self >                               ConstPointer;
 
   /* some useful typedefs */
-  typedef typename TState::TFloat T;
+  typedef typename TState::FloatType T;
 
   typedef typename Superclass::CEnergyValues CEnergyValues;
 
@@ -69,7 +69,6 @@ public:
 protected:
 
   /** Some useful protected typedefs */
-
   typedef typename Superclass::STimePoint                            STimePoint;
   typedef typename Superclass::VectorFieldPointerType                VectorFieldPointerType;
   typedef typename Superclass::VectorImagePointerType                VectorImagePointerType;
@@ -77,7 +76,7 @@ protected:
   typedef typename Superclass::VectorPointerToVectorImagePointerType VectorPointerToVectorImagePointerType;
 
   typedef typename Superclass::ImageManagerType       ImageManagerType;
-  typedef typename Superclass::ImageInformation      ImageInformation;
+  typedef typename Superclass::ImageInformation       ImageInformation;
   typedef typename Superclass::SubjectInformationType SubjectInformationType;
 
   void ComputeImagesForward();

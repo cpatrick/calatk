@@ -57,7 +57,7 @@ void CLDDMMGeometricMetamorphosisRegistration< TState >::SetMaskKernelPointer( K
 }
 
 template < class TState >
-CKernel< typename TState::TFloat, TState::VImageDimension >*
+typename CLDDMMGeometricMetamorphosisRegistration< TState >::KernelType *
 CLDDMMGeometricMetamorphosisRegistration< TState >::GetMaskKernelPointer()
 {
   if ( m_ptrMaskKernel.GetPointer() == NULL )
@@ -70,7 +70,7 @@ CLDDMMGeometricMetamorphosisRegistration< TState >::GetMaskKernelPointer()
 template < class TState >
 void CLDDMMGeometricMetamorphosisRegistration< TState >::SetDefaultMaskKernelPointer()
 {
-  this->m_ptrMaskKernel = CKernelFactory< T, TState::VImageDimension >::CreateNewKernel( m_MaskKernel );
+  this->m_ptrMaskKernel = CKernelFactory< T, TState::ImageDimension >::CreateNewKernel( m_MaskKernel );
 }
 
 template < class TState >

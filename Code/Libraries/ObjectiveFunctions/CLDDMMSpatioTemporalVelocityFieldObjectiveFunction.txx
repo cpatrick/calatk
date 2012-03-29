@@ -74,7 +74,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateTimeDis
   std::vector< STimePoint > vecTimePointData;
   this->DetermineTimePointData( vecTimePointData );
 
-  CALATK::LDDMMUtils< T, TState::VImageDimension >::CreateTimeDiscretization( vecTimePointData, m_vecTimeDiscretization, m_vecTimeIncrements, m_NumberOfDiscretizationVolumesPerUnitTime );
+  CALATK::LDDMMUtils< T, TState::ImageDimension >::CreateTimeDiscretization( vecTimePointData, m_vecTimeDiscretization, m_vecTimeIncrements, m_NumberOfDiscretizationVolumesPerUnitTime );
 
   // the time discretization vector has all the N timepoint. There will be N-1 vector fields in between
 
@@ -205,7 +205,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::GetMap( Vecto
 template < class TState >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo )
 {
-  CALATK::LDDMMUtils< T, TState::VImageDimension >::GetMapFromToFromSpatioTemporalVelocityField(
+  CALATK::LDDMMUtils< T, TState::ImageDimension >::GetMapFromToFromSpatioTemporalVelocityField(
         ptrMap,
         dTimeFrom,
         dTimeTo,

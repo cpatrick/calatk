@@ -28,56 +28,60 @@ namespace CALATK
 /**
  * \class CStateScalarExample
  *
- * \todo describe me
+ * \brief A state representing a single scalar.
+ *
+ * \todo more detailed description
  */
-template <class T>
-class CStateScalarExample : public CState< T, 0, T >
+template < class TScalar >
+class CStateScalarExample : public CState< TScalar, 0, TScalar >
 {
 public:
   /* Standard class typedefs. */
   typedef CStateScalarExample              Self;
   typedef itk::SmartPointer< Self >        Pointer;
   typedef itk::SmartPointer< const Self >  ConstPointer;
-  typedef CState< T, 0, T >                Superclass;
+  typedef CState< TScalar, 0, TScalar >    Superclass;
 
   CStateScalarExample()
   {
-    val = 0;
+    this->m_Scalar = 0.0;
   }
 
   // copy constructor, obvious for scalar case, this is just to show the principle
-  CStateScalarExample( const CStateScalarExample& c ) : val( c.val ) { }
+  CStateScalarExample( const CStateScalarExample& c ) : m_Scalar( c.m_Scalar ) { }
 
-  // now declare obvious methdods, just to demonstrate how 
+  // now declare obvious methods, just to demonstrate how
   // it would be done for a more complicated data structure
 
   // to support assignment
-  CStateScalarExample & operator=(const CStateScalarExample &p )
+  CStateScalarExample & operator=( const CStateScalarExample &p )
   {
     if ( this==&p )
+      {
       return *this;
-    this->val = p.val;
+      }
+    this->m_Scalar = p.m_Scalar;
     return *this;
   }
 
   // to support +=
-  CStateScalarExample & operator+=(const CStateScalarExample &p ) 
+  CStateScalarExample & operator+=( const CStateScalarExample &p )
   {
-    this->val += p.val;
+    this->m_Scalar += p.m_Scalar;
     return *this;
   }
 
   // to support -=
-  CStateScalarExample & operator-=(const CStateScalarExample &p ) 
+  CStateScalarExample & operator-=( const CStateScalarExample &p )
   {
-    this->val -= p.val;
+    this->m_Scalar -= p.m_Scalar;
     return *this;
   }
 
   // to support *=
-  CStateScalarExample & operator*=(const T &p )
+  CStateScalarExample & operator*=( const TScalar &p )
   {
-    this->val *= p;
+    this->m_Scalar *= p;
     return *this;
   }
 
@@ -96,39 +100,37 @@ public:
   }
 
   // to support right sided multiplication with a scalar
-  CStateScalarExample operator*(const T &p ) const
+  CStateScalarExample operator*(const TScalar &p ) const
   {
     CStateScalarExample r = *this;
     return r *= p;
   }
 
-  inline void SetValue( T val )
+  inline void SetValue( TScalar val )
   {
-    this->val = val;
+    this->m_Scalar = val;
   }
 
-  inline T GetValue()
+  inline TScalar GetValue()
   {
-    return val;
+    return this->m_Scalar;
   }
 
-  inline T SquaredNorm()
+  inline TScalar SquaredNorm()
   {
-    return val*val;
+    return this->m_Scalar * this->m_Scalar;
   }
 
-  private:
-
-  T val;
-
+private:
+  TScalar m_Scalar;
 };
 
 // make sure we can output it
-template < class T >
-std::ostream &operator<<(std::ostream &stream, CStateScalarExample< T >& o)
+template < class TScalar >
+std::ostream &operator<<(std::ostream &stream, CStateScalarExample< TScalar >& o)
 {
   stream << o.GetValue();
-  return stream; 
+  return stream;
 }
 
 } // end namespace
