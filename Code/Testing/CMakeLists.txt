@@ -172,6 +172,9 @@ add_ctest_test(calatkRegularizationSpacingTest
   ${test_temp_dir}/calatkRegularizationSpacingTest_target_map.mha
   )
 
+add_test_executable(calatkCStateFactoryTest CALATK)
+add_ctest_test(calatkCStateFactoryTest)
+
 # LDDMM tests
 add_executable(testDriverAlgorithms testDriverAlgorithms.cxx ${testDriverAlgorithms_SRCS})
 target_link_libraries(testDriverAlgorithms CALATK ${ITK_LIBRARIES})

@@ -75,7 +75,7 @@ public:
   /*
    * Allow for upsampling of the state
    */
-  virtual Self* CreateUpsampledStateAndAllocateMemory( const VectorImageType* ptrGraftImage ) const;
+  virtual Superclass* CreateUpsampledStateAndAllocateMemory( const VectorImageType* graftImage ) const;
 
   // declare operators to be able to do computations with this state, which are needed in the numerical solvers
   /**

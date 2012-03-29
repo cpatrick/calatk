@@ -22,6 +22,8 @@
 
 #include "CKernelFactory.h"
 
+#include <algorithm>
+
 namespace CALATK
 {
 
@@ -71,27 +73,27 @@ template < class T, unsigned int VImageDimension >
 typename CKernelFactory< T, VImageDimension >::NumericKernelType
 CKernelFactory< T, VImageDimension >::GetKernelTypeFromString( const std::string & kernelName )
 {
-  std::string sKernelLowerCase = kernelName;
+  std::string kernelNameLowerCase = kernelName;
   // convert to all lower case
-  std::transform( sKernelLowerCase.begin(), sKernelLowerCase.end(), sKernelLowerCase.begin(), ::tolower );
+  std::transform( kernelNameLowerCase.begin(), kernelNameLowerCase.end(), kernelNameLowerCase.begin(), ::tolower );
 
-  if ( sKernelLowerCase == "helmholtzkernel" )
-  {
+  if ( kernelNameLowerCase == "helmholtzkernel" )
+    {
     return HelmholtzKernel;
-  }
-  else if ( sKernelLowerCase == "gaussiankernel" )
-  {
+    }
+  else if ( kernelNameLowerCase == "gaussiankernel" )
+    {
     return GaussianKernel;
-  }
-  else if ( sKernelLowerCase == "multigaussiankernel")
-  {
+    }
+  else if ( kernelNameLowerCase == "multigaussiankernel")
+    {
     return MultiGaussianKernel;
-  }
+    }
   else
-  {
+    {
     std::cout << "Unknown kernel type " << kernelName << "; defaulting to a multi-Gaussian kernel." << std::endl;
     return MultiGaussianKernel;
-  }
+    }
 }
 
 } // end namespace CALATK

@@ -52,6 +52,7 @@ set(CALATK_Interfaces_sources
 set(CALATK_States_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/States/CStateInitialImageMomentum.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/States/CStateSpatioTemporalVelocityField.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/States/CStateFactory.cxx
   )
 # Set up sources for Utilities
 set(CALATK_Utilities_sources

@@ -20,7 +20,7 @@
 #ifndef C_STATE_ATLAS_H
 #define C_STATE_ATLAS_H
 
-#include "CStateAtlas.h"
+#include "CStateImageDomain.h"
 
 namespace CALATK
 {
@@ -29,19 +29,25 @@ namespace CALATK
   * This state is simply a collection of individual states of the individual registrations
   * between an image and the atlas image. Templated over the state of these registrations.
   */
-template <class TState>
-class CStateAtlas : public CStateImageDomain< typename TState::TFloat, typename TState::VImageDimension >
+template < class TStateImageDomain >
+class CStateAtlas : public CStateImageDomain< typename TStateImageDomain::FloatType, TStateImageDomain::ImageDimension >
 {
 public:
   /* some useful typedefs */
-  typedef typename TState::FloatType       FloatType;
-  typedef typename TState                  TIndividualState;
+  typedef typename TStateImageDomain::FloatType  FloatType;
+  typedef TStateImageDomain                      IndividualStateType;
+
+  static const unsigned int ImageDimension = TStateImageDomain::ImageDimension;
 
   /* Standard class typedefs. */
-  typedef CStateAtlas                                  Self;
-  typedef itk::SmartPointer< Self >                    Pointer;
-  typedef itk::SmartPointer< const Self >              ConstPointer;
-  typedef CStateImageDomain< TState, VImageDimension > Superclass;
+  typedef CStateAtlas                                    Self;
+  typedef itk::SmartPointer< Self >                      Pointer;
+  typedef itk::SmartPointer< const Self >                ConstPointer;
+  typedef CStateImageDomain< FloatType, ImageDimension > Superclass;
+
+  typedef typename Superclass::VectorImageType                  VectorImageType;
+
+  typedef std::vector< typename IndividualStateType::Pointer >  IndividualStatesCollectionType;
 
   /**
    * Empty constructor
@@ -57,7 +63,7 @@ public:
     * copy constructor to initialize from a vector of pointers to states
     * assumes memory will be managed externally, i.e., only a shallow copy will be performed
     */
-  CStateAtlas( const std::vector< TState* > * pVec );
+  CStateAtlas( const IndividualStatesCollectionType & individualStates );
 
   /**
    * Destructor, this class will involve dynamic memory allocation, so needs a destructor
@@ -67,7 +73,7 @@ public:
   /**
    * Allow for upsampling of the state
    */
-  Superclass* CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const;
+  Superclass* CreateUpsampledStateAndAllocateMemory( const VectorImageType* graftImage ) const;
 
   /// declare operators to be able to do some computations with this state, which are needed in the numerical solvers
 
@@ -91,10 +97,10 @@ public:
   /**
    * @brief Returns the state pointer for one of the underlying objectuve functions of the atlas builder
    *
-   * @param uiState - nr of the state to be returned, if it does not exist will return NULL
-   * @return TState * - returned state pointer
+   * @param idx - index of the state to be returned, if it does not exist will return NULL
+   * @return individualState - returned state pointer
    */
-  TState* GetIndividualStatePointer( unsigned int uiState );
+  IndividualStateType* GetIndividualStatePointer( unsigned int idx );
 
   /**
    * @brief Computes the square norm of the state. To be used for example in a line search method
@@ -108,12 +114,10 @@ public:
 protected:
   void ClearDataStructure();
 
-  // holds the state vectors of the individual registration algorithms
-  typedef std::vector< typename TState::Pointer > VectorIndividualStatesType;
-  VectorIndividualStatesType  m_vecIndividualStates;
+  // holds the states of the individual registration algorithms
+  IndividualStatesCollectionType  m_IndividualStatesCollection;
 
 private:
-
 };
 
 } // end namespace

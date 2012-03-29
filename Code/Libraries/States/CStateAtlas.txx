@@ -25,24 +25,24 @@
 namespace CALATK
 {
 
-template <class TState>
-CStateAtlas< TState  >::CStateAtlas()
+template< class TStateImageDomain >
+CStateAtlas< TStateImageDomain >::CStateAtlas()
 {
 }
 
 
-template <class TState>
-CStateAtlas< TState  >::CStateAtlas( const CStateAtlas & c )
+template< class TStateImageDomain >
+CStateAtlas< TStateImageDomain >::CStateAtlas( const CStateAtlas & c )
 {
   if ( this != &c )
     {
-      assert ( this->m_vecIndividualStates.isempty() );
-      typename VectorIndividualStatesType::const_iterator iter;
-      for ( iter=c.m_vecIndividualStates.begin(); iter!=c.m_vecIndividualStates.end(); ++iter )
-        {
-          typename TState::Pointer pCopiedState = new TState( *iter );
-          this->m_vecIndividualStates.push_back( pCopiedState );
-        }
+    assert ( this->m_IndividualStatesCollection.isempty() );
+    typename IndividualStatesCollectionType::const_iterator iter;
+    for ( iter = c.m_IndividualStatesCollection.begin(); iter != c.m_IndividualStatesCollection.end(); ++iter )
+      {
+      typename TStateImageDomain::Pointer copiedState = new TStateImageDomain( *iter );
+      this->m_IndividualStatesCollection.push_back( copiedState );
+      }
     }
 }
 
@@ -50,69 +50,71 @@ CStateAtlas< TState  >::CStateAtlas( const CStateAtlas & c )
 //
 // copy constructor (from individual states which have been allocated externally)
 //
-template <class TState>
-CStateAtlas< TState >::CStateAtlas( const std::vector< TState* >* pVec )
+template< class TStateImageDomain >
+CStateAtlas< TStateImageDomain >::CStateAtlas( const IndividualStatesCollectionType & individualStatesCollection )
 {
-  typename VectorIndividualStatesType::const_iterator iter;
-  for ( iter = pVec->begion(); iter != pVec->end(); ++iter )
+  typename IndividualStatesCollectionType::const_iterator iter;
+  for ( iter = individualStatesCollection.begin(); iter != individualStatesCollection.end(); ++iter )
     {
-      m_vecIndividualStates.push_back( *iter );
+    this->m_IndividualStatesCollection.push_back( *iter );
     }
 }
 
 
-template <class TState>
-void CStateAtlas< TState >::ClearDataStructure()
+template< class TStateImageDomain >
+void CStateAtlas< TStateImageDomain >::ClearDataStructure()
 {
-  this->m_vecIndividualStates.clear();
+  this->m_IndividualStatesCollection.clear();
 }
 
 
-template <class TState>
-CStateAtlas< TState >::~CStateAtlas()
+template< class TStateImageDomain >
+CStateAtlas< TStateImageDomain >::~CStateAtlas()
 {
-  ClearDataStructure();
+  this->ClearDataStructure();
 }
 
 
-template <class TState>
-typename CStateAtlas< TState >::Superclass*
-CStateAtlas< TState >::CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const
+template< class TStateImageDomain >
+typename CStateAtlas< TStateImageDomain >::Superclass*
+CStateAtlas< TStateImageDomain >::CreateUpsampledStateAndAllocateMemory( const VectorImageType* graftImage ) const
 {
-    VectorIndividualStatesType* ptrUpsampledState = new VectorIndividualStatesType;
+  IndividualStatesCollectionType individualStatesCollection;
 
-    // upsample all the individual state components
-    typename VectorIndividualStatesType::iterator iter;
-    for ( iter = m_vecIndividualStates.begin(); iter != m_vecIndividualStates.end(); ++iter )
+  // upsample all the individual state components
+  typename IndividualStatesCollectionType::const_iterator iter;
+  for ( iter = m_IndividualStatesCollection.begin(); iter != m_IndividualStatesCollection.end(); ++iter )
     {
-      ptrUpsampledState->push_back( iter->CreateUpsampledStateAndAllocateMemory( pGraftImage ) );
+    typename IndividualStateType::Pointer individualState = dynamic_cast< IndividualStateType * >(
+      (*iter)->CreateUpsampledStateAndAllocateMemory( graftImage ) );
+    individualStatesCollection.push_back( individualState );
     }
 
-  return ptrUpsampledState;
+  Self * upsampledState = new Self( individualStatesCollection );
 
+  return upsampledState;
 }
 
 // Here come the algebraic operators and assignment
 
-template <class TState>
-CStateAtlas< TState > &
-CStateAtlas< TState >::operator=(const CStateAtlas & p )
+template <class TStateImageDomain>
+CStateAtlas< TStateImageDomain > &
+CStateAtlas< TStateImageDomain >::operator=(const CStateAtlas & p )
 {
   if ( this != &p )
     {
-
     // now do a deep copy
 
     // check if we already have the same number of elements. If so overwrite, otherwise recreate
-    if ( m_vecIndividualStates.size() == p.m_vecIndividualStates.size() )
+    if ( m_IndividualStatesCollection.size() == p.m_IndividualStatesCollection.size() )
       {
       // already memory of appropriate size allocated, so just copy
       // iterate and copy
 
-      typename VectorIndividualStatesType::const_iterator iterSource;
-      typename VectorIndividualStatesType::iterator iterTarget;
-      for ( iterSource = p.m_vecIndividualStates.begin(), iterTarget = m_vecIndividualStates.begin();
-            iterSource != p.m_vecIndividualStates.end(), iterTarget != m_vecIndividualStates.end();
+      typename IndividualStatesCollectionType::const_iterator iterSource;
+      typename IndividualStatesCollectionType::iterator iterTarget;
+      for ( iterSource = p.m_IndividualStatesCollection.begin(), iterTarget = m_IndividualStatesCollection.begin();
+            iterSource != p.m_IndividualStatesCollection.end();
             ++iterSource, ++iterTarget )
         {
         // copy the current state
@@ -125,11 +127,11 @@ CStateAtlas< TState >::operator=(const CStateAtlas & p )
       std::cerr << "WARNING: reallocating memory, should already have been assigned." << std::endl;
       ClearDataStructure();
 
-      typename VectorIndividualStatesType::const_iterator iter;
-      for ( iter=p.m_vecIndividualStates.begin(); iter!=p.m_vecIndividualStates.end(); ++iter )
+      typename IndividualStatesCollectionType::const_iterator iter;
+      for ( iter = p.m_IndividualStatesCollection.begin(); iter != p.m_IndividualStatesCollection.end(); ++iter )
         {
-          typename TState::Pointer pCopiedState = new TState( *iter );
-          this->m_vecIndividualStates.push_back( pCopiedState );
+        typename IndividualStateType::Pointer copiedState = new TStateImageDomain( *iter );
+        this->m_IndividualStatesCollection.push_back( copiedState );
         }
       }
     return *this;
@@ -140,19 +142,19 @@ CStateAtlas< TState >::operator=(const CStateAtlas & p )
     }
 }
 
-template <class TState>
-CStateAtlas< TState > &
-CStateAtlas< TState >::operator+=(const CStateAtlas & p )
+template <class TStateImageDomain>
+CStateAtlas< TStateImageDomain > &
+CStateAtlas< TStateImageDomain >::operator+=(const CStateAtlas & p )
 {
-  if ( m_vecIndividualStates.size() != p.m_vecIndividualStates.size() )
+  if ( m_IndividualStatesCollection.size() != p.m_IndividualStatesCollection.size() )
     {
     throw std::runtime_error( "Size mismatch of state vectors. ABORT." );
     }
 
-  typename VectorIndividualStatesType::const_iterator iterSource;
-  typename VectorIndividualStatesType::iterator iterTarget;
-  for ( iterSource = p.m_vecIndividualStates.begin(), iterTarget = m_vecIndividualStates.begin();
-        iterSource != p.m_vecIndividualStates.end(), iterTarget != m_vecIndividualStates.end();
+  typename IndividualStatesCollectionType::const_iterator iterSource;
+  typename IndividualStatesCollectionType::iterator iterTarget;
+  for ( iterSource = p.m_IndividualStatesCollection.begin(), iterTarget = m_IndividualStatesCollection.begin();
+        iterSource != p.m_IndividualStatesCollection.end();
         ++iterSource, ++iterTarget )
     {
     // add the source to the target
@@ -162,21 +164,20 @@ CStateAtlas< TState >::operator+=(const CStateAtlas & p )
   return *this;
 }
 
-template <class TState>
-CStateAtlas< TState > &
-CStateAtlas< TState >::operator-=(const CStateAtlas & p )
+template <class TStateImageDomain>
+CStateAtlas< TStateImageDomain > &
+CStateAtlas< TStateImageDomain >::operator-=(const CStateAtlas & p )
 {
 
-  if ( m_vecIndividualStates.size() != p.m_vecIndividualStates.size() )
+  if ( m_IndividualStatesCollection.size() != p.m_IndividualStatesCollection.size() )
     {
     throw std::runtime_error( "Size mismatch of vector of vector fields. ABORT." );
-    return;
     }
 
-  typename VectorIndividualStatesType::const_iterator iterSource;
-  typename VectorIndividualStatesType::iterator iterTarget;
-  for ( iterSource = p.m_vecIndividualStates.begin(), iterTarget = m_vecIndividualStates.begin();
-        iterSource != p.m_vecIndividualStates.end(), iterTarget != m_vecIndividualStates.end();
+  typename IndividualStatesCollectionType::const_iterator iterSource;
+  typename IndividualStatesCollectionType::iterator iterTarget;
+  for ( iterSource = p.m_IndividualStatesCollection.begin(), iterTarget = m_IndividualStatesCollection.begin();
+        iterSource != p.m_IndividualStatesCollection.end();
         ++iterSource, ++iterTarget )
     {
      // subtract the source from the target
@@ -186,40 +187,40 @@ CStateAtlas< TState >::operator-=(const CStateAtlas & p )
   return *this;
 }
 
-template <class TState>
-CStateAtlas< TState > &
-CStateAtlas< TState >::operator*=(const T & p )
+template <class TStateImageDomain>
+CStateAtlas< TStateImageDomain > &
+CStateAtlas< TStateImageDomain >::operator*=(const FloatType & p )
 {
 
-  typename VectorIndividualStatesType::iterator iterTarget;
-  for ( iterTarget = m_vecIndividualStates.begin(); iterTarget != m_vecIndividualStates.end(); ++iterTarget )
+  typename IndividualStatesCollectionType::iterator iterTarget;
+  for ( iterTarget = m_IndividualStatesCollection.begin(); iterTarget != m_IndividualStatesCollection.end(); ++iterTarget )
     {
     // multiply by the value
-    *(*iterTarget)*= p;
+    *(*iterTarget) *= p;
     }
 
   return *this;
 }
 
-template <class TState>
-CStateAtlas< TState >
-CStateAtlas< TState >::operator+(const CStateAtlas & p ) const
+template <class TStateImageDomain>
+CStateAtlas< TStateImageDomain >
+CStateAtlas< TStateImageDomain >::operator+(const CStateAtlas & p ) const
 {
   CStateAtlas r = *this;
   return r += p;
 }
 
-template <class TState >
-CStateAtlas< TState >
-CStateAtlas< TState >::operator-(const CStateAtlas & p ) const
+template <class TStateImageDomain >
+CStateAtlas< TStateImageDomain >
+CStateAtlas< TStateImageDomain >::operator-(const CStateAtlas & p ) const
 {
   CStateAtlas r = *this;
   return r -= p;
 }
 
-template <class TState >
-CStateAtlas< TState >
-CStateAtlas< TState >::operator*(const T & p ) const
+template <class TStateImageDomain >
+CStateAtlas< TStateImageDomain >
+CStateAtlas< TStateImageDomain >::operator*(const FloatType & p ) const
 {
   CStateAtlas r = *this;
   return r*= p;
@@ -228,36 +229,36 @@ CStateAtlas< TState >::operator*(const T & p ) const
 //
 // returns one of the individual states
 //
-template <class TState >
-TState* CStateAtlas< TState >::GetIndividualStatePointer( unsigned int uiState )
+template <class TStateImageDomain >
+TStateImageDomain* CStateAtlas< TStateImageDomain >::GetIndividualStatePointer( unsigned int idx )
 {
-  int iNrOfStates = m_vecIndividualStates.size();
-  if ( iNrOfStates==0 || iNrOfStates<=uiState )
+  const size_t numberOfStates = m_IndividualStatesCollection.size();
+  if ( numberOfStates == 0 || numberOfStates <= idx )
     {
-      return NULL;
+    return NULL;
     }
   else
     {
-      return m_vecIndividualStates[ uiState ];
+    return this->m_IndividualStatesCollection[ idx ];
     }
 }
 
 //
 // computes the squared norm of the state, by adding all the individual square norm components
 //
-template <class TState >
-FloatType CStateAtlas< TState >::SquaredNorm()
+template <class TStateImageDomain >
+typename CStateAtlas< TStateImageDomain >::FloatType
+CStateAtlas< TStateImageDomain >::SquaredNorm()
 {
-  FloatType dSquaredNorm = 0;
+  FloatType squaredNorm = 0.0;
 
-  typename VectorIndividualStatesType::iterator iter;
-  for ( iter = m_vecIndividualStates.begin(); iter != m_vecIndividualStates.end(); ++iter )
-  {
-    dSquaredNorm += (*iter)->SquaredNorm();
-  }
+  typename IndividualStatesCollectionType::iterator iter;
+  for ( iter = m_IndividualStatesCollection.begin(); iter != m_IndividualStatesCollection.end(); ++iter )
+    {
+    squaredNorm += (*iter)->SquaredNorm();
+    }
 
-  return dSquaredNorm;
-
+  return squaredNorm;
 }
 
 } // end namespace CALATK

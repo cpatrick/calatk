@@ -29,7 +29,7 @@ namespace CALATK
 
 template < class TState >
 class CLDDMMSpatioTemporalVelocityFieldObjectiveFunction
-    : public CVelocityFieldObjectiveFunctionWithMomentum<  TState >
+    : public CVelocityFieldObjectiveFunctionWithMomentum< TState >
 {
 public:
   /** Standard class typedefs. */

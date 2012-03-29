@@ -41,16 +41,13 @@ CStateSpatioTemporalVelocityField< T, VImageDimension >::CStateSpatioTemporalVel
 }
 
 
-//
-// constructor which takes a vector of vectorfields as input
-//
 template <class T, unsigned int VImageDimension >
-CStateSpatioTemporalVelocityField< T, VImageDimension >::CStateSpatioTemporalVelocityField( const VectorFieldTimeSeriesType * pVecVecField )
+CStateSpatioTemporalVelocityField< T, VImageDimension >::CStateSpatioTemporalVelocityField( const VectorFieldTimeSeriesType & vectorFieldTimeSeries )
 {
   typename VectorFieldTimeSeriesType::const_iterator iter;
-  for ( iter = pVecVecField->begin(); iter != pVecVecField->end(); ++iter )
+  for ( iter = vectorFieldTimeSeries.begin(); iter != vectorFieldTimeSeries.end(); ++iter )
     {
-    m_VectorFieldTimeSeries.push_back( *iter );
+    this->m_VectorFieldTimeSeries.push_back( *iter );
     }
 }
 
@@ -64,26 +61,26 @@ void CStateSpatioTemporalVelocityField< T, VImageDimension >::ClearDataStructure
 template <class T, unsigned int VImageDimension >
 void CStateSpatioTemporalVelocityField< T, VImageDimension >::CopyDataStructure( const VectorFieldTimeSeriesType * ptrSource )
 {
-    ClearDataStructure();
+  this->ClearDataStructure();
 
-    if ( ptrSource != NULL )
+  if ( ptrSource != NULL )
+    {
+    // iterate through it and create a new vector field here
+    typename VectorFieldTimeSeriesType::const_iterator iter;
+    for ( iter = ptrSource->begin(); iter != ptrSource->end(); ++iter )
       {
-      // iterate through it and create a new vector field here
-      typename VectorFieldTimeSeriesType::const_iterator iter;
-      for ( iter = ptrSource->begin(); iter != ptrSource->end(); ++iter )
-        {
-        // create a vector and initialize its content
-        typename VectorFieldType::Pointer ptrCurrentVectorField = new VectorFieldType( *iter );
-        m_VectorFieldTimeSeries.push_back( ptrCurrentVectorField );
-        }
+      // create a vector and initialize its content
+      typename VectorFieldType::Pointer ptrCurrentVectorField = new VectorFieldType( *iter );
+      this->m_VectorFieldTimeSeries.push_back( ptrCurrentVectorField );
       }
+    }
 }
 
 
 template <class T, unsigned int VImageDimension >
 CStateSpatioTemporalVelocityField< T, VImageDimension >::~CStateSpatioTemporalVelocityField()
 {
-  ClearDataStructure();
+  this->ClearDataStructure();
 }
 
 
@@ -92,17 +89,17 @@ typename CStateSpatioTemporalVelocityField< T, VImageDimension >::Superclass*
 CStateSpatioTemporalVelocityField< T, VImageDimension >::CreateUpsampledStateAndAllocateMemory( const VectorImageType* graftImage ) const
 {
   // create an upsampled version of the state with the dimensions of the graft image
-  VectorFieldTimeSeriesType* ptrVecUpsampledStateData = new VectorFieldTimeSeriesType;
+  VectorFieldTimeSeriesType upsampledVectorFieldTimeSeries;
 
   typename VectorFieldTimeSeriesType::const_iterator iter;
-  for ( iter=m_VectorFieldTimeSeries.begin(); iter!=m_VectorFieldTimeSeries.end(); ++iter )
+  for ( iter = m_VectorFieldTimeSeries.begin(); iter != m_VectorFieldTimeSeries.end(); ++iter )
     {
     typename VectorFieldType::Pointer ptrResampledVectorField = new VectorFieldType( graftImage );
     this->m_Resampler->Upsample( *iter, ptrResampledVectorField );
-    ptrVecUpsampledStateData->push_back( ptrResampledVectorField );
+    upsampledVectorFieldTimeSeries.push_back( ptrResampledVectorField );
     }
 
-  Self * upsampledState = new Self( ptrVecUpsampledStateData );
+  Self * upsampledState = new Self( upsampledVectorFieldTimeSeries );
 
   return upsampledState;
 

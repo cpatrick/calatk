@@ -20,8 +20,6 @@
 #ifndef C_KERNEL_FACTORY_H
 #define C_KERNEL_FACTORY_H
 
-#include "CJSONConfiguration.h"
-#include "CALATKCommon.h"
 #include "CKernel.h"
 #include "CProcessBase.h"
 
@@ -30,15 +28,15 @@
 #include "CMultiGaussianKernel.h"
 #include "CHelmholtzKernel.h"
 
-#include <algorithm>
-
 namespace CALATK
 {
-/**
-  * Factory class to dynamically create different kernels.
-  *
-  */
 
+/**
+ * \class CKernelFactory
+ *
+ * \brief Factory class to dynamically create different CKernel's.
+ *
+ */
 template < class TFloat, unsigned int VImageDimension=3 >
 class CKernelFactory : public CProcessBase
 {

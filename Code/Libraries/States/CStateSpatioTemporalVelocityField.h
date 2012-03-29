@@ -48,11 +48,10 @@ public:
   CStateSpatioTemporalVelocityField();
 
   /**
-   * Constructor which takes a pointer of a vector of vector fields as an input.
+   * Constructor which takes a VectorFieldTimeSeries as an input.
    * Does not copy the data, but just stores the pointers to it.
-   * Destructor will destroy the vector fields though.
    */
-  CStateSpatioTemporalVelocityField( const VectorFieldTimeSeriesType * pVecVecField );
+  CStateSpatioTemporalVelocityField( const VectorFieldTimeSeriesType & vectorFieldTimeSeries );
 
   /**
    * copy constructor, creation of the image for the first time, need to allocate memory
@@ -60,12 +59,12 @@ public:
   CStateSpatioTemporalVelocityField( const CStateSpatioTemporalVelocityField & c );
 
   /**
-   * Destructor, this class will involve dynamic memory allocation, so needs a destructor
+   * Destructor
    */
   ~CStateSpatioTemporalVelocityField();
 
   /*
-   * Allow for upsampling of the state
+   * Allow for upsampling of the state.
    */
   Superclass* CreateUpsampledStateAndAllocateMemory( const VectorImageType* graftImage ) const;
 

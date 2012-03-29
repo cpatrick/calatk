@@ -158,23 +158,21 @@ void CStateInitialImageMomentum<T, VImageDimension >::ClearDataStructure()
     }
 }
 
-//
-// Upsampling
-//
-template <class T, unsigned int VImageDimension >
-typename CStateInitialImageMomentum<T, VImageDimension >::Self*
-CStateInitialImageMomentum<T, VImageDimension >::CreateUpsampledStateAndAllocateMemory( const VectorImageType* ptrGraftImage ) const
-{
-  unsigned int uiLengthOfNewImage = ptrGraftImage->GetLength();
-  unsigned int uiLengthOfNewMomentum = ptrGraftImage->GetLength();
-  
-  long int liNewNumberOfStateVectorElements = uiLengthOfNewImage + uiLengthOfNewMomentum;
 
-  T* ptrNewRawData = new T[ liNewNumberOfStateVectorElements ];
+template <class T, unsigned int VImageDimension >
+typename CStateInitialImageMomentum<T, VImageDimension >::Superclass*
+CStateInitialImageMomentum<T, VImageDimension >::CreateUpsampledStateAndAllocateMemory( const VectorImageType* graftImage ) const
+{
+  const unsigned int lengthOfNewImage = graftImage->GetLength();
+  const unsigned int lengthOfNewMomentum = graftImage->GetLength();
+  
+  const long int newNumberOfStateVectorElements = lengthOfNewImage + lengthOfNewMomentum;
+
+  T* ptrNewRawData = new T[ newNumberOfStateVectorElements ];
 
   // create an upsampled version of the state with the dimensions of the graft image
-  typename VectorImageType::Pointer ptrInitialImage = new VectorImageType( ptrGraftImage, ptrNewRawData );
-  typename VectorImageType::Pointer ptrInitialMomentum = new VectorImageType( ptrGraftImage, ptrNewRawData + uiLengthOfNewImage );
+  typename VectorImageType::Pointer ptrInitialImage = new VectorImageType( graftImage, ptrNewRawData );
+  typename VectorImageType::Pointer ptrInitialMomentum = new VectorImageType( graftImage, ptrNewRawData + lengthOfNewImage );
   
   this->m_Resampler->Upsample( m_ptrInitialImage, ptrInitialImage );
   this->m_Resampler->Upsample( m_ptrInitialMomentum, ptrInitialMomentum );
