@@ -20,19 +20,19 @@
 #ifndef C_STATE_ATLAS_TXX
 #define C_STATE_ATLAS_TXX
 
-//
-// empty constructor
-//
+#include "CStateAtlas.h"
+
+namespace CALATK
+{
+
 template <class TState>
 CStateAtlas< TState  >::CStateAtlas()
 {
 }
 
-//
-// copy constructor
-//
+
 template <class TState>
-CStateAtlas< TState  >::CStateAtlas( const CStateAtlas & c ) 
+CStateAtlas< TState  >::CStateAtlas( const CStateAtlas & c )
 {
   if ( this != &c )
     {
@@ -46,11 +46,12 @@ CStateAtlas< TState  >::CStateAtlas( const CStateAtlas & c )
     }
 }
 
+
 //
 // copy constructor (from individual states which have been allocated externally)
 //
 template <class TState>
-CStateAtlas< TState  >::CStateAtlas( const std::vector< TState* >* pVec )
+CStateAtlas< TState >::CStateAtlas( const std::vector< TState* >* pVec )
 {
   typename VectorIndividualStatesType::const_iterator iter;
   for ( iter = pVec->begion(); iter != pVec->end(); ++iter )
@@ -60,29 +61,22 @@ CStateAtlas< TState  >::CStateAtlas( const std::vector< TState* >* pVec )
 }
 
 
-//
-// clear data structure
-//
 template <class TState>
 void CStateAtlas< TState >::ClearDataStructure()
 {
   this->m_vecIndividualStates.clear();
 }
 
-//
-// destructor
-//
+
 template <class TState>
 CStateAtlas< TState >::~CStateAtlas()
 {
   ClearDataStructure();
 }
 
-//
-// Upsampling
-//
+
 template <class TState>
-typename CStateAtlas< TState >::SuperclassTState* 
+typename CStateAtlas< TState >::Superclass*
 CStateAtlas< TState >::CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const
 {
     VectorIndividualStatesType* ptrUpsampledState = new VectorIndividualStatesType;
@@ -101,24 +95,24 @@ CStateAtlas< TState >::CreateUpsampledStateAndAllocateMemory( const VectorImageT
 // Here come the algebraic operators and assignment
 
 template <class TState>
-CStateAtlas< TState > & 
+CStateAtlas< TState > &
 CStateAtlas< TState >::operator=(const CStateAtlas & p )
 {
   if ( this != &p )
     {
-    
+
     // now do a deep copy
-    
+
     // check if we already have the same number of elements. If so overwrite, otherwise recreate
     if ( m_vecIndividualStates.size() == p.m_vecIndividualStates.size() )
       {
       // already memory of appropriate size allocated, so just copy
       // iterate and copy
-      
+
       typename VectorIndividualStatesType::const_iterator iterSource;
       typename VectorIndividualStatesType::iterator iterTarget;
-      for ( iterSource = p.m_vecIndividualStates.begin(), iterTarget = m_vecIndividualStates.begin(); 
-            iterSource != p.m_vecIndividualStates.end(), iterTarget != m_vecIndividualStates.end(); 
+      for ( iterSource = p.m_vecIndividualStates.begin(), iterTarget = m_vecIndividualStates.begin();
+            iterSource != p.m_vecIndividualStates.end(), iterTarget != m_vecIndividualStates.end();
             ++iterSource, ++iterTarget )
         {
         // copy the current state
@@ -147,7 +141,7 @@ CStateAtlas< TState >::operator=(const CStateAtlas & p )
 }
 
 template <class TState>
-CStateAtlas< TState > & 
+CStateAtlas< TState > &
 CStateAtlas< TState >::operator+=(const CStateAtlas & p )
 {
   if ( m_vecIndividualStates.size() != p.m_vecIndividualStates.size() )
@@ -157,8 +151,8 @@ CStateAtlas< TState >::operator+=(const CStateAtlas & p )
 
   typename VectorIndividualStatesType::const_iterator iterSource;
   typename VectorIndividualStatesType::iterator iterTarget;
-  for ( iterSource = p.m_vecIndividualStates.begin(), iterTarget = m_vecIndividualStates.begin(); 
-        iterSource != p.m_vecIndividualStates.end(), iterTarget != m_vecIndividualStates.end(); 
+  for ( iterSource = p.m_vecIndividualStates.begin(), iterTarget = m_vecIndividualStates.begin();
+        iterSource != p.m_vecIndividualStates.end(), iterTarget != m_vecIndividualStates.end();
         ++iterSource, ++iterTarget )
     {
     // add the source to the target
@@ -169,7 +163,7 @@ CStateAtlas< TState >::operator+=(const CStateAtlas & p )
 }
 
 template <class TState>
-CStateAtlas< TState > & 
+CStateAtlas< TState > &
 CStateAtlas< TState >::operator-=(const CStateAtlas & p )
 {
 
@@ -181,8 +175,8 @@ CStateAtlas< TState >::operator-=(const CStateAtlas & p )
 
   typename VectorIndividualStatesType::const_iterator iterSource;
   typename VectorIndividualStatesType::iterator iterTarget;
-  for ( iterSource = p.m_vecIndividualStates.begin(), iterTarget = m_vecIndividualStates.begin(); 
-        iterSource != p.m_vecIndividualStates.end(), iterTarget != m_vecIndividualStates.end(); 
+  for ( iterSource = p.m_vecIndividualStates.begin(), iterTarget = m_vecIndividualStates.begin();
+        iterSource != p.m_vecIndividualStates.end(), iterTarget != m_vecIndividualStates.end();
         ++iterSource, ++iterTarget )
     {
      // subtract the source from the target
@@ -193,7 +187,7 @@ CStateAtlas< TState >::operator-=(const CStateAtlas & p )
 }
 
 template <class TState>
-CStateAtlas< TState > & 
+CStateAtlas< TState > &
 CStateAtlas< TState >::operator*=(const T & p )
 {
 
@@ -224,7 +218,7 @@ CStateAtlas< TState >::operator-(const CStateAtlas & p ) const
 }
 
 template <class TState >
-CStateAtlas< TState > 
+CStateAtlas< TState >
 CStateAtlas< TState >::operator*(const T & p ) const
 {
   CStateAtlas r = *this;
@@ -252,9 +246,9 @@ TState* CStateAtlas< TState >::GetIndividualStatePointer( unsigned int uiState )
 // computes the squared norm of the state, by adding all the individual square norm components
 //
 template <class TState >
-T CStateAtlas< TState >::SquaredNorm()
+FloatType CStateAtlas< TState >::SquaredNorm()
 {
-  T dSquaredNorm = 0;
+  FloatType dSquaredNorm = 0;
 
   typename VectorIndividualStatesType::iterator iter;
   for ( iter = m_vecIndividualStates.begin(); iter != m_vecIndividualStates.end(); ++iter )
@@ -265,5 +259,7 @@ T CStateAtlas< TState >::SquaredNorm()
   return dSquaredNorm;
 
 }
+
+} // end namespace CALATK
 
 #endif

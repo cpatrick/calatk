@@ -20,8 +20,13 @@
 #ifndef C_STATE_INITIAL_IMAGE_MOMENTUM_TXX
 #define C_STATE_INITIAL_IMAGE_MOMENTUM_TXX
 
-template<class T, unsigned int VImageDimension, class TResampler>
-CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMomentum()
+#include "CStateInitialImageMomentum.h"
+
+namespace CALATK
+{
+
+template<class T, unsigned int VImageDimension >
+CStateInitialImageMomentum<T, VImageDimension >::CStateInitialImageMomentum()
   : m_ptrInitialImage( NULL ), 
     m_ptrInitialMomentum( NULL ),
     m_NumberOfStateVectorElements( 0 ),
@@ -32,8 +37,8 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMo
   m_EstimateInitialImage = DefaultEstimateInitialImage;
 }
 
-template<class T, unsigned int VImageDimension, class TResampler>
-CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMomentum( const CStateInitialImageMomentum & c)
+template<class T, unsigned int VImageDimension >
+CStateInitialImageMomentum<T, VImageDimension >::CStateInitialImageMomentum( const CStateInitialImageMomentum & c)
   : m_ptrInitialImage( NULL ), 
     m_ptrInitialMomentum( NULL ),
     m_NumberOfStateVectorElements( 0 ),
@@ -54,8 +59,8 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMo
 //
 // constructor which takes an image and a momentum (also an image) as input
 //
-template <class T, unsigned int VImageDimension, class TResampler>
-CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMomentum( T* ptrRawData, VectorImageType* ptrInitialImage, VectorImageType* ptrInitialMomentum )
+template <class T, unsigned int VImageDimension >
+CStateInitialImageMomentum<T, VImageDimension >::CStateInitialImageMomentum( T* ptrRawData, VectorImageType* ptrInitialImage, VectorImageType* ptrInitialMomentum )
   : m_ptrInitialImage( ptrInitialImage ), 
     m_ptrInitialMomentum( ptrInitialMomentum ),
     m_NumberOfStateVectorElements( 0 ),
@@ -78,8 +83,8 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMo
 //
 // constructor which takes an image and a momentum (also an image) as input
 //
-template <class T, unsigned int VImageDimension, class TResampler>
-CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMomentum( VectorImageType* ptrGraftImage )
+template <class T, unsigned int VImageDimension >
+CStateInitialImageMomentum<T, VImageDimension >::CStateInitialImageMomentum( VectorImageType* ptrGraftImage )
   : m_ptrInitialImage( NULL ), 
     m_ptrInitialMomentum( NULL ),
     m_NumberOfStateVectorElements( 0 ),
@@ -104,8 +109,8 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::CStateInitialImageMo
 
 }
 
-template <class T, unsigned int VImageDimension, class TResampler>
-void CStateInitialImageMomentum <T, VImageDimension, TResampler>::CopyDataStructure( const VectorImageType * ptrImage, const VectorImageType * ptrMomentum )
+template <class T, unsigned int VImageDimension >
+void CStateInitialImageMomentum <T, VImageDimension >::CopyDataStructure( const VectorImageType * ptrImage, const VectorImageType * ptrMomentum )
 {
     ClearDataStructure();
 
@@ -133,8 +138,8 @@ void CStateInitialImageMomentum <T, VImageDimension, TResampler>::CopyDataStruct
     }
 }
 
-template <class T, unsigned int VImageDimension, class TResampler>
-CStateInitialImageMomentum <T, VImageDimension, TResampler>::~CStateInitialImageMomentum()
+template <class T, unsigned int VImageDimension >
+CStateInitialImageMomentum <T, VImageDimension >::~CStateInitialImageMomentum()
 {
     ClearDataStructure();
 }
@@ -142,8 +147,8 @@ CStateInitialImageMomentum <T, VImageDimension, TResampler>::~CStateInitialImage
 //
 // clear data structure
 //
-template <class T, unsigned int VImageDimension, class TResampler>
-void CStateInitialImageMomentum<T, VImageDimension, TResampler>::ClearDataStructure()
+template <class T, unsigned int VImageDimension >
+void CStateInitialImageMomentum<T, VImageDimension >::ClearDataStructure()
 {
   if ( m_ptrRawData != NULL )
     {
@@ -156,9 +161,9 @@ void CStateInitialImageMomentum<T, VImageDimension, TResampler>::ClearDataStruct
 //
 // Upsampling
 //
-template <class T, unsigned int VImageDimension, class TResampler >
-typename CStateInitialImageMomentum<T, VImageDimension, TResampler>::TState*
-CStateInitialImageMomentum<T, VImageDimension, TResampler>::CreateUpsampledStateAndAllocateMemory( const VectorImageType* ptrGraftImage ) const
+template <class T, unsigned int VImageDimension >
+typename CStateInitialImageMomentum<T, VImageDimension >::Self*
+CStateInitialImageMomentum<T, VImageDimension >::CreateUpsampledStateAndAllocateMemory( const VectorImageType* ptrGraftImage ) const
 {
   unsigned int uiLengthOfNewImage = ptrGraftImage->GetLength();
   unsigned int uiLengthOfNewMomentum = ptrGraftImage->GetLength();
@@ -171,32 +176,26 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::CreateUpsampledState
   typename VectorImageType::Pointer ptrInitialImage = new VectorImageType( ptrGraftImage, ptrNewRawData );
   typename VectorImageType::Pointer ptrInitialMomentum = new VectorImageType( ptrGraftImage, ptrNewRawData + uiLengthOfNewImage );
   
-  typename TResampler::Pointer resampler = new TResampler;
+  this->m_Resampler->Upsample( m_ptrInitialImage, ptrInitialImage );
+  this->m_Resampler->Upsample( m_ptrInitialMomentum, ptrInitialMomentum );
   
-  resampler->Upsample( m_ptrInitialImage, ptrInitialImage );
-  resampler->Upsample( m_ptrInitialMomentum, ptrInitialMomentum );
-  
-  TState * upsampledState = new TState( ptrNewRawData, ptrInitialImage, ptrInitialMomentum );
+  Self * upsampledState = new Self( ptrNewRawData, ptrInitialImage, ptrInitialMomentum );
   
   return upsampledState;
 }
 
-//
-// get the pointer to Initial Image
-//
-template <class T, unsigned int VImageDimension, class TResampler>
-typename CStateInitialImageMomentum< T, VImageDimension, TResampler>::VectorImageType *
-CStateInitialImageMomentum<T, VImageDimension, TResampler>::GetPointerToInitialImage() const
+
+template <class T, unsigned int VImageDimension >
+typename CStateInitialImageMomentum< T, VImageDimension >::VectorImageType *
+CStateInitialImageMomentum<T, VImageDimension >::GetPointerToInitialImage() const
 {
     return m_ptrInitialImage.GetPointer();
 }
 
-//
-// get the pointer to Initial Momentum
-//
-template <class T, unsigned int VImageDimension, class TResampler>
-typename CStateInitialImageMomentum< T, VImageDimension, TResampler>::VectorImageType *
-CStateInitialImageMomentum<T, VImageDimension, TResampler>::GetPointerToInitialMomentum() const
+
+template <class T, unsigned int VImageDimension >
+typename CStateInitialImageMomentum< T, VImageDimension >::VectorImageType *
+CStateInitialImageMomentum<T, VImageDimension >::GetPointerToInitialMomentum() const
 {
     return m_ptrInitialMomentum.GetPointer();
 }
@@ -205,9 +204,9 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::GetPointerToInitialM
 // the operators //
 ///////////////////
 
-template <class T, unsigned int VImageDimension, class TResampler>
-CStateInitialImageMomentum<T, VImageDimension, TResampler> &
-CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator=( const CStateInitialImageMomentum & p )
+template <class T, unsigned int VImageDimension >
+CStateInitialImageMomentum<T, VImageDimension > &
+CStateInitialImageMomentum<T, VImageDimension >::operator=( const CStateInitialImageMomentum & p )
 {
     if (this!=&p)
     {
@@ -225,12 +224,10 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator=( const CSt
     }
 }
 
-//
-// operator +=
-//
-template <class T, unsigned int VImageDimension, class TResampler>
-CStateInitialImageMomentum<T, VImageDimension, TResampler> &
-CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator+=( const CStateInitialImageMomentum & p )
+
+template <class T, unsigned int VImageDimension >
+CStateInitialImageMomentum<T, VImageDimension > &
+CStateInitialImageMomentum<T, VImageDimension >::operator+=( const CStateInitialImageMomentum & p )
 {
     VectorImageType * ptrImage = p.GetPointerToInitialImage();
     VectorImageType * ptrMomentum = p.GetPointerToInitialMomentum();
@@ -241,12 +238,10 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator+=( const CS
     return *this;
 }
 
-//
-// operator -=
-//
-template <class T, unsigned int VImageDimension, class TResampler>
-CStateInitialImageMomentum<T, VImageDimension, TResampler> &
-CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator-=( const CStateInitialImageMomentum & p )
+
+template <class T, unsigned int VImageDimension >
+CStateInitialImageMomentum<T, VImageDimension > &
+CStateInitialImageMomentum<T, VImageDimension >::operator-=( const CStateInitialImageMomentum & p )
 {
     VectorImageType * ptrImage = p.GetPointerToInitialImage();
     VectorImageType * ptrMomentum = p.GetPointerToInitialMomentum();
@@ -257,12 +252,10 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator-=( const CS
     return *this;
 }
 
-//
-// operator *=
-//
-template <class T, unsigned int VImageDimension, class TResampler>
-CStateInitialImageMomentum<T, VImageDimension, TResampler> &
-CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator*=( const T & p )
+
+template <class T, unsigned int VImageDimension >
+CStateInitialImageMomentum<T, VImageDimension > &
+CStateInitialImageMomentum<T, VImageDimension >::operator*=( const T & p )
 {
     m_ptrInitialImage->MultiplyByConstant( p );
     m_ptrInitialMomentum->MultiplyByConstant( p );
@@ -270,34 +263,28 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator*=( const T 
     return *this;
 }
 
-//
-// operator +
-//
-template <class T, unsigned int VImageDimension, class TResampler>
-CStateInitialImageMomentum<T, VImageDimension, TResampler>
-CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator+( const CStateInitialImageMomentum & p ) const
+
+template <class T, unsigned int VImageDimension >
+CStateInitialImageMomentum<T, VImageDimension >
+CStateInitialImageMomentum<T, VImageDimension >::operator+( const CStateInitialImageMomentum & p ) const
 {
     CStateInitialImageMomentum r = *this;
     return r += p;
 }
 
-//
-// operator -
-//
-template <class T, unsigned int VImageDimension, class TResampler>
-CStateInitialImageMomentum<T, VImageDimension, TResampler>
-CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator-( const CStateInitialImageMomentum & p ) const
+
+template <class T, unsigned int VImageDimension >
+CStateInitialImageMomentum<T, VImageDimension >
+CStateInitialImageMomentum<T, VImageDimension >::operator-( const CStateInitialImageMomentum & p ) const
 {
     CStateInitialImageMomentum r = *this;
     return r -= p;
 }
 
-//
-// operator *
-//
-template <class T, unsigned int VImageDimension, class TResampler>
-CStateInitialImageMomentum<T, VImageDimension, TResampler>
-CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator*( const T & p ) const
+
+template <class T, unsigned int VImageDimension >
+CStateInitialImageMomentum<T, VImageDimension >
+CStateInitialImageMomentum<T, VImageDimension >::operator*( const T & p ) const
 {
     CStateInitialImageMomentum r = *this;
     return r *= p;
@@ -306,8 +293,8 @@ CStateInitialImageMomentum<T, VImageDimension, TResampler>::operator*( const T &
 //
 // computes the squared norm of the state
 //
-template <class T, unsigned int VImageDimension, class TResampler >
-T CStateInitialImageMomentum< T, VImageDimension, TResampler >::SquaredNorm()
+template <class T, unsigned int VImageDimension >
+T CStateInitialImageMomentum< T, VImageDimension >::SquaredNorm()
 {
   T dSquaredNorm = 0;
 //  TODO: Is this the correct squared norm?
@@ -322,8 +309,8 @@ T CStateInitialImageMomentum< T, VImageDimension, TResampler >::SquaredNorm()
 //
 // return the overall number of elements in the vector which holds the state information
 //
-template <class T, unsigned int VImageDimension, class TResampler >
-long int CStateInitialImageMomentum< T, VImageDimension, TResampler >::GetNumberOfStateVectorElements()
+template <class T, unsigned int VImageDimension >
+long int CStateInitialImageMomentum< T, VImageDimension >::GetNumberOfStateVectorElements()
 {
   return m_NumberOfStateVectorElements;
 }
@@ -331,8 +318,8 @@ long int CStateInitialImageMomentum< T, VImageDimension, TResampler >::GetNumber
 //
 // return the overall number of elements in the vector which holds the state information
 //
-template <class T, unsigned int VImageDimension, class TResampler >
-long int CStateInitialImageMomentum< T, VImageDimension, TResampler >::GetNumberOfStateVectorElementsToEstimate()
+template <class T, unsigned int VImageDimension >
+long int CStateInitialImageMomentum< T, VImageDimension >::GetNumberOfStateVectorElementsToEstimate()
 {
   if ( m_EstimateInitialImage )
   {
@@ -347,8 +334,8 @@ long int CStateInitialImageMomentum< T, VImageDimension, TResampler >::GetNumber
 //
 // Gets the pointer to the state vector. Primarily intended so that the states can be used with external optimizers
 //
-template <class T, unsigned int VImageDimension, class TResampler >
-T* CStateInitialImageMomentum< T, VImageDimension, TResampler >::GetPointerToStateVector()
+template <class T, unsigned int VImageDimension >
+T* CStateInitialImageMomentum< T, VImageDimension >::GetPointerToStateVector()
 {
   return m_ptrRawData;
 }
@@ -357,8 +344,8 @@ T* CStateInitialImageMomentum< T, VImageDimension, TResampler >::GetPointerToSta
 // Get the pointer to the part of the state vector that needs to be estimated
 // (full state vector if initial image is also to be estimated)
 //
-template <class T, unsigned int VImageDimension, class TResampler >
-T* CStateInitialImageMomentum< T, VImageDimension, TResampler >::GetPointerToStateVectorElementsToEstimate()
+template <class T, unsigned int VImageDimension >
+T* CStateInitialImageMomentum< T, VImageDimension >::GetPointerToStateVectorElementsToEstimate()
 {
   if ( m_EstimateInitialImage )
   {
@@ -370,6 +357,8 @@ T* CStateInitialImageMomentum< T, VImageDimension, TResampler >::GetPointerToSta
     return m_ptrRawData + uiLengthOfImage;
   }
 }
+
+} // end namespace CALATK
 
 #endif
 

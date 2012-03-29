@@ -22,7 +22,6 @@
 
 #include "CStateImageDomain.h"
 #include "VectorField.h"
-#include "CResamplerLinear.h"
 
 namespace CALATK
 {
@@ -32,23 +31,18 @@ namespace CALATK
  *
  * \todo describe me
  */
-template <class T, unsigned int VImageDimension=3, class TResampler=CResamplerLinear<T, VImageDimension> >
-class CStateInitialImageMomentum: public CStateImageDomain< T, VImageDimension, TResampler >
+template < class TFloat, unsigned int VImageDimension=3 >
+class CStateInitialImageMomentum: public CStateImageDomain< TFloat, VImageDimension >
 {
 public:
-  typedef CStateInitialImageMomentum   TState;
-
   /* Standard class typedefs. */
-  typedef CStateInitialImageMomentum                               Self;
-  typedef CStateImageDomain< TState, VImageDimension, TResampler > Superclass;
-  typedef itk::SmartPointer< Self >                                Pointer;
-  typedef itk::SmartPointer< const Self >                          ConstPointer;
+  typedef CStateInitialImageMomentum                   Self;
+  typedef CStateImageDomain< TFloat, VImageDimension > Superclass;
+  typedef itk::SmartPointer< Self >                    Pointer;
+  typedef itk::SmartPointer< const Self >              ConstPointer;
 
   /* some useful typedefs */
-  typedef typename Superclass::TState  SuperclassTState;
-
-  typedef VectorImage< T, VImageDimension >  VectorImageType;
-  //typedef typename Superclass::VectorImageType VectorImageType;
+  typedef typename Superclass::VectorImageType VectorImageType;
 
   /**
    * Empty constructor
@@ -59,16 +53,14 @@ public:
    * Constructor which takes a pointer to a graft image, so that a state of appropriate dimension can be created.
    * Creates the memory (raw memory pointer) and also creates the appropriate state structures (image and momentum)
    * which make use of this memory block.
-   * Will destroy the data in Destructor.
    */
   CStateInitialImageMomentum( VectorImageType* ptrGraftImage );
 
   /**
    * Constructor which takes a pointer to the initial image and initial momentum as well as to the raw memory (which the initial image and the momentum wil point to);
    * Does not copy the data, just stores the pointers to it;
-   * Will destroy the data in Destructor.
    */
-  CStateInitialImageMomentum( T* ptrRawData, VectorImageType* ptrInitialImage, VectorImageType* ptrInitialMomentum );
+  CStateInitialImageMomentum( TFloat* ptrRawData, VectorImageType* ptrInitialImage, VectorImageType* ptrInitialMomentum );
 
   /**
     * copy constructor, creation of the image and momentum for the first time, need to allocate memory
@@ -83,7 +75,7 @@ public:
   /*
    * Allow for upsampling of the state
    */
-  virtual TState* CreateUpsampledStateAndAllocateMemory( const VectorImageType* ptrGraftImage ) const;
+  virtual Self* CreateUpsampledStateAndAllocateMemory( const VectorImageType* ptrGraftImage ) const;
 
   // declare operators to be able to do computations with this state, which are needed in the numerical solvers
   /**
@@ -95,24 +87,24 @@ public:
 
   CStateInitialImageMomentum & operator-=( const CStateInitialImageMomentum & p);
 
-  CStateInitialImageMomentum & operator*=( const T & p);
+  CStateInitialImageMomentum & operator*=( const TFloat & p);
 
   CStateInitialImageMomentum operator+( const CStateInitialImageMomentum & p) const;
 
   CStateInitialImageMomentum operator-( const CStateInitialImageMomentum & p) const;
 
-  CStateInitialImageMomentum operator*( const T & p) const;
+  CStateInitialImageMomentum operator*( const TFloat & p) const;
 
   VectorImageType * GetPointerToInitialImage() const;
   VectorImageType * GetPointerToInitialMomentum() const;
 
   virtual long int GetNumberOfStateVectorElements();
-  virtual T* GetPointerToStateVector();
+  virtual TFloat * GetPointerToStateVector();
 
   virtual long int GetNumberOfStateVectorElementsToEstimate();
-  virtual T* GetPointerToStateVectorElementsToEstimate();
+  virtual TFloat * GetPointerToStateVectorElementsToEstimate();
 
-  T SquaredNorm();
+  virtual TFloat SquaredNorm();
 
   GetMacro( EstimateInitialImage, bool );
   SetMacro( EstimateInitialImage, bool );
@@ -126,15 +118,12 @@ private:
   typename VectorImageType::Pointer m_ptrInitialMomentum;
 
   long int m_NumberOfStateVectorElements;
-  T* m_ptrRawData;
+  TFloat * m_ptrRawData;
 
   bool m_EstimateInitialImage;
   const bool DefaultEstimateInitialImage;
   bool m_ExternallySetEstimateInitialImage;
-
 };
-
-#include "CStateInitialImageMomentum.txx"
 
 } // end namespace
 

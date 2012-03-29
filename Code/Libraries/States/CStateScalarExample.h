@@ -33,14 +33,14 @@ namespace CALATK
  * \todo more detailed description
  */
 template < class TScalar >
-class CStateScalarExample : public CState< TScalar, 0, TScalar >
+class CStateScalarExample : public CState< TScalar >
 {
 public:
   /* Standard class typedefs. */
   typedef CStateScalarExample              Self;
   typedef itk::SmartPointer< Self >        Pointer;
   typedef itk::SmartPointer< const Self >  ConstPointer;
-  typedef CState< TScalar, 0, TScalar >    Superclass;
+  typedef CState< TScalar >                Superclass;
 
   CStateScalarExample()
   {

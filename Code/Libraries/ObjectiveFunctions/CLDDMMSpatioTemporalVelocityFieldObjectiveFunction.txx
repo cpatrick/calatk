@@ -210,7 +210,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::GetMapFromTo(
         dTimeFrom,
         dTimeTo,
         this->m_vecTimeDiscretization,
-        this->m_ptrState->GetVectorPointerToVectorFieldPointer(),
+        this->m_ptrState->GetVectorFieldTimeSeries(),
         this->m_ptrEvolver );
 }
 

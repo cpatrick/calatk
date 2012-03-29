@@ -29,17 +29,15 @@ namespace CALATK
 /**
  * \class CState
  *
- * Base class for a state. So far does not do much other than declaring certain operators private
+ * Base class for a state. So far does not do much.
  * May want to add more common functionality later.
  */
-template <class TFloat, unsigned int VImageDimension, class TResampler >
+template < class TFloat >
 class CState: public CBase
 {
 public:
   /* Useful typedefs and constants */
   typedef TFloat            FloatType;
-  typedef TResampler        ResamplerType;
-  static const unsigned int ImageDimension = VImageDimension;
 
   /** Standard typedefs. */
   typedef CState                          Self;
@@ -77,7 +75,6 @@ protected:
 private:
   // copy constructor private
   CState( const CState & c ) {}
-  
 };
 
 } // end namespace

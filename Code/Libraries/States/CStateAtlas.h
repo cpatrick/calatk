@@ -30,21 +30,18 @@ namespace CALATK
   * between an image and the atlas image. Templated over the state of these registrations.
   */
 template <class TState>
-class CStateAtlas : public CStateImageDomain< typename TState::TFloat, typename TState::VImageDimension, typename TState::TResampler >
+class CStateAtlas : public CStateImageDomain< typename TState::TFloat, typename TState::VImageDimension >
 {
 public:
   /* some useful typedefs */
-  typedef typename TState::T               T;
+  typedef typename TState::FloatType       FloatType;
   typedef typename TState                  TIndividualState;
-  typedef typename TState::VImageDimension VImageDimension;
-  typedef typename TState::TResampler      TResampler;
 
   /* Standard class typedefs. */
-  typedef CStateAtlas                                              Self;
-  typedef itk::SmartPointer< Self >                                Pointer;
-  typedef itk::SmartPointer< const Self >                          ConstPointer;
-  typedef CStateImageDomain< TState, VImageDimension, TResampler > Superclass;
-  typedef Superclass                                               SuperclassTState;
+  typedef CStateAtlas                                  Self;
+  typedef itk::SmartPointer< Self >                    Pointer;
+  typedef itk::SmartPointer< const Self >              ConstPointer;
+  typedef CStateImageDomain< TState, VImageDimension > Superclass;
 
   /**
    * Empty constructor
@@ -70,7 +67,7 @@ public:
   /**
    * Allow for upsampling of the state
    */
-  SuperclassTState* CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const; 
+  Superclass* CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const;
 
   /// declare operators to be able to do some computations with this state, which are needed in the numerical solvers
 
@@ -83,13 +80,13 @@ public:
 
   CStateAtlas & operator-=(const CStateAtlas & p );
 
-  CStateAtlas & operator*=(const T & p );
+  CStateAtlas & operator*=(const FloatType & p );
 
   CStateAtlas operator+(const CStateAtlas & p ) const;
 
   CStateAtlas operator-(const CStateAtlas & p ) const;
 
-  CStateAtlas operator*(const T & p ) const;
+  CStateAtlas operator*(const FloatType & p ) const;
 
   /**
    * @brief Returns the state pointer for one of the underlying objectuve functions of the atlas builder
@@ -98,7 +95,7 @@ public:
    * @return TState * - returned state pointer
    */
   TState* GetIndividualStatePointer( unsigned int uiState );
-  
+
   /**
    * @brief Computes the square norm of the state. To be used for example in a line search method
    * to establish sufficient descrease of an objective function
@@ -106,7 +103,7 @@ public:
    * @return Returns the squared norm. For the atlas, this is the sum of the squared norms of all
    * the components.
    */
-  T SquaredNorm();
+  virtual FloatType SquaredNorm();
 
 protected:
   void ClearDataStructure();
@@ -119,8 +116,8 @@ private:
 
 };
 
-#include "CStateAtlas.txx"
-
 } // end namespace
+
+#include "CStateAtlas.txx"
 
 #endif

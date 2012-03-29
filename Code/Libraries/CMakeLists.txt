@@ -47,6 +47,11 @@ set(CALATK_ObjectiveFunctions_sources
 set(CALATK_Interfaces_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/Interfaces/CApplication.cxx
   )
+# Set up sources for States
+set(CALATK_States_sources
+  ${CMAKE_CURRENT_SOURCE_DIR}/States/CStateInitialImageMomentum.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/States/CStateSpatioTemporalVelocityField.cxx
+  )
 # Set up sources for Utilities
 set(CALATK_Utilities_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/Timer.cxx
@@ -63,6 +68,7 @@ set(CALATK_sources
   ${CALATK_Numerics_sources}
   ${CALATK_ObjectiveFunctions_sources}
   ${CALATK_Interfaces_sources}
+  ${CALATK_States_sources}
   ${CALATK_Utilities_sources}
   ${CALATK_jsoncpp_source}
   )

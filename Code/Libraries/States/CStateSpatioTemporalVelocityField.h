@@ -22,30 +22,26 @@
 
 #include "CStateImageDomain.h"
 #include "VectorField.h"
-#include "CResamplerLinear.h"
 
 namespace CALATK
 {
 
-template <class T, unsigned int VImageDimension=3, class TResampler=CResamplerLinear<T, VImageDimension> >
-class CStateSpatioTemporalVelocityField : public CStateImageDomain< T, VImageDimension, TResampler >
+template < class TFloat, unsigned int VImageDimension=3 >
+class CStateSpatioTemporalVelocityField : public CStateImageDomain< TFloat, VImageDimension >
 {
 public:
   /* Standard class typedefs. */
-  typedef CStateSpatioTemporalVelocityField                    Self;
-  typedef itk::SmartPointer< Self >                            Pointer;
-  typedef itk::SmartPointer< const Self >                      ConstPointer;
-  typedef CStateImageDomain< T, VImageDimension, TResampler >  Superclass;
+  typedef CStateSpatioTemporalVelocityField            Self;
+  typedef itk::SmartPointer< Self >                    Pointer;
+  typedef itk::SmartPointer< const Self >              ConstPointer;
+  typedef CStateImageDomain< TFloat, VImageDimension > Superclass;
 
   /* some useful typedefs */
-  typedef typename Superclass::TState           SuperclassTState;
-  typedef CStateSpatioTemporalVelocityField     TState;
   typedef typename Superclass::VectorImageType  VectorImageType;
-  
-  typedef VectorField< T, VImageDimension >             VectorFieldType;
-  typedef typename VectorFieldType::Pointer             VectorFieldPointerType;
-  typedef std::vector< VectorFieldPointerType >*        VectorPointerToVectorFieldPointerType;
-  typedef const std::vector< VectorFieldPointerType >*  ConstVectorPointerToVectorFieldPointerType;
+
+  typedef VectorField< TFloat, VImageDimension >            VectorFieldType;
+  typedef std::vector< typename VectorFieldType::Pointer >  VectorFieldTimeSeriesType;
+
   /**
    * Empty constructor
    */
@@ -53,10 +49,10 @@ public:
 
   /**
    * Constructor which takes a pointer of a vector of vector fields as an input.
-   * Does not copy the data, but just stores the pointers to it. 
+   * Does not copy the data, but just stores the pointers to it.
    * Destructor will destroy the vector fields though.
    */
-  CStateSpatioTemporalVelocityField( ConstVectorPointerToVectorFieldPointerType pVecVecField );
+  CStateSpatioTemporalVelocityField( const VectorFieldTimeSeriesType * pVecVecField );
 
   /**
    * copy constructor, creation of the image for the first time, need to allocate memory
@@ -71,7 +67,7 @@ public:
   /*
    * Allow for upsampling of the state
    */
-  SuperclassTState* CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const; 
+  Superclass* CreateUpsampledStateAndAllocateMemory( const VectorImageType* graftImage ) const;
 
   // declare operators to be able to do some computations with this state, which are needed in the numerical solvers
 
@@ -84,38 +80,32 @@ public:
 
   CStateSpatioTemporalVelocityField & operator-=( const CStateSpatioTemporalVelocityField & p );
 
-  CStateSpatioTemporalVelocityField & operator*=( const T & p );
+  CStateSpatioTemporalVelocityField & operator*=( const TFloat & p );
 
   CStateSpatioTemporalVelocityField operator+( const CStateSpatioTemporalVelocityField & p ) const;
 
   CStateSpatioTemporalVelocityField operator-( const CStateSpatioTemporalVelocityField & p ) const;
 
-  CStateSpatioTemporalVelocityField operator*( const T & p ) const;
+  CStateSpatioTemporalVelocityField operator*( const TFloat & p ) const;
 
-  ConstVectorPointerToVectorFieldPointerType GetVectorPointerToVectorFieldPointer() const;
+  const VectorFieldTimeSeriesType * GetVectorFieldTimeSeries() const;
 
-  VectorFieldType * GetVectorFieldPointer( unsigned int iI );
-  void SetVectorFieldPointer( unsigned int iI, VectorFieldType * ptrVecField );
+  VectorFieldType * GetVectorFieldPointer( unsigned int ii );
+  void SetVectorFieldPointer( unsigned int ii, VectorFieldType * ptrVecField );
 
-  void SetSize( unsigned int iS );
+  void SetSize( unsigned int ii );
   unsigned int GetSize();
 
-  T SquaredNorm();
+  virtual TFloat SquaredNorm();
 
 protected:
-
   void ClearDataStructure();
-  void CopyDataStructure( ConstVectorPointerToVectorFieldPointerType ptrSource );
+  void CopyDataStructure( const VectorFieldTimeSeriesType * ptrSource );
 
 private:
-
-  std::vector<VectorFieldPointerType> m_vecPtrSTVelocityField;
-
+  VectorFieldTimeSeriesType m_VectorFieldTimeSeries;
 };
 
-#include "CStateSpatioTemporalVelocityField.txx"
-
 } // end namespace
-
 
 #endif
