@@ -56,9 +56,9 @@ void CSolver< TState >::OutputStateInformation( unsigned int uiIter, std::string
 // auto configuration
 //
 template < class TState >
-void CSolver< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void CSolver< TState >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+  Superclass::SetAutoConfiguration( combined, cleaned );
 }
 
 

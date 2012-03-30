@@ -55,11 +55,12 @@ CSolverLBFGS< TState >::~CSolverLBFGS()
 }
 
 template < class TState >
-void CSolverLBFGS< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void CSolverLBFGS< TState >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "LBFGS", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "LBFGS", Json::nullValue );
+  Superclass::SetAutoConfiguration( combined, cleaned );
+
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "LBFGS", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "LBFGS", Json::nullValue );
 
   SetJSONHelpForRootKey( IpOpt, "Setting for the libLBFGS optimizer" );
 

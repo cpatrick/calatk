@@ -38,12 +38,12 @@ CGaussianKernel< T, VImageDimension >::~CGaussianKernel()
 }
 
 template <class T, unsigned int VImageDimension >
-void CGaussianKernel< T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void CGaussianKernel< T, VImageDimension >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+  Superclass::SetAutoConfiguration( combined, cleaned );
   
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "GaussianKernel", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "GaussianKernel", Json::nullValue );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "GaussianKernel", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "GaussianKernel", Json::nullValue );
 
   SetJSONHelpForRootKey( GaussianKernel, "isotropic Gaussian kernel" );
 

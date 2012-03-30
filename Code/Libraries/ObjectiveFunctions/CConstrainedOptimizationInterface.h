@@ -24,10 +24,10 @@
 
 namespace CALATK
 {
+
 /** Base interface class that provides the functionality to deal with simple
   * image-based equality constrains using an augmented Lagrangian approach
   */
-
 class CConstrainedOptimizationInterface
 {
 public:

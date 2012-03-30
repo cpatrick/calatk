@@ -23,7 +23,7 @@
 		"OutputStateInformationFrequency" : 100
 	},
 	"MultiScaleSigmaInVoxels" : 0.50,
-	"MultiscaleSettings" :
+	"MultiScaleSettings" :
 	[
 
 		{

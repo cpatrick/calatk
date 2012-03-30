@@ -27,11 +27,11 @@
 
 namespace CALATK
 {
+
 /**
   * Implements the shooting method for metamorphosis
   *
   */
-
 template < class TState >
 class CMetamorphosisAdjointGeodesicShootingObjectiveFunction
     : public CLDDMMGeodesicShootingObjectiveFunction< TState >
@@ -79,7 +79,7 @@ public:
   GetMacro( Rho, T );
   SetMacro( Rho, T );
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
 protected:
 

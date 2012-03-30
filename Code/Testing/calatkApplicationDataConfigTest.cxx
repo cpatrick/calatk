@@ -17,26 +17,26 @@
 *
 */
 
-#ifndef C_INTERPOLATOR_TXX
-#define C_INTERPOLATOR_TXX
+/**
+  * Tests the behavior of CApplication class.
+  */
 
-#include "CInterpolator.h"
+#include <cstdlib>
+#include "CApplication.h"
 
-namespace CALATK
+int calatkApplicationDataConfigTest( int argc, char ** argv )
 {
+  CALATK::CApplication::Pointer calatkApplication;
+  try
+    {
+    calatkApplication = new CALATK::CApplication( argc, argv );
+    calatkApplication->Solve();
+    }
+  catch( const std::exception & e )
+    {
+    std::cerr << e.what() << std::endl;
+    return EXIT_FAILURE;
+    }
 
-template < class T, unsigned int VImageDimension >
-CInterpolator< T, VImageDimension >::CInterpolator()
-  : DefaultNumberOfThreads( 1 ), m_ExternallySetNumberOfThreads( false )
-{
-  m_NumberOfThreads = DefaultNumberOfThreads;
+  return EXIT_SUCCESS;
 }
-
-template < class T, unsigned int VImageDimension >
-CInterpolator< T, VImageDimension >::~CInterpolator()
-{
-}
-
-} // end namespace CALATK
-
-#endif

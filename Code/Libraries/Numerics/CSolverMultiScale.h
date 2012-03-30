@@ -66,25 +66,19 @@ public:
   SetMacro( SingleScaleSolver, std::string );
   GetMacro( SingleScaleSolver, std::string );
 
-
-  // auto configuration
-  virtual void SetAutoConfiguration( Json::Value &ConfValueIn, Json::Value &ConfValueOut );
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
 protected:
-
   void SetDefaultSingleScaleSolver();
 
   typename Superclass::Pointer m_ptrSolver;
 
 private:
-
   bool m_bSetDefaultSingleScaleSolver;
 
   std::string m_SingleScaleSolver;
   const std::string DefaultSingleScaleSolver;
   bool m_ExternallySetSingleScaleSolver;
-
-
 };
 
 #include "CSolverMultiScale.txx"

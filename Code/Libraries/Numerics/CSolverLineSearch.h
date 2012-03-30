@@ -86,7 +86,7 @@ public:
   SetMacro( DecreaseConstant, T );
   GetMacro( DecreaseConstant, T );
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
 protected:
 

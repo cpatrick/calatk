@@ -2458,7 +2458,6 @@ bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK1D( cons
   // see if we're dealing with one or more dimensions
   if ( (*ims)[0]->GetDimension() == 1)
     {
-
     typedef itk::Image<T, 3> ITKTimeImage1D;
     typedef itk::ImageFileWriter< ITKTimeImage1D >  ITKTimeImageWriter1D;
 
@@ -2527,7 +2526,6 @@ bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK1D( cons
     }
   else
     {
-
     typedef itk::Image<T, 4> ITKTimeImage1D;
     typedef itk::ImageFileWriter< ITKTimeImage1D >  ITKTimeImageWriter1D;
 
@@ -2573,7 +2571,6 @@ bool VectorImageUtils< T, VImageDimension >::writeTimeDependantImagesITK1D( cons
         {
         for (unsigned int d = 0; d < dim; ++d)
           {
-
           typename ITKTimeImage1D::IndexType px;
           px[0] = x;
           px[1] = d;

@@ -100,11 +100,11 @@ CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::~CLDDMMGeometricMetamor
 }
 
 template < class TState >
-void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "GeometricMetamorphosis", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "GeometricMetamorphosis", Json::nullValue );
+  Superclass::SetAutoConfiguration( combined, cleaned );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "GeometricMetamorphosis", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "GeometricMetamorphosis", Json::nullValue );
 
   SetJSONHelpForRootKey( GeometricMetamorphosis, "settings for geometric metamorphosis" );
 

@@ -52,11 +52,11 @@ CSolverNLOpt< TState >::~CSolverNLOpt()
 }
 
 template < class TState >
-void CSolverNLOpt< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void CSolverNLOpt< TState >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "NLOpt", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "NLOpt", Json::nullValue );
+  Superclass::SetAutoConfiguration( combined, cleaned );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "NLOpt", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "NLOpt", Json::nullValue );
 
   SetJSONHelpForRootKey( IpOpt, "Setting for the NLOpt optimizer" );
 

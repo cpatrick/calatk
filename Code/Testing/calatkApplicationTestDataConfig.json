@@ -1,0 +1,41 @@
+
+{
+	"Inputs" :
+	{
+		"subject1" :
+		[
+
+			[
+				0.0,
+				"Bullseye1DTimePoint0.mha"
+			],
+
+			[
+				1.0,
+				"Bullseye1DTimePoint1.mha"
+			]
+		]
+	},
+	"Outputs" :
+	{
+		"subject1" :
+		[
+			[
+				0.0,
+				"Bullseye1DTime0.00Warped.mha"
+			],
+			[
+				0.25,
+				"Bullseye1DTime0.25Warped.mha"
+			],
+			[
+				0.75,
+				"Bullseye1DTime0.75Warped.mha"
+			],
+			[
+				1.0,
+				"Bullseye1DTime1.00Warped.mha"
+			]
+		]
+	}
+}

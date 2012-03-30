@@ -97,44 +97,44 @@
 /** Master macro to deal with setting parameters through JSON in the classes */
 
 #define SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, VariableName ) \
-  this->SetJSON##VariableName( this->m_jsonConfigIn.GetFromKey( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ).asDouble() ); \
+  this->SetJSON##VariableName( this->m_CombinedJSONConfig->GetFromKey( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ).asDouble() ); \
   currentConfigurationOut[ #VariableName ] = currentConfigurationIn[ #VariableName ]; \
 
 #define SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, VariableName ) \
-  this->SetJSON##VariableName( this->m_jsonConfigIn.GetFromKey( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ).asUInt() ); \
+  this->SetJSON##VariableName( this->m_CombinedJSONConfig->GetFromKey( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ).asUInt() ); \
   currentConfigurationOut[ #VariableName ] = currentConfigurationIn[ #VariableName ]; \
 
 #define SetJSONFromKeyInt( currentConfigurationIn, currentConfigurationOut, VariableName ) \
-  this->SetJSON##VariableName( this->m_jsonConfigIn.GetFromKey( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ).asInt() ); \
+  this->SetJSON##VariableName( this->m_CombinedJSONConfig->GetFromKey( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ).asInt() ); \
   currentConfigurationOut[ #VariableName ] = currentConfigurationIn[ #VariableName ]; \
 
 #define SetJSONFromKeyBool( currentConfigurationIn, currentConfigurationOut, VariableName ) \
-  this->SetJSON##VariableName( this->m_jsonConfigIn.GetFromKey( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ).asBool() ); \
+  this->SetJSON##VariableName( this->m_CombinedJSONConfig->GetFromKey( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ).asBool() ); \
   currentConfigurationOut[ #VariableName ] = currentConfigurationIn[ #VariableName ]; \
 
 #define SetJSONFromKeyString( currentConfigurationIn, currentConfigurationOut, VariableName ) \
-  this->SetJSON##VariableName( this->m_jsonConfigIn.GetFromKey( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ).asString() ); \
+  this->SetJSON##VariableName( this->m_CombinedJSONConfig->GetFromKey( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ).asString() ); \
   currentConfigurationOut[ #VariableName ] = currentConfigurationIn[ #VariableName ]; \
 
 #define SetJSONFromKeyVector( currentConfigurationIn, currentConfigurationOut, VariableName ) \
-  this->SetJSON##VariableName( this->m_jsonConfigIn.GetFromKeyAsVector( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ) ); \
+  this->SetJSON##VariableName( this->m_CombinedJSONConfig->GetFromKeyAsVector( currentConfigurationIn, #VariableName, this->GetExternalOrDefault##VariableName() ) ); \
   currentConfigurationOut[ #VariableName ] = currentConfigurationIn[ #VariableName ]; \
 
 #define SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, VariableName, HelpString) \
-  this->m_jsonConfigIn.SetHelpForKey( currentConfigurationIn, #VariableName, HelpString ); \
-  this->m_jsonConfigOut.SetHelpForKey( currentConfigurationOut, #VariableName, HelpString ); \
+  this->m_CombinedJSONConfig->SetHelpForKey( currentConfigurationIn, #VariableName, HelpString ); \
+  this->m_CleanedJSONConfig->SetHelpForKey( currentConfigurationOut, #VariableName, HelpString ); \
 
 #define SetJSONHelpForRootKey( VariableName, HelpString ) \
-  this->m_jsonConfigIn.SetHelpForKey( #VariableName, HelpString ); \
-  this->m_jsonConfigOut.SetHelpForKey( #VariableName, HelpString ); \
+  this->m_CombinedJSONConfig->SetHelpForKey( #VariableName, HelpString ); \
+  this->m_CleanedJSONConfig->SetHelpForKey( #VariableName, HelpString ); \
 
 #define SetJSONHelpForKeyBefore( currentConfigurationIn, currentConfigurationOut, VariableName, HelpString) \
-  this->m_jsonConfigIn.SetHelpForKey( currentConfigurationIn, #VariableName, HelpString, Json::commentBefore ); \
-  this->m_jsonConfigOut.SetHelpForKey( currentConfigurationOut, #VariableName, HelpString, Json::commentBefore ); \
+  this->m_CombinedJSONConfig->SetHelpForKey( currentConfigurationIn, #VariableName, HelpString, Json::commentBefore ); \
+  this->m_CleanedJSONConfig->SetHelpForKey( currentConfigurationOut, #VariableName, HelpString, Json::commentBefore ); \
 
 #define SetJSONHelpForRootKeyBefore( VariableName, HelpString ) \
-  this->m_jsonConfigIn.SetHelpForKey( #VariableName, HelpString, Json::commentBefore ); \
-  this->m_jsonConfigOut.SetHelpForKey( #VariableName, HelpString, Json::commentBefore ); \
+  this->m_CombinedJSONConfig->SetHelpForKey( #VariableName, HelpString, Json::commentBefore ); \
+  this->m_CleanedJSONConfig->SetHelpForKey( #VariableName, HelpString, Json::commentBefore ); \
 
 /** multi-dimensional macro */
 #define DoItND(type,ImageDimension,argc,argv) \

@@ -36,7 +36,7 @@ void CAtlasObjectiveFunction< TState >::DeleteAuxiliaryStructures()
   typename VectorObjectiveFunctionPointersType::iterator iter;
   for ( iter=m_VectorObjectiveFunctionPtrs.begin(); iter!=m_VectorObjectiveFunctionPtrs.end(); ++iter )
     {
-      iter->DeleteAuxiliaryStructures();
+    iter->DeleteAuxiliaryStructures();
     }
 }
 
@@ -46,7 +46,7 @@ void CAtlasObjectiveFunction< TState >::CreateAuxiliaryStructures()
   typename VectorObjectiveFunctionPointersType::iterator iter;
   for ( iter=m_VectorObjectiveFunctionPtrs.begin(); iter!=m_VectorObjectiveFunctionPtrs.end(); ++iter )
     {
-      iter->CreateAuxiliaryStructures();
+    iter->CreateAuxiliaryStructures();
     }
 }
 
@@ -58,7 +58,7 @@ void CAtlasObjectiveFunction< TState >::InitializeState()
   typename VectorObjectiveFunctionPointersType::iterator iter;
   for ( iter=m_VectorObjectiveFunctionPtrs.begin(); iter!=m_VectorObjectiveFunctionPtrs.end(); ++iter )
     {
-      iter->InitializeState();
+    iter->InitializeState();
     }
 
   // now all of the individual objective functions are initialized
@@ -69,8 +69,8 @@ void CAtlasObjectiveFunction< TState >::InitializeState()
 
   for ( iter=m_VectorObjectiveFunctionPtrs.begin(); iter!=m_VectorObjectiveFunctionPtrs.end(); ++iter )
     {
-      vecState.push_back( iter->GetStatePointer() );
-      vecGradient.push_back( iter->GetGradientPointer() );
+    vecState.push_back( iter->GetStatePointer() );
+    vecGradient.push_back( iter->GetGradientPointer() );
     }
 
 
@@ -95,7 +95,7 @@ void CAtlasObjectiveFunction< TState >::InitializeState( TState *ptrState )
   typename VectorObjectiveFunctionPointersType::iterator iter;
   for ( unsigned int iI=0, iter=m_VectorObjectiveFunctionPtrs.begin(); iter!=m_VectorObjectiveFunctionPtrs.end(); ++iI, ++iter )
     {
-      iter->InitializeState( *ptrState->GetIndividualStatePointer( iI ) );
+    iter->InitializeState( *ptrState->GetIndividualStatePointer( iI ) );
     }
 
   // now all of the individual objective functions are initialized
@@ -106,8 +106,8 @@ void CAtlasObjectiveFunction< TState >::InitializeState( TState *ptrState )
 
   for ( iter=m_VectorObjectiveFunctionPtrs.begin(); iter!=m_VectorObjectiveFunctionPtrs.end(); ++iter )
     {
-      vecState.push_back( iter->GetStatePointer() );
-      vecGradient.push_back( iter->GetGradientPointer() );
+    vecState.push_back( iter->GetStatePointer() );
+    vecGradient.push_back( iter->GetGradientPointer() );
     }
 
   // allocate memory for the state, the objective function takes full control over the
@@ -147,7 +147,7 @@ CAtlasObjectiveFunction< TState >::GetCurrentEnergy()
   typename VectorObjectiveFunctionPointersType::iterator iter;
   for ( iter=m_VectorObjectiveFunctionPtrs.begin(); iter!=m_VectorObjectiveFunctionPtrs.end(); ++iter )
     {
-      energyValues += iter->GetCurrentEnergy();
+    energyValues += iter->GetCurrentEnergy();
     }
   return energyValues;
 }
@@ -161,7 +161,7 @@ void CAtlasObjectiveFunction< TState >::ComputeGradient()
   typename VectorObjectiveFunctionPointersType::iterator iter;
   for ( iter=m_VectorObjectiveFunctionPtrs.begin(); iter!=m_VectorObjectiveFunctionPtrs.end(); ++iter )
     {
-      iter->ComputeGradient();
+    iter->ComputeGradient();
     }
 }
 

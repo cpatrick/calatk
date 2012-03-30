@@ -20,9 +20,7 @@
 #ifndef C_SOLVER_LINE_SEARCH_TXX
 #define C_SOLVER_LINE_SEARCH_TXX
 
-//
-// empty constructor
-//
+
 template < class TState >
 CSolverLineSearch< TState>::CSolverLineSearch()
   : DefaultInitialStepSize( 0.00001 ),
@@ -80,24 +78,20 @@ CSolverLineSearch< TState>::CSolverLineSearch()
 
 }
 
-//
-// destructor
-//
+
 template < class TState >
 CSolverLineSearch< TState>::~CSolverLineSearch()
 {
 }
 
-//
-// auto configuration
-//
-template < class TState >
-void CSolverLineSearch< TState>::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
-{
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
 
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "LineSearch", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "LineSearch", Json::nullValue );
+template < class TState >
+void CSolverLineSearch< TState>::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
+{
+  Superclass::SetAutoConfiguration( combined, cleaned );
+
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "LineSearch", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "LineSearch", Json::nullValue );
 
   SetJSONHelpForRootKey( LineSearch, "setting for the linesearch algorithm" );
 

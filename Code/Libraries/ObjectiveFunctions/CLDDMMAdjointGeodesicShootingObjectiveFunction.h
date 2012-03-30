@@ -27,6 +27,7 @@
 
 namespace CALATK
 {
+
 /**
   * Implements the adjoint formulation of geodesic shooting as described in
   *
@@ -37,7 +38,6 @@ namespace CALATK
   * Niethammer et al., "Geodesic Regression for Image Time-Series," MICCAI 2011.
   *
   */
-
 template < class TState >
 class CLDDMMAdjointGeodesicShootingObjectiveFunction
     : public CLDDMMGeodesicShootingObjectiveFunction< TState >

@@ -78,7 +78,7 @@ public:
   SetMacro( UseConstantPenaltyGamma, bool );
   GetMacro( UseConstantPenaltyGamma, bool );
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
   virtual void ConvolveWithKernel( VectorImageType* pVecImage );
   virtual void ConvolveWithInverseKernel(VectorImageType *pVecImage);

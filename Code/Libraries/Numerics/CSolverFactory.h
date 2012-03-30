@@ -20,7 +20,6 @@
 #ifndef C_SOLVER_FACTORY_H
 #define C_SOLVER_FACTORY_H
 
-#include "CJSONConfiguration.h"
 #include "CALATKCommon.h"
 #include "CProcessBase.h"
 

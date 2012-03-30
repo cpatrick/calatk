@@ -22,4 +22,5 @@
 void RegisterTests()
 {
   REGISTER_TEST( calatkApplicationImageFileNamesGivenTest );
+  REGISTER_TEST( calatkApplicationDataConfigTest );
 }

@@ -34,12 +34,12 @@ CLDDMMGenericRegistration< TState >::~CLDDMMGenericRegistration()
 }
 
 template < class TState >
-void CLDDMMGenericRegistration< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void CLDDMMGenericRegistration< TState >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+  Superclass::SetAutoConfiguration( combined, cleaned );
 
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
 
   SetJSONHelpForRootKey( GeneralRegistrationSettings, "general settings for the registration" );
 
@@ -80,7 +80,6 @@ void CLDDMMGenericRegistration< TState >::SetDefaultObjectiveFunctionPointer()
   if ( plddmm == NULL )
   {
     throw std::runtime_error("Could not initialize the objective function. Make sure the instantiated state type is consistent with the objective function chosen.");
-    return;
   }
 
   plddmm->SetEvolverPointer( this->m_ptrEvolver );

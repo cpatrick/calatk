@@ -2,6 +2,10 @@
 
 
 {
+        "Algorithm" :
+        {
+                "FloatType" : "float"
+        },
 	"GeneralRegistrationSettings" :
 	{
 		"Kernel" : "HelmholtzKernel",
@@ -23,7 +27,7 @@
 		"OutputStateInformationFrequency" : 100
 	},
 	"MultiScaleSigmaInVoxels" : 0.50,
-	"MultiscaleSettings" :
+	"MultiScaleSettings" :
 	[
 
 		{

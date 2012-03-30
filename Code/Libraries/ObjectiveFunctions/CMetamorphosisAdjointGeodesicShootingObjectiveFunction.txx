@@ -88,11 +88,11 @@ CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::~CMetamorphosi
 }
 
 template < class TState >
-void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "AdjointMetamorphosis", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "AdjointMetamorphosis", Json::nullValue );
+  Superclass::SetAutoConfiguration( combined, cleaned );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "AdjointMetamorphosis", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "AdjointMetamorphosis", Json::nullValue );
 
   SetJSONHelpForRootKey( GrowthModel, "settings for the adjoint metamorphosis model" );
 
@@ -105,131 +105,130 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::SetAutoCo
 template < class TState >
 void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::CreateNewStateStructures()
 {
-    assert( this->m_ptrState.GetPointer() == NULL );
-    assert( m_vecTimeDiscretization.size() > 1 );
+  assert( this->m_ptrState.GetPointer() == NULL );
+  assert( m_vecTimeDiscretization.size() > 1 );
 
-    // get the subject ids
-    std::vector< unsigned int > vecSubjectIndices;
-    this->m_ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
+  // get the subject ids
+  std::vector< unsigned int > vecSubjectIndices;
+  this->m_ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
 
-    assert( vecSubjectIndices.size()>0 );
+  assert( vecSubjectIndices.size()>0 );
 
-    // obtain image from which to graft the image information for the data structures
+  // obtain image from which to graft the image information for the data structures
 
-    ImageInformation* pImInfo;
-    // get information from the first image to figure out the dimensions
-    this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
+  ImageInformation* pImInfo;
+  // get information from the first image to figure out the dimensions
+  this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
 
-    this->m_ptrState = new TState( pImInfo->Image );
-    this->m_ptrState->GetPointerToInitialMomentum()->SetToConstant( 0 );
+  this->m_ptrState = new TState( pImInfo->Image );
+  this->m_ptrState->GetPointerToInitialMomentum()->SetToConstant( 0 );
 }
 
 template< class TState >
 void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ShallowCopyStateStructures( TState* ptrState )
 {
-    assert ( this->m_ptrState.GetPointer() == NULL );
-    this->m_ptrState = ptrState;
+  assert ( this->m_ptrState.GetPointer() == NULL );
+  this->m_ptrState = ptrState;
 }
 
 template < class TState >
 void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState>::CreateGradientAndAuxiliaryStructures()
 {
+  // get the subject ids
+  std::vector< unsigned int > vecSubjectIndices;
+  this->m_ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
 
-    // get the subject ids
-    std::vector< unsigned int > vecSubjectIndices;
-    this->m_ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
+  assert( vecSubjectIndices.size()>0 );
 
-    assert( vecSubjectIndices.size()>0 );
+  // obtain image from which to graft the image information for the data structures
 
-    // obtain image from which to graft the image information for the data structures
+  ImageInformation* pImInfo;
+  // get information from the first image to figure out the dimensions
+  this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
 
-    ImageInformation* pImInfo;
-    // get information from the first image to figure out the dimensions
-    this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
+  // create the gradient
+  this->m_ptrGradient = new TState( pImInfo->Image );
+  this->m_ptrGradient->GetPointerToInitialImage()->SetToConstant( 0 );
+  this->m_ptrGradient->GetPointerToInitialMomentum()->SetToConstant( 0 );
 
-    // create the gradient
-    this->m_ptrGradient = new TState( pImInfo->Image );
-    this->m_ptrGradient->GetPointerToInitialImage()->SetToConstant( 0 );
-    this->m_ptrGradient->GetPointerToInitialMomentum()->SetToConstant( 0 );
+  // allocate all the auxiliary data
 
-    // allocate all the auxiliary data
+  // image and adjoint time-series
+  m_ptrI = new std::vector< typename VectorImageType::Pointer >;
+  m_ptrP = new std::vector< typename VectorImageType::Pointer >;
 
-    // image and adjoint time-series
-    m_ptrI = new std::vector< typename VectorImageType::Pointer >;
-    m_ptrP = new std::vector< typename VectorImageType::Pointer >;
-
-    // for testing
-    
-#ifdef EXTREME_DEBUGGING
-    tstLamI = new std::vector< typename VectorImageType::Pointer >;
-    tstLamP = new std::vector< typename VectorImageType::Pointer >;
-#endif
-
-    m_ptrCurrentLambdaI = new VectorImageType( pImInfo->Image );
-    m_ptrCurrentLambdaP = new VectorImageType( pImInfo->Image );
-    m_ptrCurrentLambdaV = new VectorFieldType( pImInfo->Image );
-
-    // one more than for the velocity fields
-    for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size(); ++iI )
-      {
-      typename VectorImageType::Pointer ptrCurrentVectorImage = new VectorImageType( pImInfo->Image );
-      m_ptrI->push_back( ptrCurrentVectorImage );
-
-      // bookkeeping to simplify metric computations
-      m_vecTimeDiscretization[ iI ].vecEstimatedImages.push_back( ptrCurrentVectorImage );
-
-      ptrCurrentVectorImage = new VectorImageType( pImInfo->Image );
-      m_ptrP->push_back( ptrCurrentVectorImage );
+  // for testing
 
 #ifdef EXTREME_DEBUGGING
-      // for testing
-      ptrCurrentVectorImage = new VectorImageType( pImInfo->Image );
-      tstLamI->push_back( ptrCurrentVectorImage );
-
-      ptrCurrentVectorImage = new VectorImageType( pImInfo->Image );
-      tstLamP->push_back( ptrCurrentVectorImage );
+  tstLamI = new std::vector< typename VectorImageType::Pointer >;
+  tstLamP = new std::vector< typename VectorImageType::Pointer >;
 #endif
 
-      }
+  m_ptrCurrentLambdaI = new VectorImageType( pImInfo->Image );
+  m_ptrCurrentLambdaP = new VectorImageType( pImInfo->Image );
+  m_ptrCurrentLambdaV = new VectorFieldType( pImInfo->Image );
 
-    // storage for the maps
-
-    m_ptrMapIn = new VectorFieldType( pImInfo->Image );
-    m_ptrMapOut = new VectorFieldType( pImInfo->Image );
-    m_ptrMapTmp = new VectorFieldType( pImInfo->Image );
-
-    m_ptrMapIncremental = new VectorFieldType( pImInfo->Image );
-    m_ptrMapIdentity = new VectorFieldType( pImInfo->Image );
-
-    // temporary storage
-    m_ptrTmpField = new VectorFieldType( pImInfo->Image );
-    m_ptrTmpFieldConv = new VectorFieldType( pImInfo->Image );
-
-    m_ptrTmpScalarImage = new VectorImageType( pImInfo->Image, 0.0, 1 );
-    m_ptrTmpImage = new VectorImageType( pImInfo->Image );
-
-    m_ptrDI = new VectorImageType( pImInfo->Image );
-    m_ptrDP = new VectorImageType( pImInfo->Image );
-
-    // storage for the adjoint difference
-
-    m_ptrCurrentAdjointIDifference = new VectorImageType( pImInfo->Image );
-
-    // storage for the determinant of Jacobian
-    m_ptrDeterminantOfJacobian  = new VectorImageType( pImInfo->Image, 0.0, 1 );
-
-    // storage for the negated velocity field
-    m_ptrVelocityField = new std::vector< typename VectorFieldType::Pointer >;
-    for (unsigned int iI=0; iI < m_vecTimeDiscretization.size(); iI++)
+  // one more than for the velocity fields
+  for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size(); ++iI )
     {
-        typename VectorFieldType::Pointer ptrCurrentVectorField = new VectorFieldType( pImInfo->Image );
-        ptrCurrentVectorField->SetToConstant( 0 );
-        m_ptrVelocityField->push_back( ptrCurrentVectorField );
+    typename VectorImageType::Pointer ptrCurrentVectorImage = new VectorImageType( pImInfo->Image );
+    m_ptrI->push_back( ptrCurrentVectorImage );
+
+    // bookkeeping to simplify metric computations
+    m_vecTimeDiscretization[ iI ].vecEstimatedImages.push_back( ptrCurrentVectorImage );
+
+    ptrCurrentVectorImage = new VectorImageType( pImInfo->Image );
+    m_ptrP->push_back( ptrCurrentVectorImage );
+
+#ifdef EXTREME_DEBUGGING
+    // for testing
+    ptrCurrentVectorImage = new VectorImageType( pImInfo->Image );
+    tstLamI->push_back( ptrCurrentVectorImage );
+
+    ptrCurrentVectorImage = new VectorImageType( pImInfo->Image );
+    tstLamP->push_back( ptrCurrentVectorImage );
+#endif
 
     }
 
-    // augmented Lagrangian
-    m_ptrImageLagrangianMultiplier = new VectorImageType( pImInfo->Image );
+  // storage for the maps
+
+  m_ptrMapIn = new VectorFieldType( pImInfo->Image );
+  m_ptrMapOut = new VectorFieldType( pImInfo->Image );
+  m_ptrMapTmp = new VectorFieldType( pImInfo->Image );
+
+  m_ptrMapIncremental = new VectorFieldType( pImInfo->Image );
+  m_ptrMapIdentity = new VectorFieldType( pImInfo->Image );
+
+  // temporary storage
+  m_ptrTmpField = new VectorFieldType( pImInfo->Image );
+  m_ptrTmpFieldConv = new VectorFieldType( pImInfo->Image );
+
+  m_ptrTmpScalarImage = new VectorImageType( pImInfo->Image, 0.0, 1 );
+  m_ptrTmpImage = new VectorImageType( pImInfo->Image );
+
+  m_ptrDI = new VectorImageType( pImInfo->Image );
+  m_ptrDP = new VectorImageType( pImInfo->Image );
+
+  // storage for the adjoint difference
+
+  m_ptrCurrentAdjointIDifference = new VectorImageType( pImInfo->Image );
+
+  // storage for the determinant of Jacobian
+  m_ptrDeterminantOfJacobian  = new VectorImageType( pImInfo->Image, 0.0, 1 );
+
+  // storage for the negated velocity field
+  m_ptrVelocityField = new std::vector< typename VectorFieldType::Pointer >;
+  for (unsigned int iI=0; iI < m_vecTimeDiscretization.size(); iI++)
+  {
+      typename VectorFieldType::Pointer ptrCurrentVectorField = new VectorFieldType( pImInfo->Image );
+      ptrCurrentVectorField->SetToConstant( 0 );
+      m_ptrVelocityField->push_back( ptrCurrentVectorField );
+
+  }
+
+  // augmented Lagrangian
+  m_ptrImageLagrangianMultiplier = new VectorImageType( pImInfo->Image );
 }
 
 template < class TState >

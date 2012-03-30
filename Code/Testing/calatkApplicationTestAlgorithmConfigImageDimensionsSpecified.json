@@ -1,38 +1,33 @@
 // CALATK version ?.?; JSON configuration file
 
+
 {
+        "Algorithm" :
+        {
+                "FloatType" : "float",
+                "ImageDimension" : 2
+        },
 	"GeneralRegistrationSettings" :
 	{
 		"Kernel" : "HelmholtzKernel",
-		"MaskKernel" : "HelmholtzKernel",
 		"Metric" : "SSD"
 	},
-	"GeometricMetamorphosis" :
+	"GrowthModel" :
 	{
-		"Sigma1Sqr" : 0.01,
-		"Sigma2Sqr" : 0.01,
-		"W" : 0.50
+		"SigmaSqr" : 0.010
 	},
 	"HelmholtzKernel" :
 	{
-		"Alpha" : 0.05,
+		"Alpha" : 0.050,
 		"Gamma" : 1.0
 	},
-	"MaskKernel" :
-	{
-		"HelmholtzKernel" :
-		{
-			"Alpha" : 0.01,
-			"Gamma" : 1.0
-		}
-	},
-	"MultiScaleBlurHighestResolutionImage" : true,
+	"MultiScaleBlurHighestResolutionImage" : false,
 	"MultiScaleFinalOutput" :
 	{
 		"OutputStateInformation" : false,
 		"OutputStateInformationFrequency" : 100
 	},
-	"MultiScaleSigmaInVoxels" : 1.0,
+	"MultiScaleSigmaInVoxels" : 0.50,
 	"MultiScaleSettings" :
 	[
 
@@ -48,40 +43,20 @@
 				"AdjustStepSizeUpFactor" : 2.0,
 				"AdjustStepSizeUpNumber" : 2,
 				"DecreaseConstant" : 0.0,
-				"InitialStepSize" : 1e-05,
-				"MaxNumberOfIterations" : 25,
-				"MaxNumberOfTries" : 10,
-				"MinAllowedStepSize" : 1e-10,
-				"OutputStateInformation" : false,
-				"OutputStateInformationFrequency" : 100,
-				"ReductionFactor" : 0.50
-			}
-		},
-		{
-			"Downsample" :
-			{
-				"Scale" : 0.75
-			},
-			"LineSearch" :
-			{
-				"AdjustStepSizeDownFactor" : 0.50,
-				"AdjustStepSizeDownNumber" : 2,
-				"AdjustStepSizeUpFactor" : 2.0,
-				"AdjustStepSizeUpNumber" : 2,
-				"DecreaseConstant" : 0.0,
-				"InitialStepSize" : 1e-05,
+				"InitialStepSize" : 1.000000000000000e-01,
 				"MaxNumberOfIterations" : 50,
 				"MaxNumberOfTries" : 10,
-				"MinAllowedStepSize" : 1e-5,
+				"MinAllowedStepSize" : 1.000000000000000e-04,
 				"OutputStateInformation" : false,
 				"OutputStateInformationFrequency" : 100,
 				"ReductionFactor" : 0.50
 			}
 		},
+
 		{
 			"Downsample" :
 			{
-				"Scale" : 0.5
+				"Scale" : 0.750
 			},
 			"LineSearch" :
 			{
@@ -90,10 +65,32 @@
 				"AdjustStepSizeUpFactor" : 2.0,
 				"AdjustStepSizeUpNumber" : 2,
 				"DecreaseConstant" : 0.0,
-				"InitialStepSize" : 1e-05,
+				"InitialStepSize" : 1.000000000000000e-01,
 				"MaxNumberOfIterations" : 100,
 				"MaxNumberOfTries" : 10,
-				"MinAllowedStepSize" : 1e-5,
+				"MinAllowedStepSize" : 1.000000000000000e-05,
+				"OutputStateInformation" : false,
+				"OutputStateInformationFrequency" : 100,
+				"ReductionFactor" : 0.50
+			}
+		},
+
+		{
+			"Downsample" :
+			{
+				"Scale" : 0.50
+			},
+			"LineSearch" :
+			{
+				"AdjustStepSizeDownFactor" : 0.50,
+				"AdjustStepSizeDownNumber" : 2,
+				"AdjustStepSizeUpFactor" : 2.0,
+				"AdjustStepSizeUpNumber" : 2,
+				"DecreaseConstant" : 0.0,
+				"InitialStepSize" : 1.000000000000000e-03,
+				"MaxNumberOfIterations" : 200,
+				"MaxNumberOfTries" : 10,
+				"MinAllowedStepSize" : 1.000000000000000e-07,
 				"OutputStateInformation" : false,
 				"OutputStateInformationFrequency" : 100,
 				"ReductionFactor" : 0.50

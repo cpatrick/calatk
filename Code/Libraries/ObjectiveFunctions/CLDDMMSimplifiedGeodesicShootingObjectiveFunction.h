@@ -26,6 +26,7 @@
 
 namespace CALATK
 {
+
 /**
   * Implements a simplified geodesic shooting method inspired by
   *
@@ -36,7 +37,6 @@ namespace CALATK
   *
   * Is computationally more efficient than the full adjoint solution and requires only little memory.
   */
-
 template < class TState >
 class CLDDMMSimplifiedGeodesicShootingObjectiveFunction
     : public CLDDMMGeodesicShootingObjectiveFunction< TState >

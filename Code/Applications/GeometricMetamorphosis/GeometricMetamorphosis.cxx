@@ -60,23 +60,24 @@ int DoIt( int argc, char** argv )
   unsigned int uiT0 = ptrImageManager->AddImage( sourceMask, 0.0, 1 );
   unsigned int uiT1 = ptrImageManager->AddImage( targetMask, 1.0, 1 );
 
+  CALATK::CJSONConfiguration::Pointer combinedConfiguration = new CALATK::CJSONConfiguration;
+  combinedConfiguration->ReadJSONFile( configFile );
+  CALATK::CJSONConfiguration::Pointer cleanedConfiguration = new CALATK::CJSONConfiguration;
 
-  lddmm->Solve();
-
-  lddmm->SetConfigurationFile( configFile );
-  lddmm->SetAllowJSONHelpComments( bCreateJSONHelp );
+  lddmm->SetAutoConfiguration( combinedConfiguration, cleanedConfiguration );
+  lddmm->SetAllowHelpComments( bCreateJSONHelp );
   lddmm->Solve();
 
   // write out the resulting JSON file if desired
   if ( configFileOut.compare("None") != 0 )
     {
-      if ( bCleanJSONConfigOutput )
+    if ( bCleanJSONConfigOutput )
       {
-        lddmm->WriteCurrentCleanedConfigurationToJSONFile( configFileOut );
+      cleanedConfiguration->WriteCurrentConfigurationToJSONFile( configFileOut );
       }
-      else
+    else
       {
-        lddmm->WriteCurrentCombinedConfigurationToJSONFile( configFileOut );
+      combinedConfiguration->WriteCurrentConfigurationToJSONFile( configFileOut );
       }
     }
 

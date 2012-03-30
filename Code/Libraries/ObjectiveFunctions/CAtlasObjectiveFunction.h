@@ -21,7 +21,6 @@
 #define C_ATLAS_OBJECTIVE_FUNCTION_H
 
 #include "CObjectiveFunction.h"
-#include "CJSONConfiguration.h"
 #include "CALATKCommon.h"
 
 namespace CALATK

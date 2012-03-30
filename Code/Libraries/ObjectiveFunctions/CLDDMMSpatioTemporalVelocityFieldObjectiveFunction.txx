@@ -46,11 +46,11 @@ CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::~CLDDMMSpatioTempo
 }
 
 template < class TState >
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "SpatioTemporalVelocityField", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "SpatioTemporalVelocityField", Json::nullValue );
+  Superclass::SetAutoConfiguration( combined, cleaned );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "SpatioTemporalVelocityField", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "SpatioTemporalVelocityField", Json::nullValue );
 
   SetJSONHelpForRootKey( SpatioTemporalVelocityField, "settings for the spatio-temporal velocity field" );
 

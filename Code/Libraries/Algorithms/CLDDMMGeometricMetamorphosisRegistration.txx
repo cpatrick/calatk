@@ -35,12 +35,12 @@ CLDDMMGeometricMetamorphosisRegistration< TState >::~CLDDMMGeometricMetamorphosi
 }
 
 template< class TState >
-void CLDDMMGeometricMetamorphosisRegistration< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void CLDDMMGeometricMetamorphosisRegistration< TState >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+  Superclass::SetAutoConfiguration( combined, cleaned );
 
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
 
   SetJSONHelpForRootKey( GeneralRegistrationSettings, "general setting for the registration" );
 
@@ -92,7 +92,13 @@ void CLDDMMGeometricMetamorphosisRegistration< TState >::SetDefaultsIfNeeded()
 
   this->m_ptrMaskKernel->SetPrintConfiguration( this->GetPrintConfiguration() );
   this->m_ptrMaskKernel->SetAllowHelpComments( this->GetAllowHelpComments() );
-  this->m_ptrMaskKernel->SetAutoConfiguration( this->m_jsonConfigIn.GetFromKey( "MaskKernel", Json::nullValue ), this->m_jsonConfigOut.GetFromKey( "MaskKernel", Json::nullValue ) );
+
+  Json::Value * node;
+  node = &(this->m_CombinedJSONConfig->GetFromKey( "MaskKernel", Json::nullValue ));
+  CJSONConfiguration::Pointer maskCombined = new CJSONConfiguration( node, this->m_CombinedJSONConfig->GetPrintSettings() );
+  node = &(this->m_CleanedJSONConfig->GetFromKey( "MaskKernel", Json::nullValue ));
+  CJSONConfiguration::Pointer maskCleaned = new CJSONConfiguration( node, this->m_CleanedJSONConfig->GetPrintSettings() );
+  this->m_ptrMaskKernel->SetAutoConfiguration( maskCombined, maskCleaned );
 
   Superclass::SetDefaultsIfNeeded();
 }

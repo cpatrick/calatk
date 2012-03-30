@@ -20,8 +20,6 @@
 #ifndef C_LDDMM_ADJOINT_GEODESIC_SHOOTING_OBJECTIVE_FUNCTION_TXX
 #define C_LDDMM_ADJOINT_GEODESIC_SHOOTING_OBJECTIVE_FUNCTION_TXX
 
-#define EXTREME_DEBUGGING
-#undef EXTREME_DEBUGGING
 
 template < class TState >
 CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::CLDDMMAdjointGeodesicShootingObjectiveFunction()

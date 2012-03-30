@@ -32,7 +32,6 @@
 #include "VectorField.h"
 
 #include "CProcessBase.h"
-#include "CJSONConfiguration.h"
 
 namespace CALATK
 {
@@ -44,7 +43,7 @@ namespace CALATK
  *
  * Provides the interface for automatic instantiation of default metrics, solvers, ...
  */
-template < class T, unsigned int VImageDimension >
+template < class TFloat, unsigned int VImageDimension >
 class CAlgorithmBase : public CProcessBase
 {
 public:
@@ -55,15 +54,15 @@ public:
   typedef itk::SmartPointer< const Self > ConstPointer;
 
   /* some useful typedefs */
-  typedef CEvolver< T, VImageDimension >       EvolverType;
-  typedef CKernel< T, VImageDimension >        KernelType;
-  typedef CMetric< T, VImageDimension >        MetricType;
-  typedef CImageManager< T, VImageDimension >  ImageManagerType;
+  typedef CEvolver< TFloat, VImageDimension >       EvolverType;
+  typedef CKernel< TFloat, VImageDimension >        KernelType;
+  typedef CMetric< TFloat, VImageDimension >        MetricType;
+  typedef CImageManager< TFloat, VImageDimension >  ImageManagerType;
 
-  typedef VectorImage< T, VImageDimension > VectorImageType;
-  typedef VectorField< T, VImageDimension > VectorFieldType;
+  typedef VectorImage< TFloat, VImageDimension >    VectorImageType;
+  typedef VectorField< TFloat, VImageDimension >    VectorFieldType;
 
-  typedef typename CImageManager< T, VImageDimension >::ImageInformation ImageInformation;
+  typedef typename CImageManager< TFloat, VImageDimension >::ImageInformation ImageInformation;
 
   CAlgorithmBase();
   virtual ~CAlgorithmBase();
@@ -82,34 +81,13 @@ public:
 
   virtual void Solve() = 0;
 
-  virtual const VectorFieldType* GetMap( T dTime ) = 0;
-  virtual const VectorFieldType* GetMapFromTo( T dTimeFrom, T dTimeTo ) = 0;
-  virtual const VectorImageType* GetImage( T dTime ) = 0;
+  virtual const VectorFieldType* GetMap( TFloat time ) = 0;
+  virtual const VectorFieldType* GetMapFromTo( TFloat timeFrom, TFloat timeTo ) = 0;
+  virtual const VectorImageType* GetImage( TFloat time ) = 0;
 
-  void SetAllowJSONHelpComments( bool bCreateJSONHelp );
-  bool GetAllowJSONHelpComments();
-
-  /**
-   * @brief Writes the internal JSON configuration to a file. Will only contain the values that were used (=cleaned JSON file).
-   *
-   * @param sConfigOutputFile : File to write to
-   */
-  void WriteCurrentCleanedConfigurationToJSONFile( std::string sConfigOutputFile );
-
-  /**
-   * @brief Writes the internal JSON configuration to a file. Contains all entries of the input JSON file and new ones that may have been created by the algorithm.
-   *
-   * @param sConfigOutputFile : File to write to
-   */
-  void WriteCurrentCombinedConfigurationToJSONFile( std::string sConfigOutputFile );
-
-  virtual void SetConfigurationFile( std::string sFileName );
-  std::string GetConfigurationFile();
+  virtual void SetAutoConfiguration( CJSONConfiguration * configValueIn, CJSONConfiguration * configValueOut );
 
 protected:
-
-  void ExecuteMainConfiguration();
-
   virtual void SetDefaultsIfNeeded() = 0;
 
   typename MetricType::Pointer       m_ptrMetric;
@@ -125,27 +103,17 @@ protected:
   typename VectorImageType::Pointer m_ptrIm;
   typename VectorFieldType::Pointer m_ptrMap;
 
-  virtual void ParseMainConfigurationFile();
-
-  CJSONConfiguration m_ConfigIn;
-  CJSONConfiguration m_ConfigOut;
-
-  // main configuration file
-  std::string m_MainConfigurationFile;
-
-  // to create JSON help in output
-  bool m_bCreateJSONHelp;
-
-  T GetMSSigma();
-  bool GetMSBlurHighestResolutionImage();
-  unsigned int GetMSNumberOfScales();
-  T GetMSScale( unsigned int uiScale );
+  TFloat       GetMultiScaleSigma() const ;
+  bool         GetMultiScaleBlurHighestResolutionImage() const ;
+  unsigned int GetMultiScaleNumberOfScales() const ;
+  TFloat       GetMultiScaleScale( unsigned int scaleIdx ) const;
 
   // Multi-scale settings for the image-manager
-  std::vector< T > m_MSScales;
-  T m_MSSigma;
-  bool m_MSBlurHighestResolutionImage;
+  typedef std::vector< TFloat > MultiScaleScalesType;
 
+  MultiScaleScalesType m_MultiScaleScales;
+  TFloat               m_MultiScaleSigma;
+  bool                 m_MultiScaleBlurHighestResolutionImage;
 };
 
 } // end namespace

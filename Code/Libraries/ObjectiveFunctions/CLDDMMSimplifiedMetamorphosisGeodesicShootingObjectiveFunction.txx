@@ -80,11 +80,11 @@ CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::~CLDDM
 }
 
 template < class TState >
-void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "SimplifiedMetamorphosis", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "SimplifiedMetamorphosis", Json::nullValue );
+  Superclass::SetAutoConfiguration( combined, cleaned );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "SimplifiedMetamorphosis", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "SimplifiedMetamorphosis", Json::nullValue );
 
   SetJSONHelpForRootKey( GrowthModel, "settings for the simplified metamorphosis model" );
 
@@ -97,88 +97,86 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::S
 template < class TState >
 void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::CreateNewStateStructures()
 {
-    assert( this->m_ptrState.GetPointer() == NULL );
-    assert( m_vecTimeDiscretization.size() > 1 );
+  assert( this->m_ptrState.GetPointer() == NULL );
+  assert( m_vecTimeDiscretization.size() > 1 );
 
-    // get the subject ids
-    std::vector< unsigned int > vecSubjectIndices;
-    this->m_ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
+  // get the subject ids
+  std::vector< unsigned int > vecSubjectIndices;
+  this->m_ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
 
-    assert( vecSubjectIndices.size()>0 );
+  assert( vecSubjectIndices.size()>0 );
 
-    // obtain image from which to graft the image information for the data structures
+  // obtain image from which to graft the image information for the data structures
 
-    ImageInformation* pImInfo;
-    // get information from the first image to figure out the dimensions and determine the source and target image
-    this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
+  ImageInformation* pImInfo;
+  // get information from the first image to figure out the dimensions and determine the source and target image
+  this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
 
-    this->m_ptrState = new TState( pImInfo->Image );
-    this->m_ptrState->GetPointerToInitialMomentum()->SetToConstant( 0 );
+  this->m_ptrState = new TState( pImInfo->Image );
+  this->m_ptrState->GetPointerToInitialMomentum()->SetToConstant( 0 );
 }
 
 template< class TState >
 void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::ShallowCopyStateStructures( TState* ptrState )
 {
-    assert ( this->m_ptrState.GetPointer() == NULL );
-    this->m_ptrState = ptrState;
+  assert ( this->m_ptrState.GetPointer() == NULL );
+  this->m_ptrState = ptrState;
 }
 
 template < class TState >
 void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState>::CreateGradientAndAuxiliaryStructures()
 {
+  // get the subject ids
+  std::vector< unsigned int > vecSubjectIndices;
+  this->m_ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
 
-    // get the subject ids
-    std::vector< unsigned int > vecSubjectIndices;
-    this->m_ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
+  assert( vecSubjectIndices.size()>0 );
 
-    assert( vecSubjectIndices.size()>0 );
+  // obtain image from which to graft the image information for the data structures
+  // and assign the convenience image pointer ptrI0, ptrI1
+  ImageInformation* pImInfo;
+  // get information from the first image to figure out the dimensions and determine the source and target image
+  this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
+  ptrI0 = pImInfo->Image;
 
-    // obtain image from which to graft the image information for the data structures
-    // and assign the convenience image pointer ptrI0, ptrI1
-    ImageInformation* pImInfo;
-    // get information from the first image to figure out the dimensions and determine the source and target image
-    this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
-    ptrI0 = pImInfo->Image;
+  this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 1 );
+  ptrI1 = pImInfo->Image;
 
-    this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 1 );
-    ptrI1 = pImInfo->Image;
+  // create the gradient
+  this->m_ptrGradient = new TState( pImInfo->Image );
+  this->m_ptrGradient->GetPointerToInitialImage()->SetToConstant( 0 );
+  this->m_ptrGradient->GetPointerToInitialMomentum()->SetToConstant( 0 );
 
-    // create the gradient
-    this->m_ptrGradient = new TState( pImInfo->Image );
-    this->m_ptrGradient->GetPointerToInitialImage()->SetToConstant( 0 );
-    this->m_ptrGradient->GetPointerToInitialMomentum()->SetToConstant( 0 );
+  // storage for the maps
 
-    // storage for the maps
+  m_ptrMapIn = new VectorFieldType( pImInfo->Image );
+  m_ptrMapOut = new VectorFieldType( pImInfo->Image );
+  m_ptrMapTmp = new VectorFieldType( pImInfo->Image );
 
-    m_ptrMapIn = new VectorFieldType( pImInfo->Image );
-    m_ptrMapOut = new VectorFieldType( pImInfo->Image );
-    m_ptrMapTmp = new VectorFieldType( pImInfo->Image );
+  // storage for the determinant of the Jacobian
+  m_ptrDeterminantOfJacobian = new VectorImageType( pImInfo->Image, 0.0, 1 );
 
-    // storage for the determinant of the Jacobian
-    m_ptrDeterminantOfJacobian = new VectorImageType( pImInfo->Image, 0.0, 1 );
+  // storage for current state
+  m_ptrCurrentI = new VectorImageType( pImInfo->Image );
+  m_ptrCurrentP = new VectorImageType( pImInfo->Image );
+  m_ptrCurrentVelocity = new VectorFieldType( pImInfo->Image );
 
-    // storage for current state
-    m_ptrCurrentI = new VectorImageType( pImInfo->Image );
-    m_ptrCurrentP = new VectorImageType( pImInfo->Image );
-    m_ptrCurrentVelocity = new VectorFieldType( pImInfo->Image );
+  // temporary storage
+  m_ptrTmpField = new VectorFieldType( pImInfo->Image );
+  m_ptrTmpFieldConv = new VectorFieldType( pImInfo->Image );
 
-    // temporary storage
-    m_ptrTmpField = new VectorFieldType( pImInfo->Image );
-    m_ptrTmpFieldConv = new VectorFieldType( pImInfo->Image );
+  m_ptrTmpImage = new VectorImageType( pImInfo->Image );
 
-    m_ptrTmpImage = new VectorImageType( pImInfo->Image );
+  // storage for the back map and the adjoint
+  m_ptrCurrentBackMap = new VectorFieldType( pImInfo->Image );
+  m_ptrMapIdentity = new VectorFieldType( pImInfo->Image );
+  m_ptrMapIncremental = new VectorFieldType( pImInfo->Image );
 
-    // storage for the back map and the adjoint
-    m_ptrCurrentBackMap = new VectorFieldType( pImInfo->Image );
-    m_ptrMapIdentity = new VectorFieldType( pImInfo->Image );
-    m_ptrMapIncremental = new VectorFieldType( pImInfo->Image );
+  m_ptrCurrentFinalAdjoint = new VectorImageType( pImInfo->Image );
+  m_ptrWarpedFinalToInitialAdjoint = new VectorImageType( pImInfo->Image );
 
-    m_ptrCurrentFinalAdjoint = new VectorImageType( pImInfo->Image );
-    m_ptrWarpedFinalToInitialAdjoint = new VectorImageType( pImInfo->Image );
-
-    // augmented Lagrangian
-    m_ptrImageLagrangianMultiplier = new VectorImageType( pImInfo->Image );
-
+  // augmented Lagrangian
+  m_ptrImageLagrangianMultiplier = new VectorImageType( pImInfo->Image );
 }
 
 template < class TState >

@@ -20,9 +20,7 @@
 #ifndef C_IMAGE_MANAGER_TXX
 #define C_IMAGE_MANAGER_TXX
 
-//
-// empty constructor
-//
+
 template <class T, unsigned int VImageDimension >
 CImageManager< T, VImageDimension >::CImageManager()
   : DefaultAutoScaleImages( false ),
@@ -36,9 +34,7 @@ CImageManager< T, VImageDimension >::CImageManager()
   m_AutoScaleImages = DefaultAutoScaleImages;
 }
 
-//
-// destructor
-//
+
 template <class T, unsigned int VImageDimension >
 CImageManager< T, VImageDimension >::~CImageManager()
 {
@@ -66,16 +62,13 @@ CImageManager< T, VImageDimension >::~CImageManager()
     }
 }
 
-//
-// auto configuration
-//
 
 template <class T, unsigned int VImageDimension >
-void CImageManager< T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void CImageManager< T, VImageDimension >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "ImageManager", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "ImageManager", Json::nullValue );
+  Superclass::SetAutoConfiguration( combined, cleaned );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "ImageManager", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "ImageManager", Json::nullValue );
 
   SetJSONHelpForRootKey( ImageManager, "administers the images, resolutions, and scalings" );
 

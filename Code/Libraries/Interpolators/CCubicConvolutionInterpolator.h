@@ -38,11 +38,11 @@ template < class T, unsigned int VImageDimension=3 >
 class CCubicConvolutionInterpolator :
     public CGenericInterpolator< T, VImageDimension >
 {
-  public:
-    CCubicConvolutionInterpolator();
-    ~CCubicConvolutionInterpolator();
-  protected:
-    virtual T Interpolate( T* vals, T dS );
+public:
+  CCubicConvolutionInterpolator();
+  ~CCubicConvolutionInterpolator();
+protected:
+  virtual T Interpolate( T* vals, T dS );
 };
 
 } // end namespace

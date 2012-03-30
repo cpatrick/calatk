@@ -45,7 +45,7 @@ public:
   /* Some useful typedefs */
   typedef typename TState::FloatType T;
 
-  typedef typename Superclass::CEnergyValues CEnergyValues;
+  typedef typename Superclass::CEnergyValues   CEnergyValues;
 
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
@@ -67,7 +67,7 @@ public:
   SetMacro( EstimateInitialImage, bool );
   GetMacro( EstimateInitialImage, bool );
 
-  void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
 protected:
   typedef VectorFieldUtils< T, TState::ImageDimension > VectorFieldUtilsType;

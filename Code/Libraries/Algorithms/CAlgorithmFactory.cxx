@@ -17,26 +17,16 @@
 *
 */
 
-#ifndef C_INTERPOLATOR_TXX
-#define C_INTERPOLATOR_TXX
-
-#include "CInterpolator.h"
+#include "CAlgorithmFactory.txx"
 
 namespace CALATK
 {
 
-template < class T, unsigned int VImageDimension >
-CInterpolator< T, VImageDimension >::CInterpolator()
-  : DefaultNumberOfThreads( 1 ), m_ExternallySetNumberOfThreads( false )
-{
-  m_NumberOfThreads = DefaultNumberOfThreads;
-}
+template class CAlgorithmFactory< float, 1 >;
+template class CAlgorithmFactory< float, 2 >;
+template class CAlgorithmFactory< float, 3 >;
+template class CAlgorithmFactory< double, 1 >;
+template class CAlgorithmFactory< double, 2 >;
+template class CAlgorithmFactory< double, 3 >;
 
-template < class T, unsigned int VImageDimension >
-CInterpolator< T, VImageDimension >::~CInterpolator()
-{
-}
-
-} // end namespace CALATK
-
-#endif
+} // namespace CALATK

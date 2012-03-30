@@ -57,15 +57,15 @@ T CCubicConvolutionInterpolator< T, VImageDimension >::Interpolate( T* vals, T d
   assert( dS>=0 && dS<=1 );
 
   if ( dS==0 )
-  {
+    {
     return vals[1];
-  }
+    }
   else if ( dS==1 )
-  {
+    {
     return vals[2];
-  }
+    }
   else
-  {
+    {
     T dSSqr = dS*dS;
     T dSCubed = dSSqr*dS;
 
@@ -77,7 +77,7 @@ T CCubicConvolutionInterpolator< T, VImageDimension >::Interpolate( T* vals, T d
     T dVal = ckm1*vals[0] + ck*vals[1] + ckp1*vals[2] + ckp2*vals[3];
 
     return dVal;
-  }
+    }
 }
 
 } // end namespace CALATK

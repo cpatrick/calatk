@@ -62,7 +62,7 @@ public:
   SetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );
   GetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
 protected:
   /* Some useful protected datatypes */

@@ -37,11 +37,11 @@ CLDDMMGeodesicShootingObjectiveFunction< TState >::~CLDDMMGeodesicShootingObject
 }
 
 template < class TState >
-void CLDDMMGeodesicShootingObjectiveFunction< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void CLDDMMGeodesicShootingObjectiveFunction< TState >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "LDDMMGeodesicShooting", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "LDDMMGeodesicShooting", Json::nullValue );
+  Superclass::SetAutoConfiguration( combined, cleaned );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "LDDMMGeodesicShooting", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "LDDMMGeodesicShooting", Json::nullValue );
 
   SetJSONHelpForRootKey( LDDMMGeodesicShooting, "setting for LDDMM shooting implementation (depending only on initial image/momentum" );
 

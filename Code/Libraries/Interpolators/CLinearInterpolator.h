@@ -34,6 +34,7 @@ class CLinearInterpolator :
 public:
   CLinearInterpolator();
   ~CLinearInterpolator();
+
 protected:
   virtual T Interpolate( T* vals, T dS );
 };

@@ -26,7 +26,6 @@
 #include "VectorField.h"
 
 #include "CProcessBase.h"
-#include "CJSONConfiguration.h"
 
 #include "COneStepEvolver.h"
 

@@ -95,20 +95,24 @@ int DoIt( int argc, char** argv )
   unsigned int uiI0 = ptrImageManager->AddImage( sourceImage, 0.0, 0 );
   ptrImageManager->AddImage( targetImage, 1.0, 0 );
 
-  plddmm->SetConfigurationFile( configFile );
-  plddmm->SetAllowJSONHelpComments( bCreateJSONHelp );
+  CALATK::CJSONConfiguration::Pointer combinedConfiguration = new CALATK::CJSONConfiguration;
+  combinedConfiguration->ReadJSONFile( configFile );
+  CALATK::CJSONConfiguration::Pointer cleanedConfiguration = new CALATK::CJSONConfiguration;
+
+  plddmm->SetAutoConfiguration( combinedConfiguration, cleanedConfiguration );
+  plddmm->SetAllowHelpComments( bCreateJSONHelp );
   plddmm->Solve();
 
   // write out the resulting JSON file if desired
   if ( configFileOut.compare("None") != 0 )
     {
-      if ( bCleanJSONConfigOutput )
+    if ( bCleanJSONConfigOutput )
       {
-        plddmm->WriteCurrentCleanedConfigurationToJSONFile( configFileOut );
+      cleanedConfiguration->WriteCurrentConfigurationToJSONFile( configFileOut );
       }
-      else
+    else
       {
-        plddmm->WriteCurrentCombinedConfigurationToJSONFile( configFileOut );
+      combinedConfiguration->WriteCurrentConfigurationToJSONFile( configFileOut );
       }
     }
 

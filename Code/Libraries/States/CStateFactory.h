@@ -31,8 +31,6 @@ namespace CALATK
 {
 
 /**
- * \class CStateFactory
- *
  * \brief Factory class to dynamically create different CState's.
  */
 template < class TFloat, unsigned int VImageDimension=3 >

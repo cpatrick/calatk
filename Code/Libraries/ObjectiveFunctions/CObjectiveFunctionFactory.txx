@@ -63,39 +63,39 @@ CObjectiveFunctionFactory< T, VImageDimension >::CreateNewObjectiveFunction( Num
 
 template < class T, unsigned int VImageDimension >
 typename CObjectiveFunctionFactory< T, VImageDimension >::ObjectiveFunctionBaseType*
-CObjectiveFunctionFactory< T, VImageDimension >::CreateNewObjectiveFunction( std::string sObjectiveFunction )
+CObjectiveFunctionFactory< T, VImageDimension >::CreateNewObjectiveFunction( const std::string & objectiveFunctionName )
 {
-  NumericObjectiveFunctionType objectiveFunction = GetObjectiveFunctionTypeFromString( sObjectiveFunction );
+  const NumericObjectiveFunctionType objectiveFunction = GetObjectiveFunctionTypeFromString( objectiveFunctionName );
   return CreateNewObjectiveFunction( objectiveFunction );
 }
 
 template < class T, unsigned int VImageDimension >
 typename CObjectiveFunctionFactory< T, VImageDimension >::NumericObjectiveFunctionType
-CObjectiveFunctionFactory< T, VImageDimension >::GetObjectiveFunctionTypeFromString( std::string sObjectiveFunction )
+CObjectiveFunctionFactory< T, VImageDimension >::GetObjectiveFunctionTypeFromString( const std::string & objectiveFunctionName )
 {
-  std::string sObjectiveFunctionLowerCase = sObjectiveFunction;
+  std::string objectiveFunctionLowerCase = objectiveFunctionName;
   // convert to all lower case
-  std::transform( sObjectiveFunctionLowerCase.begin(), sObjectiveFunctionLowerCase.end(), sObjectiveFunctionLowerCase.begin(), ::tolower );
+  std::transform( objectiveFunctionLowerCase.begin(), objectiveFunctionLowerCase.end(), objectiveFunctionLowerCase.begin(), ::tolower );
 
-  if ( sObjectiveFunctionLowerCase == "lddmmadjointgeodesicshooting" )
+  if ( objectiveFunctionLowerCase == "lddmmadjointgeodesicshooting" )
   {
     return LDDMMAdjointGeodesicShooting;
   }
-  else if ( sObjectiveFunctionLowerCase == "lddmmsimplifiedgeodesicshooting" )
+  else if ( objectiveFunctionLowerCase == "lddmmsimplifiedgeodesicshooting" )
   {
     return LDDMMSimplifiedGeodesicShooting;
   }
-  else if ( sObjectiveFunctionLowerCase == "lddmmgrowthmodel" )
+  else if ( objectiveFunctionLowerCase == "lddmmgrowthmodel" )
   {
     return LDDMMGrowthModel;
   }
-  else if ( sObjectiveFunctionLowerCase == "lddmmgeometricmetamorphosis" )
+  else if ( objectiveFunctionLowerCase == "lddmmgeometricmetamorphosis" )
   {
     return LDDMMGeometricMetamorphosis;
   }
   else
   {
-    std::cout << "Unknown objective function type " << sObjectiveFunction << "; defaulting to LDDMMGrowthModel" << std::endl;
+    std::cout << "Unknown objective function type " << objectiveFunctionName << "; defaulting to LDDMMGrowthModel" << std::endl;
     return LDDMMGrowthModel;
   }
 }

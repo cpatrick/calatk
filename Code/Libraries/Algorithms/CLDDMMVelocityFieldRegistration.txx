@@ -38,11 +38,11 @@ CLDDMMVelocityFieldRegistration< TState >::~CLDDMMVelocityFieldRegistration()
 }
 
 template < class TState >
-void CLDDMMVelocityFieldRegistration< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void CLDDMMVelocityFieldRegistration< TState >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
+  Superclass::SetAutoConfiguration( combined, cleaned );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "GeneralRegistrationSettings", Json::nullValue );
 
   SetJSONHelpForRootKey( GeneralRegistrationSettings, "general settings for the registration" );
 
@@ -80,7 +80,7 @@ void CLDDMMVelocityFieldRegistration< TState >::SetDefaultEvolverPointer()
   this->m_ptrEvolver->SetOneStepEvolverPointer( this->m_OneStepDefaultEvolver );
   this->m_OneStepDefaultEvolver->SetPrintConfiguration( this->GetPrintConfiguration() );
   this->m_OneStepDefaultEvolver->SetAllowHelpComments( this->GetAllowHelpComments() );
-  this->m_OneStepDefaultEvolver->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
+  this->m_OneStepDefaultEvolver->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
 }
 
 template < class TState >

@@ -63,11 +63,11 @@ CMultiGaussianKernel< T, VImageDimension >::~CMultiGaussianKernel()
 }
 
 template<class T, unsigned int VImageDimension >
-void CMultiGaussianKernel< T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void CMultiGaussianKernel< T, VImageDimension >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "MultiGaussianKernel", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "MultiGaussianKernel", Json::nullValue );
+  Superclass::SetAutoConfiguration( cleaned, combined );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "MultiGaussianKernel", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "MultiGaussianKernel", Json::nullValue );
 
   SetJSONHelpForRootKey( MultiGaussianKernel, "weighted sum of Gaussians" );
 

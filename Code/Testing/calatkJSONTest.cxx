@@ -50,9 +50,9 @@ int main( int argc, char* argv[] )
     return EXIT_FAILURE;
     }
 
-  Json::Value& valMultiScale = config.GetFromKey( "MultiscaleSettings", Json::nullValue );
+  Json::Value& valMultiScale = config.GetFromKey( "MultiScaleSettings", Json::nullValue );
 
-  std::cout << "Multiscale settings = " << std::endl;
+  std::cout << "MultiScale settings = " << std::endl;
   std::cout << valMultiScale;
 
   Json::Value& objectiveFunction = config.GetFromKey( "ObjectiveFunction", Json::nullValue );
@@ -74,12 +74,6 @@ int main( int argc, char* argv[] )
     std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;
     }
-
-  CALATK::CJSONConfiguration subConfig;
-  subConfig.SetRootReference( objectiveFunction );
-
-  std::cout << "SubConfig = " << std::endl;
-  std::cout << *subConfig.GetRootPointer();
 
   return EXIT_SUCCESS;
 }

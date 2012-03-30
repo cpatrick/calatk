@@ -35,11 +35,11 @@ CSolverMultiScale< TState >::~CSolverMultiScale()
 }
 
 template < class TState >
-void CSolverMultiScale< TState >::SetAutoConfiguration( Json::Value &ConfValueIn, Json::Value &ConfValueOut )
+void CSolverMultiScale< TState >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "MultiScaleFinalOutput", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "MultiScaleFinalOutput", Json::nullValue );
+  Superclass::SetAutoConfiguration( combined, cleaned );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "MultiScaleFinalOutput", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "MultiScaleFinalOutput", Json::nullValue );
 
   SetJSONHelpForRootKey( MultiScaleFinalOutput, "output after the last stage of the multi-scale solver");
 
@@ -51,8 +51,8 @@ void CSolverMultiScale< TState >::SetAutoConfiguration( Json::Value &ConfValueIn
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, OutputStateInformationFrequency,
                      "at what iteration steps output should be generated" );
 
-  Json::Value& currentConfigurationInGS = this->m_jsonConfigIn.GetFromKey( "MultiScaleGeneralSettings", Json::nullValue );
-  Json::Value& currentConfigurationOutGS = this->m_jsonConfigOut.GetFromKey( "MultiScaleGeneralSettings", Json::nullValue );
+  Json::Value& currentConfigurationInGS = this->m_CombinedJSONConfig->GetFromKey( "MultiScaleGeneralSettings", Json::nullValue );
+  Json::Value& currentConfigurationOutGS = this->m_CleanedJSONConfig->GetFromKey( "MultiScaleGeneralSettings", Json::nullValue );
 
   SetJSONHelpForRootKey( MultiScaleGeneralSettings, "general settings, affecting each scale of the multiscale soltion" );
 
@@ -101,49 +101,48 @@ bool CSolverMultiScale< TState >::Solve()
 
   if ( m_ptrSolver.GetPointer() == NULL )
     {
-    SetDefaultSingleScaleSolver();
+    this->SetDefaultSingleScaleSolver();
     }
-
   assert( m_ptrSolver.GetPointer() != NULL );
-
   this->m_ptrSolver->SetObjectiveFunction( this->GetObjectiveFunction() );
 
-  // get it's image manager
+  // get its image manager
   ImageManagerMultiScaleType* ptrImageManager = dynamic_cast< ImageManagerMultiScaleType* >( objectiveFunction->GetImageManagerPointer() );
-
   if ( !ptrImageManager->SupportsMultiScaling() )
     {
     throw std::runtime_error( "Image manager needs to support multi-scaling to use the multi-scale solver.");
     }
 
   // find all the scales from the image manager
-  unsigned int uiNrOfScales = ptrImageManager->GetNumberOfScales();
-
-  assert( uiNrOfScales>0 );
+  const unsigned int numberOfScales = ptrImageManager->GetNumberOfScales();
+  assert( numberOfScales > 0 );
 
   std::string sSolutionPrefix = "MS-Sol-";
 
   bool hasBeenInitialized = false;
 
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "MultiscaleSettings", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "MultiscaleSettings", Json::nullValue );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "MultiScaleSettings", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "MultiScaleSettings", Json::nullValue );
 
-  SetJSONHelpForRootKey( MultiscaleSettings, "settings for the multiscale solver" );
+  SetJSONHelpForRootKey( MultiScaleSettings, "settings for the multiscale solver" );
 
   // loop over all scales, starting at the lowest
-  for ( int iI=(int)uiNrOfScales-1; iI>=0; --iI )
+  for ( unsigned int ii = numberOfScales; ii > 0; --ii )
     {
-    ptrImageManager->SelectScale( (unsigned int)iI );
-    m_ptrSolver->SetExternalSolverState( (unsigned int)iI );
+    const unsigned int scaleIndex = ii - 1;
+    ptrImageManager->SelectScale( scaleIndex );
+    m_ptrSolver->SetExternalSolverState( scaleIndex );
     
     m_ptrSolver->SetPrintConfiguration( this->GetPrintConfiguration() );
     m_ptrSolver->SetAllowHelpComments( this->GetAllowHelpComments() );
-    m_ptrSolver->SetAutoConfiguration(
-          this->m_jsonConfigIn.GetFromIndex( currentConfigurationIn, iI, Json::nullValue ),
-          this->m_jsonConfigOut.GetFromIndex( currentConfigurationOut, iI, Json::nullValue )
-          );
+    Json::Value * node;
+    node = &(this->m_CombinedJSONConfig->GetFromIndex( currentConfigurationIn, scaleIndex, Json::nullValue ));
+    CJSONConfiguration::Pointer solverCombined = new CJSONConfiguration( node, this->m_CombinedJSONConfig->GetPrintSettings() );
+    node = &(this->m_CleanedJSONConfig->GetFromIndex( currentConfigurationOut, scaleIndex, Json::nullValue ));
+    CJSONConfiguration::Pointer solverCleaned = new CJSONConfiguration( node, this->m_CleanedJSONConfig->GetPrintSettings() );
+    m_ptrSolver->SetAutoConfiguration( solverCombined, solverCleaned );
 
-    std::cout << "Solving multiscale level " << iI+1 << "/" << uiNrOfScales << std::endl;
+    std::cout << "Solving multiscale level " << ii << "/" << numberOfScales << std::endl;
 
     if ( !hasBeenInitialized )
       {
@@ -163,17 +162,15 @@ bool CSolverMultiScale< TState >::Solve()
       
       objectiveFunction->InitializeState( pUpsampledState );
       reducedEnergy = m_ptrSolver->SolvePreInitialized();
-
       }
 
     // output the solution at this level
     if ( this->m_OutputStateInformation )
       {
-      objectiveFunction->OutputStateInformation( iI, sSolutionPrefix );
+      objectiveFunction->OutputStateInformation( scaleIndex, sSolutionPrefix );
       }
-
     }
-  
+
   return reducedEnergy;
 }
 

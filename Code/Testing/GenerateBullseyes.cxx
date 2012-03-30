@@ -20,6 +20,7 @@
 /** Generate the bullseye testing data.
  */
 
+#include "itkConfigure.h"
 #include "itkExtractImageFilter.h"
 #include "itkImage.h"
 #include "itkImageFileWriter.h"
@@ -48,6 +49,10 @@ public:
     this->Image = ImageType::New();
     this->ExtractImage2DFilter = ExtractImage2DFilterType::New();
     this->ExtractImage1DFilter = ExtractImage1DFilterType::New();
+#if ITK_VERSION_MAJOR > 3
+    this->ExtractImage1DFilter->SetDirectionCollapseToSubmatrix();
+    this->ExtractImage2DFilter->SetDirectionCollapseToSubmatrix();
+#endif
     }
 
   void SetRadii( const double radius1, const double radius2, const double radius3 )

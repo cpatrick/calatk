@@ -64,7 +64,9 @@ endfunction(add_ctest_subtest)
 #
 function(add_ctest_test_testdriver testName testDriver)
   if(BUILD_TESTING)
-    add_test(${testName} ${testDriver}
+    add_test(NAME ${testName}
+      WORKING_DIRECTORY ${test_temp_dir}
+      COMMAND ${testDriver}
       ${testName}
       ${ARGN}
       )
@@ -75,7 +77,9 @@ endfunction(add_ctest_test_testdriver)
 #
 function(add_ctest_test_testdriver_image_compare testName testDriver imBaseline imResult)
   if(BUILD_TESTING)
-    add_test(${testName} ${testDriver}
+    add_test(NAME ${testName}
+      WORKING_DIRECTORY ${test_temp_dir}
+      COMMAND ${testDriver}
       --compare ${imBaseline}
                 ${imResult}
       ${testName}
@@ -89,7 +93,9 @@ endfunction(add_ctest_test_testdriver_image_compare)
 #
 function(add_ctest_subtest_testdriver_image_compare testName subtestName testDriver imBaseline imResult)
   if(BUILD_TESTING)
-    add_test(${testName}_${subtestName} ${testDriver}
+    add_test(NAME ${testName}_${subtestName}
+      WORKING_DIRECTORY ${test_temp_dir}
+      COMMAND ${testDriver}
       --compare ${imBaseline}
                 ${imResult}
       ${testName}
@@ -120,6 +126,7 @@ set(testDriverAlgorithms_SRCS
 
 set(testDriverInterfaces_SRCS
   calatkApplicationImageFileNamesGivenTest.cxx
+  calatkApplicationDataConfigTest.cxx
 )
 
 add_executable(testDriverFiltering testDriverFiltering.cxx ${testDriverFiltering_SRCS})
@@ -270,7 +277,7 @@ if(BUILD_TESTING AND compile_GenerateBullseyes)
     PROPERTIES WILL_FAIL TRUE
     )
 
-  add_test(CALATKCommandLineBullseyes1D ${CALATKCommandLine_path}
+  add_test(CALATKCommandLineBullseyes1DTest ${CALATKCommandLine_path}
     ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfig.json
     ${test_temp_dir}/Bullseye1DTimePoint0.mha
     ${test_temp_dir}/Bullseye1DTimePoint1.mha
@@ -278,13 +285,22 @@ if(BUILD_TESTING AND compile_GenerateBullseyes)
     ${test_temp_dir}/CALATKCommandLineBullseyes1D_DataConfig.json
     )
 
+  add_test(CALATKCommandLineBullseyes1D_ImageDimensionsSpecifiedTest
+    ${CALATKCommandLine_path}
+    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfigImageDimensionsSpecified.json
+    ${test_temp_dir}/Bullseye1DTimePoint0.mha
+    ${test_temp_dir}/Bullseye1DTimePoint1.mha
+    ${test_temp_dir}/CALATKCommandLineBullseyes1D_ImageDimensionSpecified_AlgorithmConfig.json
+    ${test_temp_dir}/CALATKCommandLineBullseyes1D_ImageDimensionSpecified_DataConfig.json
+    )
+
   add_ctest_test_testdriver(calatkApplicationImageFileNamesGivenTest
     testDriverInterfaces
     ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfig.json
     ${test_temp_dir}/Bullseye2DTimePoint0.mha
     ${test_temp_dir}/Bullseye2DTimePoint1.mha
-    ${test_temp_dir}/calatkApplicationImageFileNamesGivenTests_AlgorithmConfig.json
-    ${test_temp_dir}/calatkApplicationImageFileNamesGivenTests_DataConfig.json
+    ${test_temp_dir}/calatkApplicationImageFileNamesGivenTest_AlgorithmConfig.json
+    ${test_temp_dir}/calatkApplicationImageFileNamesGivenTest_DataConfig.json
     )
   add_executable(DefaultInputConfigVerification
     calatkDefaultInputConfigVerification.cxx
@@ -292,13 +308,23 @@ if(BUILD_TESTING AND compile_GenerateBullseyes)
   target_link_libraries(DefaultInputConfigVerification CALATK)
   add_test(calatkDefaultInputConfigVerificationTest
     ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/DefaultInputConfigVerification
-    ${test_temp_dir}/calatkApplicationImageFileNamesGivenTests_DataConfig.json
+    ${test_temp_dir}/calatkApplicationImageFileNamesGivenTest_DataConfig.json
     )
   set_tests_properties(calatkDefaultInputConfigVerificationTest
     PROPERTIES DEPENDS calatkApplicationImageFileNamesGivenTest)
 
+  add_ctest_test_testdriver(calatkApplicationDataConfigTest
+    testDriverInterfaces
+    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfig.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestDataConfig.json
+    ${test_temp_dir}/calatkApplicationDataConfigTest_AlgorithmConfig.json
+    ${test_temp_dir}/calatkApplicationDataConfigTest_DataConfig.json
+    )
+
   set_tests_properties(calatkApplicationImageFileNamesGivenTest
-    CALATKCommandLineBullseyes1D
+    CALATKCommandLineBullseyes1DTest
+    CALATKCommandLineBullseyes1D_ImageDimensionsSpecifiedTest
+    calatkApplicationDataConfigTest
     PROPERTIES DEPENDS GenerateBullseyes)
 endif()
 

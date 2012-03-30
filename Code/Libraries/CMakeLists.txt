@@ -4,6 +4,7 @@ set(CALATK_jsoncpp_source ${CMAKE_SOURCE_DIR}/Code/External/jsoncpp/jsoncpp.cpp)
 # Set up sources for Algorithms
 set(CALATK_Algorithms_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/Algorithms/CAlgorithmBase.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/Algorithms/CAlgorithmFactory.cxx
   )
 # Set up sources for Base
 set(CALATK_Base_sources

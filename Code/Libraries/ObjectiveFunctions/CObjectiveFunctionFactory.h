@@ -53,21 +53,27 @@ public:
   typedef itk::SmartPointer< const Self >  ConstPointer;
 
   // all the objective function typedefs
-  typedef CObjectiveFunctionBase< T, VImageDimension > ObjectiveFunctionBaseType;
+  typedef CObjectiveFunctionBase< T, VImageDimension >             ObjectiveFunctionBaseType;
 
-  typedef CStateInitialImageMomentum< T, VImageDimension > InitialImageMomentumStateType;
+  typedef CStateInitialImageMomentum< T, VImageDimension >         InitialImageMomentumStateType;
   typedef CStateSpatioTemporalVelocityField< T, VImageDimension >  SpatioTemporalVelocityFieldStateType;
 
-  enum NumericObjectiveFunctionType { LDDMMAdjointGeodesicShooting, LDDMMSimplifiedGeodesicShooting, LDDMMGrowthModel, LDDMMGeometricMetamorphosis };
+  enum NumericObjectiveFunctionType
+    {
+    LDDMMAdjointGeodesicShooting,
+    LDDMMSimplifiedGeodesicShooting,
+    LDDMMGrowthModel,
+    LDDMMGeometricMetamorphosis
+    };
 
   CObjectiveFunctionFactory();
   ~CObjectiveFunctionFactory();
 
-  static ObjectiveFunctionBaseType* CreateNewObjectiveFunction( std::string sObjectiveFunction );
+  static ObjectiveFunctionBaseType* CreateNewObjectiveFunction( const std::string & objectiveFunctionName );
   static ObjectiveFunctionBaseType* CreateNewObjectiveFunction( NumericObjectiveFunctionType objectiveFunction );
 
 protected:
-  static NumericObjectiveFunctionType GetObjectiveFunctionTypeFromString( std::string sObjectiveFunction );
+  static NumericObjectiveFunctionType GetObjectiveFunctionTypeFromString( const std::string & objectiveFunctionName );
 };
 
 } // end namespace

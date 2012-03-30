@@ -39,11 +39,11 @@ CHelmholtzKernel< T, VImageDimension >::~CHelmholtzKernel()
 }
 
 template <class T, unsigned int VImageDimension >
-void CHelmholtzKernel< T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void CHelmholtzKernel< T, VImageDimension >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "HelmholtzKernel", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "HelmholtzKernel", Json::nullValue );
+  Superclass::SetAutoConfiguration( combined, cleaned );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "HelmholtzKernel", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "HelmholtzKernel", Json::nullValue );
 
   SetJSONHelpForRootKey( HelmholtzKernel, "kernel of the form L=-\\gamma + \\alpha \\nabla^2" );
 
