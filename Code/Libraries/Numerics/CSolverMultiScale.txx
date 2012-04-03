@@ -154,13 +154,16 @@ bool CSolverMultiScale< TState >::Solve()
       {
       // has solution from previous iteration
       // get state, upsample it and then use if for initialization
-      const TState* pCurrentState = objectiveFunction->GetStatePointer();
+      const TState * currentState = objectiveFunction->GetStatePointer();
 
       std::cout << "Upsampling state for multi-scale solver." << std::endl;
 
-      typename TState::Pointer pUpsampledState = dynamic_cast< TState* >( pCurrentState->CreateUpsampledStateAndAllocateMemory( ptrImageManager->GetGraftImagePointer() ) );
+      typename TState::Superclass * superState = currentState->CreateUpsampledStateAndAllocateMemory( ptrImageManager->GetGraftImagePointer() ); 
+      // dynamic_cast is broken with apple GCC 4.2.1 build 5666 dot 3
+      TState * castState = reinterpret_cast< TState* >( superState );
+      typename TState::Pointer upsampledState = castState;
       
-      objectiveFunction->InitializeState( pUpsampledState );
+      objectiveFunction->InitializeState( upsampledState );
       reducedEnergy = m_ptrSolver->SolvePreInitialized();
       }
 

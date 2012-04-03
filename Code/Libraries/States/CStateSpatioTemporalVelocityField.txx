@@ -99,7 +99,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension >::CreateUpsampledStateAnd
     upsampledVectorFieldTimeSeries.push_back( ptrResampledVectorField );
     }
 
-  Self * upsampledState = new Self( upsampledVectorFieldTimeSeries );
+  Superclass * upsampledState = new Self( upsampledVectorFieldTimeSeries );
 
   return upsampledState;
 

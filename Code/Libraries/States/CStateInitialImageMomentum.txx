@@ -177,7 +177,7 @@ CStateInitialImageMomentum<T, VImageDimension >::CreateUpsampledStateAndAllocate
   this->m_Resampler->Upsample( m_ptrInitialImage, ptrInitialImage );
   this->m_Resampler->Upsample( m_ptrInitialMomentum, ptrInitialMomentum );
   
-  Self * upsampledState = new Self( ptrNewRawData, ptrInitialImage, ptrInitialMomentum );
+  Superclass * upsampledState = new Self( ptrNewRawData, ptrInitialImage, ptrInitialMomentum );
   
   return upsampledState;
 }
