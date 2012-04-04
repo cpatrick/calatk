@@ -188,7 +188,6 @@ void CApplication::Solve()
   this->m_CleanedAlgorithmJSONConfig->InitializeEmptyRoot();
   this->m_CleanedDataJSONConfig->InitializeEmptyRoot();
   Json::Value & cleanedAlgorithmConfigRoot = *(this->m_CleanedAlgorithmJSONConfig->GetRootPointer());
-  Json::Value & cleanedDataConfigRoot = *(this->m_CleanedDataJSONConfig->GetRootPointer());
 
   // Get the float type (double or float).
   // The default float type.
