@@ -66,7 +66,8 @@ void CAlgorithm< TState >::Solve()
 
   this->m_CleanedJSONConfig->InitializeEmptyRoot();
   // This will create a root pointer if one does not already exists.
-  Json::Value * configInRoot = this->m_CombinedJSONConfig->GetRootPointer();
+  //Json::Value * configInRoot = this->m_CombinedJSONConfig->GetRootPointer();
+  this->m_CombinedJSONConfig->GetRootPointer();
 
   // image manager needs to be specified, so that data can be assigned
   if ( this->m_ptrImageManager.GetPointer() == NULL )

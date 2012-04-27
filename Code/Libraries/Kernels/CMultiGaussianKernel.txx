@@ -65,7 +65,7 @@ CMultiGaussianKernel< T, VImageDimension >::~CMultiGaussianKernel()
 template<class T, unsigned int VImageDimension >
 void CMultiGaussianKernel< T, VImageDimension >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( cleaned, combined );
+  Superclass::SetAutoConfiguration( combined, cleaned );
   Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "MultiGaussianKernel", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "MultiGaussianKernel", Json::nullValue );
 
