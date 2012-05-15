@@ -52,9 +52,14 @@ public:
 
   virtual TState* CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const = 0;
 
+  virtual bool StateContainsInitialImage() = 0;
+  virtual VectorImageType* GetPointerToInitialImage() const;
+
 protected:
 private:
 };
+
+#include "CStateImageDomain.txx"
 
 } // end namespace
 

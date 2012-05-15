@@ -82,6 +82,9 @@ public:
 
   virtual void Solve() = 0;
 
+  // Method which is executed before every sub-iteration
+  virtual void PreSubIterationSolve();
+
   virtual const VectorFieldType* GetMap( T dTime ) = 0;
   virtual const VectorFieldType* GetMapFromTo( T dTimeFrom, T dTimeTo ) = 0;
   virtual const VectorImageType* GetImage( T dTime ) = 0;

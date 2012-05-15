@@ -23,9 +23,12 @@
 template < class TState >
 CSolverMultiScale< TState >::CSolverMultiScale()
   : DefaultSingleScaleSolver( "LineSearchUnconstrained" ),
-    m_ExternallySetSingleScaleSolver( false )
+    m_ExternallySetSingleScaleSolver( false ),
+    DefaultNumberOfSubIterations( 1 ),
+    m_ExternallySetNumberOfSubIterations( false )
 {
   m_SingleScaleSolver = DefaultSingleScaleSolver;
+  m_NumberOfSubIterations = DefaultNumberOfSubIterations;
   this->m_ptrSolver = NULL;
 }
 
@@ -57,9 +60,12 @@ void CSolverMultiScale< TState >::SetAutoConfiguration( Json::Value &ConfValueIn
   SetJSONHelpForRootKey( MultiScaleGeneralSettings, "general settings, affecting each scale of the multiscale soltion" );
 
   SetJSONFromKeyString( currentConfigurationInGS, currentConfigurationOutGS, SingleScaleSolver );
+  SetJSONFromKeyUInt( currentConfigurationInGS, currentConfigurationOutGS, NumberOfSubIterations );
 
   SetJSONHelpForKey( currentConfigurationInGS, currentConfigurationOutGS, SingleScaleSolver,
-                     "specifies the numerical solver: IpOpt, LineSearchUnconstrained, LineSearchConstrained, NLOpt, LBFGS; IpOpt or LineSearchUnconstrained are recommended. All but LineSearch use an L-BFGS quasi Newton method.")
+                     "specifies the numerical solver: IpOpt, LineSearchUnconstrained, LineSearchConstrained, NLOpt, LBFGS; IpOpt or LineSearchUnconstrained are recommended. All but LineSearch use an L-BFGS quasi Newton method.");
+  SetJSONHelpForKey( currentConfigurationInGS, currentConfigurationOutGS, NumberOfSubIterations,
+                     "specified how many times the solver should be called (per scale) while applying a pre-condition")
 
 }
 
@@ -87,6 +93,12 @@ bool CSolverMultiScale< TState >::SolvePreInitialized()
 {
   // there is not pre-initialization here necessary (because this is the multi-scale solver), so just call solve
   return this->Solve();
+}
+
+template < class TState >
+void CSolverMultiScale< TState >::PreSubIterationSolve()
+{
+  // TODO: Put functionality here. Should call an exteranlly specified method (maybe point to algorithm and have a PreSubIterationSolve method there)
 }
 
 template < class TState >
@@ -123,7 +135,7 @@ bool CSolverMultiScale< TState >::Solve()
 
   std::string sSolutionPrefix = "MS-Sol-";
 
-  bool hasBeenInitialized = false;
+  bool MultiScaleHasBeenInitialized = false;
 
   Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "MultiscaleSettings", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "MultiscaleSettings", Json::nullValue );
@@ -143,36 +155,55 @@ bool CSolverMultiScale< TState >::Solve()
           this->m_jsonConfigOut.GetFromIndex( currentConfigurationOut, iI, Json::nullValue )
           );
 
-    std::cout << "Solving multiscale level " << iI+1 << "/" << uiNrOfScales << std::endl;
-
-    if ( !hasBeenInitialized )
+    if ( !MultiScaleHasBeenInitialized )
       {
-      std::cout << "Initializing multi-scale solution." << std::endl;
-      reducedEnergy = m_ptrSolver->Solve();
-      hasBeenInitialized = true;
+        for ( unsigned int iS=0; iS<m_NumberOfSubIterations; ++iS )
+        {
+          this->PreSubIterationSolve();
+
+          std::cout << "Solving multiscale level " << iI+1 << "/" << uiNrOfScales << "; subiteration " << iS+1 << "/" << m_NumberOfSubIterations << std::endl;
+          if ( iS==0 )
+          {
+            std::cout << "Initializing multi-scale solution." << std::endl;
+            reducedEnergy = reducedEnergy || m_ptrSolver->Solve();
+          }
+          else
+          {
+            reducedEnergy = reducedEnergy || m_ptrSolver->SolvePreInitialized();
+          }
+        }
+      MultiScaleHasBeenInitialized = true;
       }
-    else
+    else // MultiScaleHasBeenInitialized (i.e., this is not the initial scale)
       {
-      // has solution from previous iteration
-      // get state, upsample it and then use if for initialization
-      const TState* pCurrentState = objectiveFunction->GetStatePointer();
+        // has solution from previous iteration
+        // get state, upsample it and then use if for initialization
+        const TState* pCurrentState = objectiveFunction->GetStatePointer();
 
-      std::cout << "Upsampling state for multi-scale solver." << std::endl;
+        std::cout << "Upsampling state for multi-scale solver." << std::endl;
 
-      typename TState::Pointer pUpsampledState = dynamic_cast< TState* >( pCurrentState->CreateUpsampledStateAndAllocateMemory( ptrImageManager->GetGraftImagePointer() ) );
+        typename TState::Pointer pUpsampledState = dynamic_cast< TState* >( pCurrentState->CreateUpsampledStateAndAllocateMemory( ptrImageManager->GetGraftImagePointer() ) );
       
-      objectiveFunction->InitializeState( pUpsampledState );
-      reducedEnergy = m_ptrSolver->SolvePreInitialized();
+        objectiveFunction->InitializeState( pUpsampledState );
 
-      }
+        for ( unsigned int iS=0; iS<m_NumberOfSubIterations; ++iS )
+          {
 
-    // output the solution at this level
-    if ( this->m_OutputStateInformation )
-      {
-      objectiveFunction->OutputStateInformation( iI, sSolutionPrefix );
-      }
+          this->PreSubIterationSolve();
+          std::cout << "Solving multiscale level " << iI+1 << "/" << uiNrOfScales << "; subiteration " << iS+1 << "/" << m_NumberOfSubIterations << std::endl;
 
-    }
+          reducedEnergy = reducedEnergy || m_ptrSolver->SolvePreInitialized();
+
+          }
+      } // end MultiScaleHaseBeenInitialized
+
+      // output the solution at this level
+      if ( this->m_OutputStateInformation )
+        {
+        objectiveFunction->OutputStateInformation( iI, sSolutionPrefix );
+        }
+
+    } // loop over scales
   
   return reducedEnergy;
 }

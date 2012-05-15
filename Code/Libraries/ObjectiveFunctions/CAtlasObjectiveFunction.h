@@ -82,7 +82,7 @@ private:
   CAtlasObjectiveFunction( const CAtlasObjectiveFunction & );
   CAtlasObjectiveFunction& operator=( const CAtlasObjectiveFunction & );
 
-  std::vector< T > vecWeights; ///< Contains the weights for each subject to atlas registration
+  std::vector< T > m_Weights; ///< Contains the weights for each subject to atlas registration
   typedef std::vector< typename ObjectiveFunctionType::Pointer > VectorObjectiveFunctionPointersType;
   VectorObjectiveFunctionPointersType  m_VectorObjectiveFunctionPtrs;
 };

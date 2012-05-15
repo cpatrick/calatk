@@ -371,5 +371,14 @@ T* CStateInitialImageMomentum< T, VImageDimension, TResampler >::GetPointerToSta
   }
 }
 
+//
+// Allows to query if the state contains the initial image
+//
+template <class T, unsigned int VImageDimension, class TResampler >
+bool CStateInitialImageMomentum< T, VImageDimension, TResampler >::StateContainsInitialImage()
+{
+  return true;
+}
+
 #endif
 

@@ -102,6 +102,8 @@ public:
 
   T SquaredNorm();
 
+  bool StateContainsInitialImage();
+
 protected:
 
   void ClearDataStructure();

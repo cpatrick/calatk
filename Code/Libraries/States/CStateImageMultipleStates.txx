@@ -17,14 +17,14 @@
 *
 */
 
-#ifndef C_STATE_ATLAS_TXX
-#define C_STATE_ATLAS_TXX
+#ifndef C_STATE_IMAGE_MULTIPLE_STATES_TXX
+#define C_STATE_IMAGE_MULTIPLE_STATES_TXX
 
 //
 // empty constructor
 //
 template <class TState>
-CStateAtlas< TState  >::CStateAtlas()
+CStateImageMultipleStates< TState  >::CStateImageMultipleStates()
 {
 }
 
@@ -32,7 +32,7 @@ CStateAtlas< TState  >::CStateAtlas()
 // copy constructor
 //
 template <class TState>
-CStateAtlas< TState  >::CStateAtlas( const CStateAtlas & c ) 
+CStateImageMultipleStates< TState  >::CStateImageMultipleStates( const CStateImageMultipleStates & c ) 
 {
   if ( this != &c )
     {
@@ -50,7 +50,7 @@ CStateAtlas< TState  >::CStateAtlas( const CStateAtlas & c )
 // copy constructor (from individual states which have been allocated externally)
 //
 template <class TState>
-CStateAtlas< TState  >::CStateAtlas( const std::vector< TState* >* pVec )
+CStateImageMultipleStates< TState  >::CStateImageMultipleStates( const std::vector< TState* >* pVec )
 {
   typename VectorIndividualStatesType::const_iterator iter;
   for ( iter = pVec->begion(); iter != pVec->end(); ++iter )
@@ -64,7 +64,7 @@ CStateAtlas< TState  >::CStateAtlas( const std::vector< TState* >* pVec )
 // clear data structure
 //
 template <class TState>
-void CStateAtlas< TState >::ClearDataStructure()
+void CStateImageMultipleStates< TState >::ClearDataStructure()
 {
   this->m_vecIndividualStates.clear();
 }
@@ -73,7 +73,7 @@ void CStateAtlas< TState >::ClearDataStructure()
 // destructor
 //
 template <class TState>
-CStateAtlas< TState >::~CStateAtlas()
+CStateImageMultipleStates< TState >::~CStateImageMultipleStates()
 {
   ClearDataStructure();
 }
@@ -82,8 +82,8 @@ CStateAtlas< TState >::~CStateAtlas()
 // Upsampling
 //
 template <class TState>
-typename CStateAtlas< TState >::SuperclassTState* 
-CStateAtlas< TState >::CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const
+typename CStateImageMultipleStates< TState >::SuperclassTState* 
+CStateImageMultipleStates< TState >::CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const
 {
     VectorIndividualStatesType* ptrUpsampledState = new VectorIndividualStatesType;
 
@@ -101,8 +101,8 @@ CStateAtlas< TState >::CreateUpsampledStateAndAllocateMemory( const VectorImageT
 // Here come the algebraic operators and assignment
 
 template <class TState>
-CStateAtlas< TState > & 
-CStateAtlas< TState >::operator=(const CStateAtlas & p )
+CStateImageMultipleStates< TState > & 
+CStateImageMultipleStates< TState >::operator=(const CStateImageMultipleStates & p )
 {
   if ( this != &p )
     {
@@ -147,8 +147,8 @@ CStateAtlas< TState >::operator=(const CStateAtlas & p )
 }
 
 template <class TState>
-CStateAtlas< TState > & 
-CStateAtlas< TState >::operator+=(const CStateAtlas & p )
+CStateImageMultipleStates< TState > & 
+CStateImageMultipleStates< TState >::operator+=(const CStateImageMultipleStates & p )
 {
   if ( m_vecIndividualStates.size() != p.m_vecIndividualStates.size() )
     {
@@ -169,8 +169,8 @@ CStateAtlas< TState >::operator+=(const CStateAtlas & p )
 }
 
 template <class TState>
-CStateAtlas< TState > & 
-CStateAtlas< TState >::operator-=(const CStateAtlas & p )
+CStateImageMultipleStates< TState > & 
+CStateImageMultipleStates< TState >::operator-=(const CStateImageMultipleStates & p )
 {
 
   if ( m_vecIndividualStates.size() != p.m_vecIndividualStates.size() )
@@ -193,8 +193,8 @@ CStateAtlas< TState >::operator-=(const CStateAtlas & p )
 }
 
 template <class TState>
-CStateAtlas< TState > & 
-CStateAtlas< TState >::operator*=(const T & p )
+CStateImageMultipleStates< TState > & 
+CStateImageMultipleStates< TState >::operator*=(const T & p )
 {
 
   typename VectorIndividualStatesType::iterator iterTarget;
@@ -208,26 +208,26 @@ CStateAtlas< TState >::operator*=(const T & p )
 }
 
 template <class TState>
-CStateAtlas< TState >
-CStateAtlas< TState >::operator+(const CStateAtlas & p ) const
+CStateImageMultipleStates< TState >
+CStateImageMultipleStates< TState >::operator+(const CStateImageMultipleStates & p ) const
 {
-  CStateAtlas r = *this;
+  CStateImageMultipleStates r = *this;
   return r += p;
 }
 
 template <class TState >
-CStateAtlas< TState >
-CStateAtlas< TState >::operator-(const CStateAtlas & p ) const
+CStateImageMultipleStates< TState >
+CStateImageMultipleStates< TState >::operator-(const CStateImageMultipleStates & p ) const
 {
-  CStateAtlas r = *this;
+  CStateImageMultipleStates r = *this;
   return r -= p;
 }
 
 template <class TState >
-CStateAtlas< TState > 
-CStateAtlas< TState >::operator*(const T & p ) const
+CStateImageMultipleStates< TState > 
+CStateImageMultipleStates< TState >::operator*(const T & p ) const
 {
-  CStateAtlas r = *this;
+  CStateImageMultipleStates r = *this;
   return r*= p;
 }
 
@@ -235,7 +235,7 @@ CStateAtlas< TState >::operator*(const T & p ) const
 // returns one of the individual states
 //
 template <class TState >
-TState* CStateAtlas< TState >::GetIndividualStatePointer( unsigned int uiState )
+TState* CStateImageMultipleStates< TState >::GetIndividualStatePointer( unsigned int uiState )
 {
   int iNrOfStates = m_vecIndividualStates.size();
   if ( iNrOfStates==0 || iNrOfStates<=uiState )
@@ -252,7 +252,7 @@ TState* CStateAtlas< TState >::GetIndividualStatePointer( unsigned int uiState )
 // computes the squared norm of the state, by adding all the individual square norm components
 //
 template <class TState >
-T CStateAtlas< TState >::SquaredNorm()
+T CStateImageMultipleStates< TState >::SquaredNorm()
 {
   T dSquaredNorm = 0;
 
@@ -265,5 +265,15 @@ T CStateAtlas< TState >::SquaredNorm()
   return dSquaredNorm;
 
 }
+
+//
+// Allows to query if the state contains the initial image
+//
+template <class T, unsigned int VImageDimension, class TResampler >
+bool CStateImageMultipleStates< T, VImageDimension, TResampler >::StateContainsInitialImage()
+{
+  return false;
+}
+
 
 #endif

@@ -310,4 +310,13 @@ T CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler >::SquaredNo
 
 }
 
+//
+// Allows to query if the state contains the initial image
+//
+template <class T, unsigned int VImageDimension, class TResampler >
+bool CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler >::StateContainsInitialImage()
+{
+  return false;
+}
+
 #endif

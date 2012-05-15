@@ -17,10 +17,14 @@
 *
 */
 
-#include "itkTestMain.h"
+#ifndef C_STATE_IMAGE_DOMAIN_TXX
+#define C_STATE_IMAGE_DOMAIN_TXX
 
-void RegisterTests()
+template<class T, unsigned int VImageDimension, class TResampler>
+typename CStateImageDomain<T, VImageDimension, TResampler>::VectorImageType*
+CStateImageDomain<T, VImageDimension, TResampler>::GetPointerToInitialImage() const
 {
-  REGISTER_TEST( calatkLDDMMTest );
-  REGISTER_TEST( calatkMetamorphosisTest );
+  return NULL;
 }
+
+#endif

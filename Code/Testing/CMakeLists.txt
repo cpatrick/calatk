@@ -104,6 +104,7 @@ calatkInterpolationTest.cxx
 
 set(testDriverAlgorithms_SRCS
 calatkLDDMMTest.cxx
+calatkMetamorphosisTest.cxx
 )
 
 add_executable(testDriverFiltering testDriverFiltering.cxx ${testDriverFiltering_SRCS})
@@ -221,7 +222,50 @@ add_ctest_subtest_testdriver_image_compare(calatkLDDMMTest relaxation1DDouble ${
                           ${CALATK_SOURCE_DIR}/Code/Testing/calatk1DTest.json
                           )
 
+# Add metamorphosis tests
+# Add 1D Tests for different solvers
+add_ctest_subtest_testdriver_image_compare(calatkMetamorphosisTest simplifiedMetamorphosis1DFloat ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
+                          ${test_temp_dir}/1DCurveResult.nhdr
+                          MetamorphosisSimplified 1 float
+			  ${test_input_dir}/1DCurveSource.nhdr
+			  ${test_input_dir}/1DCurveMetamorphosisTarget.nhdr
+			  ${test_temp_dir}/1DCurveResult.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatkMetamorphosis1DTest.json
+			  )
 
+add_ctest_subtest_testdriver_image_compare(calatkMetamorphosisTest simplifiedMetamorphosis1DDouble ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
+                          ${test_temp_dir}/1DCurveResult.nhdr
+                          MetamorphosisSimplified 1 double
+			  ${test_input_dir}/1DCurveSource.nhdr
+			  ${test_input_dir}/1DCurveMetamorphosisTarget.nhdr
+			  ${test_temp_dir}/1DCurveResult.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatkMetamorphosis1DTest.json
+			  )
+
+add_ctest_subtest_testdriver_image_compare(calatkMetamorphosisTest adjointMetamorphosis1DFloat ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
+                          ${test_temp_dir}/1DCurveResult.nhdr
+                          MetamorphosisAdjoint 1 float
+			  ${test_input_dir}/1DCurveSource.nhdr
+			  ${test_input_dir}/1DCurveMetamorphosisTarget.nhdr
+			  ${test_temp_dir}/1DCurveResult.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatkMetamorphosis1DTest.json
+			  )
+
+add_ctest_subtest_testdriver_image_compare(calatkMetamorphosisTest adjointMetamorphosis1DDouble ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
+                          ${test_temp_dir}/1DCurveResult.nhdr
+                          MetamorphosisAdjoint 1 double
+			  ${test_input_dir}/1DCurveSource.nhdr
+			  ${test_input_dir}/1DCurveMetamorphosisTarget.nhdr
+			  ${test_temp_dir}/1DCurveResult.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatkMetamorphosis1DTest.json
+			  )
+
+
+# Test to auto-generate bullseye images
 add_test_executable(GenerateBullseyes ${ITK_LIBRARIES})
 if(BUILD_TESTING AND compile_GenerateBullseyes)
   add_test(GenerateBullseyes ${CMAKE_COMMAND}

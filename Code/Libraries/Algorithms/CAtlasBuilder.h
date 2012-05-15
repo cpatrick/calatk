@@ -27,7 +27,7 @@ namespace CALATK
 
 /**
   * A reasonable default value for the state is
-  * TIndividualState = CStateSpatioTemporalVelocityField< T, VImageDimension >
+  * TIndividualState = CStateInitialMomentum< T, VImageDimension >
   *
   */
 template < class TIndividualState,
@@ -48,6 +48,14 @@ public:
   CAtlasBuilder();
   ~CAtlasBuilder();
 
+  virtual void Solve();
+  virtual void PreSubIterationSolve();
+
+  SetMacro( AtlasIsSourceImage, bool );
+  GetMacro( AtlasIsSourceImage, bool );
+
+  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+
 protected:
 
   /**
@@ -56,6 +64,11 @@ protected:
   void SetDefaultObjectiveFunctionPointer();
 
 private:
+
+  bool m_AtlasIsSourceImage;
+  const bool DefaultAtlasIsSourceImage;
+  bool m_ExternallySetAtlasIsSourceImage;
+
 };
 
 #include "CAtlasBuilder.txx"

@@ -127,7 +127,7 @@ void CAtlasObjectiveFunction< TState >
 ::SetObjectiveFunctionAndWeight( const ObjectiveFunctionType* pObj, T dWeight )
 {
   m_VectorObjectiveFunctionPtrs.push_back( pObj );
-  vecWeights.push_back( dWeight );
+  m_Weights.push_back( dWeight );
 }
 
 template < class TState >
@@ -135,7 +135,7 @@ void CAtlasObjectiveFunction< TState >
 ::ClearObjectiveFunctionPointersAndWeights()
 {
   m_VectorObjectiveFunctionPtrs.clear();
-  vecWeights.clear();
+  m_Weights.clear();
 }
 
 // this is simply the sum of the energy over all the individual components
@@ -158,11 +158,20 @@ template < class TState >
 void CAtlasObjectiveFunction< TState >::ComputeGradient()
 {
   // compute them for each and create a state which contains pointers to all of the gradients
+  // also mulitply the gradients by the weights
   typename VectorObjectiveFunctionPointersType::iterator iter;
-  for ( iter=m_VectorObjectiveFunctionPtrs.begin(); iter!=m_VectorObjectiveFunctionPtrs.end(); ++iter )
+  std::vector< T >::const_iterator iterWeights;
+  for ( iter=m_VectorObjectiveFunctionPtrs.begin(), iterWeights=m_Weights.begin(); iter!=m_VectorObjectiveFunctionPtrs.end(); ++iter, ++iterWeights )
     {
-      iter->ComputeGradient();
+      iter->ComputeGradient();  // this automatically ends up in the gradient vector
+      iter->GetGradientPointer()->MultiplyByConstant( *iterWeights );
     }
+
+  // We don't compute the gradient with respect to the atlas image. This is handled explicitly in an outside loop in the atlas-builder algorithm.
+  // While this is not the full gradient with respect to all unknowns it allows for a generic atlas-building-framework compatible with all
+  // the component algorithms.
+  // TODO: Investigate if it would make a difference in practice to implement the full algorithm
+
 }
 
 #endif

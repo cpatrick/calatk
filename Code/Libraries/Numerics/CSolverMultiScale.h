@@ -62,10 +62,15 @@ public:
 
   virtual bool SolvePreInitialized();
   virtual bool Solve();
+  virtual void PreSubIterationSolve();
 
   SetMacro( SingleScaleSolver, std::string );
   GetMacro( SingleScaleSolver, std::string );
 
+  // Number of times we repeat using the solver
+  // before each solver call PreSubIterationSolve is called which allows to specify a pre-condition
+  SetMacro( NumberOfSubIterations, unsigned int );
+  GetMacro( NumberOfSubIterations, unsigned int );
 
   // auto configuration
   virtual void SetAutoConfiguration( Json::Value &ConfValueIn, Json::Value &ConfValueOut );
@@ -84,6 +89,9 @@ private:
   const std::string DefaultSingleScaleSolver;
   bool m_ExternallySetSingleScaleSolver;
 
+  unsigned int m_NumberOfSubIterations;
+  const unsigned int DefaultNumberOfSubIterations;
+  bool m_ExternallySetNumberOfSubIterations;
 
 };
 
