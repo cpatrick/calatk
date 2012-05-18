@@ -46,6 +46,7 @@ public:
 
   /* Some useful typedefs */
   typedef VectorImage< T, VImageDimension >  VectorImageType;
+  typedef T                 TFloat;
 
   CStateImageDomain() {};
   virtual ~CStateImageDomain() {};

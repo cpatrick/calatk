@@ -40,7 +40,7 @@ CStateImageMultipleStates< TState  >::CStateImageMultipleStates( const CStateIma
       typename VectorIndividualStatesType::const_iterator iter;
       for ( iter=c.m_vecIndividualStates.begin(); iter!=c.m_vecIndividualStates.end(); ++iter )
         {
-          typename TState::Pointer pCopiedState = new TState( *iter );
+          typename TIndividualState::Pointer pCopiedState = new TIndividualState( *iter );
           this->m_vecIndividualStates.push_back( pCopiedState );
         }
     }
@@ -50,10 +50,10 @@ CStateImageMultipleStates< TState  >::CStateImageMultipleStates( const CStateIma
 // copy constructor (from individual states which have been allocated externally)
 //
 template <class TState>
-CStateImageMultipleStates< TState  >::CStateImageMultipleStates( const std::vector< TState* >* pVec )
+CStateImageMultipleStates< TState  >::CStateImageMultipleStates( const std::vector< TIndividualState* >* pVec )
 {
   typename VectorIndividualStatesType::const_iterator iter;
-  for ( iter = pVec->begion(); iter != pVec->end(); ++iter )
+  for ( iter = pVec->begin(); iter != pVec->end(); ++iter )
     {
       m_vecIndividualStates.push_back( *iter );
     }
@@ -82,19 +82,21 @@ CStateImageMultipleStates< TState >::~CStateImageMultipleStates()
 // Upsampling
 //
 template <class TState>
-typename CStateImageMultipleStates< TState >::SuperclassTState* 
+typename CStateImageMultipleStates< TState >::TState*
 CStateImageMultipleStates< TState >::CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const
 {
     VectorIndividualStatesType* ptrUpsampledState = new VectorIndividualStatesType;
 
     // upsample all the individual state components
-    typename VectorIndividualStatesType::iterator iter;
+    typename VectorIndividualStatesType::const_iterator iter;
     for ( iter = m_vecIndividualStates.begin(); iter != m_vecIndividualStates.end(); ++iter )
     {
-      ptrUpsampledState->push_back( iter->CreateUpsampledStateAndAllocateMemory( pGraftImage ) );
+      ptrUpsampledState->push_back( (*iter)->CreateUpsampledStateAndAllocateMemory( pGraftImage ) );
     }
 
-  return ptrUpsampledState;
+    TState * upsampledState = new TState( ptrUpsampledState );
+
+    return upsampledState;
 
 }
 
@@ -194,7 +196,7 @@ CStateImageMultipleStates< TState >::operator-=(const CStateImageMultipleStates 
 
 template <class TState>
 CStateImageMultipleStates< TState > & 
-CStateImageMultipleStates< TState >::operator*=(const T & p )
+CStateImageMultipleStates< TState >::operator*=(const TFloat & p )
 {
 
   typename VectorIndividualStatesType::iterator iterTarget;
@@ -225,7 +227,7 @@ CStateImageMultipleStates< TState >::operator-(const CStateImageMultipleStates &
 
 template <class TState >
 CStateImageMultipleStates< TState > 
-CStateImageMultipleStates< TState >::operator*(const T & p ) const
+CStateImageMultipleStates< TState >::operator*(const TFloat & p ) const
 {
   CStateImageMultipleStates r = *this;
   return r*= p;
@@ -238,7 +240,7 @@ template <class TState >
 TState* CStateImageMultipleStates< TState >::GetIndividualStatePointer( unsigned int uiState )
 {
   int iNrOfStates = m_vecIndividualStates.size();
-  if ( iNrOfStates==0 || iNrOfStates<=uiState )
+  if ( iNrOfStates==0 || iNrOfStates<=(int)uiState )
     {
       return NULL;
     }
@@ -251,10 +253,11 @@ TState* CStateImageMultipleStates< TState >::GetIndividualStatePointer( unsigned
 //
 // computes the squared norm of the state, by adding all the individual square norm components
 //
-template <class TState >
-T CStateImageMultipleStates< TState >::SquaredNorm()
+template < class TState >
+typename CStateImageMultipleStates< TState >::TFloat
+CStateImageMultipleStates< TState >::SquaredNorm()
 {
-  T dSquaredNorm = 0;
+  TFloat dSquaredNorm = 0;
 
   typename VectorIndividualStatesType::iterator iter;
   for ( iter = m_vecIndividualStates.begin(); iter != m_vecIndividualStates.end(); ++iter )
@@ -269,8 +272,8 @@ T CStateImageMultipleStates< TState >::SquaredNorm()
 //
 // Allows to query if the state contains the initial image
 //
-template <class T, unsigned int VImageDimension, class TResampler >
-bool CStateImageMultipleStates< T, VImageDimension, TResampler >::StateContainsInitialImage()
+template < class TState >
+bool CStateImageMultipleStates< TState >::StateContainsInitialImage()
 {
   return false;
 }

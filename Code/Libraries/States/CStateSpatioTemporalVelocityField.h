@@ -41,7 +41,8 @@ public:
   typedef typename Superclass::TState           SuperclassTState;
   typedef CStateSpatioTemporalVelocityField     TState;
   typedef typename Superclass::VectorImageType  VectorImageType;
-  
+  typedef T                 TFloat;
+
   typedef VectorField< T, VImageDimension >             VectorFieldType;
   typedef typename VectorFieldType::Pointer             VectorFieldPointerType;
   typedef std::vector< VectorFieldPointerType >*        VectorPointerToVectorFieldPointerType;

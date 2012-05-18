@@ -20,21 +20,21 @@
 #ifndef C_ATLAS_BUILDER_TXX
 #define C_ATLAS_BUILDER_TXX
 
-template < class TIndividualState, class TState >
-CAtlasBuilder< TIndividualState, TState >::CAtlasBuilder()
+template < class TState >
+CAtlasBuilder< TState >::CAtlasBuilder()
   : DefaultAtlasIsSourceImage( true ),
     m_ExternallySetAtlasIsSourceImage( false )
 {
   m_AtlasIsSourceImage = DefaultAtlasIsSourceImage;
 }
 
-template < class TIndividualState, class TState >
-CAtlasBuilder< TIndividualState, TState >::~CAtlasBuilder()
+template < class TState >
+CAtlasBuilder< TState >::~CAtlasBuilder()
 {
 }
 
-template < class TIndividualState, class TState >
-void CAtlasBuilder< TIndividualState, TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+template < class TState >
+void CAtlasBuilder< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
 {
   Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
   Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "AtlasSettings", Json::nullValue );
@@ -49,12 +49,42 @@ void CAtlasBuilder< TIndividualState, TState >::SetAutoConfiguration( Json::Valu
 
 }
 
-template < class TIndividualState, class TState >
-void CAtlasBuilder< TIndividualState, TState >::SetDefaultObjectiveFunctionPointer()
+template < class TState >
+void CAtlasBuilder< TState >::SetDefaultMetricPointer()
+{
+  throw std::runtime_error( "SetDefaultMetricPointer: not yet implemented");
+}
+
+template < class TState >
+void CAtlasBuilder< TState >::SetDefaultImageManagerPointer()
+{
+  throw std::runtime_error( "SetDefaultImageManagerPointer: not yet implemented");
+}
+
+template < class TState >
+void CAtlasBuilder< TState >::SetDefaultKernelPointer()
+{
+  throw std::runtime_error( "SetDefaultKernelPointer: not yet implemented");
+}
+
+template < class TState >
+void CAtlasBuilder< TState >::SetDefaultEvolverPointer()
+{
+  throw std::runtime_error( "SetDefaultEvolverPointer: not yet implemented");
+}
+
+template < class TState >
+void CAtlasBuilder< TState >::SetDefaultSolverPointer()
+{
+  throw std::runtime_error( "SetDefaultSolverPointer: not yet implemented");
+}
+
+template < class TState >
+void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
 {
   // make sure that all we need has already been allocated
 
-  if ( this->m_ptrKernel.GetPointer() == NULL )
+/*  if ( this->m_ptrKernel.GetPointer() == NULL )
     {
     throw std::runtime_error( "Kernel needs to be defined before default objective function can be created." );
     }
@@ -67,16 +97,19 @@ void CAtlasBuilder< TIndividualState, TState >::SetDefaultObjectiveFunctionPoint
   if ( this->m_ptrImageManager.GetPointer() == NULL )
     {
     throw std::runtime_error( "Image manager needs to be defined before default objective function can be created." );
-    }
+    }*/
 
   typedef CAtlasObjectiveFunction< TState > CAtlasType;
   CAtlasType* pAtlas = new CAtlasType;
   this->m_ptrObjectiveFunction = pAtlas;
-  this->m_ptrKernel->SetObjectiveFunction( pAtlas );
+
+  // TODO: Now initialize the individual objective functions
+
+  /*this->m_ptrKernel->SetObjectiveFunction( pAtlas );
   pAtlas->SetEvolverPointer( this->m_ptrEvolver );
   pAtlas->SetKernelPointer( this->m_ptrKernel );
   pAtlas->SetMetricPointer( this->m_ptrMetric );
-  pAtlas->SetImageManagerPointer( this->m_ptrImageManager );
+  pAtlas->SetImageManagerPointer( this->m_ptrImageManager );*/
 
   // TODO: have an alternative method where the image is part of the gradient
 
@@ -91,8 +124,32 @@ void CAtlasBuilder< TIndividualState, TState >::SetDefaultObjectiveFunctionPoint
 
 }
 
-template < class TIndividualState, class TState >
-void CAtlasBuilder< TIndividualState, TState >::Solve()
+template < class TState >
+const typename CAtlasBuilder< TState >::VectorFieldType*
+CAtlasBuilder< TState >::GetMap( T dTime )
+{
+  throw std::runtime_error( "GetMap not yet implemented");
+  return NULL;
+}
+
+template < class TState >
+const typename CAtlasBuilder< TState >::VectorFieldType*
+CAtlasBuilder< TState >::GetMapFromTo( T dTimeFrom, T dTimeTo )
+{
+  throw std::runtime_error( "GetMapFromTo not yet implemented");
+  return NULL;
+}
+
+template < class TState >
+const typename CAtlasBuilder< TState >::VectorImageType*
+CAtlasBuilder< TState >::GetImage( T dTime )
+{
+  throw std::runtime_error( "GetImage not yet implemented");
+  return NULL;
+}
+
+template < class TState >
+void CAtlasBuilder< TState >::Solve()
 {
   // TODO: create the atlas-entries for the average image for the time-series
 
@@ -101,10 +158,10 @@ void CAtlasBuilder< TIndividualState, TState >::Solve()
   Superclass::Solve();
 }
 
-template < class TIndividualState, class TState >
-void CAtlasBuilder< TIndividualState, TState >::PreSubIterationSolve()
+template < class TState >
+void CAtlasBuilder< TState >::PreSubIterationSolve()
 {
-  // replace the source / target image by its weighted average
+  // replace the source / target image by its weighted average, unless the atlas-image is considered as part of the gradient
 
   if ( m_AtlasIsSourceImage ) // then atlas is source image (time-point 0)
   {

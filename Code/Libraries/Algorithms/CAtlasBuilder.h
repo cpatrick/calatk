@@ -21,27 +21,31 @@
 #define C_ATLAS_BUILDER_H
 
 #include "CAtlasObjectiveFunction.h"
+#include "CAlgorithm.h"
 
 namespace CALATK
 {
 
 /**
   * A reasonable default value for the state is
-  * TIndividualState = CStateInitialMomentum< T, VImageDimension >
+  * TState = CStateMultipleStates< CStateInitialMomentum< T, VImageDimension > >
   *
   */
-template < class TIndividualState,
-           class TState = CStateAtlas< TIndividualState > >
-class CAtlasBuilder : public CLDDMMSpatioTemporalVelocityFieldRegistration< TState >
+template < class TState >
+class CAtlasBuilder : public CAlgorithm< TState >
 {
 public:
   /** Standard class typedefs. */
-  typedef CAtlasBuilder                                           Self;
-  typedef CLDDMMSpatioTemporalVelocityFieldRegistration< TState > Superclass;
-  typedef itk::SmartPointer< Self >                               Pointer;
-  typedef itk::SmartPointer< const Self >                         ConstPointer;
+  typedef CAtlasBuilder                     Self;
+  typedef CAlgorithm< TState >              Superclass;
+
+  typedef typename TState::TIndividualState TIndividualState;
+
+  typedef itk::SmartPointer< Self >         Pointer;
+  typedef itk::SmartPointer< const Self >   ConstPointer;
 
   /* some useful typedefs */
+  typedef typename TState::TFloat T;
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 
@@ -62,6 +66,18 @@ protected:
     * Sets the objective function if not objective function was specified externally.
     */
   void SetDefaultObjectiveFunctionPointer();
+
+  // TODO: Implement
+
+  const VectorFieldType* GetMap( T dTime );
+  const VectorFieldType* GetMapFromTo( T dTimeFrom, T dTimeTo );
+  const VectorImageType* GetImage( T dTime );
+
+  void SetDefaultMetricPointer();
+  void SetDefaultImageManagerPointer();
+  void SetDefaultKernelPointer();
+  void SetDefaultEvolverPointer();
+  void SetDefaultSolverPointer();
 
 private:
 

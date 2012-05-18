@@ -29,22 +29,28 @@ namespace CALATK
   * This state is simply a collection of individual states of the individual registrations
   * between an image and the MultipleStates image. Templated over the state of these registrations.
   */
-template <class TState>
-class CStateImageMultipleStates : public CStateImageDomain< typename TState::TFloat, typename TState::VImageDimension, typename TState::TResampler >
+template <class IndividualStateType >
+class CStateImageMultipleStates : public CStateImageDomain< typename IndividualStateType::TFloat, IndividualStateType::VImageDimension, typename IndividualStateType::TResampler >
 {
 public:
+  typedef CStateImageMultipleStates TState;
+
   /* some useful typedefs */
-  typedef typename TState::T               T;
-  typedef typename TState                  TIndividualState;
-  typedef typename TState::VImageDimension VImageDimension;
-  typedef typename TState::TResampler      TResampler;
+  typedef typename IndividualStateType::TFloat       TFloat;
+  typedef typename IndividualStateType::TResampler   TResampler;
+  typedef IndividualStateType                        TIndividualState;
 
   /* Standard class typedefs. */
-  typedef CStateImageMultipleStates                                              Self;
+  typedef CStateImageMultipleStates                                Self;
   typedef itk::SmartPointer< Self >                                Pointer;
   typedef itk::SmartPointer< const Self >                          ConstPointer;
+
+  static const unsigned int VImageDimension = TIndividualState::VImageDimension;
+
   typedef CStateImageDomain< TState, VImageDimension, TResampler > Superclass;
-  typedef Superclass                                               SuperclassTState;
+
+  /* Some useful typedefs */
+  typedef VectorImage< TFloat, VImageDimension >  VectorImageType;
 
   /**
    * Empty constructor
@@ -60,7 +66,7 @@ public:
     * copy constructor to initialize from a vector of pointers to states
     * assumes memory will be managed externally, i.e., only a shallow copy will be performed
     */
-  CStateImageMultipleStates( const std::vector< TState* > * pVec );
+  CStateImageMultipleStates( const std::vector< TIndividualState* > * pVec );
 
   /**
    * Destructor, this class will involve dynamic memory allocation, so needs a destructor
@@ -83,13 +89,13 @@ public:
 
   CStateImageMultipleStates & operator-=(const CStateImageMultipleStates & p );
 
-  CStateImageMultipleStates & operator*=(const T & p );
+  CStateImageMultipleStates & operator*=(const TFloat & p );
 
   CStateImageMultipleStates operator+(const CStateImageMultipleStates & p ) const;
 
   CStateImageMultipleStates operator-(const CStateImageMultipleStates & p ) const;
 
-  CStateImageMultipleStates operator*(const T & p ) const;
+  CStateImageMultipleStates operator*(const TFloat & p ) const;
 
   /**
    * @brief Returns the state pointer for one of the underlying objectuve functions of the MultipleStates builder
@@ -106,7 +112,7 @@ public:
    * @return Returns the squared norm. For the MultipleStates, this is the sum of the squared norms of all
    * the components.
    */
-  T SquaredNorm();
+  TFloat SquaredNorm();
 
   bool StateContainsInitialImage();
 
@@ -114,7 +120,7 @@ protected:
   void ClearDataStructure();
 
   // holds the state vectors of the individual registration algorithms
-  typedef std::vector< typename TState::Pointer > VectorIndividualStatesType;
+  typedef std::vector< TIndividualState* > VectorIndividualStatesType;
   VectorIndividualStatesType  m_vecIndividualStates;
 
 private:

@@ -23,16 +23,16 @@
 //
 // empty constructor
 //
-template <class TIndividualState>
-CStateMultipleStates< TIndividualState  >::CStateMultipleStates()
+template < class TState >
+CStateMultipleStates< TState  >::CStateMultipleStates()
 {
 }
 
 //
 // copy constructor
 //
-template <class TIndividualState>
-CStateMultipleStates< TIndividualState  >::CStateMultipleStates( const CStateMultipleStates & c )
+template < class TState >
+CStateMultipleStates< TState >::CStateMultipleStates( const CStateMultipleStates & c )
 {
   if ( this != &c )
     {
@@ -49,11 +49,11 @@ CStateMultipleStates< TIndividualState  >::CStateMultipleStates( const CStateMul
 //
 // copy constructor (from individual states which have been allocated externally)
 //
-template <class TIndividualState>
-CStateMultipleStates< TIndividualState  >::CStateMultipleStates( const std::vector< TIndividualState* >* pVec )
+template < class TState >
+CStateMultipleStates< TState >::CStateMultipleStates( const std::vector< TIndividualState* >* pVec )
 {
   typename VectorIndividualStatesType::const_iterator iter;
-  for ( iter = pVec->begion(); iter != pVec->end(); ++iter )
+  for ( iter = pVec->begin(); iter != pVec->end(); ++iter )
     {
       m_vecIndividualStates.push_back( *iter );
     }
@@ -63,8 +63,8 @@ CStateMultipleStates< TIndividualState  >::CStateMultipleStates( const std::vect
 //
 // clear data structure
 //
-template <class TIndividualState>
-void CStateMultipleStates< TIndividualState >::ClearDataStructure()
+template < class TState >
+void CStateMultipleStates< TState >::ClearDataStructure()
 {
   this->m_vecIndividualStates.clear();
 }
@@ -72,8 +72,8 @@ void CStateMultipleStates< TIndividualState >::ClearDataStructure()
 //
 // destructor
 //
-template <class TIndividualState>
-CStateMultipleStates< TIndividualState >::~CStateMultipleStates()
+template < class TState>
+CStateMultipleStates< TState >::~CStateMultipleStates()
 {
   ClearDataStructure();
 }
@@ -81,28 +81,29 @@ CStateMultipleStates< TIndividualState >::~CStateMultipleStates()
 //
 // Upsampling
 //
-template <class TIndividualState>
-typename CStateMultipleStates< TIndividualState >::TState*
-CStateMultipleStates< TIndividualState >::CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const
+template < class TState >
+typename CStateMultipleStates< TState >::TState*
+CStateMultipleStates< TState >::CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const
 {
     VectorIndividualStatesType* ptrUpsampledState = new VectorIndividualStatesType;
 
     // upsample all the individual state components
-    typename VectorIndividualStatesType::iterator iter;
+    typename VectorIndividualStatesType::const_iterator iter;
     for ( iter = m_vecIndividualStates.begin(); iter != m_vecIndividualStates.end(); ++iter )
     {
-      ptrUpsampledState->push_back( iter->CreateUpsampledStateAndAllocateMemory( pGraftImage ) );
+      ptrUpsampledState->push_back( (*iter)->CreateUpsampledStateAndAllocateMemory( pGraftImage ) );
     }
 
-  return ptrUpsampledState;
+    TState * upsampledState = new TState( ptrUpsampledState );
 
+    return upsampledState;
 }
 
 // Here come the algebraic operators and assignment
 
-template <class TIndividualState>
-CStateMultipleStates< TIndividualState > &
-CStateMultipleStates< TIndividualState >::operator=(const CStateMultipleStates & p )
+template < class TState >
+CStateMultipleStates< TState > &
+CStateMultipleStates< TState >::operator=(const CStateMultipleStates & p )
 {
   if ( this != &p )
     {
@@ -146,9 +147,9 @@ CStateMultipleStates< TIndividualState >::operator=(const CStateMultipleStates &
     }
 }
 
-template <class TIndividualState>
-CStateMultipleStates< TIndividualState > &
-CStateMultipleStates< TIndividualState >::operator+=(const CStateMultipleStates & p )
+template < class TState >
+CStateMultipleStates< TState > &
+CStateMultipleStates< TState >::operator+=(const CStateMultipleStates & p )
 {
   if ( m_vecIndividualStates.size() != p.m_vecIndividualStates.size() )
     {
@@ -168,9 +169,9 @@ CStateMultipleStates< TIndividualState >::operator+=(const CStateMultipleStates 
   return *this;
 }
 
-template <class TIndividualState>
-CStateMultipleStates< TIndividualState > &
-CStateMultipleStates< TIndividualState >::operator-=(const CStateMultipleStates & p )
+template < class TState >
+CStateMultipleStates< TState > &
+CStateMultipleStates< TState >::operator-=(const CStateMultipleStates & p )
 {
 
   if ( m_vecIndividualStates.size() != p.m_vecIndividualStates.size() )
@@ -192,9 +193,9 @@ CStateMultipleStates< TIndividualState >::operator-=(const CStateMultipleStates 
   return *this;
 }
 
-template <class TIndividualState>
-CStateMultipleStates< TIndividualState > &
-CStateMultipleStates< TIndividualState >::operator*=(const T & p )
+template < class TState >
+CStateMultipleStates< TState > &
+CStateMultipleStates< TState >::operator*=(const TFloat & p )
 {
 
   typename VectorIndividualStatesType::iterator iterTarget;
@@ -207,25 +208,25 @@ CStateMultipleStates< TIndividualState >::operator*=(const T & p )
   return *this;
 }
 
-template <class TIndividualState>
-CStateMultipleStates< TIndividualState >
-CStateMultipleStates< TIndividualState >::operator+(const CStateMultipleStates & p ) const
+template < class TState >
+CStateMultipleStates< TState >
+CStateMultipleStates< TState >::operator+(const CStateMultipleStates & p ) const
 {
   CStateMultipleStates r = *this;
   return r += p;
 }
 
-template <class TIndividualState >
-CStateMultipleStates< TIndividualState >
-CStateMultipleStates< TIndividualState >::operator-(const CStateMultipleStates & p ) const
+template < class TState >
+CStateMultipleStates< TState >
+CStateMultipleStates< TState >::operator-(const CStateMultipleStates & p ) const
 {
   CStateMultipleStates r = *this;
   return r -= p;
 }
 
-template <class TIndividualState >
-CStateMultipleStates< TIndividualState >
-CStateMultipleStates< TIndividualState >::operator*(const T & p ) const
+template < class TState >
+CStateMultipleStates< TState >
+CStateMultipleStates< TState >::operator*(const TFloat & p ) const
 {
   CStateMultipleStates r = *this;
   return r*= p;
@@ -234,8 +235,8 @@ CStateMultipleStates< TIndividualState >::operator*(const T & p ) const
 //
 // returns one of the individual states
 //
-template <class TIndividualState >
-TIndividualState* CStateMultipleStates< TIndividualState >::GetIndividualStatePointer( unsigned int uiState )
+template < class TState >
+TIndividualState* CStateMultipleStates< TState >::GetIndividualStatePointer( unsigned int uiState )
 {
   int iNrOfStates = m_vecIndividualStates.size();
   if ( iNrOfStates==0 || iNrOfStates<=uiState )
@@ -251,10 +252,11 @@ TIndividualState* CStateMultipleStates< TIndividualState >::GetIndividualStatePo
 //
 // computes the squared norm of the state, by adding all the individual square norm components
 //
-template <class TIndividualState >
-T CStateMultipleStates< TIndividualState >::SquaredNorm()
+template < class TState >
+typename CStateMultipleStates< TState >::TFloat
+CStateMultipleStates< TState >::SquaredNorm()
 {
-  T dSquaredNorm = 0;
+  TFloat dSquaredNorm = 0;
 
   typename VectorIndividualStatesType::iterator iter;
   for ( iter = m_vecIndividualStates.begin(); iter != m_vecIndividualStates.end(); ++iter )
@@ -269,8 +271,8 @@ T CStateMultipleStates< TIndividualState >::SquaredNorm()
 //
 // Allows to query if the state contains the initial image
 //
-template <class T, unsigned int VImageDimension, class TResampler >
-bool CStateMultipleStates< T, VImageDimension, TResampler >::StateContainsInitialImage()
+template < class TState >
+bool CStateMultipleStates< TState >::StateContainsInitialImage()
 {
   return false;
 }

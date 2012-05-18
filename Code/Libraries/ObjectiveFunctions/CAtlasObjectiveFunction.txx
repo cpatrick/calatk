@@ -33,8 +33,8 @@ CAtlasObjectiveFunction< TState >::~CAtlasObjectiveFunction()
 template < class TState >
 void CAtlasObjectiveFunction< TState >::DeleteAuxiliaryStructures()
 {
-  typename VectorObjectiveFunctionPointersType::iterator iter;
-  for ( iter=m_VectorObjectiveFunctionPtrs.begin(); iter!=m_VectorObjectiveFunctionPtrs.end(); ++iter )
+  typename VectorIndividualObjectiveFunctionPointersType::iterator iter;
+  for ( iter=m_VectorIndividualObjectiveFunctionPtrs.begin(); iter!=m_VectorIndividualObjectiveFunctionPtrs.end(); ++iter )
     {
       iter->DeleteAuxiliaryStructures();
     }
@@ -43,8 +43,8 @@ void CAtlasObjectiveFunction< TState >::DeleteAuxiliaryStructures()
 template < class TState >
 void CAtlasObjectiveFunction< TState >::CreateAuxiliaryStructures()
 {
-  typename VectorObjectiveFunctionPointersType::iterator iter;
-  for ( iter=m_VectorObjectiveFunctionPtrs.begin(); iter!=m_VectorObjectiveFunctionPtrs.end(); ++iter )
+  typename VectorIndividualObjectiveFunctionPointersType::iterator iter;
+  for ( iter=m_VectorIndividualObjectiveFunctionPtrs.begin(); iter!=m_VectorIndividualObjectiveFunctionPtrs.end(); ++iter )
     {
       iter->CreateAuxiliaryStructures();
     }
@@ -55,10 +55,10 @@ void CAtlasObjectiveFunction< TState >::InitializeState()
 {
   // need to initialize the individual states and then create a new joint state vector which will form the new atlas state
   // initialize the individual state components and create a state with the pointers
-  typename VectorObjectiveFunctionPointersType::iterator iter;
-  for ( iter=m_VectorObjectiveFunctionPtrs.begin(); iter!=m_VectorObjectiveFunctionPtrs.end(); ++iter )
+  typename VectorIndividualObjectiveFunctionPointersType::iterator iter;
+  for ( iter=m_VectorIndividualObjectiveFunctionPtrs.begin(); iter!=m_VectorIndividualObjectiveFunctionPtrs.end(); ++iter )
     {
-      iter->InitializeState();
+      (*iter)->InitializeState();
     }
 
   // now all of the individual objective functions are initialized
@@ -67,10 +67,10 @@ void CAtlasObjectiveFunction< TState >::InitializeState()
   std::vector< TIndividualState* > vecState;
   std::vector< TIndividualState* > vecGradient;
 
-  for ( iter=m_VectorObjectiveFunctionPtrs.begin(); iter!=m_VectorObjectiveFunctionPtrs.end(); ++iter )
+  for ( iter=m_VectorIndividualObjectiveFunctionPtrs.begin(); iter!=m_VectorIndividualObjectiveFunctionPtrs.end(); ++iter )
     {
-      vecState.push_back( iter->GetStatePointer() );
-      vecGradient.push_back( iter->GetGradientPointer() );
+      vecState.push_back( (*iter)->GetStatePointer() );
+      vecGradient.push_back( (*iter)->GetGradientPointer() );
     }
 
 
@@ -92,10 +92,11 @@ void CAtlasObjectiveFunction< TState >::InitializeState( TState *ptrState )
   // need to initialize all the individual states (based on the input state) and then create a new joint state vector which will form the new atlas state
   // need to initialize the individual states and then create a new joint state vector which will form the new atlas state
   // initialize the individual state components and create a state with the pointers
-  typename VectorObjectiveFunctionPointersType::iterator iter;
-  for ( unsigned int iI=0, iter=m_VectorObjectiveFunctionPtrs.begin(); iter!=m_VectorObjectiveFunctionPtrs.end(); ++iI, ++iter )
+  typename VectorIndividualObjectiveFunctionPointersType::iterator iter;
+  unsigned int iI;
+  for ( iter=m_VectorIndividualObjectiveFunctionPtrs.begin(), iI=0; iter!=m_VectorIndividualObjectiveFunctionPtrs.end(); ++iI, ++iter )
     {
-      iter->InitializeState( *ptrState->GetIndividualStatePointer( iI ) );
+    (*iter)->InitializeState( ptrState->GetIndividualStatePointer( iI ) );
     }
 
   // now all of the individual objective functions are initialized
@@ -104,10 +105,10 @@ void CAtlasObjectiveFunction< TState >::InitializeState( TState *ptrState )
   std::vector< TIndividualState* > vecState;
   std::vector< TIndividualState* > vecGradient;
 
-  for ( iter=m_VectorObjectiveFunctionPtrs.begin(); iter!=m_VectorObjectiveFunctionPtrs.end(); ++iter )
+  for ( iter=m_VectorIndividualObjectiveFunctionPtrs.begin(); iter!=m_VectorIndividualObjectiveFunctionPtrs.end(); ++iter )
     {
-      vecState.push_back( iter->GetStatePointer() );
-      vecGradient.push_back( iter->GetGradientPointer() );
+      vecState.push_back( (*iter)->GetStatePointer() );
+      vecGradient.push_back( (*iter)->GetGradientPointer() );
     }
 
   // allocate memory for the state, the objective function takes full control over the
@@ -124,9 +125,9 @@ void CAtlasObjectiveFunction< TState >::InitializeState( TState *ptrState )
 
 template < class TState >
 void CAtlasObjectiveFunction< TState >
-::SetObjectiveFunctionAndWeight( const ObjectiveFunctionType* pObj, T dWeight )
+::SetObjectiveFunctionAndWeight( const IndividualObjectiveFunctionType* pObj, T dWeight )
 {
-  m_VectorObjectiveFunctionPtrs.push_back( pObj );
+  m_VectorIndividualObjectiveFunctionPtrs.push_back( pObj );
   m_Weights.push_back( dWeight );
 }
 
@@ -134,20 +135,20 @@ template < class TState >
 void CAtlasObjectiveFunction< TState >
 ::ClearObjectiveFunctionPointersAndWeights()
 {
-  m_VectorObjectiveFunctionPtrs.clear();
+  m_VectorIndividualObjectiveFunctionPtrs.clear();
   m_Weights.clear();
 }
 
 // this is simply the sum of the energy over all the individual components
 template < class TState >
-CAtlasObjectiveFunction< TState >::CEnergyValues
+typename CAtlasObjectiveFunction< TState >::CEnergyValues
 CAtlasObjectiveFunction< TState >::GetCurrentEnergy()
 {
   CEnergyValues energyValues;
-  typename VectorObjectiveFunctionPointersType::iterator iter;
-  for ( iter=m_VectorObjectiveFunctionPtrs.begin(); iter!=m_VectorObjectiveFunctionPtrs.end(); ++iter )
+  typename VectorIndividualObjectiveFunctionPointersType::iterator iter;
+  for ( iter=m_VectorIndividualObjectiveFunctionPtrs.begin(); iter!=m_VectorIndividualObjectiveFunctionPtrs.end(); ++iter )
     {
-      energyValues += iter->GetCurrentEnergy();
+      energyValues += (*iter)->GetCurrentEnergy();
     }
   return energyValues;
 }
@@ -159,12 +160,14 @@ void CAtlasObjectiveFunction< TState >::ComputeGradient()
 {
   // compute them for each and create a state which contains pointers to all of the gradients
   // also mulitply the gradients by the weights
-  typename VectorObjectiveFunctionPointersType::iterator iter;
-  std::vector< T >::const_iterator iterWeights;
-  for ( iter=m_VectorObjectiveFunctionPtrs.begin(), iterWeights=m_Weights.begin(); iter!=m_VectorObjectiveFunctionPtrs.end(); ++iter, ++iterWeights )
+  typename VectorIndividualObjectiveFunctionPointersType::iterator iter;
+  typename std::vector< T >::const_iterator iterWeights;
+  for ( iter=m_VectorIndividualObjectiveFunctionPtrs.begin(), iterWeights=m_Weights.begin(); iter!=m_VectorIndividualObjectiveFunctionPtrs.end(); ++iter, ++iterWeights )
     {
-      iter->ComputeGradient();  // this automatically ends up in the gradient vector
-      iter->GetGradientPointer()->MultiplyByConstant( *iterWeights );
+      (*iter)->ComputeGradient();  // this automatically ends up in the gradient vector
+      // TODO: multiply by weight, this should be handled by the individual algorithms, don't want to modift values here
+      //TIndividualState* currentGradientPointer = (*iter)->GetGradientPointer();
+      //*currentGradientPointer *= *iterWeights;
     }
 
   // We don't compute the gradient with respect to the atlas image. This is handled explicitly in an outside loop in the atlas-builder algorithm.
@@ -172,6 +175,39 @@ void CAtlasObjectiveFunction< TState >::ComputeGradient()
   // the component algorithms.
   // TODO: Investigate if it would make a difference in practice to implement the full algorithm
 
+}
+
+// TODO: To implement
+template < class TState >
+void CAtlasObjectiveFunction< TState >::GetMap( VectorFieldType* ptrMap, T dTime )
+{
+  throw std::runtime_error( "GetMap: not yet implemented" );
+}
+
+template < class TState >
+void CAtlasObjectiveFunction< TState >::GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo )
+{
+  throw std::runtime_error( "GetMapFromTo: not yet implemented" );
+}
+
+template < class TState >
+void CAtlasObjectiveFunction< TState >::GetImage( VectorImageType* ptrMap, T dTime )
+{
+  throw std::runtime_error( "GetImage: not yet implemented" );
+}
+
+template < class TState >
+void CAtlasObjectiveFunction< TState >::GetInitialImage( VectorImageType* ptrIm )
+{
+  throw std::runtime_error( "GetInitialImage: not yet implemented" );
+}
+
+template < class TState >
+const typename CAtlasObjectiveFunction< TState >::VectorImageType*
+CAtlasObjectiveFunction< TState >::GetPointerToInitialImage() const
+{
+  throw std::runtime_error( "GetPointerToInitialImage: not yet implemented" );
+  return NULL;
 }
 
 #endif

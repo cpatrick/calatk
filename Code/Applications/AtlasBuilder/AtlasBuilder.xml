@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<executable>
+
+  <category>Registration</category>
+    <title>Atlas-builder</title>
+    <description>Cross-sectional atlas-building</description>
+    <version>1.0</version>
+    <documentation-url></documentation-url>
+    <license>Apache 2.0</license>
+    <contributor>The CALATK team</contributor>
+    <acknowledgements></acknowledgements>
+
+  <parameters>
+        <label>Computational settings</label>
+        <description>Adjusts main settings for the computation</description>
+
+        <integer>
+            <name>iDimension</name>
+            <label>Image Dimension</label>
+            <flag>d</flag>
+            <longflag>--dimension</longflag>
+            <constraints>
+                <minimum>0</minimum>
+                <maximum>3</maximum>
+                <step>1</step>
+            </constraints>
+            <default>0</default>
+            <description>Specifies explicitly the dimension of the used images. If not specified, the image dimension is guessed. However, this can lead to ambiguities for vector-valued images.</description>
+        </integer>
+
+        <string-enumeration>
+            <name>sFloatingPointType</name>
+            <label>Floating point type</label>
+            <flag>t</flag>
+            <longflag>--type</longflag>
+            <default>float</default>
+            <element>float</element>
+            <element>double</element>
+            <description>Specifies the floating point type for the computations (float/double). In general float is recommended (because it will save memory). If CALATK is not compiled to support floating point choice, this option is ignored.</description>
+        </string-enumeration>
+
+        <string-enumeration>
+            <name>sLDDMMSolverType</name>
+            <label>LDDMM Solver Type</label>
+            <flag>s</flag>
+            <longflag>--solver</longflag>
+            <default>relaxation</default>
+            <element>simplifiedShooting</element>
+            <element>adjointShooting</element>
+            <element>relaxation</element>
+            <description>Selects the desired LDDMM solver (simplifiedShooting/adjointShooting/relaxation). The relaxation solver performs the optimization over the full spatio-temporal velocity field. This is the algorithm by Beg. The simplified shooting method and the adjoint shooting method perform the optimization over the initial image and the initial momentum. The implementations are based on a modification of the shooting algorithm by Ashburner (simplified shooting) and the adjoint shooting method/geodesic regression formulation by Vialard/Niethammer.</description>
+        </string-enumeration>
+
+  </parameters>
+
+  <parameters>
+        <label>Input/Output</label>
+        <description>Input/Output Parameters</description>
+
+        <string-vector>
+            <name>sourceImages</name>
+	    <longflag>--images</longflag>
+            <label>Source Images</label>
+            <description>Source images for the atlas building.</description>
+        </string-vector>
+
+	<string>
+            <name>atlasImage</name>
+	    <longflag>--computedAtlas</longflag>
+            <label>Atlas Image</label>
+            <description>Resulting atlas image from atlas computation.</description>
+        </string>
+
+	<string-vector>
+	  <name>sourceToAtlasMaps</name>
+	  <longflag>--sourceToAtlasMaps</longflag>
+	  <label>Source to atlas maps</label>
+	  <description>Resulting source to atlas maps.</description>
+	</string-vector>
+
+	<string-vector>
+	  <name>warpedSourceImages</name>
+	  <label>Warped source image to atlas space</label>
+	  <longflag>--wsource</longflag>
+          <description>Name of the warped (to atlas space) source images.</description>
+	</string-vector>
+
+	<file>
+	  <name>configFile</name>
+	  <longflag>--config</longflag>
+	  <label>Configuration file</label>
+	  <default>None</default>
+	  <description>JSON Configuration file.</description>
+	</file>
+
+	<file>
+	  <name>configFileOut</name>
+	  <longflag>--configOut</longflag>
+	  <label>Resulting configuration file</label>
+	  <default>None</default>
+	  <description>JSON Configuration file which describes the full parameterization of the algorithm run..</description>
+	</file>
+
+        <boolean>
+          <name>bCleanJSONConfigOutput</name>
+          <longflag>--cleanConfigOutput</longflag>
+          <default>false</default>
+          <description>If set a config file written out with --configOut will only contain values that are actually used within a run. This is useful when using a pre-specified configuration file with --config to extract only the relevant settings. Otherwise missing settings are simply added (which can also be useful if one would like to store multiple settings, e.g., for different kernels. etc. in one configuration file).
+          </description>
+        </boolean>
+
+        <boolean>
+          <name>bCreateJSONHelp</name>
+          <longflag>--createJSONHelp</longflag>
+          <default>false</default>
+          <description>If set, will generate annotated settings in the JSON configuration file. This is to help understand the meaning and options of the different settings.</description>
+        </boolean>
+
+  </parameters>
+  
+</executable>

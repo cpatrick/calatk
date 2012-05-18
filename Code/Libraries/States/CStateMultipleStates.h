@@ -29,23 +29,29 @@ namespace CALATK
   * This state is simply a collection of individual states of the individual registrations
   * between an image and the MultipleStates image. Templated over the state of these registrations.
   */
-template <class TIndividualState>
+template <class IndividualStateType >
 class CStateMultipleStates : public CStateImageDomain< typename TIndividualState::TFloat, typename TIndividualState::VImageDimension, typename TIndividualState::TResampler >
 {
 public:
   typedef CStateMultipleStates TState;
 
   /* some useful typedefs */
-  typedef typename TIndividualState::T               T;
-  typedef typename TIndividualState::VImageDimension VImageDimension;
-  typedef typename TIndividualState::TResampler      TResampler;
+  typedef typename IndividualStateType::TFloat          TFLoat;
+  typedef typename IndividualStateType::TResampler      TResampler;
+  typedef IndividualStateType                           TIndividualState;
 
   /* Standard class typedefs. */
   typedef CStateMultipleStates                                               Self;
   typedef itk::SmartPointer< Self >                                          Pointer;
   typedef itk::SmartPointer< const Self >                                    ConstPointer;
+
+  static const unsigned int VImageDimension = TIndividualState::VImageDimension;
+
   typedef CStateImageDomain< TIndividualState, VImageDimension, TResampler > Superclass;
-  typedef Superclass                                                         SuperclassTState;
+
+
+  /* Some useful typedefs */
+  typedef VectorImage< TFloat, VImageDimension >  VectorImageType;
 
   /**
    * Empty constructor
@@ -71,7 +77,7 @@ public:
   /**
    * Allow for upsampling of the state
    */
-  SuperclassTState* CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const; 
+  TState* CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const;
 
   /// declare operators to be able to do some computations with this state, which are needed in the numerical solvers
 
@@ -84,13 +90,13 @@ public:
 
   CStateMultipleStates & operator-=(const CStateMultipleStates & p );
 
-  CStateMultipleStates & operator*=(const T & p );
+  CStateMultipleStates & operator*=(const TFloat & p );
 
   CStateMultipleStates operator+(const CStateMultipleStates & p ) const;
 
   CStateMultipleStates operator-(const CStateMultipleStates & p ) const;
 
-  CStateMultipleStates operator*(const T & p ) const;
+  CStateMultipleStates operator*(const TFloat & p ) const;
 
   /**
    * @brief Returns the state pointer for one of the underlying objectuve functions of the MultipleStates builder
@@ -98,7 +104,7 @@ public:
    * @param uiState - nr of the state to be returned, if it does not exist will return NULL
    * @return TState * - returned state pointer
    */
-  TState* GetIndividualStatePointer( unsigned int uiState );
+  TIndividualState* GetIndividualStatePointer( unsigned int uiState );
   
   /**
    * @brief Computes the square norm of the state. To be used for example in a line search method
@@ -107,15 +113,15 @@ public:
    * @return Returns the squared norm. For the MultipleStates, this is the sum of the squared norms of all
    * the components.
    */
-  T SquaredNorm();
+  TFloat SquaredNorm();
 
-  bool StateContains();
+  bool StateContainsInitialImage();
 
 protected:
   void ClearDataStructure();
 
   // holds the state vectors of the individual registration algorithms
-  typedef std::vector< typename TIndividualState::Pointer > VectorIndividualStatesType;
+  typedef std::vector< TIndividualState* > VectorIndividualStatesType;
   VectorIndividualStatesType  m_vecIndividualStates;
 
 private:

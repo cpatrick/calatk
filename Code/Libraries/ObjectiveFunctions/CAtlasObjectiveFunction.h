@@ -40,12 +40,16 @@ public:
 
   /* Some useful typedefs */
 
-  typedef CObjectiveFunction< TState > ObjectiveFunctionType;
-
   typedef typename TState::TFloat T;
   typedef typename TState::TIndividualState TIndividualState;
 
+  typedef CObjectiveFunction< TState >            ObjectiveFunctionType;
+  typedef CObjectiveFunction< TIndividualState >  IndividualObjectiveFunctionType;
+
   typedef typename Superclass::CEnergyValues CEnergyValues;
+
+  typedef typename Superclass::VectorImageType VectorImageType;
+  typedef typename Superclass::VectorFieldType VectorFieldType;
 
   CAtlasObjectiveFunction();
   virtual ~CAtlasObjectiveFunction();
@@ -59,7 +63,7 @@ public:
    * @param pObj - pointer to the objective function
    * @param dWeight - weight in the atlas building
    */
-  void SetObjectiveFunctionAndWeight( const ObjectiveFunctionType* pObj, T dWeight );
+  void SetObjectiveFunctionAndWeight( const IndividualObjectiveFunctionType* pObj, T dWeight );
 
   /**
    * @brief Deletes the data structures used to store the pointers to the objective functions
@@ -69,13 +73,21 @@ public:
    */
   void ClearObjectiveFunctionPointersAndWeights();
 
+  // TODO: needs to be implemented
+  void GetMap( VectorFieldType* ptrMap, T dTime );
+  void GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo );
+  void GetImage( VectorImageType* ptrIm, T dTime );
+
+  const VectorImageType* GetPointerToInitialImage() const;
+  void GetInitialImage( VectorImageType* ptrIm );
+
 protected:
 
   void DeleteAuxiliaryStructures();
   void CreateAuxiliaryStructures();
 
   void InitializeState();
-  void InitializeState( TStateAtlas * ptrState );
+  void InitializeState( TState * ptrState );
 
 private:
   // intentionally not implemented
@@ -83,8 +95,9 @@ private:
   CAtlasObjectiveFunction& operator=( const CAtlasObjectiveFunction & );
 
   std::vector< T > m_Weights; ///< Contains the weights for each subject to atlas registration
-  typedef std::vector< typename ObjectiveFunctionType::Pointer > VectorObjectiveFunctionPointersType;
-  VectorObjectiveFunctionPointersType  m_VectorObjectiveFunctionPtrs;
+  typedef std::vector< typename IndividualObjectiveFunctionType::Pointer > VectorIndividualObjectiveFunctionPointersType;
+
+  VectorIndividualObjectiveFunctionPointersType  m_VectorIndividualObjectiveFunctionPtrs;
 };
 
 #include "CAtlasObjectiveFunction.txx"

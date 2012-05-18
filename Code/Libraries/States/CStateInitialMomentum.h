@@ -46,6 +46,7 @@ public:
 
   /* some useful typedefs */
   typedef typename Superclass::TState  SuperclassTState;
+  typedef T                 TFloat;
 
   typedef VectorImage< T, VImageDimension >  VectorImageType;
   //typedef typename Superclass::VectorImageType VectorImageType;
