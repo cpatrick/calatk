@@ -37,11 +37,11 @@ CLDDMMGeodesicShootingObjectiveFunction< TState >::~CLDDMMGeodesicShootingObject
 }
 
 template < class TState >
-void CLDDMMGeodesicShootingObjectiveFunction< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void CLDDMMGeodesicShootingObjectiveFunction< TState >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "LDDMMGeodesicShooting", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "LDDMMGeodesicShooting", Json::nullValue );
+  Superclass::SetAutoConfiguration( combined, cleaned );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "LDDMMGeodesicShooting", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "LDDMMGeodesicShooting", Json::nullValue );
 
   SetJSONHelpForRootKey( LDDMMGeodesicShooting, "setting for LDDMM shooting implementation (depending only on initial image/momentum" );
 
@@ -78,30 +78,28 @@ void CLDDMMGeodesicShootingObjectiveFunction< TState >::GetInitialMomentum( Vect
 }
 
 template < class TState >
-void CLDDMMGeodesicShootingObjectiveFunction< TState >::ComputeVelocity( const VectorImagePointerType ptrI, const VectorImagePointerType ptrP, VectorFieldPointerType ptrVout, VectorFieldPointerType ptrTmpField )
+void CLDDMMGeodesicShootingObjectiveFunction< TState >::ComputeVelocity( const VectorImageType  * ptrI, const VectorImageType * ptrP, VectorFieldType * ptrVout, VectorFieldType * ptrTmpField )
 {
-  /**
-    * Computes the velocity given an image and a momentum
-    * Computes
-    \f[
-      v = -K*(p\nabla I)
-    \f]
-    */
+ /**
+  * Computes the velocity given an image and a momentum
+  * Computes
+  \f[
+    v = -K*(p\nabla I)
+  \f]
+  */
 
-    unsigned int dim = ptrI->GetDimension();
-    ptrVout->SetToConstant(0);
+  unsigned int dim = ptrI->GetDimension();
+  ptrVout->SetToConstant(0);
 
-    for ( unsigned int iD = 0; iD<dim; iD++ )
-    {
-        VectorFieldUtils< T, TState::VImageDimension >::computeCentralGradient( ptrI, iD, ptrTmpField );
-        VectorImageUtils< T, TState::VImageDimension >::multiplyVectorByImageDimensionInPlace( ptrP, iD, ptrTmpField );
-        ptrVout->AddCellwise( ptrTmpField );
-    }
+  for ( unsigned int iD = 0; iD<dim; iD++ )
+  {
+      VectorFieldUtilsType::computeCentralGradient( ptrI, iD, ptrTmpField );
+      VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( ptrP, iD, ptrTmpField );
+      ptrVout->AddCellwise( ptrTmpField );
+  }
 
-    this->m_ptrKernel->ConvolveWithKernel( ptrVout );
-    ptrVout->MultiplyByConstant( -1.0 );
-
+  this->m_ptrKernel->ConvolveWithKernel( ptrVout );
+  ptrVout->MultiplyByConstant( -1.0 );
 }
-
 
 #endif

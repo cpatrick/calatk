@@ -102,7 +102,7 @@ private:
   typename ResamplerType::Pointer m_ptrResampler;
 
   T m_Sigma;
-  static const T DefaultSigma = 0.5;
+  const T DefaultSigma;
   bool m_ExternallySetSigma;
 
   bool m_BlurHighestResolutionImage;

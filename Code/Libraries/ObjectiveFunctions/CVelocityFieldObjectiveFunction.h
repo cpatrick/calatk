@@ -38,12 +38,12 @@ public:
   typedef itk::SmartPointer< const Self >  ConstPointer;
 
   /* some useful typedefs */
-  typedef typename TState::TFloat T;
+  typedef typename TState::FloatType T;
 
   typedef typename Superclass::CEnergyValues CEnergyValues;
 
-  typedef CEvolver< T, TState::VImageDimension > EvolverType;
-  typedef CKernel< T, TState::VImageDimension >  KernelType;
+  typedef CEvolver< T, TState::ImageDimension > EvolverType;
+  typedef CKernel< T, TState::ImageDimension >  KernelType;
 
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;

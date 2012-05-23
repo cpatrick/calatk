@@ -17,8 +17,10 @@
 *
 */
 
-#ifndef JSON_PARAMETER_UTILS
-#define JSON_PARAMETER_UTILS
+#ifndef C_JSON_CONFIGURATION
+#define C_JSON_CONFIGURATION
+
+#include "CBase.h"
 
 #include "json/json-forwards.h"
 #include "json/json.h"
@@ -34,29 +36,30 @@ namespace CALATK
 
 /**
  * @brief Implements ways to extract information from a JSON data description.
- * This can be used to keep track of paramters and to read in configuration files.
+ * This can be used to keep track of parameters and to read in configuration files.
  *
  */
-class CJSONConfiguration
+class CJSONConfiguration: public CBase
 {
 public:
-  CJSONConfiguration( bool bPrintConfiguration = false );
+  typedef CJSONConfiguration              Self;
+  typedef CBase                           Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
+
+  /** Initializes an empty Json::Value master root by default. */
+  CJSONConfiguration( bool printSettings = false );
+  /** Initialize the root of this configuration to another node of a master. */
+  CJSONConfiguration( Json::Value * node, bool printSettings = false );
   ~CJSONConfiguration();
 
   typedef std::vector< double > VectorType;
   typedef std::vector< float > VectorFloatType;
 
   /**
-   * @brief Sets the JSON configuration root by passing a JSON reference.
-   *
-   * @param vRoot The root of the JSON configuration
-   */
-  void SetRootReference( Json::Value& vRoot );
-
-  /**
    * @brief Returns the root pointer.
    *
-   * @return Pointer to the root
+   * @return Pointer to the jsoncpp root
    */
   Json::Value* GetRootPointer();
 
@@ -71,19 +74,19 @@ public:
   /**
    * @brief Reads a given JSON file and initializes the root node to point to the parsed content of this file.
    *
-   * @param sFileName Input filename
-   * @return bool Returns true if file could be read and false otherwise.
+   * @param fileName Input filename
    */
-  bool ReadJSONFile( std::string sFileName );
+  void ReadJSONFile( const std::string & fileName );
 
   /**
    * @brief Writes the JSON description (relative to the root) to a file.
    *
-   * @param sFileName File to write to
-   * @param comment header comment (first line)
-   * @return bool Returns true if the writing was successful and false otherwise.
+   * @param fileName File to write to
+   * @param rootCommentString header comment (first line)
+   *
+   * Throws an exception if an error occurs.
    */
-  bool WriteCurrentConfigurationToJSONFile( std::string sFileName, std::string commentString="" );
+  void  WriteCurrentConfigurationToJSONFile( const std::string & fileName, const std::string & rootCommentString="" );
 
   Json::Value& GetFromKey( std::string sKey, Json::Value vDefault = Json::nullValue );
   Json::Value& GetFromKey( Json::Value& vSubTree, std::string sKey, Json::Value vDefault = Json::nullValue, bool bUseIndent = true );
@@ -106,16 +109,19 @@ public:
   unsigned int GetIndent();
 
 protected:
-  std::string ReadFileContentIntoString( std::string sFileName );
+  std::string ReadFileContentIntoString( const std::string & fileName );
+
 private:
   // intentionally not implemented
   CJSONConfiguration( const CJSONConfiguration & );
   CJSONConfiguration& operator=( const CJSONConfiguration & );
 
+  void DeleteRoot();
+
   unsigned int m_Indent;
-  bool m_IsMasterNode;
-  bool m_PrintSettings;
-  bool m_AllowHelpComments;
+  bool         m_PrintSettings;
+  bool         m_AllowHelpComments;
+  bool         m_IsMasterRoot;
   Json::Value* m_ptrRoot;
 };
 

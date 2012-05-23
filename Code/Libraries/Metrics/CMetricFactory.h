@@ -20,7 +20,7 @@
 #ifndef C_METRIC_FACTORY_H
 #define C_METRIC_FACTORY_H
 
-#include "JSONParameterUtils.h"
+#include "CJSONConfiguration.h"
 #include "CALATKCommon.h"
 #include "CMetric.h"
 #include "CProcessBase.h"

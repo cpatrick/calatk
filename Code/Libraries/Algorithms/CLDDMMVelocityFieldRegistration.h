@@ -56,7 +56,7 @@ public:
   typedef itk::SmartPointer< const Self > ConstPointer;
 
   /* some useful typedefs */
-  typedef typename TState::TFloat T;
+  typedef typename TState::FloatType T;
 
   typedef typename Superclass::EvolverType           EvolverType;
   typedef typename Superclass::KernelType            KernelType;
@@ -81,7 +81,7 @@ public:
   SetMacro( Metric, std::string );
   GetMacro( Metric, std::string );
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
 protected:
 
@@ -102,7 +102,7 @@ private:
   bool              m_ExternallySetMetric;
 
   // default one step evolver
-  typedef COneStepEvolverSemiLagrangianAdvection< T, TState::VImageDimension > OneStepDefaultEvolverType;
+  typedef COneStepEvolverSemiLagrangianAdvection< T, TState::ImageDimension > OneStepDefaultEvolverType;
   typename OneStepDefaultEvolverType::Pointer m_OneStepDefaultEvolver;
 
 };

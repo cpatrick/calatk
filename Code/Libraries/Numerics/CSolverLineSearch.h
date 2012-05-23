@@ -42,7 +42,7 @@ public:
   typedef itk::SmartPointer< Self >       Pointer;
   typedef itk::SmartPointer< const Self > ConstPointer;
 
-  typedef typename TState::TFloat                    T;
+  typedef typename TState::FloatType                 T;
   typedef typename Superclass::ObjectiveFunctionType ObjectiveFunctionType;
   typedef typename Superclass::CEnergyValues         CEnergyValues;
 
@@ -86,7 +86,7 @@ public:
   SetMacro( DecreaseConstant, T );
   GetMacro( DecreaseConstant, T );
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
 protected:
 

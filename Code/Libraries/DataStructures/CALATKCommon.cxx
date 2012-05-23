@@ -79,8 +79,8 @@ unsigned int GetNonSingletonImageDimensionFromFile( const std::string & sourceIm
 
   if( !imageIO )
     {
-    std::cerr << "NO IMAGEIO WAS FOUND" << std::endl;
-    return 0;
+    std::string message = "No itk::ImageIO was found for image: " + sourceImage;
+    throw std::runtime_error( message.c_str() );
     }
 
   // Now that we found the appropriate ImageIO class, ask it to

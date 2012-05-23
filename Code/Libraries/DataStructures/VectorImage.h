@@ -266,8 +266,6 @@ protected:
   typename ITKVectorImage< T, VImageDimension >::Type::DirectionType m_Direction;
 };
 
-#include "VectorImage.txx"
-
 } // end namespace CALATK
 
 #endif

@@ -20,9 +20,11 @@
 #ifndef C_ONESTEPEVOLVER_TXX
 #define C_ONESTEPEVOLVER_TXX
 
-//
-// empty constructor
-//
+#include "COneStepEvolver.h"
+
+namespace CALATK
+{
+
 template < class T, unsigned int VImageDimension >
 COneStepEvolver<T, VImageDimension >::COneStepEvolver()
   : DefaultNumberOfThreads( 1 ), m_ExternallySetNumberOfThreads( false ),
@@ -32,11 +34,12 @@ COneStepEvolver<T, VImageDimension >::COneStepEvolver()
 }
 
 template < class T, unsigned int VImageDimension >
-void COneStepEvolver<T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void COneStepEvolver<T, VImageDimension >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "OneStepEvolver", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "OneStepEvolver", Json::nullValue );
+  Superclass::SetAutoConfiguration( combined, cleaned );
+
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "OneStepEvolver", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "OneStepEvolver", Json::nullValue );
 
   SetJSONHelpForRootKey( OneStepEvolver, "settings for solver between two temporal discretization steps" );
 
@@ -57,5 +60,7 @@ bool COneStepEvolver< T, VImageDimension >::GetInitializeOneStepEvolverState()
 {
   return m_InitializeOneStepEvolverState;
 }
+
+} // end namespace CALATK
 
 #endif

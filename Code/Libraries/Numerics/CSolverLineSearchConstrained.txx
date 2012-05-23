@@ -35,16 +35,14 @@ CSolverLineSearchConstrained< TState >::CSolverLineSearchConstrained()
   pTempState = NULL;
 }
 
-//
-// auto configuration
-//
-template < class TState >
-void CSolverLineSearchConstrained< TState>::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
-{
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
 
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "LineSearch", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "LineSearch", Json::nullValue );
+template < class TState >
+void CSolverLineSearchConstrained< TState >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
+{
+  Superclass::SetAutoConfiguration( combined, cleaned );
+
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "LineSearch", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "LineSearch", Json::nullValue );
 
   SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, AugmentedLagrangianNumberOfIterations );
   SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, AugmentedLagrangianPenaltyIncreaseFactor );
@@ -63,7 +61,7 @@ void CSolverLineSearchConstrained< TState>::SetAutoConfiguration( Json::Value& C
 // minimizes the objective function
 //
 template < class TState >
-bool CSolverLineSearchConstrained< TState>::SolvePreInitialized()
+bool CSolverLineSearchConstrained< TState >::SolvePreInitialized()
 {
   ObjectiveFunctionType * objectiveFunction = this->GetObjectiveFunction();
 

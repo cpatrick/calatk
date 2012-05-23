@@ -54,7 +54,7 @@ public:
 
   GetMacro( Sigma, T );
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
 protected:
 
@@ -72,8 +72,6 @@ private:
 
   bool m_ExternallySetSigma;
 };
-
-#include "CGaussianKernel.txx"
 
 } // end namespace
 

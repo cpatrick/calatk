@@ -35,11 +35,11 @@ CResampler< T, VImageDimension >::~CResampler()
 }
 
 template <class T, unsigned int VImageDimension >
-void CResampler< T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void CResampler< T, VImageDimension >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "Resampler", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "Resampler", Json::nullValue );
+  Superclass::SetAutoConfiguration( combined, cleaned );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "Resampler", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "Resampler", Json::nullValue );
 
   SetJSONHelpForRootKey( Resampler, "image resampler" );
 
@@ -50,9 +50,9 @@ void CResampler< T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfVa
 }
 
 template <class T, unsigned int VImageDimension >
-void CResampler< T, VImageDimension >::SetSigma( T dSigma )
+void CResampler< T, VImageDimension >::SetSigma( T sigma )
 {
-  m_Sigma = dSigma;
+  m_Sigma = sigma;
   m_ptrGaussianKernel->SetSigma( m_Sigma );
 }
 

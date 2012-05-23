@@ -72,8 +72,8 @@ private:
 
 };
 
-#include "CInterpolator.txx"
-
 } // end namespace
+
+#include "CInterpolator.txx"
 
 #endif // C_INTERPOLATOR_H

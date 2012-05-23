@@ -24,7 +24,7 @@
 #include "json/json.h"
 #include "CALATKCommon.h"
 #include "CBase.h"
-#include "JSONParameterUtils.h"
+#include "CJSONConfiguration.h"
 
 namespace CALATK
 {
@@ -39,38 +39,44 @@ class CProcessBase: public CBase
 public:
   /** Standard class typedefs. */
   typedef CProcessBase                    Self;
-  typedef CBase                         Superclass;
+  typedef CBase                           Superclass;
   typedef itk::SmartPointer< Self >       Pointer;
   typedef itk::SmartPointer< const Self > ConstPointer;
 
   CProcessBase();
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+  /** Set the CJSONConfiguration that will be used for processing.  The first
+   * configuration should contain an inputs that will be used for processing.
+   * Both configurations will have the values used and any defaults that were
+   * used but not specified. */
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
-  const Json::Value* GetAutoConfigurationIn();
+  /** Get the configuration that is a combination of the defaults that were used
+   * and the input configuration, including the input configuration that not
+   * used. */
+  const CJSONConfiguration * GetJSONConfigurationCombined();
+  /** Get the configuration that is a combination of the defaults that were used
+   * and the input configuration, excluding the input configuration that not
+   * used. */
+  const CJSONConfiguration * GetJSONConfigurationCleaned();
 
-  const Json::Value* GetAutoConfigurationOut();
-
-  void SetPrintConfiguration( bool bPrint );
-
+  //! if true the Json configurations will be printed
+  void SetPrintConfiguration( bool print );
   bool GetPrintConfiguration();
 
-  void SetAllowHelpComments( bool bAllow );
-
+  //! if true help comments will be added to the JSON configuration file
+  void SetAllowHelpComments( bool allow );
   bool GetAllowHelpComments();
 
 protected:
+  CJSONConfiguration::Pointer m_CombinedJSONConfig;
+  CJSONConfiguration::Pointer m_CleanedJSONConfig;
 
-  CJSONConfiguration m_jsonConfigIn;
-  CJSONConfiguration m_jsonConfigOut;
+  bool m_AutoConfigurationSet;
 
 private:
-  // if true the Json configurations will be printed
   bool m_PrintConfiguration;
-
-  // if true help comments will be added to the JSON configuration file
   bool m_AllowHelpComments;
-
 };
 
 } // end namespace

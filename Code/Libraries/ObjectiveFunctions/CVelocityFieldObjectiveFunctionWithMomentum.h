@@ -40,12 +40,15 @@ public:
 
   typedef typename Superclass::CEnergyValues CEnergyValues;
 
-  typedef typename TState::TFloat T;
+  typedef typename Superclass::T               T;
 
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 
-  /* Gets the momentum at a specifc time point */
+  typedef typename Superclass::EvolverType     EvolverType;
+  typedef typename Superclass::KernelType      KernelType;
+
+  /** Gets the momentum at a specific time point */
   virtual void GetMomentum( VectorImageType* ptrMomentum, T dTime ) = 0;
   virtual void GetInitialMomentum( VectorImageType* ptrMomentum ) = 0;
 };

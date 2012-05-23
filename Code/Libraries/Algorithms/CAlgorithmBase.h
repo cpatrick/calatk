@@ -33,19 +33,18 @@
 #include "VectorField.h"
 
 #include "CProcessBase.h"
-#include "JSONParameterUtils.h"
 
 namespace CALATK
 {
 
 /**
- * CAlgorithm.h -- Base class for all the registration algorithms which is still unaware of the state type.
- * Provides the interface for automatic instantiation of default metrics, solvers, ...
- * and takes care of deleting these default settings if they were allocated.
+ * \class CAlgorithmBase
  *
+ * \brief Base class for all the registration algorithms which is still unaware of the state type.
+ *
+ * Provides the interface for automatic instantiation of default metrics, solvers, ...
  */
-
-template < class T, unsigned int VImageDimension >
+template < class TFloat, unsigned int VImageDimension >
 class CAlgorithmBase : public CProcessBase
 {
 public:
@@ -56,16 +55,16 @@ public:
   typedef itk::SmartPointer< const Self > ConstPointer;
 
   /* some useful typedefs */
-  typedef CEvolver< T, VImageDimension >        EvolverType;
-  typedef COneStepEvolver< T, VImageDimension > OneStepEvolverType;
-  typedef CKernel< T, VImageDimension >         KernelType;
-  typedef CMetric< T, VImageDimension >         MetricType;
-  typedef CImageManager< T, VImageDimension >   ImageManagerType;
+  typedef CEvolver< TFloat, VImageDimension >        EvolverType;
+  typedef COneStepEvolver< TFloat, VImageDimension > OneStepEvolverType;
+  typedef CKernel< TFloat, VImageDimension >         KernelType;
+  typedef CMetric< TFloat, VImageDimension >         MetricType;
+  typedef CImageManager< TFloat, VImageDimension >   ImageManagerType;
 
-  typedef VectorImage< T, VImageDimension > VectorImageType;
-  typedef VectorField< T, VImageDimension > VectorFieldType;
+  typedef VectorImage< TFloat, VImageDimension >    VectorImageType;
+  typedef VectorField< TFloat, VImageDimension >    VectorFieldType;
 
-  typedef typename CImageManager< T, VImageDimension >::ImageInformation ImageInformation;
+  typedef typename CImageManager< TFloat, VImageDimension >::ImageInformation ImageInformation;
 
   CAlgorithmBase();
   virtual ~CAlgorithmBase();
@@ -108,13 +107,9 @@ public:
    */
   void WriteCurrentCombinedConfigurationToJSONFile( std::string sConfigOutputFile );
 
-  virtual void SetConfigurationFile( std::string sFileName );
-  std::string GetConfigurationFile();
+  virtual void SetAutoConfiguration( CJSONConfiguration * configValueIn, CJSONConfiguration * configValueOut );
 
 protected:
-
-  void ExecuteMainConfiguration();
-
   virtual void SetDefaultsIfNeeded() = 0;
 
   typename MetricType::Pointer       m_ptrMetric;
@@ -130,30 +125,18 @@ protected:
   typename VectorImageType::Pointer m_ptrIm;
   typename VectorFieldType::Pointer m_ptrMap;
 
-  virtual void ParseMainConfigurationFile();
-
-  CALATK::CJSONConfiguration m_ConfigIn;
-  CALATK::CJSONConfiguration m_ConfigOut;
-
-  // main configuration file
-  std::string m_MainConfigurationFile;
-
-  // to create JSON help in output
-  bool m_bCreateJSONHelp;
-
-  T GetMSSigma();
-  bool GetMSBlurHighestResolutionImage();
-  unsigned int GetMSNumberOfScales();
-  T GetMSScale( unsigned int uiScale );
+  TFloat       GetMultiScaleSigma() const ;
+  bool         GetMultiScaleBlurHighestResolutionImage() const ;
+  unsigned int GetMultiScaleNumberOfScales() const ;
+  TFloat       GetMultiScaleScale( unsigned int scaleIdx ) const;
 
   // Multi-scale settings for the image-manager
-  std::vector< T > m_MSScales;
-  T m_MSSigma;
-  bool m_MSBlurHighestResolutionImage;
+  typedef std::vector< TFloat > MultiScaleScalesType;
 
+  MultiScaleScalesType m_MultiScaleScales;
+  TFloat               m_MultiScaleSigma;
+  bool                 m_MultiScaleBlurHighestResolutionImage;
 };
-
-#include "CAlgorithmBase.txx"
 
 } // end namespace
 

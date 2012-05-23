@@ -2,36 +2,36 @@
 
 
 {
-	"GeneralRegistrationSettings" : 
+	"GeneralRegistrationSettings" :
 	{
 		"Kernel" : "HelmholtzKernel",
 		"Metric" : "SSD"
 	},
-	"GrowthModel" : 
+	"GrowthModel" :
 	{
 		"SigmaSqr" : 0.010
 	},
-	"HelmholtzKernel" : 
+	"HelmholtzKernel" :
 	{
 		"Alpha" : 0.050,
 		"Gamma" : 1.0
 	},
 	"MultiScaleBlurHighestResolutionImage" : false,
-	"MultiScaleFinalOutput" : 
+	"MultiScaleFinalOutput" :
 	{
 		"OutputStateInformation" : false,
 		"OutputStateInformationFrequency" : 100
 	},
 	"MultiScaleSigmaInVoxels" : 0.50,
-	"MultiscaleSettings" : 
+	"MultiScaleSettings" :
 	[
-		
+
 		{
-			"Downsample" : 
+			"Downsample" :
 			{
 				"Scale" : 1
 			},
-			"LineSearch" : 
+			"LineSearch" :
 			{
 				"AdjustStepSizeDownFactor" : 0.50,
 				"AdjustStepSizeDownNumber" : 2,
@@ -47,13 +47,13 @@
 				"ReductionFactor" : 0.50
 			}
 		},
-		
+
 		{
-			"Downsample" : 
+			"Downsample" :
 			{
 				"Scale" : 0.750
 			},
-			"LineSearch" : 
+			"LineSearch" :
 			{
 				"AdjustStepSizeDownFactor" : 0.50,
 				"AdjustStepSizeDownNumber" : 2,
@@ -69,13 +69,13 @@
 				"ReductionFactor" : 0.50
 			}
 		},
-		
+
 		{
-			"Downsample" : 
+			"Downsample" :
 			{
 				"Scale" : 0.50
 			},
-			"LineSearch" : 
+			"LineSearch" :
 			{
 				"AdjustStepSizeDownFactor" : 0.50,
 				"AdjustStepSizeDownNumber" : 2,
@@ -92,16 +92,16 @@
 			}
 		}
 	],
-	"OneStepEvolver" : 
+	"OneStepEvolver" :
 	{
 		"NumberOfThreads" : 1
 	},
-	"OneStepEvolverSemiLagrangianAdvection" : 
+	"OneStepEvolverSemiLagrangianAdvection" :
 	{
 		"NumberOfIterationsToDetermineFlowField" : 2,
 		"TimeStepFactor" : 1.0
 	},
-	"SpatioTemporalVelocityField" : 
+	"SpatioTemporalVelocityField" :
 	{
 		"NumberOfDiscretizationVolumesPerUnitTime" : 10.0
 	}

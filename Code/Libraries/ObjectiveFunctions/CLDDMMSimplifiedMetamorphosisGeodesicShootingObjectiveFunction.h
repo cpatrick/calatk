@@ -26,6 +26,7 @@
 
 namespace CALATK
 {
+
 /**
   * Implements a simplified geodesic shooting method *for metamorphosis* inspired by
   *
@@ -36,7 +37,6 @@ namespace CALATK
   *
   * Is computationally more efficient than the full adjoint solution and requires only little memory.
   */
-
 template < class TState >
 class CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction
     : public CLDDMMGeodesicShootingObjectiveFunction< TState >
@@ -49,7 +49,8 @@ public:
   typedef itk::SmartPointer< const Self >                                 ConstPointer;
 
   /* Some useful typedefs */
-  typedef typename TState::TFloat T;
+  typedef typename TState::FloatType T;
+  typedef typename TState::FloatType FloatType;
 
   typedef typename Superclass::CEnergyValues CEnergyValues;
 
@@ -86,7 +87,7 @@ public:
   GetMacro( Rho, T );
   SetMacro( Rho, T );
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
 protected:
 
@@ -101,11 +102,15 @@ protected:
 
   void ComputeImageMomentumForwardAndFinalAdjointWarpedToInitialImage( VectorImageType* ptrWarpedFinalToInitialAdjoint );
 
-  typedef CImageManager< T, TState::VImageDimension > ImageManagerType;
-  typedef typename ImageManagerType::ImageInformation ImageInformation;
+  typedef CImageManager< T, TState::ImageDimension >        ImageManagerType;
+  typedef typename ImageManagerType::ImageInformation       ImageInformation;
   typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
 
   typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;
+
+  typedef typename Superclass::LDDMMUtilsType               LDDMMUtilsType;
+  typedef typename Superclass::VectorImageUtilsType         VectorImageUtilsType;
+  typedef typename Superclass::VectorFieldUtilsType         VectorFieldUtilsType;
 
 private:
   // maps to keep track of the current deformation (and temporary storage for the solver)

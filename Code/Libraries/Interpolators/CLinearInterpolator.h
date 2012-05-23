@@ -34,11 +34,10 @@ class CLinearInterpolator :
 public:
   CLinearInterpolator();
   ~CLinearInterpolator();
+
 protected:
   virtual T Interpolate( T* vals, T dS );
 };
-
-#include "CLinearInterpolator.txx"
 
 } // end namespace
 

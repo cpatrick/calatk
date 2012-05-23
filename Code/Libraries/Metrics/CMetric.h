@@ -22,15 +22,13 @@
 
 #include "VectorImage.h"
 #include "CProcessBase.h"
-#include "JSONParameterUtils.h"
-
-/**
- * Base class for the metric
- */
 
 namespace CALATK
 {
 
+/**
+ * Base class for the metric
+ */
 template <class T, unsigned int VImageDimension = 3 >
 class CMetric : public CProcessBase
 {
@@ -91,8 +89,6 @@ protected:
 
 private:
 };
-
-//#include "CMetric.txx"
 
 } // end namespace
 

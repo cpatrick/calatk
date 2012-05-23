@@ -64,8 +64,6 @@ public:
 
 };
 
-#include "CFastLinearInterpolator.txx"
-
 } // end namespace
 
 #endif // C_FAST_LINEAR_INTERPOLATOR_H

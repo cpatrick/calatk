@@ -20,6 +20,11 @@
 #ifndef C_LINEAR_INTERPOLATOR_TXX
 #define C_LINEAR_INTERPOLATOR_TXX
 
+#include "CLinearInterpolator.h"
+
+namespace CALATK
+{
+
 template < class T, unsigned int VImageDimension >
 CLinearInterpolator< T, VImageDimension >::CLinearInterpolator()
 {
@@ -44,5 +49,7 @@ T CLinearInterpolator< T, VImageDimension >::Interpolate( T* vals, T dS )
 
   return ( (1-dS)*vals[0] + dS*vals[1] );
 }
+
+} // end namespace CALATK
 
 #endif

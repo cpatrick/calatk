@@ -55,7 +55,7 @@ public:
   bool SolvePreInitialized( double* ptr, long int liNumberOfStateVectorElements );
   bool SolvePreInitialized( float* ptr, long int liNumberOfStateVectorElements );
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
   SetMacro( tol, T );
   GetMacro( tol, T );

@@ -33,8 +33,8 @@
 #include "CImageManagerMultiScale.h"
 #include "LDDMMUtils.h"
 
-#include "CStateScalarExample.h"
-#include "CScalarExampleObjectiveFunction.h"
+#include "CStateScalar.h"
+#include "CScalarObjectiveFunction.h"
 #include "CSolverLineSearch.h"
 
 #include "CStateSpatioTemporalVelocityField.h"

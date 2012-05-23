@@ -1,47 +1,47 @@
 // CALATK version ?.?; JSON configuration file
 
 {
-	"GeneralRegistrationSettings" : 
+	"GeneralRegistrationSettings" :
 	{
 		"Kernel" : "HelmholtzKernel",
 		"MaskKernel" : "HelmholtzKernel",
 		"Metric" : "SSD"
 	},
-	"GeometricMetamorphosis" : 
+	"GeometricMetamorphosis" :
 	{
 		"Sigma1Sqr" : 0.01,
 		"Sigma2Sqr" : 0.01,
 		"W" : 0.50
 	},
-	"HelmholtzKernel" : 
+	"HelmholtzKernel" :
 	{
 		"Alpha" : 0.05,
 		"Gamma" : 1.0
 	},
-	"MaskKernel" : 
+	"MaskKernel" :
 	{
-		"HelmholtzKernel" : 
+		"HelmholtzKernel" :
 		{
 			"Alpha" : 0.01,
 			"Gamma" : 1.0
 		}
 	},
 	"MultiScaleBlurHighestResolutionImage" : true,
-	"MultiScaleFinalOutput" : 
+	"MultiScaleFinalOutput" :
 	{
 		"OutputStateInformation" : false,
 		"OutputStateInformationFrequency" : 100
 	},
 	"MultiScaleSigmaInVoxels" : 1.0,
-	"MultiscaleSettings" : 
+	"MultiScaleSettings" :
 	[
-		
+
 		{
 			"Downsample" :
 			{
 				"Scale" : 1
 			},
-			"LineSearch" : 
+			"LineSearch" :
 			{
 				"AdjustStepSizeDownFactor" : 0.50,
 				"AdjustStepSizeDownNumber" : 2,
@@ -62,7 +62,7 @@
 			{
 				"Scale" : 0.75
 			},
-			"LineSearch" : 
+			"LineSearch" :
 			{
 				"AdjustStepSizeDownFactor" : 0.50,
 				"AdjustStepSizeDownNumber" : 2,
@@ -83,7 +83,7 @@
 			{
 				"Scale" : 0.5
 			},
-			"LineSearch" : 
+			"LineSearch" :
 			{
 				"AdjustStepSizeDownFactor" : 0.50,
 				"AdjustStepSizeDownNumber" : 2,
@@ -100,16 +100,16 @@
 			}
 		}
 	],
-	"OneStepEvolver" : 
+	"OneStepEvolver" :
 	{
 		"NumberOfThreads" : 1
 	},
-	"OneStepEvolverSemiLagrangianAdvection" : 
+	"OneStepEvolverSemiLagrangianAdvection" :
 	{
 		"NumberOfIterationsToDetermineFlowField" : 2,
 		"TimeStepFactor" : 1.0
 	},
-	"SpatioTemporalVelocityField" : 
+	"SpatioTemporalVelocityField" :
 	{
 		"NumberOfDiscretizationVolumesPerUnitTime" : 10.0
 	}

@@ -26,11 +26,11 @@ namespace CALATK
 {
 
 template < class TState >
-class CScalarExampleObjectiveFunction : public CObjectiveFunction< TState >
+class CScalarObjectiveFunction : public CObjectiveFunction< TState >
 {
 public:
   /** Standard class typedefs. */
-  typedef CScalarExampleObjectiveFunction  Self;
+  typedef CScalarObjectiveFunction  Self;
   typedef CObjectiveFunction< TState >     Superclass;
   typedef itk::SmartPointer< Self >        Pointer;
   typedef itk::SmartPointer< const Self >  ConstPointer;
@@ -40,7 +40,7 @@ public:
 
   typedef typename Superclass::CEnergyValues CEnergyValues;
 
-  CScalarExampleObjectiveFunction()
+  CScalarObjectiveFunction()
   {
     state.SetValue( 0 );
     gradient.SetValue( 0 );
@@ -84,7 +84,7 @@ protected:
 
   /** purposefully not implemented */
   void GetMap( VectorFieldType*, T ) {};
-  /** purposefully not implemented */   
+  /** purposefully not implemented */
   void GetImage( VectorImageType*, T ) {};
   /** purposefully not implemented */
   const VectorImageType* GetPointerToInitialImage() {};

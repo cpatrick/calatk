@@ -20,11 +20,46 @@
 #ifndef C_STATE_IMAGE_DOMAIN_TXX
 #define C_STATE_IMAGE_DOMAIN_TXX
 
+namespace CALATK
+{
+
+#include "CStateImageDomain.h"
+#include "CResamplerLinear.h"
+
+
 template<class T, unsigned int VImageDimension, class TResampler>
 typename CStateImageDomain<T, VImageDimension, TResampler>::VectorImageType*
 CStateImageDomain<T, VImageDimension, TResampler>::GetPointerToInitialImage() const
 {
   return NULL;
 }
+
+template< class TFloat, unsigned int VImageDimension >
+CStateImageDomain< TFloat, VImageDimension >::CStateImageDomain()
+{
+  this->m_Resampler = new CResamplerLinear< TFloat, VImageDimension>();
+}
+
+
+template< class TFloat, unsigned int VImageDimension >
+CStateImageDomain< TFloat, VImageDimension >::~CStateImageDomain()
+{
+}
+
+template< class TFloat, unsigned int VImageDimension >
+void
+CStateImageDomain< TFloat, VImageDimension >::SetResampler( ResamplerType * resampler )
+{
+  this->m_Resampler = resampler;
+}
+
+template< class TFloat, unsigned int VImageDimension >
+typename CStateImageDomain< TFloat, VImageDimension >::ResamplerType *
+CStateImageDomain< TFloat, VImageDimension >::GetResampler() const
+{
+  return this->m_Resampler.GetPointer();
+}
+
+} // end namespace CALATK
 
 #endif

@@ -57,7 +57,7 @@ public:
   GetMacro( Alpha, T );
   GetMacro( Gamma, T );
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
 protected:
 
@@ -79,8 +79,6 @@ private:
   bool m_ExternallySetGamma;
 
 };
-
-#include "CHelmholtzKernel.txx"
 
 } // end namespace
 

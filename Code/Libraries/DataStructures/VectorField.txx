@@ -20,6 +20,11 @@
 #ifndef VECTOR_FIELD_TXX
 #define VECTOR_FIELD_TXX
 
+#include "VectorField.h"
+
+namespace CALATK
+{
+
 //////////////////////////////////
 // Constructors and Destructors //
 //////////////////////////////////
@@ -186,5 +191,7 @@ void VectorField< T, VImageDimension >::SetZ(unsigned int x, unsigned int y, uns
 
   this->SetValue(x,y,z,2, value);
 }
+
+} // end namespace CALATK
 
 #endif

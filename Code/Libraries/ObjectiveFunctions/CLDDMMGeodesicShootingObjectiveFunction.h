@@ -26,11 +26,11 @@
 
 namespace CALATK
 {
+
 /**
   * Base class for the shooting algorithms.
   *
   */
-
 template < class TState >
 class CLDDMMGeodesicShootingObjectiveFunction
     : public CVelocityFieldObjectiveFunctionWithMomentum< TState >
@@ -43,9 +43,9 @@ public:
   typedef itk::SmartPointer< const Self >                        ConstPointer;
 
   /* Some useful typedefs */
-  typedef typename TState::TFloat T;
+  typedef typename TState::FloatType T;
 
-  typedef typename Superclass::CEnergyValues CEnergyValues;
+  typedef typename Superclass::CEnergyValues   CEnergyValues;
 
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
@@ -67,14 +67,14 @@ public:
   SetMacro( EstimateInitialImage, bool );
   GetMacro( EstimateInitialImage, bool );
 
-  void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
 protected:
+  typedef VectorFieldUtils< T, TState::ImageDimension > VectorFieldUtilsType;
+  typedef VectorImageUtils< T, TState::ImageDimension > VectorImageUtilsType;
+  typedef LDDMMUtils< T, TState::ImageDimension >       LDDMMUtilsType;
 
-  typedef VectorImageType* VectorImagePointerType;
-  typedef VectorFieldType* VectorFieldPointerType;
-
-  void ComputeVelocity( const VectorImagePointerType ptrI, const VectorImagePointerType ptrP, VectorFieldPointerType ptrVout, VectorFieldPointerType ptrTmpField );
+  void ComputeVelocity( const VectorImageType * ptrI, const VectorImageType * ptrP, VectorFieldType * ptrVout, VectorFieldType * ptrTmpField );
 
   T m_NumberOfDiscretizationVolumesPerUnitTime;
   const T DefaultNumberOfDiscretizationVolumesPerUnitTime;

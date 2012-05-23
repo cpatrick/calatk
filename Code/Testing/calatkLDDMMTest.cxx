@@ -33,28 +33,28 @@
 
 #include <stdlib.h>
 
-#include "JSONParameterUtils.h"
+#include "CJSONConfiguration.h"
 
-template < class TFLOAT, unsigned int VImageDimension >
-int DoIt(std::string LDDMMType, char* sourceImage, char* targetImage, char* resultImage, const std::string & configFileName)
+template < class TFloat, unsigned int VImageDimension >
+int DoIt(std::string LDDMMType, const char* sourceImage, const char* targetImage, const char* resultImage, const std::string & configFileName)
 {
   // define the type of state
-  typedef CALATK::CStateInitialImageMomentum< TFLOAT, VImageDimension > TStateInitialImageMomentum;
-  typedef CALATK::CStateSpatioTemporalVelocityField< TFLOAT, VImageDimension > TStateSpatioTemporalVelocityField;
+  typedef CALATK::CStateInitialImageMomentum< TFloat, VImageDimension >          StateInitialImageMomentumType;
+  typedef CALATK::CStateSpatioTemporalVelocityField< TFloat, VImageDimension >   StateSpatioTemporalVelocityFieldType;
   // define the registration method based on this state
-  typedef CALATK::CLDDMMGenericRegistration< TStateInitialImageMomentum > regTypeInitialImageMomentum;
-  typedef CALATK::CLDDMMGenericRegistration< TStateSpatioTemporalVelocityField > regTypeSpatioTemporalVelocityField;
+  typedef CALATK::CLDDMMGenericRegistration< StateInitialImageMomentumType >        InitialImageMomentumRegistrationType;
+  typedef CALATK::CLDDMMGenericRegistration< StateSpatioTemporalVelocityFieldType > SpatioTemporalVelocityFieldRegistrationType;
 
   // general typedefs
-  typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension > VectorImageUtilsType;
-  typedef CALATK::CImageManagerMultiScale< TFLOAT, VImageDimension > ImageManagerMultiScaleType;
-  typedef CALATK::LDDMMUtils< TFLOAT, VImageDimension > LDDMMUtilsType;
-  typedef CALATK::VectorImage< TFLOAT, VImageDimension > VectorImageType;
-  typedef CALATK::VectorField< TFLOAT, VImageDimension > VectorFieldType;
+  typedef CALATK::VectorImageUtils< TFloat, VImageDimension >        VectorImageUtilsType;
+  typedef CALATK::CImageManagerMultiScale< TFloat, VImageDimension > ImageManagerMultiScaleType;
+  typedef CALATK::LDDMMUtils< TFloat, VImageDimension >              LDDMMUtilsType;
+  typedef CALATK::VectorImage< TFloat, VImageDimension >             VectorImageType;
+  typedef CALATK::VectorField< TFloat, VImageDimension >             VectorFieldType;
 
-  typedef CALATK::CAlgorithmBase< TFLOAT, VImageDimension > TReg;
+  typedef CALATK::CAlgorithmBase< TFloat, VImageDimension > RegistrationType;
 
-  typename TReg::Pointer plddmm = NULL;
+  typename RegistrationType::Pointer plddmm = NULL;
   bool bIsInitialImageMomentumType = false;
   bool bIsSpatioTemporalVelocityType = false;
 
@@ -64,20 +64,20 @@ int DoIt(std::string LDDMMType, char* sourceImage, char* targetImage, char* resu
   // custom specified, set it
   if ( LDDMMType.compare( "simplifiedShooting" ) == 0 )
   {
-    plddmm = new regTypeInitialImageMomentum;
-    dynamic_cast< regTypeInitialImageMomentum* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMSimplifiedGeodesicShooting" );
+    plddmm = new InitialImageMomentumRegistrationType;
+    dynamic_cast< InitialImageMomentumRegistrationType* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMSimplifiedGeodesicShooting" );
     bIsInitialImageMomentumType = true;
   }
   else if ( LDDMMType.compare( "adjointShooting" ) == 0 )
   {
-    plddmm = new regTypeInitialImageMomentum;
-    dynamic_cast< regTypeInitialImageMomentum* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMAdjointGeodesicShooting" );
+    plddmm = new InitialImageMomentumRegistrationType;
+    dynamic_cast< InitialImageMomentumRegistrationType* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMAdjointGeodesicShooting" );
     bIsInitialImageMomentumType = true;
   }
   else if ( LDDMMType.compare( "relaxation" ) == 0 )
   {
-    plddmm = new regTypeSpatioTemporalVelocityField;
-    dynamic_cast< regTypeSpatioTemporalVelocityField* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMGrowthModel" );
+    plddmm = new SpatioTemporalVelocityFieldRegistrationType;
+    dynamic_cast< SpatioTemporalVelocityFieldRegistrationType* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMGrowthModel" );
     bIsSpatioTemporalVelocityType = true;
   }
   else
@@ -91,7 +91,11 @@ int DoIt(std::string LDDMMType, char* sourceImage, char* targetImage, char* resu
   ptrImageManager->AddImage( sourceImage, 0.0, 0 );
   ptrImageManager->AddImage( targetImage, 1.0, 0 );
 
-  plddmm->SetConfigurationFile( configFileName );
+  CALATK::CJSONConfiguration::Pointer combinedConfiguration = new CALATK::CJSONConfiguration;
+  combinedConfiguration->ReadJSONFile( configFileName );
+  CALATK::CJSONConfiguration::Pointer cleanedConfiguration = new CALATK::CJSONConfiguration;
+  plddmm->SetAutoConfiguration( combinedConfiguration, cleanedConfiguration );
+
   plddmm->Solve();
 
   const typename VectorFieldType::Pointer ptrMap1 = new VectorFieldType( plddmm->GetMap( 1.0 ) );
@@ -158,5 +162,4 @@ int calatkLDDMMTest(int argc, char * argv[] )
   }
 
   return EXIT_FAILURE;
-
 }

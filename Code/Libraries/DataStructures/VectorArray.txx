@@ -20,6 +20,11 @@
 #ifndef VECTOR_ARRAY_TXX
 #define VECTOR_ARRAY_TXX
 
+#include "VectorArray.h"
+
+namespace CALATK
+{
+
 //////////////////////////////////
 // Constructors and Destructors //
 //////////////////////////////////
@@ -790,42 +795,42 @@ void VectorArray<T, VImageDimension>::Copy(const VectorArray<T, VImageDimension>
 template <class T, unsigned int VImageDimension>
 inline unsigned int VectorArray<T, VImageDimension>::GetSizeX() const
 {
-  return m_SizeX;
+  return this->m_SizeX;
 }
 
 
 template <class T, unsigned int VImageDimension>
 inline unsigned int VectorArray<T, VImageDimension>::GetSizeY() const
 {
-  return m_SizeY;
+  return this->m_SizeY;
 }
 
 
 template <class T, unsigned int VImageDimension>
 inline unsigned int VectorArray<T, VImageDimension>::GetSizeZ() const
 {
-  return m_SizeZ;
+  return this->m_SizeZ;
 }
 
 
 template <class T, unsigned int VImageDimension>
 inline unsigned int VectorArray<T, VImageDimension>::GetDimension() const
 {
-  return m_Dimension;
+  return this->m_Dimension;
 }
 
 
 template <class T, unsigned int VImageDimension>
 inline unsigned int VectorArray<T, VImageDimension>::GetLength() const
 {
-  return m_Length;
+  return this->m_Length;
 }
 
 
 template <class T, unsigned int VImageDimension>
 T* VectorArray<T, VImageDimension>::GetDataPointer()
 {
-  return m_DataPtr;
+  return this->m_DataPtr;
 }
 
 
@@ -860,17 +865,6 @@ void VectorArray<T, VImageDimension>::Deallocate()
     }
 }
 
+} // end namespace CALATK
+
 #endif
-
-
-
-
-
-
-
-
-
-
-
-
-

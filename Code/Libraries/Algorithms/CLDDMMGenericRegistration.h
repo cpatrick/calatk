@@ -22,7 +22,7 @@
 
 #include "CObjectiveFunctionFactory.h"
 #include "CALATKCommon.h"
-#include "JSONParameterUtils.h"
+#include "CJSONConfiguration.h"
 #include "CLDDMMVelocityFieldWithMomentumRegistration.h"
 
 namespace CALATK
@@ -31,7 +31,6 @@ namespace CALATK
 /** A generic registration driver which instantiates different LDDMM registration objective functions
   * through the objective function factory.
   */
-
 template < class TState >
 class CLDDMMGenericRegistration
     : public CLDDMMVelocityFieldWithMomentumRegistration< TState >
@@ -53,7 +52,7 @@ public:
   SetMacro( ObjectiveFunction, std::string );
   GetMacro( ObjectiveFunction, std::string );
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
 protected:
 

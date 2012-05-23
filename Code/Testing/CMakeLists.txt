@@ -58,12 +58,28 @@ function(add_ctest_subtest testName subtestName)
     add_test(${testName}_${subtestName} ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/${testName} ${ARGN})
   endif(BUILD_TESTING AND compile_${testName})
 endfunction(add_ctest_subtest)
+
 #
-# Define a function that adds a ctest test with image comparison only if the executable is turned on
+# Define a function that adds a ctest test with image comparison
+#
+function(add_ctest_test_testdriver testName testDriver)
+  if(BUILD_TESTING)
+    add_test(NAME ${testName}
+      WORKING_DIRECTORY ${test_temp_dir}
+      COMMAND ${testDriver}
+      ${testName}
+      ${ARGN}
+      )
+  endif(BUILD_TESTING)
+endfunction(add_ctest_test_testdriver)
+#
+# Define a function that adds a ctest test with image comparison
 #
 function(add_ctest_test_testdriver_image_compare testName testDriver imBaseline imResult)
   if(BUILD_TESTING)
-    add_test(${testName} ${testDriver}
+    add_test(NAME ${testName}
+      WORKING_DIRECTORY ${test_temp_dir}
+      COMMAND ${testDriver}
       --compare ${imBaseline}
                 ${imResult}
       ${testName}
@@ -77,7 +93,9 @@ endfunction(add_ctest_test_testdriver_image_compare)
 #
 function(add_ctest_subtest_testdriver_image_compare testName subtestName testDriver imBaseline imResult)
   if(BUILD_TESTING)
-    add_test(${testName}_${subtestName} ${testDriver}
+    add_test(NAME ${testName}_${subtestName}
+      WORKING_DIRECTORY ${test_temp_dir}
+      COMMAND ${testDriver}
       --compare ${imBaseline}
                 ${imResult}
       ${testName}
@@ -94,17 +112,22 @@ endfunction(add_ctest_subtest_testdriver_image_compare)
 # Set up source code files for all the tests which are processed by the testDriver
 
 set(testDriverFiltering_SRCS
-calatkGaussianBlurringTest.cxx
+  calatkGaussianBlurringTest.cxx
 )
 
 set(testDriverPDESolver_SRCS
-calatkAdvectionTest.cxx
-calatkInterpolationTest.cxx
+  calatkAdvectionTest.cxx
+  calatkInterpolationTest.cxx
 )
 
 set(testDriverAlgorithms_SRCS
-calatkLDDMMTest.cxx
-calatkMetamorphosisTest.cxx
+  calatkLDDMMTest.cxx
+  calatkMetamorphosisTest.cxx
+)
+
+set(testDriverInterfaces_SRCS
+  calatkApplicationImageFileNamesGivenTest.cxx
+  calatkApplicationDataConfigTest.cxx
 )
 
 add_executable(testDriverFiltering testDriverFiltering.cxx ${testDriverFiltering_SRCS})
@@ -156,6 +179,9 @@ add_ctest_test(calatkRegularizationSpacingTest
   ${test_temp_dir}/calatkRegularizationSpacingTest_warped_source.nrrd
   ${test_temp_dir}/calatkRegularizationSpacingTest_target_map.mha
   )
+
+add_test_executable(calatkCStateFactoryTest CALATK)
+add_ctest_test(calatkCStateFactoryTest)
 
 # LDDMM tests
 add_executable(testDriverAlgorithms testDriverAlgorithms.cxx ${testDriverAlgorithms_SRCS})
@@ -265,7 +291,11 @@ add_ctest_subtest_testdriver_image_compare(calatkMetamorphosisTest adjointMetamo
 			  )
 
 
-# Test to auto-generate bullseye images
+# Tests for the high level interface to the library and visualization/analysis
+# interfaces.
+add_executable(testDriverInterfaces testDriverInterfaces.cxx ${testDriverInterfaces_SRCS})
+target_link_libraries(testDriverInterfaces CALATK ${ITK_LIBRARIES})
+
 add_test_executable(GenerateBullseyes ${ITK_LIBRARIES})
 if(BUILD_TESTING AND compile_GenerateBullseyes)
   add_test(GenerateBullseyes ${CMAKE_COMMAND}
@@ -273,7 +303,74 @@ if(BUILD_TESTING AND compile_GenerateBullseyes)
     -DGenerateBullseyes_executable:FILEPATH=${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/GenerateBullseyes
     -P ${CALATK_SOURCE_DIR}/Code/Testing/GenerateBullseyesIfNeeded.cmake
     )
+
+  get_target_property(CALATKCommandLine_dir CALATKCommandLine
+    RUNTIME_OUTPUT_DIRECTORY)
+  set(CALATKCommandLine_path ${CALATKCommandLine_dir}/CALATKCommandLine)
+
+  add_test(CALATKCommandLineNoArgs ${CALATKCommandLine_path})
+  add_test(CALATKCommandLineHelp ${CALATKCommandLine_path} -h)
+  add_test(CALATKCommandInsufficientArgs ${CALATKCommandLine_path}
+    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfig.json
+    ${test_temp_dir}/Bullseye1DTimePoint0.mha
+    )
+  set_tests_properties(CALATKCommandLineNoArgs
+    CALATKCommandLineHelp
+    CALATKCommandInsufficientArgs
+    PROPERTIES WILL_FAIL TRUE
+    )
+
+  add_test(CALATKCommandLineBullseyes1DTest ${CALATKCommandLine_path}
+    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfig.json
+    ${test_temp_dir}/Bullseye1DTimePoint0.mha
+    ${test_temp_dir}/Bullseye1DTimePoint1.mha
+    ${test_temp_dir}/CALATKCommandLineBullseyes1D_AlgorithmConfig.json
+    ${test_temp_dir}/CALATKCommandLineBullseyes1D_DataConfig.json
+    )
+
+  add_test(CALATKCommandLineBullseyes1D_ImageDimensionsSpecifiedTest
+    ${CALATKCommandLine_path}
+    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfigImageDimensionsSpecified.json
+    ${test_temp_dir}/Bullseye1DTimePoint0.mha
+    ${test_temp_dir}/Bullseye1DTimePoint1.mha
+    ${test_temp_dir}/CALATKCommandLineBullseyes1D_ImageDimensionSpecified_AlgorithmConfig.json
+    ${test_temp_dir}/CALATKCommandLineBullseyes1D_ImageDimensionSpecified_DataConfig.json
+    )
+
+  add_ctest_test_testdriver(calatkApplicationImageFileNamesGivenTest
+    testDriverInterfaces
+    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfig.json
+    ${test_temp_dir}/Bullseye2DTimePoint0.mha
+    ${test_temp_dir}/Bullseye2DTimePoint1.mha
+    ${test_temp_dir}/calatkApplicationImageFileNamesGivenTest_AlgorithmConfig.json
+    ${test_temp_dir}/calatkApplicationImageFileNamesGivenTest_DataConfig.json
+    )
+  add_executable(DefaultInputConfigVerification
+    calatkDefaultInputConfigVerification.cxx
+    )
+  target_link_libraries(DefaultInputConfigVerification CALATK)
+  add_test(calatkDefaultInputConfigVerificationTest
+    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/DefaultInputConfigVerification
+    ${test_temp_dir}/calatkApplicationImageFileNamesGivenTest_DataConfig.json
+    )
+  set_tests_properties(calatkDefaultInputConfigVerificationTest
+    PROPERTIES DEPENDS calatkApplicationImageFileNamesGivenTest)
+
+  add_ctest_test_testdriver(calatkApplicationDataConfigTest
+    testDriverInterfaces
+    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfig.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestDataConfig.json
+    ${test_temp_dir}/calatkApplicationDataConfigTest_AlgorithmConfig.json
+    ${test_temp_dir}/calatkApplicationDataConfigTest_DataConfig.json
+    )
+
+  set_tests_properties(calatkApplicationImageFileNamesGivenTest
+    CALATKCommandLineBullseyes1DTest
+    CALATKCommandLineBullseyes1D_ImageDimensionsSpecifiedTest
+    calatkApplicationDataConfigTest
+    PROPERTIES DEPENDS GenerateBullseyes)
 endif()
+
 #add_ctest_test(writeFileITKTest
 #  # 2D input
 #  ${test_input_dir}/2Dsample.mha

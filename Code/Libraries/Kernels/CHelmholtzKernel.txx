@@ -20,6 +20,11 @@
 #ifndef C_HELMHOLTZ_KERNEL_TXX
 #define C_HELMHOLTZ_KERNEL_TXX
 
+#include "CHelmholtzKernel.h"
+
+namespace CALATK
+{
+
 template <class T, unsigned int VImageDimension >
 CHelmholtzKernel< T, VImageDimension >::CHelmholtzKernel()
   : DefaultAlpha( 0.05 ), DefaultGamma( 1 ), m_ExternallySetAlpha( false ), m_ExternallySetGamma( false )
@@ -34,11 +39,11 @@ CHelmholtzKernel< T, VImageDimension >::~CHelmholtzKernel()
 }
 
 template <class T, unsigned int VImageDimension >
-void CHelmholtzKernel< T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void CHelmholtzKernel< T, VImageDimension >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "HelmholtzKernel", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "HelmholtzKernel", Json::nullValue );
+  Superclass::SetAutoConfiguration( combined, cleaned );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "HelmholtzKernel", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "HelmholtzKernel", Json::nullValue );
 
   SetJSONHelpForRootKey( HelmholtzKernel, "kernel of the form L=-\\gamma + \\alpha \\nabla^2" );
 
@@ -70,17 +75,17 @@ void CHelmholtzKernel< T, VImageDimension >::SetGamma( T dGamma )
 template <class T, unsigned int VImageDimension >
 void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( const VectorImageType1D* pVecImageGraft )
 {
-  unsigned int szX = pVecImageGraft->GetSizeX();
+  const unsigned int szX = pVecImageGraft->GetSizeX();
 
-  T dx = pVecImageGraft->GetSpacingX();
+  const T dx = pVecImageGraft->GetSpacingX();
 
-  T pi = (T)CALATK::PI;
+  const T pi = (T)CALATK::PI;
 
   T f1Eff = 0;
 
   for (unsigned int x = 0; x < szX; ++x)
     {
-    f1Eff = GetFrequencyFromIndex( x, szX, dx );
+    f1Eff = this->GetFrequencyFromIndex( x, szX, dx );
     T val = m_Gamma + 2*m_Alpha*( (1 - std::cos(2*pi*f1Eff*dx))/(dx*dx) );
     this->m_ptrLInv->SetValue(x,0, val*val );
     this->m_ptrL->SetValue(x,0,1.0/(val*val) );
@@ -90,23 +95,23 @@ void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( cons
 template <class T, unsigned int VImageDimension >
 void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( const VectorImageType2D* pVecImageGraft )
 {
-  unsigned int szX = pVecImageGraft->GetSizeX();
-  unsigned int szY = pVecImageGraft->GetSizeY();
+  const unsigned int szX = pVecImageGraft->GetSizeX();
+  const unsigned int szY = pVecImageGraft->GetSizeY();
 
-  T dx = pVecImageGraft->GetSpacingX();
-  T dy = pVecImageGraft->GetSpacingY();
+  const T dx = pVecImageGraft->GetSpacingX();
+  const T dy = pVecImageGraft->GetSpacingY();
 
-  T pi = (T)CALATK::PI;
+  const T pi = (T)CALATK::PI;
 
   T f1Eff = 0;
   T f2Eff = 0;
 
   for (unsigned int y = 0; y < szY; ++y) 
     {
-    f2Eff = GetFrequencyFromIndex( y, szY, dy );
+    f2Eff = this->GetFrequencyFromIndex( y, szY, dy );
     for (unsigned int x = 0; x < szX; ++x) 
       {
-      f1Eff = GetFrequencyFromIndex( x, szX, dx );
+      f1Eff = this->GetFrequencyFromIndex( x, szX, dx );
       T val = m_Gamma + 2*m_Alpha*( 
         (1 - std::cos(2*pi*f1Eff*dx))/(dx*dx) + 
         (1 - std::cos(2*pi*f2Eff*dy))/(dy*dy) );
@@ -120,16 +125,15 @@ void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( cons
 template <class T, unsigned int VImageDimension >
 void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( const VectorImageType3D* pVecImageGraft )
 {
+  const unsigned int szX = pVecImageGraft->GetSizeX();
+  const unsigned int szY = pVecImageGraft->GetSizeY();
+  const unsigned int szZ = pVecImageGraft->GetSizeZ();
 
-  unsigned int szX = pVecImageGraft->GetSizeX();
-  unsigned int szY = pVecImageGraft->GetSizeY();
-  unsigned int szZ = pVecImageGraft->GetSizeZ();
+  const T dx = pVecImageGraft->GetSpacingX();
+  const T dy = pVecImageGraft->GetSpacingY();
+  const T dz = pVecImageGraft->GetSpacingZ();
 
-  T dx = pVecImageGraft->GetSpacingX();
-  T dy = pVecImageGraft->GetSpacingY();
-  T dz = pVecImageGraft->GetSpacingZ();
-
-  T pi = (T)CALATK::PI;
+  const T pi = (T)CALATK::PI;
 
   T f1Eff = 0;
   T f2Eff = 0;
@@ -137,13 +141,13 @@ void CHelmholtzKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( cons
 
   for (unsigned int z = 0; z < szZ; ++z) 
     {
-    f3Eff = GetFrequencyFromIndex( z, szZ, dz );
+    f3Eff = this->GetFrequencyFromIndex( z, szZ, dz );
     for (unsigned int y = 0; y < szY; ++y) 
       {
-      f2Eff = GetFrequencyFromIndex( y, szY, dy );
+      f2Eff = this->GetFrequencyFromIndex( y, szY, dy );
       for (unsigned int x = 0; x < szX; ++x) 
         {
-        f1Eff = GetFrequencyFromIndex( x, szX, dx );
+        f1Eff = this->GetFrequencyFromIndex( x, szX, dx );
         T val = m_Gamma + 2*m_Alpha*( 
           (1 - std::cos(2*pi*f1Eff*dx))/(dx*dx) + 
           (1 - std::cos(2*pi*f2Eff*dy))/(dy*dy) + 
@@ -160,5 +164,7 @@ void CHelmholtzKernel< T, VImageDimension >::ConfirmKernelsNeedToBeComputed()
 {
   this->m_KernelsNeedToBeComputed = true;
 }
+
+} // end namespace CALATK
 
 #endif

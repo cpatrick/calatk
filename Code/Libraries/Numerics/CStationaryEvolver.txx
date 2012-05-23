@@ -20,6 +20,11 @@
 #ifndef C_STATIONARY_EVOLVER_TXX
 #define C_STATIONARY_EVOLVER_TXX
 
+#include "CStationaryEvolver.h"
+
+namespace CALATK
+{
+
 template <class T, unsigned int VImageDimension >
 CStationaryEvolver< T, VImageDimension >::CStationaryEvolver()
 {
@@ -79,5 +84,7 @@ void CStationaryEvolver< T, VImageDimension >::SolveForward( VectorFieldType* pV
     }
 
 }
+
+} // end namespace CALATK
 
 #endif

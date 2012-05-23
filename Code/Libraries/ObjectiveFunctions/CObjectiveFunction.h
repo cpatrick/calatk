@@ -30,21 +30,21 @@ namespace CALATK
 
 template < class TState >
 class CObjectiveFunction
-    : public CObjectiveFunctionBase< typename TState::TFloat, TState::VImageDimension >,
-    public CAugmentedLagrangianInterface< typename TState::TFloat, TState::VImageDimension >
+    : public CObjectiveFunctionBase< typename TState::FloatType, TState::ImageDimension >,
+    public CAugmentedLagrangianInterface< typename TState::FloatType, TState::ImageDimension >
 {
 public:
   /** Standard class typedefs. */
-  typedef CObjectiveFunction                                                         Self;
-  typedef CObjectiveFunctionBase< typename TState::TFloat, TState::VImageDimension > Superclass;
-  typedef itk::SmartPointer< Self >                                                  Pointer;
-  typedef itk::SmartPointer< const Self >                                            ConstPointer;
+  typedef CObjectiveFunction                                                           Self;
+  typedef CObjectiveFunctionBase< typename TState::FloatType, TState::ImageDimension > Superclass;
+  typedef itk::SmartPointer< Self >                                                    Pointer;
+  typedef itk::SmartPointer< const Self >                                              ConstPointer;
 
   /* some useful typedefs */
   
-  typedef typename TState::TFloat T;
-  typedef VectorField< T, TState::VImageDimension > VectorFieldType;
-  typedef VectorImage< T, TState::VImageDimension > VectorImageType;
+  typedef typename TState::FloatType T;
+  typedef VectorField< T, TState::ImageDimension > VectorFieldType;
+  typedef VectorImage< T, TState::ImageDimension > VectorImageType;
 
   typedef TState  StateType;
   typedef TState* ptrStateType;

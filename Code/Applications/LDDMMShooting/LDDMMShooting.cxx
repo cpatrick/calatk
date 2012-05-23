@@ -28,7 +28,7 @@
 #include "VectorImageUtils.h"
 #include "CImageManagerMultiScale.h"
 
-#include "JSONParameterUtils.h"
+#include "CJSONConfiguration.h"
 
 #include "LDDMMShootingCLP.h"
 
@@ -54,20 +54,24 @@ int DoIt( int argc, char** argv )
   unsigned int uiI0 = ptrImageManager->AddImage( sourceImage, 0.0, 0 );
   ptrImageManager->AddImage( targetImage, 1.0, 0 );
 
-  lddmm->SetConfigurationFile( configFile );
-  lddmm->SetAllowJSONHelpComments( bCreateJSONHelp );
+  CALATK::CJSONConfiguration::Pointer combinedConfiguration = new CALATK::CJSONConfiguration;
+  combinedConfiguration->ReadJSONFile( configFile );
+  CALATK::CJSONConfiguration::Pointer cleanedConfiguration = new CALATK::CJSONConfiguration;
+
+  lddmm->SetAutoConfiguration( combinedConfiguration, cleanedConfiguration );
+  lddmm->SetAllowHelpComments( bCreateJSONHelp );
   lddmm->Solve();
 
   // write out the resulting JSON file if desired
   if ( configFileOut.compare("None") != 0 )
     {
-      if ( bCleanJSONConfigOutput )
+    if ( bCleanJSONConfigOutput )
       {
-        lddmm->WriteCurrentCleanedConfigurationToJSONFile( configFileOut );
+      cleanedConfiguration->WriteCurrentConfigurationToJSONFile( configFileOut );
       }
-      else
+    else
       {
-        lddmm->WriteCurrentCombinedConfigurationToJSONFile( configFileOut );
+      combinedConfiguration->WriteCurrentConfigurationToJSONFile( configFileOut );
       }
     }
 

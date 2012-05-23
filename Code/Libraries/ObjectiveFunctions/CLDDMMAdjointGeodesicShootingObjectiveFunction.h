@@ -27,6 +27,7 @@
 
 namespace CALATK
 {
+
 /**
   * Implements the adjoint formulation of geodesic shooting as described in
   *
@@ -37,7 +38,6 @@ namespace CALATK
   * Niethammer et al., "Geodesic Regression for Image Time-Series," MICCAI 2011.
   *
   */
-
 template < class TState >
 class CLDDMMAdjointGeodesicShootingObjectiveFunction
     : public CLDDMMGeodesicShootingObjectiveFunction< TState >
@@ -50,7 +50,7 @@ public:
   typedef itk::SmartPointer< const Self >                   ConstPointer;
 
   /* Some useful typedefs */
-  typedef typename TState::TFloat T;
+  typedef typename TState::FloatType T;
 
   typedef typename Superclass::CEnergyValues CEnergyValues;
 
@@ -97,8 +97,8 @@ protected:
 
   void CreateTimeDiscretization();
 
-  typedef CImageManager< T, TState::VImageDimension > ImageManagerType;
-  typedef typename ImageManagerType::ImageInformation ImageInformation;
+  typedef CImageManager< T, TState::ImageDimension >        ImageManagerType;
+  typedef typename ImageManagerType::ImageInformation       ImageInformation;
   typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
 
   typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;

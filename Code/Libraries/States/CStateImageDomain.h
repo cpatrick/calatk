@@ -22,7 +22,7 @@
 
 #include "CState.h"
 #include "VectorImage.h"
-
+#include "CResampler.h"
 
 namespace CALATK
 {
@@ -32,36 +32,44 @@ namespace CALATK
  *
  * Class which introduces upsampling of a state based on image dimensions
  */
-template <class T, unsigned int VImageDimension, class TResampler >
-class CStateImageDomain : public CState< T, VImageDimension, TResampler >
+template <class TFloat, unsigned int VImageDimension >
+class CStateImageDomain : public CState< TFloat >
 {
 public:
-  typedef CStateImageDomain                  TState;
+  static const unsigned int ImageDimension = VImageDimension;
 
   /* Standard class typedefs. */
-  typedef CStateImageDomain                                        Self;
-  typedef itk::SmartPointer< Self >                                Pointer;
-  typedef itk::SmartPointer< const Self >                          ConstPointer;
-  typedef CState< TState, VImageDimension, TResampler >            Superclass;
+  typedef CStateImageDomain                Self;
+  typedef itk::SmartPointer< Self >        Pointer;
+  typedef itk::SmartPointer< const Self >  ConstPointer;
+  typedef CState< TFloat >                 Superclass;
 
   /* Some useful typedefs */
-  typedef VectorImage< T, VImageDimension >  VectorImageType;
-  typedef T                 TFloat;
+  typedef VectorImage< TFloat, VImageDimension >  VectorImageType;
+  typedef CResampler< TFloat, VImageDimension >   ResamplerType;
 
-  CStateImageDomain() {};
-  virtual ~CStateImageDomain() {};
+  CStateImageDomain();
+  virtual ~CStateImageDomain();
 
-  virtual TState* CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const = 0;
+  virtual Self* CreateUpsampledStateAndAllocateMemory( const VectorImageType* graftImage ) const = 0;
+
+  /** Set/Get the resampler used for upsampling.  Defaults to a CResamplerLinear. */
+  void SetResampler( ResamplerType * resampler );
+  ResamplerType * GetResampler() const;
 
   virtual bool StateContainsInitialImage() = 0;
   virtual VectorImageType* GetPointerToInitialImage() const;
 
 protected:
+  typename ResamplerType::Pointer m_Resampler;
+
 private:
 };
 
 #include "CStateImageDomain.txx"
 
 } // end namespace
+
+#include "CStateImageDomain.txx"
 
 #endif

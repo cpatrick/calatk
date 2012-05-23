@@ -25,16 +25,17 @@
 
 namespace CALATK
 {
-/** Class which introduces output of the momentum */
 
 /**
-  * A reasonable default value for the state is
-  * TState = CStateSpatioTemporalVelocityField< T, VImageDimension >
-  *
-  * or
-  *
-  * TState - CStateInitialImageMomentum< T, VImageDimension >
-  */
+ * \brief Class which introduces output of the momentum
+ *
+ * A reasonable default value for the state is
+ * TState = CStateSpatioTemporalVelocityField< T, VImageDimension >
+ *
+ * or
+ *
+ * TState - CStateInitialImageMomentum< T, VImageDimension >
+ */
 template < class TState >
 class CLDDMMVelocityFieldWithMomentumRegistration
     : public CLDDMMVelocityFieldRegistration< TState >
@@ -47,7 +48,7 @@ public:
   typedef itk::SmartPointer< const Self >              ConstPointer;
 
   /* some useful typedefs */
-  typedef typename TState::TFloat T;
+  typedef typename TState::FloatType T;
 
   typedef typename Superclass::EvolverType           EvolverType;
   typedef typename Superclass::KernelType            KernelType;

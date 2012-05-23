@@ -31,7 +31,7 @@
 #include "VectorImageUtils.h"
 #include "LDDMMUtils.h"
 
-#include "JSONParameterUtils.h"
+#include "CJSONConfiguration.h"
 
 #include "AtlasBuilderCLP.h"
 

@@ -36,47 +36,47 @@ public:
   typedef itk::SmartPointer< Self >       Pointer;
   typedef itk::SmartPointer< const Self > ConstPointer;
 
-  typedef typename TState::TFloat                    T;
+  typedef typename TState::FloatType                 T;
+
   typedef typename Superclass::ObjectiveFunctionType ObjectiveFunctionType;
   typedef typename Superclass::CEnergyValues         CEnergyValues;
-  typedef VectorImage< T, TState::VImageDimension >  VectorImageType;
+
+  typedef VectorImage< T, TState::ImageDimension >   VectorImageType;
 
   CSolverLineSearchConstrained();
 
   /**
    * Performs the line search
    */
-    bool SolvePreInitialized();
+  bool SolvePreInitialized();
 
-    SetMacro( AugmentedLagrangianNumberOfIterations, unsigned int );
-    GetMacro( AugmentedLagrangianNumberOfIterations, unsigned int );
+  SetMacro( AugmentedLagrangianNumberOfIterations, unsigned int );
+  GetMacro( AugmentedLagrangianNumberOfIterations, unsigned int );
 
-    SetMacro( AugmentedLagrangianPenaltyIncreaseFactor, T );
-    GetMacro( AugmentedLagrangianPenaltyIncreaseFactor, T );
+  SetMacro( AugmentedLagrangianPenaltyIncreaseFactor, T );
+  GetMacro( AugmentedLagrangianPenaltyIncreaseFactor, T );
 
-    SetMacro( AugmentedLagrangianInitialMu, T );
-    GetMacro( AugmentedLagrangianInitialMu, T );
+  SetMacro( AugmentedLagrangianInitialMu, T );
+  GetMacro( AugmentedLagrangianInitialMu, T );
 
-    virtual void SetAutoConfiguration( Json::Value &ConfValueIn, Json::Value &ConfValueOut );
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
 protected:
-
-    unsigned int m_AugmentedLagrangianNumberOfIterations;
-    T m_AugmentedLagrangianPenaltyIncreaseFactor;
-    T m_AugmentedLagrangianInitialMu;
+  unsigned int m_AugmentedLagrangianNumberOfIterations;
+  T m_AugmentedLagrangianPenaltyIncreaseFactor;
+  T m_AugmentedLagrangianInitialMu;
 
 private:
+  const unsigned int DefaultAugmentedLagrangianNumberOfIterations;
+  bool m_ExternallySetAugmentedLagrangianNumberOfIterations;
 
-    const unsigned int DefaultAugmentedLagrangianNumberOfIterations;
-    bool m_ExternallySetAugmentedLagrangianNumberOfIterations;
+  const T DefaultAugmentedLagrangianPenaltyIncreaseFactor;
+  bool m_ExternallySetAugmentedLagrangianPenaltyIncreaseFactor;
 
-    const T DefaultAugmentedLagrangianPenaltyIncreaseFactor;
-    bool m_ExternallySetAugmentedLagrangianPenaltyIncreaseFactor;
+  const T DefaultAugmentedLagrangianInitialMu;
+  bool m_ExternallySetAugmentedLagrangianInitialMu;
 
-    const T DefaultAugmentedLagrangianInitialMu;
-    bool m_ExternallySetAugmentedLagrangianInitialMu;
-
-    typename TState::Pointer pTempState;
+  typename TState::Pointer pTempState;
 };
 
 #include "CSolverLineSearchConstrained.txx"

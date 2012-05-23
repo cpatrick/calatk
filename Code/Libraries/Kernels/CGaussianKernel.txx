@@ -20,6 +20,11 @@
 #ifndef C_GAUSSIAN_KERNEL_TXX
 #define C_GAUSSIAN_KERNEL_TXX
 
+#include "CGaussianKernel.h"
+
+namespace CALATK
+{
+
 template <class T, unsigned int VImageDimension >
 CGaussianKernel< T, VImageDimension >::CGaussianKernel()
   : DefaultSigma( 1 ), m_ExternallySetSigma( false )
@@ -33,12 +38,12 @@ CGaussianKernel< T, VImageDimension >::~CGaussianKernel()
 }
 
 template <class T, unsigned int VImageDimension >
-void CGaussianKernel< T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void CGaussianKernel< T, VImageDimension >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+  Superclass::SetAutoConfiguration( combined, cleaned );
   
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "GaussianKernel", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "GaussianKernel", Json::nullValue );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "GaussianKernel", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "GaussianKernel", Json::nullValue );
 
   SetJSONHelpForRootKey( GaussianKernel, "isotropic Gaussian kernel" );
 
@@ -69,7 +74,7 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( const
 
   for (unsigned int x = 0; x < szX; ++x)
     {
-    f1Eff = GetFrequencyFromIndex( x, szX, dx );
+    f1Eff = this->GetFrequencyFromIndex( x, szX, dx );
 
     T val = exp( -m_Sigma*m_Sigma*( 4*pi*pi*(f1Eff*f1Eff)/2 ) );
     this->m_ptrL->SetValue(x,0, val );
@@ -103,10 +108,10 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( const
 
   for (unsigned int y = 0; y < szY; ++y) 
     {
-    f2Eff = GetFrequencyFromIndex( y, szY, dy );
+    f2Eff = this->GetFrequencyFromIndex( y, szY, dy );
     for (unsigned int x = 0; x < szX; ++x) 
       {
-      f1Eff = GetFrequencyFromIndex( x, szX, dx );
+      f1Eff = this->GetFrequencyFromIndex( x, szX, dx );
 
       T val = exp( -m_Sigma*m_Sigma*( 4*pi*pi*(f1Eff*f1Eff + f2Eff*f2Eff )/2 ) );
       this->m_ptrL->SetValue(x,y,0, val );
@@ -144,13 +149,13 @@ void CGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( const
 
   for (unsigned int z = 0; z < szZ; ++z) 
     {
-    f3Eff = GetFrequencyFromIndex( z, szZ, dz );
+    f3Eff = this->GetFrequencyFromIndex( z, szZ, dz );
     for (unsigned int y = 0; y < szY; ++y) 
       {
-      f2Eff = GetFrequencyFromIndex( y, szY, dy );
+      f2Eff = this->GetFrequencyFromIndex( y, szY, dy );
       for (unsigned int x = 0; x < szX; ++x) 
         {
-        f1Eff = GetFrequencyFromIndex( x, szX, dx );
+        f1Eff = this->GetFrequencyFromIndex( x, szX, dx );
         T val = exp( -m_Sigma*m_Sigma*( 4*pi*pi*( f1Eff*f1Eff + f2Eff*f2Eff + f3Eff*f3Eff)/2 ) );
         this->m_ptrL->SetValue(x,y,z,0, val );
 
@@ -174,5 +179,7 @@ void CGaussianKernel< T, VImageDimension >::ConfirmKernelsNeedToBeComputed()
 {
   this->m_KernelsNeedToBeComputed = true;
 }
+
+} // end namespace CALATK
 
 #endif

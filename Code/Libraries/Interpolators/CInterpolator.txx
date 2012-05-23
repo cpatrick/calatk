@@ -20,6 +20,11 @@
 #ifndef C_INTERPOLATOR_TXX
 #define C_INTERPOLATOR_TXX
 
+#include "CInterpolator.h"
+
+namespace CALATK
+{
+
 template < class T, unsigned int VImageDimension >
 CInterpolator< T, VImageDimension >::CInterpolator()
   : DefaultNumberOfThreads( 1 ), m_ExternallySetNumberOfThreads( false )
@@ -31,5 +36,7 @@ template < class T, unsigned int VImageDimension >
 CInterpolator< T, VImageDimension >::~CInterpolator()
 {
 }
+
+} // end namespace CALATK
 
 #endif

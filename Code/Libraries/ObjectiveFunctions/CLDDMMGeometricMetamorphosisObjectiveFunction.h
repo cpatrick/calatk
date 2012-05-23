@@ -38,13 +38,16 @@ public:
   typedef itk::SmartPointer< const Self >                               ConstPointer;
 
   /* Some useful typedefs */
-  typedef typename TState::TFloat T;
+  typedef typename TState::FloatType T;
 
   typedef typename Superclass::CEnergyValues CEnergyValues;
 
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
-  typedef CKernel< T, TState::VImageDimension >* ptrKernelType;
+
+  typedef typename Superclass::EvolverType     EvolverType;
+  typedef typename Superclass::KernelType      KernelType;
+
 
   CLDDMMGeometricMetamorphosisObjectiveFunction();
   virtual ~CLDDMMGeometricMetamorphosisObjectiveFunction();
@@ -70,12 +73,12 @@ public:
   SetMacro( W, T );
   GetMacro( W, T );
 
-  void SetMaskKernelPointer( ptrKernelType pKernel );
-  ptrKernelType GetMaskKernelPointer();
+  void SetMaskKernelPointer( KernelType * pKernel );
+  KernelType * GetMaskKernelPointer();
 
   void OutputStateInformation( unsigned int uiIter, std::string outputPrefix="" );
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
 protected:
 
@@ -107,11 +110,11 @@ private:
 
   unsigned int m_uiTimeIndexOfTimePoint1;
 
-  ImageInformation* pImInfo0;
-  ImageInformation* pImInfo1;
+  ImageInformation* m_ptrImageInformation0;
+  ImageInformation* m_ptrImageInformation1;
 
-  ImageInformation* pMaskInfo0;
-  ImageInformation* pMaskInfo1;
+  ImageInformation* m_ptrMaskInformation0;
+  ImageInformation* m_ptrMaskInformation1;
 
   // just convenience pointers to make writing the algorithms easier
   // memory pointed to is taken care of by the imageManager (it there a way to make them const?)
@@ -164,8 +167,7 @@ private:
   bool m_ExternallySetSigma2Sqr;
   bool m_ExternallySetW;
 
-  ptrKernelType m_ptrMaskKernel;
-
+  typename KernelType::Pointer m_ptrMaskKernel;
 };
 
 #include "CLDDMMGeometricMetamorphosisObjectiveFunction.txx"

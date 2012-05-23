@@ -20,9 +20,11 @@
 #ifndef C_ONESTEPEVOLVER_SEMILAGRANGIAN_ADVECTION_TXX
 #define C_ONESTEPEVOLVER_SEMILAGRANGIAN_ADVECTION_TXX
 
-//
-// empty constructor
-//
+#include "COneStepEvolverSemiLagrangianAdvection.h"
+
+namespace CALATK
+{
+
 template <class T, unsigned int VImageDimension >
 COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::COneStepEvolverSemiLagrangianAdvection()
   : DefaultTimeStepFactor( 1 ), m_ExternallySetTimeStepFactor( false ),
@@ -41,12 +43,12 @@ COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::~COneStepEvolverSem
 }
 
 template <class T, unsigned int VImageDimension >
-void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
+  Superclass::SetAutoConfiguration( combined, cleaned );
 
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "OneStepEvolverSemiLagrangianAdvection", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "OneStepEvolverSemiLagrangianAdvection", Json::nullValue );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "OneStepEvolverSemiLagrangianAdvection", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "OneStepEvolverSemiLagrangianAdvection", Json::nullValue );
 
   SetJSONHelpForRootKey( OneStepEvolverSemiLagrangianAdvection, "settings for the semi-Lagrangian advection solver" );
 
@@ -188,6 +190,6 @@ T COneStepEvolverSemiLagrangianAdvection<T, VImageDimension >::ComputeMaximalUpd
   return minDT;
 }
 
-
+} // end namespace CALATK
 
 #endif

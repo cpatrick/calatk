@@ -20,6 +20,12 @@
 #ifndef C_MULTI_GAUSSIAN_KERNEL_TXX
 #define C_MULTI_GAUSSIAN_KERNEL_TXX
 
+#include "CGaussianKernel.h"
+#include "CMultiGaussianKernel.h"
+
+namespace CALATK
+{
+
 template <class T, unsigned int VImageDimension >
 CMultiGaussianKernel< T, VImageDimension >::CMultiGaussianKernel()
   : DefaultGamma( 1.0 ),
@@ -57,11 +63,11 @@ CMultiGaussianKernel< T, VImageDimension >::~CMultiGaussianKernel()
 }
 
 template<class T, unsigned int VImageDimension >
-void CMultiGaussianKernel< T, VImageDimension >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void CMultiGaussianKernel< T, VImageDimension >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "MultiGaussianKernel", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "MultiGaussianKernel", Json::nullValue );
+  Superclass::SetAutoConfiguration( combined, cleaned );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "MultiGaussianKernel", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "MultiGaussianKernel", Json::nullValue );
 
   SetJSONHelpForRootKey( MultiGaussianKernel, "weighted sum of Gaussians" );
 
@@ -179,7 +185,7 @@ void CMultiGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( 
 
   for (unsigned int x = 0; x < szX; ++x)
     {
-    f1Eff = GetFrequencyFromIndex( x, szX, dx );
+    f1Eff = this->GetFrequencyFromIndex( x, szX, dx );
 
     T val = 0;
 
@@ -233,10 +239,10 @@ void CMultiGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( 
 
   for (unsigned int y = 0; y < szY; ++y)
     {
-    f2Eff = GetFrequencyFromIndex( y, szY, dy );
+    f2Eff = this->GetFrequencyFromIndex( y, szY, dy );
     for (unsigned int x = 0; x < szX; ++x)
       {
-      f1Eff = GetFrequencyFromIndex( x, szX, dx );
+      f1Eff = this->GetFrequencyFromIndex( x, szX, dx );
 
       T val = 0;
 
@@ -294,13 +300,13 @@ void CMultiGaussianKernel< T, VImageDimension >::ComputeKernelAndInverseKernel( 
 
   for (unsigned int z = 0; z < szZ; ++z)
     {
-    f3Eff = GetFrequencyFromIndex( z, szZ, dz );
+    f3Eff = this->GetFrequencyFromIndex( z, szZ, dz );
     for (unsigned int y = 0; y < szY; ++y)
       {
-      f2Eff = GetFrequencyFromIndex( y, szY, dy );
+      f2Eff = this->GetFrequencyFromIndex( y, szY, dy );
       for (unsigned int x = 0; x < szX; ++x)
         {
-        f1Eff = GetFrequencyFromIndex( x, szX, dx );
+        f1Eff = this->GetFrequencyFromIndex( x, szX, dx );
 
         T val = 0;
 
@@ -374,11 +380,12 @@ std::vector< T > CMultiGaussianKernel< T, VImageDimension >::ComputeDataDependen
       std::cout << "Computing multi-Gaussian kernel weight for sigma = " << m_Sigmas[ iI ] << " ... ";
 
       // instantiate a Gaussian kernel with appropriate sigma
-      CGaussianKernel< T, VImageDimension > gaussianKernel;
-      gaussianKernel.SetSigma( m_Sigmas[ iI ] );
+      typedef CGaussianKernel< T, VImageDimension > GaussianKernelType;
+      typename GaussianKernelType::Pointer gaussianKernel = new GaussianKernelType;
+      gaussianKernel->SetSigma( m_Sigmas[ iI ] );
 
       ptrSmoothedGradient->Copy( ptrGradient );
-      gaussianKernel.ConvolveWithKernel( ptrSmoothedGradient );
+      gaussianKernel->ConvolveWithKernel( ptrSmoothedGradient );
 
       // now determine what the maximal magnitude of the vectors is
       T dMaximalNorm = sqrt( ptrSmoothedGradient->ComputeMaximalSquaredNorm() );
@@ -436,5 +443,7 @@ void CMultiGaussianKernel< T, VImageDimension >::ConfirmKernelsNeedToBeComputed(
 {
   this->m_KernelsNeedToBeComputed = true;
 }
+
+} // end namespace CALATK
 
 #endif

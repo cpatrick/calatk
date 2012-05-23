@@ -23,7 +23,7 @@
 
 #include "CALATKCommon.h"
 #include <iostream>
-#include "JSONParameterUtils.h"
+#include "CJSONConfiguration.h"
 #include <fstream>
 
 typedef float TFLOAT;
@@ -37,40 +37,44 @@ int main( int argc, char* argv[] )
     return EXIT_FAILURE;
     }
 
-  std::string config_file( argv[1] );
+  const std::string config_file( argv[1] );
 
   CALATK::CJSONConfiguration config;
-  bool parsingSuccessful = config.ReadJSONFile( config_file );
-
-  if ( !parsingSuccessful )
+  try
     {
+    config.ReadJSONFile( config_file );
+    }
+  catch( const std::exception & e )
+    {
+    std::cerr << e.what() << std::endl;
     return EXIT_FAILURE;
     }
 
-  Json::Value& valMultiScale = config.GetFromKey( "MultiscaleSettings", Json::nullValue );
+  Json::Value& valMultiScale = config.GetFromKey( "MultiScaleSettings", Json::nullValue );
 
-  std::cout << "Multiscale settings = " << std::endl;
+  std::cout << "MultiScale settings = " << std::endl;
   std::cout << valMultiScale;
 
-  Json::Value& valObj = config.GetFromKey( "ObjectiveFunction", Json::nullValue );
+  Json::Value& objectiveFunction = config.GetFromKey( "ObjectiveFunction", Json::nullValue );
 
-  valObj[0]["test"]=1;
-  valObj[1]["test"]=2;
+  objectiveFunction[0]["test"]=1;
+  objectiveFunction[1]["test"]=2;
 
-  valObj[0]["test"].setComment("// one value", Json::commentAfterOnSameLine );
+  objectiveFunction[0]["test"].setComment("// one value", Json::commentAfterOnSameLine );
 
-  valObj.setComment( "// sets the objective function; comment after on same line", Json::commentAfterOnSameLine );
-  valObj.setComment( "// sets the objective function; comment before", Json::commentBefore );
+  objectiveFunction.setComment( "// sets the objective function; comment after on same line", Json::commentAfterOnSameLine );
+  objectiveFunction.setComment( "// sets the objective function; comment before", Json::commentBefore );
 
-  config.WriteCurrentConfigurationToJSONFile( argv[2] );
-
-  CALATK::CJSONConfiguration subConfig;
-  subConfig.SetRootReference( valObj );
-
-  std::cout << "SubConfig = " << std::endl;
-  std::cout << *subConfig.GetRootPointer();
+  try
+    {
+    config.WriteCurrentConfigurationToJSONFile( argv[2] );
+    }
+  catch( const std::exception & e )
+    {
+    std::cerr << e.what() << std::endl;
+    return EXIT_FAILURE;
+    }
 
   return EXIT_SUCCESS;
-
 }
 

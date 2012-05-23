@@ -20,7 +20,7 @@
 #ifndef C_STATE_MULTIPLE_STATES_H
 #define C_STATE_MULTIPLE_STATES_H
 
-#include "CStateMultipleStates.h"
+#include "CStateImageDomain.h"
 
 namespace CALATK
 {
@@ -36,6 +36,7 @@ public:
   typedef CStateMultipleStates TState;
 
   /* some useful typedefs */
+
   typedef typename IndividualStateType::TFloat          TFloat;
   typedef typename IndividualStateType::TResampler      TResampler;
   typedef IndividualStateType                           TIndividualState;
@@ -100,9 +101,10 @@ public:
   /**
    * @brief Returns the state pointer for one of the underlying objectuve functions of the MultipleStates builder
    *
-   * @param uiState - nr of the state to be returned, if it does not exist will return NULL
-   * @return TState * - returned state pointer
+   * @param idx - index of the state to be returned, if it does not exist will return NULL
+   * @return individualState - returned state pointer
    */
+
   TIndividualState* GetIndividualStatePointer( unsigned int uiState );
   
   /**
@@ -112,6 +114,7 @@ public:
    * @return Returns the squared norm. For the MultipleStates, this is the sum of the squared norms of all
    * the components.
    */
+
   TFloat SquaredNorm();
 
   bool StateContainsInitialImage();
@@ -124,11 +127,12 @@ protected:
   VectorIndividualStatesType  m_vecIndividualStates;
 
 private:
-
 };
 
 #include "CStateMultipleStates.txx"
 
 } // end namespace
+
+#include "CStateAtlas.txx"
 
 #endif

@@ -25,7 +25,7 @@
 #include "CALATKCommon.h"
 
 #include "CProcessBase.h"
-#include "JSONParameterUtils.h"
+#include "CJSONConfiguration.h"
 
 namespace CALATK
 {
@@ -53,7 +53,7 @@ public:
   SetJSONMacro( Sigma, T );
   GetMacro( Sigma, T );
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
 protected:
   typedef  CGaussianKernel< T, VImageDimension > GaussianKernelType;
@@ -63,8 +63,7 @@ protected:
 
 private:
   const T DefaultSigma;
-  
-  bool m_ExternallySetSigma;
+  bool    m_ExternallySetSigma;
 };
 
 #include "CResampler.txx"

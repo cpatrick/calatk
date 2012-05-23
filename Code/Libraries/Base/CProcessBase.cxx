@@ -24,63 +24,75 @@ namespace CALATK
 
 CProcessBase::CProcessBase():
   m_PrintConfiguration( true ),
-  m_AllowHelpComments( false )
+  m_AllowHelpComments( false ),
+  m_AutoConfigurationSet( false )
 {
-  this->m_jsonConfigOut.PrintSettingsOff();
-  this->m_jsonConfigIn.PrintSettingsOn();
+  this->m_CombinedJSONConfig = new CJSONConfiguration;
+  this->m_CleanedJSONConfig = new CJSONConfiguration;
 
-  this->m_jsonConfigOut.AllowHelpCommentsOff();
-  this->m_jsonConfigIn.AllowHelpCommentsOff();
+  this->m_CleanedJSONConfig->PrintSettingsOff();
+  this->m_CombinedJSONConfig->PrintSettingsOn();
+
+  this->m_CleanedJSONConfig->AllowHelpCommentsOff();
+  this->m_CombinedJSONConfig->AllowHelpCommentsOff();
 }
 
-void CProcessBase::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+
+void CProcessBase::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  this->m_jsonConfigIn.SetRootReference( ConfValueIn );
-  this->m_jsonConfigOut.SetRootReference( ConfValueOut );
+  this->m_CombinedJSONConfig = combined;
+  this->m_CleanedJSONConfig  = cleaned;
+  this->m_AutoConfigurationSet = true;
 }
 
-const Json::Value* CProcessBase::GetAutoConfigurationIn()
+
+const CJSONConfiguration * CProcessBase::GetJSONConfigurationCombined()
 {
-  return this->m_jsonConfigIn.GetRootPointer();
+  return this->m_CombinedJSONConfig.GetPointer();
 }
 
-const Json::Value* CProcessBase::GetAutoConfigurationOut()
+
+const CJSONConfiguration * CProcessBase::GetJSONConfigurationCleaned()
 {
-  return this->m_jsonConfigOut.GetRootPointer();
+  return this->m_CleanedJSONConfig.GetPointer();
 }
+
 
 void CProcessBase::SetPrintConfiguration( bool bPrint )
 {
   this->m_PrintConfiguration = bPrint;
   if ( this->m_PrintConfiguration )
-  {
-    this->m_jsonConfigIn.PrintSettingsOn();
-  }
+    {
+    this->m_CombinedJSONConfig->PrintSettingsOn();
+    }
   else
-  {
-    this->m_jsonConfigIn.PrintSettingsOff();
-  }
+    {
+    this->m_CombinedJSONConfig->PrintSettingsOff();
+    }
 }
+
 
 bool CProcessBase::GetPrintConfiguration()
 {
   return this->m_PrintConfiguration;
 }
 
+
 void CProcessBase::SetAllowHelpComments( bool bAllow )
 {
   this->m_AllowHelpComments = bAllow;
   if ( this->m_AllowHelpComments )
-  {
-    this->m_jsonConfigIn.AllowHelpCommentsOn();
-    this->m_jsonConfigOut.AllowHelpCommentsOn();
-  }
+    {
+    this->m_CombinedJSONConfig->AllowHelpCommentsOn();
+    this->m_CleanedJSONConfig->AllowHelpCommentsOn();
+    }
   else
-  {
-    this->m_jsonConfigIn.AllowHelpCommentsOff();
-    this->m_jsonConfigOut.AllowHelpCommentsOff();
-  }
+    {
+    this->m_CombinedJSONConfig->AllowHelpCommentsOff();
+    this->m_CleanedJSONConfig->AllowHelpCommentsOff();
+    }
 }
+
 
 bool CProcessBase::GetAllowHelpComments()
 {

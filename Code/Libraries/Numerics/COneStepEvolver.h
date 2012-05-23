@@ -23,7 +23,6 @@
 #include <stdexcept>
 
 #include "CProcessBase.h"
-#include "JSONParameterUtils.h"
 
 #include "VectorImage.h"
 #include "VectorField.h"
@@ -110,7 +109,7 @@ public:
    */
   GetMacro( NumberOfThreads, unsigned int );
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
   /**
     *
@@ -127,14 +126,14 @@ public:
 private:
 
   unsigned int DefaultNumberOfThreads;
-  bool m_ExternallySetNumberOfThreads;
+  bool         m_ExternallySetNumberOfThreads;
   unsigned int m_NumberOfThreads;
 
   bool m_InitializeOneStepEvolverState;
 };
 
-#include "COneStepEvolver.txx"
-
 } // end namespace
+
+#include "COneStepEvolver.txx"
 
 #endif

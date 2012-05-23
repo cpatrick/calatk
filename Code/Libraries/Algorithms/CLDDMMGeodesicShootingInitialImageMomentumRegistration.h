@@ -28,7 +28,6 @@
 #include "CMetricSSD.h"
 #include "COneStepEvolverSemiLagrangianAdvection.h"
 #include "CStationaryEvolver.h"
-//#include "CImageManagerFullScale.h"
 #include "CImageManagerMultiScale.h"
 
 namespace CALATK

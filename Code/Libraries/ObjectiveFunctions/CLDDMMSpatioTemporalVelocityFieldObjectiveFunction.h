@@ -29,7 +29,7 @@ namespace CALATK
 
 template < class TState >
 class CLDDMMSpatioTemporalVelocityFieldObjectiveFunction
-    : public CVelocityFieldObjectiveFunctionWithMomentum<  TState >
+    : public CVelocityFieldObjectiveFunctionWithMomentum< TState >
 {
 public:
   /** Standard class typedefs. */
@@ -41,10 +41,13 @@ public:
   /* some useful typedefs */
   typedef typename Superclass::CEnergyValues CEnergyValues;
 
-  typedef typename TState::TFloat T;
+  typedef typename Superclass::T T;
 
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
+
+  typedef typename Superclass::EvolverType     EvolverType;
+  typedef typename Superclass::KernelType      KernelType;
 
 
   CLDDMMSpatioTemporalVelocityFieldObjectiveFunction();
@@ -59,10 +62,9 @@ public:
   SetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );
   GetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
 protected:
-
   /* Some useful protected datatypes */
   typedef typename VectorFieldType::Pointer      VectorFieldPointerType;
   typedef std::vector< VectorFieldPointerType >* VectorPointerToVectorFieldPointerType;
@@ -70,8 +72,8 @@ protected:
   typedef typename VectorImageType::Pointer      VectorImagePointerType;
   typedef std::vector< VectorImagePointerType >* VectorPointerToVectorImagePointerType;
 
-  typedef CImageManager< T, TState::VImageDimension >       ImageManagerType;
-  typedef typename ImageManagerType::ImageInformation      ImageInformation;
+  typedef CImageManager< T, TState::ImageDimension >        ImageManagerType;
+  typedef typename ImageManagerType::ImageInformation       ImageInformation;
   typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
 
   typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;

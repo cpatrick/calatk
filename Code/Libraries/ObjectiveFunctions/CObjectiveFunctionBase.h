@@ -25,7 +25,6 @@
 #include "CImageManager.h"
 #include "CKernel.h"
 #include "CProcessBase.h"
-#include "JSONParameterUtils.h"
 
 namespace CALATK
 {

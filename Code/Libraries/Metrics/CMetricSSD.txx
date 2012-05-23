@@ -20,6 +20,11 @@
 #ifndef C_METRIC_SSD_TXX
 #define C_METRIC_SSD_TXX
 
+#include "CMetricSSD.h"
+
+namespace CALATK
+{
+
 template <class T, unsigned int VImageDimension >
 CMetricSSD< T, VImageDimension >::CMetricSSD()
 {
@@ -114,10 +119,10 @@ void CMetricSSD< T, VImageDimension >::GetLocalizedMetric( VectorImageType3D* pL
           pI0->GetSizeY() == pLocalizedMetric->GetSizeY() &&
           pI0->GetSizeZ() == pLocalizedMetric->GetSizeZ() );
 
-  unsigned int szX = pI0->GetSizeX();
-  unsigned int szY = pI0->GetSizeY();
-  unsigned int szZ = pI0->GetSizeZ();
-  unsigned int dim = pI0->GetDimension();
+  const unsigned int szX = pI0->GetSizeX();
+  const unsigned int szY = pI0->GetSizeY();
+  const unsigned int szZ = pI0->GetSizeZ();
+  const unsigned int dim = pI0->GetDimension();
 
   for ( unsigned int z=0; z<szZ; ++z )
     {
@@ -152,8 +157,8 @@ void CMetricSSD< T, VImageDimension >::GetAdjointMatchingDifferenceImage( Vector
     T dAdjointDifferenceValue = 2*( pIMeasured->GetValue( uiI ) - pIEstimated->GetValue( uiI ) );
     pAdjointDifference->SetValue( uiI, dAdjointDifferenceValue );
     }
-
 }
 
+} // end namespace CALATK
 
 #endif

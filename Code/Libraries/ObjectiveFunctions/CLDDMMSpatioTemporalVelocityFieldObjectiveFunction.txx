@@ -46,11 +46,11 @@ CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::~CLDDMMSpatioTempo
 }
 
 template < class TState >
-void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "SpatioTemporalVelocityField", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "SpatioTemporalVelocityField", Json::nullValue );
+  Superclass::SetAutoConfiguration( combined, cleaned );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "SpatioTemporalVelocityField", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "SpatioTemporalVelocityField", Json::nullValue );
 
   SetJSONHelpForRootKey( SpatioTemporalVelocityField, "settings for the spatio-temporal velocity field" );
 
@@ -74,7 +74,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateTimeDis
   std::vector< STimePoint > vecTimePointData;
   this->DetermineTimePointData( vecTimePointData );
 
-  CALATK::LDDMMUtils< T, TState::VImageDimension >::CreateTimeDiscretization( vecTimePointData, m_vecTimeDiscretization, m_vecTimeIncrements, m_NumberOfDiscretizationVolumesPerUnitTime );
+  CALATK::LDDMMUtils< T, TState::ImageDimension >::CreateTimeDiscretization( vecTimePointData, m_vecTimeDiscretization, m_vecTimeIncrements, m_NumberOfDiscretizationVolumesPerUnitTime );
 
   // the time discretization vector has all the N timepoint. There will be N-1 vector fields in between
 
@@ -83,30 +83,28 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateTimeDis
 template < class TState >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateNewStateStructures()
 {
-
   // Images and adjoints will be saved at all time-points
-  // velcoity fields have one less entry (because they 'live' in between the measurement points)
+  // velocity fields have one less entry (because they 'live' in between the measurement points)
 
   assert( this->m_ptrState.GetPointer() == NULL );
   assert( m_vecTimeDiscretization.size() > 1 );
 
-  const VectorImageType* pGraftIm = this->m_ptrImageManager->GetGraftImagePointer();
+  const VectorImageType* graftImage = this->m_ptrImageManager->GetGraftImagePointer();
 
   // allocate memory for the state
-
-  std::vector< VectorFieldPointerType > vecState;
+  typedef typename TState::VectorFieldTimeSeriesType VectorFieldTimeSeriesType;
+  VectorFieldTimeSeriesType vectorFieldTimeSeries;
 
   // -1, because these are velocity fields
-  for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size()-1; ++iI )
+  for ( unsigned int ii = 0; ii < m_vecTimeDiscretization.size() - 1; ++ii )
     {
-    VectorFieldPointerType ptrCurrentVectorField = new VectorFieldType( pGraftIm );
-    ptrCurrentVectorField->SetToConstant( 0 );
-    vecState.push_back( ptrCurrentVectorField );
+    VectorFieldPointerType ptrCurrentVectorField = new VectorFieldType( graftImage );
+    ptrCurrentVectorField->SetToConstant( 0.0 );
+    vectorFieldTimeSeries.push_back( ptrCurrentVectorField );
     }
 
   // associate the allocated memory with the state
-  this->m_ptrState = new TState( &vecState );
-    
+  this->m_ptrState = new TState( vectorFieldTimeSeries );
 }
 
 template < class TState >
@@ -115,44 +113,46 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateNewGrad
   assert( this->m_ptrGradient.GetPointer() == NULL );
   assert( m_vecTimeDiscretization.size() > 1 );
 
-  const VectorImageType* pGraftIm = this->m_ptrImageManager->GetGraftImagePointer();
+  const VectorImageType* graftImage = this->m_ptrImageManager->GetGraftImagePointer();
 
   // allocate the memory for the gradient
 
-  std::vector< VectorFieldPointerType > vecGradient;
+  typedef typename TState::VectorFieldTimeSeriesType VectorFieldTimeSeriesType;
+  VectorFieldTimeSeriesType vectorFieldTimeSeries;
   
   // -1, because these are velocity fields
-  for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size()-1; ++iI )
+  for ( unsigned int ii = 0; ii < m_vecTimeDiscretization.size()-1; ++ii )
     {
-    VectorFieldPointerType ptrCurrentVectorField = new VectorFieldType( pGraftIm );
-    ptrCurrentVectorField->SetToConstant( 0 );
-    vecGradient.push_back( ptrCurrentVectorField );
+    VectorFieldPointerType ptrCurrentVectorField = new VectorFieldType( graftImage );
+    ptrCurrentVectorField->SetToConstant( 0.0 );
+    vectorFieldTimeSeries.push_back( ptrCurrentVectorField );
     }
 
   // associate the allocated memory with the gradient
-  this->m_ptrGradient = new TState( &vecGradient );
-
+  this->m_ptrGradient = new TState( vectorFieldTimeSeries );
 }
+
 
 template < class TState >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::ShallowCopyStateStructures( TState* ptrState )
 {
-
   assert( this->m_ptrState.GetPointer() == NULL );
 
-  std::vector< VectorFieldPointerType > vecState;
+  // allocate memory for the state
+  typedef typename TState::VectorFieldTimeSeriesType VectorFieldTimeSeriesType;
+  VectorFieldTimeSeriesType vectorFieldTimeSeries;
 
   // -1, because these are velocity fields
-  for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size()-1; ++iI )
+  for ( unsigned int ii = 0; ii < m_vecTimeDiscretization.size()-1; ++ii )
     {
-    VectorFieldPointerType ptrCurrentVectorField = ptrState->GetVectorFieldPointer( iI );
-    vecState.push_back( ptrCurrentVectorField );
+    VectorFieldPointerType ptrCurrentVectorField = ptrState->GetVectorFieldPointer( ii );
+    vectorFieldTimeSeries.push_back( ptrCurrentVectorField );
     }
 
   // associate the allocated memory with the state
-  this->m_ptrState = new TState( &vecState );
-
+  this->m_ptrState = new TState( vectorFieldTimeSeries );
 }
+
 
 template < class TState >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::InitializeDataStructuresFromState( TState* ptrState )
@@ -204,12 +204,12 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::GetMap( Vecto
 template < class TState >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo )
 {
-  CALATK::LDDMMUtils< T, TState::VImageDimension >::GetMapFromToFromSpatioTemporalVelocityField(
+  CALATK::LDDMMUtils< T, TState::ImageDimension >::GetMapFromToFromSpatioTemporalVelocityField(
         ptrMap,
         dTimeFrom,
         dTimeTo,
         this->m_vecTimeDiscretization,
-        this->m_ptrState->GetVectorPointerToVectorFieldPointer(),
+        this->m_ptrState->GetVectorFieldTimeSeries(),
         this->m_ptrEvolver );
 }
 

@@ -44,7 +44,7 @@ void CAlgorithm< TState >::SetDefaultsIfNeeded()
 
   this->m_ptrSolver->SetPrintConfiguration( this->GetPrintConfiguration() );
   this->m_ptrSolver->SetAllowHelpComments( this->GetAllowHelpComments() );
-  this->m_ptrSolver->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
+  this->m_ptrSolver->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
 
   if ( this->m_ptrObjectiveFunction.GetPointer() == NULL )
     {
@@ -53,45 +53,47 @@ void CAlgorithm< TState >::SetDefaultsIfNeeded()
 
   this->m_ptrObjectiveFunction->SetPrintConfiguration( this->GetPrintConfiguration() );
   this->m_ptrObjectiveFunction->SetAllowHelpComments( this->GetAllowHelpComments() );
-  this->m_ptrObjectiveFunction->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
+  this->m_ptrObjectiveFunction->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
 }
 
 template < class TState >
 void CAlgorithm< TState >::Solve()
 {
-  // parse configuration file if one is available
-  this->ParseMainConfigurationFile();
+  if( ! this->m_AutoConfigurationSet )
+    {
+    throw std::logic_error( "CAlgorithm: AutoConfiguration inputs have not been set." );
+    }
+
+  this->m_CleanedJSONConfig->InitializeEmptyRoot();
+  // This will create a root pointer if one does not already exists.
+  //Json::Value * configInRoot = this->m_CombinedJSONConfig->GetRootPointer();
+  this->m_CombinedJSONConfig->GetRootPointer();
 
   // image manager needs to be specified, so that data can be assigned
-  assert( this->m_ptrImageManager.GetPointer() != NULL );
-
   if ( this->m_ptrImageManager.GetPointer() == NULL )
-  {
-    throw std::runtime_error( "Image manager not initialized. Did you specify input images?" );
-    return;
-  }
+    {
+    throw std::logic_error( "CAlgorithm: Image manager not initialized. Did you specify input images?" );
+    }
 
-  typedef CImageManagerMultiScale< T, TState::VImageDimension > ImageManagerMultiScaleType;
+  typedef CImageManagerMultiScale< T, TState::ImageDimension > ImageManagerMultiScaleType;
 
   // fill in multi-scale information if we have it
   ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( this->m_ptrImageManager.GetPointer() );
   // check if we have a valid cast
   if ( ptrImageManager !=0 )
-  {
-    ptrImageManager->SetSigma( this->GetMSSigma() );
-    ptrImageManager->SetBlurHighestResolutionImage( this->GetMSBlurHighestResolutionImage() );
-
-    for ( unsigned int iI=0; iI < this->GetMSNumberOfScales(); ++iI )
     {
-       ptrImageManager->AddScale( this->GetMSScale( iI ), iI );
-    }
-  }
-  else
-  {
-    std::cout << "INFO: Could not find any multi-resolution information. Using defaults." << std::endl;
-  }
+    ptrImageManager->SetSigma( this->GetMultiScaleSigma() );
+    ptrImageManager->SetBlurHighestResolutionImage( this->GetMultiScaleBlurHighestResolutionImage() );
 
-  this->ExecuteMainConfiguration();
+    for ( unsigned int iI=0; iI < this->GetMultiScaleNumberOfScales(); ++iI )
+      {
+      ptrImageManager->AddScale( this->GetMultiScaleScale( iI ), iI );
+      }
+    }
+  else
+    {
+    std::cout << "INFO: Could not find any multi-resolution information. Using defaults." << std::endl;
+    }
 
   this->m_ptrImageManager->print( std::cout );
 

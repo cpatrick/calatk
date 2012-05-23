@@ -34,7 +34,7 @@ void CVelocityFieldObjectiveFunction< TState >::SetEvolverPointer( EvolverType *
 }
 
 template < class TState >
-CEvolver< typename TState::TFloat, TState::VImageDimension > *
+typename CVelocityFieldObjectiveFunction< TState >::EvolverType *
 CVelocityFieldObjectiveFunction< TState >::GetEvolverPointer()
 {
   return m_ptrEvolver.GetPointer();
@@ -47,7 +47,7 @@ void CVelocityFieldObjectiveFunction< TState >::SetKernelPointer( KernelType * p
 }
 
 template < class TState >
-CKernel< typename TState::TFloat, TState::VImageDimension >*
+typename CVelocityFieldObjectiveFunction< TState >::KernelType *
 CVelocityFieldObjectiveFunction< TState >::GetKernelPointer()
 {
   return m_ptrKernel.GetPointer();

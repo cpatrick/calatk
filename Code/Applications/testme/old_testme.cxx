@@ -13,8 +13,8 @@
 #include "CImageManagerFullScale.h"
 #include "LDDMMUtils.h"
 
-#include "CStateScalarExample.h"
-#include "CScalarExampleObjectiveFunction.h"
+#include "CStateScalar.h"
+#include "CScalarObjectiveFunction.h"
 #include "CSolverLineSearch.h"
 
 #include "CStateSpatioTemporalVelocityField.h"
@@ -92,10 +92,10 @@ int main(int argc, char **argv)
   imageManager.GetImagesWithSubjectIndex( pImInfo, 1 );
 
   // testing the line search
-  typedef CALATK::CStateScalarExample< double > StateType;
+  typedef CALATK::CStateScalar< double > StateType;
 
 /*
-  CALATK::CScalarExampleObjectiveFunction< double, DIMENSION, StateType > objectiveFunction;
+  CALATK::CScalarObjectiveFunction< double, DIMENSION, StateType > objectiveFunction;
 
   CALATK::CSolverLineSearch< double, DIMENSION, StateType > lineSearch;
   lineSearch.SetObjectiveFunctionPointer( &objectiveFunction );

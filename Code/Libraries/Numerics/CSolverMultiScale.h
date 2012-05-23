@@ -39,15 +39,15 @@ public:
   typedef itk::SmartPointer< Self >       Pointer;
   typedef itk::SmartPointer< const Self > ConstPointer;
 
-  typedef typename TState::TFloat T;
-  static const unsigned int VImageDimension = TState::VImageDimension;
+  typedef typename TState::FloatType T;
+  static const unsigned int ImageDimension = TState::ImageDimension;
 
   typedef typename Superclass::CEnergyValues CEnergyValues;
 
-  typedef VectorImage< T, VImageDimension >             VectorImageType;
-  typedef VectorImageUtils< T, VImageDimension >        VectorImageUtilsType;
-  typedef CImageManagerMultiScale< T, VImageDimension > ImageManagerMultiScaleType;
-  typedef typename Superclass::ObjectiveFunctionType    ObjectiveFunctionType;
+  typedef VectorImage< T, ImageDimension >             VectorImageType;
+  typedef VectorImageUtils< T, ImageDimension >        VectorImageUtilsType;
+  typedef CImageManagerMultiScale< T, ImageDimension > ImageManagerMultiScaleType;
+  typedef typename Superclass::ObjectiveFunctionType   ObjectiveFunctionType;
 
   CSolverMultiScale();
   virtual ~CSolverMultiScale();
@@ -72,17 +72,14 @@ public:
   SetMacro( NumberOfSubIterations, unsigned int );
   GetMacro( NumberOfSubIterations, unsigned int );
 
-  // auto configuration
-  virtual void SetAutoConfiguration( Json::Value &ConfValueIn, Json::Value &ConfValueOut );
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
 protected:
-
   void SetDefaultSingleScaleSolver();
 
   typename Superclass::Pointer m_ptrSolver;
 
 private:
-
   bool m_bSetDefaultSingleScaleSolver;
 
   std::string m_SingleScaleSolver;
