@@ -65,19 +65,19 @@ int DoIt(std::string LDDMMType, char* sourceImage, char* targetImage, char* resu
   if ( LDDMMType.compare( "simplifiedShooting" ) == 0 )
   {
     plddmm = new regTypeInitialImageMomentum;
-    dynamic_cast< regTypeInitialImageMomentum* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMSimplifiedGeodesicShooting" );
+    dynamic_cast< regTypeInitialImageMomentum* >( plddmm.GetPointer() )->SetObjectiveFunctionAsString( "LDDMMSimplifiedGeodesicShooting" );
     bIsInitialImageMomentumType = true;
   }
   else if ( LDDMMType.compare( "adjointShooting" ) == 0 )
   {
     plddmm = new regTypeInitialImageMomentum;
-    dynamic_cast< regTypeInitialImageMomentum* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMAdjointGeodesicShooting" );
+    dynamic_cast< regTypeInitialImageMomentum* >( plddmm.GetPointer() )->SetObjectiveFunctionAsString( "LDDMMAdjointGeodesicShooting" );
     bIsInitialImageMomentumType = true;
   }
   else if ( LDDMMType.compare( "relaxation" ) == 0 )
   {
     plddmm = new regTypeSpatioTemporalVelocityField;
-    dynamic_cast< regTypeSpatioTemporalVelocityField* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMGrowthModel" );
+    dynamic_cast< regTypeSpatioTemporalVelocityField* >( plddmm.GetPointer() )->SetObjectiveFunctionAsString( "LDDMMGrowthModel" );
     bIsSpatioTemporalVelocityType = true;
   }
   else

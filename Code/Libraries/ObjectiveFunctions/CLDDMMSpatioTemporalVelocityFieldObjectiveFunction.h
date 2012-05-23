@@ -79,8 +79,17 @@ protected:
   void InitializeDataStructures();
   void InitializeDataStructuresFromState( TState* ptrState );
 
-  // methods which delete and create possible auxiliary dynamic structures
+  /**
+   * @brief Method which is called to create auxiliary dynamic data-structures.
+   * Important for multi-scale implementations so that the auxiliary datastructures can have the proper current dimension.
+   * Is called automatically by the initialize data structure methods.
+   */
   virtual void CreateAuxiliaryStructures() = 0;
+
+  /**
+   * @brief Deletes auxiliary data structures.
+   *
+   */
   virtual void DeleteAuxiliaryStructures() = 0;
 
   void DeleteData();

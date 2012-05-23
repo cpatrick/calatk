@@ -29,14 +29,14 @@ namespace CALATK
   * This state is simply a collection of individual states of the individual registrations
   * between an image and the MultipleStates image. Templated over the state of these registrations.
   */
-template <class IndividualStateType >
-class CStateMultipleStates : public CStateImageDomain< typename TIndividualState::TFloat, typename TIndividualState::VImageDimension, typename TIndividualState::TResampler >
+template < class IndividualStateType >
+class CStateMultipleStates : public CStateImageDomain< typename IndividualStateType::TFloat, IndividualStateType::VImageDimension, typename IndividualStateType::TResampler >
 {
 public:
   typedef CStateMultipleStates TState;
 
   /* some useful typedefs */
-  typedef typename IndividualStateType::TFloat          TFLoat;
+  typedef typename IndividualStateType::TFloat          TFloat;
   typedef typename IndividualStateType::TResampler      TResampler;
   typedef IndividualStateType                           TIndividualState;
 
@@ -47,8 +47,7 @@ public:
 
   static const unsigned int VImageDimension = TIndividualState::VImageDimension;
 
-  typedef CStateImageDomain< TIndividualState, VImageDimension, TResampler > Superclass;
-
+  typedef CStateImageDomain< TState, VImageDimension, TResampler > Superclass;
 
   /* Some useful typedefs */
   typedef VectorImage< TFloat, VImageDimension >  VectorImageType;

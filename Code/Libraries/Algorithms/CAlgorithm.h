@@ -48,6 +48,11 @@ public:
   /* some useful typedefs */
   typedef typename TState::TFloat T;
 
+  typedef typename Superclass::EvolverType EvolverType;
+  typedef typename Superclass::OneStepEvolverType OneStepEvolverType;
+  typedef typename Superclass::KernelType  KernelType;
+  typedef typename Superclass::MetricType  MetricType;
+
   typedef CObjectiveFunction< TState >  ObjectiveFunctionType;
   typedef CSolver< TState >             SolverType;
 
@@ -57,11 +62,11 @@ public:
   CAlgorithm();
   virtual ~CAlgorithm();
 
-  void SetObjectiveFunction( ObjectiveFunctionType * objectiveFunction );
-  ObjectiveFunctionType * GetObjectiveFunction();
+  virtual void SetObjectiveFunction( ObjectiveFunctionType * objectiveFunction );
+  virtual ObjectiveFunctionType * GetObjectiveFunction();
 
-  void SetSolverPointer( SolverType * ptrSolver );
-  SolverType * GetSolverPointer();
+  virtual void SetSolverPointer( SolverType * ptrSolver );
+  virtual SolverType * GetSolverPointer();
 
   virtual void Solve();
 

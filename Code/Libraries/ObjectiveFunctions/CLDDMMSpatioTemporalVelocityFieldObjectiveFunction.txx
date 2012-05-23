@@ -158,7 +158,6 @@ template < class TState >
 void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::InitializeDataStructuresFromState( TState* ptrState )
 {
   this->DeleteAuxiliaryStructures();
-
   this->DeleteData();
 
   this->CreateTimeDiscretization();

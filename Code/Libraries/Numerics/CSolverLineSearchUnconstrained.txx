@@ -30,7 +30,7 @@ CSolverLineSearchUnconstrained< TState >::CSolverLineSearchUnconstrained()
 // minimizes the objective function
 //
 template < class TState >
-bool CSolverLineSearchUnconstrained< TState>::SolvePreInitialized()
+bool CSolverLineSearchUnconstrained< TState >::SolvePreInitialized()
 {
   ObjectiveFunctionType * objectiveFunction = this->GetObjectiveFunction();
 

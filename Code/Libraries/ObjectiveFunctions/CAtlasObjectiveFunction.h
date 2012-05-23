@@ -27,7 +27,11 @@
 namespace CALATK
 {
 
-template < class TState>
+template < class TState >
+/**
+ * @brief Objective function for atlas-building. Makes use of a multistate and manages multiple individual objective functions.
+ *
+ */
 class CAtlasObjectiveFunction
     : public CObjectiveFunction< TState >
 {
@@ -60,31 +64,71 @@ public:
   /**
    * @brief Sets one of the objective functions for the registration between an image and the atlas
    *
+   * @returns --id of the individualobjectivefunction that was set (starts at 0 and is then incremented)
    * @param pObj - pointer to the objective function
    * @param dWeight - weight in the atlas building
    */
-  void SetObjectiveFunctionAndWeight( const IndividualObjectiveFunctionType* pObj, T dWeight );
+  unsigned int SetObjectiveFunctionAndWeight( const IndividualObjectiveFunctionType* pObj, T dWeight );
+
+  /**
+   * @brief Sets one of the objective functions for the registration between an image and the atlas, can be used to overwrite previously assigned individual objective functions
+   *
+   * @param uiId --id of the individualobjectivefunction (starts at 0, if not existant will be created, if not successive intermediate ids will be initialized to null)
+   * @param pObj - pointer to the objective function
+   * @param dWeight - weight in the atlas building
+   */
+  void SetObjectiveFunctionAndWeight( unsigned int uiId, const IndividualObjectiveFunctionType* pObj, T dWeight );
 
   /**
    * @brief Deletes the data structures used to store the pointers to the objective functions
    * and the weights. The data the pointers point to is *not* deallocated (this is the duty of
-   * whoever created the pointers). Allows to start assigning the atlas building information from scratch.
+   * whoever created the pointers -- or the respective smart pointer implementation).
+   * Allows to start assigning the atlas building information from scratch.
    *
    */
   void ClearObjectiveFunctionPointersAndWeights();
 
-  // TODO: needs to be implemented
+  /**
+   * @brief Allows to check how many individual objective functions have been registered with the atlas-builder.
+   *
+   * @return unsigned int -- number of registered objective functions
+   */
+  unsigned int GetNumberOfRegisteredObjectiveFunctions() const;
+
+  /**
+   * @brief The individual objective functions are numbered. To support the standard GetMap, GetMapFromTo, GetImage interface
+   * this method allows to set a currently active individual objective function for the respective output. This has no effect on any
+   * internal atlas-builder computations and is just provided for convenience to keep the interface.
+   *
+   * @param uiActiveObjectiveFunctionOutput -- number of individual objective function which will create subsequent output
+   */
+  void SetCurrentActiveObjectiveFunctionOutput( unsigned int uiActiveObjectiveFunctionOutput );
+
+  /**
+   * @brief Returns the current individual objective function active for output with GetMap, GetMapFromTo, GetImage
+   *
+   * @return unsigned int -- id of currently active individual objective function
+   */
+  unsigned int GetCurrentActiveObjectiveFunctionOutput();
+
+  /**
+   * @brief Given the current state the atlas-image (i.e., the first image for all of the time-series is updated)
+   *
+   * Assumes that the atlas-image is at time-point 0 and the target images at time point 1.
+   * All the time-series share the same initial image. Can be called after each iteration or after any given number of iterations (as desired by the solver).
+   */
+  void UpdateAtlasImage();
+
+  // Map and image output for the individual objective functions (selection by CurrentActiveObjectiveFunctionOutput)
   void GetMap( VectorFieldType* ptrMap, T dTime );
   void GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo );
   void GetImage( VectorImageType* ptrIm, T dTime );
 
+  // TODO: needs to be implemented
   const VectorImageType* GetPointerToInitialImage() const;
   void GetInitialImage( VectorImageType* ptrIm );
 
 protected:
-
-  void DeleteAuxiliaryStructures();
-  void CreateAuxiliaryStructures();
 
   void InitializeState();
   void InitializeState( TState * ptrState );
@@ -98,6 +142,8 @@ private:
   typedef std::vector< typename IndividualObjectiveFunctionType::Pointer > VectorIndividualObjectiveFunctionPointersType;
 
   VectorIndividualObjectiveFunctionPointersType  m_VectorIndividualObjectiveFunctionPtrs;
+
+  unsigned int m_CurrentActiveObjectiveFunctionOutput;  /**< id for currently active individual objective function to create output */
 };
 
 #include "CAtlasObjectiveFunction.txx"

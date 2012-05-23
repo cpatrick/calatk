@@ -29,7 +29,7 @@ namespace CALATK
   * This state is simply a collection of individual states of the individual registrations
   * between an image and the MultipleStates image. Templated over the state of these registrations.
   */
-template <class IndividualStateType >
+template < class IndividualStateType >
 class CStateImageMultipleStates : public CStateImageDomain< typename IndividualStateType::TFloat, IndividualStateType::VImageDimension, typename IndividualStateType::TResampler >
 {
 public:

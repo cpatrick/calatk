@@ -27,6 +27,7 @@
 #include "CObjectiveFunction.h"
 #include "CImageManager.h"
 #include "CEvolver.h"
+#include "COneStepEvolver.h"
 #include "CSolver.h"
 #include "VectorImage.h"
 #include "VectorField.h"
@@ -55,10 +56,11 @@ public:
   typedef itk::SmartPointer< const Self > ConstPointer;
 
   /* some useful typedefs */
-  typedef CEvolver< T, VImageDimension >       EvolverType;
-  typedef CKernel< T, VImageDimension >        KernelType;
-  typedef CMetric< T, VImageDimension >        MetricType;
-  typedef CImageManager< T, VImageDimension >  ImageManagerType;
+  typedef CEvolver< T, VImageDimension >        EvolverType;
+  typedef COneStepEvolver< T, VImageDimension > OneStepEvolverType;
+  typedef CKernel< T, VImageDimension >         KernelType;
+  typedef CMetric< T, VImageDimension >         MetricType;
+  typedef CImageManager< T, VImageDimension >   ImageManagerType;
 
   typedef VectorImage< T, VImageDimension > VectorImageType;
   typedef VectorField< T, VImageDimension > VectorFieldType;
@@ -71,14 +73,14 @@ public:
   void SetImageManagerPointer( ImageManagerType * ptrImageManager );
   ImageManagerType * GetImageManagerPointer();
 
-  void SetKernelPointer( KernelType * ptrKernel );
-  KernelType * GetKernelPointer();
+  virtual void SetKernelPointer( KernelType * ptrKernel );
+  virtual KernelType * GetKernelPointer();
 
-  void SetEvolverPointer( EvolverType * ptrEvolver );
-  EvolverType * GetEvolverPointer();
+  virtual void SetEvolverPointer( EvolverType * ptrEvolver );
+  virtual EvolverType * GetEvolverPointer();
 
-  void SetMetricPointer( MetricType * ptrMetric );
-  MetricType * GetMetricPointer();
+  virtual void SetMetricPointer( MetricType * ptrMetric );
+  virtual MetricType * GetMetricPointer();
 
   virtual void Solve() = 0;
 

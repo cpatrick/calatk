@@ -27,7 +27,7 @@
 #include "CALATKCommon.h"
 #include "CAtlasBuilder.h"
 #include "CStateInitialImageMomentum.h"
-#include "CStateImageMultipleStates.h"
+#include "CStateMultipleStates.h"
 #include "VectorImageUtils.h"
 #include "LDDMMUtils.h"
 
@@ -46,7 +46,7 @@ int DoIt( int argc, char** argv )
   // define the individual state
   typedef CALATK::CStateInitialImageMomentum< TFLOAT, VImageDimension > TIndividualState;
   // define the atlas state
-  typedef CALATK::CStateImageMultipleStates< TIndividualState > TState;
+  typedef CALATK::CStateMultipleStates< TIndividualState > TState;
 
   // define the atlas-building method based on this state
   typedef CALATK::CAtlasBuilder< TState > regType;
@@ -59,7 +59,7 @@ int DoIt( int argc, char** argv )
 
   typename regType::Pointer atlasBuilder = new regType;
 
-  ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( atlasBuilder->GetImageManagerPointer() );
+  ImageManagerMultiScaleType* ptrImageManager = dynamic_cast< ImageManagerMultiScaleType* >( atlasBuilder->GetImageManagerPointer() );
 
   for ( unsigned int iI=0; iI < sourceImages.size(); ++iI )
     {

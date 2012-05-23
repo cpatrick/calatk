@@ -36,11 +36,11 @@ CStateMultipleStates< TState >::CStateMultipleStates( const CStateMultipleStates
 {
   if ( this != &c )
     {
-      assert ( this->m_vecIndividualStates.isempty() );
+      assert ( this->m_vecIndividualStates.empty() );
       typename VectorIndividualStatesType::const_iterator iter;
       for ( iter=c.m_vecIndividualStates.begin(); iter!=c.m_vecIndividualStates.end(); ++iter )
         {
-          typename TIndividualState::Pointer pCopiedState = new TIndividualState( *iter );
+          typename TIndividualState::Pointer pCopiedState = new TIndividualState( **iter );
           this->m_vecIndividualStates.push_back( pCopiedState );
         }
     }
@@ -135,7 +135,7 @@ CStateMultipleStates< TState >::operator=(const CStateMultipleStates & p )
       typename VectorIndividualStatesType::const_iterator iter;
       for ( iter=p.m_vecIndividualStates.begin(); iter!=p.m_vecIndividualStates.end(); ++iter )
         {
-          typename TIndividualState::Pointer pCopiedState = new TIndividualState( *iter );
+          typename TIndividualState::Pointer pCopiedState = new TIndividualState( **iter );
           this->m_vecIndividualStates.push_back( pCopiedState );
         }
       }
@@ -236,10 +236,11 @@ CStateMultipleStates< TState >::operator*(const TFloat & p ) const
 // returns one of the individual states
 //
 template < class TState >
-TIndividualState* CStateMultipleStates< TState >::GetIndividualStatePointer( unsigned int uiState )
+typename CStateMultipleStates< TState >::TIndividualState*
+CStateMultipleStates< TState >::GetIndividualStatePointer( unsigned int uiState )
 {
   int iNrOfStates = m_vecIndividualStates.size();
-  if ( iNrOfStates==0 || iNrOfStates<=uiState )
+  if ( iNrOfStates==0 || iNrOfStates<=(int)uiState )
     {
       return NULL;
     }

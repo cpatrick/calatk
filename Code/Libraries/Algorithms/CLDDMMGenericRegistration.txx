@@ -22,10 +22,10 @@
 
 template < class TState >
 CLDDMMGenericRegistration< TState >::CLDDMMGenericRegistration()
-  : DefaultObjectiveFunction( "LDDMMGrowthModel" ),
-    m_ExternallySetObjectiveFunction( false )
+  : DefaultObjectiveFunctionAsString( "LDDMMGrowthModel" ),
+    m_ExternallySetObjectiveFunctionAsString( false )
 {
-  m_ObjectiveFunction = DefaultObjectiveFunction;
+  m_ObjectiveFunctionAsString = DefaultObjectiveFunctionAsString;
 }
 
 template < class TState >
@@ -43,9 +43,9 @@ void CLDDMMGenericRegistration< TState >::SetAutoConfiguration( Json::Value& Con
 
   SetJSONHelpForRootKey( GeneralRegistrationSettings, "general settings for the registration" );
 
-  SetJSONFromKeyString( currentConfigurationIn, currentConfigurationOut, ObjectiveFunction );
+  SetJSONFromKeyString( currentConfigurationIn, currentConfigurationOut, ObjectiveFunctionAsString );
 
-  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, ObjectiveFunction,
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, ObjectiveFunctionAsString,
                      "objective function: LDDMMAdjointGeodesicShooting / LDDMMSimplifiedGeodesicShooting / LDDMMGrowthModel" );
 }
 
@@ -75,7 +75,7 @@ void CLDDMMGenericRegistration< TState >::SetDefaultObjectiveFunctionPointer()
   typedef CVelocityFieldObjectiveFunctionWithMomentum< TState > LDDMMVelocityFieldObjectiveFunctionWithMomentumType;
   LDDMMVelocityFieldObjectiveFunctionWithMomentumType* plddmm = NULL;
 
-  plddmm = dynamic_cast< LDDMMVelocityFieldObjectiveFunctionWithMomentumType * >( CObjectiveFunctionFactory< typename TState::TFloat, TState::VImageDimension >::CreateNewObjectiveFunction( m_ObjectiveFunction ) );
+  plddmm = dynamic_cast< LDDMMVelocityFieldObjectiveFunctionWithMomentumType * >( CObjectiveFunctionFactory< typename TState::TFloat, TState::VImageDimension >::CreateNewObjectiveFunction( m_ObjectiveFunctionAsString ) );
 
   if ( plddmm == NULL )
   {

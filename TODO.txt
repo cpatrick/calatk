@@ -3,3 +3,16 @@
 - Start using smart pointers.
 
 - Check the STimePoint datastructure. Are there really sensible use-cases that would need possibly multiple estimated images for each time point? (geomet maybe)? Or should this be replaced by simply one estimated image?
+
+- Create a better (more generic) memory allocation mechanism, i.e., check the createauxiliarydatastructure and deleteauxiliarydatastructure methods and clean up things. I.e., move them to the objective function base class, etc.
+
+- Fix memory leaks. How to properly use the itkSmartPointer?
+
+- Introduce proper support for weights for the atlas-builder. How to do this?
+
+- Refactor the image manager.
+
+- Introduce ability to hold atlas-image in image-manager. The image-manager should create, store, and destroy it so that image resolutions are consistent.
+
+
+- remove the objectivefunctionfromstring (in genericlddmm) and use more consitent naming that does not clash with anything.

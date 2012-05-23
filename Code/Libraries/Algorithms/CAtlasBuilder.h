@@ -22,6 +22,14 @@
 
 #include "CAtlasObjectiveFunction.h"
 #include "CAlgorithm.h"
+#include "CSolverMultiScale.h"
+#include "CStationaryEvolver.h"
+#include "COneStepEvolverSemiLagrangianAdvection.h"
+#include "CMetricFactory.h"
+#include "CKernelFactory.h"
+#include "CObjectiveFunctionFactory.h"
+#include "CVelocityFieldObjectiveFunctionWithMomentum.h"
+
 
 namespace CALATK
 {
@@ -31,7 +39,13 @@ namespace CALATK
   * TState = CStateMultipleStates< CStateInitialMomentum< T, VImageDimension > >
   *
   */
+
 template < class TState >
+/**
+ * @brief Generic atlas builder algorithm.
+ * Connects to the atlas-builder objective function. In principle any registration component algorithm can be used.
+ * However, a shooting method is highly encouraged to limit memory requirements.
+ */
 class CAtlasBuilder : public CAlgorithm< TState >
 {
 public:
@@ -49,11 +63,63 @@ public:
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 
+  typedef typename Superclass::ObjectiveFunctionType   IndividualObjectiveFunctionType;
+  typedef typename Superclass::EvolverType        EvolverType;
+  typedef typename Superclass::OneStepEvolverType OneStepEvolverType;
+  typedef typename Superclass::KernelType         KernelType;
+  typedef typename Superclass::MetricType         MetricType;
+
+  typedef CStationaryEvolver< T, TState::VImageDimension > DefaultEvolverType;
+  typedef COneStepEvolverSemiLagrangianAdvection< T, TState::VImageDimension > OneStepDefaultEvolverType;
+  typedef CVelocityFieldObjectiveFunctionWithMomentum< TState > LDDMMVelocityFieldObjectiveFunctionWithMomentumType;
+
   CAtlasBuilder();
   ~CAtlasBuilder();
 
+  // need to overwrite all the default implementations for setting solvers, evolvers, metrics, ...
+  // as we will have sets of those (we could also point to the same, but this would disallow multi-threading)
+
+  void SetIndividualObjectiveFunction( IndividualObjectiveFunctionType * objectiveFunction );
+  void SetIndividualObjectiveFunction( unsigned int uiId, IndividualObjectiveFunctionType * objectiveFunction );
+  IndividualObjectiveFunctionType * GetIndividualObjectiveFunction( unsigned int uiId );
+  IndividualObjectiveFunctionType * GetIndividualObjectiveFunction();
+  unsigned int GetNumberOfRegisteredIndividualObjectiveFunctions() const;
+
+  void SetIndividualKernelPointer( KernelType * ptrKernel );
+  void SetIndividualKernelPointer( unsigned int uiId, KernelType * ptrKernel );
+  KernelType * GetIndividualKernelPointer( unsigned int uiId );
+  KernelType * GetIndividualKernelPointer();
+  unsigned int GetNumberOfRegisteredIndividualKernelPointers() const;
+
+  void SetIndividualEvolverPointer( EvolverType * ptrEvolver );
+  void SetIndividualEvolverPointer( unsigned int uiId, EvolverType * ptrEvolver );
+  EvolverType * GetIndividualEvolverPointer( unsigned int uiId );
+  EvolverType * GetIndividualEvolverPointer();
+  unsigned int GetNumberOfRegisteredIndividualEvolverPointers() const;
+
+  void SetIndividualOneStepEvolverPointer( OneStepEvolverType * ptrEvolver );
+  void SetIndividualOneStepEvolverPointer( unsigned int uiId, OneStepEvolverType * ptrEvolver );
+  OneStepEvolverType * GetIndividualOneStepEvolverPointer( unsigned int uiId );
+  OneStepEvolverType * GetIndividualOneStepEvolverPointer();
+  unsigned int GetNumberOfRegisteredIndividualOneStepEvolverPointers() const;
+
+  void SetIndividualMetricPointer( MetricType * ptrMetric );
+  void SetIndividualMetricPointer( unsigned int uiId, MetricType * ptrMetric );
+  MetricType * GetIndividualMetricPointer( unsigned int uiId );
+  MetricType * GetIndividualMetricPointer();
+  unsigned int GetNumberOfRegisteredIndividualMetricPointers() const;
+
+  void SetCurrentActiveRegistration( unsigned int );
+  unsigned int GetCurrentActiveRegistration();
+
   virtual void Solve();
   virtual void PreSubIterationSolve();
+
+  SetMacro( Kernel, std::string );
+  GetMacro( Kernel, std::string );
+
+  SetMacro( Metric, std::string );
+  GetMacro( Metric, std::string );
 
   SetMacro( AtlasIsSourceImage, bool );
   GetMacro( AtlasIsSourceImage, bool );
@@ -68,22 +134,45 @@ protected:
   void SetDefaultObjectiveFunctionPointer();
 
   // TODO: Implement
-
   const VectorFieldType* GetMap( T dTime );
   const VectorFieldType* GetMapFromTo( T dTimeFrom, T dTimeTo );
   const VectorImageType* GetImage( T dTime );
 
-  void SetDefaultMetricPointer();
+  void SetDefaultSolverPointer();
   void SetDefaultImageManagerPointer();
+
+  void SetDefaultMetricPointer();
   void SetDefaultKernelPointer();
   void SetDefaultEvolverPointer();
-  void SetDefaultSolverPointer();
+
+  /**
+   * @brief Returns the number of image pairs that will be used for the atlas building
+   *
+   * @return unsigned int -- number of individual registration
+   */
+  unsigned int GetNumberOfIndividualRegistrations() const;
 
 private:
+
+  std::string       m_Kernel;
+  const std::string DefaultKernel;
+  bool              m_ExternallySetKernel;
+
+  std::string       m_Metric;
+  const std::string DefaultMetric;
+  bool              m_ExternallySetMetric;
 
   bool m_AtlasIsSourceImage;
   const bool DefaultAtlasIsSourceImage;
   bool m_ExternallySetAtlasIsSourceImage;
+
+  unsigned int m_CurrentActiveRegistration;
+
+  std::vector< typename IndividualObjectiveFunctionType::Pointer > m_IndividualObjectiveFunctionPointers;
+  std::vector< typename KernelType::Pointer > m_IndividualKernelPointers;
+  std::vector< typename EvolverType::Pointer > m_IndividualEvolverPointers;
+  std::vector< typename OneStepEvolverType::Pointer > m_IndividualOneStepEvolverPointers;
+  std::vector< typename MetricType::Pointer > m_IndividualMetricPointers;
 
 };
 
