@@ -365,11 +365,6 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
     throw std::runtime_error( "Evolver needs to be defined before default objective function can be created." );
     }
 
-  if ( m_IndividualObjectiveFunctionPointers.empty() )
-  {
-    throw std::runtime_error( "Individual objective functions need to be defined before default objective function can be created." );
-  }
-
   if ( this->m_ptrImageManager.GetPointer() == NULL )
     {
     throw std::runtime_error( "Image manager needs to be defined before default objective function can be created." );
@@ -378,8 +373,6 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
   typedef CAtlasObjectiveFunction< TState > CAtlasType;
   CAtlasType* pAtlas = new CAtlasType;
   this->m_ptrObjectiveFunction = pAtlas;
-
-#warning TODO: Need to add a default mechanism to initialize the individualobjectivefunctions
 
   // Now initialize the individual objective functions
 
@@ -391,6 +384,23 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
   }
   else
   {
+
+    if ( m_IndividualObjectiveFunctionPointers.empty() )
+    {
+      // initialize default (since none have been specified)
+      for ( unsigned int iI = 0; iI < uiNumberOfIndividualRegistrations; ++iI )
+      {
+        typename LDDMMVelocityFieldObjectiveFunctionWithMomentumType::Pointer ptrCurrentIndividualObjectiveFunction =
+            dynamic_cast< LDDMMVelocityFieldObjectiveFunctionWithMomentumType * >( CObjectiveFunctionFactory< T, TState::VImageDimension >::CreateNewObjectiveFunction( m_ObjectiveFunction ) );
+        if ( ptrCurrentIndividualObjectiveFunction.GetPointer() == NULL )
+        {
+          throw std::runtime_error("Could not initialize the objective function. Make sure the instantiated state type is consistent with the objective function chosen.");
+          return;
+        }
+        SetIndividualObjectiveFunction( ptrCurrentIndividualObjectiveFunction.GetPointer() );
+      }
+    }
+
     // check that we have a consistent number of kernels, metrics, individual objective functions, and evolvers
     bool bFailedConsistencyCheck =
         ( GetNumberOfRegisteredIndividualKernelPointers() != uiNumberOfIndividualRegistrations ) ||
@@ -407,11 +417,8 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
 
     for ( unsigned int iI = 0; iI < uiNumberOfIndividualRegistrations; ++iI )
     {
-
-      //CObjectiveFunctionFactory< typename TState::TFloat, TState::VImageDimension >::CreateNewObjectiveFunction( m_ObjectiveFunctionAsString ) );
-
       typename LDDMMVelocityFieldObjectiveFunctionWithMomentumType::Pointer ptrCurrentIndividualObjectiveFunction = dynamic_cast< LDDMMVelocityFieldObjectiveFunctionWithMomentumType * >( GetIndividualObjectiveFunction( iI ) );
-      if ( ptrCurrentIndividualObjectiveFunction == NULL )
+      if ( ptrCurrentIndividualObjectiveFunction.GetPointer() == NULL )
       {
         throw std::runtime_error("Could not initialize the objective function. Make sure the instantiated state type is consistent with the objective function chosen.");
         return;

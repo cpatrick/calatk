@@ -50,8 +50,8 @@ public:
   CLDDMMGenericRegistration();
   ~CLDDMMGenericRegistration();
 
-  SetMacro( ObjectiveFunctionAsString, std::string );
-  GetMacro( ObjectiveFunctionAsString, std::string );
+  SetMacro( ObjectiveFunction, std::string );
+  GetMacro( ObjectiveFunction, std::string );
 
   virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
 
@@ -61,9 +61,9 @@ protected:
 
 private:
 
-  std::string m_ObjectiveFunctionAsString;
-  const std::string DefaultObjectiveFunctionAsString;
-  bool m_ExternallySetObjectiveFunctionAsString;
+  std::string m_ObjectiveFunction;
+  const std::string DefaultObjectiveFunction;
+  bool m_ExternallySetObjectiveFunction;
 
 };
 

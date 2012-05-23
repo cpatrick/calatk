@@ -63,15 +63,16 @@ public:
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 
-  typedef typename Superclass::ObjectiveFunctionType   IndividualObjectiveFunctionType;
-  typedef typename Superclass::EvolverType        EvolverType;
-  typedef typename Superclass::OneStepEvolverType OneStepEvolverType;
-  typedef typename Superclass::KernelType         KernelType;
-  typedef typename Superclass::MetricType         MetricType;
+  typedef CAtlasObjectiveFunction< TState >  ObjectiveFunctionType;
+  typedef typename ObjectiveFunctionType::IndividualObjectiveFunctionType IndividualObjectiveFunctionType;
+  typedef typename Superclass::EvolverType             EvolverType;
+  typedef typename Superclass::OneStepEvolverType      OneStepEvolverType;
+  typedef typename Superclass::KernelType              KernelType;
+  typedef typename Superclass::MetricType              MetricType;
 
   typedef CStationaryEvolver< T, TState::VImageDimension > DefaultEvolverType;
   typedef COneStepEvolverSemiLagrangianAdvection< T, TState::VImageDimension > OneStepDefaultEvolverType;
-  typedef CVelocityFieldObjectiveFunctionWithMomentum< TState > LDDMMVelocityFieldObjectiveFunctionWithMomentumType;
+  typedef CVelocityFieldObjectiveFunctionWithMomentum< TIndividualState > LDDMMVelocityFieldObjectiveFunctionWithMomentumType;
 
   CAtlasBuilder();
   ~CAtlasBuilder();
@@ -121,6 +122,9 @@ public:
   SetMacro( Metric, std::string );
   GetMacro( Metric, std::string );
 
+  SetMacro( ObjectiveFunction, std::string );
+  GetMacro( ObjectiveFunction, std::string );
+
   SetMacro( AtlasIsSourceImage, bool );
   GetMacro( AtlasIsSourceImage, bool );
 
@@ -161,6 +165,10 @@ private:
   std::string       m_Metric;
   const std::string DefaultMetric;
   bool              m_ExternallySetMetric;
+
+  std::string m_ObjectiveFunction;
+  const std::string DefaultObjectiveFunction;
+  bool m_ExternallySetObjectiveFunction;
 
   bool m_AtlasIsSourceImage;
   const bool DefaultAtlasIsSourceImage;

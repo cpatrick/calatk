@@ -102,14 +102,14 @@ void CAlgorithm< TState >::Solve()
 }
 
 template < class TState >
-void CAlgorithm< TState >::SetObjectiveFunction( ObjectiveFunctionType * objectiveFunction )
+void CAlgorithm< TState >::SetObjectiveFunctionPointer( ObjectiveFunctionType * objectiveFunction )
 {
   this->m_ptrObjectiveFunction = objectiveFunction;
 }
 
 template < class TState >
 typename CAlgorithm< TState >::ObjectiveFunctionType *
-CAlgorithm< TState >::GetObjectiveFunction()
+CAlgorithm< TState >::GetObjectiveFunctionPointer()
 {
   if ( m_ptrObjectiveFunction.GetPointer() == NULL )
     {

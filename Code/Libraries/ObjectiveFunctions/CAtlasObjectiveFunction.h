@@ -21,6 +21,7 @@
 #define C_ATLAS_OBJECTIVE_FUNCTION_H
 
 #include "CObjectiveFunction.h"
+#include "CVelocityFieldObjectiveFunctionWithMomentum.h"
 #include "JSONParameterUtils.h"
 #include "CALATKCommon.h"
 
@@ -47,8 +48,8 @@ public:
   typedef typename TState::TFloat T;
   typedef typename TState::TIndividualState TIndividualState;
 
-  typedef CObjectiveFunction< TState >            ObjectiveFunctionType;
-  typedef CObjectiveFunction< TIndividualState >  IndividualObjectiveFunctionType;
+  typedef CAtlasObjectiveFunction< TState >                                 ObjectiveFunctionType;
+  typedef CVelocityFieldObjectiveFunctionWithMomentum< TIndividualState >  IndividualObjectiveFunctionType;
 
   typedef typename Superclass::CEnergyValues CEnergyValues;
 
@@ -68,7 +69,7 @@ public:
    * @param pObj - pointer to the objective function
    * @param dWeight - weight in the atlas building
    */
-  unsigned int SetObjectiveFunctionAndWeight( const IndividualObjectiveFunctionType* pObj, T dWeight );
+  unsigned int SetObjectiveFunctionAndWeight( IndividualObjectiveFunctionType* pObj, T dWeight );
 
   /**
    * @brief Sets one of the objective functions for the registration between an image and the atlas, can be used to overwrite previously assigned individual objective functions

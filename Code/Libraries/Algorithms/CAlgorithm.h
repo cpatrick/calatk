@@ -62,8 +62,8 @@ public:
   CAlgorithm();
   virtual ~CAlgorithm();
 
-  virtual void SetObjectiveFunction( ObjectiveFunctionType * objectiveFunction );
-  virtual ObjectiveFunctionType * GetObjectiveFunction();
+  virtual void SetObjectiveFunctionPointer( ObjectiveFunctionType * objectiveFunction );
+  virtual ObjectiveFunctionType * GetObjectiveFunctionPointer();
 
   virtual void SetSolverPointer( SolverType * ptrSolver );
   virtual SolverType * GetSolverPointer();
