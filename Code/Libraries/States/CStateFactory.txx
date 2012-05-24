@@ -1,6 +1,6 @@
 /*
 *
-*  Copyright 2011 by the CALATK development team
+*  Copyright 2011, 2012 by the CALATK development team
 *
 *   Licensed under the Apache License, Version 2.0 (the "License");
 *   you may not use this file except in compliance with the License.
@@ -59,7 +59,7 @@ CStateFactory< TFloat, VImageDimension >::CreateNewState( OptimizationStateType 
   case StateSpatioTemporalVelocityField:
     state = new StateSpatioTemporalVelocityFieldType();
     break;
- /* case StateMultipleStatesWithInitialMomentum:
+  case StateMultipleStatesWithInitialMomentum:
     state = new StateMultipleStatesWithInitialMomentumType();
     break;
   case StateMultipleStatesWithSpatioTemporalVelocityField:
@@ -70,7 +70,7 @@ CStateFactory< TFloat, VImageDimension >::CreateNewState( OptimizationStateType 
     break;
   case StateImageMultipleStatesWithSpatioTemporalVelocityField:
     state = new StateImageMultipleStatesWithSpatioTemporalVelocityFieldType();
-    break;*/
+    break;
   default:
     throw std::logic_error( "CStateFactory: unknown state requested." );
     }

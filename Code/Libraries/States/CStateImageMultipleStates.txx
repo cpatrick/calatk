@@ -1,6 +1,6 @@
 /*
 *
-*  Copyright 2011 by the CALATK development team
+*  Copyright 2011, 2012 by the CALATK development team
 *
 *   Licensed under the Apache License, Version 2.0 (the "License");
 *   you may not use this file except in compliance with the License.
@@ -65,7 +65,7 @@ CStateImageMultipleStates< TState  >::CStateImageMultipleStates( const Individua
 //
 // clear data structure
 //
-template <class TState>
+template < class TState >
 void CStateImageMultipleStates< TState >::ClearDataStructure()
 {
   this->m_IndividualStatesCollection.clear();
@@ -74,7 +74,7 @@ void CStateImageMultipleStates< TState >::ClearDataStructure()
 //
 // destructor
 //
-template <class TState>
+template < class TState >
 CStateImageMultipleStates< TState >::~CStateImageMultipleStates()
 {
   this->ClearDataStructure();
@@ -83,7 +83,7 @@ CStateImageMultipleStates< TState >::~CStateImageMultipleStates()
 //
 // Upsampling
 //
-template <class TState>
+template < class TState >
 typename CStateImageMultipleStates< TState >::Superclass*
 CStateImageMultipleStates< TState >::CreateUpsampledStateAndAllocateMemory( const VectorImageType* graftImage ) const
 {
@@ -105,7 +105,7 @@ CStateImageMultipleStates< TState >::CreateUpsampledStateAndAllocateMemory( cons
 
 // Here come the algebraic operators and assignment
 
-template <class TState>
+template < class TState >
 CStateImageMultipleStates< TState > & 
 CStateImageMultipleStates< TState >::operator=(const CStateImageMultipleStates & p )
 {
@@ -150,7 +150,7 @@ CStateImageMultipleStates< TState >::operator=(const CStateImageMultipleStates &
     }
 }
 
-template <class TState>
+template < class TState >
 CStateImageMultipleStates< TState > & 
 CStateImageMultipleStates< TState >::operator+=(const CStateImageMultipleStates & p )
 {
@@ -172,7 +172,7 @@ CStateImageMultipleStates< TState >::operator+=(const CStateImageMultipleStates 
   return *this;
 }
 
-template <class TState>
+template < class TState >
 CStateImageMultipleStates< TState > & 
 CStateImageMultipleStates< TState >::operator-=(const CStateImageMultipleStates & p )
 {
@@ -195,7 +195,7 @@ CStateImageMultipleStates< TState >::operator-=(const CStateImageMultipleStates 
   return *this;
 }
 
-template <class TState>
+template < class TState >
 CStateImageMultipleStates< TState > & 
 CStateImageMultipleStates< TState >::operator*=(const FloatType & p )
 {
@@ -210,7 +210,7 @@ CStateImageMultipleStates< TState >::operator*=(const FloatType & p )
   return *this;
 }
 
-template <class TState>
+template < class TState >
 CStateImageMultipleStates< TState >
 CStateImageMultipleStates< TState >::operator+(const CStateImageMultipleStates & p ) const
 {

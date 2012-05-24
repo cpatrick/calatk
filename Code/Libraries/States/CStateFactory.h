@@ -1,6 +1,6 @@
 /*
 *
-*  Copyright 2011 by the CALATK development team
+*  Copyright 2011, 2012 by the CALATK development team
 *
 *   Licensed under the Apache License, Version 2.0 (the "License");
 *   you may not use this file except in compliance with the License.
@@ -27,7 +27,7 @@
 #include "CStateScalar.h"
 #include "CStateSpatioTemporalVelocityField.h"
 #include "CStateMultipleStates.h"
-//#include "CStateImageMultipleStates.h"
+#include "CStateImageMultipleStates.h"
 
 namespace CALATK
 {
@@ -57,8 +57,8 @@ public:
   typedef CStateSpatioTemporalVelocityField< FloatType, VImageDimension >      StateSpatioTemporalVelocityFieldType;
   typedef CStateMultipleStates< StateInitialMomentumType >                  StateMultipleStatesWithInitialMomentumType;
   typedef CStateMultipleStates< StateSpatioTemporalVelocityFieldType >      StateMultipleStatesWithSpatioTemporalVelocityFieldType;
- // typedef CStateImageMultipleStates< StateInitialMomentumType >             StateImageMultipleStatesWithInitialMomentumType;
- // typedef CStateImageMultipleStates< StateSpatioTemporalVelocityFieldType > StateImageMultipleStatesWithSpatioTemporalVelocityFieldType;
+  typedef CStateImageMultipleStates< StateInitialMomentumType >             StateImageMultipleStatesWithInitialMomentumType;
+  typedef CStateImageMultipleStates< StateSpatioTemporalVelocityFieldType > StateImageMultipleStatesWithSpatioTemporalVelocityFieldType;
 
   enum OptimizationStateType
     {

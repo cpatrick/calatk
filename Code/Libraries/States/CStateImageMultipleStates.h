@@ -1,6 +1,6 @@
 /*
 *
-*  Copyright 2011 by the CALATK development team
+*  Copyright 2011, 2012 by the CALATK development team
 *
 *   Licensed under the Apache License, Version 2.0 (the "License");
 *   you may not use this file except in compliance with the License.
@@ -20,7 +20,7 @@
 #ifndef C_STATE_IMAGE_MULTIPLE_STATES_H
 #define C_STATE_IMAGE_MULTIPLE_STATES_H
 
-#include "CStateImageMultipleStates.h"
+#include "CStateImageDomain.h"
 
 namespace CALATK
 {
@@ -43,7 +43,7 @@ public:
   typedef CStateImageMultipleStates                                Self;
   typedef itk::SmartPointer< Self >                                Pointer;
   typedef itk::SmartPointer< const Self >                          ConstPointer;
-  typedef CStateImageDomain< TIndividualState, ImageDimension >    Superclass;
+  typedef CStateImageDomain< FloatType, ImageDimension >    Superclass;
 
   typedef typename Superclass::VectorImageType                     VectorImageType;
 
