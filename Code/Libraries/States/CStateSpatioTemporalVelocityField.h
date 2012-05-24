@@ -36,10 +36,13 @@ public:
   typedef itk::SmartPointer< const Self >              ConstPointer;
   typedef CStateImageDomain< TFloat, VImageDimension > Superclass;
 
+  static const unsigned int ImageDimension = VImageDimension;
+  typedef TFloat                           FloatType;
+
   /* some useful typedefs */
   typedef typename Superclass::VectorImageType  VectorImageType;
 
-  typedef VectorField< TFloat, VImageDimension >            VectorFieldType;
+  typedef VectorField< FloatType, VImageDimension >            VectorFieldType;
   typedef std::vector< typename VectorFieldType::Pointer >  VectorFieldTimeSeriesType;
 
   /**
@@ -66,7 +69,7 @@ public:
   /*
    * Allow for upsampling of the state.
    */
-  Superclass* CreateUpsampledStateAndAllocateMemory( const VectorImageType* graftImage ) const;
+  virtual Superclass* CreateUpsampledStateAndAllocateMemory( const VectorImageType* graftImage ) const;
 
   // declare operators to be able to do some computations with this state, which are needed in the numerical solvers
 
@@ -79,13 +82,13 @@ public:
 
   CStateSpatioTemporalVelocityField & operator-=( const CStateSpatioTemporalVelocityField & p );
 
-  CStateSpatioTemporalVelocityField & operator*=( const TFloat & p );
+  CStateSpatioTemporalVelocityField & operator*=( const FloatType & p );
 
   CStateSpatioTemporalVelocityField operator+( const CStateSpatioTemporalVelocityField & p ) const;
 
   CStateSpatioTemporalVelocityField operator-( const CStateSpatioTemporalVelocityField & p ) const;
 
-  CStateSpatioTemporalVelocityField operator*( const TFloat & p ) const;
+  CStateSpatioTemporalVelocityField operator*( const FloatType & p ) const;
 
   const VectorFieldTimeSeriesType * GetVectorFieldTimeSeries() const;
 
@@ -95,7 +98,7 @@ public:
   void SetSize( unsigned int ii );
   unsigned int GetSize();
 
-  virtual TFloat SquaredNorm();
+  virtual FloatType SquaredNorm();
 
   bool StateContainsInitialImage();
 

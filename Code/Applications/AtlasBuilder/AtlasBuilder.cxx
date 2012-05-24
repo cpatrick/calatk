@@ -67,8 +67,12 @@ int DoIt( int argc, char** argv )
     ptrImageManager->AddImage( sourceImages[ iI ], 0.0, iI );
     }
 
-  atlasBuilder->SetConfigurationFile( configFile );
-  atlasBuilder->SetAllowJSONHelpComments( bCreateJSONHelp );
+  CALATK::CJSONConfiguration::Pointer combinedConfiguration = new CALATK::CJSONConfiguration;
+  combinedConfiguration->ReadJSONFile( configFile );
+  CALATK::CJSONConfiguration::Pointer cleanedConfiguration = new CALATK::CJSONConfiguration;
+  atlasBuilder->SetAutoConfiguration( combinedConfiguration, cleanedConfiguration );
+  atlasBuilder->SetAllowHelpComments( bCreateJSONHelp );
+
   atlasBuilder->Solve();
 
   // write out the resulting JSON file if desired
@@ -76,11 +80,11 @@ int DoIt( int argc, char** argv )
     {
       if ( bCleanJSONConfigOutput )
       {
-        atlasBuilder->WriteCurrentCleanedConfigurationToJSONFile( configFileOut );
+        cleanedConfiguration->WriteCurrentConfigurationToJSONFile( configFileOut );
       }
       else
       {
-        atlasBuilder->WriteCurrentCombinedConfigurationToJSONFile( configFileOut );
+        combinedConfiguration->WriteCurrentConfigurationToJSONFile( configFileOut );
       }
     }
 

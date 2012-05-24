@@ -156,11 +156,11 @@ bool CSolverMultiScale< TState >::Solve()
 
     if ( !MultiScaleHasBeenInitialized )
       {
-        for ( unsigned int iS=0; iS<m_NumberOfSubIterations; ++iS )
+        for ( unsigned int iS=0; iS < m_NumberOfSubIterations; ++iS )
         {
           this->PreSubIterationSolve();
 
-          std::cout << "Solving multiscale level " << iI << "/" << uiNrOfScales << "; subiteration " << iS+1 << "/" << m_NumberOfSubIterations << std::endl;
+          std::cout << "Solving multiscale level " << iI << "/" << numberOfScales << "; subiteration " << iS+1 << "/" << m_NumberOfSubIterations << std::endl;
           if ( iS==0 )
           {
             std::cout << "Initializing multi-scale solution." << std::endl;
@@ -177,7 +177,7 @@ bool CSolverMultiScale< TState >::Solve()
       {
         // has solution from previous iteration
         // get state, upsample it and then use if for initialization
-        const TState* pCurrentState = objectiveFunction->GetStatePointer();
+        const TState* currentState = objectiveFunction->GetStatePointer();
 
         std::cout << "Upsampling state for multi-scale solver." << std::endl;
 
@@ -189,11 +189,11 @@ bool CSolverMultiScale< TState >::Solve()
 
         objectiveFunction->InitializeState( upsampledState );
 
-        for ( unsigned int iS=0; iS<m_NumberOfSubIterations; ++iS )
+        for ( unsigned int iS=0; iS < m_NumberOfSubIterations; ++iS )
           {
 
           this->PreSubIterationSolve();
-          std::cout << "Solving multiscale level " << iI << "/" << uiNrOfScales << "; subiteration " << iS+1 << "/" << m_NumberOfSubIterations << std::endl;
+          std::cout << "Solving multiscale level " << iI << "/" << numberOfScales << "; subiteration " << iS+1 << "/" << m_NumberOfSubIterations << std::endl;
 
           reducedEnergy = reducedEnergy || m_ptrSolver->SolvePreInitialized();
 

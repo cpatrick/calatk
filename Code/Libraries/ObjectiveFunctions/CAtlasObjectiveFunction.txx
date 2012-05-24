@@ -46,8 +46,8 @@ void CAtlasObjectiveFunction< TState >::InitializeState()
   // now all of the individual objective functions are initialized
   // Let's collect the pointers to the states and gradients and create new atlas state and gradient pointers
 
-  std::vector< TIndividualState* > vecState;
-  std::vector< TIndividualState* > vecGradient;
+  std::vector< typename IndividualStateType::Pointer > vecState;
+  std::vector< typename IndividualStateType::Pointer > vecGradient;
 
   for ( iter=m_VectorIndividualObjectiveFunctionPtrs.begin(); iter!=m_VectorIndividualObjectiveFunctionPtrs.end(); ++iter )
     {
@@ -60,10 +60,10 @@ void CAtlasObjectiveFunction< TState >::InitializeState()
   // all the pointers are aready stored in m_VectorObjectiveFunctionPtrs
 
   // associate the allocated memory with the atlas state
-  this->m_ptrState = new TState( &vecState );
+  this->m_ptrState = new TState( vecState );
 
   // associate the allocated memory with the atlas gradient
-  this->m_ptrGradient = new TState( &vecGradient );
+  this->m_ptrGradient = new TState( vecGradient );
 
 }
 
@@ -84,8 +84,8 @@ void CAtlasObjectiveFunction< TState >::InitializeState( TState *ptrState )
   // now all of the individual objective functions are initialized
   // Let's collect the pointers to the states and gradients and create new atlas state and gradient pointers
 
-  std::vector< TIndividualState* > vecState;
-  std::vector< TIndividualState* > vecGradient;
+  std::vector< typename IndividualStateType::Pointer > vecState;
+  std::vector< typename IndividualStateType::Pointer > vecGradient;
 
   for ( iter=m_VectorIndividualObjectiveFunctionPtrs.begin(); iter!=m_VectorIndividualObjectiveFunctionPtrs.end(); ++iter )
     {
@@ -98,10 +98,10 @@ void CAtlasObjectiveFunction< TState >::InitializeState( TState *ptrState )
   // all the pointers are aready stored in m_VectorObjectiveFunctionPtrs
 
   // associate the allocated memory with the atlas state
-  this->m_ptrState = new TState( &vecState );
+  this->m_ptrState = new TState( vecState );
 
   // associate the allocated memory with the atlas gradient
-  this->m_ptrGradient = new TState( &vecGradient );
+  this->m_ptrGradient = new TState( vecGradient );
 
 }
 
@@ -218,7 +218,7 @@ void CAtlasObjectiveFunction< TState >::ComputeGradient()
     {
       (*iter)->ComputeGradient();  // this automatically ends up in the gradient vector
       // TODO: multiply by weight, this should be handled by the individual algorithms, don't want to modift values here
-      //TIndividualState* currentGradientPointer = (*iter)->GetGradientPointer();
+      //IndividualStateType* currentGradientPointer = (*iter)->GetGradientPointer();
       //*currentGradientPointer *= *iterWeights;
     }
 

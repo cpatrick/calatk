@@ -32,7 +32,7 @@ namespace CALATK
  * \todo describe me
  */
 template < class TFloat, unsigned int VImageDimension=3 >
-class CStateInitialImageMomentum: public CStateImageDomain< TFloat, VImageDimension >
+class CStateInitialImageMomentum : public CStateImageDomain< TFloat, VImageDimension >
 {
 public:
   /* Standard class typedefs. */
@@ -41,11 +41,11 @@ public:
   typedef itk::SmartPointer< Self >                    Pointer;
   typedef itk::SmartPointer< const Self >              ConstPointer;
 
-  /* some useful typedefs */
-  typedef typename Superclass::TState  SuperclassTState;
-  typedef T                 TFloat;
+  static const unsigned int ImageDimension = VImageDimension;
+  typedef TFloat                           FloatType;
 
-  typedef VectorImage< T, VImageDimension >  VectorImageType;
+  /* some useful typedefs */
+  typedef VectorImage< FloatType, VImageDimension >  VectorImageType;
 
   /**
    * Empty constructor
@@ -63,7 +63,7 @@ public:
    * Constructor which takes a pointer to the initial image and initial momentum as well as to the raw memory (which the initial image and the momentum wil point to);
    * Does not copy the data, just stores the pointers to it;
    */
-  CStateInitialImageMomentum( TFloat* ptrRawData, VectorImageType* ptrInitialImage, VectorImageType* ptrInitialMomentum );
+  CStateInitialImageMomentum( FloatType* ptrRawData, VectorImageType* ptrInitialImage, VectorImageType* ptrInitialMomentum );
 
   /**
     * copy constructor, creation of the image and momentum for the first time, need to allocate memory
@@ -78,7 +78,7 @@ public:
   /*
    * Allow for upsampling of the state
    */
-  virtual Superclass* CreateUpsampledStateAndAllocateMemory( const VectorImageType* graftImage ) const;
+  virtual Superclass* CreateUpsampledStateAndAllocateMemory( const VectorImageType* ptrGraftImage ) const;
 
   // declare operators to be able to do computations with this state, which are needed in the numerical solvers
   /**
@@ -90,26 +90,26 @@ public:
 
   CStateInitialImageMomentum & operator-=( const CStateInitialImageMomentum & p);
 
-  CStateInitialImageMomentum & operator*=( const TFloat & p);
+  CStateInitialImageMomentum & operator*=( const FloatType & p);
 
   CStateInitialImageMomentum operator+( const CStateInitialImageMomentum & p) const;
 
   CStateInitialImageMomentum operator-( const CStateInitialImageMomentum & p) const;
 
-  CStateInitialImageMomentum operator*( const TFloat & p) const;
+  CStateInitialImageMomentum operator*( const FloatType & p) const;
 
   VectorImageType * GetPointerToInitialImage() const;
   VectorImageType * GetPointerToInitialMomentum() const;
 
   virtual long int GetNumberOfStateVectorElements();
-  virtual TFloat * GetPointerToStateVector();
+  virtual FloatType * GetPointerToStateVector();
 
   virtual long int GetNumberOfStateVectorElementsToEstimate();
-  virtual TFloat * GetPointerToStateVectorElementsToEstimate();
+  virtual FloatType * GetPointerToStateVectorElementsToEstimate();
 
-  virtual TFloat SquaredNorm();
+  virtual FloatType SquaredNorm();
 
-  bool StateContainsInitialImage();
+  virtual bool StateContainsInitialImage();
 
   GetMacro( EstimateInitialImage, bool );
   SetMacro( EstimateInitialImage, bool );
@@ -123,7 +123,7 @@ private:
   typename VectorImageType::Pointer m_ptrInitialMomentum;
 
   long int m_NumberOfStateVectorElements;
-  TFloat * m_ptrRawData;
+  FloatType * m_ptrRawData;
 
   bool m_EstimateInitialImage;
   const bool DefaultEstimateInitialImage;

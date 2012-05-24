@@ -17,12 +17,11 @@
 *
 */
 
-#ifndef C_STATE_INITIAL_IMAGE_MOMENTUM_H
-#define C_STATE_INITIAL_IMAGE_MOMENTUM_H
+#ifndef C_STATE_INITIAL_MOMENTUM_H
+#define C_STATE_INITIAL_MOMENTUM_H
 
 #include "CStateImageDomain.h"
 #include "VectorField.h"
-#include "CResamplerLinear.h"
 
 namespace CALATK
 {
@@ -32,24 +31,22 @@ namespace CALATK
  *
  * \todo describe me
  */
-template <class T, unsigned int VImageDimension=3, class TResampler=CResamplerLinear<T, VImageDimension> >
-class CStateInitialMomentum: public CStateImageDomain< T, VImageDimension, TResampler >
+template < class TFloat, unsigned int VImageDimension=3 >
+class CStateInitialMomentum: public CStateImageDomain< TFloat, VImageDimension >
 {
 public:
-  typedef CStateInitialMomentum   TState;
 
   /* Standard class typedefs. */
-  typedef CStateInitialMomentum                               Self;
-  typedef CStateImageDomain< TState, VImageDimension, TResampler > Superclass;
-  typedef itk::SmartPointer< Self >                                Pointer;
-  typedef itk::SmartPointer< const Self >                          ConstPointer;
+  typedef CStateInitialMomentum                        Self;
+  typedef CStateImageDomain< TFloat, VImageDimension > Superclass;
+  typedef itk::SmartPointer< Self >                    Pointer;
+  typedef itk::SmartPointer< const Self >              ConstPointer;
+
+  static const unsigned int ImageDimension = VImageDimension;
+  typedef TFloat                           FloatType;
 
   /* some useful typedefs */
-  typedef typename Superclass::TState  SuperclassTState;
-  typedef T                 TFloat;
-
-  typedef VectorImage< T, VImageDimension >  VectorImageType;
-  //typedef typename Superclass::VectorImageType VectorImageType;
+  typedef VectorImage< FloatType, VImageDimension >  VectorImageType;
 
   /**
    * Empty constructor
@@ -69,7 +66,7 @@ public:
    * Does not copy the data, just stores the pointers to it;
    * Will destroy the data in Destructor.
    */
-  CStateInitialMomentum( T* ptrRawData, VectorImageType* ptrInitialMomentum );
+  CStateInitialMomentum( FloatType* ptrRawData, VectorImageType* ptrInitialMomentum );
 
   /**
     * copy constructor, creation of the image and momentum for the first time, need to allocate memory
@@ -84,7 +81,7 @@ public:
   /*
    * Allow for upsampling of the state
    */
-  virtual TState* CreateUpsampledStateAndAllocateMemory( const VectorImageType* ptrGraftImage ) const;
+  virtual Superclass* CreateUpsampledStateAndAllocateMemory( const VectorImageType* ptrGraftImage ) const;
 
   // declare operators to be able to do computations with this state, which are needed in the numerical solvers
   /**
@@ -96,23 +93,23 @@ public:
 
   CStateInitialMomentum & operator-=( const CStateInitialMomentum & p);
 
-  CStateInitialMomentum & operator*=( const T & p);
+  CStateInitialMomentum & operator*=( const FloatType & p);
 
   CStateInitialMomentum operator+( const CStateInitialMomentum & p) const;
 
   CStateInitialMomentum operator-( const CStateInitialMomentum & p) const;
 
-  CStateInitialMomentum operator*( const T & p) const;
+  CStateInitialMomentum operator*( const FloatType & p) const;
 
   VectorImageType * GetPointerToInitialMomentum() const;
 
   virtual long int GetNumberOfStateVectorElements();
-  virtual T* GetPointerToStateVector();
+  virtual FloatType* GetPointerToStateVector();
 
   virtual long int GetNumberOfStateVectorElementsToEstimate();
-  virtual T* GetPointerToStateVectorElementsToEstimate();
+  virtual FloatType* GetPointerToStateVectorElementsToEstimate();
 
-  T SquaredNorm();
+  virtual FloatType SquaredNorm();
 
   virtual bool StateContainsInitialImage();
 
@@ -124,10 +121,8 @@ private:
   typename VectorImageType::Pointer m_ptrInitialMomentum;
 
   long int m_NumberOfStateVectorElements;
-  T* m_ptrRawData;
+  FloatType* m_ptrRawData;
 };
-
-#include "CStateInitialMomentum.txx"
 
 } // end namespace
 

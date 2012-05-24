@@ -41,7 +41,7 @@ class CSolverIpOpt
 {
 public:
 
-  typedef typename TState::TFloat T;
+  typedef typename TState::FloatType T;
   typedef CSolver< TState > Superclass;
   typedef typename Superclass::ObjectiveFunctionType ObjectiveFunctionType;
   typedef typename Superclass::CEnergyValues CEnergyValues;

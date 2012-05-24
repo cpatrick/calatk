@@ -36,13 +36,15 @@ template <class TFloat, unsigned int VImageDimension >
 class CStateImageDomain : public CState< TFloat >
 {
 public:
-  static const unsigned int ImageDimension = VImageDimension;
 
   /* Standard class typedefs. */
   typedef CStateImageDomain                Self;
   typedef itk::SmartPointer< Self >        Pointer;
   typedef itk::SmartPointer< const Self >  ConstPointer;
   typedef CState< TFloat >                 Superclass;
+
+  static const unsigned int ImageDimension = VImageDimension;
+  typedef TFloat                           FloatType;
 
   /* Some useful typedefs */
   typedef VectorImage< TFloat, VImageDimension >  VectorImageType;
@@ -65,8 +67,6 @@ protected:
 
 private:
 };
-
-#include "CStateImageDomain.txx"
 
 } // end namespace
 

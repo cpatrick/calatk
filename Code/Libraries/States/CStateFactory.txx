@@ -50,18 +50,27 @@ CStateFactory< TFloat, VImageDimension >::CreateNewState( OptimizationStateType 
   case StateScalar:
     state = new StateScalarType();
     break;
+  case StateInitialMomentum:
+    state = new StateInitialMomentumType();
+    break;
   case StateInitialImageMomentum:
     state = new StateInitialImageMomentumType();
     break;
   case StateSpatioTemporalVelocityField:
     state = new StateSpatioTemporalVelocityFieldType();
     break;
-  case StateAtlasWithInitialImageMomentum:
-    state = new StateAtlasWithInitialImageMomentumType();
+ /* case StateMultipleStatesWithInitialMomentum:
+    state = new StateMultipleStatesWithInitialMomentumType();
     break;
-  case StateAtlasWithSpatioTemporalVelocityField:
-    state = new StateAtlasWithSpatioTemporalVelocityFieldType();
+  case StateMultipleStatesWithSpatioTemporalVelocityField:
+    state = new StateMultipleStatesWithSpatioTemporalVelocityFieldType();
     break;
+  case StateImageMultipleStatesWithInitialMomentum:
+    state = new StateImageMultipleStatesWithInitialMomentumType();
+    break;
+  case StateImageMultipleStatesWithSpatioTemporalVelocityField:
+    state = new StateImageMultipleStatesWithSpatioTemporalVelocityFieldType();
+    break;*/
   default:
     throw std::logic_error( "CStateFactory: unknown state requested." );
     }
@@ -95,17 +104,25 @@ CStateFactory< TFloat, VImageDimension >::GetStateTypeFromString( const std::str
     {
     return StateInitialImageMomentum;
     }
-  else if ( stateNameLowerCase == "statespatiotemporalvelocityfield")
+  else if ( stateNameLowerCase == "statespatiotemporalvelocityfield" )
     {
     return StateSpatioTemporalVelocityField;
     }
-  else if ( stateNameLowerCase == "stateatlaswithinitialimagemomentum")
+  else if ( stateNameLowerCase == "statemultiplestateswithinitalmomentum" )
     {
-    return StateAtlasWithInitialImageMomentum;
+    return StateMultipleStatesWithInitialMomentum;
     }
-  else if ( stateNameLowerCase == "stateatlaswithspatiotemporalvelocityfield")
+  else if ( stateNameLowerCase == "statemultiplestateswithspatiotemporalvelocityfield" )
     {
-    return StateAtlasWithSpatioTemporalVelocityField;
+    return StateMultipleStatesWithSpatioTemporalVelocityField;
+    }
+  else if ( stateNameLowerCase == "stateimagemultiplestateswithinitalmomentum" )
+    {
+    return StateImageMultipleStatesWithInitialMomentum;
+    }
+  else if ( stateNameLowerCase == "stateimagemultiplestateswithspatiotemporalvelocityfield" )
+    {
+    return StateImageMultipleStatesWithSpatioTemporalVelocityField;
     }
   else
     {

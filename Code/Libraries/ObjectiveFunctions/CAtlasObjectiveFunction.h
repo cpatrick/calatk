@@ -22,7 +22,6 @@
 
 #include "CObjectiveFunction.h"
 #include "CVelocityFieldObjectiveFunctionWithMomentum.h"
-#include "JSONParameterUtils.h"
 #include "CALATKCommon.h"
 
 namespace CALATK
@@ -45,11 +44,11 @@ public:
 
   /* Some useful typedefs */
 
-  typedef typename TState::TFloat T;
-  typedef typename TState::TIndividualState TIndividualState;
+  typedef typename TState::FloatType T;
+  typedef typename TState::IndividualStateType IndividualStateType;
 
-  typedef CAtlasObjectiveFunction< TState >                                 ObjectiveFunctionType;
-  typedef CVelocityFieldObjectiveFunctionWithMomentum< TIndividualState >  IndividualObjectiveFunctionType;
+  typedef CAtlasObjectiveFunction< TState >                                   ObjectiveFunctionType;
+  typedef CVelocityFieldObjectiveFunctionWithMomentum< IndividualStateType >  IndividualObjectiveFunctionType;
 
   typedef typename Superclass::CEnergyValues CEnergyValues;
 

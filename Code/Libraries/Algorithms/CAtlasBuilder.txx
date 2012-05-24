@@ -41,11 +41,11 @@ CAtlasBuilder< TState >::~CAtlasBuilder()
 }
 
 template < class TState >
-void CAtlasBuilder< TState >::SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut )
+void CAtlasBuilder< TState >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
-  Superclass::SetAutoConfiguration( ConfValueIn, ConfValueOut );
-  Json::Value& currentConfigurationIn = this->m_jsonConfigIn.GetFromKey( "AtlasSettings", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_jsonConfigOut.GetFromKey( "AtlasSettings", Json::nullValue );
+  Superclass::SetAutoConfiguration( combined, cleaned );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "AtlasSettings", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "AtlasSettings", Json::nullValue );
 
   SetJSONHelpForRootKey( AtlasSettings, "general settings for the atlas-builder" );
 
@@ -165,7 +165,7 @@ void CAtlasBuilder< TState >::SetIndividualOneStepEvolverPointer( OneStepEvolver
   // TODO: should this configuration setting be here or is there a better place?
   ptrOneStepEvolver->SetPrintConfiguration( this->GetPrintConfiguration() );
   ptrOneStepEvolver->SetAllowHelpComments( this->GetAllowHelpComments() );
-  ptrOneStepEvolver->SetAutoConfiguration( *this->m_jsonConfigIn.GetRootPointer(), *this->m_jsonConfigOut.GetRootPointer() );
+  ptrOneStepEvolver->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
 
   m_IndividualOneStepEvolverPointers.push_back( ptrOneStepEvolver );
 }
@@ -247,7 +247,7 @@ unsigned int CAtlasBuilder< TState >::GetCurrentActiveRegistration()
 template < class TState >
 void CAtlasBuilder< TState >::SetDefaultImageManagerPointer()
 {
-  this->m_ptrImageManager = new CImageManagerMultiScale< T, TState::VImageDimension >;
+  this->m_ptrImageManager = new CImageManagerMultiScale< T, TState::ImageDimension >;
 }
 
 template < class TState >
@@ -272,7 +272,7 @@ void CAtlasBuilder< TState >::SetDefaultMetricPointer()
     for ( unsigned int iI=0; iI<uiNumberOfIndividualRegistrations; ++iI )
     {
       // only sum of squared differences makes really sense here, because we are dealing with atlas-building
-      SetIndividualMetricPointer( CMetricFactory< T, TState::VImageDimension >::CreateNewMetric( m_Metric ) );
+      SetIndividualMetricPointer( CMetricFactory< T, TState::ImageDimension >::CreateNewMetric( m_Metric ) );
     }
   }
   else
@@ -297,7 +297,7 @@ void CAtlasBuilder< TState >::SetDefaultKernelPointer()
     for ( unsigned int iI=0; iI<uiNumberOfIndividualRegistrations; ++iI )
     {
       // only sum of squared differences makes really sense here, because we are dealing with atlas-building
-      SetIndividualKernelPointer( CKernelFactory< T, TState::VImageDimension >::CreateNewKernel( m_Kernel ) );
+      SetIndividualKernelPointer( CKernelFactory< T, TState::ImageDimension >::CreateNewKernel( m_Kernel ) );
     }
   }
   else
@@ -391,7 +391,7 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
       for ( unsigned int iI = 0; iI < uiNumberOfIndividualRegistrations; ++iI )
       {
         typename LDDMMVelocityFieldObjectiveFunctionWithMomentumType::Pointer ptrCurrentIndividualObjectiveFunction =
-            dynamic_cast< LDDMMVelocityFieldObjectiveFunctionWithMomentumType * >( CObjectiveFunctionFactory< T, TState::VImageDimension >::CreateNewObjectiveFunction( m_ObjectiveFunction ) );
+            dynamic_cast< LDDMMVelocityFieldObjectiveFunctionWithMomentumType * >( CObjectiveFunctionFactory< T, TState::ImageDimension >::CreateNewObjectiveFunction( m_ObjectiveFunction ) );
         if ( ptrCurrentIndividualObjectiveFunction.GetPointer() == NULL )
         {
           throw std::runtime_error("Could not initialize the objective function. Make sure the instantiated state type is consistent with the objective function chosen.");

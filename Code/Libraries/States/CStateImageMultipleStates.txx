@@ -20,10 +20,13 @@
 #ifndef C_STATE_IMAGE_MULTIPLE_STATES_TXX
 #define C_STATE_IMAGE_MULTIPLE_STATES_TXX
 
+namespace CALATK
+{
+
 //
 // empty constructor
 //
-template <class TState>
+template < class TState >
 CStateImageMultipleStates< TState  >::CStateImageMultipleStates()
 {
 }
@@ -31,17 +34,17 @@ CStateImageMultipleStates< TState  >::CStateImageMultipleStates()
 //
 // copy constructor
 //
-template <class TState>
+template < class TState >
 CStateImageMultipleStates< TState  >::CStateImageMultipleStates( const CStateImageMultipleStates & c ) 
 {
   if ( this != &c )
     {
-      assert ( this->m_vecIndividualStates.empty() );
-      typename VectorIndividualStatesType::const_iterator iter;
-      for ( iter=c.m_vecIndividualStates.begin(); iter!=c.m_vecIndividualStates.end(); ++iter )
+      assert ( this->m_IndividualStatesCollection.empty() );
+      typename IndividualStatesCollectionType::const_iterator iter;
+      for ( iter=c.m_IndividualStatesCollection.begin(); iter!=c.m_IndividualStatesCollection.end(); ++iter )
         {
-          typename TIndividualState::Pointer pCopiedState = new TIndividualState( **iter );
-          this->m_vecIndividualStates.push_back( pCopiedState );
+          typename IndividualStateType::Pointer copiedState = new IndividualStateType( **iter );
+          this->m_IndividualStatesCollection.push_back( copiedState );
         }
     }
 }
@@ -49,11 +52,11 @@ CStateImageMultipleStates< TState  >::CStateImageMultipleStates( const CStateIma
 //
 // copy constructor (from individual states which have been allocated externally)
 //
-template <class TState>
-CStateImageMultipleStates< TState  >::CStateImageMultipleStates( const std::vector< TIndividualState* >* pVec )
+template < class TState >
+CStateImageMultipleStates< TState  >::CStateImageMultipleStates( const IndividualStatesCollectionType & individualStatesCollection )
 {
-  typename VectorIndividualStatesType::const_iterator iter;
-  for ( iter = pVec->begin(); iter != pVec->end(); ++iter )
+  typename IndividualStatesCollectionType::const_iterator iter;
+  for ( iter = individualStatesCollection.begin(); iter != individualStatesCollection.end(); ++iter )
     {
     this->m_IndividualStatesCollection.push_back( *iter );
     }
@@ -81,21 +84,23 @@ CStateImageMultipleStates< TState >::~CStateImageMultipleStates()
 // Upsampling
 //
 template <class TState>
-typename CStateImageMultipleStates< TState >::TState*
-CStateImageMultipleStates< TState >::CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const
+typename CStateImageMultipleStates< TState >::Superclass*
+CStateImageMultipleStates< TState >::CreateUpsampledStateAndAllocateMemory( const VectorImageType* graftImage ) const
 {
   IndividualStatesCollectionType individualStatesCollection;
 
   // upsample all the individual state components
-  typename VectorIndividualStatesType::const_iterator iter;
-  for ( iter = m_vecIndividualStates.begin(); iter != m_vecIndividualStates.end(); ++iter )
+  typename IndividualStatesCollectionType::const_iterator iter;
+  for ( iter = m_IndividualStatesCollection.begin(); iter != m_IndividualStatesCollection.end(); ++iter )
   {
-    ptrUpsampledState->push_back( (*iter)->CreateUpsampledStateAndAllocateMemory( pGraftImage ) );
+    typename IndividualStateType::Pointer individualState = dynamic_cast< IndividualStateType * >( (*iter)->CreateUpsampledStateAndAllocateMemory( graftImage ) );
+    individualStatesCollection.push_back( individualState );
   }
 
-  TState * upsampledState = new TState( ptrUpsampledState );
+  Superclass * upsampledState = new Self( individualStatesCollection );
 
   return upsampledState;
+
 }
 
 // Here come the algebraic operators and assignment
@@ -133,8 +138,8 @@ CStateImageMultipleStates< TState >::operator=(const CStateImageMultipleStates &
       typename IndividualStatesCollectionType::const_iterator iter;
       for ( iter = p.m_IndividualStatesCollection.begin(); iter != p.m_IndividualStatesCollection.end(); ++iter )
         {
-          typename TIndividualState::Pointer pCopiedState = new TIndividualState( **iter );
-          this->m_vecIndividualStates.push_back( pCopiedState );
+          typename IndividualStateType::Pointer copiedState = new IndividualStateType( **iter );
+          this->m_IndividualStatesCollection.push_back( copiedState );
         }
       }
     return *this;
@@ -192,7 +197,7 @@ CStateImageMultipleStates< TState >::operator-=(const CStateImageMultipleStates 
 
 template <class TState>
 CStateImageMultipleStates< TState > & 
-CStateImageMultipleStates< TState >::operator*=(const TFloat & p )
+CStateImageMultipleStates< TState >::operator*=(const FloatType & p )
 {
 
   typename IndividualStatesCollectionType::iterator iterTarget;
@@ -223,7 +228,7 @@ CStateImageMultipleStates< TState >::operator-(const CStateImageMultipleStates &
 
 template <class TState >
 CStateImageMultipleStates< TState > 
-CStateImageMultipleStates< TState >::operator*(const TFloat & p ) const
+CStateImageMultipleStates< TState >::operator*(const FloatType & p ) const
 {
   CStateImageMultipleStates r = *this;
   return r*= p;
@@ -233,11 +238,11 @@ CStateImageMultipleStates< TState >::operator*(const TFloat & p ) const
 // returns one of the individual states
 //
 template <class TState >
-typename CStateImageMultipleStates< TSTate >::TIndividualState*
-CStateImageMultipleStates< TState >::GetIndividualStatePointer( unsigned int uiState )
+typename CStateImageMultipleStates< TState >::IndividualStateType*
+CStateImageMultipleStates< TState >::GetIndividualStatePointer( unsigned int idx )
 {
-  int iNrOfStates = m_vecIndividualStates.size();
-  if ( iNrOfStates==0 || iNrOfStates<=(int)uiState )
+  const size_t numberOfStates = m_IndividualStatesCollection.size();
+  if ( numberOfStates == 0 || numberOfStates <= idx )
     {
     return NULL;
     }
@@ -251,18 +256,19 @@ CStateImageMultipleStates< TState >::GetIndividualStatePointer( unsigned int uiS
 // computes the squared norm of the state, by adding all the individual square norm components
 //
 template < class TState >
-typename CStateImageMultipleStates< TState >::TFloat
+typename CStateImageMultipleStates< TState >::FloatType
 CStateImageMultipleStates< TState >::SquaredNorm()
 {
-  TFloat dSquaredNorm = 0;
+  FloatType squaredNorm = 0.0;
 
-  typename VectorIndividualStatesType::iterator iter;
-  for ( iter = m_vecIndividualStates.begin(); iter != m_vecIndividualStates.end(); ++iter )
-  {
-    dSquaredNorm += (*iter)->SquaredNorm();
-  }
+  typename IndividualStatesCollectionType::iterator iter;
+  for ( iter = m_IndividualStatesCollection.begin(); iter != m_IndividualStatesCollection.end(); ++iter )
+    {
+      squaredNorm += (*iter)->SquaredNorm();
+    }
 
-  return dSquaredNorm;
+  return squaredNorm;
+
 }
 
 //

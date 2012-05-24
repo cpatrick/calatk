@@ -29,7 +29,7 @@
 #include "VectorImageUtils.h"
 #include "CImageManagerMultiScale.h"
 
-#include "JSONParameterUtils.h"
+#include "CJSONConfiguration.h"
 
 template< class TFLOAT, unsigned int VImageDimension >
 int DoIt( std::string MetamorphosisType, char* sourceImage, char* targetImage, char* resultImage, const std::string & configFileName )
@@ -73,7 +73,11 @@ int DoIt( std::string MetamorphosisType, char* sourceImage, char* targetImage, c
   ptrImageManager->AddImage( sourceImage, 0.0, 0 );
   ptrImageManager->AddImage( targetImage, 1.0, 0 );
 
-  plddmm->SetConfigurationFile( configFileName );
+  CALATK::CJSONConfiguration::Pointer combinedConfiguration = new CALATK::CJSONConfiguration;
+  combinedConfiguration->ReadJSONFile( configFileName );
+  CALATK::CJSONConfiguration::Pointer cleanedConfiguration = new CALATK::CJSONConfiguration;
+  plddmm->SetAutoConfiguration( combinedConfiguration, cleanedConfiguration );
+
   plddmm->Solve();
 
 

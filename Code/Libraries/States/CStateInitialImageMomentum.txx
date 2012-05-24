@@ -25,8 +25,8 @@
 namespace CALATK
 {
 
-template<class T, unsigned int VImageDimension >
-CStateInitialImageMomentum<T, VImageDimension >::CStateInitialImageMomentum()
+template< class TFloat, unsigned int VImageDimension >
+CStateInitialImageMomentum< TFloat, VImageDimension >::CStateInitialImageMomentum()
   : m_ptrInitialImage( NULL ), 
     m_ptrInitialMomentum( NULL ),
     m_NumberOfStateVectorElements( 0 ),
@@ -37,8 +37,8 @@ CStateInitialImageMomentum<T, VImageDimension >::CStateInitialImageMomentum()
   m_EstimateInitialImage = DefaultEstimateInitialImage;
 }
 
-template<class T, unsigned int VImageDimension >
-CStateInitialImageMomentum<T, VImageDimension >::CStateInitialImageMomentum( const CStateInitialImageMomentum & c)
+template< class TFloat, unsigned int VImageDimension >
+CStateInitialImageMomentum< TFloat, VImageDimension >::CStateInitialImageMomentum( const CStateInitialImageMomentum & c)
   : m_ptrInitialImage( NULL ), 
     m_ptrInitialMomentum( NULL ),
     m_NumberOfStateVectorElements( 0 ),
@@ -59,8 +59,8 @@ CStateInitialImageMomentum<T, VImageDimension >::CStateInitialImageMomentum( con
 //
 // constructor which takes an image and a momentum (also an image) as input
 //
-template <class T, unsigned int VImageDimension >
-CStateInitialImageMomentum<T, VImageDimension >::CStateInitialImageMomentum( T* ptrRawData, VectorImageType* ptrInitialImage, VectorImageType* ptrInitialMomentum )
+template < class TFloat, unsigned int VImageDimension >
+CStateInitialImageMomentum< TFloat, VImageDimension >::CStateInitialImageMomentum( FloatType* ptrRawData, VectorImageType* ptrInitialImage, VectorImageType* ptrInitialMomentum )
   : m_ptrInitialImage( ptrInitialImage ), 
     m_ptrInitialMomentum( ptrInitialMomentum ),
     m_NumberOfStateVectorElements( 0 ),
@@ -83,8 +83,8 @@ CStateInitialImageMomentum<T, VImageDimension >::CStateInitialImageMomentum( T* 
 //
 // constructor which takes an image and a momentum (also an image) as input
 //
-template <class T, unsigned int VImageDimension >
-CStateInitialImageMomentum<T, VImageDimension >::CStateInitialImageMomentum( VectorImageType* ptrGraftImage )
+template < class TFloat, unsigned int VImageDimension >
+CStateInitialImageMomentum< TFloat, VImageDimension >::CStateInitialImageMomentum( VectorImageType* ptrGraftImage )
   : m_ptrInitialImage( NULL ), 
     m_ptrInitialMomentum( NULL ),
     m_NumberOfStateVectorElements( 0 ),
@@ -100,7 +100,7 @@ CStateInitialImageMomentum<T, VImageDimension >::CStateInitialImageMomentum( Vec
   
   long int liNumberOfStateVectorElements = uiLengthOfImage + uiLengthOfMomentum;
 
-  m_ptrRawData = new T[ liNumberOfStateVectorElements ];
+  m_ptrRawData = new FloatType[ liNumberOfStateVectorElements ];
   
   m_NumberOfStateVectorElements = liNumberOfStateVectorElements;
 
@@ -109,8 +109,8 @@ CStateInitialImageMomentum<T, VImageDimension >::CStateInitialImageMomentum( Vec
 
 }
 
-template <class T, unsigned int VImageDimension >
-void CStateInitialImageMomentum <T, VImageDimension >::CopyDataStructure( const VectorImageType * ptrImage, const VectorImageType * ptrMomentum )
+template < class TFloat, unsigned int VImageDimension >
+void CStateInitialImageMomentum < TFloat, VImageDimension >::CopyDataStructure( const VectorImageType * ptrImage, const VectorImageType * ptrMomentum )
 {
     ClearDataStructure();
 
@@ -122,7 +122,7 @@ void CStateInitialImageMomentum <T, VImageDimension >::CopyDataStructure( const 
 
     // create a vector that hold all of this
 
-    m_ptrRawData = new T[ m_NumberOfStateVectorElements ];
+    m_ptrRawData = new TFloat[ m_NumberOfStateVectorElements ];
 
     // create the image and momentum data structures with external memory allocation 
     // memory comes from the raw data vector
@@ -138,8 +138,8 @@ void CStateInitialImageMomentum <T, VImageDimension >::CopyDataStructure( const 
     }
 }
 
-template <class T, unsigned int VImageDimension >
-CStateInitialImageMomentum <T, VImageDimension >::~CStateInitialImageMomentum()
+template < class TFloat, unsigned int VImageDimension >
+CStateInitialImageMomentum < TFloat, VImageDimension >::~CStateInitialImageMomentum()
 {
     ClearDataStructure();
 }
@@ -147,8 +147,8 @@ CStateInitialImageMomentum <T, VImageDimension >::~CStateInitialImageMomentum()
 //
 // clear data structure
 //
-template <class T, unsigned int VImageDimension >
-void CStateInitialImageMomentum<T, VImageDimension >::ClearDataStructure()
+template < class TFloat, unsigned int VImageDimension >
+void CStateInitialImageMomentum< TFloat, VImageDimension >::ClearDataStructure()
 {
   if ( m_ptrRawData != NULL )
     {
@@ -159,20 +159,20 @@ void CStateInitialImageMomentum<T, VImageDimension >::ClearDataStructure()
 }
 
 
-template <class T, unsigned int VImageDimension >
-typename CStateInitialImageMomentum<T, VImageDimension >::Superclass*
-CStateInitialImageMomentum<T, VImageDimension >::CreateUpsampledStateAndAllocateMemory( const VectorImageType* graftImage ) const
+template < class TFloat, unsigned int VImageDimension >
+typename CStateInitialImageMomentum< TFloat, VImageDimension >::Superclass*
+CStateInitialImageMomentum< TFloat, VImageDimension >::CreateUpsampledStateAndAllocateMemory( const VectorImageType* ptrGraftImage ) const
 {
-  const unsigned int lengthOfNewImage = graftImage->GetLength();
-  const unsigned int lengthOfNewMomentum = graftImage->GetLength();
+  const unsigned int lengthOfNewImage = ptrGraftImage->GetLength();
+  const unsigned int lengthOfNewMomentum = ptrGraftImage->GetLength();
   
   const long int newNumberOfStateVectorElements = lengthOfNewImage + lengthOfNewMomentum;
 
-  T* ptrNewRawData = new T[ newNumberOfStateVectorElements ];
+  FloatType* ptrNewRawData = new FloatType[ newNumberOfStateVectorElements ];
 
   // create an upsampled version of the state with the dimensions of the graft image
-  typename VectorImageType::Pointer ptrInitialImage = new VectorImageType( graftImage, ptrNewRawData );
-  typename VectorImageType::Pointer ptrInitialMomentum = new VectorImageType( graftImage, ptrNewRawData + lengthOfNewImage );
+  typename VectorImageType::Pointer ptrInitialImage = new VectorImageType( ptrGraftImage, ptrNewRawData );
+  typename VectorImageType::Pointer ptrInitialMomentum = new VectorImageType( ptrGraftImage, ptrNewRawData + lengthOfNewImage );
   
   this->m_Resampler->Upsample( m_ptrInitialImage, ptrInitialImage );
   this->m_Resampler->Upsample( m_ptrInitialMomentum, ptrInitialMomentum );
@@ -183,17 +183,17 @@ CStateInitialImageMomentum<T, VImageDimension >::CreateUpsampledStateAndAllocate
 }
 
 
-template <class T, unsigned int VImageDimension >
-typename CStateInitialImageMomentum< T, VImageDimension >::VectorImageType *
-CStateInitialImageMomentum<T, VImageDimension >::GetPointerToInitialImage() const
+template < class TFloat, unsigned int VImageDimension >
+typename CStateInitialImageMomentum< TFloat, VImageDimension >::VectorImageType *
+CStateInitialImageMomentum< TFloat, VImageDimension >::GetPointerToInitialImage() const
 {
     return m_ptrInitialImage.GetPointer();
 }
 
 
-template <class T, unsigned int VImageDimension >
-typename CStateInitialImageMomentum< T, VImageDimension >::VectorImageType *
-CStateInitialImageMomentum<T, VImageDimension >::GetPointerToInitialMomentum() const
+template < class TFloat, unsigned int VImageDimension >
+typename CStateInitialImageMomentum< TFloat, VImageDimension >::VectorImageType *
+CStateInitialImageMomentum< TFloat, VImageDimension >::GetPointerToInitialMomentum() const
 {
     return m_ptrInitialMomentum.GetPointer();
 }
@@ -202,9 +202,9 @@ CStateInitialImageMomentum<T, VImageDimension >::GetPointerToInitialMomentum() c
 // the operators //
 ///////////////////
 
-template <class T, unsigned int VImageDimension >
-CStateInitialImageMomentum<T, VImageDimension > &
-CStateInitialImageMomentum<T, VImageDimension >::operator=( const CStateInitialImageMomentum & p )
+template < class TFloat, unsigned int VImageDimension >
+CStateInitialImageMomentum< TFloat, VImageDimension > &
+CStateInitialImageMomentum< TFloat, VImageDimension >::operator=( const CStateInitialImageMomentum & p )
 {
     if (this!=&p)
     {
@@ -223,9 +223,9 @@ CStateInitialImageMomentum<T, VImageDimension >::operator=( const CStateInitialI
 }
 
 
-template <class T, unsigned int VImageDimension >
-CStateInitialImageMomentum<T, VImageDimension > &
-CStateInitialImageMomentum<T, VImageDimension >::operator+=( const CStateInitialImageMomentum & p )
+template < class TFloat, unsigned int VImageDimension >
+CStateInitialImageMomentum< TFloat, VImageDimension > &
+CStateInitialImageMomentum< TFloat, VImageDimension >::operator+=( const CStateInitialImageMomentum & p )
 {
     VectorImageType * ptrImage = p.GetPointerToInitialImage();
     VectorImageType * ptrMomentum = p.GetPointerToInitialMomentum();
@@ -237,9 +237,9 @@ CStateInitialImageMomentum<T, VImageDimension >::operator+=( const CStateInitial
 }
 
 
-template <class T, unsigned int VImageDimension >
-CStateInitialImageMomentum<T, VImageDimension > &
-CStateInitialImageMomentum<T, VImageDimension >::operator-=( const CStateInitialImageMomentum & p )
+template < class TFloat, unsigned int VImageDimension >
+CStateInitialImageMomentum< TFloat, VImageDimension > &
+CStateInitialImageMomentum< TFloat, VImageDimension >::operator-=( const CStateInitialImageMomentum & p )
 {
     VectorImageType * ptrImage = p.GetPointerToInitialImage();
     VectorImageType * ptrMomentum = p.GetPointerToInitialMomentum();
@@ -251,9 +251,9 @@ CStateInitialImageMomentum<T, VImageDimension >::operator-=( const CStateInitial
 }
 
 
-template <class T, unsigned int VImageDimension >
-CStateInitialImageMomentum<T, VImageDimension > &
-CStateInitialImageMomentum<T, VImageDimension >::operator*=( const T & p )
+template < class TFloat, unsigned int VImageDimension >
+CStateInitialImageMomentum< TFloat, VImageDimension > &
+CStateInitialImageMomentum< TFloat, VImageDimension >::operator*=( const FloatType & p )
 {
     m_ptrInitialImage->MultiplyByConstant( p );
     m_ptrInitialMomentum->MultiplyByConstant( p );
@@ -262,27 +262,27 @@ CStateInitialImageMomentum<T, VImageDimension >::operator*=( const T & p )
 }
 
 
-template <class T, unsigned int VImageDimension >
-CStateInitialImageMomentum<T, VImageDimension >
-CStateInitialImageMomentum<T, VImageDimension >::operator+( const CStateInitialImageMomentum & p ) const
+template < class TFloat, unsigned int VImageDimension >
+CStateInitialImageMomentum< TFloat, VImageDimension >
+CStateInitialImageMomentum< TFloat, VImageDimension >::operator+( const CStateInitialImageMomentum & p ) const
 {
     CStateInitialImageMomentum r = *this;
     return r += p;
 }
 
 
-template <class T, unsigned int VImageDimension >
-CStateInitialImageMomentum<T, VImageDimension >
-CStateInitialImageMomentum<T, VImageDimension >::operator-( const CStateInitialImageMomentum & p ) const
+template < class TFloat, unsigned int VImageDimension >
+CStateInitialImageMomentum< TFloat, VImageDimension >
+CStateInitialImageMomentum< TFloat, VImageDimension >::operator-( const CStateInitialImageMomentum & p ) const
 {
     CStateInitialImageMomentum r = *this;
     return r -= p;
 }
 
 
-template <class T, unsigned int VImageDimension >
-CStateInitialImageMomentum<T, VImageDimension >
-CStateInitialImageMomentum<T, VImageDimension >::operator*( const T & p ) const
+template < class TFloat, unsigned int VImageDimension >
+CStateInitialImageMomentum< TFloat, VImageDimension >
+CStateInitialImageMomentum< TFloat, VImageDimension >::operator*( const FloatType & p ) const
 {
     CStateInitialImageMomentum r = *this;
     return r *= p;
@@ -291,10 +291,10 @@ CStateInitialImageMomentum<T, VImageDimension >::operator*( const T & p ) const
 //
 // computes the squared norm of the state
 //
-template <class T, unsigned int VImageDimension >
-T CStateInitialImageMomentum< T, VImageDimension >::SquaredNorm()
+template < class TFloat, unsigned int VImageDimension >
+TFloat CStateInitialImageMomentum< TFloat, VImageDimension >::SquaredNorm()
 {
-  T dSquaredNorm = 0;
+  FloatType dSquaredNorm = 0;
 //  TODO: Is this the correct squared norm?
 
   dSquaredNorm += m_ptrInitialImage->ComputeSquaredNorm();
@@ -307,8 +307,8 @@ T CStateInitialImageMomentum< T, VImageDimension >::SquaredNorm()
 //
 // return the overall number of elements in the vector which holds the state information
 //
-template <class T, unsigned int VImageDimension >
-long int CStateInitialImageMomentum< T, VImageDimension >::GetNumberOfStateVectorElements()
+template < class TFloat, unsigned int VImageDimension >
+long int CStateInitialImageMomentum< TFloat, VImageDimension >::GetNumberOfStateVectorElements()
 {
   return m_NumberOfStateVectorElements;
 }
@@ -316,8 +316,8 @@ long int CStateInitialImageMomentum< T, VImageDimension >::GetNumberOfStateVecto
 //
 // return the overall number of elements in the vector which holds the state information
 //
-template <class T, unsigned int VImageDimension >
-long int CStateInitialImageMomentum< T, VImageDimension >::GetNumberOfStateVectorElementsToEstimate()
+template < class TFloat, unsigned int VImageDimension >
+long int CStateInitialImageMomentum< TFloat, VImageDimension >::GetNumberOfStateVectorElementsToEstimate()
 {
   if ( m_EstimateInitialImage )
   {
@@ -332,8 +332,8 @@ long int CStateInitialImageMomentum< T, VImageDimension >::GetNumberOfStateVecto
 //
 // Gets the pointer to the state vector. Primarily intended so that the states can be used with external optimizers
 //
-template <class T, unsigned int VImageDimension >
-T* CStateInitialImageMomentum< T, VImageDimension >::GetPointerToStateVector()
+template < class TFloat, unsigned int VImageDimension >
+TFloat* CStateInitialImageMomentum< TFloat, VImageDimension >::GetPointerToStateVector()
 {
   return m_ptrRawData;
 }
@@ -342,8 +342,8 @@ T* CStateInitialImageMomentum< T, VImageDimension >::GetPointerToStateVector()
 // Get the pointer to the part of the state vector that needs to be estimated
 // (full state vector if initial image is also to be estimated)
 //
-template <class T, unsigned int VImageDimension >
-T* CStateInitialImageMomentum< T, VImageDimension >::GetPointerToStateVectorElementsToEstimate()
+template < class TFloat, unsigned int VImageDimension >
+TFloat* CStateInitialImageMomentum< TFloat, VImageDimension >::GetPointerToStateVectorElementsToEstimate()
 {
   if ( m_EstimateInitialImage )
   {
@@ -359,8 +359,8 @@ T* CStateInitialImageMomentum< T, VImageDimension >::GetPointerToStateVectorElem
 //
 // Allows to query if the state contains the initial image
 //
-template <class T, unsigned int VImageDimension, class TResampler >
-bool CStateInitialImageMomentum< T, VImageDimension, TResampler >::StateContainsInitialImage()
+template < class TFloat, unsigned int VImageDimension >
+bool CStateInitialImageMomentum< TFloat, VImageDimension >::StateContainsInitialImage()
 {
   return true;
 }

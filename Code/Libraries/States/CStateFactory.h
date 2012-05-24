@@ -22,10 +22,12 @@
 
 #include "CState.h"
 #include "CProcessBase.h"
-#include "CStateAtlas.h"
+#include "CStateInitialMomentum.h"
 #include "CStateInitialImageMomentum.h"
 #include "CStateScalar.h"
 #include "CStateSpatioTemporalVelocityField.h"
+#include "CStateMultipleStates.h"
+//#include "CStateImageMultipleStates.h"
 
 namespace CALATK
 {
@@ -43,22 +45,31 @@ public:
   typedef itk::SmartPointer< Self >       Pointer;
   typedef itk::SmartPointer< const Self > ConstPointer;
 
-  // all the state typedefs
-  typedef CState< TFloat >                StateType;
+  typedef TFloat                          FloatType;
+  static const unsigned int ImageDimension = VImageDimension;
 
-  typedef CStateScalar< TFloat >                                       StateScalarType;
-  typedef CStateInitialImageMomentum< TFloat, VImageDimension >        StateInitialImageMomentumType;
-  typedef CStateSpatioTemporalVelocityField< TFloat, VImageDimension > StateSpatioTemporalVelocityFieldType;
-  typedef CStateAtlas< StateInitialImageMomentumType >                 StateAtlasWithInitialImageMomentumType;
-  typedef CStateAtlas< StateSpatioTemporalVelocityFieldType >          StateAtlasWithSpatioTemporalVelocityFieldType;
+  // all the state typedefs
+  typedef CState< FloatType >             StateType;
+
+  typedef CStateScalar< FloatType >                                            StateScalarType;
+  typedef CStateInitialMomentum< FloatType, VImageDimension >                  StateInitialMomentumType;
+  typedef CStateInitialImageMomentum< FloatType, VImageDimension >             StateInitialImageMomentumType;
+  typedef CStateSpatioTemporalVelocityField< FloatType, VImageDimension >      StateSpatioTemporalVelocityFieldType;
+  typedef CStateMultipleStates< StateInitialMomentumType >                  StateMultipleStatesWithInitialMomentumType;
+  typedef CStateMultipleStates< StateSpatioTemporalVelocityFieldType >      StateMultipleStatesWithSpatioTemporalVelocityFieldType;
+ // typedef CStateImageMultipleStates< StateInitialMomentumType >             StateImageMultipleStatesWithInitialMomentumType;
+ // typedef CStateImageMultipleStates< StateSpatioTemporalVelocityFieldType > StateImageMultipleStatesWithSpatioTemporalVelocityFieldType;
 
   enum OptimizationStateType
     {
     StateScalar,
+    StateInitialMomentum,
     StateInitialImageMomentum,
     StateSpatioTemporalVelocityField,
-    StateAtlasWithInitialImageMomentum,
-    StateAtlasWithSpatioTemporalVelocityField
+    StateMultipleStatesWithInitialMomentum,
+    StateMultipleStatesWithSpatioTemporalVelocityField,
+    StateImageMultipleStatesWithInitialMomentum,
+    StateImageMultipleStatesWithSpatioTemporalVelocityField
     };
 
   CStateFactory();

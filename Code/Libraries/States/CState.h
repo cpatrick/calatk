@@ -59,18 +59,18 @@ public:
     return 0;
   }
 
-  virtual TFloat* GetPointerToStateVector()
+  virtual FloatType* GetPointerToStateVector()
   {
     return NULL;
   };
 
-  virtual TFloat* GetPointerToStateVectorElementsToEstimate()
+  virtual FloatType* GetPointerToStateVectorElementsToEstimate()
   {
     return NULL;
   };
 
 protected:
-  virtual TFloat SquaredNorm() = 0;
+  virtual FloatType SquaredNorm() = 0;
 
 private:
   // copy constructor private

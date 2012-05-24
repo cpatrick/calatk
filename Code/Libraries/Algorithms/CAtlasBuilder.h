@@ -29,7 +29,8 @@
 #include "CKernelFactory.h"
 #include "CObjectiveFunctionFactory.h"
 #include "CVelocityFieldObjectiveFunctionWithMomentum.h"
-
+#include "CALATKCommon.h"
+#include "CJSONConfiguration.h"
 
 namespace CALATK
 {
@@ -53,13 +54,13 @@ public:
   typedef CAtlasBuilder                     Self;
   typedef CAlgorithm< TState >              Superclass;
 
-  typedef typename TState::TIndividualState TIndividualState;
+  typedef typename TState::IndividualStateType IndividualStateType;
 
   typedef itk::SmartPointer< Self >         Pointer;
   typedef itk::SmartPointer< const Self >   ConstPointer;
 
   /* some useful typedefs */
-  typedef typename TState::TFloat T;
+  typedef typename TState::FloatType T;
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 
@@ -70,9 +71,9 @@ public:
   typedef typename Superclass::KernelType              KernelType;
   typedef typename Superclass::MetricType              MetricType;
 
-  typedef CStationaryEvolver< T, TState::VImageDimension > DefaultEvolverType;
-  typedef COneStepEvolverSemiLagrangianAdvection< T, TState::VImageDimension > OneStepDefaultEvolverType;
-  typedef CVelocityFieldObjectiveFunctionWithMomentum< TIndividualState > LDDMMVelocityFieldObjectiveFunctionWithMomentumType;
+  typedef CStationaryEvolver< T, TState::ImageDimension > DefaultEvolverType;
+  typedef COneStepEvolverSemiLagrangianAdvection< T, TState::ImageDimension > OneStepDefaultEvolverType;
+  typedef CVelocityFieldObjectiveFunctionWithMomentum< IndividualStateType > LDDMMVelocityFieldObjectiveFunctionWithMomentumType;
 
   CAtlasBuilder();
   ~CAtlasBuilder();
@@ -128,7 +129,7 @@ public:
   SetMacro( AtlasIsSourceImage, bool );
   GetMacro( AtlasIsSourceImage, bool );
 
-  virtual void SetAutoConfiguration( Json::Value& ConfValueIn, Json::Value& ConfValueOut );
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
 protected:
 

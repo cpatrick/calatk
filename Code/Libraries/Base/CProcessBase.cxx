@@ -23,9 +23,9 @@ namespace CALATK
 {
 
 CProcessBase::CProcessBase():
+  m_AutoConfigurationSet( false ),
   m_PrintConfiguration( true ),
-  m_AllowHelpComments( false ),
-  m_AutoConfigurationSet( false )
+  m_AllowHelpComments( false )
 {
   this->m_CombinedJSONConfig = new CJSONConfiguration;
   this->m_CleanedJSONConfig = new CJSONConfiguration;

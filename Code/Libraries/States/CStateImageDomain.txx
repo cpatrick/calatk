@@ -20,17 +20,17 @@
 #ifndef C_STATE_IMAGE_DOMAIN_TXX
 #define C_STATE_IMAGE_DOMAIN_TXX
 
-namespace CALATK
-{
-
 #include "CStateImageDomain.h"
 #include "CResamplerLinear.h"
 
-
-template<class T, unsigned int VImageDimension, class TResampler>
-typename CStateImageDomain<T, VImageDimension, TResampler>::VectorImageType*
-CStateImageDomain<T, VImageDimension, TResampler>::GetPointerToInitialImage() const
+namespace CALATK
 {
+
+template< class TFloat, unsigned int VImageDimension >
+typename CStateImageDomain< TFloat, VImageDimension >::VectorImageType*
+CStateImageDomain< TFloat, VImageDimension>::GetPointerToInitialImage() const
+{
+  throw std::runtime_error( "Not yet implemented." );
   return NULL;
 }
 

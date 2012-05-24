@@ -20,6 +20,9 @@
 #ifndef C_STATE_MULTIPLE_STATES_TXX
 #define C_STATE_MULTIPLE_STATES_TXX
 
+namespace CALATK
+{
+
 //
 // empty constructor
 //
@@ -36,12 +39,12 @@ CStateMultipleStates< TState >::CStateMultipleStates( const CStateMultipleStates
 {
   if ( this != &c )
     {
-      assert ( this->m_vecIndividualStates.empty() );
-      typename VectorIndividualStatesType::const_iterator iter;
-      for ( iter=c.m_vecIndividualStates.begin(); iter!=c.m_vecIndividualStates.end(); ++iter )
+      assert ( this->m_IndividualStatesCollection.empty() );
+      typename IndividualStatesCollectionType::const_iterator iter;
+      for ( iter=c.m_IndividualStatesCollection.begin(); iter!=c.m_IndividualStatesCollection.end(); ++iter )
         {
-          typename TIndividualState::Pointer pCopiedState = new TIndividualState( **iter );
-          this->m_vecIndividualStates.push_back( pCopiedState );
+          typename IndividualStateType::Pointer copiedState = new IndividualStateType( **iter );
+          this->m_IndividualStatesCollection.push_back( copiedState );
         }
     }
 }
@@ -50,12 +53,12 @@ CStateMultipleStates< TState >::CStateMultipleStates( const CStateMultipleStates
 // copy constructor (from individual states which have been allocated externally)
 //
 template < class TState >
-CStateMultipleStates< TState >::CStateMultipleStates( const std::vector< TIndividualState* >* pVec )
+CStateMultipleStates< TState >::CStateMultipleStates( const IndividualStatesCollectionType & individualStatesCollection )
 {
-  typename VectorIndividualStatesType::const_iterator iter;
-  for ( iter = pVec->begin(); iter != pVec->end(); ++iter )
+  typename IndividualStatesCollectionType::const_iterator iter;
+  for ( iter = individualStatesCollection.begin(); iter != individualStatesCollection.end(); ++iter )
     {
-      m_vecIndividualStates.push_back( *iter );
+      this->m_IndividualStatesCollection.push_back( *iter );
     }
 }
 
@@ -66,7 +69,7 @@ CStateMultipleStates< TState >::CStateMultipleStates( const std::vector< TIndivi
 template < class TState >
 void CStateMultipleStates< TState >::ClearDataStructure()
 {
-  this->m_vecIndividualStates.clear();
+  this->m_IndividualStatesCollection.clear();
 }
 
 //
@@ -82,21 +85,23 @@ CStateMultipleStates< TState >::~CStateMultipleStates()
 // Upsampling
 //
 template < class TState >
-typename CStateMultipleStates< TState >::TState*
-CStateMultipleStates< TState >::CreateUpsampledStateAndAllocateMemory( const VectorImageType* pGraftImage ) const
+typename CStateMultipleStates< TState >::Superclass*
+CStateMultipleStates< TState >::CreateUpsampledStateAndAllocateMemory( const VectorImageType* graftImage ) const
 {
-    VectorIndividualStatesType* ptrUpsampledState = new VectorIndividualStatesType;
+    IndividualStatesCollectionType individualStatesCollection;
 
     // upsample all the individual state components
-    typename VectorIndividualStatesType::const_iterator iter;
-    for ( iter = m_vecIndividualStates.begin(); iter != m_vecIndividualStates.end(); ++iter )
+    typename IndividualStatesCollectionType::const_iterator iter;
+    for ( iter = m_IndividualStatesCollection.begin(); iter != m_IndividualStatesCollection.end(); ++iter )
     {
-      ptrUpsampledState->push_back( (*iter)->CreateUpsampledStateAndAllocateMemory( pGraftImage ) );
+      typename IndividualStateType::Pointer individualState = dynamic_cast< IndividualStateType * >( (*iter)->CreateUpsampledStateAndAllocateMemory( graftImage ) );
+      individualStatesCollection.push_back( individualState );
     }
 
-    TState * upsampledState = new TState( ptrUpsampledState );
+    Superclass * upsampledState = new Self( individualStatesCollection );
 
     return upsampledState;
+
 }
 
 // Here come the algebraic operators and assignment
@@ -107,19 +112,18 @@ CStateMultipleStates< TState >::operator=(const CStateMultipleStates & p )
 {
   if ( this != &p )
     {
-    
     // now do a deep copy
     
     // check if we already have the same number of elements. If so overwrite, otherwise recreate
-    if ( m_vecIndividualStates.size() == p.m_vecIndividualStates.size() )
+    if ( m_IndividualStatesCollection.size() == p.m_IndividualStatesCollection.size() )
       {
       // already memory of appropriate size allocated, so just copy
       // iterate and copy
       
-      typename VectorIndividualStatesType::const_iterator iterSource;
-      typename VectorIndividualStatesType::iterator iterTarget;
-      for ( iterSource = p.m_vecIndividualStates.begin(), iterTarget = m_vecIndividualStates.begin(); 
-            iterSource != p.m_vecIndividualStates.end(), iterTarget != m_vecIndividualStates.end(); 
+      typename IndividualStatesCollectionType::const_iterator iterSource;
+      typename IndividualStatesCollectionType::iterator iterTarget;
+      for ( iterSource = p.m_IndividualStatesCollection.begin(), iterTarget = m_IndividualStatesCollection.begin();
+            iterSource != p.m_IndividualStatesCollection.end(), iterTarget != m_IndividualStatesCollection.end();
             ++iterSource, ++iterTarget )
         {
         // copy the current state
@@ -132,11 +136,11 @@ CStateMultipleStates< TState >::operator=(const CStateMultipleStates & p )
       std::cerr << "WARNING: reallocating memory, should already have been assigned." << std::endl;
       ClearDataStructure();
 
-      typename VectorIndividualStatesType::const_iterator iter;
-      for ( iter=p.m_vecIndividualStates.begin(); iter!=p.m_vecIndividualStates.end(); ++iter )
+      typename IndividualStatesCollectionType::const_iterator iter;
+      for ( iter=p.m_IndividualStatesCollection.begin(); iter!=p.m_IndividualStatesCollection.end(); ++iter )
         {
-          typename TIndividualState::Pointer pCopiedState = new TIndividualState( **iter );
-          this->m_vecIndividualStates.push_back( pCopiedState );
+          typename IndividualStateType::Pointer copiedState = new IndividualStateType( **iter );
+          this->m_IndividualStatesCollection.push_back( copiedState );
         }
       }
     return *this;
@@ -151,15 +155,15 @@ template < class TState >
 CStateMultipleStates< TState > &
 CStateMultipleStates< TState >::operator+=(const CStateMultipleStates & p )
 {
-  if ( m_vecIndividualStates.size() != p.m_vecIndividualStates.size() )
+  if ( m_IndividualStatesCollection.size() != p.m_IndividualStatesCollection.size() )
     {
     throw std::runtime_error( "Size mismatch of state vectors. ABORT." );
     }
 
-  typename VectorIndividualStatesType::const_iterator iterSource;
-  typename VectorIndividualStatesType::iterator iterTarget;
-  for ( iterSource = p.m_vecIndividualStates.begin(), iterTarget = m_vecIndividualStates.begin(); 
-        iterSource != p.m_vecIndividualStates.end(), iterTarget != m_vecIndividualStates.end(); 
+  typename IndividualStatesCollectionType::const_iterator iterSource;
+  typename IndividualStatesCollectionType::iterator iterTarget;
+  for ( iterSource = p.m_IndividualStatesCollection.begin(), iterTarget = m_IndividualStatesCollection.begin();
+        iterSource != p.m_IndividualStatesCollection.end(), iterTarget != m_IndividualStatesCollection.end();
         ++iterSource, ++iterTarget )
     {
     // add the source to the target
@@ -174,16 +178,16 @@ CStateMultipleStates< TState > &
 CStateMultipleStates< TState >::operator-=(const CStateMultipleStates & p )
 {
 
-  if ( m_vecIndividualStates.size() != p.m_vecIndividualStates.size() )
+  if ( m_IndividualStatesCollection.size() != p.m_IndividualStatesCollection.size() )
     {
     throw std::runtime_error( "Size mismatch of vector of vector fields. ABORT." );
     return;
     }
 
-  typename VectorIndividualStatesType::const_iterator iterSource;
-  typename VectorIndividualStatesType::iterator iterTarget;
-  for ( iterSource = p.m_vecIndividualStates.begin(), iterTarget = m_vecIndividualStates.begin(); 
-        iterSource != p.m_vecIndividualStates.end(), iterTarget != m_vecIndividualStates.end(); 
+  typename IndividualStatesCollectionType::const_iterator iterSource;
+  typename IndividualStatesCollectionType::iterator iterTarget;
+  for ( iterSource = p.m_IndividualStatesCollection.begin(), iterTarget = m_IndividualStatesCollection.begin();
+        iterSource != p.m_IndividualStatesCollection.end(), iterTarget != m_IndividualStatesCollection.end();
         ++iterSource, ++iterTarget )
     {
      // subtract the source from the target
@@ -195,11 +199,11 @@ CStateMultipleStates< TState >::operator-=(const CStateMultipleStates & p )
 
 template < class TState >
 CStateMultipleStates< TState > &
-CStateMultipleStates< TState >::operator*=(const TFloat & p )
+CStateMultipleStates< TState >::operator*=(const FloatType & p )
 {
 
-  typename VectorIndividualStatesType::iterator iterTarget;
-  for ( iterTarget = m_vecIndividualStates.begin(); iterTarget != m_vecIndividualStates.end(); ++iterTarget )
+  typename IndividualStatesCollectionType::iterator iterTarget;
+  for ( iterTarget = m_IndividualStatesCollection.begin(); iterTarget != m_IndividualStatesCollection.end(); ++iterTarget )
     {
     // multiply by the value
     *(*iterTarget)*= p;
@@ -226,7 +230,7 @@ CStateMultipleStates< TState >::operator-(const CStateMultipleStates & p ) const
 
 template < class TState >
 CStateMultipleStates< TState >
-CStateMultipleStates< TState >::operator*(const TFloat & p ) const
+CStateMultipleStates< TState >::operator*(const FloatType & p ) const
 {
   CStateMultipleStates r = *this;
   return r*= p;
@@ -236,17 +240,17 @@ CStateMultipleStates< TState >::operator*(const TFloat & p ) const
 // returns one of the individual states
 //
 template < class TState >
-typename CStateMultipleStates< TState >::TIndividualState*
-CStateMultipleStates< TState >::GetIndividualStatePointer( unsigned int uiState )
+typename CStateMultipleStates< TState >::IndividualStateType*
+CStateMultipleStates< TState >::GetIndividualStatePointer( unsigned int idx )
 {
-  int iNrOfStates = m_vecIndividualStates.size();
-  if ( iNrOfStates==0 || iNrOfStates<=(int)uiState )
+  const size_t numberOfStates = m_IndividualStatesCollection.size();
+  if ( numberOfStates == 0 || numberOfStates <= idx )
     {
-      return NULL;
+    return NULL;
     }
   else
     {
-      return m_vecIndividualStates[ uiState ];
+    return this->m_IndividualStatesCollection[ idx ];
     }
 }
 
@@ -254,18 +258,18 @@ CStateMultipleStates< TState >::GetIndividualStatePointer( unsigned int uiState 
 // computes the squared norm of the state, by adding all the individual square norm components
 //
 template < class TState >
-typename CStateMultipleStates< TState >::TFloat
+typename CStateMultipleStates< TState >::FloatType
 CStateMultipleStates< TState >::SquaredNorm()
 {
-  TFloat dSquaredNorm = 0;
+  FloatType squaredNorm = 0;
 
-  typename VectorIndividualStatesType::iterator iter;
-  for ( iter = m_vecIndividualStates.begin(); iter != m_vecIndividualStates.end(); ++iter )
+  typename IndividualStatesCollectionType::iterator iter;
+  for ( iter = m_IndividualStatesCollection.begin(); iter != m_IndividualStatesCollection.end(); ++iter )
   {
-    dSquaredNorm += (*iter)->SquaredNorm();
+    squaredNorm += (*iter)->SquaredNorm();
   }
 
-  return dSquaredNorm;
+  return squaredNorm;
 
 }
 
@@ -278,5 +282,6 @@ bool CStateMultipleStates< TState >::StateContainsInitialImage()
   return false;
 }
 
+} // end namespace CALATK
 
 #endif

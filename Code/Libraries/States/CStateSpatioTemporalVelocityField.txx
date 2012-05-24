@@ -302,8 +302,8 @@ T CStateSpatioTemporalVelocityField< T, VImageDimension >::SquaredNorm()
 //
 // Allows to query if the state contains the initial image
 //
-template <class T, unsigned int VImageDimension, class TResampler >
-bool CStateSpatioTemporalVelocityField< T, VImageDimension, TResampler >::StateContainsInitialImage()
+template <class T, unsigned int VImageDimension >
+bool CStateSpatioTemporalVelocityField< T, VImageDimension >::StateContainsInitialImage()
 {
   return false;
 }
