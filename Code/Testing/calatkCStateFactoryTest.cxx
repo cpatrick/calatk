@@ -32,9 +32,12 @@ int main( int argc, char* argv[] )
 
   state = StateFactoryType::CreateNewState( "StateScalar" );
   state = StateFactoryType::CreateNewState( "StateInitialImageMomentum" );
+  state = StateFactoryType::CreateNewState( "StateInitialMomentum" );
   state = StateFactoryType::CreateNewState( "StateSpatioTemporalVelocityField" );
-  state = StateFactoryType::CreateNewState( "StateAtlasWithInitialImageMomentum" );
-  state = StateFactoryType::CreateNewState( "StateAtlasWithSpatioTemporalVelocityField" );
+  state = StateFactoryType::CreateNewState( "StateMultipleStatesWithInitialMomentum" );
+  state = StateFactoryType::CreateNewState( "StateMultipleStatesWithSpatioTemporalVelocityField" );
+  state = StateFactoryType::CreateNewState( "StateImageMultipleStatesWithInitialMomentum" );
+  state = StateFactoryType::CreateNewState( "StateImageMultipleStatesWithSpatioTemporalVelocityField" );
 
   return EXIT_SUCCESS;
 }

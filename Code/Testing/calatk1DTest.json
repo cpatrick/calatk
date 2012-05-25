@@ -41,7 +41,7 @@
 				"InitialStepSize" : 1.000000000000000e-01,
 				"MaxNumberOfIterations" : 50,
 				"MaxNumberOfTries" : 10,
-				"MinAllowedStepSize" : 1.000000000000000e-04,
+				"MinAllowedStepSize" : 1.000000000000000e-08,
 				"OutputStateInformation" : false,
 				"OutputStateInformationFrequency" : 100,
 				"ReductionFactor" : 0.50
@@ -63,7 +63,7 @@
 				"InitialStepSize" : 1.000000000000000e-01,
 				"MaxNumberOfIterations" : 100,
 				"MaxNumberOfTries" : 10,
-				"MinAllowedStepSize" : 1.000000000000000e-05,
+				"MinAllowedStepSize" : 1.000000000000000e-08,
 				"OutputStateInformation" : false,
 				"OutputStateInformationFrequency" : 100,
 				"ReductionFactor" : 0.50
@@ -85,7 +85,7 @@
 				"InitialStepSize" : 1.000000000000000e-03,
 				"MaxNumberOfIterations" : 200,
 				"MaxNumberOfTries" : 10,
-				"MinAllowedStepSize" : 1.000000000000000e-07,
+				"MinAllowedStepSize" : 1.000000000000000e-08,
 				"OutputStateInformation" : false,
 				"OutputStateInformationFrequency" : 100,
 				"ReductionFactor" : 0.50

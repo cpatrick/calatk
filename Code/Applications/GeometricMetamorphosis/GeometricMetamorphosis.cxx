@@ -61,7 +61,10 @@ int DoIt( int argc, char** argv )
   unsigned int uiT1 = ptrImageManager->AddImage( targetMask, 1.0, 1 );
 
   CALATK::CJSONConfiguration::Pointer combinedConfiguration = new CALATK::CJSONConfiguration;
-  combinedConfiguration->ReadJSONFile( configFile );
+  if ( configFile.compare( "None" ) != 0 )
+  {
+    combinedConfiguration->ReadJSONFile( configFile );
+  }
   CALATK::CJSONConfiguration::Pointer cleanedConfiguration = new CALATK::CJSONConfiguration;
 
   lddmm->SetAutoConfiguration( combinedConfiguration, cleanedConfiguration );
@@ -73,11 +76,11 @@ int DoIt( int argc, char** argv )
     {
     if ( bCleanJSONConfigOutput )
       {
-      cleanedConfiguration->WriteCurrentConfigurationToJSONFile( configFileOut );
+      cleanedConfiguration->WriteCurrentConfigurationToJSONFile( configFileOut, CALATK::GetCALATKJsonHeaderString() + " --CLEANED" );
       }
     else
       {
-      combinedConfiguration->WriteCurrentConfigurationToJSONFile( configFileOut );
+      combinedConfiguration->WriteCurrentConfigurationToJSONFile( configFileOut, CALATK::GetCALATKJsonHeaderString() + " --COMBINED" );
       }
     }
 

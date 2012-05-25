@@ -104,11 +104,15 @@ CStateFactory< TFloat, VImageDimension >::GetStateTypeFromString( const std::str
     {
     return StateInitialImageMomentum;
     }
+  else if ( stateNameLowerCase == "stateinitialmomentum" )
+    {
+    return StateInitialMomentum;
+    }
   else if ( stateNameLowerCase == "statespatiotemporalvelocityfield" )
     {
     return StateSpatioTemporalVelocityField;
     }
-  else if ( stateNameLowerCase == "statemultiplestateswithinitalmomentum" )
+  else if ( stateNameLowerCase == "statemultiplestateswithinitialmomentum" )
     {
     return StateMultipleStatesWithInitialMomentum;
     }
@@ -116,7 +120,7 @@ CStateFactory< TFloat, VImageDimension >::GetStateTypeFromString( const std::str
     {
     return StateMultipleStatesWithSpatioTemporalVelocityField;
     }
-  else if ( stateNameLowerCase == "stateimagemultiplestateswithinitalmomentum" )
+  else if ( stateNameLowerCase == "stateimagemultiplestateswithinitialmomentum" )
     {
     return StateImageMultipleStatesWithInitialMomentum;
     }

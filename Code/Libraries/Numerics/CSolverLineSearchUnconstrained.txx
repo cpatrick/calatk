@@ -54,7 +54,9 @@ bool CSolverLineSearchUnconstrained< TState >::SolvePreInitialized()
 
   CEnergyValues CurrentEnergy = InitialEnergy;
 
-  for ( unsigned int uiIter = 0; uiIter<this->m_MaxNumberOfIterations; ++uiIter )
+  std::cout << "Unconstrained linesearch: requested at most " << this->m_MaxNumberOfIterations << " iterations." << std::endl;
+
+  for ( unsigned int uiIter = 0; uiIter < this->m_MaxNumberOfIterations; ++uiIter )
     {
 
     unsigned int uiRequiredIterations;

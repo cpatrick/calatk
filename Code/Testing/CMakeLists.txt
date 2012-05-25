@@ -80,6 +80,7 @@ function(add_ctest_test_testdriver_image_compare testName testDriver imBaseline 
     add_test(NAME ${testName}
       WORKING_DIRECTORY ${test_temp_dir}
       COMMAND ${testDriver}
+      --compareIntensityTolerance 0.1
       --compare ${imBaseline}
                 ${imResult}
       ${testName}
@@ -96,6 +97,7 @@ function(add_ctest_subtest_testdriver_image_compare testName subtestName testDri
     add_test(NAME ${testName}_${subtestName}
       WORKING_DIRECTORY ${test_temp_dir}
       COMMAND ${testDriver}
+      --compareIntensityTolerance 0.1
       --compare ${imBaseline}
                 ${imResult}
       ${testName}
@@ -190,103 +192,103 @@ target_link_libraries(testDriverAlgorithms CALATK ${ITK_LIBRARIES})
 # Add 1D Tests for different solvers
 add_ctest_subtest_testdriver_image_compare(calatkLDDMMTest simplifiedShooting1DFloat ${ALGORITHMS_TESTS_ALGORITHMS}
                           ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
-                          ${test_temp_dir}/1DCurveResult.nhdr
+                          ${test_temp_dir}/1DCurveResultLDDMMSimplifiedShootingFloat.nhdr
                           simplifiedShooting 1 float
 			  ${test_input_dir}/1DCurveSource.nhdr
 			  ${test_input_dir}/1DCurveTarget.nhdr
-			  ${test_temp_dir}/1DCurveResult.nhdr
+                          ${test_temp_dir}/1DCurveResultLDDMMSimplifiedShootingFloat.nhdr
                           ${CALATK_SOURCE_DIR}/Code/Testing/calatk1DTest.json
 			  )
 
 add_ctest_subtest_testdriver_image_compare(calatkLDDMMTest adjointShooting1DFloat ${ALGORITHMS_TESTS_ALGORITHMS}
                           ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
-                          ${test_temp_dir}/1DCurveResult.nhdr
+                          ${test_temp_dir}/1DCurveResultLDDMMAdjointFloat.nhdr
                           adjointShooting 1 float
                           ${test_input_dir}/1DCurveSource.nhdr
                           ${test_input_dir}/1DCurveTarget.nhdr
-                          ${test_temp_dir}/1DCurveResult.nhdr
+                          ${test_temp_dir}/1DCurveResultLDDMMAdjointFloat.nhdr
                           ${CALATK_SOURCE_DIR}/Code/Testing/calatk1DTest.json
                           )
 
 add_ctest_subtest_testdriver_image_compare(calatkLDDMMTest relaxation1DFloat ${ALGORITHMS_TESTS_ALGORITHMS}
                           ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
-                          ${test_temp_dir}/1DCurveResult.nhdr
+                          ${test_temp_dir}/1DCurveResultLDDMMRelaxationFloat.nhdr
                           relaxation 1 float
                           ${test_input_dir}/1DCurveSource.nhdr
                           ${test_input_dir}/1DCurveTarget.nhdr
-                          ${test_temp_dir}/1DCurveResult.nhdr
+                          ${test_temp_dir}/1DCurveResultLDDMMRelaxationFloat.nhdr
                           ${CALATK_SOURCE_DIR}/Code/Testing/calatk1DTest.json
                           )
 
 add_ctest_subtest_testdriver_image_compare(calatkLDDMMTest simplifiedShooting1DDouble ${ALGORITHMS_TESTS_ALGORITHMS}
                           ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
-                          ${test_temp_dir}/1DCurveResult.nhdr
+                          ${test_temp_dir}/1DCurveResultLDDMMSimplifiedShootingDouble.nhdr
                           simplifiedShooting 1 double
                           ${test_input_dir}/1DCurveSource.nhdr
                           ${test_input_dir}/1DCurveTarget.nhdr
-                          ${test_temp_dir}/1DCurveResult.nhdr
+                          ${test_temp_dir}/1DCurveResultLDDMMSimplifiedShootingDouble.nhdr
                           ${CALATK_SOURCE_DIR}/Code/Testing/calatk1DTest.json
                           )
 
 add_ctest_subtest_testdriver_image_compare(calatkLDDMMTest adjointShooting1DDouble ${ALGORITHMS_TESTS_ALGORITHMS}
                           ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
-                          ${test_temp_dir}/1DCurveResult.nhdr
+                          ${test_temp_dir}/1DCurveResultLDDMMAdjointDouble.nhdr
                           adjointShooting 1 double
                           ${test_input_dir}/1DCurveSource.nhdr
                           ${test_input_dir}/1DCurveTarget.nhdr
-                          ${test_temp_dir}/1DCurveResult.nhdr
+                          ${test_temp_dir}/1DCurveResultLDDMMAdjointDouble.nhdr
                           ${CALATK_SOURCE_DIR}/Code/Testing/calatk1DTest.json
                           )
 
 add_ctest_subtest_testdriver_image_compare(calatkLDDMMTest relaxation1DDouble ${ALGORITHMS_TESTS_ALGORITHMS}
                           ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
-                          ${test_temp_dir}/1DCurveResult.nhdr
+                          ${test_temp_dir}/1DCurveResultLDDMMRelaxationDouble.nhdr
                           relaxation 1 double
                           ${test_input_dir}/1DCurveSource.nhdr
                           ${test_input_dir}/1DCurveTarget.nhdr
-                          ${test_temp_dir}/1DCurveResult.nhdr
+                          ${test_temp_dir}/1DCurveResultLDDMMRelaxationDouble.nhdr
                           ${CALATK_SOURCE_DIR}/Code/Testing/calatk1DTest.json
                           )
 
 # Add metamorphosis tests
 # Add 1D Tests for different solvers
 add_ctest_subtest_testdriver_image_compare(calatkMetamorphosisTest simplifiedMetamorphosis1DFloat ${ALGORITHMS_TESTS_ALGORITHMS}
-                          ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
-                          ${test_temp_dir}/1DCurveResult.nhdr
+                          ${test_input_dir}/Baseline/1DMetamorphosisCurveResultBaseline.nhdr
+                          ${test_temp_dir}/1DCurveResultSimplifiedFloat.nhdr
                           MetamorphosisSimplified 1 float
-			  ${test_input_dir}/1DCurveSource.nhdr
-			  ${test_input_dir}/1DCurveMetamorphosisTarget.nhdr
-			  ${test_temp_dir}/1DCurveResult.nhdr
+                          ${test_input_dir}/1DMetamorphosisCurveSource.nhdr
+                          ${test_input_dir}/1DMetamorphosisCurveTarget.nhdr
+                          ${test_temp_dir}/1DCurveResultSimplifiedFloat.nhdr
                           ${CALATK_SOURCE_DIR}/Code/Testing/calatkMetamorphosis1DTest.json
 			  )
 
 add_ctest_subtest_testdriver_image_compare(calatkMetamorphosisTest simplifiedMetamorphosis1DDouble ${ALGORITHMS_TESTS_ALGORITHMS}
-                          ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
-                          ${test_temp_dir}/1DCurveResult.nhdr
+                          ${test_input_dir}/Baseline/1DMetamorphosisCurveResultBaseline.nhdr
+                          ${test_temp_dir}/1DCurveResultSimplifiedDouble.nhdr
                           MetamorphosisSimplified 1 double
-			  ${test_input_dir}/1DCurveSource.nhdr
-			  ${test_input_dir}/1DCurveMetamorphosisTarget.nhdr
-			  ${test_temp_dir}/1DCurveResult.nhdr
+                          ${test_input_dir}/1DMetamorphosisCurveSource.nhdr
+                          ${test_input_dir}/1DMetamorphosisCurveTarget.nhdr
+                          ${test_temp_dir}/1DCurveResultSimplifiedDouble.nhdr
                           ${CALATK_SOURCE_DIR}/Code/Testing/calatkMetamorphosis1DTest.json
 			  )
 
 add_ctest_subtest_testdriver_image_compare(calatkMetamorphosisTest adjointMetamorphosis1DFloat ${ALGORITHMS_TESTS_ALGORITHMS}
-                          ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
-                          ${test_temp_dir}/1DCurveResult.nhdr
-                          MetamorphosisAdjoint 1 float
-			  ${test_input_dir}/1DCurveSource.nhdr
-			  ${test_input_dir}/1DCurveMetamorphosisTarget.nhdr
-			  ${test_temp_dir}/1DCurveResult.nhdr
+                          ${test_input_dir}/Baseline/1DMetamorphosisCurveResultBaseline.nhdr
+                          ${test_temp_dir}/1DCurveResultAdjointFloat.nhdr
+                          MetamorphosisFullAdjoint 1 float
+                          ${test_input_dir}/1DMetamorphosisCurveSource.nhdr
+                          ${test_input_dir}/1DMetamorphosisCurveTarget.nhdr
+                          ${test_temp_dir}/1DCurveResultAdjointFloat.nhdr
                           ${CALATK_SOURCE_DIR}/Code/Testing/calatkMetamorphosis1DTest.json
 			  )
 
 add_ctest_subtest_testdriver_image_compare(calatkMetamorphosisTest adjointMetamorphosis1DDouble ${ALGORITHMS_TESTS_ALGORITHMS}
-                          ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
-                          ${test_temp_dir}/1DCurveResult.nhdr
-                          MetamorphosisAdjoint 1 double
-			  ${test_input_dir}/1DCurveSource.nhdr
-			  ${test_input_dir}/1DCurveMetamorphosisTarget.nhdr
-			  ${test_temp_dir}/1DCurveResult.nhdr
+                          ${test_input_dir}/Baseline/1DMetamorphosisCurveResultBaseline.nhdr
+                          ${test_temp_dir}/1DCurveResultAdjointDouble.nhdr
+                          MetamorphosisFullAdjoint 1 double
+                          ${test_input_dir}/1DMetamorphosisCurveSource.nhdr
+                          ${test_input_dir}/1DMetamorphosisCurveTarget.nhdr
+                          ${test_temp_dir}/1DCurveResultAdjointDouble.nhdr
                           ${CALATK_SOURCE_DIR}/Code/Testing/calatkMetamorphosis1DTest.json
 			  )
 

@@ -58,7 +58,7 @@ int DoIt( std::string MetamorphosisType, char* sourceImage, char* targetImage, c
     {
     plddmm = new regTypeFull;
     }
-  else if ( MetamorphosisType.compare( "MetamorphosisSimplifed" ) == 0 )
+  else if ( MetamorphosisType.compare( "MetamorphosisSimplified" ) == 0 )
     {
     plddmm = new regTypeSimplified;
     }
@@ -80,9 +80,13 @@ int DoIt( std::string MetamorphosisType, char* sourceImage, char* targetImage, c
 
   plddmm->Solve();
 
+  // generating map
+  // const typename VectorFieldType::Pointer ptrMap1 = new VectorFieldType( plddmm->GetMap( 1.0 ) );
+  // VectorImageUtilsType::writeFileITK( ptrMap1, resultImage );
 
-  const typename VectorFieldType::Pointer ptrMap1 = new VectorFieldType( plddmm->GetMap( 1.0 ) );
-  VectorImageUtilsType::writeFileITK( ptrMap1, resultImage );
+  const typename VectorImageType::Pointer ptrI0W1 = new VectorImageType( plddmm->GetImage( 1.0 ) );
+  // generating warped image
+  VectorImageUtilsType::writeFileITK( ptrI0W1, resultImage );
 
   return EXIT_SUCCESS;
 }
@@ -98,7 +102,7 @@ int calatkMetamorphosisTest( int argc, char * argv[] )
   if ( argc !=8 )
   {
     std::cout << "Found " << argc << " arguments." << std::endl;
-    std::cout << "Usage: calatkMetamorphosisTest metamorphosisType dim floatType sourceImage targetImage resultingImage" << std::endl;
+    std::cout << "Usage: calatkMetamorphosisTest metamorphosisType dim floatType sourceImage targetImage resultingImage configFileName" << std::endl;
     return EXIT_FAILURE;
   }
 

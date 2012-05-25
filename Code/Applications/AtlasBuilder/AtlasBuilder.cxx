@@ -68,11 +68,14 @@ int DoIt( int argc, char** argv )
     }
 
   CALATK::CJSONConfiguration::Pointer combinedConfiguration = new CALATK::CJSONConfiguration;
-  combinedConfiguration->ReadJSONFile( configFile );
+  if ( configFile.compare( "None" ) != 0 )
+  {
+    combinedConfiguration->ReadJSONFile( configFile );
+  }
   CALATK::CJSONConfiguration::Pointer cleanedConfiguration = new CALATK::CJSONConfiguration;
+
   atlasBuilder->SetAutoConfiguration( combinedConfiguration, cleanedConfiguration );
   atlasBuilder->SetAllowHelpComments( bCreateJSONHelp );
-
   atlasBuilder->Solve();
 
   // write out the resulting JSON file if desired
@@ -80,11 +83,11 @@ int DoIt( int argc, char** argv )
     {
       if ( bCleanJSONConfigOutput )
       {
-        cleanedConfiguration->WriteCurrentConfigurationToJSONFile( configFileOut );
+        cleanedConfiguration->WriteCurrentConfigurationToJSONFile( configFileOut, CALATK::GetCALATKJsonHeaderString() + " --CLEANED" );
       }
       else
       {
-        combinedConfiguration->WriteCurrentConfigurationToJSONFile( configFileOut );
+        combinedConfiguration->WriteCurrentConfigurationToJSONFile( configFileOut, CALATK::GetCALATKJsonHeaderString() + " --COMBINED" );
       }
     }
 

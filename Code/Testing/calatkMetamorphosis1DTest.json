@@ -1,0 +1,73 @@
+// CALATK version 0.1; JSON configuration file --COMBINED
+
+{
+	"GeneralRegistrationSettings" : 
+	{
+		"Kernel" : "HelmholtzKernel",
+		"Metric" : "SSD"
+	},
+	"HelmholtzKernel" : 
+	{
+		"Alpha" : 0.050,
+		"Gamma" : 1.0
+	},
+	"ImageManager" : 
+	{
+		"AutoScaleImages" : false
+	},
+	"LDDMMGeodesicShooting" : 
+	{
+		"EstimateInitialImage" : false,
+		"NumberOfDiscretizationVolumesPerUnitTime" : 10.0,
+		"SigmaSqr" : 0.010
+	},
+	"MultiScaleBlurHighestResolutionImage" : true,
+	"MultiScaleFinalOutput" : 
+	{
+		"OutputStateInformation" : false,
+		"OutputStateInformationFrequency" : 0
+	},
+	"MultiScaleGeneralSettings" : 
+	{
+		"NumberOfSubIterations" : 1,
+		"SingleScaleSolver" : "LineSearchUnconstrained"
+	},
+	"MultiScaleSettings" : 
+	[
+		
+		{
+			"LineSearch" : 
+			{
+				"AdjustStepSizeDownFactor" : 0.50,
+				"AdjustStepSizeDownNumber" : 2,
+				"AdjustStepSizeUpFactor" : 2.0,
+				"AdjustStepSizeUpNumber" : 2,
+				"AugmentedLagrangianInitialMu" : 10.0,
+				"AugmentedLagrangianNumberOfIterations" : 5,
+				"AugmentedLagrangianPenaltyIncreaseFactor" : 2.0,
+				"DecreaseConstant" : 0.0,
+				"InitialStepSize" : 1.000000000000000e-05,
+				"MaxNumberOfIterations" : 100,
+				"MaxNumberOfTries" : 10,
+				"MinAllowedStepSize" : 1.000000000000000e-08,
+				"OutputStateInformation" : false,
+				"OutputStateInformationFrequency" : 0,
+				"ReductionFactor" : 0.50
+			}
+		}
+	],
+	"MultiScaleSigmaInVoxels" : 1.0,
+	"OneStepEvolver" : 
+	{
+		"NumberOfThreads" : 1
+	},
+	"OneStepEvolverSemiLagrangianAdvection" : 
+	{
+		"NumberOfIterationsToDetermineFlowField" : 2,
+		"TimeStepFactor" : 1.0
+	},
+	"SimplifiedMetamorphosis" : 
+	{
+		"Rho" : 1.0
+	}
+}
