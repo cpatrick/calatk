@@ -64,13 +64,6 @@
             <description>Source images for the atlas building.</description>
         </string-vector>
 
-	<string>
-            <name>atlasImage</name>
-	    <longflag>--computedAtlas</longflag>
-            <label>Atlas Image</label>
-            <description>Resulting atlas image from atlas computation.</description>
-        </string>
-
 	<string-vector>
 	  <name>sourceToAtlasMaps</name>
 	  <longflag>--sourceToAtlasMaps</longflag>
@@ -115,6 +108,14 @@
           <default>false</default>
           <description>If set, will generate annotated settings in the JSON configuration file. This is to help understand the meaning and options of the different settings.</description>
         </boolean>
+
+        <image>
+            <name>atlasImage</name>
+            <label>Atlas Image</label>
+            <channel>output</channel>
+            <index>0</index>
+            <description>Resulting atlas image from atlas computation.</description>
+        </image>
 
   </parameters>
   
