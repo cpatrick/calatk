@@ -1,0 +1,238 @@
+/*
+*
+*  Copyright 2011, 2012 by the CALATK development team
+*
+*   Licensed under the Apache License, Version 2.0 (the "License");
+*   you may not use this file except in compliance with the License.
+*   You may obtain a copy of the License at
+*
+*     http://www.apache.org/licenses/LICENSE-2.0
+*
+*   Unless required by applicable law or agreed to in writing, software
+*   distributed under the License is distributed on an "AS IS" BASIS,
+*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*   See the License for the specific language governing permissions and
+*   limitations under the License.
+*
+*
+*/
+
+#ifndef C_IMAGE_MANAGER_H
+#define C_IMAGE_MANAGER_H
+
+#include "CALATKCommon.h"
+#include "VectorImage.h"
+#include "VectorField.h"
+#include <stdexcept>
+#include <string>
+#include <map>
+#include <set>
+#include <vector>
+#include "CProcessBase.h"
+#include "CImageInformation.h"
+
+namespace CALATK
+{
+
+/**
+ * \brief Base class to deal with a set of images.
+ *
+ * Those can be individual images, but also image time-series, and even from multiple subjects.
+ * Images are specified by filename and time-point. Multiple identical time-points are permissible.
+ * As the images are added they are assumed to be distinct and assigned unique identifiers.
+ * Deletion is done by identifiers.
+ *
+ */
+template < class TFloat, unsigned int VImageDimension=3 >
+class CImageManager : public CProcessBase
+{
+public:
+  /** Standard class typedefs. */
+  typedef CImageManager                   Self;
+  typedef CProcessBase                    Superclass;
+  typedef itk::SmartPointer< Self >       Pointer;
+  typedef itk::SmartPointer< const Self > ConstPointer;
+
+  typedef VectorImage< TFloat, VImageDimension > VectorImageType; /**< Image type of given dimension and floating point format. */
+  typedef VectorField< TFloat, VImageDimension > VectorFieldType; /**< Vector field type of given dimension and floating point format. */
+
+  struct TimeSeriesDataPointType
+  {
+    std::string imageFileName;
+    std::string imageTransformationFileName;
+    typename VectorImageType::Pointer image;
+    typename VectorFieldType::Pointer transform;
+    int sid; // subject id, should be constant when extracting a subject time-series
+    int uid; // unique id;
+    FloatType timePoint;
+  };
+
+  /* Sorting */
+  /** Custom compare method which makes sure that the datasets will be sorted with respect to time.*/
+  struct CompareTimepointsMethod
+  {
+    bool operator()( CImageInformation const & a, CImageInformation const & b) const
+    {
+      return a.timepoint < b.timepoint;
+    }
+  };
+
+  /********************************
+   * Typedefs *
+   ********************************/
+
+  /* All the image information over <b>all</b> subjects and images of <b>all</b> scales */
+  typedef std::multimap< int, ImageInformation, CompareTimepointsMethod > AllSubjectInformationType;
+
+  /********************************
+   * Constructors and Destructors *
+   ********************************/
+
+  /**
+   * Empty Constructor
+   */
+  CImageManager();
+
+  /**
+   * Destructor
+   */
+  virtual ~CImageManager();
+
+   /**
+   * @brief Registers the filename of an image with a given timepoint and subject id (for longitudinal studies)
+   *
+   * @param filename - filename of the image
+   * @param timepoint - time associated with image
+   * @param subjectIndex - subject index (if multiple subject should be stored)
+   * @return returns the id of the registered file, can be used to register a transform later on or to delete it
+   */
+  unsigned int AddImage( const std::string filename, T timepoint, int subjectIndex );
+
+
+  /**
+   * @brief Registers an image with a given timepoint and subject id (for longitudinal studies)
+   *
+   * @param pIm - pointer to image
+   * @param timepoint - time associated with image
+   * @param subjectIndex - subject index
+   * @return unsigned int - returns the id of the registered file
+   */
+  unsigned int AddImage( VectorImageType* pIm, T timepoint, int subjectIndex );
+
+  /**
+   * @brief Returns the image at full resolution (as loaded), based on the imageid.
+   *
+   * @param uid - unique id of a registered image
+   * @return image with given id
+   */
+  const VectorImageType* GetOriginalImageById( int uid );
+
+  /**
+   * @brief Registers the filename of an image transform for a given image
+   *
+   * @param filename - filename of the image
+   * @param uid - id of the image the transform should be registered with
+   * @return returns true if the registration was successful (false if there is no image with uiId)
+   */
+  bool AddImageTransform( const std::string filename, int uid );
+
+   /**
+   * Registers the filename of an image with a given timepoint and subject id (for longitudinal studies)
+   * together with its transformation
+   *
+   * @param filename - filename of the image
+   * @param transformFilename - filename of the image
+   * @param timepoint - time associated with image
+   * @param subjectIndex - subject index (if multiple subject should be stored)
+   * @return returns the unique id of the registered file, can be used to register a transform later on or to delete it
+   */
+  unsigned int AddImageAndTransform( const std::string filename, const std::string transformFilename, T timepoint, int subjectIndex );
+
+  /**
+   * Unregisters an image (also removes its transform and all data associated with it)
+   *
+   * @param uiId - unique data set id to be unregistered
+   * @return returns true if the image could be removed and false otherwise
+   */
+  virtual bool RemoveImage( int uiId );
+
+  /**
+   * Returns vectors to the actual image data, needs to be implemented by a derived class.
+   *
+   * @return pImInfo - the full subject information (a time-series for one subject)
+   * @param subjectIndex - subject index of the subject to be returned
+   */
+  virtual void GetTimeSeriesWithSubjectIndex( std::vector< TimeSeriesDataPointType >& timeseries, int subjectIndex );
+
+  /**
+   * Returns vectors of the time points for a specific subject.
+   * To be used for example for numerical solvers which need to discretize time over all time points
+   *
+   * @return timepoint - returns all the timepoints for the specified subject
+   * @param subjectIndex - index of the subject whose timepoints should be extracted
+   */
+  void GetTimepointsForSubjectIndex( std::vector< FloatType >& timepoints, int subjectIndex );
+
+  /**
+   * Returns the available subject ids
+   *
+   * @return Returns all the availabe subject indices registered with the image manager.
+   */
+  void GetAvailableSubjectIndices( std::vector< int >& availableSubjectIds );
+
+  /**
+   * Returns the number of available distinct subjects stored
+   *
+   * @return Returns the number of available subject indices registered with the image manager.
+   */
+  unsigned int GetNumberOfAvailableSubjectIndices();
+
+  /**
+   * Convenience method which returns a pointer to the first stored image.
+   * This can be used for example to initialize data sizes for upsampling
+   *
+   * @param uiSubjectIndex - desired subject index
+   * @return Returns the first image of the time series of the subject with the given subject index
+   */
+  const VectorImageType* GetGraftImagePointer( int uiSubjectIndex = 0 );
+
+  /**
+   * Prints the state of the image manager
+   */
+  void print( std::ostream& output );
+
+  /**
+    * Convenience method to test if the image manger supports multi-scaling.
+    *
+    * @return Returns true if the image manager supports multi scaling and false otherwise.
+    */
+  virtual bool SupportsMultiScaling()
+  {
+    return false;
+  }
+
+  SetMacro( AutoScaleImages, bool );
+  GetMacro( AutoScaleImages, bool );
+
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
+
+protected:
+
+private:
+
+  int m_CurrentRunningId; /**< Internal running id for datasets */
+  std::map< unsigned int, unsigned int> m_MapIdToSubjectId; /**< map which stores a map from image id to subject id */
+
+  AllSubjectInformationType m_AllSubjectInformation;
+
+  bool m_AutoScaleImages;
+  bool DefaultAutoScaleImages;
+  bool m_ExternallySetAutoScaleImages;
+
+};
+
+#include "CImageManager.txx"
+
+} // end namespace
+
+#endif
