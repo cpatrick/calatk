@@ -52,14 +52,14 @@ int DoIt( int argc, char** argv )
   typedef CALATK::CAtlasBuilder< TState > regType;
 
   typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension > VectorImageUtilsType;
-  typedef CALATK::CImageManagerMultiScale< TFLOAT, VImageDimension > ImageManagerMultiScaleType;
+  typedef CALATK::CImageManager< TFLOAT, VImageDimension > ImageManagerType;
   typedef CALATK::LDDMMUtils< TFLOAT, VImageDimension > LDDMMUtilsType;
   typedef typename regType::VectorImageType VectorImageType;
   typedef typename regType::VectorFieldType VectorFieldType;
 
   typename regType::Pointer atlasBuilder = new regType;
 
-  ImageManagerMultiScaleType* ptrImageManager = dynamic_cast< ImageManagerMultiScaleType* >( atlasBuilder->GetImageManagerPointer() );
+  ImageManagerType* ptrImageManager = dynamic_cast< ImageManagerType* >( atlasBuilder->GetImageManagerPointer() );
 
   for ( unsigned int iI=0; iI < sourceImages.size(); ++iI )
     {

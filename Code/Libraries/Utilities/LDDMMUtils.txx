@@ -150,7 +150,7 @@ unsigned int LDDMMUtils< T, VImageDimension >::DetermineTimeSeriesTimePointData(
   unsigned int uiNumberOfMeasurements = 0;
 
   // get the subject ids
-  std::vector< unsigned int > vecSubjectIndices;
+  std::vector< int > vecSubjectIndices;
   ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
 
   unsigned int uiNumberOfDifferentSubjects = vecSubjectIndices.size();
@@ -169,50 +169,49 @@ unsigned int LDDMMUtils< T, VImageDimension >::DetermineTimeSeriesTimePointData(
   std::cout << "Measurement timepoints = " << vecMeasurementTimepoints << std::endl;
 
   // get the full time-course information for the subject
-  SubjectInformationType* pSubjectInfo;
-  ptrImageManager->GetImagesWithSubjectIndex( pSubjectInfo, vecSubjectIndices[ uiSubjectIndex ] );
+  std::vector< TimeSeriesDataPointType > timeSeries;
+  ptrImageManager->GetTimeSeriesWithSubjectIndex( timeSeries, vecSubjectIndices[ uiSubjectIndex ] );
 
   // clear the time-point information vector
-
   vecTimePointData.clear();
 
   // now enter all the time-point information based on the subject information
 
   // go through all the timepoints and enter them into the vecTimeDiscretization structure
 
-  typename SubjectInformationType::iterator iter;
+  typename std::vector< TimeSeriesDataPointType >::iterator iter;
 
   // TODO: just make the image manager return this type of data-structure by default
 
   T dLastTimePoint = 0;
   bool bFirstValue = true;
 
-  for ( iter = pSubjectInfo->begin(); iter != pSubjectInfo->end(); ++iter )
+  for ( iter = timeSeries.begin(); iter != timeSeries.end(); ++iter )
     {
 
     uiNumberOfMeasurements++;
 
-    if ( !bFirstValue && ( dLastTimePoint == (*iter)->timepoint ) )
+    if ( !bFirstValue && ( dLastTimePoint == iter->GetTimePoint() ) )
       {
       // if there is a multiple measurement
       unsigned int uiLast = vecTimePointData.size()-1;
-      vecTimePointData[ uiLast ].vecMeasurementImages.push_back( (*iter)->Image );
-      vecTimePointData[ uiLast ].vecMeasurementTransforms.push_back( (*iter)->pTransform );
+      vecTimePointData[ uiLast ].vecMeasurementImages.push_back( iter->GetImage() );
+      vecTimePointData[ uiLast ].vecMeasurementTransforms.push_back( iter->GetTransform() );
       }
     else
       {
       // fill the time-point stucture
       STimePoint timePoint;
       timePoint.bIsMeasurementPoint = true; // all of them are measurements
-      timePoint.dTime = (*iter)->timepoint;
-      timePoint.vecMeasurementImages.push_back( (*iter)->Image );
-      timePoint.vecMeasurementTransforms.push_back( (*iter)->pTransform );
+      timePoint.dTime = iter->GetTimePoint();
+      timePoint.vecMeasurementImages.push_back( iter->GetImage() );
+      timePoint.vecMeasurementTransforms.push_back( iter->GetTransform() );
 
       vecTimePointData.push_back( timePoint );
 
       }
 
-      dLastTimePoint = (*iter)->timepoint;
+      dLastTimePoint = iter->GetTimePoint();
       bFirstValue = false;
 
     }

@@ -75,9 +75,8 @@ protected:
   typedef typename Superclass::VectorPointerToVectorFieldPointerType VectorPointerToVectorFieldPointerType;
   typedef typename Superclass::VectorPointerToVectorImagePointerType VectorPointerToVectorImagePointerType;
 
-  typedef typename Superclass::ImageManagerType       ImageManagerType;
-  typedef typename Superclass::ImageInformation       ImageInformation;
-  typedef typename Superclass::SubjectInformationType SubjectInformationType;
+  typedef typename Superclass::ImageManagerType        ImageManagerType;
+  typedef typename Superclass::TimeSeriesDataPointType TimeSeriesDataPointType;
 
   void ComputeImagesForward();
   void ComputeAdjointBackward();

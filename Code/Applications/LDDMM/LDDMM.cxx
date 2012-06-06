@@ -29,7 +29,7 @@
 #include "CAlgorithmBase.h"
 #include "CLDDMMGenericRegistration.h"
 #include "VectorImageUtils.h"
-#include "CImageManagerMultiScale.h"
+#include "CImageManager.h"
 
 #include "CJSONConfiguration.h"
 
@@ -51,7 +51,7 @@ int DoIt( int argc, char** argv )
 
   // general typedefs
   typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension > VectorImageUtilsType;
-  typedef CALATK::CImageManagerMultiScale< TFLOAT, VImageDimension > ImageManagerMultiScaleType;
+  typedef CALATK::CImageManager< TFLOAT, VImageDimension > ImageManagerType;
   typedef CALATK::LDDMMUtils< TFLOAT, VImageDimension > LDDMMUtilsType;
   typedef CALATK::VectorImage< TFLOAT, VImageDimension > VectorImageType;
   typedef CALATK::VectorField< TFLOAT, VImageDimension > VectorFieldType;
@@ -90,7 +90,7 @@ int DoIt( int argc, char** argv )
     return EXIT_FAILURE;
   }
 
-  ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( plddmm->GetImageManagerPointer() );
+  ImageManagerType* ptrImageManager = dynamic_cast<ImageManagerType*>( plddmm->GetImageManagerPointer() );
 
   unsigned int uiI0 = ptrImageManager->AddImage( sourceImage, 0.0, 0 );
   ptrImageManager->AddImage( targetImage, 1.0, 0 );

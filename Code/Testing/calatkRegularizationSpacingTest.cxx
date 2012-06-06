@@ -23,9 +23,9 @@
 
 #include "CLDDMMGrowthModelRegistration.h"
 #include "CStateSpatioTemporalVelocityField.h"
-#include "CImageManagerMultiScale.h"
-#include "VectorImageUtils.h"
 #include "CHelmholtzKernel.h"
+#include "VectorImageUtils.h"
+#include "CImageManager.h"
 
 #include <string>
 #include <stdlib.h>
@@ -50,9 +50,9 @@ int DoIt( int argc, char* argv[] )
   // define the registration method based on this state
   typedef CALATK::CLDDMMGrowthModelRegistration< TState > RegistrationType;
 
-  typedef CALATK::CImageManagerMultiScale< TFLOAT, VImageDimension > ImageManagerMultiScaleType;
-  typedef typename RegistrationType::VectorImageType                          VectorImageType;
-  typedef typename RegistrationType::VectorFieldType                          VectorFieldType;
+  typedef CALATK::CImageManager< TFLOAT, VImageDimension >           ImageManagerType;
+  typedef typename RegistrationType::VectorImageType                 VectorImageType;
+  typedef typename RegistrationType::VectorFieldType                 VectorFieldType;
   typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension >        VectorImageUtilsType;
   typedef CALATK::LDDMMUtils< TFLOAT, VImageDimension >              LDDMMUtilsType;
 
@@ -78,7 +78,7 @@ int DoIt( int argc, char* argv[] )
     pIm1->SetSpacingZ( spacingFactor*pIm1->GetSpacingZ() );
     }
 
-  typename ImageManagerMultiScaleType::Pointer ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm->GetImageManagerPointer() );
+  typename ImageManagerType::Pointer ptrImageManager = dynamic_cast<ImageManagerType*>( lddmm->GetImageManagerPointer() );
 
   unsigned int uiI0 = ptrImageManager->AddImage( pIm0, 0.0, 0 );
   ptrImageManager->AddImage( pIm1, 1.0, 0 );

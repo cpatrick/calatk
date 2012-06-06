@@ -107,11 +107,9 @@ protected:
 
   void CreateTimeDiscretization();
 
-  typedef CImageManager< T, TState::ImageDimension >        ImageManagerType;
-  typedef typename ImageManagerType::ImageInformation       ImageInformation;
-  typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
-
-  typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;
+  typedef typename Superclass::ImageManagerType        ImageManagerType;
+  typedef typename Superclass::TimeSeriesDataPointType TimeSeriesDataPointType;
+  typedef typename Superclass::STimePoint STimePoint;
 
 private:
   typename VectorFieldType::Pointer m_ptrMapIn; // map for the numerical solution

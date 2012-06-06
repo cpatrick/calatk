@@ -90,9 +90,8 @@ protected:
   typedef typename Superclass::VectorPointerToVectorFieldPointerType VectorPointerToVectorFieldPointerType;
   typedef typename Superclass::VectorPointerToVectorImagePointerType VectorPointerToVectorImagePointerType;
   
-  typedef typename Superclass::ImageManagerType ImageManagerType;
-  typedef typename Superclass::ImageInformation ImageInformation;
-  typedef typename Superclass::SubjectInformationType SubjectInformationType;
+  typedef typename Superclass::ImageManagerType        ImageManagerType;
+  typedef typename Superclass::TimeSeriesDataPointType TimeSeriesDataPointType;
 
   void ComputeImagesForward();
   void ComputeAdjointBackward();
@@ -110,11 +109,11 @@ private:
 
   unsigned int m_uiTimeIndexOfTimePoint1;
 
-  ImageInformation* m_ptrImageInformation0;
-  ImageInformation* m_ptrImageInformation1;
+  TimeSeriesDataPointType m_ImageInformation0;
+  TimeSeriesDataPointType m_ImageInformation1;
 
-  ImageInformation* m_ptrMaskInformation0;
-  ImageInformation* m_ptrMaskInformation1;
+  TimeSeriesDataPointType m_MaskInformation0;
+  TimeSeriesDataPointType m_MaskInformation1;
 
   // just convenience pointers to make writing the algorithms easier
   // memory pointed to is taken care of by the imageManager (it there a way to make them const?)

@@ -50,6 +50,9 @@ public:
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 
+  typedef typename Superclass::ImageManagerType        ImageManagerType;
+  typedef typename Superclass::TimeSeriesDataPointType TimeSeriesDataPointType;
+
   CLDDMMGeodesicShootingObjectiveFunction();
   virtual ~CLDDMMGeodesicShootingObjectiveFunction();
 

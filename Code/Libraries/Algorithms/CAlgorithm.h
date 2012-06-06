@@ -21,7 +21,7 @@
 #define C_ALGORITHM_H
 
 #include "CAlgorithmBase.h"
-#include "CImageManagerMultiScale.h"
+#include "CImageManager.h"
 
 namespace CALATK
 {

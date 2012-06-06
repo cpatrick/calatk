@@ -247,7 +247,7 @@ unsigned int CAtlasBuilder< TState >::GetCurrentActiveRegistration()
 template < class TState >
 void CAtlasBuilder< TState >::SetDefaultImageManagerPointer()
 {
-  this->m_ptrImageManager = new CImageManagerMultiScale< T, TState::ImageDimension >;
+  this->m_ptrImageManager = new CImageManager< T, TState::ImageDimension >;
 }
 
 template < class TState >

@@ -29,10 +29,16 @@
 #include <set>
 #include <vector>
 #include "CProcessBase.h"
+
 #include "CImageInformation.h"
+
 
 namespace CALATK
 {
+
+/** Forward declarations */
+template < class TFloat, unsigned int VImageDimension > class CGaussianKernel;
+template < class TFloat, unsigned int VImageDimension > class CResamplerLinear;
 
 /**
  * \brief Base class to deal with a set of images.
@@ -53,36 +59,34 @@ public:
   typedef itk::SmartPointer< Self >       Pointer;
   typedef itk::SmartPointer< const Self > ConstPointer;
 
-  typedef VectorImage< TFloat, VImageDimension > VectorImageType; /**< Image type of given dimension and floating point format. */
-  typedef VectorField< TFloat, VImageDimension > VectorFieldType; /**< Vector field type of given dimension and floating point format. */
+  typedef TFloat FloatType;
 
-  struct TimeSeriesDataPointType
-  {
-    std::string imageFileName;
-    std::string imageTransformationFileName;
-    typename VectorImageType::Pointer image;
-    typename VectorFieldType::Pointer transform;
-    int sid; // subject id, should be constant when extracting a subject time-series
-    int uid; // unique id;
-    FloatType timePoint;
-  };
+  typedef VectorImage< FloatType, VImageDimension > VectorImageType; /**< Image type of given dimension and floating point format. */
+  typedef VectorField< FloatType, VImageDimension > VectorFieldType; /**< Vector field type of given dimension and floating point format. */
+
+  typedef CResamplerLinear< FloatType, VImageDimension > ResamplerType;
+  typedef CGaussianKernel< FloatType, VImageDimension > GaussianKernelType;
+
+  typedef CImageInformation< FloatType, VImageDimension > TimeSeriesDataPointType;
 
   /* Sorting */
-  /** Custom compare method which makes sure that the datasets will be sorted with respect to time.*/
-  struct CompareTimepointsMethod
+  /** Custom compare method which makes sure that the datasets will be sorted based on subject ids.*/
+  struct CompareSubjectIds
   {
-    bool operator()( CImageInformation const & a, CImageInformation const & b) const
+    bool operator()( int const & a, int const & b) const
     {
-      return a.timepoint < b.timepoint;
+      return a < b; // sorting based on subject indices
     }
   };
 
-  /********************************
-   * Typedefs *
-   ********************************/
-
-  /* All the image information over <b>all</b> subjects and images of <b>all</b> scales */
-  typedef std::multimap< int, ImageInformation, CompareTimepointsMethod > AllSubjectInformationType;
+  /** Custom compare method to sort based on timepoints; to sort time-series vectors based on time before returning them */
+  struct CompareTimePoints
+  {
+    bool operator()( TimeSeriesDataPointType const & a, TimeSeriesDataPointType const & b ) const
+    {
+      return a.GetTimePoint() < b.GetTimePoint(); // sorting based on timepoint
+    }
+  };
 
   /********************************
    * Constructors and Destructors *
@@ -98,16 +102,53 @@ public:
    */
   virtual ~CImageManager();
 
+  /**
+   * @brief Adds an image scale to support multi-scaling
+   *
+   * @param scale
+   * @param scaleIdx
+   */
+  void AddScale( FloatType scale, unsigned int scaleIdx );
+
+  /**
+   * @brief Removes a particular scale with given index
+   *
+   * @param scaleIdx
+   */
+  void RemoveScale( unsigned int scaleIdx );
+
+  /**
+   * @brief Returns the number of specified scales
+   *
+   * @return unsigned int
+   */
+  unsigned int GetNumberOfScales();
+
+  /**
+   * @brief Selects a current scale. Any information requested from the image manager will be with respect to the currently selected scale.
+   *
+   * @param scaleIdx
+   */
+  void SelectScale( unsigned int scaleIdx );
+
    /**
    * @brief Registers the filename of an image with a given timepoint and subject id (for longitudinal studies)
    *
    * @param filename - filename of the image
    * @param timepoint - time associated with image
    * @param subjectIndex - subject index (if multiple subject should be stored)
-   * @return returns the id of the registered file, can be used to register a transform later on or to delete it
+   * @return int -- returns the id of the registered file, can be used to register a transform later on or to delete it
    */
-  unsigned int AddImage( const std::string filename, T timepoint, int subjectIndex );
+  int AddImage( const std::string filename, FloatType timepoint, int subjectIndex );
 
+  /**
+   * @brief Registers the filename of an image with a given timepoint *for all subject ids*
+   *
+   * @param filename -- filename of the image
+   * @param timepoint -- time associated with image
+   * @return int -- returns the id of the registered file
+   */
+  int AddCommonImage( const std::string filename, FloatType timepoint );
 
   /**
    * @brief Registers an image with a given timepoint and subject id (for longitudinal studies)
@@ -115,12 +156,21 @@ public:
    * @param pIm - pointer to image
    * @param timepoint - time associated with image
    * @param subjectIndex - subject index
-   * @return unsigned int - returns the id of the registered file
+   * @return int - returns the id of the registered image
    */
-  unsigned int AddImage( VectorImageType* pIm, T timepoint, int subjectIndex );
+  int AddImage( VectorImageType* pIm, FloatType timepoint, int subjectIndex );
 
   /**
-   * @brief Returns the image at full resolution (as loaded), based on the imageid.
+   * @brief  Registers an image with a given timepoint *for all subject ids*
+   *
+   * @param pIm -- pointer to image
+   * @param timepoint -- time associated with image
+   * @return int -- returns the id of the registered image
+   */
+  int AddCommonImage( VectorImageType* pIm, FloatType timepoint );
+
+  /**
+   * @brief Returns the image at full resolution (as loaded), based on the unique image id.
    *
    * @param uid - unique id of a registered image
    * @return image with given id
@@ -128,25 +178,40 @@ public:
   const VectorImageType* GetOriginalImageById( int uid );
 
   /**
-   * @brief Registers the filename of an image transform for a given image
+   * @brief Returns the image at the currently selected resolution, based on the unique image id.
    *
-   * @param filename - filename of the image
+   * @param uid -- unique id of a registered image
+   * @return const VectorImageType
+   */
+  const VectorImageType* GetImageById( int uid );
+
+  /**
+   * @brief Registers the filename of an image transform for a given image
    * @param uid - id of the image the transform should be registered with
-   * @return returns true if the registration was successful (false if there is no image with uiId)
+   * @return int -- returns true if the registration was successful (false if there is no image with uiId)
    */
   bool AddImageTransform( const std::string filename, int uid );
 
    /**
-   * Registers the filename of an image with a given timepoint and subject id (for longitudinal studies)
-   * together with its transformation
+   * @brief Registers the filename of an image with a given timepoint and subject id (for longitudinal studies) together with its transformation
    *
    * @param filename - filename of the image
-   * @param transformFilename - filename of the image
+   * @param transformFilename - filename of the transform
    * @param timepoint - time associated with image
    * @param subjectIndex - subject index (if multiple subject should be stored)
-   * @return returns the unique id of the registered file, can be used to register a transform later on or to delete it
+   * @return int -- returns the unique id of the registered file, can be used to register a transform later on or to delete it
    */
-  unsigned int AddImageAndTransform( const std::string filename, const std::string transformFilename, T timepoint, int subjectIndex );
+  int AddImageAndTransform( const std::string filename, const std::string transformFilename, FloatType timepoint, int subjectIndex );
+
+  /**
+   * @brief Registers the filename of an image with a given timepoint *for all subject ids* (for longitudinal studies) together with its transformation
+   *
+   * @param filename -- filename of the image
+   * @param transformFilename -- filename of the transform
+   * @param timepoint -- time associated with image
+   * @return int -- returns the unique id of the registered file
+   */
+  int AddCommonImageAndTransform( const std::string filename, const std::string transformFilename, FloatType timepoint );
 
   /**
    * Unregisters an image (also removes its transform and all data associated with it)
@@ -197,42 +262,83 @@ public:
   const VectorImageType* GetGraftImagePointer( int uiSubjectIndex = 0 );
 
   /**
+   * @brief Returns true if there is more than one scale registered (and hence multi-scaling can be performed) and otherwise false.
+   *
+   * @return bool
+   */
+  bool SupportsMultiScaling();
+
+  /**
    * Prints the state of the image manager
    */
   void print( std::ostream& output );
 
-  /**
-    * Convenience method to test if the image manger supports multi-scaling.
-    *
-    * @return Returns true if the image manager supports multi scaling and false otherwise.
-    */
-  virtual bool SupportsMultiScaling()
-  {
-    return false;
-  }
-
   SetMacro( AutoScaleImages, bool );
   GetMacro( AutoScaleImages, bool );
 
+  // this is the image blurring for the multi-scale pyramid. It is specified in voxel units
+  SetMacro( Sigma, FloatType );
+  GetMacro( Sigma, FloatType );
+
+  // this variable determines if the highest resolution image should be blurred to compute the solution or not
+  SetMacro( BlurHighestResolutionImage, bool );
+  GetMacro( BlurHighestResolutionImage, bool );
+
   virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
+  static const int COMMON_SUBJECT_ID = -1;  /**< Subject id which is assigned to the datasets which are common for all the subject ids */
+
 protected:
+
+  /**
+   * @brief Returns true if for the full range of scale indeces specified (0 to maxScaleIndex) the scales have been given and false otherwise.
+   *
+   * @return bool
+   */
+  bool ScalesForAllIndicesAreSpecified();
 
 private:
 
   int m_CurrentRunningId; /**< Internal running id for datasets */
-  std::map< unsigned int, unsigned int> m_MapIdToSubjectId; /**< map which stores a map from image id to subject id */
+  std::map< unsigned int, unsigned int> m_MapIdToSubjectId; /**< map which stores a map from image id to subject id, -1 values indicate common datasets */
+
+  /********************************
+   * Typedefs *
+   ********************************/
+
+  /* All the image information over <b>all</b> subjects and images of <b>all</b> scales */
+  typedef std::multimap< int, TimeSeriesDataPointType, CompareSubjectIds > AllSubjectInformationType;
+  typedef std::vector< TimeSeriesDataPointType > AllCommonSubjectInformationType;
 
   AllSubjectInformationType m_AllSubjectInformation;
+  AllCommonSubjectInformationType m_AllCommonSubjectInformation;
+
+  itk::SmartPointer< ResamplerType > m_Resampler;
+  itk::SmartPointer< GaussianKernelType > m_GaussianKernel;
+
+  unsigned int m_CurrentlySelectedScale;
+  std::vector< FloatType >    m_ScaleVector;
+  std::vector< bool > m_ScaleWasSet;
 
   bool m_AutoScaleImages;
   bool DefaultAutoScaleImages;
   bool m_ExternallySetAutoScaleImages;
 
+  FloatType m_Sigma;
+  const FloatType DefaultSigma;
+  bool m_ExternallySetSigma;
+
+  bool m_BlurHighestResolutionImage;
+  bool DefaultBlurHighestResolutionImage;
+  bool m_ExternallySetBlurHighestResolutionImage;
+
+  bool m_ImagesWereRegistered; ///< disallow changes the scales afer images have been registered
+
 };
 
-#include "CImageManager.txx"
-
 } // end namespace
+
+#include "CGaussianKernel.h"
+#include "CResamplerLinear.h"
 
 #endif

@@ -21,11 +21,12 @@
 #define C_RESAMPLER_H
 
 #include "VectorImage.h"
-#include "CGaussianKernel.h"
 #include "CALATKCommon.h"
 
 #include "CProcessBase.h"
 #include "CJSONConfiguration.h"
+
+#include "CGaussianKernel.h"
 
 namespace CALATK
 {
@@ -57,7 +58,7 @@ public:
 
 protected:
   typedef  CGaussianKernel< T, VImageDimension > GaussianKernelType;
-  typename GaussianKernelType::Pointer          m_ptrGaussianKernel;
+  typename GaussianKernelType::Pointer m_ptrGaussianKernel;
 
   T m_Sigma;
 
@@ -66,8 +67,8 @@ private:
   bool    m_ExternallySetSigma;
 };
 
-#include "CResampler.txx"
-
 } // end namespace
+
+#include "CResampler.txx"
 
 #endif

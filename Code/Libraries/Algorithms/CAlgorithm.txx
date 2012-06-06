@@ -75,7 +75,7 @@ void CAlgorithm< TState >::Solve()
     throw std::logic_error( "CAlgorithm: Image manager not initialized. Did you specify input images?" );
     }
 
-  typedef CImageManagerMultiScale< T, TState::ImageDimension > ImageManagerMultiScaleType;
+  typedef CImageManager< T, TState::ImageDimension > ImageManagerMultiScaleType;
 
   // fill in multi-scale information if we have it
   ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( this->m_ptrImageManager.GetPointer() );

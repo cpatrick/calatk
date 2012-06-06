@@ -82,13 +82,6 @@ CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::CLDDMMGeometricMetamorp
   m_ptrTmpVelocityField = NULL;
   m_ptrTmpGradient = NULL;
 
-  // pointers to measured image information
-  m_ptrImageInformation0 = NULL;
-  m_ptrImageInformation1 = NULL;
-
-  m_ptrMaskInformation0 = NULL;
-  m_ptrMaskInformation1 = NULL;
-
   // kernel pointer
   m_ptrMaskKernel = NULL;
 
@@ -141,25 +134,35 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::DeleteAuxiliaryStr
 template < class TState >
 void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::CreateAuxiliaryStructures()
 {
-// get the subject ids
-  std::vector< unsigned int > vecSubjectIndices;
+// get the subject id's, there should only be two here!!
+  std::vector< int > vecSubjectIndices;
   this->m_ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
 
   // assumes a given set of subject indices for image (0) and mask (1)
-  assert( vecSubjectIndices[ 0 ] == 0 && vecSubjectIndices[ 1 ] == 1 );
+  if ( !( vecSubjectIndices[ 0 ] == 0 && vecSubjectIndices[ 1 ] == 1 ) )
+  {
+    throw std::runtime_error( "Geometric metamorphosis requires two time-series, one with subject index 0 and the other one with subject index 1." );
+    return;
+  }
 
   // get the full time-course information for subject index 0 and 1
-  SubjectInformationType* pSubjectInfoImage;
-  this->m_ptrImageManager->GetImagesWithSubjectIndex( pSubjectInfoImage, 0 );
+  std::vector< TimeSeriesDataPointType > timeSeries0;
+  std::vector< TimeSeriesDataPointType > timeSeries1;
 
-  SubjectInformationType* pSubjectInfoMask;
-  this->m_ptrImageManager->GetImagesWithSubjectIndex( pSubjectInfoMask, 1 );
+  this->m_ptrImageManager->GetTimeSeriesWithSubjectIndex( timeSeries0, 0 );
+  this->m_ptrImageManager->GetTimeSeriesWithSubjectIndex( timeSeries1, 1 );
 
-  this->m_ptrImageManager->GetPointerToSubjectImageInformationBySubjectInformationAndIndex( m_ptrImageInformation0, pSubjectInfoImage, 0 );
-  this->m_ptrImageManager->GetPointerToSubjectImageInformationBySubjectInformationAndIndex( m_ptrImageInformation1, pSubjectInfoImage, 1 );
+  // make sure that we only have two
+  if ( !( timeSeries0.size()==2 && timeSeries1.size()==2 ) )
+  {
+    throw std::runtime_error( "Geometric metamorphosis requires exactly two time-points for each time-series." );
+    return;
+  }
 
-  this->m_ptrImageManager->GetPointerToSubjectImageInformationBySubjectInformationAndIndex( m_ptrMaskInformation0, pSubjectInfoMask, 0 );
-  this->m_ptrImageManager->GetPointerToSubjectImageInformationBySubjectInformationAndIndex( m_ptrMaskInformation1, pSubjectInfoMask, 1 );
+  m_ImageInformation0 = timeSeries0[ 0 ];
+  m_ImageInformation1 = timeSeries0[ 1 ];
+  m_MaskInformation0 = timeSeries1[ 0 ];
+  m_MaskInformation1 = timeSeries1[ 1 ];
 
   m_uiTimeIndexOfTimePoint1 = DetermineTimeIndexOfTimePoint1();
 
@@ -228,12 +231,12 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::CreateAuxiliaryStr
   // now make all the associations for the convenience pointers
   
   // mask image at different time-points
-  ptrT0 = m_ptrMaskInformation0->Image;
-  ptrT2 = m_ptrMaskInformation1->Image;
+  ptrT0 = m_MaskInformation0.GetImage();
+  ptrT2 = m_MaskInformation1.GetImage();
 
   // measured images at different time-points
-  ptrI0 = m_ptrImageInformation0->Image;
-  ptrI1 = m_ptrImageInformation1->Image;
+  ptrI0 = m_ImageInformation0.GetImage();
+  ptrI1 = m_ImageInformation1.GetImage();
 
   // estimates at different time-points (subjected to the velocity field)
   ptrEstI1 = (*m_ptrI)[ m_uiTimeIndexOfTimePoint1 ];
@@ -295,7 +298,7 @@ template < class TState >
 void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::DetermineTimePointData( std::vector< STimePoint >& vecTimePointData )
 {
   // get the subject ids
-  std::vector< unsigned int > vecSubjectIndices;
+  std::vector< int > vecSubjectIndices;
   this->m_ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
 
   unsigned int uiNumberOfDifferentSubjects = vecSubjectIndices.size();
@@ -323,8 +326,6 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::DetermineTimePoint
 
   // now enter all the time-point information, assuming 0, 1, and 2 timepoints
   // do not enter the measured information, becasue we will strore this seperately for the geomet case
-
-  typename SubjectInformationType::iterator iter;
 
   STimePoint timePoint0;
   timePoint0.bIsMeasurementPoint = true;

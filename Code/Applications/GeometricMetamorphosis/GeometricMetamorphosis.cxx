@@ -27,7 +27,7 @@
 #include "CStateSpatioTemporalVelocityField.h"
 #include "CLDDMMGeometricMetamorphosisRegistration.h"
 #include "VectorImageUtils.h"
-#include "CImageManagerMultiScale.h"
+#include "CImageManager.h"
 #include "LDDMMUtils.h"
 
 #include "GeometricMetamorphosisCLP.h"
@@ -43,14 +43,14 @@ int DoIt( int argc, char** argv )
   typedef CALATK::CLDDMMGeometricMetamorphosisRegistration< TState > RegistrationType;
 
   typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension > VectorImageUtilsType;
-  typedef CALATK::CImageManagerMultiScale< TFLOAT, VImageDimension > ImageManagerMultiScaleType;
+  typedef CALATK::CImageManager< TFLOAT, VImageDimension > ImageManagerType;
   typedef CALATK::LDDMMUtils< TFLOAT, VImageDimension > LDDMMUtilsType;
   typedef typename RegistrationType::VectorFieldType VectorFieldType;
   typedef typename RegistrationType::VectorImageType VectorImageType;
 
   typename RegistrationType::Pointer lddmm = new RegistrationType();
 
-  ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm->GetImageManagerPointer() );
+  ImageManagerType* ptrImageManager = dynamic_cast<ImageManagerType*>( lddmm->GetImageManagerPointer() );
 
   std::string runCaseType = "run3";
 

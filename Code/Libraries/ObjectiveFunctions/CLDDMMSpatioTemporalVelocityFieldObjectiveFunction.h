@@ -72,11 +72,9 @@ protected:
   typedef typename VectorImageType::Pointer      VectorImagePointerType;
   typedef std::vector< VectorImagePointerType >* VectorPointerToVectorImagePointerType;
 
-  typedef CImageManager< T, TState::ImageDimension >        ImageManagerType;
-  typedef typename ImageManagerType::ImageInformation       ImageInformation;
-  typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
-
-  typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;
+  typedef typename Superclass::ImageManagerType        ImageManagerType;
+  typedef typename Superclass::TimeSeriesDataPointType TimeSeriesDataPointType;
+  typedef typename Superclass::STimePoint STimePoint;
 
   void InitializeDataStructures();
   void InitializeDataStructuresFromState( TState* ptrState );

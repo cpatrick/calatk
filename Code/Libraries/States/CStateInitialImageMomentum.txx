@@ -84,7 +84,7 @@ CStateInitialImageMomentum< TFloat, VImageDimension >::CStateInitialImageMomentu
 // constructor which takes an image and a momentum (also an image) as input
 //
 template < class TFloat, unsigned int VImageDimension >
-CStateInitialImageMomentum< TFloat, VImageDimension >::CStateInitialImageMomentum( VectorImageType* ptrGraftImage )
+CStateInitialImageMomentum< TFloat, VImageDimension >::CStateInitialImageMomentum( const VectorImageType* ptrGraftImage )
   : m_ptrInitialImage( NULL ), 
     m_ptrInitialMomentum( NULL ),
     m_NumberOfStateVectorElements( 0 ),

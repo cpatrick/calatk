@@ -57,7 +57,7 @@ public:
    * Creates the memory (raw memory pointer) and also creates the appropriate state structures (image and momentum)
    * which make use of this memory block.
    */
-  CStateInitialImageMomentum( VectorImageType* ptrGraftImage );
+  CStateInitialImageMomentum( const VectorImageType* ptrGraftImage );
 
   /**
    * Constructor which takes a pointer to the initial image and initial momentum as well as to the raw memory (which the initial image and the momentum wil point to);

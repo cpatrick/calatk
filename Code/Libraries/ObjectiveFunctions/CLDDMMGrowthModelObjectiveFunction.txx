@@ -68,13 +68,13 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::CreateAuxiliaryStructures()
 {
 
   // get the subject ids
-  std::vector< unsigned int > vecSubjectIndices;
+  std::vector< int > vecSubjectIndices;
   this->m_ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
 
   assert( vecSubjectIndices.size()>0 );
 
   // obtain image from which to graft the image information for the data structures
-  const VectorImageType* pGraftIm = this->m_ptrImageManager->GetGraftImagePointer();
+  const VectorImageType* pGraftIm = this->m_ptrImageManager->GetGraftImagePointer( vecSubjectIndices[ 0 ] );
 
   // allocate all the auxiliary data
 

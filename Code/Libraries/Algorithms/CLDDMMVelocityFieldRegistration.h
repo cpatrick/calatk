@@ -29,8 +29,7 @@
 #include "COneStepEvolverSemiLagrangianAdvection.h"
 #include "CStationaryEvolver.h"
 #include "CAlgorithm.h"
-//#include "CImageManagerFullScale.h"
-#include "CImageManagerMultiScale.h"
+#include "CImageManager.h"
 #include "CSolverLineSearchUnconstrained.h"
 #include "CSolverMultiScale.h"
 

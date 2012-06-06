@@ -20,6 +20,11 @@
 #ifndef C_KERNEL_TXX
 #define C_KERNEL_TXX
 
+#include "CKernel.h"
+
+namespace CALATK
+{
+
 template <class T, unsigned int VImageDimension >
 CKernel< T, VImageDimension >::CKernel()
   : m_KernelsNeedToBeComputed( true ),
@@ -84,5 +89,7 @@ unsigned int CKernel< T, VImageDimension >::GetObjectiveFunctionKernelNumber()
 {
   return m_KernelNumber;
 }
+
+} // end namespace
 
 #endif

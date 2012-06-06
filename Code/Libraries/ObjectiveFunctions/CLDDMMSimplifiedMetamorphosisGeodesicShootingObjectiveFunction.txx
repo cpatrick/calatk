@@ -101,18 +101,15 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::C
   assert( m_vecTimeDiscretization.size() > 1 );
 
   // get the subject ids
-  std::vector< unsigned int > vecSubjectIndices;
+  std::vector< int > vecSubjectIndices;
   this->m_ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
 
   assert( vecSubjectIndices.size()>0 );
 
   // obtain image from which to graft the image information for the data structures
+  const VectorImageType* graftImage = this->m_ptrImageManager->GetGraftImagePointer();
 
-  ImageInformation* pImInfo;
-  // get information from the first image to figure out the dimensions and determine the source and target image
-  this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
-
-  this->m_ptrState = new TState( pImInfo->Image );
+  this->m_ptrState = new TState( graftImage );
   this->m_ptrState->GetPointerToInitialMomentum()->SetToConstant( 0 );
 }
 
@@ -127,56 +124,64 @@ template < class TState >
 void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState>::CreateGradientAndAuxiliaryStructures()
 {
   // get the subject ids
-  std::vector< unsigned int > vecSubjectIndices;
+  std::vector< int > vecSubjectIndices;
   this->m_ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
 
   assert( vecSubjectIndices.size()>0 );
 
   // obtain image from which to graft the image information for the data structures
   // and assign the convenience image pointer ptrI0, ptrI1
-  ImageInformation* pImInfo;
-  // get information from the first image to figure out the dimensions and determine the source and target image
-  this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 0 );
-  ptrI0 = pImInfo->Image;
+  std::vector< TimeSeriesDataPointType > timeseries;
+  this->m_ptrImageManager->GetTimeSeriesWithSubjectIndex( timeseries, vecSubjectIndices[ 0 ] );
 
-  this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( pImInfo, vecSubjectIndices[0], 1 );
-  ptrI1 = pImInfo->Image;
+  if ( timeseries.size()!=2 )
+  {
+    throw std::runtime_error( "Time series should contain exactly two images." );
+    return;
+  }
+
+  // get information from the first image to figure out the dimensions and determine the source and target image
+  ptrI0 = timeseries[0].GetImage();
+  ptrI1 = timeseries[1].GetImage();
+
+  // use the first image here to graft from, but any other image would do
+  const VectorImageType* graftImage = ptrI0;
 
   // create the gradient
-  this->m_ptrGradient = new TState( pImInfo->Image );
+  this->m_ptrGradient = new TState( graftImage );
   this->m_ptrGradient->GetPointerToInitialImage()->SetToConstant( 0 );
   this->m_ptrGradient->GetPointerToInitialMomentum()->SetToConstant( 0 );
 
   // storage for the maps
 
-  m_ptrMapIn = new VectorFieldType( pImInfo->Image );
-  m_ptrMapOut = new VectorFieldType( pImInfo->Image );
-  m_ptrMapTmp = new VectorFieldType( pImInfo->Image );
+  m_ptrMapIn = new VectorFieldType( graftImage );
+  m_ptrMapOut = new VectorFieldType( graftImage );
+  m_ptrMapTmp = new VectorFieldType( graftImage );
 
   // storage for the determinant of the Jacobian
-  m_ptrDeterminantOfJacobian = new VectorImageType( pImInfo->Image, 0.0, 1 );
+  m_ptrDeterminantOfJacobian = new VectorImageType( graftImage, 0.0, 1 );
 
   // storage for current state
-  m_ptrCurrentI = new VectorImageType( pImInfo->Image );
-  m_ptrCurrentP = new VectorImageType( pImInfo->Image );
-  m_ptrCurrentVelocity = new VectorFieldType( pImInfo->Image );
+  m_ptrCurrentI = new VectorImageType( graftImage );
+  m_ptrCurrentP = new VectorImageType( graftImage );
+  m_ptrCurrentVelocity = new VectorFieldType( graftImage );
 
   // temporary storage
-  m_ptrTmpField = new VectorFieldType( pImInfo->Image );
-  m_ptrTmpFieldConv = new VectorFieldType( pImInfo->Image );
+  m_ptrTmpField = new VectorFieldType( graftImage );
+  m_ptrTmpFieldConv = new VectorFieldType( graftImage );
 
-  m_ptrTmpImage = new VectorImageType( pImInfo->Image );
+  m_ptrTmpImage = new VectorImageType( graftImage );
 
   // storage for the back map and the adjoint
-  m_ptrCurrentBackMap = new VectorFieldType( pImInfo->Image );
-  m_ptrMapIdentity = new VectorFieldType( pImInfo->Image );
-  m_ptrMapIncremental = new VectorFieldType( pImInfo->Image );
+  m_ptrCurrentBackMap = new VectorFieldType( graftImage );
+  m_ptrMapIdentity = new VectorFieldType( graftImage );
+  m_ptrMapIncremental = new VectorFieldType( graftImage );
 
-  m_ptrCurrentFinalAdjoint = new VectorImageType( pImInfo->Image );
-  m_ptrWarpedFinalToInitialAdjoint = new VectorImageType( pImInfo->Image );
+  m_ptrCurrentFinalAdjoint = new VectorImageType( graftImage );
+  m_ptrWarpedFinalToInitialAdjoint = new VectorImageType( graftImage );
 
   // augmented Lagrangian
-  m_ptrImageLagrangianMultiplier = new VectorImageType( pImInfo->Image );
+  m_ptrImageLagrangianMultiplier = new VectorImageType( graftImage );
 }
 
 template < class TState >

@@ -48,6 +48,10 @@ public:
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 
+  typedef CImageManager< T, TState::ImageDimension >         ImageManagerType;
+  typedef typename ImageManagerType::TimeSeriesDataPointType TimeSeriesDataPointType;
+  typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;
+
   CVelocityFieldObjectiveFunction();
 
   void SetEvolverPointer( EvolverType * pEvolver );

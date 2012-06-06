@@ -18,6 +18,15 @@ set(CALATK_DataStructures_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/DataStructures/VectorField.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/DataStructures/VectorImage.cxx
   )
+# Set up sources for the ImageManager
+set(CALATK_ImageManager_sources
+  ${CMAKE_CURRENT_SOURCE_DIR}/ImageManager/CImageManager.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/ImageManager/CImageInformation.cxx
+  )
+# Set up sources for Resamplers
+set(CALATK_Resamplers_sources
+  ${CMAKE_CURRENT_SOURCE_DIR}/Resamplers/CResamplerLinear.cxx
+)
 # Set up sources for Interpolators
 set(CALATK_Interpolators_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/Interpolators/CCubicConvolutionInterpolator.cxx
@@ -62,10 +71,13 @@ set(CALATK_Utilities_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/ApplicationUtils.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/CJSONConfiguration.cxx
   )
+
 set(CALATK_sources
   ${CALATK_Algorithms_sources}
   ${CALATK_Base_sources}
   ${CALATK_DataStructures_sources}
+  ${CALATK_ImageManager_sources}
+  ${CALATK_Resamplers_sources}
   ${CALATK_Interpolators_sources}
   ${CALATK_Kernels_sources}
   ${CALATK_Metrics_sources}

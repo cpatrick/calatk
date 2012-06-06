@@ -83,24 +83,19 @@ void CAlgorithmBase< T, VImageDimension >::SetDefaultsIfNeeded()
   this->m_ptrKernel->SetAllowHelpComments( this->GetAllowHelpComments() );
   this->m_ptrKernel->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
 
-  // get the subject ids
-  std::vector< unsigned int > vecSubjectIndices;
-  this->m_ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
-
   this->m_ptrImageManager->SetPrintConfiguration( this->GetPrintConfiguration() );
   this->m_ptrImageManager->SetAllowHelpComments( this->GetAllowHelpComments() );
   this->m_ptrImageManager->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
 
   // also create the memory for the map and the image, so we can use it to return a map and an image at any time
-  ImageInformation * ptrImageInformation;
-  this->m_ptrImageManager->GetPointerToSubjectImageInformationByIndex( ptrImageInformation, vecSubjectIndices[ 0 ], 0 );
+  const VectorImageType* graftImage = m_ptrImageManager->GetGraftImagePointer();
 
   assert( this->m_ptrIm.GetPointer() == NULL );
-  this->m_ptrIm = new VectorImageType( ptrImageInformation->Image );
+  this->m_ptrIm = new VectorImageType( graftImage );
   this->m_ptrIm->SetToConstant( 0 );
 
   assert( m_ptrMap.GetPointer() == NULL );
-  this->m_ptrMap = new VectorFieldType( ptrImageInformation->Image );
+  this->m_ptrMap = new VectorFieldType( graftImage );
   this->m_ptrMap->SetToConstant( 0 );
 }
 

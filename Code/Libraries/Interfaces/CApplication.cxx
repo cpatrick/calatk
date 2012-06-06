@@ -327,12 +327,12 @@ CApplication::InternalSolve()
   typename ImageManagerType::Pointer imageManager;
   if( combinedAlgorithmConfigRoot["MultiScaleSettings"] != Json::nullValue )
     {
-    typedef CImageManagerMultiScale< TFloat, VImageDimension > ImageManagerMultiScaleType;
+    typedef CImageManager< TFloat, VImageDimension > ImageManagerMultiScaleType;
     imageManager = new ImageManagerMultiScaleType;
     }
   else
     {
-    typedef CImageManagerFullScale< TFloat, VImageDimension > ImageManagerFullScaleType;
+    typedef CImageManager< TFloat, VImageDimension > ImageManagerFullScaleType;
     imageManager = new ImageManagerFullScaleType;
     }
   algorithmBase->SetImageManagerPointer( imageManager );

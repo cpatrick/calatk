@@ -59,7 +59,7 @@ public:
    * which make use of this memory block.
    * Will destroy the data in Destructor.
    */
-  CStateInitialMomentum( VectorImageType* ptrGraftImage );
+  CStateInitialMomentum( const VectorImageType* ptrGraftImage );
 
   /**
    * Constructor which takes a pointer to the initial momentum as well as to the raw memory (which the initial momentum wil point to);

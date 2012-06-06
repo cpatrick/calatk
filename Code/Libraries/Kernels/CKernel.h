@@ -26,7 +26,6 @@
 
 namespace CALATK
 {
-
 /** Need forward declaration of objective function */
 
 template < class T, unsigned int VImageDimension > class CObjectiveFunctionBase;
@@ -104,10 +103,11 @@ private:
 
 };
 
-#include "CKernel.txx"
-
 } // end namespace
 
 #include "CObjectiveFunctionBase.h"
+
+#include "CKernel.txx"
+
 
 #endif

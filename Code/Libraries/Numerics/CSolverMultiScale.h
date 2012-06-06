@@ -22,7 +22,7 @@
 
 #include "CSolver.h"
 #include "CSolverFactory.h"
-#include "CImageManagerMultiScale.h"
+#include "CImageManager.h"
 #include "VectorImage.h"
 #include "VectorImageUtils.h"
 
@@ -46,7 +46,7 @@ public:
 
   typedef VectorImage< T, ImageDimension >             VectorImageType;
   typedef VectorImageUtils< T, ImageDimension >        VectorImageUtilsType;
-  typedef CImageManagerMultiScale< T, ImageDimension > ImageManagerMultiScaleType;
+  typedef CImageManager< T, ImageDimension >           ImageManagerMultiScaleType;
   typedef typename Superclass::ObjectiveFunctionType   ObjectiveFunctionType;
 
   CSolverMultiScale();

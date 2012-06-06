@@ -48,6 +48,10 @@ public:
   typedef typename Superclass::EvolverType     EvolverType;
   typedef typename Superclass::KernelType      KernelType;
 
+  typedef typename Superclass::ImageManagerType        ImageManagerType;
+  typedef typename Superclass::TimeSeriesDataPointType TimeSeriesDataPointType;
+  typedef typename Superclass::STimePoint STimePoint;
+
   /** Gets the momentum at a specific time point */
   virtual void GetMomentum( VectorImageType* ptrMomentum, T dTime ) = 0;
   virtual void GetInitialMomentum( VectorImageType* ptrMomentum ) = 0;

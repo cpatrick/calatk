@@ -21,13 +21,19 @@
 #define C_OBJECTIVE_FUNCTION_BASE_H
 
 #include "CALATKCommon.h"
-#include "CMetric.h"
-#include "CImageManager.h"
-#include "CKernel.h"
 #include "CProcessBase.h"
+
+#include "CMetric.h"
+#include "CKernel.h"
+
+//#include "CImageManager.h"
 
 namespace CALATK
 {
+
+/** Forward declaration */
+template < class T, unsigned int VImageDimension > class CImageManager;
+
 /** Base class for objective functions which is still unaware of the state type */
 
 template < class T, unsigned int VImageDimension >
@@ -171,12 +177,12 @@ protected:
 
   // TODO: FIXME, needs to be an array, so we can in principle support registrations at every measurement
   ptrMetricType m_pMetric;
-  typename ImageManagerType::Pointer m_ptrImageManager;
+  itk::SmartPointer< ImageManagerType > m_ptrImageManager;
 
 };
 
-#include "CObjectiveFunctionBase.txx"
-
 } // end namespace
+
+#include "CObjectiveFunctionBase.txx"
 
 #endif // C_OBJECTIVE_FUNCTION_BASE_H

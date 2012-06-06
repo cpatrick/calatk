@@ -64,8 +64,6 @@ public:
   typedef VectorImage< TFloat, VImageDimension >    VectorImageType;
   typedef VectorField< TFloat, VImageDimension >    VectorFieldType;
 
-  typedef typename CImageManager< TFloat, VImageDimension >::ImageInformation ImageInformation;
-
   CAlgorithmBase();
   virtual ~CAlgorithmBase();
 

@@ -28,7 +28,7 @@
 #include "CLDDMMSimplifiedMetamorphosisGeodesicShootingRegistration.h"
 #include "CLDDMMVelocityFieldWithMomentumRegistration.h"
 #include "VectorImageUtils.h"
-#include "CImageManagerMultiScale.h"
+#include "CImageManager.h"
 
 #include "CJSONConfiguration.h"
 
@@ -46,7 +46,7 @@ int DoIt( int argc, char** argv )
   typedef CALATK::CLDDMMSimplifiedMetamorphosisGeodesicShootingRegistration< TState > regTypeSimplified;
 
   typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension > VectorImageUtilsType;
-  typedef CALATK::CImageManagerMultiScale< TFLOAT, VImageDimension > ImageManagerMultiScaleType;
+  typedef CALATK::CImageManager< TFLOAT, VImageDimension > ImageManagerType;
   typedef CALATK::LDDMMUtils< TFLOAT, VImageDimension > LDDMMUtilsType;
 
   typedef CALATK::CLDDMMVelocityFieldWithMomentumRegistration< TState > regType;
@@ -65,7 +65,7 @@ int DoIt( int argc, char** argv )
     plddmm = new regTypeSimplified;
   }
 
-  ImageManagerMultiScaleType* ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( plddmm->GetImageManagerPointer() );
+  ImageManagerType* ptrImageManager = dynamic_cast<ImageManagerType*>( plddmm->GetImageManagerPointer() );
 
   ptrImageManager->AddImage( sourceImage, 0.0, 0 );
   ptrImageManager->AddImage( targetImage, 1.0, 0 );

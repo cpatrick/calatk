@@ -64,7 +64,7 @@ void CLDDMMVelocityFieldRegistration< TState >::SetDefaultMetricPointer()
 template < class TState >
 void CLDDMMVelocityFieldRegistration< TState >::SetDefaultImageManagerPointer()
 {
-  this->m_ptrImageManager = new CImageManagerMultiScale< T, TState::ImageDimension >;
+  this->m_ptrImageManager = new CImageManager< T, TState::ImageDimension >;
 }
 
 template < class TState >

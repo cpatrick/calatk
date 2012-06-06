@@ -20,6 +20,11 @@
 #ifndef C_OBJECTIVE_FUNCTION_BASE_TXX
 #define C_OBJECTIVE_FUNCTION_BASE_TXX
 
+#include "CObjectiveFunctionBase.h"
+
+namespace CALATK
+{
+
 //
 // empty constructor
 //
@@ -59,5 +64,7 @@ CObjectiveFunctionBase< T, VImageDimension >::GetImageManagerPointer() const
 {
   return this->m_ptrImageManager;
 }
+
+} // end namespace
 
 #endif

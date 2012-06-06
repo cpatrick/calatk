@@ -20,6 +20,11 @@
 #ifndef C_RESAMPLER_LINEAR_TXX
 #define C_RESAMPLER_LINEAR_TXX
 
+#include "CResamplerLinear.h"
+
+namespace CALATK
+{
+
 template <class T, unsigned int VImageDimension >
 CResamplerLinear< T, VImageDimension >::CResamplerLinear()
 {
@@ -61,5 +66,7 @@ void CResamplerLinear< T, VImageDimension >::Upsample( const VectorImageType* pt
   // now blurring necessary here, just upsample
   VectorImageUtils< T, VImageDimension >::resize( ptrImIn, ptrImOut );
 }
+
+} // end namespace
 
 #endif

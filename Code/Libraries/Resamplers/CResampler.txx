@@ -20,6 +20,11 @@
 #ifndef C_RESAMPLER_TXX
 #define C_RESAMPLER_TXX
 
+#include "CResampler.h"
+
+namespace CALATK
+{
+
 template <class T, unsigned int VImageDimension >
 CResampler< T, VImageDimension >::CResampler()
   : DefaultSigma( 0.05 ), m_ExternallySetSigma( false )
@@ -55,5 +60,7 @@ void CResampler< T, VImageDimension >::SetSigma( T sigma )
   m_Sigma = sigma;
   m_ptrGaussianKernel->SetSigma( m_Sigma );
 }
+
+} // end namespace
 
 #endif

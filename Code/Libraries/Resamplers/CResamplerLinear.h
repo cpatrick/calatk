@@ -47,8 +47,8 @@ public:
 
 };
 
-#include "CResamplerLinear.txx"
-
 } // end namespace
+
+#include "CResamplerLinear.txx"
 
 #endif

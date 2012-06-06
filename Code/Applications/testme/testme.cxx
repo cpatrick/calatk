@@ -29,8 +29,6 @@
 #include "VectorField.h"
 #include "VectorImageUtils.h"
 #include "CImageManager.h"
-#include "CImageManagerFullScale.h"
-#include "CImageManagerMultiScale.h"
 #include "LDDMMUtils.h"
 
 #include "CStateScalar.h"
@@ -58,29 +56,27 @@ int main(int argc, char **argv)
   typedef CALATK::VectorImageUtils< TFLOAT, DIMENSION > VectorImageUtilsType;
   typedef CALATK::VectorImage< TFLOAT, DIMENSION > VectorImageType;
 
-  typedef CALATK::CImageManagerMultiScale< TFLOAT, DIMENSION > ImageManagerMultiScaleType;
-  typedef CALATK::CImageManagerMultiScale< TFLOAT, DIMENSION >::ImageInformation ImageInformation;
+  typedef CALATK::CImageManager< TFLOAT, DIMENSION > ImageManagerType;
   
-  CALATK::CImageManagerMultiScale<TFLOAT,DIMENSION> imageManager;
+  ImageManagerType imageManager;
 
-  imageManager.AddImage( "I0_short.nhdr", 0.0, 0 );
+  int uid = imageManager.AddImage( "I0_short.nhdr", 0.0, 0 );
 
-  imageManager.AddScale( 0.5, 1 );
+  imageManager.AddScale(  1.0, 0 );
+  imageManager.AddScale(  0.5, 1 );
   imageManager.AddScale( 0.25, 2 );
 
-  ImageInformation* pImInfo;
-
   imageManager.SelectScale( 0 );
-  imageManager.GetPointerToSubjectImageInformationByIndex( pImInfo, 0, 0 );
-  VectorImageUtilsType::writeFileITK( pImInfo->Image, "im-scale-0.nrrd" );
+  const VectorImageType* imS0 = imageManager.GetImageById( uid );
+  VectorImageUtilsType::writeFileITK( imS0, "im-scale-0.nrrd" );
 
   imageManager.SelectScale( 1 );
-  imageManager.GetPointerToSubjectImageInformationByIndex( pImInfo, 0, 0 );
-  VectorImageUtilsType::writeFileITK( pImInfo->Image, "im-scale-1.nrrd" );
+  const VectorImageType* imS1 = imageManager.GetImageById( uid );
+  VectorImageUtilsType::writeFileITK( imS1, "im-scale-1.nrrd" );
 
   imageManager.SelectScale( 2 );
-  imageManager.GetPointerToSubjectImageInformationByIndex( pImInfo, 0, 0 );
-  VectorImageUtilsType::writeFileITK( pImInfo->Image, "im-scale-2.nrrd" );
+  const VectorImageType* imS2 = imageManager.GetImageById( uid );
+  VectorImageUtilsType::writeFileITK( imS2, "im-scale-2.nrrd" );
 
   VectorImageType::Pointer image = VectorImageUtilsType::readFileITK( "I0_short.nhdr" );
   VectorImageType::Pointer imageBlurred = new VectorImageType( image );

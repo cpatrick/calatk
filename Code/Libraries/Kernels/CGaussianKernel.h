@@ -31,7 +31,7 @@ namespace CALATK
  *
  */
 
-template <class T, unsigned int VImageDimension=3 >
+template < class T, unsigned int VImageDimension=3 >
 class CGaussianKernel : public CFourierDomainKernel< T, VImageDimension >
 {
 public:

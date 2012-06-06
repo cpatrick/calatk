@@ -27,7 +27,7 @@
 #include "CStateSpatioTemporalVelocityField.h"
 #include "CLDDMMGrowthModelRegistration.h"
 #include "VectorImageUtils.h"
-#include "CImageManagerMultiScale.h"
+#include "CImageManager.h"
 
 #include "CJSONConfiguration.h"
 
@@ -44,14 +44,14 @@ int DoIt( int argc, char** argv )
   typedef CALATK::CLDDMMGrowthModelRegistration< TState > RegistrationType;
 
   typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension > VectorImageUtilsType;
-  typedef CALATK::CImageManagerMultiScale< TFLOAT, VImageDimension > ImageManagerMultiScaleType;
+  typedef CALATK::CImageManager< TFLOAT, VImageDimension > ImageManagerType;
   typedef CALATK::LDDMMUtils< TFLOAT, VImageDimension > LDDMMUtilsType;
   typedef typename RegistrationType::VectorImageType VectorImageType;
   typedef typename RegistrationType::VectorFieldType VectorFieldType;
 
   typename RegistrationType::Pointer lddmm = new RegistrationType;
 
-  typename ImageManagerMultiScaleType::Pointer ptrImageManager = dynamic_cast<ImageManagerMultiScaleType*>( lddmm->GetImageManagerPointer() );
+  typename ImageManagerType::Pointer ptrImageManager = dynamic_cast<ImageManagerType*>( lddmm->GetImageManagerPointer() );
 
   unsigned int uiI0 = ptrImageManager->AddImage( sourceImage, 0.0, 0 );
   ptrImageManager->AddImage( targetImage, 1.0, 0 );

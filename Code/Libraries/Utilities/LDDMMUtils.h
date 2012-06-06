@@ -60,8 +60,7 @@ public:
 
   typedef CTimePoint< T, VectorImageType, VectorFieldType > STimePoint;
   typedef CImageManager< T, VImageDimension > ImageManagerType;
-  typedef typename ImageManagerType::ImageInformation ImageInformation;
-  typedef typename ImageManagerType::SubjectInformationType SubjectInformationType;
+  typedef typename ImageManagerType::TimeSeriesDataPointType TimeSeriesDataPointType;
 
   typedef CEvolver< T, VImageDimension > EvolverType;
 
