@@ -55,6 +55,24 @@ public:
     fftwf_destroy_plan( fftplan );
   };
 
+  /** static function to free memory */
+  static void FFTFreeIn( float * data )
+  {
+    fftwf_free( data );
+  }
+
+  /** static function to free memory */
+  static void FFTFreeOut( fftwf_complex* data )
+  {
+    fftwf_free( data );
+  }
+
+  /** static function to cleanup */
+  static void FFTCleanup()
+  {
+    fftwf_cleanup();
+  }
+
   /** static function to make the plan */
   static FFTPlanType FFT_plan_dft_r2c_1d( int szX, float* in, FFTComplexType* out, unsigned int uiAction )
   {
@@ -121,6 +139,24 @@ public:
   {
     fftw_destroy_plan( fftplan );
   };
+
+  /** static function to free memory */
+  static void FFTFreeIn( double * data )
+  {
+    fftw_free( data );
+  }
+
+  /** static function to free memory */
+  static void FFTFreeOut( fftw_complex* data )
+  {
+    fftw_free( data );
+  }
+
+  /** static function to cleanup */
+  static void FFTCleanup()
+  {
+    fftw_cleanup();
+  }
 
   /** static function to make the plan */
   static FFTPlanType FFT_plan_dft_r2c_1d( int szX, double* in, FFTComplexType* out, unsigned int uiAction )

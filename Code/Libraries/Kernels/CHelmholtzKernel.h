@@ -49,6 +49,13 @@ public:
   CHelmholtzKernel();
   virtual ~CHelmholtzKernel();
 
+  typedef CKernel< T, VImageDimension > KernelType;
+  typedef typename KernelType::NumericKernelType NumericKernelType;
+  virtual NumericKernelType GetKernelType()
+  {
+    return KernelType::HelmholtzKernel;
+  }
+
   void SetAlpha( T dAlpha );
   void SetGamma( T dGamma );
   SetJSONMacro( Alpha, T );

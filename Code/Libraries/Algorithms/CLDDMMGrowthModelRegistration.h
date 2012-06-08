@@ -22,6 +22,7 @@
 
 #include "CLDDMMVelocityFieldWithMomentumRegistration.h"
 #include "CLDDMMGrowthModelObjectiveFunction.h"
+#include "KernelUtils.h"
 
 namespace CALATK
 {
@@ -43,8 +44,12 @@ public:
   typedef itk::SmartPointer< const Self >                       ConstPointer;
 
   /* some useful typedefs */
+  typedef typename TState::FloatType T;
+
   typedef typename                                              Superclass::VectorImageType VectorImageType;
   typedef typename                                              Superclass::VectorFieldType VectorFieldType;
+
+  typedef KernelUtils< T, TState::ImageDimension > KernelUtilsType;
 
   CLDDMMGrowthModelRegistration();
   ~CLDDMMGrowthModelRegistration();
@@ -52,6 +57,7 @@ public:
 protected:
 
   void SetDefaultObjectiveFunctionPointer();
+  void PreFirstSolve();
 
 private:
 };

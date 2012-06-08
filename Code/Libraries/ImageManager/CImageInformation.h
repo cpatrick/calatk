@@ -27,12 +27,11 @@
 #include "VectorImageUtils.h"
 #include "VectorFieldUtils.h"
 
+#include "CGaussianKernel.h"
+#include "CResampler.h"
+
 namespace CALATK
 {
-
-/** Forward declarations */
-template < class TFloat, unsigned int VImageDimension > class CGaussianKernel;
-template < class TFloat, unsigned int VImageDimension > class CResampler;
 
 template < class TFloat, unsigned int VImageDimension=3 >
 /**
@@ -375,9 +374,5 @@ private:
 };
 
 } // end namespace
-
-#include "CGaussianKernel.h"
-#include "CResampler.h"
-
 
 #endif // C_IMAGE_INFORMATION_H

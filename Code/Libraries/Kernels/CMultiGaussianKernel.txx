@@ -35,7 +35,8 @@ CMultiGaussianKernel< T, VImageDimension >::CMultiGaussianKernel()
     m_ExternallySetEffectiveWeights( false ),
     m_ExternallySetGamma( false ),
     m_ExternallySetEstimateGradientScalingFactors( false ),
-    m_ExternallySetUseConstantPenaltyGamma( false )
+    m_ExternallySetUseConstantPenaltyGamma( false ),
+    m_KernelNumber( 0 )
 {
   DefaultSigmas.resize( 5 );
   DefaultSigmas[ 0 ] = 0.25;
@@ -89,6 +90,30 @@ void CMultiGaussianKernel< T, VImageDimension >::SetAutoConfiguration( CJSONConf
                      "flag which determines if the gamma constant is used or not in the multi-Gaussian kernel" );
 }
 
+template <class T, unsigned int VImageDimension >
+void CMultiGaussianKernel< T, VImageDimension >::SetObjectiveFunction( ObjectiveFunctionBaseType* ptrObj )
+{
+  this->m_ptrObjectiveFunction = ptrObj;
+}
+
+template <class T, unsigned int VImageDimension >
+typename CMultiGaussianKernel< T, VImageDimension >::ObjectiveFunctionBaseType*
+CMultiGaussianKernel< T, VImageDimension >::GetObjectiveFunction()
+{
+  return this->m_ptrObjectiveFunction.GetPointer();
+}
+
+template <class T, unsigned int VImageDimension >
+void CMultiGaussianKernel< T, VImageDimension >::SetObjectiveFunctionKernelNumber( unsigned int uiKN )
+{
+  m_KernelNumber = uiKN;
+}
+
+template <class T, unsigned int VImageDimension >
+unsigned int CMultiGaussianKernel< T, VImageDimension >::GetObjectiveFunctionKernelNumber()
+{
+  return m_KernelNumber;
+}
 
 template <class T, unsigned int VImageDimension >
 void CMultiGaussianKernel< T, VImageDimension >::ComputeActualWeights()

@@ -82,13 +82,29 @@ void CLDDMMGenericRegistration< TState >::SetDefaultObjectiveFunctionPointer()
     throw std::runtime_error("Could not initialize the objective function. Make sure the instantiated state type is consistent with the objective function chosen.");
   }
 
+  this->m_ptrObjectiveFunction = plddmm;
+
+}
+
+template < class TState >
+void CLDDMMGenericRegistration< TState >::PreFirstSolve()
+{
+  typedef CVelocityFieldObjectiveFunctionWithMomentum< TState > LDDMMVelocityFieldObjectiveFunctionWithMomentumType;
+  LDDMMVelocityFieldObjectiveFunctionWithMomentumType* plddmm = NULL;
+
+  plddmm = dynamic_cast< LDDMMVelocityFieldObjectiveFunctionWithMomentumType * >( this->m_ptrObjectiveFunction.GetPointer() );
+
+  if ( plddmm == NULL )
+  {
+    throw std::runtime_error( "Objective function was not intialized." );
+  }
+
   plddmm->SetEvolverPointer( this->m_ptrEvolver );
   plddmm->SetKernelPointer( this->m_ptrKernel );
   plddmm->SetMetricPointer( this->m_ptrMetric );
   plddmm->SetImageManagerPointer( this->m_ptrImageManager );
 
-  this->m_ptrObjectiveFunction = plddmm;
-  this->m_ptrKernel->SetObjectiveFunction( plddmm );
+  KernelUtilsType::SetObjectiveFunctionAndKernelNumberIfNeeded( this->m_ptrKernel, plddmm );
 
 }
 

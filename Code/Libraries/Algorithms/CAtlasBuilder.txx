@@ -424,7 +424,8 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
         return;
       }
 
-      GetIndividualKernelPointer( iI )->SetObjectiveFunction( ptrCurrentIndividualObjectiveFunction );
+      KernelUtilsType::SetObjectiveFunctionAndKernelNumberIfNeeded( GetIndividualKernelPointer( iI ), ptrCurrentIndividualObjectiveFunction );
+
       ptrCurrentIndividualObjectiveFunction->SetEvolverPointer( GetIndividualEvolverPointer( iI ) );
       ptrCurrentIndividualObjectiveFunction->SetMetricPointer( GetIndividualMetricPointer( iI ) );
       // TODO: May need to be adapted with update of image manager, should this even be here?

@@ -84,6 +84,9 @@ public:
   // Method which is executed before every sub-iteration
   virtual void PreSubIterationSolve();
 
+  // Method which is executed before the inital solution
+  virtual void PreFirstSolve();
+
   virtual const VectorFieldType* GetMap( TFloat dTime ) = 0;
   virtual const VectorFieldType* GetMapFromTo( TFloat dTimeFrom, TFloat dTimeTo ) = 0;
   virtual const VectorImageType* GetImage( TFloat dTime ) = 0;

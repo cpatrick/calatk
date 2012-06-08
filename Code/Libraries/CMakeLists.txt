@@ -72,6 +72,7 @@ set(CALATK_Utilities_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/CJSONConfiguration.cxx
   )
 
+
 set(CALATK_sources
   ${CALATK_Algorithms_sources}
   ${CALATK_Base_sources}
@@ -79,10 +80,10 @@ set(CALATK_sources
   ${CALATK_ImageManager_sources}
   ${CALATK_Resamplers_sources}
   ${CALATK_Interpolators_sources}
+  ${CALATK_ObjectiveFunctions_sources}
   ${CALATK_Kernels_sources}
   ${CALATK_Metrics_sources}
   ${CALATK_Numerics_sources}
-  ${CALATK_ObjectiveFunctions_sources}
   ${CALATK_Interfaces_sources}
   ${CALATK_States_sources}
   ${CALATK_Utilities_sources}

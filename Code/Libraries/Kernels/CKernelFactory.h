@@ -54,10 +54,10 @@ public:
   typedef CGaussianKernel< TFloat, VImageDimension >      GaussianKernelType;
   typedef CMultiGaussianKernel< TFloat, VImageDimension > MultiGaussianKernelType;
 
-  enum NumericKernelType { HelmholtzKernel, GaussianKernel, MultiGaussianKernel };
+  typedef typename KernelType::NumericKernelType NumericKernelType;
 
   CKernelFactory();
-  ~CKernelFactory();
+  virtual ~CKernelFactory();
 
   static KernelType* CreateNewKernel( const std::string & kernelName );
   static KernelType* CreateNewKernel( NumericKernelType kernel );

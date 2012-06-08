@@ -99,6 +99,8 @@ void CAlgorithm< TState >::Solve()
 
   this->SetDefaultsIfNeeded();
 
+  this->PreFirstSolve();
+
   this->m_ptrSolver->SetObjectiveFunction( this->m_ptrObjectiveFunction );
   this->m_ptrSolver->Solve();
 }

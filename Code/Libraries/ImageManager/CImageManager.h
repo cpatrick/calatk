@@ -32,13 +32,11 @@
 
 #include "CImageInformation.h"
 
+#include "CGaussianKernel.h"
+#include "CResamplerLinear.h"
 
 namespace CALATK
 {
-
-/** Forward declarations */
-template < class TFloat, unsigned int VImageDimension > class CGaussianKernel;
-template < class TFloat, unsigned int VImageDimension > class CResamplerLinear;
 
 /**
  * \brief Base class to deal with a set of images.
@@ -337,8 +335,5 @@ private:
 };
 
 } // end namespace
-
-#include "CGaussianKernel.h"
-#include "CResamplerLinear.h"
 
 #endif

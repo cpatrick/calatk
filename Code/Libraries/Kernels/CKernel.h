@@ -26,9 +26,6 @@
 
 namespace CALATK
 {
-/** Need forward declaration of objective function */
-
-template < class T, unsigned int VImageDimension > class CObjectiveFunctionBase;
 
 /** 
  * CKernel: base class for the smoothing kernels to smooth a velocity field
@@ -50,10 +47,12 @@ public:
   typedef VectorImage< T, 2 >               VectorImageType2D;
   typedef VectorImage< T, 3 >               VectorImageType3D;
 
-  typedef CObjectiveFunctionBase< T, VImageDimension > ObjectiveFunctionBaseType;
+  enum NumericKernelType { HelmholtzKernel, GaussianKernel, MultiGaussianKernel };
 
   CKernel();
   virtual ~CKernel();
+
+  virtual NumericKernelType GetKernelType() = 0;
 
   /**
    * Creating a kernel. For example to be used to compute velocity norms
@@ -72,15 +71,6 @@ public:
     return m_ptrLInv.GetPointer();
   }
 
-  /// some kernel (like the multi-Gaussian one) need access to the data to estimate weights
-  void SetObjectiveFunction( ObjectiveFunctionBaseType* ptrObjectiveFunction );
-  ObjectiveFunctionBaseType* GetObjectiveFunction();
-
-  /// some objective functions (such as geometric metamorphosis) have multiple kernels.
-  /// Weight estimation is then kernel-dependent and the right one needs to be selected.
-  void SetObjectiveFunctionKernelNumber( unsigned int iI=0 );
-  unsigned int GetObjectiveFunctionKernelNumber();
-
   virtual void DeallocateMemory() {}
 
 protected:
@@ -96,16 +86,11 @@ protected:
   typename VectorImageType::Pointer m_ptrL;
   typename VectorImageType::Pointer m_ptrLInv;
 
-  typename ObjectiveFunctionBaseType::Pointer m_ptrObjectiveFunction;
-  unsigned int m_KernelNumber;
-
 private:
 
 };
 
 } // end namespace
-
-#include "CObjectiveFunctionBase.h"
 
 #include "CKernel.txx"
 

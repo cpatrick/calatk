@@ -26,13 +26,10 @@
 #include "CMetric.h"
 #include "CKernel.h"
 
-//#include "CImageManager.h"
+#include "CImageManager.h"
 
 namespace CALATK
 {
-
-/** Forward declaration */
-template < class T, unsigned int VImageDimension > class CImageManager;
 
 /** Base class for objective functions which is still unaware of the state type */
 

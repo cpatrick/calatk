@@ -78,4 +78,6 @@ protected:
 
 } // end namespace
 
+//#include "CObjectiveFunctionFactory.txx"
+
 #endif // C_OBJECTIVE_FUNCTION_FACTORY_H

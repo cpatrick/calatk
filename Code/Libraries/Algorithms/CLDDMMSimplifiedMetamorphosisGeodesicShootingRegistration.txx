@@ -63,15 +63,30 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingRegistration< TState >::SetDef
 
   typedef CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState > CMetamorphosisType;
   typename CMetamorphosisType::Pointer pMetamorphosis = new CMetamorphosisType;
+
+  this->m_ptrObjectiveFunction = pMetamorphosis;
+
+}
+
+template < class TState >
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingRegistration< TState >::PreFirstSolve()
+{
+  typedef CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState > CMetamorphosisType;
+  CMetamorphosisType* pMetamorphosis = NULL;
+
+  pMetamorphosis = dynamic_cast< CMetamorphosisType* >( this->m_ptrObjectiveFunction.GetPointer() );
+
+  if ( pMetamorphosis == NULL )
+  {
+    throw std::runtime_error( "Objective function was not intialized." );
+  }
+
   pMetamorphosis->SetEvolverPointer( this->m_ptrEvolver );
   pMetamorphosis->SetKernelPointer( this->m_ptrKernel );
   pMetamorphosis->SetMetricPointer( this->m_ptrMetric );
   pMetamorphosis->SetImageManagerPointer( this->m_ptrImageManager );
 
-  this->m_ptrObjectiveFunction = pMetamorphosis;
-  this->m_ptrKernel->SetObjectiveFunction( pMetamorphosis );
-
+  KernelUtilsType::SetObjectiveFunctionAndKernelNumberIfNeeded( this->m_ptrKernel, pMetamorphosis );
 }
-
 
 #endif

@@ -130,18 +130,35 @@ void CLDDMMGeometricMetamorphosisRegistration< TState >::SetDefaultObjectiveFunc
 
   typedef CLDDMMGeometricMetamorphosisObjectiveFunction< TState > CLDDMMType;
   typename CLDDMMType::Pointer plddmm = new CLDDMMType;
+
+  this->m_ptrObjectiveFunction = plddmm;
+
+}
+
+template < class TState >
+void CLDDMMGeometricMetamorphosisRegistration< TState >::PreFirstSolve()
+{
+  typedef CLDDMMGeometricMetamorphosisObjectiveFunction< TState > CLDDMMType;
+  CLDDMMType * plddmm = NULL;
+
+  plddmm = dynamic_cast< CLDDMMType* >( this->m_ptrObjectiveFunction.GetPointer() );
+
+  if ( plddmm == NULL )
+  {
+    throw std::runtime_error( "Objective function was not intialized." );
+  }
+
   plddmm->SetEvolverPointer( this->m_ptrEvolver );
   plddmm->SetKernelPointer( this->m_ptrKernel );
   plddmm->SetMaskKernelPointer( this->m_ptrMaskKernel );
   plddmm->SetMetricPointer( this->m_ptrMetric );
   plddmm->SetImageManagerPointer( this->m_ptrImageManager );
 
-  this->m_ptrObjectiveFunction = plddmm;
   // set the objective functions for the kernels and the kernel numbers
-  this->m_ptrKernel->SetObjectiveFunction( plddmm );
-  this->m_ptrKernel->SetObjectiveFunctionKernelNumber( 0 );
-  this->m_ptrMaskKernel->SetObjectiveFunction( plddmm );
-  this->m_ptrMaskKernel->SetObjectiveFunctionKernelNumber( 1 );
+
+  KernelUtilsType::SetObjectiveFunctionAndKernelNumberIfNeeded( this->m_ptrKernel, plddmm, 0 );
+  KernelUtilsType::SetObjectiveFunctionAndKernelNumberIfNeeded( this->m_ptrMaskKernel, plddmm, 1 );
+
 }
 
 #endif

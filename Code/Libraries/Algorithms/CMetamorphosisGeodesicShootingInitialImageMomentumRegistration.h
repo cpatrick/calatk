@@ -29,6 +29,7 @@
 #include "CStationaryEvolver.h"
 #include "CImageManager.h"
 #include "CSolverLineSearchConstrained.h"
+#include "KernelUtils.h"
 
 namespace CALATK
 {
@@ -51,8 +52,12 @@ public:
   typedef itk::SmartPointer< const Self >                                 ConstPointer;
 
   /* some useful typedefs */
+  typedef typename TState::FloatType T;
+
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
+
+  typedef KernelUtils< T, TState::ImageDimension > KernelUtilsType;
 
   CMetamorphosisGeodesicShootingInitialImageMomentumRegistration();
   ~CMetamorphosisGeodesicShootingInitialImageMomentumRegistration();
@@ -60,6 +65,8 @@ public:
 protected:
   virtual void SetDefaultSolverPointer();
   virtual void SetDefaultObjectiveFunctionPointer();
+  void PreFirstSolve();
+
 };
 
 } // end namespace

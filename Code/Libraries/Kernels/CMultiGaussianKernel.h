@@ -23,6 +23,7 @@
 #include "CFourierDomainKernel.h"
 #include "CALATKCommon.h"
 #include "VectorField.h"
+#include "CObjectiveFunctionBase.h"
 
 namespace CALATK
 {
@@ -58,8 +59,17 @@ public:
 
   typedef VectorField< T, VImageDimension > VectorFieldType;
 
+  typedef CObjectiveFunctionBase< T, VImageDimension > ObjectiveFunctionBaseType;
+
   CMultiGaussianKernel();
   virtual ~CMultiGaussianKernel();
+
+  typedef CKernel< T, VImageDimension > KernelType;
+  typedef typename KernelType::NumericKernelType NumericKernelType;
+  virtual NumericKernelType GetKernelType()
+  {
+    return KernelType::MultiGaussianKernel;
+  }
 
   void SetSigmasAndEffectiveWeights( std::vector<T> Sigmas, std::vector<T> EffectiveWeights );
   void SetGamma( T dGamma );
@@ -82,6 +92,15 @@ public:
 
   virtual void ConvolveWithKernel( VectorImageType* pVecImage );
   virtual void ConvolveWithInverseKernel(VectorImageType *pVecImage);
+
+  /// needs access to the data to estimate weights
+  virtual void SetObjectiveFunction( ObjectiveFunctionBaseType* ptrObjectiveFunction );
+  virtual ObjectiveFunctionBaseType* GetObjectiveFunction();
+
+  /// some objective functions (such as geometric metamorphosis) have multiple kernels.
+  /// Weight estimation is then kernel-dependent and the right one needs to be selected.
+  void SetObjectiveFunctionKernelNumber( unsigned int iI=0 );
+  unsigned int GetObjectiveFunctionKernelNumber();
 
 protected:
 
@@ -118,6 +137,10 @@ private:
   std::vector<T> m_ActualWeights;
   std::vector<T> DefaultGradientScalingFactors;
   std::vector<T> m_GradientScalingFactors;
+
+  typename ObjectiveFunctionBaseType::Pointer m_ptrObjectiveFunction;
+  unsigned int m_KernelNumber;
+
 };
 
 } // end namespace

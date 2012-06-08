@@ -52,12 +52,31 @@ void CLDDMMGrowthModelRegistration< TState >::SetDefaultObjectiveFunctionPointer
 
   typedef CLDDMMGrowthModelObjectiveFunction< TState > CLDDMMType;
   CLDDMMType* plddmm = new CLDDMMType;
+
   this->m_ptrObjectiveFunction = plddmm;
-  this->m_ptrKernel->SetObjectiveFunction( plddmm );
+
+}
+
+template < class TState >
+void CLDDMMGrowthModelRegistration< TState >::PreFirstSolve()
+{
+  typedef CLDDMMGrowthModelObjectiveFunction< TState > CLDDMMType;
+  CLDDMMType* plddmm = NULL;
+
+  plddmm = dynamic_cast< CLDDMMType* >( this->m_ptrObjectiveFunction.GetPointer() );
+
+  if ( plddmm == NULL )
+  {
+    throw std::runtime_error( "Objective function was not intialized." );
+  }
+
   plddmm->SetEvolverPointer( this->m_ptrEvolver );
   plddmm->SetKernelPointer( this->m_ptrKernel );
   plddmm->SetMetricPointer( this->m_ptrMetric );
   plddmm->SetImageManagerPointer( this->m_ptrImageManager );
+
+  KernelUtilsType::SetObjectiveFunctionAndKernelNumberIfNeeded( this->m_ptrKernel, plddmm );
+
 }
 
 #endif

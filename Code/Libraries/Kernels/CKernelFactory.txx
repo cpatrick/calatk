@@ -44,13 +44,16 @@ CKernelFactory< T, VImageDimension >::CreateNewKernel( NumericKernelType kernelT
   KernelType * kernel = NULL;
   switch ( kernelType )
   {
-  case HelmholtzKernel:
+  case KernelType::HelmholtzKernel:
+    std::cout << "Creating a Helmholtz kernel" << std::endl;
     kernel = new HelmholtzKernelType;
     break;
-  case GaussianKernel:
+  case KernelType::GaussianKernel:
+    std::cout << "Creating a Gaussian kernel" << std::endl;
     kernel = new GaussianKernelType;
     break;
-  case MultiGaussianKernel:
+  case KernelType::MultiGaussianKernel:
+    std::cout << "Creating a multi-Gaussian kernel" << std::endl;
     kernel = new MultiGaussianKernelType;
     break;
   default:
@@ -79,20 +82,20 @@ CKernelFactory< T, VImageDimension >::GetKernelTypeFromString( const std::string
 
   if ( kernelNameLowerCase == "helmholtzkernel" )
     {
-    return HelmholtzKernel;
+    return KernelType::HelmholtzKernel;
     }
   else if ( kernelNameLowerCase == "gaussiankernel" )
     {
-    return GaussianKernel;
+    return KernelType::GaussianKernel;
     }
   else if ( kernelNameLowerCase == "multigaussiankernel")
     {
-    return MultiGaussianKernel;
+    return KernelType::MultiGaussianKernel;
     }
   else
     {
     std::cout << "Unknown kernel type " << kernelName << "; defaulting to a multi-Gaussian kernel." << std::endl;
-    return MultiGaussianKernel;
+    return KernelType::MultiGaussianKernel;
     }
 }
 

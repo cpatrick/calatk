@@ -178,7 +178,8 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, 1>* source, T
   m_SizeZ(source->GetSizeZ()),
   m_Dimension(uiNumDim),
   m_Length(m_SizeX*m_SizeY*m_SizeZ*uiNumDim),
-  m_DataPtr(NULL)
+  m_DataPtr(NULL),
+  m_ManageMemory( true )
 {
   Allocate();
 

@@ -52,6 +52,11 @@ void CAlgorithmBase< T, VImageDimension >::PreSubIterationSolve()
   // empty by default. Overwrite it if functionality should be implemented. For example for atlas-building to change the current atlas image
 }
 
+template < class T, unsigned int VImageDimension >
+void CAlgorithmBase< T, VImageDimension >::PreFirstSolve()
+{
+  // empty by default. Overwrite it if functionality should be implemented. For example to initialize data-dependent kernels.
+}
 
 template < class T, unsigned int VImageDimension >
 void CAlgorithmBase< T, VImageDimension >::SetDefaultsIfNeeded()

@@ -135,10 +135,10 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::DeleteAuxiliaryStructures()
   this->m_ptrTmpVelocityField = NULL;
   this->m_ptrTmpGradient      = NULL;
 
+  this->m_ptrDeterminantOfJacobian    = NULL;
   this->m_ptrI0                       = NULL;
   this->m_ptrCurrentLambdaEnd         = NULL;
   this->m_ptrCurrentAdjointDifference = NULL;
-  this->m_ptrDeterminantOfJacobian    = NULL;
 
   if( this->m_ptrI )
     {

@@ -23,6 +23,7 @@
 #include "CLDDMMVelocityFieldWithMomentumRegistration.h"
 #include "CLDDMMGeometricMetamorphosisObjectiveFunction.h"
 #include "CKernel.h"
+#include "KernelUtils.h"
 
 namespace CALATK
 {
@@ -49,7 +50,8 @@ public:
   typedef typename Superclass::VectorImageType  VectorImageType;
   typedef typename Superclass::VectorFieldType  VectorFieldType;
 
-  typedef CKernel< T, TState::ImageDimension >  KernelType;
+  typedef CKernel< T, TState::ImageDimension >      KernelType;
+  typedef KernelUtils< T, TState::ImageDimension > KernelUtilsType;
 
   CLDDMMGeometricMetamorphosisRegistration();
   ~CLDDMMGeometricMetamorphosisRegistration();
@@ -69,6 +71,7 @@ protected:
   void SetDefaultsIfNeeded();
   void SetDefaultObjectiveFunctionPointer();
   void SetDefaultMaskKernelPointer();
+  void PreFirstSolve();
 
 private:
 

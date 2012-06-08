@@ -40,12 +40,14 @@ void CFourierDomainKernel< T, VImageDimension >::DeleteData()
     // clean up fftw data
     CFFTDataType<T>::FFTDestroyPlan( fftwData->fwd );
     CFFTDataType<T>::FFTDestroyPlan( fftwData->bck );
-    fftw_free( fftwData->in );
-    fftw_free( fftwData->out );
+
+    CFFTDataType<T>::FFTFreeIn( fftwData->in );
+    CFFTDataType<T>::FFTFreeOut( fftwData->out );
+
+    // CFFTDataType<T>::FFTCleanup(); // TODO: should this be in here, seems to create segfaults
 
     delete fftwData;
     fftwData = NULL;
-    fftw_cleanup();
     }
 
   //this->m_ptrL = NULL;

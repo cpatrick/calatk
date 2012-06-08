@@ -71,8 +71,30 @@ void CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TState >::S
   pMetamorphosis->SetImageManagerPointer( this->m_ptrImageManager );
 
   this->m_ptrObjectiveFunction = pMetamorphosis;
-  this->m_ptrKernel->SetObjectiveFunction( pMetamorphosis );
 
+  KernelUtilsType::SetObjectiveFunctionAndKernelNumberIfNeeded( this->m_ptrKernel, pMetamorphosis );
+
+}
+
+template < class TState >
+void CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TState >::PreFirstSolve()
+{
+  typedef CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState > CMetamorphosisType;
+  CMetamorphosisType* pMetamorphosis = NULL;
+
+  pMetamorphosis = dynamic_cast< CMetamorphosisType* >( this->m_ptrObjectiveFunction.GetPointer() );
+
+  if ( pMetamorphosis == NULL )
+  {
+    throw std::runtime_error( "Objective function was not intialized." );
+  }
+
+  pMetamorphosis->SetEvolverPointer( this->m_ptrEvolver );
+  pMetamorphosis->SetKernelPointer( this->m_ptrKernel );
+  pMetamorphosis->SetMetricPointer( this->m_ptrMetric );
+  pMetamorphosis->SetImageManagerPointer( this->m_ptrImageManager );
+
+  KernelUtilsType::SetObjectiveFunctionAndKernelNumberIfNeeded( this->m_ptrKernel, pMetamorphosis );
 }
 
 } // end namespace CALATK

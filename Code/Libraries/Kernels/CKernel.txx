@@ -29,8 +29,7 @@ template <class T, unsigned int VImageDimension >
 CKernel< T, VImageDimension >::CKernel()
   : m_KernelsNeedToBeComputed( true ),
     m_ptrL( NULL ),
-    m_ptrLInv( NULL ),
-    m_KernelNumber( 0 )
+    m_ptrLInv( NULL )
 {
 }
 
@@ -63,31 +62,6 @@ void CKernel< T, VImageDimension >::AllocateMemoryForKernelAndInverseKernel( con
     default:
       throw std::runtime_error("Cannot allocate kernel memory of desired dimension.");
     }
-}
-
-template <class T, unsigned int VImageDimension >
-void CKernel< T, VImageDimension >::SetObjectiveFunction( ObjectiveFunctionBaseType* ptrObj )
-{
-  this->m_ptrObjectiveFunction = ptrObj;
-}
-
-template <class T, unsigned int VImageDimension >
-typename CKernel< T, VImageDimension >::ObjectiveFunctionBaseType*
-CKernel< T, VImageDimension >::GetObjectiveFunction()
-{
-  return this->m_ptrObjectiveFunction.GetPointer();
-}
-
-template <class T, unsigned int VImageDimension >
-void CKernel< T, VImageDimension >::SetObjectiveFunctionKernelNumber( unsigned int uiKN )
-{
-  m_KernelNumber = uiKN;
-}
-
-template <class T, unsigned int VImageDimension >
-unsigned int CKernel< T, VImageDimension >::GetObjectiveFunctionKernelNumber()
-{
-  return m_KernelNumber;
 }
 
 } // end namespace

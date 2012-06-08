@@ -31,6 +31,7 @@
 #include "CVelocityFieldObjectiveFunctionWithMomentum.h"
 #include "CALATKCommon.h"
 #include "CJSONConfiguration.h"
+#include "KernelUtils.h"
 
 namespace CALATK
 {
@@ -63,6 +64,8 @@ public:
   typedef typename TState::FloatType T;
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
+
+  typedef KernelUtils< T, TState::ImageDimension > KernelUtilsType;
 
   typedef CAtlasObjectiveFunction< TState >  ObjectiveFunctionType;
   typedef typename ObjectiveFunctionType::IndividualObjectiveFunctionType IndividualObjectiveFunctionType;

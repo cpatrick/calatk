@@ -49,6 +49,13 @@ public:
   CGaussianKernel();
   virtual ~CGaussianKernel();
 
+  typedef CKernel< T, VImageDimension > KernelType;
+  typedef typename KernelType::NumericKernelType NumericKernelType;
+  virtual NumericKernelType GetKernelType()
+  {
+    return KernelType::GaussianKernel;
+  }
+
   void SetSigma( T dSigma );
   SetJSONMacro( Sigma, T );
 

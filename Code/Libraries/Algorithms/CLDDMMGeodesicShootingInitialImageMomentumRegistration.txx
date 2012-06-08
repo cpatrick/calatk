@@ -52,13 +52,30 @@ void CLDDMMGeodesicShootingInitialImageMomentumRegistration< TState >::SetDefaul
 
   typedef CLDDMMAdjointGeodesicShootingObjectiveFunction< TState > CLDDMMType;
   typename CLDDMMType::Pointer plddmm = new CLDDMMType;
+
+  this->m_ptrObjectiveFunction = plddmm;
+
+}
+
+template < class TState >
+void CLDDMMGeodesicShootingInitialImageMomentumRegistration< TState >::PreFirstSolve()
+{
+  typedef CLDDMMAdjointGeodesicShootingObjectiveFunction< TState > CLDDMMType;
+  CLDDMMType * plddmm = NULL;
+
+  plddmm = dynamic_cast< CLDDMMType* >( this->m_ptrObjectiveFunction.GetPointer() );
+
+  if ( plddmm == NULL )
+  {
+    throw std::runtime_error( "Objective function was not intialized." );
+  }
+
   plddmm->SetEvolverPointer( this->m_ptrEvolver );
   plddmm->SetKernelPointer( this->m_ptrKernel );
   plddmm->SetMetricPointer( this->m_ptrMetric );
   plddmm->SetImageManagerPointer( this->m_ptrImageManager );
 
-  this->m_ptrObjectiveFunction = plddmm;
-  this->m_ptrKernel->SetObjectiveFunction( plddmm );
+  KernelUtilsType::SetObjectiveFunctionAndKernelNumberIfNeeded( this->m_ptrKernel, plddmm );
 
 }
 
