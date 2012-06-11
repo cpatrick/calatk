@@ -364,6 +364,7 @@ CImageInformation< TFloat, VImageDimension >::GetOriginalImage()
       if ( m_BlurHighestResolutionImage )
         {
         std::cout << "WARNING: blurring the original image" << std::endl;
+        this->m_GaussianKernel->SetSigma( m_Sigma );
         this->m_GaussianKernel->ConvolveWithKernel( m_OriginalImage );
         }
 
@@ -467,14 +468,9 @@ CImageInformation< TFloat, VImageDimension >::GetCurrentlyActiveImage()
           throw std::runtime_error( "Resampler needs to be specified for multi-resolution support." );
           return NULL;
           }
+        std::cout << "Computing resampled image with sigma (physical coordinates!) = " << m_Sigma/m_Scales[ activeScale ] << std::endl;
 
-#warning TODO: Convert this also to physical coordinates. Should not be based on voxels. EVERYTHING NEEDS TO BE PHYSICAL!!
-        // convert the voxel sigma to a pyhysical sigma based on the largest voxel extent
-        FloatType largestSpacing = originalImage->GetLargestSpacing();
-
-        std::cout << "Computing resampled image with sigma = " << largestSpacing*m_Sigma/m_Scales[ activeScale ] << std::endl;
-
-        m_Resampler->SetSigma( largestSpacing*m_Sigma/m_Scales[ activeScale ] );
+        m_Resampler->SetSigma( m_Sigma/m_Scales[ activeScale ] );
         m_Resampler->Downsample( m_OriginalImage, resampledImage );
       }
       m_ImagesOfAllScales[ activeScale ] = resampledImage;

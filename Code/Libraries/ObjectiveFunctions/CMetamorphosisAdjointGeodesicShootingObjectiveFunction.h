@@ -85,10 +85,6 @@ protected:
 
   /** Some useful protected typedefs */
 
-  typedef std::vector< typename VectorFieldType::Pointer >* VectorPointerToVectorFieldPointerType;
-
-  typedef std::vector< typename VectorImageType::Pointer >* VectorPointerToVectorImagePointerType;
-
   typedef typename Superclass::VectorFieldUtilsType VectorFieldUtilsType;
   typedef typename Superclass::VectorImageUtilsType VectorImageUtilsType;
 
@@ -130,18 +126,18 @@ private:
   typename VectorImageType::Pointer m_ptrDI;
   typename VectorImageType::Pointer m_ptrDP;
 
-  VectorPointerToVectorImagePointerType m_ptrI; // image
-  VectorPointerToVectorImagePointerType m_ptrP; // momentum
+  std::vector< typename VectorImageType::Pointer > m_ptrI; // image
+  std::vector< typename VectorImageType::Pointer > m_ptrP; // momentum
 
   // just for testing, remove later
-  VectorPointerToVectorImagePointerType tstLamI;
-  VectorPointerToVectorImagePointerType tstLamP;
+  std::vector< typename VectorImageType::Pointer >tstLamI;
+  std::vector< typename VectorImageType::Pointer > tstLamP;
 
   typename VectorImageType::Pointer m_ptrCurrentLambdaI; // adjoint 1
   typename VectorImageType::Pointer m_ptrCurrentLambdaP; // adjoint 2
   typename VectorFieldType::Pointer m_ptrCurrentLambdaV; // adjoint 3
 
-  VectorPointerToVectorFieldPointerType m_ptrVelocityField;
+  std::vector< typename VectorFieldType::Pointer > m_ptrVelocityField;
 
   std::vector< T > m_vecMeasurementTimepoints;
 

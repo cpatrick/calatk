@@ -161,7 +161,7 @@ void CImageManager< TFloat, VImageDimension >::SetAutoConfiguration( CJSONConfig
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, AutoScaleImages,
                      "if enabled will will set all values of an image smaller than 0 to 0 and scale the maximum value to 1." );
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, Sigma,
-                     "selects the amount of blurring used for the multi-resolution pyramid." );
+                     "selects the amount of blurring used for the multi-resolution pyramid (physical coordinates for highest resolution image)." );
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, BlurHighestResolutionImage,
                      "if set to true blurs also the highest resolution image otherwise keeps the highest resolution image as is." );
 }

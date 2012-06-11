@@ -29,6 +29,7 @@ namespace CALATK
 template < class TState >
 CStateImageMultipleStates< TState  >::CStateImageMultipleStates()
 {
+  throw std::runtime_error( "not fully implemented, needs to hold an image as a state" );
 }
 
 //

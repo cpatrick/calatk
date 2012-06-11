@@ -55,8 +55,8 @@ public:
 
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
-  typedef VectorImageType* VectorImagePointerType;
-  typedef VectorFieldType* VectorFieldPointerType;
+  typedef typename VectorImageType::Pointer VectorImagePointerType;
+  typedef typename VectorFieldType::Pointer VectorFieldPointerType;
 
   CLDDMMSimplifiedGeodesicShootingObjectiveFunction();
   virtual ~CLDDMMSimplifiedGeodesicShootingObjectiveFunction();

@@ -36,14 +36,9 @@ CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::CLDDMMAdjointGeodesicS
 
     m_ptrDeterminantOfJacobian = NULL;
 
-    m_ptrI = NULL;
-    m_ptrP = NULL;
-
     m_ptrCurrentLambdaI = NULL;
     m_ptrCurrentLambdaP = NULL;
     m_ptrCurrentLambdaV = NULL;
-
-    m_ptrVelocityField = NULL;
 
     // temporary storage
     m_ptrTmpField = NULL;
@@ -54,10 +49,9 @@ CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::CLDDMMAdjointGeodesicS
     m_ptrDI = NULL;
     m_ptrDP = NULL;
 
-    // just for testing, if EXTREME_DEBUG is defined it will store the full timecoarse of lamI and lamP
+    // tstLamI, tstLamP: just for testing, if EXTREME_DEBUG is defined it will store the full timecoarse of lamI and lamP
     // this is very memory intensive for 3D, hence disabled by default.
-    tstLamI = NULL;
-    tstLamP = NULL;
+
 }
 
 template< class TState >
@@ -127,14 +121,14 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::CreateGradientAndA
     // allocate all the auxiliary data
 
     // image and adjoint time-series
-    this->m_ptrI = new std::vector< VectorImagePointerType >;
-    this->m_ptrP = new std::vector< VectorImagePointerType >;
+    this->m_ptrI.clear();
+    this->m_ptrP.clear();
 
     // for testing
     
 #ifdef EXTREME_DEBUGGING
-    tstLamI = new std::vector< VectorImagePointerType >;
-    tstLamP = new std::vector< VectorImagePointerType >;
+    tstLamI.clear();
+    tstLamP.clear();
 #endif
 
     this->m_ptrCurrentLambdaI = new VectorImageType( graftImage );
@@ -145,21 +139,21 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::CreateGradientAndA
     for ( unsigned int iI=0; iI < m_vecTimeDiscretization.size(); ++iI )
       {
       VectorImagePointerType ptrCurrentVectorImage = new VectorImageType( graftImage );
-      m_ptrI->push_back( ptrCurrentVectorImage );
+      m_ptrI.push_back( ptrCurrentVectorImage );
 
       // bookkeeping to simplify metric computations
       m_vecTimeDiscretization[ iI ].vecEstimatedImages.push_back( ptrCurrentVectorImage );
 
       ptrCurrentVectorImage = new VectorImageType( graftImage );
-      m_ptrP->push_back( ptrCurrentVectorImage );
+      m_ptrP.push_back( ptrCurrentVectorImage );
 
 #ifdef EXTREME_DEBUGGING
       // for testing
       ptrCurrentVectorImage = new VectorImageType( graftImage );
-      tstLamI->push_back( ptrCurrentVectorImage );
+      tstLamI.push_back( ptrCurrentVectorImage );
 
       ptrCurrentVectorImage = new VectorImageType( graftImage );
-      tstLamP->push_back( ptrCurrentVectorImage );
+      tstLamP.push_back( ptrCurrentVectorImage );
 #endif
 
       }
@@ -191,12 +185,12 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::CreateGradientAndA
     m_ptrDeterminantOfJacobian  = new VectorImageType( graftImage );
 
     // storage for the negated velocity field
-    m_ptrVelocityField = new std::vector<VectorFieldPointerType>;
+    m_ptrVelocityField.clear();
     for (unsigned int iI=0; iI < m_vecTimeDiscretization.size(); iI++)
     {
         VectorFieldPointerType ptrCurrentVectorField = new VectorFieldType( graftImage );
         ptrCurrentVectorField->SetToConstant( 0 );
-        m_ptrVelocityField->push_back( ptrCurrentVectorField );
+        m_ptrVelocityField.push_back( ptrCurrentVectorField );
     }
 }
 
@@ -279,7 +273,7 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( Vec
         dTimeFrom,
         dTimeTo,
         m_vecTimeDiscretization,
-        m_ptrVelocityField,
+        &m_ptrVelocityField,
         this->m_ptrEvolver );
 }
 
@@ -365,20 +359,20 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ComputeImageMomen
   typedef LDDMMUtils< T, TState::ImageDimension > LDDMMUtilsType;
   LDDMMUtilsType::identityMap( m_ptrMapIn );
 
-  (*m_ptrI)[ 0 ]->Copy( ptrInitialImage );
-  (*m_ptrP)[ 0 ]->Copy( ptrInitialMomentum );
+  m_ptrI[ 0 ]->Copy( ptrInitialImage );
+  m_ptrP[ 0 ]->Copy( ptrInitialMomentum );
 
   for ( unsigned int iI = 0; iI < m_vecTimeDiscretization.size()-1; iI++ )
   {
-      this->ComputeVelocity( (*m_ptrI)[ iI ], (*m_ptrP)[iI], (*m_ptrVelocityField)[iI], m_ptrTmpField );
-      this->m_ptrEvolver->SolveForward( (*m_ptrVelocityField)[iI], m_ptrMapIn, m_ptrMapOut, m_ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
+      this->ComputeVelocity( m_ptrI[ iI ], m_ptrP[iI], m_ptrVelocityField[iI], m_ptrTmpField );
+      this->m_ptrEvolver->SolveForward( m_ptrVelocityField[iI], m_ptrMapIn, m_ptrMapOut, m_ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
 
-      LDDMMUtilsType::applyMap( m_ptrMapOut, ptrInitialImage, (*m_ptrI) [ iI +1 ]);
-      LDDMMUtilsType::applyMap( m_ptrMapOut, ptrInitialMomentum, (*m_ptrP) [ iI+1 ]);
+      LDDMMUtilsType::applyMap( m_ptrMapOut, ptrInitialImage, m_ptrI [ iI +1 ]);
+      LDDMMUtilsType::applyMap( m_ptrMapOut, ptrInitialMomentum, m_ptrP [ iI+1 ]);
 
       LDDMMUtilsType::computeDeterminantOfJacobian( m_ptrMapOut, m_ptrDeterminantOfJacobian );
 
-      (*m_ptrP)[iI+1]->MultiplyElementwise( m_ptrDeterminantOfJacobian );
+      m_ptrP[iI+1]->MultiplyElementwise( m_ptrDeterminantOfJacobian );
 
       m_ptrMapIn->Copy( m_ptrMapOut );
   }
@@ -435,14 +429,14 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ComputeAdjointsBa
     LDDMMUtils< T, TState::ImageDimension>::identityMap( m_ptrMapIdentity );
 
 #ifdef EXTREME_DEBUGGING
-    (*tstLamI)[ m_vecTimeDiscretization.size()-1 ]->Copy( m_ptrCurrentLambdaI );
-    (*tstLamP)[ m_vecTimeDiscretization.size()-1 ]->Copy( m_ptrCurrentLambdaP );
+    tstLamI[ m_vecTimeDiscretization.size()-1 ]->Copy( m_ptrCurrentLambdaI );
+    tstLamP[ m_vecTimeDiscretization.size()-1 ]->Copy( m_ptrCurrentLambdaP );
 #endif
 
     for ( int iI = (int)m_vecTimeDiscretization.size()-1-1; iI>=0; iI--)
     {
       // use the velocity field computed in the forward direction, but negate it
-      ptrCurrentVelocityField->Copy( (*m_ptrVelocityField)[ iI ] );
+      ptrCurrentVelocityField->Copy( m_ptrVelocityField[ iI ] );
       ptrCurrentVelocityField->MultiplyByConstant(-1);
 
       // update the incremental map
@@ -451,7 +445,7 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ComputeAdjointsBa
       // compute the convolved adjoint velocity at time point i+1
       // this introduces a slight assymmetry in the solution (because ideally we would like to compute it at i)
       // compute K*\lambda_v; first lambda_v
-      ComputeVelocityAdjoint( (*m_ptrI)[ iI+1 ], (*m_ptrP)[ iI+1 ], m_ptrCurrentLambdaI, m_ptrCurrentLambdaP, ptrCurrentKLambdaV );
+      ComputeVelocityAdjoint( m_ptrI[ iI+1 ], m_ptrP[ iI+1 ], m_ptrCurrentLambdaI, m_ptrCurrentLambdaP, ptrCurrentKLambdaV );
 
       // compute K*\lambda_v
       this->m_ptrKernel->ConvolveWithKernel( ptrCurrentKLambdaV );
@@ -467,7 +461,7 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ComputeAdjointsBa
       {
         // 1) compute dp = -\nabla I^T ( K* lambda_v )
         // nabla I
-        VectorFieldUtilsType::computeCentralGradient( (*m_ptrI)[ iI+1 ], iD, m_ptrTmpField );
+        VectorFieldUtilsType::computeCentralGradient( m_ptrI[ iI+1 ], iD, m_ptrTmpField );
 
         // compute the element-wise inner product
         VectorImageUtilsType::multiplyVectorByVectorInnerProductElementwise( m_ptrTmpField, ptrCurrentKLambdaV, m_ptrTmpScalarImage );
@@ -480,7 +474,7 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ComputeAdjointsBa
         // 2) Compute di = div( p K*lambda_v )
         m_ptrTmpField->Copy( ptrCurrentKLambdaV );
         // multiply it by the d-th dimension of p
-        VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( (*m_ptrP)[ iI+1 ], iD, m_ptrTmpField );
+        VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( m_ptrP[ iI+1 ], iD, m_ptrTmpField );
 
         // compute the divergence
         VectorFieldUtilsType::computeDivergence( m_ptrTmpField, m_ptrTmpScalarImage );
@@ -520,8 +514,8 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ComputeAdjointsBa
       }
 
 #ifdef EXTREME_DEBUGGING
-      (*tstLamI)[ iI ]->Copy( m_ptrCurrentLambdaI );
-      (*tstLamP)[ iI ]->Copy( m_ptrCurrentLambdaP );
+      tstLamI[ iI ]->Copy( m_ptrCurrentLambdaI );
+      tstLamP[ iI ]->Copy( m_ptrCurrentLambdaP );
 #endif
 
   }
@@ -763,15 +757,15 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::OutputStateInform
     // initialize to 0
     ptrCurrentGradient->SetToConstant( 0 );
 
-    VectorImageUtilsType::writeFileITK( (*m_ptrI)[iI], outputPrefix + "I" + CreateIntegerString( iI, 3 ) + suffix );
-    VectorImageUtilsType::writeFileITK( (*m_ptrP)[iI], outputPrefix + "lam" + CreateIntegerString( iI, 3 ) + suffix );
+    VectorImageUtilsType::writeFileITK( m_ptrI[iI], outputPrefix + "I" + CreateIntegerString( iI, 3 ) + suffix );
+    VectorImageUtilsType::writeFileITK( m_ptrP[iI], outputPrefix + "lam" + CreateIntegerString( iI, 3 ) + suffix );
 
     for ( unsigned int iD = 0; iD<dim; ++iD )
       {
-      VectorFieldUtilsType::computeCentralGradient( (*m_ptrI)[ iI ], iD, m_ptrTmpField );
+      VectorFieldUtilsType::computeCentralGradient( m_ptrI[ iI ], iD, m_ptrTmpField );
       VectorImageUtilsType::writeFileITK( m_ptrTmpField, outputPrefix + "gradI" + CreateIntegerString( iI, 3 ) + suffix );
 
-      VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( (*m_ptrP)[ iI ], iD, m_ptrTmpField );
+      VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( m_ptrP[ iI ], iD, m_ptrTmpField );
       VectorImageUtilsType::writeFileITK( m_ptrTmpField, outputPrefix + "lam_x_gradI" + CreateIntegerString( iI, 3 ) + suffix );
 
       ptrCurrentGradient->AddCellwise( m_ptrTmpField );
@@ -782,7 +776,7 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::OutputStateInform
     VectorImageUtilsType::writeFileITK( ptrCurrentGradient, outputPrefix + "conv_lam_x_gradI" + CreateIntegerString( iI, 3 ) + suffix );
 
     // add v
-    this->ComputeVelocity( (*m_ptrI)[ iI ], (*m_ptrP)[ iI ], m_ptrTmpField, m_ptrTmpFieldConv );
+    this->ComputeVelocity( m_ptrI[ iI ], m_ptrP[ iI ], m_ptrTmpField, m_ptrTmpFieldConv );
 
     VectorImageUtilsType::writeFileITK( m_ptrTmpField, outputPrefix + "v" + CreateIntegerString( iI, 3 ) + suffix );
 
@@ -790,8 +784,8 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::OutputStateInform
     VectorImageUtilsType::writeFileITK( ptrCurrentGradient, outputPrefix + "gradv" + CreateIntegerString( iI, 3 ) + suffix );
 
 #ifdef EXTREME_DEBUGGING
-    VectorImageUtilsType::writeFileITK( (*tstLamI)[iI], outputPrefix + "lamI" + CreateIntegerString( iI, 3) + suffix );
-    VectorImageUtilsType::writeFileITK( (*tstLamP)[iI], outputPrefix + "lamP" + CreateIntegerString( iI, 3) + suffix );
+    VectorImageUtilsType::writeFileITK( tstLamI[iI], outputPrefix + "lamI" + CreateIntegerString( iI, 3) + suffix );
+    VectorImageUtilsType::writeFileITK( tstLamP[iI], outputPrefix + "lamP" + CreateIntegerString( iI, 3) + suffix );
 #endif
 
     }

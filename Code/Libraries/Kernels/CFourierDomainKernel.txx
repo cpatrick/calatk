@@ -44,7 +44,7 @@ void CFourierDomainKernel< T, VImageDimension >::DeleteData()
     CFFTDataType<T>::FFTFreeIn( fftwData->in );
     CFFTDataType<T>::FFTFreeOut( fftwData->out );
 
-    // CFFTDataType<T>::FFTCleanup(); // TODO: should this be in here, seems to create segfaults
+    //CFFTDataType<T>::FFTCleanup(); // TODO: should this be in here, seems to create segfaults
 
     delete fftwData;
     fftwData = NULL;
@@ -390,6 +390,7 @@ void CFourierDomainKernel< T, VImageDimension >::ConvolveInFourierDomain( Vector
 template <class T, unsigned int VImageDimension >
 void CFourierDomainKernel< T, VImageDimension >::AllocateMemoryAndComputeKernelsIfNeeded( const VectorImageType* ptrVectorImage )
 {
+
   if ( !this->m_MemoryWasAllocated )
     {
     this->AllocateMemoryForKernelAndInverseKernel( ptrVectorImage );

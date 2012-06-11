@@ -87,8 +87,6 @@ protected:
   typedef typename Superclass::STimePoint STimePoint;
   typedef typename Superclass::VectorFieldPointerType VectorFieldPointerType;
   typedef typename Superclass::VectorImagePointerType VectorImagePointerType;
-  typedef typename Superclass::VectorPointerToVectorFieldPointerType VectorPointerToVectorFieldPointerType;
-  typedef typename Superclass::VectorPointerToVectorImagePointerType VectorPointerToVectorImagePointerType;
   
   typedef typename Superclass::ImageManagerType        ImageManagerType;
   typedef typename Superclass::TimeSeriesDataPointType TimeSeriesDataPointType;
@@ -133,11 +131,11 @@ private:
   VectorImagePointerType m_ptrT2M1;
   VectorImagePointerType m_ptrEstT1M1;
 
-  VectorPointerToVectorImagePointerType m_ptrI;
-  VectorPointerToVectorImagePointerType m_ptrT;
+  std::vector< VectorImagePointerType > m_ptrI;
+  std::vector< VectorImagePointerType > m_ptrT;
 
-  VectorPointerToVectorImagePointerType m_ptrLambda;
-  VectorPointerToVectorImagePointerType m_ptrLambdaT;
+  std::vector< VectorImagePointerType > m_ptrLambda;
+  std::vector< VectorImagePointerType > m_ptrLambdaT;
 
   VectorImagePointerType m_ptrCurrentAdjointDifference;
   VectorImagePointerType m_ptrCurrentAdjointDifferenceT;

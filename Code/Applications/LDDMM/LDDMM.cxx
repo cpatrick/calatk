@@ -90,11 +90,6 @@ int DoIt( int argc, char** argv )
     return EXIT_FAILURE;
   }
 
-  ImageManagerType* ptrImageManager = dynamic_cast<ImageManagerType*>( plddmm->GetImageManagerPointer() );
-
-  unsigned int uiI0 = ptrImageManager->AddImage( sourceImage, 0.0, 0 );
-  ptrImageManager->AddImage( targetImage, 1.0, 0 );
-
   CALATK::CJSONConfiguration::Pointer combinedConfiguration = new CALATK::CJSONConfiguration;
   if ( configFile.compare( "None" ) != 0 )
   {
@@ -102,8 +97,14 @@ int DoIt( int argc, char** argv )
   }
   CALATK::CJSONConfiguration::Pointer cleanedConfiguration = new CALATK::CJSONConfiguration;
 
+  ImageManagerType* ptrImageManager = dynamic_cast<ImageManagerType*>( plddmm->GetImageManagerPointer() );
+
   plddmm->SetAutoConfiguration( combinedConfiguration, cleanedConfiguration );
   plddmm->SetAllowHelpComments( bCreateJSONHelp );
+
+  unsigned int uiI0 = ptrImageManager->AddImage( sourceImage, 0.0, 0 );
+  ptrImageManager->AddImage( targetImage, 1.0, 0 );
+
   plddmm->Solve();
 
   // write out the resulting JSON file if desired

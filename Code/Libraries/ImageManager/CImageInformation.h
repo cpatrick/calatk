@@ -353,8 +353,8 @@ protected:
   std::vector< typename VectorImageType::Pointer > m_ImagesOfAllScales;  /**< pointer to resampled images at different scales */
 
   typename VectorImageType::Pointer m_ExternallySpecifiedImage; /**< Stores the externally specified image if one was set */
-  itk::SmartPointer< GaussianKernelType > m_GaussianKernel;
-  itk::SmartPointer< ResamplerType > m_Resampler;
+  typename GaussianKernelType::Pointer m_GaussianKernel;
+  typename ResamplerType::Pointer m_Resampler;
 
 private:
 

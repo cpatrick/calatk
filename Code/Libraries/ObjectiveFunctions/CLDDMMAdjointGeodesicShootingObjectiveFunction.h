@@ -78,9 +78,6 @@ public:
 protected:
   /** Some useful protected typedefs */
 
-  typedef std::vector< typename VectorFieldType::Pointer >* VectorPointerToVectorFieldPointerType;
-  typedef std::vector< typename VectorImageType::Pointer >* VectorPointerToVectorImagePointerType;
-
   void InitializeDataStructures();
   void InitializeDataStructuresFromState( TState * ptrState );
 
@@ -122,18 +119,18 @@ private:
   VectorImagePointerType m_ptrDI;
   VectorImagePointerType m_ptrDP;
 
-  VectorPointerToVectorImagePointerType m_ptrI; // image
-  VectorPointerToVectorImagePointerType m_ptrP; // momentum
+  std::vector< VectorImagePointerType > m_ptrI; // image
+  std::vector< VectorImagePointerType > m_ptrP; // momentum
 
   // just for testing, remove later
-  VectorPointerToVectorImagePointerType tstLamI;
-  VectorPointerToVectorImagePointerType tstLamP;
+  std::vector< VectorImagePointerType > tstLamI;
+  std::vector< VectorImagePointerType >tstLamP;
 
   VectorImagePointerType m_ptrCurrentLambdaI; // adjoint 1
   VectorImagePointerType m_ptrCurrentLambdaP; // adjoint 2
   VectorFieldPointerType m_ptrCurrentLambdaV; // adjoint 3
 
-  VectorPointerToVectorFieldPointerType m_ptrVelocityField;
+  std::vector< VectorFieldPointerType > m_ptrVelocityField;
 
   std::vector< T > m_vecMeasurementTimepoints;
 

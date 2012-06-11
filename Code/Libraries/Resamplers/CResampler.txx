@@ -30,7 +30,6 @@ CResampler< T, VImageDimension >::CResampler()
   : DefaultSigma( 0.05 ), m_ExternallySetSigma( false )
 {
   this->m_ptrGaussianKernel = new GaussianKernelType();
-
   this->SetSigma( DefaultSigma );
 }
 

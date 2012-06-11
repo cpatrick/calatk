@@ -116,8 +116,6 @@ public:
 protected:
   void ClearDataStructure();
 
-#warning not fully implemented, needs to hold an image as a state
-
   // holds the states of the individual registration algorithms
   IndividualStatesCollectionType  m_IndividualStatesCollection;
 

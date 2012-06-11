@@ -72,8 +72,6 @@ protected:
   typedef typename Superclass::STimePoint                            STimePoint;
   typedef typename Superclass::VectorFieldPointerType                VectorFieldPointerType;
   typedef typename Superclass::VectorImagePointerType                VectorImagePointerType;
-  typedef typename Superclass::VectorPointerToVectorFieldPointerType VectorPointerToVectorFieldPointerType;
-  typedef typename Superclass::VectorPointerToVectorImagePointerType VectorPointerToVectorImagePointerType;
 
   typedef typename Superclass::ImageManagerType        ImageManagerType;
   typedef typename Superclass::TimeSeriesDataPointType TimeSeriesDataPointType;
@@ -100,8 +98,8 @@ private:
 
   VectorImagePointerType m_ptrDeterminantOfJacobian;
 
-  VectorPointerToVectorImagePointerType m_ptrI; // image
-  VectorPointerToVectorImagePointerType m_ptrLambda; // adjoint
+  std::vector< VectorImagePointerType > m_ptrI; // image
+  std::vector< VectorImagePointerType > m_ptrLambda; // adjoint
 
   T m_SigmaSqr; // 1/m_SigmaSqr is the multiplier for the data attachment term
 

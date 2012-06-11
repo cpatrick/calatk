@@ -67,10 +67,7 @@ public:
 protected:
   /* Some useful protected datatypes */
   typedef typename VectorFieldType::Pointer      VectorFieldPointerType;
-  typedef std::vector< VectorFieldPointerType >* VectorPointerToVectorFieldPointerType;
-
   typedef typename VectorImageType::Pointer      VectorImagePointerType;
-  typedef std::vector< VectorImagePointerType >* VectorPointerToVectorImagePointerType;
 
   typedef typename Superclass::ImageManagerType        ImageManagerType;
   typedef typename Superclass::TimeSeriesDataPointType TimeSeriesDataPointType;

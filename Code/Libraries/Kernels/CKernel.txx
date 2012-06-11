@@ -45,6 +45,9 @@ void CKernel< T, VImageDimension >::AllocateMemoryForKernelAndInverseKernel( con
   const unsigned int szY = inputImage->GetSizeY();
   const unsigned int szZ = inputImage->GetSizeZ();
 
+  this->m_ptrL = NULL;
+  this->m_ptrLInv = NULL;
+
   switch ( VImageDimension )
     {
     case 1:
