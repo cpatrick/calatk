@@ -138,6 +138,9 @@ void CLDDMMGeometricMetamorphosisRegistration< TState >::SetDefaultObjectiveFunc
 template < class TState >
 void CLDDMMGeometricMetamorphosisRegistration< TState >::PreFirstSolve()
 {
+
+  Superclass::PreFirstSolve();
+
   typedef CLDDMMGeometricMetamorphosisObjectiveFunction< TState > CLDDMMType;
   CLDDMMType * plddmm = NULL;
 

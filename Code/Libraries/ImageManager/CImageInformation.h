@@ -274,18 +274,32 @@ public:
   bool GetBlurHighestResolutionImage() const;
 
   /**
-   * @brief Sets the standard deviation (in physical coordinates) for the Gaussian smoothing kernel.
+   * @brief Sets the standard deviation (in physical coordinates) for the Gaussian smoothing kernel for multi-scale.
    *
    * @param sigma
    */
   void SetSigma( FloatType sigma );
 
   /**
-   * @brief Returns the standard deviation for the Gaussian smoothing kernel.
+   * @brief Returns the standard deviation for the Gaussian smoothing kernel for multi-scale.
    *
    * @return FloatType
    */
   FloatType GetSigma() const;
+
+  /**
+   * @brief Sets the standard deviation (in physical coordinates) for the Gaussian smoothing kernel for the original image.
+   *
+   * @param sigma
+   */
+  void SetSigmaHighestResolutionImage( FloatType sigma );
+
+  /**
+   * @brief Returns the standard deviation for the Gaussian smoothing kernel for the original image.
+   *
+   * @return FloatType
+   */
+  FloatType GetSigmaHighestResolutionImage() const;
 
   /**
    * @brief If set to true scales the image to a range between 0 and 1
@@ -364,6 +378,7 @@ private:
 
   bool m_BlurHighestResolutionImage;
   FloatType m_Sigma;
+  FloatType m_SigmaHighestResolutionImage;
   bool m_AutoScaleImage;
 
   LoadStrategyType m_LoadStrategyType;

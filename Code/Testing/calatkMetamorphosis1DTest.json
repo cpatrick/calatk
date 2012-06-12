@@ -13,7 +13,10 @@
 	},
 	"ImageManager" : 
 	{
-		"AutoScaleImages" : false
+		"AutoScaleImages" : false,
+		"BlurHighestResolutionImage" : true,
+		"Sigma" : 0.01,
+		"SigmaHighestResolutionImage" : 0.01
 	},
 	"LDDMMGeodesicShooting" : 
 	{
@@ -21,7 +24,6 @@
 		"NumberOfDiscretizationVolumesPerUnitTime" : 10.0,
 		"SigmaSqr" : 0.010
 	},
-	"MultiScaleBlurHighestResolutionImage" : true,
 	"MultiScaleFinalOutput" : 
 	{
 		"OutputStateInformation" : false,
@@ -56,7 +58,6 @@
 			}
 		}
 	],
-	"MultiScaleSigmaInVoxels" : 1.0,
 	"OneStepEvolver" : 
 	{
 		"NumberOfThreads" : 1

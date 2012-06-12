@@ -27,9 +27,7 @@ namespace CALATK
 
 template < class T, unsigned int VImageDimension >
 CAlgorithmBase< T, VImageDimension >::CAlgorithmBase()
-  : m_MultiScaleSigma( 1 ),
-    m_MultiScaleBlurHighestResolutionImage( true )
-{
+  {
   this->m_ptrMetric = NULL;
   this->m_ptrImageManager = NULL;
   this->m_ptrEvolver = NULL;
@@ -50,12 +48,6 @@ template < class T, unsigned int VImageDimension >
 void CAlgorithmBase< T, VImageDimension >::PreSubIterationSolve()
 {
   // empty by default. Overwrite it if functionality should be implemented. For example for atlas-building to change the current atlas image
-}
-
-template < class T, unsigned int VImageDimension >
-void CAlgorithmBase< T, VImageDimension >::PreFirstSolve()
-{
-  // empty by default. Overwrite it if functionality should be implemented. For example to initialize data-dependent kernels.
 }
 
 template < class T, unsigned int VImageDimension >
@@ -88,12 +80,22 @@ void CAlgorithmBase< T, VImageDimension >::SetDefaultsIfNeeded()
   this->m_ptrKernel->SetAllowHelpComments( this->GetAllowHelpComments() );
   this->m_ptrKernel->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
 
+  if ( this->m_ptrImageManager.GetPointer() == NULL )
+  {
+    this->SetDefaultImageManagerPointer();
+  }
+
   this->m_ptrImageManager->SetPrintConfiguration( this->GetPrintConfiguration() );
   this->m_ptrImageManager->SetAllowHelpComments( this->GetAllowHelpComments() );
   this->m_ptrImageManager->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
 
-  // also create the memory for the map and the image, so we can use it to return a map and an image at any time
-  const VectorImageType* graftImage = m_ptrImageManager->GetGraftImagePointer();
+}
+
+template < class T, unsigned int VImageDimension >
+void CAlgorithmBase< T, VImageDimension >::PreFirstSolve()
+{
+  // create the memory for the map and the image at the resolution of the original image, so we can use it to return a map and an image at any time
+  const VectorImageType* graftImage = m_ptrImageManager->GetGraftImagePointerAtScale();
 
   assert( this->m_ptrIm.GetPointer() == NULL );
   this->m_ptrIm = new VectorImageType( graftImage );
@@ -185,12 +187,6 @@ void CAlgorithmBase< T, VImageDimension >::SetAutoConfiguration( CJSONConfigurat
   // by default there will be only one scale
   // which will be overwritten if there is a configuration file available
 
-  this->m_MultiScaleSigma = m_CombinedJSONConfig->GetFromKey( "MultiScaleSigmaInVoxels", 1.0 ).asDouble();
-  this->m_CleanedJSONConfig->GetFromKey( "MultiScaleSigmaInVoxels", m_MultiScaleSigma ).asDouble();
-
-  this->m_MultiScaleBlurHighestResolutionImage = m_CombinedJSONConfig->GetFromKey( "MultiScaleBlurHighestResolutionImage", true ).asBool();
-  this->m_CleanedJSONConfig->GetFromKey( "MultiScaleBlurHighestResolutionImage", m_MultiScaleBlurHighestResolutionImage ).asBool();
-
   Json::Value& currentConfigurationIn  = m_CombinedJSONConfig->GetFromKey( "MultiScaleSettings", Json::nullValue );
   Json::Value& currentConfigurationOut = m_CleanedJSONConfig->GetFromKey( "MultiScaleSettings", Json::nullValue );
 
@@ -207,19 +203,6 @@ void CAlgorithmBase< T, VImageDimension >::SetAutoConfiguration( CJSONConfigurat
     currentConfigurationOut[ ii ][ "Downsample" ][ "Scale" ] = currentScale;
     m_MultiScaleScales.push_back( currentScale );
     }
-}
-
-
-template < class T, unsigned int VImageDimension >
-T CAlgorithmBase< T, VImageDimension >::GetMultiScaleSigma() const
-{
-  return this->m_MultiScaleSigma;
-}
-
-template < class T, unsigned int VImageDimension >
-bool CAlgorithmBase< T, VImageDimension >::GetMultiScaleBlurHighestResolutionImage() const
-{
-  return this->m_MultiScaleBlurHighestResolutionImage;
 }
 
 template < class T, unsigned int VImageDimension >

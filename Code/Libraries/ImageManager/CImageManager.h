@@ -260,6 +260,16 @@ public:
   const VectorImageType* GetGraftImagePointer( int uiSubjectIndex = 0 );
 
   /**
+   * Convenience method which returns a pointer to the first stored image at a give scale.
+   * This can be used for example to initialize data sizes for upsampling
+   *
+   * @param subjectIndex - desired subject index
+   * @param scale -- desired scale
+   * @return Returns the first image of the time series of the subject with the given subject index
+   */
+  const VectorImageType* GetGraftImagePointerAtScale( int uiSubjectIndex = 0, unsigned int scale = 0 );
+
+  /**
    * @brief Returns true if there is more than one scale registered (and hence multi-scaling can be performed) and otherwise false.
    *
    * @return bool
@@ -278,6 +288,10 @@ public:
   SetMacro( Sigma, FloatType );
   GetMacro( Sigma, FloatType );
 
+  // this is for blurring of the highest resolution image
+  SetMacro( SigmaHighestResolutionImage, FloatType );
+  GetMacro( SigmaHighestResolutionImage, FloatType );
+
   // this variable determines if the highest resolution image should be blurred to compute the solution or not
   SetMacro( BlurHighestResolutionImage, bool );
   GetMacro( BlurHighestResolutionImage, bool );
@@ -294,6 +308,8 @@ protected:
    * @return bool
    */
   bool ScalesForAllIndicesAreSpecified();
+
+  void SetCurrentImagePreprocessingSettings( TimeSeriesDataPointType& dataPoint );
 
 private:
 
@@ -325,6 +341,10 @@ private:
   FloatType m_Sigma;
   const FloatType DefaultSigma;
   bool m_ExternallySetSigma;
+
+  FloatType m_SigmaHighestResolutionImage;
+  const FloatType DefaultSigmaHighestResolutionImage;
+  bool m_ExternallySetSigmaHighestResolutionImage;
 
   bool m_BlurHighestResolutionImage;
   bool DefaultBlurHighestResolutionImage;

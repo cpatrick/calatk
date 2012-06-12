@@ -36,8 +36,8 @@ int main( int argc, char* argv[] )
   state = StateFactoryType::CreateNewState( "StateSpatioTemporalVelocityField" );
   state = StateFactoryType::CreateNewState( "StateMultipleStatesWithInitialMomentum" );
   state = StateFactoryType::CreateNewState( "StateMultipleStatesWithSpatioTemporalVelocityField" );
-  state = StateFactoryType::CreateNewState( "StateImageMultipleStatesWithInitialMomentum" );
-  state = StateFactoryType::CreateNewState( "StateImageMultipleStatesWithSpatioTemporalVelocityField" );
+  //state = StateFactoryType::CreateNewState( "StateImageMultipleStatesWithInitialMomentum" );
+  //state = StateFactoryType::CreateNewState( "StateImageMultipleStatesWithSpatioTemporalVelocityField" );
 
   return EXIT_SUCCESS;
 }

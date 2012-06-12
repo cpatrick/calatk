@@ -71,6 +71,9 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingRegistration< TState >::SetDef
 template < class TState >
 void CLDDMMSimplifiedMetamorphosisGeodesicShootingRegistration< TState >::PreFirstSolve()
 {
+
+  Superclass::PreFirstSolve();
+
   typedef CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState > CMetamorphosisType;
   CMetamorphosisType* pMetamorphosis = NULL;
 

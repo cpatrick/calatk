@@ -16,13 +16,18 @@
 		"Alpha" : 0.050,
 		"Gamma" : 1.0
 	},
-	"MultiScaleBlurHighestResolutionImage" : false,
+	"ImageManager" : 
+	{
+		"AutoScaleImages" : false,
+		"BlurHighestResolutionImage" : false,
+		"Sigma" : 0.0050,
+		"SigmaHighestResolutionImage" : 0.0050
+	},
 	"MultiScaleFinalOutput" :
 	{
 		"OutputStateInformation" : false,
 		"OutputStateInformationFrequency" : 100
 	},
-	"MultiScaleSigmaInVoxels" : 0.50,
 	"MultiScaleSettings" :
 	[
 

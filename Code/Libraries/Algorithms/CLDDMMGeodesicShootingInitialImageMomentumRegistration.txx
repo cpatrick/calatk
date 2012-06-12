@@ -60,6 +60,9 @@ void CLDDMMGeodesicShootingInitialImageMomentumRegistration< TState >::SetDefaul
 template < class TState >
 void CLDDMMGeodesicShootingInitialImageMomentumRegistration< TState >::PreFirstSolve()
 {
+
+  Superclass::PreFirstSolve();
+
   typedef CLDDMMAdjointGeodesicShootingObjectiveFunction< TState > CLDDMMType;
   CLDDMMType * plddmm = NULL;
 

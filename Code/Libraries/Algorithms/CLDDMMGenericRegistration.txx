@@ -89,6 +89,9 @@ void CLDDMMGenericRegistration< TState >::SetDefaultObjectiveFunctionPointer()
 template < class TState >
 void CLDDMMGenericRegistration< TState >::PreFirstSolve()
 {
+
+  Superclass::PreFirstSolve();
+
   typedef CVelocityFieldObjectiveFunctionWithMomentum< TState > LDDMMVelocityFieldObjectiveFunctionWithMomentumType;
   LDDMMVelocityFieldObjectiveFunctionWithMomentumType* plddmm = NULL;
 

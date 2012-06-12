@@ -59,15 +59,13 @@ void CAlgorithm< TState >::SetDefaultsIfNeeded()
 template < class TState >
 void CAlgorithm< TState >::Solve()
 {
+
+  this->SetDefaultsIfNeeded();
+
   if( ! this->m_AutoConfigurationSet )
     {
     throw std::logic_error( "CAlgorithm: AutoConfiguration inputs have not been set." );
     }
-
-  this->m_CleanedJSONConfig->InitializeEmptyRoot();
-  // This will create a root pointer if one does not already exists.
-  //Json::Value * configInRoot = this->m_CombinedJSONConfig->GetRootPointer();
-  this->m_CombinedJSONConfig->GetRootPointer();
 
   // image manager needs to be specified, so that data can be assigned
   if ( this->m_ptrImageManager.GetPointer() == NULL )
@@ -82,8 +80,6 @@ void CAlgorithm< TState >::Solve()
   // check if we have a valid cast
   if ( ptrImageManager !=0 )
     {
-    ptrImageManager->SetSigma( this->GetMultiScaleSigma() );
-    ptrImageManager->SetBlurHighestResolutionImage( this->GetMultiScaleBlurHighestResolutionImage() );
 
     for ( unsigned int iI=0; iI < this->GetMultiScaleNumberOfScales(); ++iI )
       {
@@ -96,8 +92,6 @@ void CAlgorithm< TState >::Solve()
     }
 
   this->m_ptrImageManager->print( std::cout );
-
-  this->SetDefaultsIfNeeded();
 
   this->PreFirstSolve();
 

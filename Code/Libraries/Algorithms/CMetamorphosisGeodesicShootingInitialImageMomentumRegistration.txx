@@ -79,6 +79,9 @@ void CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TState >::S
 template < class TState >
 void CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TState >::PreFirstSolve()
 {
+
+  Superclass::PreFirstSolve();
+
   typedef CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState > CMetamorphosisType;
   CMetamorphosisType* pMetamorphosis = NULL;
 

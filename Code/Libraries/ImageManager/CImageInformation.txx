@@ -33,6 +33,7 @@ CImageInformation< TFloat, VImageDimension >::CImageInformation()
     m_CurrentlyActiveScale( 0 ),
     m_BlurHighestResolutionImage( false ),
     m_Sigma( 0.5 ),
+    m_SigmaHighestResolutionImage( 0.5 ),
     m_AutoScaleImage( false ),
     m_LoadStrategyType( LOAD_STRATEGY_STORE_ALL ),
     m_HasExternallySpecifiedImage( false ),
@@ -93,6 +94,18 @@ template < class TFloat, unsigned int VImageDimension >
 TFloat CImageInformation< TFloat, VImageDimension >::GetSigma() const
 {
   return m_Sigma;
+}
+
+template < class TFloat, unsigned int VImageDimension >
+void CImageInformation< TFloat, VImageDimension >::SetSigmaHighestResolutionImage( FloatType sigma )
+{
+  m_SigmaHighestResolutionImage = sigma;
+}
+
+template < class TFloat, unsigned int VImageDimension >
+TFloat CImageInformation< TFloat, VImageDimension >::GetSigmaHighestResolutionImage() const
+{
+  return m_SigmaHighestResolutionImage;
 }
 
 template < class TFloat, unsigned int VImageDimension >
@@ -364,7 +377,7 @@ CImageInformation< TFloat, VImageDimension >::GetOriginalImage()
       if ( m_BlurHighestResolutionImage )
         {
         std::cout << "WARNING: blurring the original image" << std::endl;
-        this->m_GaussianKernel->SetSigma( m_Sigma );
+        this->m_GaussianKernel->SetSigma( m_SigmaHighestResolutionImage );
         this->m_GaussianKernel->ConvolveWithKernel( m_OriginalImage );
         }
 

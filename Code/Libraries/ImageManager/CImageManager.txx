@@ -32,6 +32,8 @@ CImageManager< TFloat, VImageDimension >::CImageManager()
     m_ExternallySetAutoScaleImages( false ),
     DefaultSigma( 0.5 ),
     m_ExternallySetSigma( false ),
+    DefaultSigmaHighestResolutionImage( 0.5 ),
+    m_ExternallySetSigmaHighestResolutionImage( false ),
     DefaultBlurHighestResolutionImage( false ),
     m_ExternallySetBlurHighestResolutionImage( false ),
     m_ImagesWereRegistered( false )
@@ -43,6 +45,7 @@ CImageManager< TFloat, VImageDimension >::CImageManager()
 
   m_AutoScaleImages = DefaultAutoScaleImages;
   m_Sigma = DefaultSigma;
+  m_SigmaHighestResolutionImage = DefaultSigmaHighestResolutionImage;
   m_BlurHighestResolutionImage = DefaultBlurHighestResolutionImage;
 
   // add default scale, the original blurred image at the original resolution
@@ -156,12 +159,15 @@ void CImageManager< TFloat, VImageDimension >::SetAutoConfiguration( CJSONConfig
 
   SetJSONFromKeyBool( currentConfigurationIn, currentConfigurationOut, AutoScaleImages );
   SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, Sigma );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, SigmaHighestResolutionImage );
   SetJSONFromKeyBool( currentConfigurationIn, currentConfigurationOut, BlurHighestResolutionImage );
 
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, AutoScaleImages,
                      "if enabled will will set all values of an image smaller than 0 to 0 and scale the maximum value to 1." );
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, Sigma,
                      "selects the amount of blurring used for the multi-resolution pyramid (physical coordinates for highest resolution image)." );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, SigmaHighestResolutionImage,
+                     "selects the amount of blurring used for the original image if desired. Blurred before *any* multi-resolution computation (physical coordinates for highest resolution image)." );
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, BlurHighestResolutionImage,
                      "if set to true blurs also the highest resolution image otherwise keeps the highest resolution image as is." );
 }
@@ -181,6 +187,7 @@ CImageManager< TFloat, VImageDimension >::GetOriginalImageById( int uid )
   {
     if ( iter->second.GetUniqueId() == uid )
     {
+      SetCurrentImagePreprocessingSettings( iter->second );
       return iter->second.GetOriginalImage();
     }
   }
@@ -191,6 +198,7 @@ CImageManager< TFloat, VImageDimension >::GetOriginalImageById( int uid )
   {
     if ( iterCommon->GetUniqueId() == uid )
     {
+      SetCurrentImagePreprocessingSettings( *iterCommon );
       return iterCommon->GetOriginalImage();
     }
   }
@@ -226,6 +234,7 @@ CImageManager< TFloat, VImageDimension >::GetImageById( int uid )
           throw std::runtime_error( "Scales are not fully specified." );
         }
       }
+      SetCurrentImagePreprocessingSettings( iter->second );
       return iter->second.GetImageAtScale( m_CurrentlySelectedScale );
     }
   }
@@ -248,6 +257,7 @@ CImageManager< TFloat, VImageDimension >::GetImageById( int uid )
           throw std::runtime_error( "Scales are not fully specified." );
         }
       }
+      SetCurrentImagePreprocessingSettings( *iterCommon );
       return iterCommon->GetImageAtScale( m_CurrentlySelectedScale );
     }
   }
@@ -324,12 +334,6 @@ int CImageManager< TFloat, VImageDimension >::AddImage( VectorImageType* pIm, Fl
   imageInformation.SetSubjectId( subjectIndex );
   imageInformation.SetExternallySpecifiedImage( pIm );
 
-  imageInformation.SetGaussianKernelPointer( m_GaussianKernel );
-  imageInformation.SetResamplerPointer( m_Resampler );
-  imageInformation.SetSigma( m_Sigma );
-  imageInformation.SetBlurHighestResolutionImage( m_BlurHighestResolutionImage );
-  imageInformation.SetAutoScaleImage( m_AutoScaleImages );
-
   // now add this to the multimap
   m_AllSubjectInformation.insert( std::pair< int, TimeSeriesDataPointType >( subjectIndex ,imageInformation ) );
 
@@ -357,12 +361,6 @@ int CImageManager< TFloat, VImageDimension >::AddCommonImage( VectorImageType* p
   imageInformation.SetUniqueId( m_CurrentRunningId++ );
   imageInformation.SetSubjectId( COMMON_SUBJECT_ID );
   imageInformation.SetExternallySpecifiedImage( pIm );
-
-  imageInformation.SetGaussianKernelPointer( m_GaussianKernel );
-  imageInformation.SetResamplerPointer( m_Resampler );
-  imageInformation.SetSigma( m_Sigma );
-  imageInformation.SetBlurHighestResolutionImage( m_BlurHighestResolutionImage );
-  imageInformation.SetAutoScaleImage( m_AutoScaleImages );
 
   // now add this to the vector
   m_AllCommonSubjectInformation.push_back( imageInformation );
@@ -393,12 +391,6 @@ int CImageManager< TFloat, VImageDimension>::AddImageAndTransform( const std::st
   imageInformation.SetUniqueId( m_CurrentRunningId++ );
   imageInformation.SetSubjectId( subjectIndex );
 
-  imageInformation.SetGaussianKernelPointer( m_GaussianKernel );
-  imageInformation.SetResamplerPointer( m_Resampler );
-  imageInformation.SetSigma( m_Sigma );
-  imageInformation.SetBlurHighestResolutionImage( m_BlurHighestResolutionImage );
-  imageInformation.SetAutoScaleImage( m_AutoScaleImages );
-
   // now add this to the multimap
   m_AllSubjectInformation.insert( std::pair< int, TimeSeriesDataPointType >( subjectIndex ,imageInformation ) );
 
@@ -406,6 +398,17 @@ int CImageManager< TFloat, VImageDimension>::AddImageAndTransform( const std::st
   m_MapIdToSubjectId[ imageInformation.GetUniqueId() ] = subjectIndex;
 
   return imageInformation.GetUniqueId();
+}
+
+template < class TFloat, unsigned int VImageDimension >
+void CImageManager< TFloat, VImageDimension >::SetCurrentImagePreprocessingSettings( TimeSeriesDataPointType& dataPoint )
+{
+  dataPoint.SetGaussianKernelPointer( m_GaussianKernel );
+  dataPoint.SetResamplerPointer( m_Resampler );
+  dataPoint.SetSigma( m_Sigma );
+  dataPoint.SetSigmaHighestResolutionImage( m_SigmaHighestResolutionImage );
+  dataPoint.SetBlurHighestResolutionImage( m_BlurHighestResolutionImage );
+  dataPoint.SetAutoScaleImage( m_AutoScaleImages );
 }
 
 //
@@ -427,12 +430,6 @@ int CImageManager< TFloat, VImageDimension>::AddCommonImageAndTransform( const s
   imageInformation.SetTimePoint( timepoint );
   imageInformation.SetUniqueId( m_CurrentRunningId++ );
   imageInformation.SetSubjectId( COMMON_SUBJECT_ID );
-
-  imageInformation.SetGaussianKernelPointer( m_GaussianKernel );
-  imageInformation.SetResamplerPointer( m_Resampler );
-  imageInformation.SetSigma( m_Sigma );
-  imageInformation.SetBlurHighestResolutionImage( m_BlurHighestResolutionImage );
-  imageInformation.SetAutoScaleImage( m_AutoScaleImages );
 
   // now add this to the common vector
   m_AllCommonSubjectInformation.push_back( imageInformation );
@@ -568,6 +565,7 @@ void CImageManager< TFloat, VImageDimension>::GetTimeSeriesWithSubjectIndex( std
         throw std::runtime_error( "Scales are not fully specified." );
       }
     }
+    SetCurrentImagePreprocessingSettings( *iterCommon );
     iterCommon->GetImageAtScale( m_CurrentlySelectedScale );
     iterCommon->GetTransformAtScale( m_CurrentlySelectedScale );
     timeseries.push_back( *iterCommon );
@@ -593,6 +591,8 @@ void CImageManager< TFloat, VImageDimension>::GetTimeSeriesWithSubjectIndex( std
         throw std::runtime_error( "Scales are not fully specified." );
       }
     }
+    SetCurrentImagePreprocessingSettings( iter->second );
+
     iter->second.GetImageAtScale( m_CurrentlySelectedScale );
     iter->second.GetTransformAtScale( m_CurrentlySelectedScale );
     timeseries.push_back( iter->second );
@@ -620,13 +620,25 @@ template < class TFloat, unsigned int VImageDimension >
 const typename CImageManager< TFloat, VImageDimension>::VectorImageType *
 CImageManager< TFloat, VImageDimension>::GetGraftImagePointer( int subjectIndex )
 {
+  return GetGraftImagePointerAtScale( subjectIndex, m_CurrentlySelectedScale );
+}
+
+//
+// Returns one image which can be used to allocate memory for example for upsampling in multi-scale implementations at a particular scale
+//
+template < class TFloat, unsigned int VImageDimension >
+const typename CImageManager< TFloat, VImageDimension>::VectorImageType *
+CImageManager< TFloat, VImageDimension>::GetGraftImagePointerAtScale( int subjectIndex, unsigned int scale )
+{
   std::vector< TimeSeriesDataPointType > timeseries;
   this->GetTimeSeriesWithSubjectIndex( timeseries, subjectIndex );
 
   assert( timeseries.size()>0 );
+  SetCurrentImagePreprocessingSettings( timeseries[ 0 ] );
 
-  return timeseries[ 0 ].GetImageAtScale( m_CurrentlySelectedScale );
+  return timeseries[ 0 ].GetImageAtScale( scale );
 }
+
 
 //
 // Prints the filenames and timepoints
@@ -637,6 +649,9 @@ void CImageManager< TFloat, VImageDimension>::print( std::ostream& output )
   std::vector< int > availableSubjectIndices;
   std::vector< int >::const_iterator subjectIter;
   this->GetAvailableSubjectIndices( availableSubjectIndices );
+
+  // get the number of scales
+  std::cout << "ImageManager: scales = " << m_ScaleVector << std::endl;
 
   // loop over subjects
   for ( subjectIter = availableSubjectIndices.begin(); subjectIter != availableSubjectIndices.end(); ++subjectIter )

@@ -126,8 +126,6 @@ protected:
   typename VectorImageType::Pointer m_ptrIm;
   typename VectorFieldType::Pointer m_ptrMap;
 
-  TFloat       GetMultiScaleSigma() const ;
-  bool         GetMultiScaleBlurHighestResolutionImage() const ;
   unsigned int GetMultiScaleNumberOfScales() const ;
   TFloat       GetMultiScaleScale( unsigned int scaleIdx ) const;
 
@@ -135,8 +133,6 @@ protected:
   typedef std::vector< TFloat > MultiScaleScalesType;
 
   MultiScaleScalesType m_MultiScaleScales;
-  TFloat               m_MultiScaleSigma;
-  bool                 m_MultiScaleBlurHighestResolutionImage;
 };
 
 } // end namespace

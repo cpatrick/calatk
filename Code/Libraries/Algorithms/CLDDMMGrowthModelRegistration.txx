@@ -60,6 +60,9 @@ void CLDDMMGrowthModelRegistration< TState >::SetDefaultObjectiveFunctionPointer
 template < class TState >
 void CLDDMMGrowthModelRegistration< TState >::PreFirstSolve()
 {
+
+  Superclass::PreFirstSolve();
+
   typedef CLDDMMGrowthModelObjectiveFunction< TState > CLDDMMType;
   CLDDMMType* plddmm = NULL;
 
