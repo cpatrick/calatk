@@ -498,8 +498,6 @@ void CAtlasBuilder< TState >::Solve()
 {
   // TODO: create the atlas-entries for the average image for the time-series
 
-  // copy the input image manager (TODO: need for a proper copy constructor?)
-
   Superclass::Solve();
 }
 

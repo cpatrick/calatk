@@ -293,6 +293,9 @@ add_ctest_subtest_testdriver_image_compare(calatkMetamorphosisTest adjointMetamo
 			  )
 
 
+add_test_executable(calatkImageManagerTest CALATK ${ITK_LIBRARIES})
+add_ctest_test(calatkImageManagerTest)
+
 # Tests for the high level interface to the library and visualization/analysis
 # interfaces.
 add_executable(testDriverInterfaces testDriverInterfaces.cxx ${testDriverInterfaces_SRCS})
