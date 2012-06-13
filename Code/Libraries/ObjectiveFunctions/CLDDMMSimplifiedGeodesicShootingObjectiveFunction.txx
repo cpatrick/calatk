@@ -86,7 +86,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::CreateNewState
   // obtain image from which to graft the image information for the data structures
 
   // get information from the first image to figure out the dimensions and determine the source and target image
-  this->m_ptrState = new TState( this->m_ptrImageManager->GetGraftImagePointer() );
+  this->m_ptrState = new TState( this->m_ptrImageManager->GetGraftImagePointer( this->GetActiveSubjectId() ) );
   this->m_ptrState->GetPointerToInitialMomentum()->SetToConstant( 0 );
 }
 
@@ -110,7 +110,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::CreateGradientA
     // obtain image from which to graft the image information for the data structures
     // and assign the convenience image pointer ptrI0, ptrI1
     std::vector< TimeSeriesDataPointType > timeseries;
-    this->m_ptrImageManager->GetTimeSeriesWithSubjectIndex( timeseries, vecSubjectIndices[ 0 ] );
+    this->m_ptrImageManager->GetTimeSeriesWithSubjectIndex( timeseries, this->GetActiveSubjectId() );
 
     if ( timeseries.size()!=2 )
     {
@@ -374,7 +374,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::CreateTimeDisc
 
     std::vector< STimePoint > vecTimePointData;
     typedef LDDMMUtils< T, TState::ImageDimension > LDDMMUtilsType;
-    unsigned int uiNrOfMeasurements = LDDMMUtilsType::DetermineTimeSeriesTimePointData( this->m_ptrImageManager, 0, vecTimePointData );
+    unsigned int uiNrOfMeasurements = LDDMMUtilsType::DetermineTimeSeriesTimePointData( this->m_ptrImageManager, this->GetActiveSubjectId(), vecTimePointData );
 
     if ( uiNrOfMeasurements != 2 )
     {
@@ -458,7 +458,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeImageMo
 
   unsigned int uiNrOfTimePoints = m_vecTimeDiscretization.size();
 
-  this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentFinalAdjoint, m_ptrCurrentI, ptrI1 );
+  this->m_ptrMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentFinalAdjoint, m_ptrCurrentI, ptrI1 );
   m_ptrCurrentFinalAdjoint->MultiplyByConstant( m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecWeights[ 0 ] );
 
   LDDMMUtilsType::applyMap( m_ptrCurrentBackMap, m_ptrCurrentFinalAdjoint, ptrWarpedFinalToInitialAdjoint );
@@ -516,7 +516,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeInitial
 
   typename VectorImageType::Pointer ptrCurrentAdjointDifference = new VectorImageType( ptrI0 );
 
-  this->m_pMetric->GetAdjointMatchingDifferenceImage( ptrCurrentAdjointDifference, ptrI0, ptrI1 );
+  this->m_ptrMetric->GetAdjointMatchingDifferenceImage( ptrCurrentAdjointDifference, ptrI0, ptrI1 );
   ptrCurrentAdjointDifference->MultiplyByConstant( m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecWeights[ 0 ] );
 
   // initialize to 0
@@ -588,8 +588,8 @@ CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::GetCurrentEnergy()
 
   // we only have two timepoints here
 
-  dImageNorm += m_vecTimeDiscretization[ 0 ].vecWeights[ 0 ] * this->m_pMetric->GetMetric( ptrI0, ptrInitialImage );
-  dImageNorm += m_vecTimeDiscretization[ uiNrOfDiscretizationPoints-1 ].vecWeights[ 0 ] * this->m_pMetric->GetMetric( ptrI1, m_ptrCurrentI );
+  dImageNorm += m_vecTimeDiscretization[ 0 ].vecWeights[ 0 ] * this->m_ptrMetric->GetMetric( ptrI0, ptrInitialImage );
+  dImageNorm += m_vecTimeDiscretization[ uiNrOfDiscretizationPoints-1 ].vecWeights[ 0 ] * this->m_ptrMetric->GetMetric( ptrI1, m_ptrCurrentI );
 
   dEnergy += dImageNorm;
 

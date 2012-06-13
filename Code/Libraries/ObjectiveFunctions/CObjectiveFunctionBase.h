@@ -44,9 +44,12 @@ public:
   typedef itk::SmartPointer< Self >         Pointer;
   typedef itk::SmartPointer< const Self >   ConstPointer;
 
-  typedef CMetric< T, VImageDimension >* ptrMetricType;
+  typedef CMetric< T, VImageDimension >       MetricType;
   typedef CKernel< T, VImageDimension >       KernelType;
   typedef CImageManager< T, VImageDimension > ImageManagerType;
+
+  typedef typename MetricType::Pointer PointerMetricType;
+  typedef typename ImageManagerType::Pointer PointerImageManagerType;
 
   typedef VectorImage< T, VImageDimension > VectorImageType;
   typedef VectorField< T, VImageDimension > VectorFieldType;
@@ -151,18 +154,25 @@ public:
   {
   };
 
+  /**
+   * @brief Sets the subject id which is then used in subsequent algorithms to select subject-specific timeseries
+   *
+   * @param uid  -- unique subject id
+   */
+  void SetActiveSubjectId( int uid );
+
+  /**
+   * @brief Returns the currently set subject id which is used to select timeseries
+   *
+   * @return int
+   */
+  int GetActiveSubjectId() const;
+
   void SetImageManagerPointer( ImageManagerType * ptrImageManager );
   ImageManagerType* GetImageManagerPointer() const;
 
-  void SetMetricPointer( ptrMetricType pMetric )
-  {
-    m_pMetric = pMetric;
-  };
-
-  ptrMetricType GetMetricPointer() const
-  {
-    return m_pMetric;
-  };
+  void SetMetricPointer( MetricType* pMetric );
+  MetricType* GetMetricPointer() const;
 
   /**
   * Computes initial un-smoothed velocity gradient of the velocity.
@@ -173,9 +183,10 @@ public:
 protected:
 
   // TODO: FIXME, needs to be an array, so we can in principle support registrations at every measurement
-  ptrMetricType m_pMetric;
-  itk::SmartPointer< ImageManagerType > m_ptrImageManager;
+  PointerMetricType m_ptrMetric;
+  PointerImageManagerType m_ptrImageManager;
 
+  int m_CurrentlyActiveSubjectId;
 };
 
 } // end namespace

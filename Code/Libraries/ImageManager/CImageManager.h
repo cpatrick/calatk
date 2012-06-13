@@ -223,7 +223,7 @@ public:
    * Returns vectors to the actual image data, needs to be implemented by a derived class.
    *
    * @return pImInfo - the full subject information (a time-series for one subject)
-   * @param subjectIndex - subject index of the subject to be returned
+   * @param subjectIndex - subject index of the subject to be returned, if subject index is negative returns the first timeseries
    */
   virtual void GetTimeSeriesWithSubjectIndex( std::vector< TimeSeriesDataPointType >& timeseries, int subjectIndex );
 
@@ -232,7 +232,7 @@ public:
    * To be used for example for numerical solvers which need to discretize time over all time points
    *
    * @return timepoint - returns all the timepoints for the specified subject
-   * @param subjectIndex - index of the subject whose timepoints should be extracted
+   * @param subjectIndex - index of the subject whose timepoints should be extracted, if subject index is negative, returns the first timeseries
    */
   void GetTimepointsForSubjectIndex( std::vector< FloatType >& timepoints, int subjectIndex );
 
@@ -254,7 +254,7 @@ public:
    * Convenience method which returns a pointer to the first stored image.
    * This can be used for example to initialize data sizes for upsampling
    *
-   * @param uiSubjectIndex - desired subject index
+   * @param uiSubjectIndex - desired subject index, if subject index is negative it returns the first image of the first timeseries
    * @return Returns the first image of the time series of the subject with the given subject index
    */
   const VectorImageType* GetGraftImagePointer( int uiSubjectIndex = 0 );
@@ -263,7 +263,7 @@ public:
    * Convenience method which returns a pointer to the first stored image at a give scale.
    * This can be used for example to initialize data sizes for upsampling
    *
-   * @param subjectIndex - desired subject index
+   * @param subjectIndex - desired subject index, if subject index is negative it returns the first image of the first timeseries
    * @param scale -- desired scale
    * @return Returns the first image of the time series of the subject with the given subject index
    */
@@ -275,6 +275,14 @@ public:
    * @return bool
    */
   bool SupportsMultiScaling();
+
+  /**
+   * @brief Convenience function to return the subjectIndex or the subjectIndex of the first timeseries if subjectIndex is negative
+   *
+   * @param subjectIndex
+   * @return int
+   */
+  int GetFirstSubjectIndexIfNegative( int subjectIndex );
 
   /**
    * Prints the state of the image manager
@@ -309,6 +317,11 @@ protected:
    */
   bool ScalesForAllIndicesAreSpecified();
 
+  /**
+   * @brief Convenience function which sets options which are externally set for the data (smoothing, resamplers, ...)
+   *
+   * @param dataPoint
+   */
   void SetCurrentImagePreprocessingSettings( TimeSeriesDataPointType& dataPoint );
 
 private:

@@ -478,6 +478,9 @@ bool CImageManager< TFloat, VImageDimension>::RemoveImage( int uid )
 template < class TFloat, unsigned int VImageDimension >
 void CImageManager< TFloat, VImageDimension>::GetTimepointsForSubjectIndex( std::vector< FloatType >& timepoints, int subjectIndex )
 {
+
+  subjectIndex = GetFirstSubjectIndexIfNegative( subjectIndex );
+
   typedef typename AllSubjectInformationType::iterator AllSubjectInformationIteratorType;
   AllSubjectInformationIteratorType iter;
   std::pair< AllSubjectInformationIteratorType, AllSubjectInformationIteratorType > retRange;
@@ -545,6 +548,8 @@ unsigned int CImageManager< TFloat, VImageDimension>::GetNumberOfAvailableSubjec
 template < class TFloat, unsigned int VImageDimension >
 void CImageManager< TFloat, VImageDimension>::GetTimeSeriesWithSubjectIndex( std::vector< TimeSeriesDataPointType >& timeseries, int subjectIndex )
 {
+  subjectIndex = GetFirstSubjectIndexIfNegative( subjectIndex );
+
   // if images are requested, they will be loaded on the fly (CImageInformation takes care of this)
 
   timeseries.clear();
@@ -620,6 +625,8 @@ template < class TFloat, unsigned int VImageDimension >
 const typename CImageManager< TFloat, VImageDimension>::VectorImageType *
 CImageManager< TFloat, VImageDimension>::GetGraftImagePointer( int subjectIndex )
 {
+  subjectIndex = GetFirstSubjectIndexIfNegative( subjectIndex );
+
   return GetGraftImagePointerAtScale( subjectIndex, m_CurrentlySelectedScale );
 }
 
@@ -630,6 +637,8 @@ template < class TFloat, unsigned int VImageDimension >
 const typename CImageManager< TFloat, VImageDimension>::VectorImageType *
 CImageManager< TFloat, VImageDimension>::GetGraftImagePointerAtScale( int subjectIndex, unsigned int scale )
 {
+  subjectIndex = GetFirstSubjectIndexIfNegative( subjectIndex );
+
   std::vector< TimeSeriesDataPointType > timeseries;
   this->GetTimeSeriesWithSubjectIndex( timeseries, subjectIndex );
 
@@ -639,6 +648,30 @@ CImageManager< TFloat, VImageDimension>::GetGraftImagePointerAtScale( int subjec
   return timeseries[ 0 ].GetImageAtScale( scale );
 }
 
+//
+// if the subject index is negative it returns the subject index of the first timeseries
+//
+template < class TFloat, unsigned int VImageDimension >
+int CImageManager< TFloat, VImageDimension >::GetFirstSubjectIndexIfNegative( int subjectIndex )
+{
+  if ( subjectIndex < 0 )
+  {
+    std::vector< int > availableSubjectIndices;
+    this->GetAvailableSubjectIndices( availableSubjectIndices );
+    if ( availableSubjectIndices.empty() ) // there are none
+    {
+      return subjectIndex;
+    }
+    else
+    {
+      return availableSubjectIndices[ 0 ];
+    }
+  }
+  else
+  {
+    return subjectIndex;
+  }
+}
 
 //
 // Prints the filenames and timepoints

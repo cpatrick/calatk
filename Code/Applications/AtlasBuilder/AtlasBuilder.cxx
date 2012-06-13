@@ -76,6 +76,7 @@ int DoIt( int argc, char** argv )
 
   atlasBuilder->SetAutoConfiguration( combinedConfiguration, cleanedConfiguration );
   atlasBuilder->SetAllowHelpComments( bCreateJSONHelp );
+
   atlasBuilder->Solve();
 
   // write out the resulting JSON file if desired

@@ -71,7 +71,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::CreateAuxiliaryStructures()
   assert( vecSubjectIndices.size()>0 );
 
   // obtain image from which to graft the image information for the data structures
-  const VectorImageType* pGraftIm = this->m_ptrImageManager->GetGraftImagePointer( vecSubjectIndices[ 0 ] );
+  const VectorImageType* pGraftIm = this->m_ptrImageManager->GetGraftImagePointer( this->GetActiveSubjectId() );
 
   // allocate all the auxiliary data
 
@@ -188,7 +188,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::GetInitialMomentum( VectorIma
 template  < class TState >
 void CLDDMMGrowthModelObjectiveFunction< TState >::DetermineTimePointData( std::vector< STimePoint >& vecTimePointData )
 {
-  CALATK::LDDMMUtils< T, TState::ImageDimension >::DetermineTimeSeriesTimePointData( this->m_ptrImageManager, 0, vecTimePointData );
+  CALATK::LDDMMUtils< T, TState::ImageDimension >::DetermineTimeSeriesTimePointData( this->m_ptrImageManager, this->GetActiveSubjectId(), vecTimePointData );
 }
 
 template < class TState >
@@ -226,7 +226,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeAdjointBackward()
   // first set the final condition
   for ( unsigned int iM = 0; iM <  uiNrOfMeasuredImagesAtTimePoint; ++iM )
     {
-    this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, this->m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecEstimatedImages[0] , this->m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecMeasurementImages[ iM ] );
+    this->m_ptrMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, this->m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecEstimatedImages[0] , this->m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecMeasurementImages[ iM ] );
     m_ptrCurrentAdjointDifference->MultiplyByConstant( 1.0/m_SigmaSqr );
     m_ptrCurrentLambdaEnd->AddCellwise( m_ptrCurrentAdjointDifference );
     }
@@ -270,7 +270,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeAdjointBackward()
       uiNrOfMeasuredImagesAtTimePoint = this->m_vecTimeDiscretization[ iI ].vecMeasurementImages.size();
       for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM )
         {
-        this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, this->m_vecTimeDiscretization[ iI ].vecEstimatedImages[0] , this->m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ] );
+        this->m_ptrMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, this->m_vecTimeDiscretization[ iI ].vecEstimatedImages[0] , this->m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ] );
         m_ptrCurrentAdjointDifference->MultiplyByConstant( 1.0/m_SigmaSqr );
         m_ptrLambda[iI]->AddCellwise( m_ptrCurrentAdjointDifference );
         }
@@ -350,7 +350,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeInitialUnsmoothedVeloc
       unsigned int uiNrOfMeasuredImagesAtTimePoint = this->m_vecTimeDiscretization[ iI ].vecMeasurementImages.size();
       for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM )
         {
-        this->m_pMetric->GetAdjointMatchingDifferenceImage( ptrCurrentAdjointDifference, m_ptrI0 , this->m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ] );
+        this->m_ptrMetric->GetAdjointMatchingDifferenceImage( ptrCurrentAdjointDifference, m_ptrI0 , this->m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ] );
         ptrCurrentAdjointDifference->MultiplyByConstant( 1.0/m_SigmaSqr );
         ptrLambda0->AddCellwise( ptrCurrentAdjointDifference );
         }
@@ -410,7 +410,7 @@ CLDDMMGrowthModelObjectiveFunction< TState >::GetCurrentEnergy()
     unsigned int uiNrOfMeasuredImagesAtTimePoint = this->m_vecTimeDiscretization[ iI ].vecMeasurementImages.size();
     for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM )
       {
-      T dCurrentImageMetric = 1.0/m_SigmaSqr*this->m_pMetric->GetMetric( this->m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ], this->m_vecTimeDiscretization[ iI ].vecEstimatedImages[0] );
+      T dCurrentImageMetric = 1.0/m_SigmaSqr*this->m_ptrMetric->GetMetric( this->m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ], this->m_vecTimeDiscretization[ iI ].vecEstimatedImages[0] );
       dImageNorm += dCurrentImageMetric;
       }
 

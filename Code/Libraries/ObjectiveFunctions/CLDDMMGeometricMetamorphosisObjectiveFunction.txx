@@ -425,7 +425,7 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeAdjointBack
 
   // first set the final condition for lambda T
 
-  this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifferenceT, ptrEstT2, ptrT2 );
+  this->m_ptrMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifferenceT, ptrEstT2, ptrT2 );
   m_ptrCurrentAdjointDifferenceT->MultiplyByConstant( 1.0/m_Sigma2Sqr );
   m_ptrCurrentLambdaTEnd->AddCellwise( m_ptrCurrentAdjointDifferenceT );
 
@@ -471,7 +471,7 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeAdjointBack
 
   // now add the jump to currentlambdaTEnd
   // \lambda^\tau(1-) = \lambda^\tau(1+) -2/sigma1^2(I(1)-I_1)^2*(T2-1)^2(I^tau(1)-1)
-  this->m_pMetric->GetLocalizedMetric( m_ptrCurrentAdjointDifferenceT, ptrEstI1, ptrI1 );
+  this->m_ptrMetric->GetLocalizedMetric( m_ptrCurrentAdjointDifferenceT, ptrEstI1, ptrI1 );
   m_ptrCurrentAdjointDifferenceT->MultiplyByConstant( 1.0/m_Sigma1Sqr );
   
   // now multiply it with (T2-1)^2 and (IT(1)-1) to get the final desired result for \lambda(1)
@@ -485,7 +485,7 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeAdjointBack
 
   // now compute the final condition for \lambda
   // \lambda(1) = -2/sigma1^2*(I(1)-I_1)*(T2-1)^2*(IT(1)-1)^2
-  this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, ptrEstI1, ptrI1 );
+  this->m_ptrMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, ptrEstI1, ptrI1 );
   m_ptrCurrentAdjointDifference->MultiplyByConstant( 1.0/m_Sigma1Sqr );
 
   // now multiply it with (T2-1)^2 and (IT(1)-1)^2 to get the final desired result for \lambda(1)
@@ -629,11 +629,11 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeInitialUnsm
       // first add the components from the image
 
       // compute the adjoint related to the image, i.e., -\sigma_1^2(I_0-I_1)(1-T_1)^2(1-T_2)^2
-      this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, ptrI0, ptrI1 );
+      this->m_ptrMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, ptrI0, ptrI1 );
       m_ptrCurrentAdjointDifference->MultiplyByConstant( 1.0/m_Sigma1Sqr );
 
       // \lambda(1) = -2/sigma1^2*(I_0-I_1)*(T2-1)^2*(IT(1)-1)^2
-      this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, ptrI0, ptrI1 );
+      this->m_ptrMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, ptrI0, ptrI1 );
       m_ptrCurrentAdjointDifference->MultiplyByConstant( 1.0/m_Sigma1Sqr );
 
       // for convencience of notation, use a scalar image as temporary storage
@@ -670,7 +670,7 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeInitialUnsm
 
       // now compute the final condition for \lambda
       // \lambda(1) = -2/sigma2^2*(T1-T2)
-      this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifferenceT, ptrT0, ptrT2 );
+      this->m_ptrMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifferenceT, ptrT0, ptrT2 );
       m_ptrCurrentAdjointDifferenceT->MultiplyByConstant( 1.0/m_Sigma2Sqr );
 
       VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( m_ptrCurrentAdjointDifferenceT, 0, m_ptrTmpGradient2 );
@@ -683,7 +683,7 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeInitialUnsm
 
       // now add the jump to currentlambdaTEnd
       // \lambda^\tau(1-) = \lambda^\tau(1+) -2/sigma1^2(I0-I_1)^2*(T2-1)^2(T1-1)
-      this->m_pMetric->GetLocalizedMetric( m_ptrCurrentAdjointDifferenceT, ptrI0, ptrI1 );
+      this->m_ptrMetric->GetLocalizedMetric( m_ptrCurrentAdjointDifferenceT, ptrI0, ptrI1 );
       m_ptrCurrentAdjointDifferenceT->MultiplyByConstant( 1.0/m_Sigma1Sqr );
 
       // now multiply it with (T2-1)^2 and (IT(1)-1) to get the final desired result for \lambda(1)
@@ -709,7 +709,7 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeInitialUnsm
 
       // now compute the final condition for \lambda
       // \lambda(1) = -2/sigma2^2*(T1-T2)
-      this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifferenceT, ptrT0, ptrT2 );
+      this->m_ptrMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifferenceT, ptrT0, ptrT2 );
       m_ptrCurrentAdjointDifferenceT->MultiplyByConstant( 1.0/m_Sigma2Sqr );
 
       VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( m_ptrCurrentAdjointDifferenceT, 0, ptrGradient );
@@ -787,12 +787,12 @@ CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetCurrentEnergy()
 
   // foreground part
 
-  T dCurrentImageMetric = 1.0/m_Sigma1Sqr*this->m_pMetric->GetMetric( m_ptrI1Comp, m_ptrEstI1Comp );
+  T dCurrentImageMetric = 1.0/m_Sigma1Sqr*this->m_ptrMetric->GetMetric( m_ptrI1Comp, m_ptrEstI1Comp );
 
   dImageNorm += dCurrentImageMetric;
 
   // and background part
-  dCurrentImageMetric = 1.0/m_Sigma2Sqr*this->m_pMetric->GetMetric( ptrEstT2, ptrT2 );
+  dCurrentImageMetric = 1.0/m_Sigma2Sqr*this->m_ptrMetric->GetMetric( ptrEstT2, ptrT2 );
 
   dImageNorm += dCurrentImageMetric;
 

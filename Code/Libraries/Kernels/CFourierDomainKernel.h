@@ -112,12 +112,12 @@ public:
   /** Array of input doubles to be transformed */
   float* in;
   /** Array of output double-pairs to hold the result */
-  fftwf_complex* out;
+  FFTComplexType* out;
 
   /** FFTW plan object for the forward transformation */
-  fftwf_plan fwd;
+  FFTPlanType fwd;
   /** FFTW plan object for the backward transformation */
-  fftwf_plan bck;
+  FFTPlanType bck;
 };
 
 template < >
@@ -197,12 +197,12 @@ public:
   /** Array of input doubles to be transformed */
   double* in;
   /** Array of output double-pairs to hold the result */
-  fftw_complex* out;
+  FFTComplexType* out;
 
   /** FFTW plan object for the forward transformation */
-  fftw_plan fwd;
+  FFTPlanType fwd;
   /** FFTW plan object for the backward transformation */
-  fftw_plan bck;
+  FFTPlanType bck;
 };
 
 template <class T, unsigned int VImageDimension=3 >

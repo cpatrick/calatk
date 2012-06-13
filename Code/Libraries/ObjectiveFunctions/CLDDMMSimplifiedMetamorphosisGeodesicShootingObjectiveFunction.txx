@@ -107,7 +107,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::C
   assert( vecSubjectIndices.size()>0 );
 
   // obtain image from which to graft the image information for the data structures
-  const VectorImageType* graftImage = this->m_ptrImageManager->GetGraftImagePointer();
+  const VectorImageType* graftImage = this->m_ptrImageManager->GetGraftImagePointer( this->GetActiveSubjectId() );
 
   this->m_ptrState = new TState( graftImage );
   this->m_ptrState->GetPointerToInitialMomentum()->SetToConstant( 0 );
@@ -132,7 +132,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState>::Cr
   // obtain image from which to graft the image information for the data structures
   // and assign the convenience image pointer ptrI0, ptrI1
   std::vector< TimeSeriesDataPointType > timeseries;
-  this->m_ptrImageManager->GetTimeSeriesWithSubjectIndex( timeseries, vecSubjectIndices[ 0 ] );
+  this->m_ptrImageManager->GetTimeSeriesWithSubjectIndex( timeseries, this->GetActiveSubjectId() );
 
   if ( timeseries.size()!=2 )
   {
@@ -412,7 +412,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::C
     }
 
     std::vector< STimePoint > vecTimePointData;
-    unsigned int uiNrOfMeasurements = CALATK::LDDMMUtils< T, TState::ImageDimension >::DetermineTimeSeriesTimePointData( this->m_ptrImageManager, 0, vecTimePointData );
+    unsigned int uiNrOfMeasurements = CALATK::LDDMMUtils< T, TState::ImageDimension >::DetermineTimeSeriesTimePointData( this->m_ptrImageManager, this->GetActiveSubjectId(), vecTimePointData );
 
     if ( uiNrOfMeasurements != 2 )
     {

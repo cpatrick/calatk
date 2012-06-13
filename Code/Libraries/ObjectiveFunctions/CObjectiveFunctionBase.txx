@@ -30,8 +30,9 @@ namespace CALATK
 //
 template < class T, unsigned int VImageDimension >
 CObjectiveFunctionBase< T, VImageDimension >::CObjectiveFunctionBase()
+  : m_CurrentlyActiveSubjectId( -1 )
 {
-  m_pMetric = NULL;
+  m_ptrMetric = NULL;
   m_ptrImageManager = NULL;
 }
 
@@ -63,6 +64,31 @@ typename CObjectiveFunctionBase< T, VImageDimension >::ImageManagerType*
 CObjectiveFunctionBase< T, VImageDimension >::GetImageManagerPointer() const
 {
   return this->m_ptrImageManager;
+}
+
+template < class T, unsigned int VImageDimension >
+void CObjectiveFunctionBase< T, VImageDimension >::SetMetricPointer( MetricType* ptrMetric )
+{
+  this->m_ptrMetric = ptrMetric;
+}
+
+template < class T, unsigned int VImageDimension >
+typename CObjectiveFunctionBase< T, VImageDimension >::MetricType*
+CObjectiveFunctionBase< T, VImageDimension >::GetMetricPointer() const
+{
+  return this->m_ptrMetric;
+}
+
+template < class T, unsigned int VImageDimension >
+void CObjectiveFunctionBase< T, VImageDimension >::SetActiveSubjectId( int uid )
+{
+  this->m_CurrentlyActiveSubjectId = uid;
+}
+
+template < class T, unsigned int VImageDimension >
+int CObjectiveFunctionBase< T, VImageDimension >::GetActiveSubjectId() const
+{
+  return this->m_CurrentlyActiveSubjectId;
 }
 
 } // end namespace

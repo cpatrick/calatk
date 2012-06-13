@@ -89,7 +89,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateNewStat
   assert( this->m_ptrState.GetPointer() == NULL );
   assert( m_vecTimeDiscretization.size() > 1 );
 
-  const VectorImageType* graftImage = this->m_ptrImageManager->GetGraftImagePointer();
+  const VectorImageType* graftImage = this->m_ptrImageManager->GetGraftImagePointer( this->GetActiveSubjectId() );
 
   // allocate memory for the state
   typedef typename TState::VectorFieldTimeSeriesType VectorFieldTimeSeriesType;
@@ -113,7 +113,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::CreateNewGrad
   assert( this->m_ptrGradient.GetPointer() == NULL );
   assert( m_vecTimeDiscretization.size() > 1 );
 
-  const VectorImageType* graftImage = this->m_ptrImageManager->GetGraftImagePointer();
+  const VectorImageType* graftImage = this->m_ptrImageManager->GetGraftImagePointer( this->GetActiveSubjectId() );
 
   // allocate the memory for the gradient
 
@@ -165,7 +165,7 @@ void CLDDMMSpatioTemporalVelocityFieldObjectiveFunction< TState >::InitializeDat
   // shallow copy (i.e., we just take over the externally allocated memory)
   this->ShallowCopyStateStructures( ptrState );
 
-  // new geadient structures
+  // new gradient structures
   this->CreateNewGradientStructures();
 
   // gradient and everything else

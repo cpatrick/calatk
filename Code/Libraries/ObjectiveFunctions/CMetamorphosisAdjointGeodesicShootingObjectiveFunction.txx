@@ -111,7 +111,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::CreateNew
   // obtain image from which to graft the image information for the data structures
 
   // get information from the first image to figure out the dimensions and determine the source and target image
-  this->m_ptrState = new TState( this->m_ptrImageManager->GetGraftImagePointer() );
+  this->m_ptrState = new TState( this->m_ptrImageManager->GetGraftImagePointer( this->GetActiveSubjectId() ) );
   this->m_ptrState->GetPointerToInitialMomentum()->SetToConstant( 0 );
 }
 
@@ -132,7 +132,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState>::CreateGrad
   assert( vecSubjectIndices.size()>0 );
 
   // obtain image from which to graft the image information for the data structures
-  const VectorImageType* graftImage = this->m_ptrImageManager->GetGraftImagePointer();
+  const VectorImageType* graftImage = this->m_ptrImageManager->GetGraftImagePointer( this->GetActiveSubjectId() );
 
   // create the gradient
   this->m_ptrGradient = new TState( graftImage );
@@ -352,7 +352,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState>::CreateTime
   std::vector< STimePoint > vecTimePointData;
 
   typedef LDDMMUtils< T, TState::ImageDimension > LDDMMUtilsType;
-  LDDMMUtilsType::DetermineTimeSeriesTimePointData( this->m_ptrImageManager, 0, vecTimePointData );
+  LDDMMUtilsType::DetermineTimeSeriesTimePointData( this->m_ptrImageManager, this->GetActiveSubjectId(), vecTimePointData );
   LDDMMUtilsType::CreateTimeDiscretization( vecTimePointData, m_vecTimeDiscretization, m_vecTimeIncrements, this->m_NumberOfDiscretizationVolumesPerUnitTime );
 
   // now add the weights, default weights are all constants here

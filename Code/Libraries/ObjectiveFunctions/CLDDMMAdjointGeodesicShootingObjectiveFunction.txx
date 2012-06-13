@@ -89,7 +89,7 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::CreateNewStateStr
     // obtain image from which to graft the image information for the data structures
 
     // get information from the first image to figure out the dimensions
-    this->m_ptrState = new TState( this->m_ptrImageManager->GetGraftImagePointer() );
+    this->m_ptrState = new TState( this->m_ptrImageManager->GetGraftImagePointer( this->GetActiveSubjectId() ) );
     this->m_ptrState->GetPointerToInitialMomentum()->SetToConstant( 0 );
 }
 
@@ -111,7 +111,7 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::CreateGradientAndA
     assert( vecSubjectIndices.size()>0 );
 
     // obtain image from which to graft the image information for the data structures
-    const VectorImageType* graftImage = this->m_ptrImageManager->GetGraftImagePointer();
+    const VectorImageType* graftImage = this->m_ptrImageManager->GetGraftImagePointer( this->GetActiveSubjectId() );
 
     // create the gradient
     this->m_ptrGradient = new TState( graftImage );
@@ -288,7 +288,7 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::CreateTimeDiscreti
 
     std::vector< STimePoint > vecTimePointData;
     typedef LDDMMUtils< T, TState::ImageDimension > LDDMMUtilsType;
-    LDDMMUtilsType::DetermineTimeSeriesTimePointData( this->m_ptrImageManager, 0, vecTimePointData );
+    LDDMMUtilsType::DetermineTimeSeriesTimePointData( this->m_ptrImageManager, this->GetActiveSubjectId(), vecTimePointData );
     LDDMMUtilsType::CreateTimeDiscretization( vecTimePointData, m_vecTimeDiscretization, m_vecTimeIncrements, this->m_NumberOfDiscretizationVolumesPerUnitTime );
 
     // now add the weights, default weights are all constants here
@@ -418,7 +418,7 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ComputeAdjointsBa
     // loop over all measurement images at the last time point (likely this will only be one in most cases)
     for (unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtFinalTimePoint; iM++)
     {
-      this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointIDifference, m_vecTimeDiscretization[ uiNrOfTimePoints-1].vecEstimatedImages[ 0 ], m_vecTimeDiscretization[ uiNrOfTimePoints - 1].vecMeasurementImages[iM] );
+      this->m_ptrMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointIDifference, m_vecTimeDiscretization[ uiNrOfTimePoints-1].vecEstimatedImages[ 0 ], m_vecTimeDiscretization[ uiNrOfTimePoints - 1].vecMeasurementImages[iM] );
       m_ptrCurrentAdjointIDifference->MultiplyByConstant( m_vecTimeDiscretization[uiNrOfTimePoints-1].vecWeights[iM] );
       m_ptrCurrentLambdaI->AddCellwise( m_ptrCurrentAdjointIDifference );
     }
@@ -506,7 +506,7 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ComputeAdjointsBa
         unsigned int uiNrOfMeasuredImagesAtTimePoint = m_vecTimeDiscretization[ iI ].vecMeasurementImages.size();
         for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM )
         {
-          this->m_pMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointIDifference, m_vecTimeDiscretization[ iI ].vecEstimatedImages[ 0 ], m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ] );
+          this->m_ptrMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointIDifference, m_vecTimeDiscretization[ iI ].vecEstimatedImages[ 0 ], m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ] );
           m_ptrCurrentAdjointIDifference->MultiplyByConstant( m_vecTimeDiscretization[ iI ].vecWeights[ iM ] );
           m_ptrCurrentLambdaI->AddCellwise( m_ptrCurrentAdjointIDifference );
         }
@@ -628,7 +628,7 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ComputeInitialUns
       unsigned int uiNrOfMeasuredImagesAtTimePoint = this->m_vecTimeDiscretization[ iI ].vecMeasurementImages.size();
       for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM )
         {
-        this->m_pMetric->GetAdjointMatchingDifferenceImage( ptrCurrentAdjointDifference, ptrI0 , this->m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ] );
+        this->m_ptrMetric->GetAdjointMatchingDifferenceImage( ptrCurrentAdjointDifference, ptrI0 , this->m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ] );
         ptrCurrentAdjointDifference->MultiplyByConstant( m_vecTimeDiscretization[ iI ].vecWeights[ iM ] );
         ptrLambda0->AddCellwise( ptrCurrentAdjointDifference );
         }
@@ -705,7 +705,7 @@ CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::GetCurrentEnergy()
     unsigned int uiNrOfMeasuredImagesAtTimePoint = m_vecTimeDiscretization[ iI ].vecMeasurementImages.size();
     for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM )
       {
-      T dCurrentImageMetric = m_vecTimeDiscretization[iI].vecWeights[iM] * this->m_pMetric->GetMetric( m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ], m_vecTimeDiscretization[ iI ].vecEstimatedImages[ 0 ] );
+      T dCurrentImageMetric = m_vecTimeDiscretization[iI].vecWeights[iM] * this->m_ptrMetric->GetMetric( m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ], m_vecTimeDiscretization[ iI ].vecEstimatedImages[ 0 ] );
       dImageNorm += dCurrentImageMetric;
       }
 

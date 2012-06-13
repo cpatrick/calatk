@@ -44,6 +44,7 @@ template < class TState >
 void CAtlasBuilder< TState >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
   Superclass::SetAutoConfiguration( combined, cleaned );
+
   Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "AtlasSettings", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "AtlasSettings", Json::nullValue );
 
@@ -262,14 +263,14 @@ void CAtlasBuilder< TState >::SetDefaultMetricPointer()
 {
   if ( m_IndividualMetricPointers.empty() )
   {
-    unsigned int uiNumberOfIndividualRegistrations = this->GetNumberOfIndividualRegistrations();
+    unsigned int numberOfIndividualRegistrations = this->GetNumberOfIndividualRegistrations();
 
-    if ( uiNumberOfIndividualRegistrations == 0 )
+    if ( numberOfIndividualRegistrations == 0 )
     {
       throw std::runtime_error( "SetDefaultMetricPointer: no data available -- cannot determine number of metrics to initialize" );
     }
 
-    for ( unsigned int iI=0; iI<uiNumberOfIndividualRegistrations; ++iI )
+    for ( unsigned int iI=0; iI < numberOfIndividualRegistrations; ++iI )
     {
       // only sum of squared differences makes really sense here, because we are dealing with atlas-building
       SetIndividualMetricPointer( CMetricFactory< T, TState::ImageDimension >::CreateNewMetric( m_Metric ) );
@@ -277,7 +278,7 @@ void CAtlasBuilder< TState >::SetDefaultMetricPointer()
   }
   else
   {
-    throw std::runtime_error( "SetDefaultMetricPointer: individual metrics have been specified ");
+    std::cout << "SetDefaultMetricPointer: individual metrics have been specified " << std::endl;
   }
 }
 
@@ -287,14 +288,14 @@ void CAtlasBuilder< TState >::SetDefaultKernelPointer()
 {
   if ( m_IndividualKernelPointers.empty() )
   {
-    unsigned int uiNumberOfIndividualRegistrations = this->GetNumberOfIndividualRegistrations();
+    unsigned int numberOfIndividualRegistrations = this->GetNumberOfIndividualRegistrations();
 
-    if ( uiNumberOfIndividualRegistrations == 0 )
+    if ( numberOfIndividualRegistrations == 0 )
     {
       throw std::runtime_error( "SetDefaultKernelPointer: no data available -- cannot determine number of metrics to initialize" );
     }
 
-    for ( unsigned int iI=0; iI<uiNumberOfIndividualRegistrations; ++iI )
+    for ( unsigned int iI=0; iI < numberOfIndividualRegistrations; ++iI )
     {
       // only sum of squared differences makes really sense here, because we are dealing with atlas-building
       SetIndividualKernelPointer( CKernelFactory< T, TState::ImageDimension >::CreateNewKernel( m_Kernel ) );
@@ -302,7 +303,7 @@ void CAtlasBuilder< TState >::SetDefaultKernelPointer()
   }
   else
   {
-    throw std::runtime_error( "SetDefaultKernelPointer: individual kernels have been specified" );
+    std::cout << "SetDefaultKernelPointer: individual kernels have been specified" << std::endl;
   }
 }
 
@@ -312,14 +313,14 @@ void CAtlasBuilder< TState >::SetDefaultEvolverPointer()
 {
   if ( m_IndividualEvolverPointers.empty() && m_IndividualOneStepEvolverPointers.empty() )
   {
-    unsigned int uiNumberOfIndividualRegistrations = this->GetNumberOfIndividualRegistrations();
+    unsigned int numberOfIndividualRegistrations = this->GetNumberOfIndividualRegistrations();
 
-    if ( uiNumberOfIndividualRegistrations == 0 )
+    if ( numberOfIndividualRegistrations == 0 )
     {
       throw std::runtime_error( "SetDefaultEvolverPointer: no data available -- cannot determine number of evolvers to initialize" );
     }
 
-    for ( unsigned int iI=0; iI<uiNumberOfIndividualRegistrations; ++iI )
+    for ( unsigned int iI=0; iI < numberOfIndividualRegistrations; ++iI )
     {
       // only sum of squared differences makes really sense here, because we are dealing with atlas-building
       EvolverType * ptrEvolver = new DefaultEvolverType;
@@ -332,15 +333,23 @@ void CAtlasBuilder< TState >::SetDefaultEvolverPointer()
   }
   else
   {
-    throw std::runtime_error( "SetDefaultEvolverPointer: individual evolvers or one step evolvers have been specified" );
+    std::cout << "SetDefaultEvolverPointer: individual evolvers or one step evolvers have been specified" << std::endl;
   }
 }
 
 template < class TState >
 unsigned int CAtlasBuilder< TState >::GetNumberOfIndividualRegistrations() const
 {
-  throw std::runtime_error( "GetNumberOfIndividualRegistrations: not yet implemented" );
-  return 0;
+  // get this from the image manager
+  if ( this->m_ptrImageManager.GetPointer() == 0 )
+  {
+    throw std::runtime_error( "Image manager needs to be specified to determine the number of required image registrations." );
+    return 0;
+  }
+  else
+  {
+    return this->m_ptrImageManager->GetNumberOfAvailableSubjectIndices();
+  }
 }
 
 // this overwrites the default implementation, because we are dealing with a set of objective functions here
@@ -376,9 +385,9 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
 
   // Now initialize the individual objective functions
 
-  unsigned int uiNumberOfIndividualRegistrations = this->GetNumberOfIndividualRegistrations();
+  unsigned int numberOfIndividualRegistrations = this->GetNumberOfIndividualRegistrations();
 
-  if ( uiNumberOfIndividualRegistrations == 0 )
+  if ( numberOfIndividualRegistrations == 0 )
   {
     throw std::runtime_error( "There seems to be no data available from the data manager" );
   }
@@ -388,7 +397,7 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
     if ( m_IndividualObjectiveFunctionPointers.empty() )
     {
       // initialize default (since none have been specified)
-      for ( unsigned int iI = 0; iI < uiNumberOfIndividualRegistrations; ++iI )
+      for ( unsigned int iI = 0; iI < numberOfIndividualRegistrations; ++iI )
       {
         typename LDDMMVelocityFieldObjectiveFunctionWithMomentumType::Pointer ptrCurrentIndividualObjectiveFunction =
             dynamic_cast< LDDMMVelocityFieldObjectiveFunctionWithMomentumType * >( CObjectiveFunctionFactory< T, TState::ImageDimension >::CreateNewObjectiveFunction( m_ObjectiveFunction ) );
@@ -403,10 +412,10 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
 
     // check that we have a consistent number of kernels, metrics, individual objective functions, and evolvers
     bool bFailedConsistencyCheck =
-        ( GetNumberOfRegisteredIndividualKernelPointers() != uiNumberOfIndividualRegistrations ) ||
-        ( GetNumberOfRegisteredIndividualMetricPointers() != uiNumberOfIndividualRegistrations ) ||
-        ( GetNumberOfRegisteredIndividualEvolverPointers() != uiNumberOfIndividualRegistrations ) ||
-        ( GetNumberOfRegisteredIndividualObjectiveFunctions() != uiNumberOfIndividualRegistrations );
+        ( GetNumberOfRegisteredIndividualKernelPointers() != numberOfIndividualRegistrations ) ||
+        ( GetNumberOfRegisteredIndividualMetricPointers() != numberOfIndividualRegistrations ) ||
+        ( GetNumberOfRegisteredIndividualEvolverPointers() != numberOfIndividualRegistrations ) ||
+        ( GetNumberOfRegisteredIndividualObjectiveFunctions() != numberOfIndividualRegistrations );
 
     if ( bFailedConsistencyCheck )
     {
@@ -415,7 +424,14 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
 
     // now we know everything is fine, so we can associate everything with each other
 
-    for ( unsigned int iI = 0; iI < uiNumberOfIndividualRegistrations; ++iI )
+    // get the available subject indices
+    std::vector< int > availableSubjectIndices;
+    this->m_ptrImageManager->GetAvailableSubjectIndices( availableSubjectIndices );
+
+    assert( availableSubjectIndices.size() == numberOfIndividualRegistrations );
+    assert( numberOfIndividualRegistrations > 0 );
+
+    for ( unsigned int iI = 0; iI < numberOfIndividualRegistrations; ++iI )
     {
       typename LDDMMVelocityFieldObjectiveFunctionWithMomentumType::Pointer ptrCurrentIndividualObjectiveFunction = dynamic_cast< LDDMMVelocityFieldObjectiveFunctionWithMomentumType * >( GetIndividualObjectiveFunction( iI ) );
       if ( ptrCurrentIndividualObjectiveFunction.GetPointer() == NULL )
@@ -430,6 +446,7 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
       ptrCurrentIndividualObjectiveFunction->SetMetricPointer( GetIndividualMetricPointer( iI ) );
       // TODO: May need to be adapted with update of image manager, should this even be here?
       ptrCurrentIndividualObjectiveFunction->SetImageManagerPointer( this->m_ptrImageManager );
+      ptrCurrentIndividualObjectiveFunction->SetActiveSubjectId( availableSubjectIndices[ iI ] );
 
       // add the individual objective function to the overall atlas objective function
       // TODO: allow weights that are different from 1

@@ -145,8 +145,10 @@ void LDDMMUtils< T, VImageDimension >::CreateTimeDiscretization( const std::vect
 // Determining the timepoint data from data of the image manager
 //
 template < class T, unsigned int VImageDimension >
-unsigned int LDDMMUtils< T, VImageDimension >::DetermineTimeSeriesTimePointData( ImageManagerType* ptrImageManager, unsigned int uiSubjectIndex, std::vector< STimePoint >& vecTimePointData )
+unsigned int LDDMMUtils< T, VImageDimension >::DetermineTimeSeriesTimePointData( ImageManagerType* ptrImageManager, int subjectIndex, std::vector< STimePoint >& vecTimePointData )
 {
+  subjectIndex = ptrImageManager->GetFirstSubjectIndexIfNegative( subjectIndex );
+
   unsigned int uiNumberOfMeasurements = 0;
 
   // get the subject ids
@@ -163,14 +165,14 @@ unsigned int LDDMMUtils< T, VImageDimension >::DetermineTimeSeriesTimePointData(
 
   std::vector< T > vecMeasurementTimepoints;
   // make sure we have at least two timepoints
-  ptrImageManager->GetTimepointsForSubjectIndex( vecMeasurementTimepoints, vecSubjectIndices[ uiSubjectIndex ] );
+  ptrImageManager->GetTimepointsForSubjectIndex( vecMeasurementTimepoints, subjectIndex );
   assert( vecMeasurementTimepoints.size() > 1 );
 
   std::cout << "Measurement timepoints = " << vecMeasurementTimepoints << std::endl;
 
   // get the full time-course information for the subject
   std::vector< TimeSeriesDataPointType > timeSeries;
-  ptrImageManager->GetTimeSeriesWithSubjectIndex( timeSeries, vecSubjectIndices[ uiSubjectIndex ] );
+  ptrImageManager->GetTimeSeriesWithSubjectIndex( timeSeries, subjectIndex );
 
   // clear the time-point information vector
   vecTimePointData.clear();

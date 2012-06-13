@@ -38,13 +38,13 @@ void CFourierDomainKernel< T, VImageDimension >::DeleteData()
   if ( fftwData != NULL )
     {
     // clean up fftw data
-    CFFTDataType<T>::FFTDestroyPlan( fftwData->fwd );
-    CFFTDataType<T>::FFTDestroyPlan( fftwData->bck );
+    //CFFTDataType<T>::FFTDestroyPlan( fftwData->fwd );
+    //CFFTDataType<T>::FFTDestroyPlan( fftwData->bck );
+
+    CFFTDataType<T>::FFTCleanup(); // TODO: should this be in here, seems to create segfaults
 
     CFFTDataType<T>::FFTFreeIn( fftwData->in );
     CFFTDataType<T>::FFTFreeOut( fftwData->out );
-
-    //CFFTDataType<T>::FFTCleanup(); // TODO: should this be in here, seems to create segfaults
 
     delete fftwData;
     fftwData = NULL;
@@ -76,6 +76,9 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures1D( un
 
   // Set up the fftw data
   const unsigned int numElts = szX;
+
+  assert( fftwData==NULL );
+
   fftwData = new CFFTDataType<T>();
 
   fftwData->in = (T*) fftw_malloc( sizeof(T) * numElts);
@@ -92,6 +95,9 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures2D( un
 
   // Set up the fftw data
   const unsigned int numElts = szX*szY;
+
+  assert( fftwData == NULL );
+
   fftwData = new CFFTDataType<T>();
 
   fftwData->in = (T*) fftw_malloc( sizeof(T) * numElts );
@@ -109,6 +115,9 @@ void CFourierDomainKernel< T, VImageDimension >::AllocateFFTDataStructures3D( un
 
  // Set up the fftw data
   const unsigned int numElts = szX*szY*szZ;
+
+  assert( fftwData == NULL );
+
   fftwData = new CFFTDataType<T>();
 
   fftwData->in = (T*) fftw_malloc( sizeof(T) * numElts );

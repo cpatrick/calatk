@@ -108,11 +108,11 @@ public:
     * and returns a vector of this time point information which can be used to compute a time-discretization for LDDMM
     *
     * @param pImageMangager - pointer to the image manager
-    * @param uiSubjectIndex - index of subject of which the timepoints should be extracted
+    * @param subjectIndex - index of subject of which the timepoints should be extracted
     * @param vecTimePointData - resulting vector of timepoint data
     * @return number of measurements in the time series
     */
-  static unsigned int DetermineTimeSeriesTimePointData( ImageManagerType* pImageManager, unsigned int uiSubjectIndex, std::vector< STimePoint >& vecTimePointData );
+  static unsigned int DetermineTimeSeriesTimePointData( ImageManagerType* pImageManager, int subjectIndex, std::vector< STimePoint >& vecTimePointData );
 
   /**
     * Function which computes a map between two time-points given a spatio-temporal velocity field.
