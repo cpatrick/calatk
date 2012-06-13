@@ -123,7 +123,7 @@ CStateMultipleStates< TState >::operator=(const CStateMultipleStates & p )
       typename IndividualStatesCollectionType::const_iterator iterSource;
       typename IndividualStatesCollectionType::iterator iterTarget;
       for ( iterSource = p.m_IndividualStatesCollection.begin(), iterTarget = m_IndividualStatesCollection.begin();
-            iterSource != p.m_IndividualStatesCollection.end(), iterTarget != m_IndividualStatesCollection.end();
+            iterSource != p.m_IndividualStatesCollection.end();
             ++iterSource, ++iterTarget )
         {
         // copy the current state
@@ -163,7 +163,7 @@ CStateMultipleStates< TState >::operator+=(const CStateMultipleStates & p )
   typename IndividualStatesCollectionType::const_iterator iterSource;
   typename IndividualStatesCollectionType::iterator iterTarget;
   for ( iterSource = p.m_IndividualStatesCollection.begin(), iterTarget = m_IndividualStatesCollection.begin();
-        iterSource != p.m_IndividualStatesCollection.end(), iterTarget != m_IndividualStatesCollection.end();
+        iterSource != p.m_IndividualStatesCollection.end();
         ++iterSource, ++iterTarget )
     {
     // add the source to the target
