@@ -28,7 +28,8 @@ CAtlasBuilder< TState >::CAtlasBuilder()
     m_ExternallySetMetric( false ),
     DefaultAtlasIsSourceImage( true ),
     m_ExternallySetAtlasIsSourceImage( false ),
-    m_CurrentActiveRegistration( 0 )
+    m_CurrentActiveRegistration( 0 ),
+    m_AtlasImageHasBeenCreatedForImageManager( false )
 {
   m_AtlasIsSourceImage = DefaultAtlasIsSourceImage;
   this->m_Kernel = DefaultKernel;
@@ -460,12 +461,8 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
 
   // TODO: Implement two options, one with atlas image as source and one with the atlas-image as target image
 
-  // TODO: Make the objective functions aware of what they should look at (a particular subject id, everything, ...)
-
   // TODO: put in sanity check that makes sure that only one time-point is specified for each of the subjects (here for the atlas-building)
   // This time-point is then ignored
-
-  // TODO: TO be able to run this multi-threaded we will likely need to have multiple instances of the kernel object, also need to check that all the other algorithm components are thread-safe!!
 
 }
 
@@ -494,10 +491,106 @@ CAtlasBuilder< TState >::GetImage( T dTime )
 }
 
 template < class TState >
+void CAtlasBuilder< TState >::UpdateAtlasImage()
+{
+  std::vector< int > availableSubjectIndices;
+  this->m_ptrImageManager->GetAvailableSubjectIndices( availableSubjectIndices );
+
+  if ( m_AtlasImage.GetPointer() == NULL )
+    {
+      throw std::runtime_error( "Atlas-image needs to be created before it can be updated." );
+      return;
+    }
+
+  // initialize the atlas image as the average over all the other images
+
+  m_AtlasImage->SetToConstant( 0 );
+
+  for ( unsigned int iI = 0; iI < availableSubjectIndices.size(); ++iI )
+    {
+      std::vector< TimeSeriesDataPointType > timeseries;
+      this->m_ptrImageManager->GetTimeSeriesWithSubjectIndex( timeseries, availableSubjectIndices[ iI ] );
+      // make sure there is only one image if the atlas-image has not been created before and two otherwise
+
+      if ( ( m_AtlasImageHasBeenCreatedForImageManager && timeseries.size() != 2 )
+           || ( !m_AtlasImageHasBeenCreatedForImageManager && timeseries.size() != 1 ) )
+        {
+          throw std::runtime_error( "Too many images in timeseries. Not sure which one to pick for atlas building" );
+          return;
+        }
+
+      // now we either have one or two images, just add the one that is not the common image
+      for ( unsigned iJ = 0; iJ < timeseries.size(); ++iJ )
+        {
+          if ( !timeseries[ iJ ].IsCommonImage() )
+            {
+              TFloat currentTimePoint = timeseries[ iJ ].GetTimePoint();
+              if ( ( m_AtlasIsSourceImage && currentTimePoint != 1.0 )
+                   || ( !m_AtlasIsSourceImage && currentTimePoint != 0.0 ) )
+                {
+                  throw std::runtime_error( "If atlas is source image all other images need to be specified at t=1, otherwise at t=0." );
+                  return;
+                }
+
+              m_AtlasImage->AddCellwise( timeseries[ iJ ].GetImageAtScale( 0 ) );
+              break;
+            }
+        }
+    }
+
+  // now that we have added all of them we just need to divide to get the average image
+  m_AtlasImage->MultiplyByConstant( 1.0/availableSubjectIndices.size() );
+
+}
+
+template < class TState >
+void CAtlasBuilder< TState >::CreateAtlasImageForImageManager()
+{
+  std::vector< int > availableSubjectIndices;
+  this->m_ptrImageManager->GetAvailableSubjectIndices( availableSubjectIndices );
+
+  if ( m_AtlasImage.GetPointer() == NULL )
+    {
+      // create one
+      if ( availableSubjectIndices.size() < 1 )
+        {
+          throw std::runtime_error( "No subjects specified." );
+          return;
+        }
+
+      m_AtlasImage = new VectorImageType( this->m_ptrImageManager->GetGraftImagePointerAtScale( availableSubjectIndices[ 0 ] ) );
+    }
+
+  // initialize the atlas image as the average over all the other images
+  UpdateAtlasImage();
+
+  if ( !m_AtlasImageHasBeenCreatedForImageManager )
+  {
+      if ( m_AtlasIsSourceImage )
+        {
+          this->m_ptrImageManager->AddCommonImage( m_AtlasImage, 0.0 );
+        }
+      else
+        {
+          this->m_ptrImageManager->AddCommonImage( m_AtlasImage, 1.0 );
+        }
+  }
+
+}
+
+template < class TState >
+void CAtlasBuilder< TState >::PreFirstSolve()
+{
+  // TODO: Do we need to set the objective function properly here? (Just as for the growth model?)
+
+  Superclass::PreFirstSolve();
+  CreateAtlasImageForImageManager();
+}
+
+template < class TState >
 void CAtlasBuilder< TState >::Solve()
 {
-  // TODO: create the atlas-entries for the average image for the time-series
-
+  // NEEDED? Anyhting to add here?
   Superclass::Solve();
 }
 
@@ -505,16 +598,7 @@ template < class TState >
 void CAtlasBuilder< TState >::PreSubIterationSolve()
 {
   // replace the source / target image by its weighted average, unless the atlas-image is considered as part of the gradient
-
-  if ( m_AtlasIsSourceImage ) // then atlas is source image (time-point 0)
-  {
-
-  }
-  else // then atlas is target image (time-point 1)
-  {
-
-  }
-
+  UpdateAtlasImage();
 }
 
 #endif

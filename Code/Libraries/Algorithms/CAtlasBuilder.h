@@ -69,10 +69,12 @@ public:
 
   typedef CAtlasObjectiveFunction< TState >  ObjectiveFunctionType;
   typedef typename ObjectiveFunctionType::IndividualObjectiveFunctionType IndividualObjectiveFunctionType;
-  typedef typename Superclass::EvolverType             EvolverType;
-  typedef typename Superclass::OneStepEvolverType      OneStepEvolverType;
-  typedef typename Superclass::KernelType              KernelType;
-  typedef typename Superclass::MetricType              MetricType;
+  typedef typename Superclass::EvolverType                                EvolverType;
+  typedef typename Superclass::OneStepEvolverType                         OneStepEvolverType;
+  typedef typename Superclass::KernelType                                 KernelType;
+  typedef typename Superclass::MetricType                                 MetricType;
+  typedef typename Superclass::ImageManagerType                           ImageManagerType;
+  typedef typename ImageManagerType::TimeSeriesDataPointType              TimeSeriesDataPointType;
 
   typedef CStationaryEvolver< T, TState::ImageDimension > DefaultEvolverType;
   typedef COneStepEvolverSemiLagrangianAdvection< T, TState::ImageDimension > OneStepDefaultEvolverType;
@@ -153,6 +155,8 @@ protected:
   void SetDefaultKernelPointer();
   void SetDefaultEvolverPointer();
 
+  void PreFirstSolve();
+
   /**
    * @brief Returns the number of image pairs that will be used for the atlas building
    *
@@ -161,6 +165,18 @@ protected:
   unsigned int GetNumberOfIndividualRegistrations() const;
 
 private:
+
+  /**
+   * @brief Given the current time-series computes a (weighted) average to compute the atlas image
+   *
+   */
+  void UpdateAtlasImage();
+
+  /**
+   * @brief Creates the atlas image and associates it as a common image with all the time-series contained in the image manager
+   *
+   */
+  void CreateAtlasImageForImageManager();
 
   std::string       m_Kernel;
   const std::string DefaultKernel;
@@ -185,6 +201,10 @@ private:
   std::vector< typename EvolverType::Pointer > m_IndividualEvolverPointers;
   std::vector< typename OneStepEvolverType::Pointer > m_IndividualOneStepEvolverPointers;
   std::vector< typename MetricType::Pointer > m_IndividualMetricPointers;
+
+  bool m_AtlasImageHasBeenCreatedForImageManager;  /**< Flag to keep track if common atlas image has been created for image manager */
+
+  typename VectorImageType::Pointer m_AtlasImage;
 
 };
 

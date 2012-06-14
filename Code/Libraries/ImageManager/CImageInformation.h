@@ -187,6 +187,20 @@ public:
   bool HasExternallySpecifiedImage() const;
 
   /**
+   * @brief Returns true if this is a common image (shared by multiple time-series), e.g., for atlas building
+   *
+   * @return bool
+   */
+  bool IsCommonImage() const;
+
+  /**
+   * @brief Allows to declare an image as common (true) or not common (false).
+   *
+   * @param bool
+   */
+  void SetIsCommonImage( bool isCommonImage );
+
+  /**
    * @brief Returns the image at original resolution (without any blurring applied)
    *
    * @return VectorImageType
@@ -386,6 +400,8 @@ private:
   bool m_HasExternallySpecifiedImage;
 
   bool m_ScalesHaveBeenSet;
+
+  bool m_IsCommonImage;
 };
 
 } // end namespace

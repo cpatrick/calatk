@@ -361,6 +361,7 @@ int CImageManager< TFloat, VImageDimension >::AddCommonImage( VectorImageType* p
   imageInformation.SetUniqueId( m_CurrentRunningId++ );
   imageInformation.SetSubjectId( COMMON_SUBJECT_ID );
   imageInformation.SetExternallySpecifiedImage( pIm );
+  imageInformation.SetIsCommonImage( true );
 
   // now add this to the vector
   m_AllCommonSubjectInformation.push_back( imageInformation );
@@ -430,6 +431,7 @@ int CImageManager< TFloat, VImageDimension>::AddCommonImageAndTransform( const s
   imageInformation.SetTimePoint( timepoint );
   imageInformation.SetUniqueId( m_CurrentRunningId++ );
   imageInformation.SetSubjectId( COMMON_SUBJECT_ID );
+  imageInformation.SetIsCommonImage( true );
 
   // now add this to the common vector
   m_AllCommonSubjectInformation.push_back( imageInformation );
@@ -684,7 +686,12 @@ void CImageManager< TFloat, VImageDimension>::print( std::ostream& output )
   this->GetAvailableSubjectIndices( availableSubjectIndices );
 
   // get the number of scales
-  std::cout << "ImageManager: scales = " << m_ScaleVector << std::endl;
+  std::cout << "ImageManager: scales = ";
+  for ( unsigned int iI=0; iI < m_ScaleVector.size(); ++iI )
+    {
+      std::cout << m_ScaleVector[ iI ] << " ";
+    }
+  std::cout << std::endl;
 
   // loop over subjects
   for ( subjectIter = availableSubjectIndices.begin(); subjectIter != availableSubjectIndices.end(); ++subjectIter )

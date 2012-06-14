@@ -37,7 +37,8 @@ CImageInformation< TFloat, VImageDimension >::CImageInformation()
     m_AutoScaleImage( false ),
     m_LoadStrategyType( LOAD_STRATEGY_STORE_ALL ),
     m_HasExternallySpecifiedImage( false ),
-    m_ScalesHaveBeenSet( false )
+    m_ScalesHaveBeenSet( false ),
+    m_IsCommonImage( false )
 {
 }
 
@@ -262,6 +263,17 @@ bool CImageInformation< TFloat, VImageDimension >::HasExternallySpecifiedImage()
   return m_HasExternallySpecifiedImage;
 }
 
+template < class TFloat, unsigned int VImageDimension >
+bool CImageInformation< TFloat, VImageDimension >::IsCommonImage() const
+{
+  return m_IsCommonImage;
+}
+
+template < class TFloat, unsigned int VImageDimension >
+void CImageInformation< TFloat, VImageDimension >::SetIsCommonImage( bool isCommonImage )
+{
+  m_IsCommonImage = isCommonImage;
+}
 
 template < class TFloat, unsigned int VImageDimension >
 typename CImageInformation< TFloat, VImageDimension >::VectorFieldType *
