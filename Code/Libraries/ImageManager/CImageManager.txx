@@ -152,7 +152,7 @@ template < class TFloat, unsigned int VImageDimension >
 void CImageManager< TFloat, VImageDimension >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
   Superclass::SetAutoConfiguration( combined, cleaned );
-  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "ImageManager", Json::nullValue );
+  Json::Value& currentConfigurationIn  = this->m_CombinedJSONConfig->GetFromKey( "ImageManager", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "ImageManager", Json::nullValue );
 
   SetJSONHelpForRootKey( ImageManager, "administers the images, resolutions, and scalings" );

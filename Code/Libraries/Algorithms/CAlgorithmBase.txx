@@ -221,7 +221,7 @@ T CAlgorithmBase< T, VImageDimension >::GetMultiScaleScale( unsigned int scaleId
     }
   else
     {
-  return m_MultiScaleScales[ scaleIdx ];
+    return m_MultiScaleScales[ scaleIdx ];
     }
 }
 
