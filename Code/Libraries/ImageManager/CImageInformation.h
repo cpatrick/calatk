@@ -48,7 +48,10 @@ public:
   typedef VectorImage< FloatType, VImageDimension > VectorImageType; /**< Image type of given dimension and floating point format. */
   typedef VectorField< FloatType, VImageDimension > VectorFieldType; /**< Vector field type of given dimension and floating point format. */
   typedef CGaussianKernel< FloatType, VImageDimension > GaussianKernelType;
-  typedef CResampler< FloatType, VImageDimension > ResamplerType;
+  typedef CResampler< FloatType, VImageDimension >      ResamplerType;
+
+  /** Type of the scales used for resampling the image. */
+  typedef std::vector< FloatType > ScalesType;
 
   CImageInformation();
   ~CImageInformation();
@@ -129,14 +132,14 @@ public:
    *
    * @param scales -- vector of scales
    */
-  void SetScales( std::vector< FloatType > scales );
+  void SetScales( const ScalesType & scales );
 
   /**
    * @brief Returns the scales at which images can be computed
    *
-   * @return std::vector<FloatType> -- vector of scales
+   * @return vector of scales
    */
-  std::vector< FloatType > GetScales();
+  ScalesType GetScales() const;
 
   /**
    * @brief Returns true if scales have been set and false otherwise.
@@ -374,7 +377,7 @@ private:
 
   unsigned int m_CurrentlyActiveScale;
 
-  std::vector< FloatType > m_Scales;
+  ScalesType m_Scales;
 
   bool m_BlurHighestResolutionImage;
   FloatType m_Sigma;

@@ -195,18 +195,22 @@ int CImageInformation< TFloat, VImageDimension >::GetUniqueId() const
 }
 
 template < class TFloat, unsigned int VImageDimension >
-void CImageInformation< TFloat, VImageDimension >::SetScales( std::vector< FloatType > scales )
+void CImageInformation< TFloat, VImageDimension >::SetScales( const ScalesType & scales )
 {
   if ( m_ImagesOfAllScales.size() != 0 )
-  {
+    {
     std::cout << "WARNING: multi-scale images appear to have been initialized before, deleting them." << std::endl;
-  }
+    }
 
-  unsigned int numberOfScales = scales.size();
+  const unsigned int numberOfScales = scales.size();
   m_ImagesOfAllScales.clear();
   m_ImagesOfAllScales.resize( numberOfScales, NULL );
 
-  m_Scales = scales;
+  m_Scales.resize( numberOfScales );
+  for( unsigned int ii = 0; ii < numberOfScales; ++ii )
+    {
+    m_Scales[ii] = scales[ii];
+    }
 
   m_ScalesHaveBeenSet = true;
 }
@@ -218,7 +222,8 @@ bool CImageInformation< TFloat, VImageDimension >::ScalesHaveBeenSet()
 }
 
 template < class TFloat, unsigned int VImageDimension >
-std::vector< TFloat > CImageInformation< TFloat, VImageDimension >::GetScales()
+typename CImageInformation< TFloat, VImageDimension >::ScalesType
+CImageInformation< TFloat, VImageDimension >::GetScales() const
 {
   return m_Scales;
 }
