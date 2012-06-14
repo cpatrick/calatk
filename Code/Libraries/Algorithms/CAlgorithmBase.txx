@@ -87,8 +87,7 @@ void CAlgorithmBase< T, VImageDimension >::SetDefaultsIfNeeded()
 
   this->m_ptrImageManager->SetPrintConfiguration( this->GetPrintConfiguration() );
   this->m_ptrImageManager->SetAllowHelpComments( this->GetAllowHelpComments() );
-  this->m_ptrImageManager->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
-
+  this->m_ptrImageManager->SetAlgorithmAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
 }
 
 template < class T, unsigned int VImageDimension >

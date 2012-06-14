@@ -61,11 +61,11 @@ public:
   const CJSONConfiguration * GetJSONConfigurationCleaned();
 
   //! if true the Json configurations will be printed
-  void SetPrintConfiguration( bool print );
+  virtual void SetPrintConfiguration( bool print );
   bool GetPrintConfiguration();
 
   //! if true help comments will be added to the JSON configuration file
-  void SetAllowHelpComments( bool allow );
+  virtual void SetAllowHelpComments( bool allow );
   bool GetAllowHelpComments();
 
 protected:
@@ -73,8 +73,6 @@ protected:
   CJSONConfiguration::Pointer m_CleanedJSONConfig;
 
   bool m_AutoConfigurationSet;
-
-private:
   bool m_PrintConfiguration;
   bool m_AllowHelpComments;
 };

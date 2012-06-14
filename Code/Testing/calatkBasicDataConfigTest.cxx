@@ -42,7 +42,7 @@ int calatkBasicDataConfigTest( int argc, char ** argv )
 
   typedef CALATK::CImageManager< TFloat, Dimension > ImageManagerType;
   ImageManagerType::Pointer imageManager = new ImageManagerType;
-  imageManager->SetAutoConfiguration( basicConfigurationCombined, basicConfigurationCleaned );
+  imageManager->SetDataAutoConfiguration( basicConfigurationCombined, basicConfigurationCleaned );
 
   return EXIT_SUCCESS;
 }

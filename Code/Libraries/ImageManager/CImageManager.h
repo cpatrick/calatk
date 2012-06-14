@@ -304,7 +304,39 @@ public:
   SetMacro( BlurHighestResolutionImage, bool );
   GetMacro( BlurHighestResolutionImage, bool );
 
-  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
+  /** Set the algorithm configuration.
+   *
+   * \param combined The given configuration combined with what was used.
+   * \param cleaned  Only what was used.
+   */
+  virtual void SetAlgorithmAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
+  /** Get the algorithm configuration that is a combination of the defaults that were used
+   * and the input configuration, including the input configuration that not
+   * used. */
+  const CJSONConfiguration * GetAlgorithmJSONConfigurationCombined();
+  /** Get the algorithm configuration that is a combination of the defaults that were used
+   * and the input configuration, excluding the input configuration that not
+   * used. */
+  const CJSONConfiguration * GetAlgorithmJSONConfigurationCleaned();
+
+  /** Set the data configuration.
+   *
+   * \param combined The given configuration combined with what was used.
+   * \param cleaned  Only what was used.
+   */
+  virtual void SetDataAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
+  /** Get the data configuration that is a combination of the defaults that were used
+   * and the input configuration, including the input configuration that not
+   * used. */
+  const CJSONConfiguration * GetDataJSONConfigurationCombined();
+  /** Get the data configuration that is a combination of the defaults that were used
+   * and the input configuration, excluding the input configuration that not
+   * used. */
+  const CJSONConfiguration * GetDataJSONConfigurationCleaned();
+
+  // Reimplemented because we have both a data and algorithm configuration.
+  virtual void SetPrintConfiguration( bool print );
+  virtual void SetAllowHelpComments( bool allow );
 
   static const int COMMON_SUBJECT_ID = -1;  /**< Subject id which is assigned to the datasets which are common for all the subject ids */
 
@@ -325,6 +357,14 @@ protected:
   void SetCurrentImagePreprocessingSettings( TimeSeriesDataPointType& dataPoint );
 
 private:
+
+  /** Private to force the use of the SetAlgorithmAutoConfiguration, so it is
+   * known that this is setting algorithm configuration as opposed to the data
+   * configuration. */
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
+  const CJSONConfiguration * GetJSONConfigurationCombined();
+  const CJSONConfiguration * GetJSONConfigurationCleaned();
+
 
   int m_CurrentRunningId; /**< Internal running id for datasets */
   std::map< unsigned int, unsigned int> m_MapIdToSubjectId; /**< map which stores a map from image id to subject id, -1 values indicate common datasets */
@@ -365,6 +405,13 @@ private:
 
   bool m_ImagesWereRegistered; ///< disallow changes the scales afer images have been registered
 
+  CJSONConfiguration::Pointer m_AlgorithmCombinedJSONConfig;
+  CJSONConfiguration::Pointer m_AlgorithmCleanedJSONConfig;
+  bool m_AlgorithmAutoConfigurationSet;
+
+  CJSONConfiguration::Pointer m_DataCombinedJSONConfig;
+  CJSONConfiguration::Pointer m_DataCleanedJSONConfig;
+  bool m_DataAutoConfigurationSet;
 };
 
 } // end namespace

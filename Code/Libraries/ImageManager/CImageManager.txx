@@ -54,6 +54,24 @@ CImageManager< TFloat, VImageDimension >::CImageManager()
   // create the resampler and the Gaussian kernel required for downsampling and smoothing in general
   m_Resampler = new CResamplerLinear< TFloat, VImageDimension >;
   m_GaussianKernel = new CGaussianKernel< TFloat, VImageDimension >;
+
+  m_AlgorithmCombinedJSONConfig = new CJSONConfiguration;
+  m_AlgorithmCleanedJSONConfig = new CJSONConfiguration;
+
+  m_AlgorithmCleanedJSONConfig->PrintSettingsOff();
+  m_AlgorithmCombinedJSONConfig->PrintSettingsOn();
+
+  m_AlgorithmCleanedJSONConfig->AllowHelpCommentsOff();
+  m_AlgorithmCombinedJSONConfig->AllowHelpCommentsOff();
+
+  m_DataCombinedJSONConfig = new CJSONConfiguration;
+  m_DataCleanedJSONConfig = new CJSONConfiguration;
+
+  m_DataCleanedJSONConfig->PrintSettingsOff();
+  m_DataCombinedJSONConfig->PrintSettingsOn();
+
+  m_DataCleanedJSONConfig->AllowHelpCommentsOff();
+  m_DataCombinedJSONConfig->AllowHelpCommentsOff();
 }
 
 
@@ -115,12 +133,14 @@ void CImageManager< TFloat, VImageDimension >::RemoveScale( unsigned int scaleId
     }
 }
 
+
 template < class TFloat, unsigned int VImageDimension >
 unsigned int CImageManager< TFloat, VImageDimension >::GetNumberOfScales()
 {
   // multi-scale levels which contains the image at the original resolution
   return m_ScaleVector.size();
 }
+
 
 template < class TFloat, unsigned int VImageDimension >
 void CImageManager< TFloat, VImageDimension >::SelectScale( unsigned int scaleIdx )
@@ -151,7 +171,19 @@ void CImageManager< TFloat, VImageDimension >::SelectScale( unsigned int scaleId
 template < class TFloat, unsigned int VImageDimension >
 void CImageManager< TFloat, VImageDimension >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
+  throw std::logic_error( "Do not call me." );
+}
+
+
+template < class TFloat, unsigned int VImageDimension >
+void CImageManager< TFloat, VImageDimension >::SetAlgorithmAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
+{
   Superclass::SetAutoConfiguration( combined, cleaned );
+
+  this->m_AlgorithmCombinedJSONConfig = combined;
+  this->m_AlgorithmCleanedJSONConfig = cleaned;
+  this->m_AlgorithmAutoConfigurationSet = true;
+
   Json::Value& currentConfigurationIn  = this->m_CombinedJSONConfig->GetFromKey( "ImageManager", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "ImageManager", Json::nullValue );
 
@@ -170,6 +202,77 @@ void CImageManager< TFloat, VImageDimension >::SetAutoConfiguration( CJSONConfig
                      "selects the amount of blurring used for the original image if desired. Blurred before *any* multi-resolution computation (physical coordinates for highest resolution image)." );
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, BlurHighestResolutionImage,
                      "if set to true blurs also the highest resolution image otherwise keeps the highest resolution image as is." );
+}
+
+
+template < class TFloat, unsigned int VImageDimension >
+const CJSONConfiguration * CImageManager< TFloat, VImageDimension >::GetAlgorithmJSONConfigurationCombined()
+{
+  return this->m_AlgorithmCombinedJSONConfig.GetPointer();
+}
+
+
+template < class TFloat, unsigned int VImageDimension >
+const CJSONConfiguration * CImageManager< TFloat, VImageDimension >::GetAlgorithmJSONConfigurationCleaned()
+{
+  return this->m_AlgorithmCleanedJSONConfig.GetPointer();
+}
+
+
+template < class TFloat, unsigned int VImageDimension >
+void CImageManager< TFloat, VImageDimension >::SetDataAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
+{
+  this->m_DataCombinedJSONConfig = combined;
+  this->m_DataCleanedJSONConfig = cleaned;
+  this->m_DataAutoConfigurationSet = true;
+}
+
+
+template < class TFloat, unsigned int VImageDimension >
+const CJSONConfiguration * CImageManager< TFloat, VImageDimension >::GetDataJSONConfigurationCombined()
+{
+  return this->m_DataCombinedJSONConfig.GetPointer();
+}
+
+
+template < class TFloat, unsigned int VImageDimension >
+const CJSONConfiguration * CImageManager< TFloat, VImageDimension >::GetDataJSONConfigurationCleaned()
+{
+  return this->m_DataCleanedJSONConfig.GetPointer();
+}
+
+
+template < class TFloat, unsigned int VImageDimension >
+void CImageManager< TFloat, VImageDimension >::SetPrintConfiguration( bool print )
+{
+  Superclass::SetPrintConfiguration( print );
+  if ( this->m_PrintConfiguration )
+    {
+    this->m_DataCombinedJSONConfig->PrintSettingsOn();
+    this->m_DataCleanedJSONConfig->PrintSettingsOn();
+    }
+  else
+    {
+    this->m_DataCombinedJSONConfig->PrintSettingsOff();
+    this->m_DataCleanedJSONConfig->PrintSettingsOff();
+    }
+}
+
+
+template < class TFloat, unsigned int VImageDimension >
+void CImageManager< TFloat, VImageDimension >::SetAllowHelpComments( bool allow )
+{
+  Superclass::SetAllowHelpComments( allow );
+  if ( this->m_AllowHelpComments )
+    {
+    this->m_DataCombinedJSONConfig->AllowHelpCommentsOn();
+    this->m_DataCleanedJSONConfig->AllowHelpCommentsOn();
+    }
+  else
+    {
+    this->m_DataCombinedJSONConfig->AllowHelpCommentsOff();
+    this->m_DataCleanedJSONConfig->AllowHelpCommentsOff();
+    }
 }
 
 //

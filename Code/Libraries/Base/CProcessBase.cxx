@@ -64,10 +64,12 @@ void CProcessBase::SetPrintConfiguration( bool bPrint )
   if ( this->m_PrintConfiguration )
     {
     this->m_CombinedJSONConfig->PrintSettingsOn();
+    //this->m_CleanedJSONConfig->PrintSettingsOn();
     }
   else
     {
     this->m_CombinedJSONConfig->PrintSettingsOff();
+    //this->m_CleanedJSONConfig->PrintSettingsOff();
     }
 }
 
