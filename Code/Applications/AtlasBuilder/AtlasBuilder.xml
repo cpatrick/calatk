@@ -109,6 +109,13 @@
           <description>If set, will generate annotated settings in the JSON configuration file. This is to help understand the meaning and options of the different settings.</description>
         </boolean>
 
+        <boolean>
+          <name>bAtlasImageIsTargetImage</name>
+          <longflag>--atlasImageIsTargetImage</longflag>
+          <default>false</default>
+          <description>Controls who the atlas will be built. If set the given images are treated as source images and warped towards the atlas (not recommended). Otherwise the atlas becomes the source image and potential registation mismatches only occur at the target, but everything is computed with respect to a proper central atlas (recommended).</description>
+        </boolean>
+
         <image>
             <name>atlasImage</name>
             <label>Atlas Image</label>

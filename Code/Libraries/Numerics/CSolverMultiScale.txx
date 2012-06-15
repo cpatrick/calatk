@@ -119,7 +119,8 @@ bool CSolverMultiScale< TState >::Solve()
   this->m_ptrSolver->SetObjectiveFunction( this->GetObjectiveFunction() );
 
   // get its image manager
-  ImageManagerMultiScaleType* ptrImageManager = dynamic_cast< ImageManagerMultiScaleType* >( objectiveFunction->GetImageManagerPointer() );
+  ImageManagerType* ptrImageManager = objectiveFunction->GetImageManagerPointer();
+
   if ( !ptrImageManager->SupportsMultiScaling() )
     {
     throw std::runtime_error( "Image manager needs to support multi-scaling to use the multi-scale solver.");

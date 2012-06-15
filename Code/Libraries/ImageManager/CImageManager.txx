@@ -508,6 +508,26 @@ void CImageManager< TFloat, VImageDimension>::GetTimepointsForSubjectIndex( std:
 }
 
 //
+// Get time point data for a specific common image given a unique id
+//
+template < class TFloat, unsigned int VImageDimension >
+typename CImageManager< TFloat, VImageDimension >::TimeSeriesDataPointType*
+CImageManager< TFloat, VImageDimension >::GetCommonTimePointByUniqueId( int uid )
+{
+  // add all the common timepoints
+  typename AllCommonSubjectInformationType::iterator iterCommon;
+  for ( iterCommon = m_AllCommonSubjectInformation.begin(); iterCommon != m_AllCommonSubjectInformation.end(); ++iterCommon )
+  {
+    if ( iterCommon->GetUniqueId() == uid )
+    {
+    return &(*iterCommon);
+    }
+  }
+  throw std::runtime_error( "Could not find common dataset with given unique id." );
+  return NULL;
+}
+
+//
 // get available subject ids
 //
 template < class TFloat, unsigned int VImageDimension >

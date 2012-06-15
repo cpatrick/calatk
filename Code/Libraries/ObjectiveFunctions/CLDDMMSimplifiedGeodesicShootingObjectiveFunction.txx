@@ -100,13 +100,6 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ShallowCopySta
 template < class TState >
 void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::CreateGradientAndAuxiliaryStructures()
 {
-
-    // get the subject ids
-    std::vector< int > vecSubjectIndices;
-    this->m_ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
-
-    assert( vecSubjectIndices.size()==1 );
-
     // obtain image from which to graft the image information for the data structures
     // and assign the convenience image pointer ptrI0, ptrI1
     std::vector< TimeSeriesDataPointType > timeseries;

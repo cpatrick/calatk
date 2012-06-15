@@ -46,7 +46,7 @@ public:
 
   typedef VectorImage< T, ImageDimension >             VectorImageType;
   typedef VectorImageUtils< T, ImageDimension >        VectorImageUtilsType;
-  typedef CImageManager< T, ImageDimension >           ImageManagerMultiScaleType;
+  typedef CImageManager< T, ImageDimension >           ImageManagerType;
   typedef typename Superclass::ObjectiveFunctionType   ObjectiveFunctionType;
 
   CSolverMultiScale();

@@ -237,6 +237,14 @@ public:
   void GetTimepointsForSubjectIndex( std::vector< FloatType >& timepoints, int subjectIndex );
 
   /**
+   * @brief Returns a common time-point based on its unique id. Uses the currently active scale.
+   *
+   * @param uid
+   * @return dataPoint
+   */
+  TimeSeriesDataPointType* GetCommonTimePointByUniqueId( int uid = 0);
+
+  /**
    * Returns the available subject ids
    *
    * @return Returns all the availabe subject indices registered with the image manager.

@@ -151,18 +151,6 @@ unsigned int LDDMMUtils< T, VImageDimension >::DetermineTimeSeriesTimePointData(
 
   unsigned int uiNumberOfMeasurements = 0;
 
-  // get the subject ids
-  std::vector< int > vecSubjectIndices;
-  ptrImageManager->GetAvailableSubjectIndices( vecSubjectIndices );
-
-  unsigned int uiNumberOfDifferentSubjects = vecSubjectIndices.size();
-
-  if ( uiNumberOfDifferentSubjects != 1 )
-    {
-    throw std::runtime_error( "DetermineTimeSeriesTimePointData: Currently only supports one subject at a time." );
-    return uiNumberOfMeasurements;
-    }
-
   std::vector< T > vecMeasurementTimepoints;
   // make sure we have at least two timepoints
   ptrImageManager->GetTimepointsForSubjectIndex( vecMeasurementTimepoints, subjectIndex );

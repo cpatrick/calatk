@@ -43,7 +43,7 @@ CObjectiveFunctionFactory< T, VImageDimension >::CreateNewObjectiveFunction( Num
   switch ( objectiveFunction )
   {
   default:
-    std::cout << "Unknown objective functionn type = " << objectiveFunction << "; defaulting to LDDMMGrowthModel" << std::endl;
+    std::cout << "Unknown objective function type = " << objectiveFunction << "; defaulting to LDDMMGrowthModel" << std::endl;
   case LDDMMGrowthModel:
     ptrObjectiveFunction = new CLDDMMGrowthModelObjectiveFunction< SpatioTemporalVelocityFieldStateType >;
     break;

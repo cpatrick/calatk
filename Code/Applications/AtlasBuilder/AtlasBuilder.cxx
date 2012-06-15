@@ -64,8 +64,24 @@ int DoIt( int argc, char** argv )
   for ( unsigned int iI=0; iI < sourceImages.size(); ++iI )
     {
     // give each image its own id, because this is cross-sectional atlas building
-    ptrImageManager->AddImage( sourceImages[ iI ], 0.0, iI );
+      if ( bAtlasImageIsTargetImage)
+      {
+        ptrImageManager->AddImage( sourceImages[ iI ], 0.0, iI );
+      }
+      else
+      {
+        ptrImageManager->AddImage( sourceImages[ iI ], 1.0, iI );
+      }
     }
+
+  if ( bAtlasImageIsTargetImage )
+  {
+    atlasBuilder->SetAtlasIsSourceImage( false );
+  }
+  else
+  {
+    atlasBuilder->SetAtlasIsSourceImage( true );
+  }
 
   CALATK::CJSONConfiguration::Pointer combinedConfiguration = new CALATK::CJSONConfiguration;
   if ( configFile.compare( "None" ) != 0 )
@@ -91,6 +107,16 @@ int DoIt( int argc, char** argv )
         combinedConfiguration->WriteCurrentConfigurationToJSONFile( configFileOut, CALATK::GetCALATKJsonHeaderString() + " --COMBINED" );
       }
     }
+
+  // write out the atlas image
+  if ( atlasImage.compare("None") != 0 )
+  {
+    const VectorImageType* ptrAtlasImage = NULL;
+    ptrAtlasImage = atlasBuilder->GetAtlasImage();
+    VectorImageUtilsType::writeFileITK( ptrAtlasImage, atlasImage );
+  }
+
+
 
   return EXIT_SUCCESS;
 

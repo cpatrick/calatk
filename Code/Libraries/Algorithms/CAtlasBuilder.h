@@ -61,11 +61,11 @@ public:
   typedef itk::SmartPointer< const Self >   ConstPointer;
 
   /* some useful typedefs */
-  typedef typename TState::FloatType T;
+  typedef typename TState::FloatType FloatType;
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
 
-  typedef KernelUtils< T, TState::ImageDimension > KernelUtilsType;
+  typedef KernelUtils< FloatType, TState::ImageDimension > KernelUtilsType;
 
   typedef CAtlasObjectiveFunction< TState >  ObjectiveFunctionType;
   typedef typename ObjectiveFunctionType::IndividualObjectiveFunctionType IndividualObjectiveFunctionType;
@@ -76,8 +76,8 @@ public:
   typedef typename Superclass::ImageManagerType                           ImageManagerType;
   typedef typename ImageManagerType::TimeSeriesDataPointType              TimeSeriesDataPointType;
 
-  typedef CStationaryEvolver< T, TState::ImageDimension > DefaultEvolverType;
-  typedef COneStepEvolverSemiLagrangianAdvection< T, TState::ImageDimension > OneStepDefaultEvolverType;
+  typedef CStationaryEvolver< FloatType, TState::ImageDimension > DefaultEvolverType;
+  typedef COneStepEvolverSemiLagrangianAdvection< FloatType, TState::ImageDimension > OneStepDefaultEvolverType;
   typedef CVelocityFieldObjectiveFunctionWithMomentum< IndividualStateType > LDDMMVelocityFieldObjectiveFunctionWithMomentumType;
 
   CAtlasBuilder();
@@ -116,6 +116,8 @@ public:
   MetricType * GetIndividualMetricPointer();
   unsigned int GetNumberOfRegisteredIndividualMetricPointers() const;
 
+  const VectorImageType* GetAtlasImage() const;
+
   void SetCurrentActiveRegistration( unsigned int );
   unsigned int GetCurrentActiveRegistration();
 
@@ -138,15 +140,15 @@ public:
 
 protected:
 
+  /** Totally overwrite the default handling since the atlas-builder works
+    * fundamentally different from the image-to-image registration algorithms
+    */
+  virtual void SetDefaultsIfNeeded();
+
   /**
     * Sets the objective function if not objective function was specified externally.
     */
   void SetDefaultObjectiveFunctionPointer();
-
-  // TODO: Implement
-  const VectorFieldType* GetMap( T dTime );
-  const VectorFieldType* GetMapFromTo( T dTimeFrom, T dTimeTo );
-  const VectorImageType* GetImage( T dTime );
 
   void SetDefaultSolverPointer();
   void SetDefaultImageManagerPointer();
@@ -154,6 +156,11 @@ protected:
   void SetDefaultMetricPointer();
   void SetDefaultKernelPointer();
   void SetDefaultEvolverPointer();
+
+  // TODO: Implement
+  const VectorFieldType* GetMap( FloatType dTime );
+  const VectorFieldType* GetMapFromTo( FloatType dTimeFrom, FloatType dTimeTo );
+  const VectorImageType* GetImage( FloatType dTime );
 
   void PreFirstSolve();
 
@@ -167,10 +174,22 @@ protected:
 private:
 
   /**
-   * @brief Given the current time-series computes a (weighted) average to compute the atlas image
+   * @brief Given the current time-series computes a (weighted) average to initialize the atlas image
    *
    */
-  void UpdateAtlasImage();
+  void InitializeAtlasImage();
+
+  /**
+   * @brief Assumes that the atlas image is the source image and updates it by a weighted average of the target images pulled back to the source
+   *
+   */
+  void UpdateAtlasImageAsAverageOfTargetImages();
+
+  /**
+   * @brief Assumes that the atlas image is the target image and updates it by flowing the source images forward and averaging them.
+   *
+   */
+  void UpdateAtlasImageAsAverageOfSourceImages();
 
   /**
    * @brief Creates the atlas image and associates it as a common image with all the time-series contained in the image manager
@@ -205,6 +224,15 @@ private:
   bool m_AtlasImageHasBeenCreatedForImageManager;  /**< Flag to keep track if common atlas image has been created for image manager */
 
   typename VectorImageType::Pointer m_AtlasImage;
+
+  // hide some of the methods which are not useful for the atlas-builder
+  void SetKernelPointer( KernelType *ptrKernel );
+  KernelType* GetKernelPointer();
+  void SetEvolverPointer( EvolverType *ptrEvolver );
+  EvolverType* GetEvolverPointer();
+  void SetMetricPointer( MetricType *ptrMetric );
+  MetricType* GetMetricPointer();
+
 
 };
 

@@ -26,6 +26,8 @@ CAtlasBuilder< TState >::CAtlasBuilder()
     m_ExternallySetKernel( false ),
     DefaultMetric( "SSD" ),
     m_ExternallySetMetric( false ),
+    DefaultObjectiveFunction( "LDDMMSimplifiedGeodesicShooting" ),
+    m_ExternallySetObjectiveFunction( false ),
     DefaultAtlasIsSourceImage( true ),
     m_ExternallySetAtlasIsSourceImage( false ),
     m_CurrentActiveRegistration( 0 ),
@@ -34,11 +36,62 @@ CAtlasBuilder< TState >::CAtlasBuilder()
   m_AtlasIsSourceImage = DefaultAtlasIsSourceImage;
   this->m_Kernel = DefaultKernel;
   this->m_Metric = DefaultMetric;
+  this->m_ObjectiveFunction = DefaultObjectiveFunction;
 }
 
 template < class TState >
 CAtlasBuilder< TState >::~CAtlasBuilder()
 {
+}
+
+// purposefully disable functions (since they are not sensible for the atlas-builder)
+template < class TState >
+void CAtlasBuilder< TState >::SetKernelPointer( KernelType *ptrKernel )
+{
+  throw std::runtime_error( "SetKernelPointer should not be used for atlas builder." );
+}
+
+template < class TState >
+typename CAtlasBuilder< TState >::KernelType*
+CAtlasBuilder< TState >::GetKernelPointer()
+{
+  throw std::runtime_error( "GetKernelPointer should not be used for atlas builder." );
+  return NULL;
+}
+
+template < class TState >
+void CAtlasBuilder< TState >::SetEvolverPointer( EvolverType *ptrEvolver )
+{
+  throw std::runtime_error( "SetEvolverPointer should not be used for atlas builder." );
+}
+
+template < class TState >
+typename CAtlasBuilder< TState >::EvolverType*
+CAtlasBuilder< TState >::GetEvolverPointer()
+{
+  throw std::runtime_error( "GetEvolverPointer should not be used for atlas builder." );
+  return NULL;
+}
+
+template < class TState >
+void CAtlasBuilder< TState >::SetMetricPointer( MetricType *ptrMetric )
+{
+  throw std::runtime_error( "SetMetricPointer should not be used for atlas builder." );
+}
+
+template < class TState >
+typename CAtlasBuilder< TState >::MetricType*
+CAtlasBuilder< TState >::GetMetricPointer()
+{
+  throw std::runtime_error( "GetMetricPointer should not be used for atlas builder." );
+  return NULL;
+}
+
+template < class TState >
+const typename CAtlasBuilder< TState >::VectorImageType*
+CAtlasBuilder< TState >::GetAtlasImage() const
+{
+  return m_AtlasImage;
 }
 
 template < class TState >
@@ -247,9 +300,79 @@ unsigned int CAtlasBuilder< TState >::GetCurrentActiveRegistration()
 }
 
 template < class TState >
+void CAtlasBuilder< TState >::SetDefaultsIfNeeded()
+{
+  // we need to start with the image manager, to get the number of images
+  // which determines number of kernels, metrics, etc.
+  if ( this->m_ptrImageManager.GetPointer() == NULL )
+  {
+    this->SetDefaultImageManagerPointer();
+  }
+
+  this->m_ptrImageManager->SetPrintConfiguration( this->GetPrintConfiguration() );
+  this->m_ptrImageManager->SetAllowHelpComments( this->GetAllowHelpComments() );
+  this->m_ptrImageManager->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
+
+  if ( m_IndividualMetricPointers.empty() )
+  {
+    this->SetDefaultMetricPointer();
+  }
+
+  for ( unsigned int iI=0; iI < m_IndividualMetricPointers.size(); ++iI )
+  {
+    this->m_IndividualMetricPointers[ iI ]->SetPrintConfiguration( this->GetPrintConfiguration() );
+    this->m_IndividualMetricPointers[ iI ]->SetAllowHelpComments( this->GetAllowHelpComments() );
+    this->m_IndividualMetricPointers[ iI ]->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
+  }
+
+  if ( m_IndividualEvolverPointers.empty() )
+    {
+    this->SetDefaultEvolverPointer();
+    }
+
+  for ( unsigned int iI=0; iI < m_IndividualEvolverPointers.size(); ++iI )
+  {
+    this->m_IndividualEvolverPointers[ iI ]->SetPrintConfiguration( this->GetPrintConfiguration() );
+    this->m_IndividualEvolverPointers[ iI ]->SetAllowHelpComments( this->GetAllowHelpComments() );
+    this->m_IndividualEvolverPointers[ iI ]->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
+  }
+
+  if ( m_IndividualKernelPointers.empty() )
+    {
+    this->SetDefaultKernelPointer();
+    }
+
+  for ( unsigned int iI=0; iI < m_IndividualKernelPointers.size(); ++ iI )
+  {
+    this->m_IndividualKernelPointers[ iI ]->SetPrintConfiguration( this->GetPrintConfiguration() );
+    this->m_IndividualKernelPointers[ iI ]->SetAllowHelpComments( this->GetAllowHelpComments() );
+    this->m_IndividualKernelPointers[ iI ]->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
+  }
+
+// from algorithm
+  if ( this->m_ptrSolver.GetPointer() == NULL )
+    {
+    this->SetDefaultSolverPointer();
+    }
+
+  this->m_ptrSolver->SetPrintConfiguration( this->GetPrintConfiguration() );
+  this->m_ptrSolver->SetAllowHelpComments( this->GetAllowHelpComments() );
+  this->m_ptrSolver->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
+
+  if ( this->m_ptrObjectiveFunction.GetPointer() == NULL )
+    {
+    this->SetDefaultObjectiveFunctionPointer();
+    }
+
+  this->m_ptrObjectiveFunction->SetPrintConfiguration( this->GetPrintConfiguration() );
+  this->m_ptrObjectiveFunction->SetAllowHelpComments( this->GetAllowHelpComments() );
+  this->m_ptrObjectiveFunction->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
+}
+
+template < class TState >
 void CAtlasBuilder< TState >::SetDefaultImageManagerPointer()
 {
-  this->m_ptrImageManager = new CImageManager< T, TState::ImageDimension >;
+  this->m_ptrImageManager = new CImageManager< FloatType, TState::ImageDimension >;
 }
 
 template < class TState >
@@ -274,7 +397,7 @@ void CAtlasBuilder< TState >::SetDefaultMetricPointer()
     for ( unsigned int iI=0; iI < numberOfIndividualRegistrations; ++iI )
     {
       // only sum of squared differences makes really sense here, because we are dealing with atlas-building
-      SetIndividualMetricPointer( CMetricFactory< T, TState::ImageDimension >::CreateNewMetric( m_Metric ) );
+      SetIndividualMetricPointer( CMetricFactory< FloatType, TState::ImageDimension >::CreateNewMetric( m_Metric ) );
     }
   }
   else
@@ -299,7 +422,7 @@ void CAtlasBuilder< TState >::SetDefaultKernelPointer()
     for ( unsigned int iI=0; iI < numberOfIndividualRegistrations; ++iI )
     {
       // only sum of squared differences makes really sense here, because we are dealing with atlas-building
-      SetIndividualKernelPointer( CKernelFactory< T, TState::ImageDimension >::CreateNewKernel( m_Kernel ) );
+      SetIndividualKernelPointer( CKernelFactory< FloatType, TState::ImageDimension >::CreateNewKernel( m_Kernel ) );
     }
   }
   else
@@ -353,6 +476,11 @@ unsigned int CAtlasBuilder< TState >::GetNumberOfIndividualRegistrations() const
   }
 }
 
+// need to overwrite all the SetDefault methods from CAlgorithmBase,
+// because we are dealing with multiple kernels, metric, ... here
+
+
+
 // this overwrites the default implementation, because we are dealing with a set of objective functions here
 template < class TState >
 void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
@@ -401,7 +529,7 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
       for ( unsigned int iI = 0; iI < numberOfIndividualRegistrations; ++iI )
       {
         typename LDDMMVelocityFieldObjectiveFunctionWithMomentumType::Pointer ptrCurrentIndividualObjectiveFunction =
-            dynamic_cast< LDDMMVelocityFieldObjectiveFunctionWithMomentumType * >( CObjectiveFunctionFactory< T, TState::ImageDimension >::CreateNewObjectiveFunction( m_ObjectiveFunction ) );
+            dynamic_cast< LDDMMVelocityFieldObjectiveFunctionWithMomentumType * >( CObjectiveFunctionFactory< FloatType, TState::ImageDimension >::CreateNewObjectiveFunction( m_ObjectiveFunction ) );
         if ( ptrCurrentIndividualObjectiveFunction.GetPointer() == NULL )
         {
           throw std::runtime_error("Could not initialize the objective function. Make sure the instantiated state type is consistent with the objective function chosen.");
@@ -445,9 +573,9 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
 
       ptrCurrentIndividualObjectiveFunction->SetEvolverPointer( GetIndividualEvolverPointer( iI ) );
       ptrCurrentIndividualObjectiveFunction->SetMetricPointer( GetIndividualMetricPointer( iI ) );
-      // TODO: May need to be adapted with update of image manager, should this even be here?
       ptrCurrentIndividualObjectiveFunction->SetImageManagerPointer( this->m_ptrImageManager );
       ptrCurrentIndividualObjectiveFunction->SetActiveSubjectId( availableSubjectIndices[ iI ] );
+      ptrCurrentIndividualObjectiveFunction->SetKernelPointer( GetIndividualKernelPointer( iI ) );
 
       // add the individual objective function to the overall atlas objective function
       // TODO: allow weights that are different from 1
@@ -457,18 +585,16 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
 
   }
 
+  this->m_ptrObjectiveFunction->SetImageManagerPointer( this->m_ptrImageManager );
+
   // TODO: have an alternative method where the image is part of the gradient
 
   // TODO: Implement two options, one with atlas image as source and one with the atlas-image as target image
-
-  // TODO: put in sanity check that makes sure that only one time-point is specified for each of the subjects (here for the atlas-building)
-  // This time-point is then ignored
-
 }
 
 template < class TState >
 const typename CAtlasBuilder< TState >::VectorFieldType*
-CAtlasBuilder< TState >::GetMap( T dTime )
+CAtlasBuilder< TState >::GetMap( FloatType dTime )
 {
   throw std::runtime_error( "GetMap not yet implemented");
   return NULL;
@@ -476,7 +602,7 @@ CAtlasBuilder< TState >::GetMap( T dTime )
 
 template < class TState >
 const typename CAtlasBuilder< TState >::VectorFieldType*
-CAtlasBuilder< TState >::GetMapFromTo( T dTimeFrom, T dTimeTo )
+CAtlasBuilder< TState >::GetMapFromTo( FloatType dTimeFrom, FloatType dTimeTo )
 {
   throw std::runtime_error( "GetMapFromTo not yet implemented");
   return NULL;
@@ -484,14 +610,14 @@ CAtlasBuilder< TState >::GetMapFromTo( T dTimeFrom, T dTimeTo )
 
 template < class TState >
 const typename CAtlasBuilder< TState >::VectorImageType*
-CAtlasBuilder< TState >::GetImage( T dTime )
+CAtlasBuilder< TState >::GetImage( FloatType dTime )
 {
   throw std::runtime_error( "GetImage not yet implemented");
   return NULL;
 }
 
 template < class TState >
-void CAtlasBuilder< TState >::UpdateAtlasImage()
+void CAtlasBuilder< TState >::InitializeAtlasImage()
 {
   std::vector< int > availableSubjectIndices;
   this->m_ptrImageManager->GetAvailableSubjectIndices( availableSubjectIndices );
@@ -524,7 +650,7 @@ void CAtlasBuilder< TState >::UpdateAtlasImage()
         {
           if ( !timeseries[ iJ ].IsCommonImage() )
             {
-              TFloat currentTimePoint = timeseries[ iJ ].GetTimePoint();
+              FloatType currentTimePoint = timeseries[ iJ ].GetTimePoint();
               if ( ( m_AtlasIsSourceImage && currentTimePoint != 1.0 )
                    || ( !m_AtlasIsSourceImage && currentTimePoint != 0.0 ) )
                 {
@@ -562,7 +688,7 @@ void CAtlasBuilder< TState >::CreateAtlasImageForImageManager()
     }
 
   // initialize the atlas image as the average over all the other images
-  UpdateAtlasImage();
+  InitializeAtlasImage();
 
   if ( !m_AtlasImageHasBeenCreatedForImageManager )
   {
@@ -579,12 +705,66 @@ void CAtlasBuilder< TState >::CreateAtlasImageForImageManager()
 }
 
 template < class TState >
+void CAtlasBuilder< TState >::UpdateAtlasImageAsAverageOfTargetImages()
+{
+  std::cout << "Updating atlas image as average of target images." << std::endl;
+
+  // need to use the atlas image at the current resolution (so it works properly in case of multi scaling)
+  typename VectorImageType::Pointer currentAtlasImage = this->m_ptrImageManager->GetCommonTimePointByUniqueId( )->GetImage();
+  currentAtlasImage->SetToConstant( 0 );
+
+  typename VectorImageType::Pointer tmpImage = new VectorImageType( m_AtlasImage );
+
+  unsigned int numberOfObjectiveFunctions = GetNumberOfRegisteredIndividualObjectiveFunctions();
+
+  for ( unsigned int iI=0; iI < numberOfObjectiveFunctions; ++iI )
+  {
+    // TODO, implement this. Do we need a weighting with the determinant of Jacobian?
+#warning Implement me
+    //GetIndividualObjectiveFunction( iI )->GetTargetImage( tmpImage, 0.0 );
+    currentAtlasImage->AddCellwise( tmpImage );
+  }
+
+  // now that we have added all of them we just need to divide to get the average image
+  currentAtlasImage->MultiplyByConstant( 1.0/numberOfObjectiveFunctions );
+}
+
+template < class TState >
+void CAtlasBuilder< TState >::UpdateAtlasImageAsAverageOfSourceImages()
+{
+  std::cout << "Updating atlas image as average of source images." << std::endl;
+
+  // need to use the atlas image at the current resolution (so it works properly in case of multi scaling)
+  typename VectorImageType::Pointer currentAtlasImage = this->m_ptrImageManager->GetCommonTimePointByUniqueId( )->GetImage();
+  currentAtlasImage->SetToConstant( 0 );
+
+  typename VectorImageType::Pointer tmpImage = new VectorImageType( m_AtlasImage );
+
+  unsigned int numberOfObjectiveFunctions = GetNumberOfRegisteredIndividualObjectiveFunctions();
+
+  for ( unsigned int iI=0; iI < numberOfObjectiveFunctions; ++iI )
+  {
+    GetIndividualObjectiveFunction( iI )->GetImage( tmpImage, 1.0 );
+    currentAtlasImage->AddCellwise( tmpImage );
+  }
+
+  // now that we have added all of them we just need to divide to get the average image
+  currentAtlasImage->MultiplyByConstant( 1.0/numberOfObjectiveFunctions );
+}
+
+template < class TState >
 void CAtlasBuilder< TState >::PreFirstSolve()
 {
-  // TODO: Do we need to set the objective function properly here? (Just as for the growth model?)
 
   Superclass::PreFirstSolve();
   CreateAtlasImageForImageManager();
+
+  if ( this->m_ptrObjectiveFunction.GetPointer() == NULL )
+  {
+    throw std::runtime_error( "Atlas objective function was not initialized." );
+    return;
+  }
+
 }
 
 template < class TState >
@@ -598,7 +778,17 @@ template < class TState >
 void CAtlasBuilder< TState >::PreSubIterationSolve()
 {
   // replace the source / target image by its weighted average, unless the atlas-image is considered as part of the gradient
-  UpdateAtlasImage();
+
+  if ( m_AtlasIsSourceImage )
+  {
+    UpdateAtlasImageAsAverageOfTargetImages();
+  }
+  else
+  {
+    UpdateAtlasImageAsAverageOfSourceImages();
+  }
+
+
 }
 
 #endif

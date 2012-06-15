@@ -100,6 +100,7 @@ void CLDDMMGenericRegistration< TState >::PreFirstSolve()
   if ( plddmm == NULL )
   {
     throw std::runtime_error( "Objective function was not intialized." );
+    return;
   }
 
   plddmm->SetEvolverPointer( this->m_ptrEvolver );

@@ -36,7 +36,7 @@ void CAtlasObjectiveFunction< TState >::InitializeState()
 {
   // need to initialize the individual states and then create a new joint state vector which will form the new atlas state
   // initialize the individual state components and create a state with the pointers
-  // TODO: Have a true vetorized implementation, so we can use it with the general optimizers
+  // TODO: Have a true vectorized implementation, so we can use it with the general optimizers
   typename VectorIndividualObjectiveFunctionPointersType::iterator iter;
   for ( iter=m_VectorIndividualObjectiveFunctionPtrs.begin(); iter!=m_VectorIndividualObjectiveFunctionPtrs.end(); ++iter )
     {
