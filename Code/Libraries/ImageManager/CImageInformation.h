@@ -45,8 +45,8 @@ public:
 
   /** Standard typedefs */
   typedef TFloat FloatType;
-  typedef VectorImage< FloatType, VImageDimension > VectorImageType; /**< Image type of given dimension and floating point format. */
-  typedef VectorField< FloatType, VImageDimension > VectorFieldType; /**< Vector field type of given dimension and floating point format. */
+  typedef VectorImage< FloatType, VImageDimension >     VectorImageType; /**< Image type of given dimension and floating point format. */
+  typedef VectorField< FloatType, VImageDimension >     VectorFieldType; /**< Vector field type of given dimension and floating point format. */
   typedef CGaussianKernel< FloatType, VImageDimension > GaussianKernelType;
   typedef CResampler< FloatType, VImageDimension >      ResamplerType;
 
@@ -61,7 +61,7 @@ public:
    *
    * @param imageFileName -- filename of the image to be loaded when needed
    */
-  void SetImageFileName( std::string imageFileName );
+  void SetImageFileName( const std::string & imageFileName );
 
   /**
    * @brief Returns the image filename
@@ -75,7 +75,7 @@ public:
    *
    * @param transformationFileName -- name of file which holds the transformation
    */
-  void SetTransformationFileName( std::string transformationFileName );
+  void SetTransformationFileName( const std::string & transformationFileName );
 
   /**
    * @brief Returns the name of the file which holds the transformation applied to the image (currently not implemented)

@@ -134,7 +134,7 @@ CImageInformation< TFloat, VImageDimension >::GetLoadStrategyType() const
 }
 
 template < class TFloat, unsigned int VImageDimension >
-void CImageInformation< TFloat, VImageDimension >::SetImageFileName( std::string imageFileName )
+void CImageInformation< TFloat, VImageDimension >::SetImageFileName( const std::string & imageFileName )
 {
   m_ImageFileName = imageFileName;
 }
@@ -146,7 +146,7 @@ std::string CImageInformation< TFloat, VImageDimension >::GetImageFileName() con
 }
 
 template < class TFloat, unsigned int VImageDimension >
-void CImageInformation< TFloat, VImageDimension >::SetTransformationFileName( std::string imageTransformationFileName )
+void CImageInformation< TFloat, VImageDimension >::SetTransformationFileName( const std::string & imageTransformationFileName )
 {
   m_ImageTransformationFileName = imageTransformationFileName;
 }

@@ -284,7 +284,6 @@ void CApplication::Solve()
 
   if( this->m_UsedDataConfigurationFile.length() > 0 )
     {
-    // TODO: replace with used configuration.
     this->m_CombinedDataJSONConfig->WriteCurrentConfigurationToJSONFile( this->m_UsedDataConfigurationFile );
     }
 
