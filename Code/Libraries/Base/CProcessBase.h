@@ -73,6 +73,7 @@ protected:
   CJSONConfiguration::Pointer m_CleanedJSONConfig;
 
   bool m_AutoConfigurationSet;
+  int m_LogLevel;
 
 private:
   bool m_PrintConfiguration;

@@ -207,7 +207,31 @@ void CImageInformation< TFloat, VImageDimension >::SetScales( std::vector< Float
   m_ImagesOfAllScales.clear();
   m_ImagesOfAllScales.resize( numberOfScales, NULL );
 
-  m_Scales = scales;
+  m_Scales.clear();
+
+  // check if there is a scale with 1.0 (the original scale). If so remove it, because the original image will be scale 0!!
+  for ( unsigned int iI=0; iI < scales.size(); ++iI )
+    {
+      if ( scales[ iI ] != 1.0 )
+        {
+          m_Scales.push_back( scales[ iI ] );
+        }
+    }
+
+  numberOfScales = m_Scales.size();
+
+  if ( numberOfScales > 0 ) // could be zero in case 1.0 was the only one specified
+    {
+      // sort them high to low
+      std::sort( m_Scales.rbegin(), m_Scales.rend() );
+
+      // make sure there are no negative ones
+
+      if ( m_Scales[ 0 ] <= 0 || m_Scales[ numberOfScales-1 ] <= 0 )
+        {
+          throw std::runtime_error( "Inappropriate scale values. All scales needs to be > 0." );
+        }
+    }
 
   m_ScalesHaveBeenSet = true;
 }
@@ -221,13 +245,22 @@ bool CImageInformation< TFloat, VImageDimension >::ScalesHaveBeenSet()
 template < class TFloat, unsigned int VImageDimension >
 std::vector< TFloat > CImageInformation< TFloat, VImageDimension >::GetScales()
 {
-  return m_Scales;
+  // return all scales (including 0 for the original image, this is handled totally transparently for the user)
+  std::vector< FloatType > allScales;
+  allScales.push_back( 1.0 );
+
+  for ( unsigned int iI=0; iI<m_Scales.size(); ++iI )
+    {
+      allScales.push_back( m_Scales[ iI ] );
+    }
+
+  return allScales;
 }
 
 template < class TFloat, unsigned int VImageDimension >
 unsigned int CImageInformation< TFloat, VImageDimension >::GetNumberOfScales() const
 {
-  return m_Scales.size();
+  return m_Scales.size() + 1; // 0 scale is always the original image
 }
 
 template < class TFloat, unsigned int VImageDimension >
@@ -466,40 +499,52 @@ CImageInformation< TFloat, VImageDimension >::GetCurrentlyActiveImage()
   }
 
   // needs to determine if it already has been computed and if not, compute it on the fly
-  if ( m_ImagesOfAllScales[ activeScale ].GetPointer() == NULL )
-  {
-    // not computed yet, create it
-
-    typename VectorImageType::Pointer originalImage = this->GetOriginalImage(); // will create it on the fly if necessary
-
-    std::cout << "Computing scale " << activeScale << " of: " << m_ImageFileName << std::endl;
-    if ( m_Scales[ activeScale ] <= 0 )
+  bool imageHasBeenComputed = false;
+  if ( activeScale == 0 )
     {
-      throw std::runtime_error( "Inappropriate scale value. Scale needs to be > 0." );
-      return NULL;
+      if ( m_OriginalImage.GetPointer() != NULL )
+        {
+          imageHasBeenComputed = true;
+        }
+    }
+  else
+    {
+      if ( m_ImagesOfAllScales[ activeScale - 1 ].GetPointer() != NULL )
+        {
+          imageHasBeenComputed = true;
+        }
     }
 
-    typename VectorImageType::Pointer resampledImage = VectorImageUtils< TFloat, VImageDimension >::AllocateMemoryForScaledVectorImage( originalImage, m_Scales[ activeScale ] );
+  if ( !imageHasBeenComputed )
+    {
+      // just load the original image if we deal with scale 0
+      if ( activeScale == 0 )
+        {
+          typename VectorImageType::Pointer originalImage = this->GetOriginalImage(); // will create it on the fly if necessary
+          return originalImage;
+        }
+      else // need to compute a multi-scale version
+        {
+          // make sure that the original image is available (otherwise load it on the fly)
+          this->GetOriginalImage();
 
-    if ( activeScale == 0 && !m_BlurHighestResolutionImage )
-      {
-        std::cout << "NOT blurring the image of the highest resolution" << std::endl;
-        resampledImage->Copy( originalImage );
-      }
-      else
-      {
-        if ( m_Resampler.GetPointer() == NULL )
-          {
-          throw std::runtime_error( "Resampler needs to be specified for multi-resolution support." );
-          return NULL;
-          }
-        std::cout << "Computing resampled image with sigma (physical coordinates!) = " << m_Sigma/m_Scales[ activeScale ] << std::endl;
+          std::cout << "Computing scale " << activeScale << " of: " << m_ImageFileName << std::endl;
+          typename VectorImageType::Pointer resampledImage = VectorImageUtils< TFloat, VImageDimension >::AllocateMemoryForScaledVectorImage( m_OriginalImage, m_Scales[ activeScale - 1] );
 
-        m_Resampler->SetSigma( m_Sigma/m_Scales[ activeScale ] );
-        m_Resampler->Downsample( m_OriginalImage, resampledImage );
-      }
-      m_ImagesOfAllScales[ activeScale ] = resampledImage;
-  }
+          if ( m_Resampler.GetPointer() == NULL )
+            {
+            throw std::runtime_error( "Resampler needs to be specified for multi-resolution support." );
+            return NULL;
+            }
+          std::cout << "Computing resampled image with sigma (physical coordinates!) = " << m_Sigma/m_Scales[ activeScale - 1] << std::endl;
+
+          m_Resampler->SetSigma( m_Sigma/m_Scales[ activeScale - 1] );
+          m_Resampler->Downsample( m_OriginalImage, resampledImage );
+
+          m_ImagesOfAllScales[ activeScale - 1 ] = resampledImage;
+
+        }
+    }
 
   // now remove currently unused images if LOAD_STRATEGY_STORE_ONLY is on
 
@@ -514,24 +559,41 @@ CImageInformation< TFloat, VImageDimension >::GetCurrentlyActiveImage()
       throw std::runtime_error( "LOAD_STRATEGY_STORE_ONLY_CURRENT cannot be combined with an externally specified image" );
     }
 
-    m_OriginalImage = NULL;
-    m_OriginalTransform = NULL;
+    if ( activeScale > 0 ) // otherwise we want the original image and need to keep it
+      {
+        m_OriginalImage = NULL;
+        m_OriginalTransform = NULL;
 
-    for ( unsigned int iI = 0; iI < activeScale; ++iI )
-    {
-      // TODO: add deletion of transform, once supported
-      m_ImagesOfAllScales[ iI ] = NULL;
-    }
+        for ( unsigned int iI = 0; iI < activeScale-1; ++iI )
+          {
+            // TODO: add deletion of transform, once supported
+            m_ImagesOfAllScales[ iI ] = NULL;
+          }
 
-    for ( unsigned int iI = activeScale+1; iI < numberOfScales; ++iI )
-    {
-      // TODO: add deletion of transform, once supported
-      m_ImagesOfAllScales[ iI ] = NULL;
-    }
+        for ( unsigned int iI = activeScale; iI < m_ImagesOfAllScales.size(); ++iI )
+          {
+            // TODO: add deletion of transform, once supported
+            m_ImagesOfAllScales[ iI ] = NULL;
+          }
+      }
+    else // active scale == 0
+      {
+        for ( unsigned int iI=0; iI < m_ImagesOfAllScales.size(); ++iI )
+          {
+            m_ImagesOfAllScales[ iI ] = NULL;
+          }
+      }
 
   }
 
-  return m_ImagesOfAllScales[ activeScale ];
+  if ( activeScale == 0 )
+    {
+      return m_OriginalImage;
+    }
+  else
+    {
+      return m_ImagesOfAllScales[ activeScale-1 ];
+    }
 
 }
 

@@ -41,7 +41,7 @@ namespace CALATK
 {
 
 const double PI = 4.0*atan(1.0);
-
+// enumerations for logging
 
 std::string GetCALATKVersionString();
 std::string GetCALATKJsonHeaderString();

@@ -273,7 +273,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetMoment
 }
 
 template < class TState >
-void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetImage( VectorImageType* ptrIm, T dTime )
+void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetSourceImage( VectorImageType* ptrIm, T dTime )
 {
   // This is more complicated than for the standard models, because we have an appearance change here
   // required an integration forward in time
@@ -318,6 +318,12 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetImage(
   std::cout << "desired I = " << desiredI << std::endl;
 
   ptrIm->Copy( m_ptrI[ desiredI ] );
+}
+
+template < class TState >
+void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetTargetImage( VectorImageType* ptrIm, T dTime )
+{
+  throw std::runtime_error( "Not yet implemented." );
 }
 
 template < class TState >

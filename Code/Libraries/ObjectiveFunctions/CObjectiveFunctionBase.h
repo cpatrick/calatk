@@ -140,8 +140,11 @@ public:
   /* Gets the map between specific time points */
   virtual void GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo ) = 0;
 
-  /* Gets the image at a specific time point */
-  virtual void GetImage( VectorImageType* ptrIm, T dTime ) = 0;
+  /* Gets the source image at a specific time point */
+  virtual void GetSourceImage( VectorImageType* ptrIm, T dTime ) = 0;
+
+  /* Gets the target image at a specific time point */
+  virtual void GetTargetImage( VectorImageType* ptrIm, T dTime ) = 0;
 
   /* Gets a pointer to the initial image */
   virtual const VectorImageType* GetPointerToInitialImage() const = 0;
@@ -179,6 +182,9 @@ public:
   * This can be used to estimate weights for multi-Gaussian kernels for example.
   */
   virtual void ComputeInitialUnsmoothedVelocityGradient( VectorFieldType* ptrInitialUnsmoothedVelocityGradient, unsigned int uiKernelNumber = 0 );
+
+  // method being called before a subiteration of a numerical solver for the multi-scale solver, overwrite
+  virtual void PreSubIterationSolve();
 
 protected:
 

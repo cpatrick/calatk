@@ -37,7 +37,6 @@ CProcessBase::CProcessBase():
   this->m_CombinedJSONConfig->AllowHelpCommentsOff();
 }
 
-
 void CProcessBase::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
   this->m_CombinedJSONConfig = combined;

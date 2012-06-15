@@ -610,9 +610,17 @@ CAtlasBuilder< TState >::GetMapFromTo( FloatType dTimeFrom, FloatType dTimeTo )
 
 template < class TState >
 const typename CAtlasBuilder< TState >::VectorImageType*
-CAtlasBuilder< TState >::GetImage( FloatType dTime )
+CAtlasBuilder< TState >::GetSourceImage( FloatType dTime )
 {
-  throw std::runtime_error( "GetImage not yet implemented");
+  throw std::runtime_error( "GetSourceImage not yet implemented");
+  return NULL;
+}
+
+template < class TState >
+const typename CAtlasBuilder< TState >::VectorImageType*
+CAtlasBuilder< TState >::GetTargetImage( FloatType dTime )
+{
+  throw std::runtime_error( "GetTargetImage not yet implemented");
   return NULL;
 }
 
@@ -667,6 +675,9 @@ void CAtlasBuilder< TState >::InitializeAtlasImage()
   // now that we have added all of them we just need to divide to get the average image
   m_AtlasImage->MultiplyByConstant( 1.0/availableSubjectIndices.size() );
 
+#warning DEBUG
+  VectorImageUtilsType::writeFileITK( m_AtlasImage, "initAtlas.nrrd" );
+
 }
 
 template < class TState >
@@ -705,54 +716,6 @@ void CAtlasBuilder< TState >::CreateAtlasImageForImageManager()
 }
 
 template < class TState >
-void CAtlasBuilder< TState >::UpdateAtlasImageAsAverageOfTargetImages()
-{
-  std::cout << "Updating atlas image as average of target images." << std::endl;
-
-  // need to use the atlas image at the current resolution (so it works properly in case of multi scaling)
-  typename VectorImageType::Pointer currentAtlasImage = this->m_ptrImageManager->GetCommonTimePointByUniqueId( )->GetImage();
-  currentAtlasImage->SetToConstant( 0 );
-
-  typename VectorImageType::Pointer tmpImage = new VectorImageType( m_AtlasImage );
-
-  unsigned int numberOfObjectiveFunctions = GetNumberOfRegisteredIndividualObjectiveFunctions();
-
-  for ( unsigned int iI=0; iI < numberOfObjectiveFunctions; ++iI )
-  {
-    // TODO, implement this. Do we need a weighting with the determinant of Jacobian?
-#warning Implement me
-    //GetIndividualObjectiveFunction( iI )->GetTargetImage( tmpImage, 0.0 );
-    currentAtlasImage->AddCellwise( tmpImage );
-  }
-
-  // now that we have added all of them we just need to divide to get the average image
-  currentAtlasImage->MultiplyByConstant( 1.0/numberOfObjectiveFunctions );
-}
-
-template < class TState >
-void CAtlasBuilder< TState >::UpdateAtlasImageAsAverageOfSourceImages()
-{
-  std::cout << "Updating atlas image as average of source images." << std::endl;
-
-  // need to use the atlas image at the current resolution (so it works properly in case of multi scaling)
-  typename VectorImageType::Pointer currentAtlasImage = this->m_ptrImageManager->GetCommonTimePointByUniqueId( )->GetImage();
-  currentAtlasImage->SetToConstant( 0 );
-
-  typename VectorImageType::Pointer tmpImage = new VectorImageType( m_AtlasImage );
-
-  unsigned int numberOfObjectiveFunctions = GetNumberOfRegisteredIndividualObjectiveFunctions();
-
-  for ( unsigned int iI=0; iI < numberOfObjectiveFunctions; ++iI )
-  {
-    GetIndividualObjectiveFunction( iI )->GetImage( tmpImage, 1.0 );
-    currentAtlasImage->AddCellwise( tmpImage );
-  }
-
-  // now that we have added all of them we just need to divide to get the average image
-  currentAtlasImage->MultiplyByConstant( 1.0/numberOfObjectiveFunctions );
-}
-
-template < class TState >
 void CAtlasBuilder< TState >::PreFirstSolve()
 {
 
@@ -774,22 +737,6 @@ void CAtlasBuilder< TState >::Solve()
   Superclass::Solve();
 }
 
-template < class TState >
-void CAtlasBuilder< TState >::PreSubIterationSolve()
-{
-  // replace the source / target image by its weighted average, unless the atlas-image is considered as part of the gradient
-
-  if ( m_AtlasIsSourceImage )
-  {
-    UpdateAtlasImageAsAverageOfTargetImages();
-  }
-  else
-  {
-    UpdateAtlasImageAsAverageOfSourceImages();
-  }
-
-
-}
 
 #endif
 

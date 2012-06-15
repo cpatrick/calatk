@@ -99,7 +99,7 @@ int DoIt( int argc, char** argv )
 
   if ( warpedSourceImage.compare("None") != 0 )
     {
-    typename VectorImageType::Pointer ptrI0W1 = new VectorImageType( plddmm->GetImage( 1.0 ) );
+    typename VectorImageType::Pointer ptrI0W1 = new VectorImageType( plddmm->GetSourceImage( 1.0 ) );
     // generating warped image (not always written out)
     VectorImageUtilsType::writeFileITK( ptrI0W1, warpedSourceImage );
     }

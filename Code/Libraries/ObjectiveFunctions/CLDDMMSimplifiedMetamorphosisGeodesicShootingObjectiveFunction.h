@@ -65,7 +65,8 @@ public:
   void InitializeState();
   void InitializeState( TState* ptrState );
 
-  void GetImage( VectorImageType* ptrIm, T dTime );
+  void GetSourceImage( VectorImageType* ptrIm, T dTime );
+  void GetTargetImage( VectorImageType* ptrIm, T dTime );
   void GetMomentum( VectorImageType* ptrMomentum, T dTime );
 
   void GetMap( VectorFieldType* ptrMap, T dTime );

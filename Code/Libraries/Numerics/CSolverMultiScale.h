@@ -62,7 +62,6 @@ public:
 
   virtual bool SolvePreInitialized();
   virtual bool Solve();
-  virtual void PreSubIterationSolve();
 
   SetMacro( SingleScaleSolver, std::string );
   GetMacro( SingleScaleSolver, std::string );

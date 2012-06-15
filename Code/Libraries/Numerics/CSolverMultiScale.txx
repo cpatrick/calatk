@@ -96,12 +96,6 @@ bool CSolverMultiScale< TState >::SolvePreInitialized()
 }
 
 template < class TState >
-void CSolverMultiScale< TState >::PreSubIterationSolve()
-{
-  // TODO: Put functionality here. Should call an exteranlly specified method (maybe point to algorithm and have a PreSubIterationSolve method there)
-}
-
-template < class TState >
 bool CSolverMultiScale< TState >::Solve()
 {
   bool reducedEnergy = false;
@@ -159,8 +153,6 @@ bool CSolverMultiScale< TState >::Solve()
       {
         for ( unsigned int iS=0; iS < m_NumberOfSubIterations; ++iS )
         {
-          this->PreSubIterationSolve();
-
           std::cout << "Solving multiscale level " << iI << "/" << numberOfScales << "; subiteration " << iS+1 << "/" << m_NumberOfSubIterations << std::endl;
           if ( iS==0 )
           {
@@ -170,6 +162,9 @@ bool CSolverMultiScale< TState >::Solve()
           }
           else
           {
+            // for iS = 0 not properly initialized
+            objectiveFunction->PreSubIterationSolve();
+
             bool currentlyReducedEnergy = m_ptrSolver->SolvePreInitialized();
             reducedEnergy = reducedEnergy || currentlyReducedEnergy;
           }
@@ -195,7 +190,7 @@ bool CSolverMultiScale< TState >::Solve()
         for ( unsigned int iS=0; iS < m_NumberOfSubIterations; ++iS )
           {
 
-          this->PreSubIterationSolve();
+          objectiveFunction->PreSubIterationSolve();
           std::cout << "Solving multiscale level " << iI << "/" << numberOfScales << "; subiteration " << iS+1 << "/" << m_NumberOfSubIterations << std::endl;
 
           bool currentlyReducedEnergy = m_ptrSolver->SolvePreInitialized();

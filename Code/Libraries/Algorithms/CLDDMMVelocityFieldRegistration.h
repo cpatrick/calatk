@@ -71,7 +71,8 @@ public:
 
   const VectorFieldType* GetMap( T dTime );
   const VectorFieldType* GetMapFromTo( T dTimeFrom, T dTimeTo );
-  const VectorImageType* GetImage( T dTime );
+  const VectorImageType* GetSourceImage( T dTime );
+  const VectorImageType* GetTargetImage( T dTime );
   const VectorImageType* GetInitialImage();
 
   SetMacro( Kernel, std::string );

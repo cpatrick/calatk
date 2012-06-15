@@ -44,6 +44,12 @@ CObjectiveFunctionBase< T, VImageDimension >::~CObjectiveFunctionBase()
 {
 }
 
+template < class T, unsigned int VImageDimension >
+void CObjectiveFunctionBase< T, VImageDimension >::PreSubIterationSolve()
+{
+  // TODO: Put functionality here. Should call an externally specified method (maybe point to algorithm and have a PreSubIterationSolve method there)
+}
+
 //
 // initial unsmoothed gradient computation (for example for kernel weight determination)
 template < class T, unsigned int VImageDimension >

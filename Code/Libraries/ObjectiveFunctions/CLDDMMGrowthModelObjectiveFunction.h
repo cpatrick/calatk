@@ -56,7 +56,8 @@ public:
   SetMacro( SigmaSqr, T );
   GetMacro( SigmaSqr, T );
 
-  void GetImage( VectorImageType* ptrIm, T dTime );
+  void GetSourceImage( VectorImageType* ptrIm, T dTime );
+  void GetTargetImage( VectorImageType* ptrIm, T dTime );
   void GetInitialImage( VectorImageType* ptrIm );
   const VectorImageType* GetPointerToInitialImage() const;
   void GetMomentum( VectorImageType* ptrMomentum, T dTime );

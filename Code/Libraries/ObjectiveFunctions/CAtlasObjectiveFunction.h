@@ -112,21 +112,28 @@ public:
   unsigned int GetCurrentActiveObjectiveFunctionOutput();
 
   /**
-   * @brief Given the current state the atlas-image (i.e., the first image for all of the time-series is updated)
+   * @brief Assumes that the atlas image is the source image and updates it by a weighted average of the target images pulled back to the source
    *
-   * Assumes that the atlas-image is at time-point 0 and the target images at time point 1.
-   * All the time-series share the same initial image. Can be called after each iteration or after any given number of iterations (as desired by the solver).
    */
-  void UpdateAtlasImage();
+  void UpdateAtlasImageAsAverageOfTargetImages();
+
+  /**
+   * @brief Assumes that the atlas image is the target image and updates it by flowing the source images forward and averaging them.
+   *
+   */
+  void UpdateAtlasImageAsAverageOfSourceImages();
 
   // Map and image output for the individual objective functions (selection by CurrentActiveObjectiveFunctionOutput)
   void GetMap( VectorFieldType* ptrMap, T dTime );
   void GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo );
-  void GetImage( VectorImageType* ptrIm, T dTime );
+  void GetSourceImage( VectorImageType* ptrIm, T dTime );
+  void GetTargetImage( VectorImageType* ptrIm, T dTime );
 
   // TODO: needs to be implemented
   const VectorImageType* GetPointerToInitialImage() const;
   void GetInitialImage( VectorImageType* ptrIm );
+
+  void PreSubIterationSolve();
 
 protected:
 
@@ -144,6 +151,9 @@ private:
   VectorIndividualObjectiveFunctionPointersType  m_VectorIndividualObjectiveFunctionPtrs;
 
   unsigned int m_CurrentActiveObjectiveFunctionOutput;  /**< id for currently active individual objective function to create output */
+
+#warning Make this a proper choice
+  bool m_AtlasIsSourceImage; // TODO: Make this a proper choice
 };
 
 #include "CAtlasObjectiveFunction.txx"

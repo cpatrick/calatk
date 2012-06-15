@@ -111,7 +111,7 @@ int DoIt( int argc, char** argv )
 
   if ( bWriteDetailedResults )
     {
-    typename VectorImageType::ConstPointer ptrIm = new VectorImageType( lddmm->GetImage( 1.0 ) );
+    typename VectorImageType::ConstPointer ptrIm = new VectorImageType( lddmm->GetSourceImage( 1.0 ) );
     typename VectorImageType::ConstPointer ptrT1 = new VectorImageType( lddmm->GetImageT( 1.0 ) );
     typename VectorImageType::ConstPointer ptrT2 = new VectorImageType( lddmm->GetImageT( 2.0 ) );
     typename VectorFieldType::ConstPointer ptrMap0 = new VectorFieldType( lddmm->GetMap( 0.0 ) );

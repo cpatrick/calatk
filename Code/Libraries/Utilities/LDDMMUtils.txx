@@ -210,11 +210,31 @@ unsigned int LDDMMUtils< T, VImageDimension >::DetermineTimeSeriesTimePointData(
 
 }
 
-//
-// Computing the map between two timepoints
-//
+
 template < class T, unsigned int VImageDimension >
 void LDDMMUtils< T, VImageDimension >::GetMapFromToFromSpatioTemporalVelocityField(
+    VectorFieldType* ptrMap,
+    T dTimeFrom,
+    T dTimeTo,
+    const std::vector< STimePoint >& vecTimeDiscretization,
+    ConstVectorPointerToVectorFieldPointerType ptrSpatioTemporalVelocityField,
+    EvolverType* ptrEvolver )
+{
+  if ( dTimeFrom <= dTimeTo )
+    {
+      GetMapFromToFromSpatioTemporalVelocityFieldForward( ptrMap, dTimeFrom, dTimeTo, vecTimeDiscretization, ptrSpatioTemporalVelocityField, ptrEvolver );
+    }
+  else
+    {
+      GetMapFromToFromSpatioTemporalVelocityFieldBackward( ptrMap, dTimeFrom, dTimeTo, vecTimeDiscretization, ptrSpatioTemporalVelocityField, ptrEvolver );
+    }
+}
+
+//
+// Computing the map between two timepoints in the forward direction
+//
+template < class T, unsigned int VImageDimension >
+void LDDMMUtils< T, VImageDimension >::GetMapFromToFromSpatioTemporalVelocityFieldForward(
     VectorFieldType* ptrMap,
     T dTimeFrom,
     T dTimeTo,
@@ -301,5 +321,106 @@ void LDDMMUtils< T, VImageDimension >::GetMapFromToFromSpatioTemporalVelocityFie
     ptrMapIn->Copy( ptrMapOut );
     }
 }
+
+//
+// Computing the map between two timepoints in the backward direction
+//
+template < class T, unsigned int VImageDimension >
+void LDDMMUtils< T, VImageDimension >::GetMapFromToFromSpatioTemporalVelocityFieldBackward(
+    VectorFieldType* ptrMap,
+    T dTimeFrom,
+    T dTimeTo,
+    const std::vector< STimePoint >& vecTimeDiscretization,
+    ConstVectorPointerToVectorFieldPointerType ptrSpatioTemporalVelocityField,
+    EvolverType* ptrEvolver )
+{
+  assert( dTimeTo <= dTimeFrom );
+  std::cout << "Computing map from " << dTimeFrom << " to " << dTimeTo << std::endl;
+
+  if ( dTimeFrom < vecTimeDiscretization[0].dTime || dTimeTo > vecTimeDiscretization.back().dTime )
+    {
+    throw std::runtime_error("Requested map outside of valid time range.");
+    return;
+    }
+
+  VectorFieldType* ptrMapOut = ptrMap;
+
+  // create two additional maps to hold the solution
+  typename VectorFieldType::Pointer ptrMapIn = new VectorFieldType( ptrMap );
+  typename VectorFieldType::Pointer ptrMapTmp = new VectorFieldType( ptrMap );
+  typename VectorFieldType::Pointer ptrNegativeVelocity = new VectorFieldType( ptrMap );
+
+  // get the map between two time points
+  LDDMMUtils< T, VImageDimension >::identityMap( ptrMapIn );
+
+  T dCurrentTime = vecTimeDiscretization.back().dTime;
+  unsigned int uiStart = 0;
+
+  // we may need to fast backward to the beginning time point
+
+  if ( dCurrentTime > dTimeFrom )
+    {
+
+    for ( int iI = vecTimeDiscretization.size()-2; iI>=0; --iI )
+      {
+      T dCurrentDT = vecTimeDiscretization[ iI+1 ].dTime - vecTimeDiscretization[ iI ].dTime;
+      if ( dCurrentTime - dCurrentDT < dTimeFrom )
+        {
+        // evolve for an increment
+        std::cout << "partially evolve for " << dCurrentTime - dTimeFrom << std::endl;
+        ptrNegativeVelocity->Copy( (*ptrSpatioTemporalVelocityField)[ iI ] );
+        ptrNegativeVelocity->MultiplyByConstant( -1.0 );
+        ptrEvolver->SolveForward( ptrNegativeVelocity, ptrMapIn, ptrMapOut, ptrMapTmp, dCurrentTime - dTimeFrom );
+        // for next step, copy
+        ptrMapIn->Copy( ptrMapOut );
+        uiStart = iI-1;
+        dCurrentTime -= dCurrentDT;
+        break;
+        }
+      else
+        {
+        // just skip ahead
+        dCurrentTime -= dCurrentDT;
+        uiStart = iI - 1;
+        }
+      if ( dCurrentTime <= dTimeFrom )
+        {
+        break;
+        }
+      }
+    }
+
+
+  std::cout << "fast backwarded to " << dCurrentTime << std::endl;
+  std::cout << "starting from index " << uiStart << std::endl;
+
+  // now we can move backward
+
+  for ( unsigned int iI = uiStart; iI >= 0; --iI )
+    {
+    T dCurrentDT = vecTimeDiscretization[ iI+1 ].dTime - vecTimeDiscretization[ iI ].dTime;
+    if ( dCurrentTime - dCurrentDT > dTimeTo )
+      {
+      std::cout << "evolved for " << dCurrentDT << std::endl;
+      ptrNegativeVelocity->Copy( (*ptrSpatioTemporalVelocityField)[ iI ] );
+      ptrNegativeVelocity->MultiplyByConstant( -1.0 );
+      ptrEvolver->SolveForward( ptrNegativeVelocity, ptrMapIn, ptrMapOut, ptrMapTmp, dCurrentDT );
+      dCurrentTime -= dCurrentDT;
+      }
+    else
+      {
+      std::cout << "finally partially evolved for " << dCurrentTime - dTimeTo << std::endl;
+      ptrNegativeVelocity->Copy( (*ptrSpatioTemporalVelocityField)[ iI ] );
+      ptrNegativeVelocity->MultiplyByConstant( -1.0 );
+      ptrEvolver->SolveForward( ptrNegativeVelocity, ptrMapIn, ptrMapOut, ptrMapTmp, dCurrentTime-dTimeTo );
+      dCurrentTime = dTimeTo;
+      break;
+      }
+    // for next step, copy
+    ptrMapIn->Copy( ptrMapOut );
+    }
+
+}
+
 
 #endif

@@ -247,15 +247,28 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::GetMomentum( Vect
 }
 
 template < class TState >
-void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::GetImage( VectorImageType* ptrIm, T dTime )
+void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::GetSourceImage( VectorImageType* ptrIm, T dTime )
 {
   // TODO: account for appearance changes, based on closeby images
   GetMap( m_ptrMapTmp, dTime );
   // now compute the image by interpolation
   VectorImageType* ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
   LDDMMUtils< T, TState::ImageDimension >::applyMap( m_ptrMapTmp, ptrInitialImage, ptrIm );
-
 }
+
+template < class TState >
+void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::GetTargetImage( VectorImageType* ptrIm, T dTime )
+{
+  std::vector< TimeSeriesDataPointType > timeseries;
+  this->m_ptrImageManager->GetTimeSeriesWithSubjectIndex( timeseries, this->GetActiveSubjectId() );
+  unsigned int numberOfTimePoints = timeseries.size();
+
+  // need the reverse map
+  GetMapFromTo( m_ptrMapTmp, timeseries[ numberOfTimePoints - 1 ].GetTimePoint(), dTime );
+  // now compute the image by interpolation
+  LDDMMUtils< T, TState::ImageDimension >::applyMap( m_ptrMapTmp, timeseries[ numberOfTimePoints - 1 ].GetImage(), ptrIm );
+}
+
 
 template < class TState >
 void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::GetMap( VectorFieldType* ptrMap, T dTime )

@@ -133,6 +133,24 @@ public:
       ConstVectorPointerToVectorFieldPointerType ptrSpatioTemporalVelocityField,
       EvolverType* ptrEvolver );
 
+  /** Just like GetMapFromSpatioTemporalVelocityField, but assumes dTimeTo>=dTimeFrom */
+  static void GetMapFromToFromSpatioTemporalVelocityFieldForward(
+      VectorFieldType* ptrMap,
+      T dTimeFrom,
+      T dTimeTo,
+      const std::vector< STimePoint >& vecTimeDiscretization,
+      ConstVectorPointerToVectorFieldPointerType ptrSpatioTemporalVelocityField,
+      EvolverType* ptrEvolver );
+
+  /** Just like GetMapFromSpatioTemporalVelocityField, but assumes dTimeTo<=dTimeFrom */
+  static void GetMapFromToFromSpatioTemporalVelocityFieldBackward(
+      VectorFieldType* ptrMap,
+      T dTimeFrom,
+      T dTimeTo,
+      const std::vector< STimePoint >& vecTimeDiscretization,
+      ConstVectorPointerToVectorFieldPointerType ptrSpatioTemporalVelocityField,
+      EvolverType* ptrEvolver );
+
 };
 
 #include "LDDMMUtils.txx"

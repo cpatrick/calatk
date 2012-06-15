@@ -222,18 +222,6 @@ CImageManager< TFloat, VImageDimension >::GetImageById( int uid )
   {
     if ( iter->second.GetUniqueId() == uid )
     {
-      // need to make sure that scales have been set before requesting an image
-      if ( !iter->second.ScalesHaveBeenSet() )
-      {
-        if ( this->ScalesForAllIndicesAreSpecified() )
-        {
-          iter->second.SetScales( m_ScaleVector );
-        }
-        else
-        {
-          throw std::runtime_error( "Scales are not fully specified." );
-        }
-      }
       SetCurrentImagePreprocessingSettings( iter->second );
       return iter->second.GetImageAtScale( m_CurrentlySelectedScale );
     }
@@ -245,18 +233,6 @@ CImageManager< TFloat, VImageDimension >::GetImageById( int uid )
   {
     if ( iterCommon->GetUniqueId() == uid )
     {
-      // need to make sure that scales have been set before requesting an image
-      if ( !iterCommon->ScalesHaveBeenSet() )
-      {
-        if ( this->ScalesForAllIndicesAreSpecified() )
-        {
-          iterCommon->SetScales( m_ScaleVector );
-        }
-        else
-        {
-          throw std::runtime_error( "Scales are not fully specified." );
-        }
-      }
       SetCurrentImagePreprocessingSettings( *iterCommon );
       return iterCommon->GetImageAtScale( m_CurrentlySelectedScale );
     }
@@ -404,6 +380,19 @@ int CImageManager< TFloat, VImageDimension>::AddImageAndTransform( const std::st
 template < class TFloat, unsigned int VImageDimension >
 void CImageManager< TFloat, VImageDimension >::SetCurrentImagePreprocessingSettings( TimeSeriesDataPointType& dataPoint )
 {
+  // need to make sure that scales have been set before requesting an image
+  if ( !dataPoint.ScalesHaveBeenSet() )
+  {
+    if ( this->ScalesForAllIndicesAreSpecified() )
+    {
+      dataPoint.SetScales( m_ScaleVector );
+    }
+    else
+    {
+      throw std::runtime_error( "Scales are not fully specified." );
+    }
+  }
+
   dataPoint.SetGaussianKernelPointer( m_GaussianKernel );
   dataPoint.SetResamplerPointer( m_Resampler );
   dataPoint.SetSigma( m_Sigma );
@@ -520,11 +509,38 @@ CImageManager< TFloat, VImageDimension >::GetCommonTimePointByUniqueId( int uid 
   {
     if ( iterCommon->GetUniqueId() == uid )
     {
+    SetCurrentImagePreprocessingSettings( *iterCommon );
     return &(*iterCommon);
     }
   }
   throw std::runtime_error( "Could not find common dataset with given unique id." );
   return NULL;
+}
+
+//
+// Get time point data for a specific common image given an index
+//
+template < class TFloat, unsigned int VImageDimension >
+typename CImageManager< TFloat, VImageDimension >::TimeSeriesDataPointType*
+CImageManager< TFloat, VImageDimension >::GetCommonTimePointByVectorIndex( int id )
+{
+  SetCurrentImagePreprocessingSettings( m_AllCommonSubjectInformation[ id ] );
+  return &m_AllCommonSubjectInformation[ id ];
+}
+
+//
+// Get time point data for the only common time-point
+//
+template < class TFloat, unsigned int VImageDimension >
+typename CImageManager< TFloat, VImageDimension >::TimeSeriesDataPointType*
+CImageManager< TFloat, VImageDimension >::GetOnlyCommonTimePointSavely()
+{
+  if ( m_AllCommonSubjectInformation.size() != 1 )
+    {
+      throw std::runtime_error( "More than one common time-point stored." );
+      return NULL;
+    }
+  return GetCommonTimePointByVectorIndex( 0 );
 }
 
 //
@@ -580,18 +596,6 @@ void CImageManager< TFloat, VImageDimension>::GetTimeSeriesWithSubjectIndex( std
   typename AllCommonSubjectInformationType::iterator iterCommon;
   for ( iterCommon = m_AllCommonSubjectInformation.begin(); iterCommon != m_AllCommonSubjectInformation.end(); ++iterCommon )
   {
-    // need to make sure that scales have been set before requesting an image
-    if ( !iterCommon->ScalesHaveBeenSet() )
-    {
-      if ( this->ScalesForAllIndicesAreSpecified() )
-      {
-        iterCommon->SetScales( m_ScaleVector );
-      }
-      else
-      {
-        throw std::runtime_error( "Scales are not fully specified." );
-      }
-    }
     SetCurrentImagePreprocessingSettings( *iterCommon );
     iterCommon->GetImageAtScale( m_CurrentlySelectedScale );
     iterCommon->GetTransformAtScale( m_CurrentlySelectedScale );
@@ -606,18 +610,6 @@ void CImageManager< TFloat, VImageDimension>::GetTimeSeriesWithSubjectIndex( std
 
   for ( iter = retRange.first; iter != retRange.second; ++iter )
   {
-    // need to make sure that scales have been set before requesting an image
-    if ( !iter->second.ScalesHaveBeenSet() )
-    {
-      if ( this->ScalesForAllIndicesAreSpecified() )
-      {
-        iter->second.SetScales( m_ScaleVector );
-      }
-      else
-      {
-        throw std::runtime_error( "Scales are not fully specified." );
-      }
-    }
     SetCurrentImagePreprocessingSettings( iter->second );
 
     iter->second.GetImageAtScale( m_CurrentlySelectedScale );

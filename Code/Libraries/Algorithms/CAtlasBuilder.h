@@ -32,6 +32,7 @@
 #include "CALATKCommon.h"
 #include "CJSONConfiguration.h"
 #include "KernelUtils.h"
+#include "VectorImageUtils.h"
 
 namespace CALATK
 {
@@ -75,6 +76,8 @@ public:
   typedef typename Superclass::MetricType                                 MetricType;
   typedef typename Superclass::ImageManagerType                           ImageManagerType;
   typedef typename ImageManagerType::TimeSeriesDataPointType              TimeSeriesDataPointType;
+
+  typedef VectorImageUtils< FloatType, TState::ImageDimension > VectorImageUtilsType;
 
   typedef CStationaryEvolver< FloatType, TState::ImageDimension > DefaultEvolverType;
   typedef COneStepEvolverSemiLagrangianAdvection< FloatType, TState::ImageDimension > OneStepDefaultEvolverType;
@@ -122,7 +125,6 @@ public:
   unsigned int GetCurrentActiveRegistration();
 
   virtual void Solve();
-  virtual void PreSubIterationSolve();
 
   SetMacro( Kernel, std::string );
   GetMacro( Kernel, std::string );
@@ -160,7 +162,8 @@ protected:
   // TODO: Implement
   const VectorFieldType* GetMap( FloatType dTime );
   const VectorFieldType* GetMapFromTo( FloatType dTimeFrom, FloatType dTimeTo );
-  const VectorImageType* GetImage( FloatType dTime );
+  const VectorImageType* GetSourceImage( FloatType dTime );
+  const VectorImageType* GetTargetImage( FloatType dTime );
 
   void PreFirstSolve();
 
@@ -178,18 +181,6 @@ private:
    *
    */
   void InitializeAtlasImage();
-
-  /**
-   * @brief Assumes that the atlas image is the source image and updates it by a weighted average of the target images pulled back to the source
-   *
-   */
-  void UpdateAtlasImageAsAverageOfTargetImages();
-
-  /**
-   * @brief Assumes that the atlas image is the target image and updates it by flowing the source images forward and averaging them.
-   *
-   */
-  void UpdateAtlasImageAsAverageOfSourceImages();
 
   /**
    * @brief Creates the atlas image and associates it as a common image with all the time-series contained in the image manager

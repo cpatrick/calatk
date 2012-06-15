@@ -245,6 +245,21 @@ public:
   TimeSeriesDataPointType* GetCommonTimePointByUniqueId( int uid = 0);
 
   /**
+   * @brief Returns a common time-point based on a vector index. This is a direct lookup. Only use when you know excaclty what you are doing. Primarily useful to access the first element if there is only one.
+   *
+   * @param id
+   * @return dataPoint
+   */
+  TimeSeriesDataPointType* GetCommonTimePointByVectorIndex( int id = 0 );
+
+  /**
+   * @brief Same as GetCommonTimePointByVectorIndex( 0 ), but makes sure that there is indeed only one timepoint
+   *
+   * @return TimeSeriesDataPointType *
+   */
+  TimeSeriesDataPointType* GetOnlyCommonTimePointSavely();
+
+  /**
    * Returns the available subject ids
    *
    * @return Returns all the availabe subject indices registered with the image manager.
