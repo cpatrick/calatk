@@ -383,7 +383,8 @@ if( BUILD_TESTING )
 
   add_test(calatkBasicDataConfigTest
     testDriverImageManager calatkBasicDataConfigTest
-    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestDataConfig.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/calatkBasicDataConfigTestInput.json
+    ${test_temp_dir}/calatkBasicDataConfigTestOutput.json
     )
 endif( BUILD_TESTING )
 

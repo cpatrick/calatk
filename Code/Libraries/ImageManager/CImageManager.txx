@@ -327,23 +327,35 @@ void CImageManager< TFloat, VImageDimension >::ReadInputsFromBasicDataJSONConfig
     {
     throw std::runtime_error( "No subjects found." );
     }
-  dataCleanedConfigRoot["Inputs"][0] = combinedSubject;
-  for( Json::Value::iterator timePointIt = combinedSubject.begin();
-       timePointIt != combinedSubject.end();
-       ++timePointIt )
+
+  const Json::Value::Members subjects = combinedInputs.getMemberNames();
+  for( unsigned int subjectIdx = 0; subjectIdx < combinedInputs.size(); ++subjectIdx )
     {
-    this->AddImage( (*timePointIt)[1].asCString(), (*timePointIt)[0].asDouble(), 0 );
-    Json::Value & cleanedSubject = dataCleanedConfigRoot["Inputs"][0];
-    cleanedSubject[0] = (*timePointIt)[0];
-    if( cleanedSubject[0] == Json::nullValue )
+    Json::Value cleanedSubject( Json::arrayValue );
+    const std::string subject = subjects[subjectIdx];
+    Json::Value & combinedSubject = combinedInputs[subject];
+    for( unsigned int timePointIdx = 0; timePointIdx < combinedSubject.size(); ++timePointIdx )
       {
-      throw std::runtime_error( "Expected time point not found in Basic data configuration file." );
+      Json::Value & combinedTimePoint = combinedSubject[timePointIdx];
+
+      Json::Value cleanedTimePoint( Json::arrayValue );
+      cleanedTimePoint[0] = combinedTimePoint[0];
+      if( cleanedTimePoint[0] == Json::nullValue )
+        {
+        throw std::runtime_error( "Expected time point not found in Basic data configuration file." );
+        }
+      cleanedTimePoint[1] = combinedTimePoint[1];
+      if( cleanedTimePoint[1] == Json::nullValue )
+        {
+        throw std::runtime_error( "Expected image file path not found in Basic data configuration file." );
+        }
+
+      this->AddImage( combinedTimePoint[1].asCString(), combinedTimePoint[0].asDouble(), 0 );
+
+      cleanedSubject[timePointIdx] = cleanedTimePoint;
       }
-    cleanedSubject[1] = (*timePointIt)[1];
-    if( cleanedSubject[1] == Json::nullValue )
-      {
-      throw std::runtime_error( "Expected image file path not found in Basic data configuration file." );
-      }
+
+    dataCleanedConfigRoot["Inputs"][subject] = cleanedSubject;
     }
 }
 

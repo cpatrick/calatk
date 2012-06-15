@@ -30,9 +30,9 @@ int calatkBasicDataConfigTest( int argc, char ** argv )
   typedef float TFloat;
   static const unsigned int Dimension = 2;
 
-  if( argc < 2 )
+  if( argc < 3 )
     {
-    std::cerr << "Usage: " << argv[0] << " <basic_data_config.json>" << std::endl;
+    std::cerr << "Usage: " << argv[0] << " <basic_data_config_input.json> <basic_data_config_output.json>" << std::endl;
     return EXIT_FAILURE;
     }
 
@@ -42,7 +42,11 @@ int calatkBasicDataConfigTest( int argc, char ** argv )
 
   typedef CALATK::CImageManager< TFloat, Dimension > ImageManagerType;
   ImageManagerType::Pointer imageManager = new ImageManagerType;
+
   imageManager->SetDataAutoConfiguration( basicConfigurationCombined, basicConfigurationCleaned );
+  imageManager->ReadInputsFromDataJSONConfiguration();
+
+  basicConfigurationCleaned->WriteCurrentConfigurationToJSONFile( argv[2] );
 
   return EXIT_SUCCESS;
 }
