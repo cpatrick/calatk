@@ -20,7 +20,10 @@
 #ifndef C_IMAGE_MANAGER_TXX
 #define C_IMAGE_MANAGER_TXX
 
-#include"CImageManager.h"
+#include "CImageManager.h"
+
+#include "LDDMMUtils.h"
+#include "CAlgorithmBase.h"
 
 namespace CALATK
 {
@@ -225,6 +228,38 @@ void CImageManager< TFloat, VImageDimension >::SetDataAutoConfiguration( CJSONCo
   this->m_DataCombinedJSONConfig = combined;
   this->m_DataCleanedJSONConfig = cleaned;
   this->m_DataAutoConfigurationSet = true;
+
+  static const std::string inputHelp = "Input data for the analysis.";
+  this->m_DataCombinedJSONConfig->SetHelpForKey( "Inputs", inputHelp );
+  this->m_DataCleanedJSONConfig->SetHelpForKey( "Inputs", inputHelp );
+  static const std::string outputHelp = "Output data resulting from the analysis.";
+  this->m_DataCombinedJSONConfig->SetHelpForKey( "Outputs", outputHelp );
+  this->m_DataCleanedJSONConfig->SetHelpForKey( "Outputs", outputHelp );
+}
+
+
+template < class TFloat, unsigned int VImageDimension >
+void CImageManager< TFloat, VImageDimension >::ReadInputsFromDataJSONConfiguration()
+{
+  if( !this->m_DataAutoConfigurationSet )
+    {
+    throw std::logic_error( "Must set tho DataAutoConfiguration first." );
+    }
+  //! \todo read from the Basic or Advanced configuration format depending on
+  // its content
+  this->ReadInputsFromBasicDataJSONConfiguration();
+}
+
+template < class TFloat, unsigned int VImageDimension >
+void CImageManager< TFloat, VImageDimension >::WriteOutputsFromDataJSONConfiguration( AlgorithmBaseType * algorithm )
+{
+  if( !this->m_DataAutoConfigurationSet )
+    {
+    throw std::logic_error( "Must set tho DataAutoConfiguration first." );
+    }
+  //! \todo read from the Basic or Advanced configuration format depending on
+  // its content
+  this->WriteOutputsFromBasicDataJSONConfiguration( algorithm );
 }
 
 
@@ -274,6 +309,61 @@ void CImageManager< TFloat, VImageDimension >::SetAllowHelpComments( bool allow 
     this->m_DataCleanedJSONConfig->AllowHelpCommentsOff();
     }
 }
+
+
+template < class TFloat, unsigned int VImageDimension >
+void CImageManager< TFloat, VImageDimension >::ReadInputsFromBasicDataJSONConfiguration()
+{
+  Json::Value & dataCombinedConfigRoot = *(this->m_DataCombinedJSONConfig->GetRootPointer());
+  Json::Value & dataInputs = dataCombinedConfigRoot["Inputs"];
+  if( dataInputs == Json::nullValue )
+    {
+    throw std::runtime_error( "No input images given." );
+    }
+  Json::Value & firstSubject = *(dataInputs.begin());
+  if( firstSubject == Json::nullValue || firstSubject.size() == 0 )
+    {
+    throw std::runtime_error( "No subjects found." );
+    }
+  for( Json::Value::iterator timePointIt = firstSubject.begin();
+       timePointIt != firstSubject.end();
+       ++timePointIt )
+    {
+    this->AddImage( (*timePointIt)[1].asCString(), (*timePointIt)[0].asDouble(), 0 );
+    }
+}
+
+
+template < class TFloat, unsigned int VImageDimension >
+void CImageManager< TFloat, VImageDimension >::WriteOutputsFromBasicDataJSONConfiguration( AlgorithmBaseType * algorithm )
+{
+  Json::Value & dataCombinedConfigRoot = *(this->m_DataCombinedJSONConfig->GetRootPointer());
+  Json::Value & dataOutputs = dataCombinedConfigRoot["Outputs"];
+  if( dataOutputs != Json::nullValue )
+    {
+    Json::Value & outputFirstSubject = *(dataOutputs.begin());
+    if( outputFirstSubject != Json::nullValue )
+      {
+      typedef VectorImage< TFloat, VImageDimension > VectorImageType;
+      typename VectorImageType::ConstPointer originalImage = this->GetOriginalImageById( 0 );
+      typename VectorImageType::Pointer warpedImage = new VectorImageType( originalImage );
+      for( Json::Value::iterator timePointIt = outputFirstSubject.begin();
+           timePointIt != outputFirstSubject.end();
+           ++timePointIt )
+        {
+        typedef VectorField< TFloat, VImageDimension > VectorFieldType;
+        typename VectorFieldType::ConstPointer map = new VectorFieldType( algorithm->GetMap( (*timePointIt)[0].asDouble() ));
+
+        typedef LDDMMUtils< TFloat, VImageDimension > LDDMMUtilsType;
+        LDDMMUtilsType::applyMap( map, originalImage, warpedImage );
+
+        typedef VectorImageUtils< TFloat, VImageDimension > VectorImageUtilsType;
+        VectorImageUtilsType::writeFileITK( warpedImage, (*timePointIt)[1].asString() );
+        }
+      }
+    }
+}
+
 
 //
 // gets the original image based on the global id

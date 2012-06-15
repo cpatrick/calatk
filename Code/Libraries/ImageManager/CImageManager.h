@@ -28,7 +28,6 @@
 #include <map>
 #include <set>
 #include <vector>
-#include "CProcessBase.h"
 
 #include "CImageInformation.h"
 
@@ -37,6 +36,10 @@
 
 namespace CALATK
 {
+
+// Forward declaration;
+template < class TFloat, unsigned int VImageDimension >
+class CAlgorithmBase;
 
 /**
  * \brief Base class to deal with a set of images.
@@ -62,8 +65,10 @@ public:
   typedef VectorImage< FloatType, VImageDimension > VectorImageType; /**< Image type of given dimension and floating point format. */
   typedef VectorField< FloatType, VImageDimension > VectorFieldType; /**< Vector field type of given dimension and floating point format. */
 
-  typedef CResamplerLinear< FloatType, VImageDimension > ResamplerType;
-  typedef CGaussianKernel< FloatType, VImageDimension > GaussianKernelType;
+  typedef CAlgorithmBase< FloatType, VImageDimension >    AlgorithmBaseType;
+
+  typedef CResamplerLinear< FloatType, VImageDimension >  ResamplerType;
+  typedef CGaussianKernel< FloatType, VImageDimension >   GaussianKernelType;
 
   typedef CImageInformation< FloatType, VImageDimension > TimeSeriesDataPointType;
 
@@ -334,6 +339,18 @@ public:
    * used. */
   const CJSONConfiguration * GetDataJSONConfigurationCleaned();
 
+  /** Read in the input images and their associated metadata from the JSON
+   * configuration file specified with SetDataAutoConfiguration().
+   * */
+  void ReadInputsFromDataJSONConfiguration();
+
+  /** Write the output images and other results specified in the JSON
+   * configuration file specified with SetDataAutoConfiguration().
+   *
+   * \param algorithm that the results are to be extracted from.
+   * */
+  void WriteOutputsFromDataJSONConfiguration( AlgorithmBaseType * algorithm );
+
   // Reimplemented because we have both a data and algorithm configuration.
   virtual void SetPrintConfiguration( bool print );
   virtual void SetAllowHelpComments( bool allow );
@@ -356,6 +373,12 @@ protected:
    */
   void SetCurrentImagePreprocessingSettings( TimeSeriesDataPointType& dataPoint );
 
+  /** Read in the given input images and their associated metadata into the
+   * ImageManager memory when the JSON configuration file is in the Basic
+   * format. */
+  void ReadInputsFromBasicDataJSONConfiguration();
+
+  void WriteOutputsFromBasicDataJSONConfiguration( AlgorithmBaseType * algorithm );
 private:
 
   /** Private to force the use of the SetAlgorithmAutoConfiguration, so it is

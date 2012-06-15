@@ -337,54 +337,15 @@ CApplication::InternalSolve()
     }
   algorithmBase->SetImageManagerPointer( imageManager );
 
-  //! \todo this stuff should go in the ImageManager
-  Json::Value & combinedDataConfigRoot = *(this->m_CombinedDataJSONConfig->GetRootPointer());
-  Json::Value & dataInputs = combinedDataConfigRoot["Inputs"];
-  if( dataInputs == Json::nullValue )
-    {
-    throw std::runtime_error( "No input images given." );
-    }
-  Json::Value & firstSubject = *(dataInputs.begin());
-  if( firstSubject == Json::nullValue || firstSubject.size() == 0 )
-    {
-    throw std::runtime_error( "No input images given." );
-    }
-  for( Json::Value::iterator timePointIt = firstSubject.begin();
-       timePointIt != firstSubject.end();
-       ++timePointIt )
-    {
-    imageManager->AddImage( (*timePointIt)[1].asCString(), (*timePointIt)[0].asDouble(), 0 );
-    }
+  imageManager->SetAlgorithmAutoConfiguration( this->m_CombinedAlgorithmJSONConfig, this->m_CleanedAlgorithmJSONConfig );
+  imageManager->SetDataAutoConfiguration( this->m_CombinedDataJSONConfig, this->m_CleanedDataJSONConfig );
+  imageManager->ReadInputsFromDataJSONConfiguration();
 
   // Do it!
   algorithmBase->SetAutoConfiguration( this->m_CombinedAlgorithmJSONConfig, this->m_CleanedAlgorithmJSONConfig );
   algorithmBase->Solve();
 
-  //! \todo this should go in the ImageManager
-  Json::Value & dataOutputs = combinedDataConfigRoot["Outputs"];
-  if( dataOutputs != Json::nullValue )
-    {
-    Json::Value & outputFirstSubject = *(dataOutputs.begin());
-    if( outputFirstSubject != Json::nullValue )
-      {
-      typedef VectorImage< TFloat, VImageDimension > VectorImageType;
-      typename VectorImageType::ConstPointer originalImage = imageManager->GetOriginalImageById( 0 );
-      typename VectorImageType::Pointer warpedImage = new VectorImageType( originalImage );
-      for( Json::Value::iterator timePointIt = outputFirstSubject.begin();
-           timePointIt != outputFirstSubject.end();
-           ++timePointIt )
-        {
-        typedef VectorField< TFloat, VImageDimension > VectorFieldType;
-        typename VectorFieldType::ConstPointer map = new VectorFieldType( algorithmBase->GetMap( (*timePointIt)[0].asDouble() ));
-
-        typedef LDDMMUtils< TFloat, VImageDimension > LDDMMUtilsType;
-        LDDMMUtilsType::applyMap( map, originalImage, warpedImage );
-
-        typedef VectorImageUtils< TFloat, VImageDimension > VectorImageUtilsType;
-        VectorImageUtilsType::writeFileITK( warpedImage, (*timePointIt)[1].asString() );
-        }
-      }
-    }
+  imageManager->WriteOutputsFromDataJSONConfiguration( algorithmBase );
 }
 
 } // end namespace CALATK
