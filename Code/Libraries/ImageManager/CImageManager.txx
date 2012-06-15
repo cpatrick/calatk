@@ -315,21 +315,35 @@ template < class TFloat, unsigned int VImageDimension >
 void CImageManager< TFloat, VImageDimension >::ReadInputsFromBasicDataJSONConfiguration()
 {
   Json::Value & dataCombinedConfigRoot = *(this->m_DataCombinedJSONConfig->GetRootPointer());
-  Json::Value & dataInputs = dataCombinedConfigRoot["Inputs"];
-  if( dataInputs == Json::nullValue )
+  Json::Value & dataCleanedConfigRoot  = *(this->m_DataCleanedJSONConfig->GetRootPointer());
+  Json::Value & combinedInputs = dataCombinedConfigRoot["Inputs"];
+
+  if( combinedInputs == Json::nullValue )
     {
     throw std::runtime_error( "No input images given." );
     }
-  Json::Value & firstSubject = *(dataInputs.begin());
-  if( firstSubject == Json::nullValue || firstSubject.size() == 0 )
+  Json::Value & combinedSubject = *(combinedInputs.begin());
+  if( combinedSubject == Json::nullValue || combinedSubject.size() == 0 )
     {
     throw std::runtime_error( "No subjects found." );
     }
-  for( Json::Value::iterator timePointIt = firstSubject.begin();
-       timePointIt != firstSubject.end();
+  dataCleanedConfigRoot["Inputs"][0] = combinedSubject;
+  for( Json::Value::iterator timePointIt = combinedSubject.begin();
+       timePointIt != combinedSubject.end();
        ++timePointIt )
     {
     this->AddImage( (*timePointIt)[1].asCString(), (*timePointIt)[0].asDouble(), 0 );
+    Json::Value & cleanedSubject = dataCleanedConfigRoot["Inputs"][0];
+    cleanedSubject[0] = (*timePointIt)[0];
+    if( cleanedSubject[0] == Json::nullValue )
+      {
+      throw std::runtime_error( "Expected time point not found in Basic data configuration file." );
+      }
+    cleanedSubject[1] = (*timePointIt)[1];
+    if( cleanedSubject[1] == Json::nullValue )
+      {
+      throw std::runtime_error( "Expected image file path not found in Basic data configuration file." );
+      }
     }
 }
 
