@@ -92,7 +92,7 @@ CApplication::CApplication( const int argc, char **argv ):
 void CApplication::SetGivenAlgorithmConfigurationFile( const std::string & file )
 {
   this->m_GivenAlgorithmConfigurationFile = file;
-  this->m_CombinedAlgorithmJSONConfig->ReadJSONFile( file );
+  this->m_CombinedAlgorithmJSONConfig->ReadJSONConfigurationFile( file );
 }
 
 
@@ -136,7 +136,7 @@ void CApplication::SetGivenSourceAndTargetImageFiles( const std::string & source
 void CApplication::SetGivenDataConfigurationFile( const std::string & file )
 {
   this->m_GivenDataConfigurationFile = file;
-  this->m_CombinedDataJSONConfig->ReadJSONFile( file );
+  this->m_CombinedDataJSONConfig->ReadJSONConfigurationFile( file );
 }
 
 
@@ -279,12 +279,12 @@ void CApplication::Solve()
 
   if( this->m_UsedAlgorithmConfigurationFile.length() > 0 )
     {
-    this->m_CleanedAlgorithmJSONConfig->WriteCurrentConfigurationToJSONFile( this->m_UsedAlgorithmConfigurationFile );
+    this->m_CleanedAlgorithmJSONConfig->WriteJSONConfigurationFile( this->m_UsedAlgorithmConfigurationFile );
     }
 
   if( this->m_UsedDataConfigurationFile.length() > 0 )
     {
-    this->m_CombinedDataJSONConfig->WriteCurrentConfigurationToJSONFile( this->m_UsedDataConfigurationFile );
+    this->m_CombinedDataJSONConfig->WriteJSONConfigurationFile( this->m_UsedDataConfigurationFile );
     }
 
 }

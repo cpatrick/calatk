@@ -99,7 +99,7 @@ unsigned int CJSONConfiguration::GetIndent()
 }
 
 
-void CJSONConfiguration::WriteCurrentConfigurationToJSONFile( const std::string & fileName, const std::string & rootCommentString )
+void CJSONConfiguration::WriteJSONConfigurationFile( const std::string & fileName, const std::string & rootCommentString )
 {
   std::ofstream outFile;
   outFile.open( fileName.c_str() );
@@ -366,7 +366,7 @@ std::string CJSONConfiguration::ReadFileContentIntoString( const std::string & f
 }
 
 
-void CJSONConfiguration::ReadJSONFile( const std::string & fileName )
+void CJSONConfiguration::ReadJSONConfigurationFile( const std::string & fileName )
 {
   this->DeleteRoot();
 

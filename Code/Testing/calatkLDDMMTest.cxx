@@ -92,7 +92,7 @@ int DoIt(std::string LDDMMType, const char* sourceImage, const char* targetImage
   ptrImageManager->AddImage( targetImage, 1.0, 0 );
 
   CALATK::CJSONConfiguration::Pointer combinedConfiguration = new CALATK::CJSONConfiguration;
-  combinedConfiguration->ReadJSONFile( configFileName );
+  combinedConfiguration->ReadJSONConfigurationFile( configFileName );
   CALATK::CJSONConfiguration::Pointer cleanedConfiguration = new CALATK::CJSONConfiguration;
   plddmm->SetAutoConfiguration( combinedConfiguration, cleanedConfiguration );
 

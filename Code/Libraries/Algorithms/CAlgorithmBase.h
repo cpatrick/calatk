@@ -94,20 +94,6 @@ public:
   void SetAllowJSONHelpComments( bool bCreateJSONHelp );
   bool GetAllowJSONHelpComments();
 
-  /**
-   * @brief Writes the internal JSON configuration to a file. Will only contain the values that were used (=cleaned JSON file).
-   *
-   * @param sConfigOutputFile : File to write to
-   */
-  void WriteCurrentCleanedConfigurationToJSONFile( std::string sConfigOutputFile );
-
-  /**
-   * @brief Writes the internal JSON configuration to a file. Contains all entries of the input JSON file and new ones that may have been created by the algorithm.
-   *
-   * @param sConfigOutputFile : File to write to
-   */
-  void WriteCurrentCombinedConfigurationToJSONFile( std::string sConfigOutputFile );
-
   virtual void SetAutoConfiguration( CJSONConfiguration * configValueIn, CJSONConfiguration * configValueOut );
 
 protected:

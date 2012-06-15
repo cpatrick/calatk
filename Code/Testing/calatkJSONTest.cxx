@@ -42,7 +42,7 @@ int main( int argc, char* argv[] )
   CALATK::CJSONConfiguration config;
   try
     {
-    config.ReadJSONFile( config_file );
+    config.ReadJSONConfigurationFile( config_file );
     }
   catch( const std::exception & e )
     {
@@ -67,7 +67,7 @@ int main( int argc, char* argv[] )
 
   try
     {
-    config.WriteCurrentConfigurationToJSONFile( argv[2] );
+    config.WriteJSONConfigurationFile( argv[2] );
     }
   catch( const std::exception & e )
     {

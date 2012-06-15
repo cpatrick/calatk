@@ -38,7 +38,7 @@ int calatkBasicDataConfigTest( int argc, char ** argv )
 
   CALATK::CJSONConfiguration::Pointer basicConfigurationCombined = new CALATK::CJSONConfiguration;
   CALATK::CJSONConfiguration::Pointer basicConfigurationCleaned  = new CALATK::CJSONConfiguration;
-  basicConfigurationCombined->ReadJSONFile( argv[1] );
+  basicConfigurationCombined->ReadJSONConfigurationFile( argv[1] );
 
   typedef CALATK::CImageManager< TFloat, Dimension > ImageManagerType;
   ImageManagerType::Pointer imageManager = new ImageManagerType;
@@ -46,7 +46,7 @@ int calatkBasicDataConfigTest( int argc, char ** argv )
   imageManager->SetDataAutoConfiguration( basicConfigurationCombined, basicConfigurationCleaned );
   imageManager->ReadInputsFromDataJSONConfiguration();
 
-  basicConfigurationCleaned->WriteCurrentConfigurationToJSONFile( argv[2] );
+  basicConfigurationCleaned->WriteJSONConfigurationFile( argv[2] );
 
   return EXIT_SUCCESS;
 }
