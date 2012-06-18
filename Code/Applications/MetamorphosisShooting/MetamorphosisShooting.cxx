@@ -73,12 +73,14 @@ int DoIt( int argc, char** argv )
   CALATK::CJSONConfiguration::Pointer combinedConfiguration = new CALATK::CJSONConfiguration;
   if ( configFile.compare( "None" ) != 0 )
   {
-    combinedConfiguration->ReadJSONFile( configFile );
+    combinedConfiguration->ReadJSONConfigurationFile( configFile );
   }
   CALATK::CJSONConfiguration::Pointer cleanedConfiguration = new CALATK::CJSONConfiguration;
 
   plddmm->SetAutoConfiguration( combinedConfiguration, cleanedConfiguration );
   plddmm->SetAllowHelpComments( bCreateJSONHelp );
+  plddmm->SetMaxDesiredLogLevel( logLevel );
+
   plddmm->Solve();
 
   // write out the resulting JSON file if desired
@@ -86,11 +88,11 @@ int DoIt( int argc, char** argv )
     {
     if ( bCleanJSONConfigOutput )
       {
-      cleanedConfiguration->WriteCurrentConfigurationToJSONFile( configFileOut, CALATK::GetCALATKJsonHeaderString() + " --CLEANED" );
+      cleanedConfiguration->WriteJSONConfigurationFile( configFileOut, CALATK::GetCALATKJsonHeaderString() + " --CLEANED" );
       }
     else
       {
-      combinedConfiguration->WriteCurrentConfigurationToJSONFile( configFileOut, CALATK::GetCALATKJsonHeaderString() + " --COMBINED" );
+      combinedConfiguration->WriteJSONConfigurationFile( configFileOut, CALATK::GetCALATKJsonHeaderString() + " --COMBINED" );
       }
     }
 

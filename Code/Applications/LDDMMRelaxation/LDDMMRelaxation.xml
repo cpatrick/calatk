@@ -116,6 +116,18 @@
           <description>If set, will generate annotated settings in the JSON configuration file. This is to help understand the meaning and options of the different settings.</description>
         </boolean>
 
+        <integer-enumeration>
+            <name>logLevel</name>
+            <longflag>--logLevel</longflag>
+            <default>1</default>
+            <element>0</element>
+            <element>1</element>
+            <element>2</element>
+            <element>3</element>
+            <element>4</element>
+            <description>Sets the verbosity level for the algorithms that support multiple levels of output. Always (0), normal (1), verbose (2), very_verbose(3), most_verbose (4).</description>
+        </integer-enumeration>
+
   </parameters>
   
 </executable>

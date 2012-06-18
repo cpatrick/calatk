@@ -264,14 +264,14 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
 
   bool isBackwardMap = ( dTimeTo <= dTimeFrom );
 
-  std::cout << "Computing map from " << dTimeFrom << " to " << dTimeTo << std::endl;
+  this->logStream << log_level_verbose << "Computing map from " << dTimeFrom << " to " << dTimeTo << std::endl;
 
   typename VectorFieldType::Pointer ptrMapIdentity;
 
   if ( isBackwardMap ) // swap the times, we will create the backward map on the fly through forward integration
   {
     std::swap( dTimeTo, dTimeFrom );
-    std::cout << "Computing backward map (in forward direction)." << std::endl;
+    this->logStream << log_level_verbose << "Computing backward map (in forward direction)." << std::endl;
     ptrMapIdentity = new VectorFieldType( ptrMap ); // need an identity map at all times to construct the backward map
     LDDMMUtilsType::identityMap( ptrMapIdentity );
   }
@@ -319,12 +319,12 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
   for ( unsigned int iI = 0; iI < m_vecTimeDiscretization.size()-1; iI++ )
   {
 
-    std::cout << "current time = " << dCurrentTime << std::endl;
+    this->logStream << log_level_verbose << "current time = " << dCurrentTime << std::endl;
 
     T dCurrentDT = m_vecTimeDiscretization[ iI+1 ].dTime - m_vecTimeDiscretization[ iI ].dTime;
 
     this->ComputeVelocity( ptrCurrentI, ptrCurrentP, ptrCurrentVelocity, ptrMapOut );
-    std::cout << "evolving overall map for " << m_vecTimeIncrements[ iI ] << std::endl;
+    this->logStream << log_level_verbose << "evolving overall map for " << m_vecTimeIncrements[ iI ] << std::endl;
     this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMapIn, ptrMapOut, ptrMapTmp, m_vecTimeIncrements[ iI ] );
 
     LDDMMUtilsType::applyMap( ptrMapOut, ptrInitialImage, ptrCurrentI );
@@ -341,7 +341,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
       if ( dCurrentTime + dCurrentDT >= dTimeTo )
       {
         // the full map is in between this time interval so just integrate it for a little bit
-        std::cout << "1: evolving map for " << dTimeTo - dCurrentTime << std::endl;
+        this->logStream << log_level_verbose << "1: evolving map for " << dTimeTo - dCurrentTime << std::endl;
         dTimeEvolvedFor += dTimeTo - dCurrentTime;
 
         if ( isBackwardMap )
@@ -358,14 +358,14 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
           ptrMap->Copy( ptrMapOut );
         }
 
-        std::cout << "Overall time evolved for = " << dTimeEvolvedFor << std::endl;
+        this->logStream << log_level_verbose << "Overall time evolved for = " << dTimeEvolvedFor << std::endl;
 
         return; // done because everything was in this interval
       }
       else
       {
          // integrate it for the full interval
-        std::cout << "2: evolving map for " << m_vecTimeIncrements[ iI ] << std::endl;
+        this->logStream << log_level_verbose << "2: evolving map for " << m_vecTimeIncrements[ iI ] << std::endl;
         dTimeEvolvedFor += m_vecTimeIncrements[ iI ];
 
         if ( isBackwardMap )
@@ -391,7 +391,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
       if ( dCurrentTime + dCurrentDT > dTimeTo )
       {
         // the full map is in between this time interval so just integrate it for a little bit
-        std::cout << "3: evolving map for " << dTimeTo - dTimeFrom << std::endl;
+        this->logStream << log_level_verbose << "3: evolving map for " << dTimeTo - dTimeFrom << std::endl;
         dTimeEvolvedFor += dTimeTo = dTimeFrom;
 
         if ( isBackwardMap )
@@ -408,14 +408,14 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
           ptrMap->Copy( ptrMapOut );
         }
 
-        std::cout << "Overall time evolved for = " << dTimeEvolvedFor << std::endl;
+        this->logStream << log_level_verbose << "Overall time evolved for = " << dTimeEvolvedFor << std::endl;
 
         return; // done because everything was in this interval
       }
       else
       {
         // integrate the map until the end of this interval
-        std::cout << "4: evolving map for " << dCurrentDT << std::endl;
+        this->logStream << log_level_verbose << "4: evolving map for " << dCurrentDT << std::endl;
         dTimeEvolvedFor += dCurrentDT;
 
         if ( isBackwardMap )
@@ -441,7 +441,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
 
   }
 
-  std::cout << "Overall time evolved for = " << dTimeEvolvedFor << std::endl;
+  this->logStream << log_level_verbose << "Overall time evolved for = " << dTimeEvolvedFor << std::endl;
 
 }
 

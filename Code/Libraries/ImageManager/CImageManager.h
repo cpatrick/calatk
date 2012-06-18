@@ -28,7 +28,6 @@
 #include <map>
 #include <set>
 #include <vector>
-#include "CProcessBase.h"
 
 #include "CImageInformation.h"
 
@@ -37,6 +36,10 @@
 
 namespace CALATK
 {
+
+// Forward declaration;
+template < class TFloat, unsigned int VImageDimension >
+class CAlgorithmBase;
 
 /**
  * \brief Base class to deal with a set of images.
@@ -62,8 +65,10 @@ public:
   typedef VectorImage< FloatType, VImageDimension > VectorImageType; /**< Image type of given dimension and floating point format. */
   typedef VectorField< FloatType, VImageDimension > VectorFieldType; /**< Vector field type of given dimension and floating point format. */
 
-  typedef CResamplerLinear< FloatType, VImageDimension > ResamplerType;
-  typedef CGaussianKernel< FloatType, VImageDimension > GaussianKernelType;
+  typedef CAlgorithmBase< FloatType, VImageDimension >    AlgorithmBaseType;
+
+  typedef CResamplerLinear< FloatType, VImageDimension >  ResamplerType;
+  typedef CGaussianKernel< FloatType, VImageDimension >   GaussianKernelType;
 
   typedef CImageInformation< FloatType, VImageDimension > TimeSeriesDataPointType;
 
@@ -137,7 +142,7 @@ public:
    * @param subjectIndex - subject index (if multiple subject should be stored)
    * @return int -- returns the id of the registered file, can be used to register a transform later on or to delete it
    */
-  int AddImage( const std::string filename, FloatType timepoint, int subjectIndex );
+  int AddImage( const std::string & filename, FloatType timepoint, int subjectIndex );
 
   /**
    * @brief Registers the filename of an image with a given timepoint *for all subject ids*
@@ -146,7 +151,7 @@ public:
    * @param timepoint -- time associated with image
    * @return int -- returns the id of the registered file
    */
-  int AddCommonImage( const std::string filename, FloatType timepoint );
+  int AddCommonImage( const std::string & filename, FloatType timepoint );
 
   /**
    * @brief Registers an image with a given timepoint and subject id (for longitudinal studies)
@@ -188,7 +193,7 @@ public:
    * @param uid - id of the image the transform should be registered with
    * @return int -- returns true if the registration was successful (false if there is no image with uiId)
    */
-  bool AddImageTransform( const std::string filename, int uid );
+  bool AddImageTransform( const std::string & filename, int uid );
 
    /**
    * @brief Registers the filename of an image with a given timepoint and subject id (for longitudinal studies) together with its transformation
@@ -199,7 +204,7 @@ public:
    * @param subjectIndex - subject index (if multiple subject should be stored)
    * @return int -- returns the unique id of the registered file, can be used to register a transform later on or to delete it
    */
-  int AddImageAndTransform( const std::string filename, const std::string transformFilename, FloatType timepoint, int subjectIndex );
+  int AddImageAndTransform( const std::string & filename, const std::string & transformFilename, FloatType timepoint, int subjectIndex );
 
   /**
    * @brief Registers the filename of an image with a given timepoint *for all subject ids* (for longitudinal studies) together with its transformation
@@ -209,7 +214,7 @@ public:
    * @param timepoint -- time associated with image
    * @return int -- returns the unique id of the registered file
    */
-  int AddCommonImageAndTransform( const std::string filename, const std::string transformFilename, FloatType timepoint );
+  int AddCommonImageAndTransform( const std::string & filename, const std::string & transformFilename, FloatType timepoint );
 
   /**
    * Unregisters an image (also removes its transform and all data associated with it)
@@ -327,7 +332,51 @@ public:
   SetMacro( BlurHighestResolutionImage, bool );
   GetMacro( BlurHighestResolutionImage, bool );
 
-  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
+  /** Set the algorithm configuration.
+   *
+   * \param combined The given configuration combined with what was used.
+   * \param cleaned  Only what was used.
+   */
+  virtual void SetAlgorithmAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
+  /** Get the algorithm configuration that is a combination of the defaults that were used
+   * and the input configuration, including the input configuration that not
+   * used. */
+  const CJSONConfiguration * GetAlgorithmJSONConfigurationCombined();
+  /** Get the algorithm configuration that is a combination of the defaults that were used
+   * and the input configuration, excluding the input configuration that not
+   * used. */
+  const CJSONConfiguration * GetAlgorithmJSONConfigurationCleaned();
+
+  /** Set the data configuration.
+   *
+   * \param combined The given configuration combined with what was used.
+   * \param cleaned  Only what was used.
+   */
+  virtual void SetDataAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
+  /** Get the data configuration that is a combination of the defaults that were used
+   * and the input configuration, including the input configuration that not
+   * used. */
+  const CJSONConfiguration * GetDataJSONConfigurationCombined();
+  /** Get the data configuration that is a combination of the defaults that were used
+   * and the input configuration, excluding the input configuration that not
+   * used. */
+  const CJSONConfiguration * GetDataJSONConfigurationCleaned();
+
+  /** Read in the input images and their associated metadata from the JSON
+   * configuration file specified with SetDataAutoConfiguration().
+   * */
+  void ReadInputsFromDataJSONConfiguration();
+
+  /** Write the output images and other results specified in the JSON
+   * configuration file specified with SetDataAutoConfiguration().
+   *
+   * \param algorithm that the results are to be extracted from.
+   * */
+  void WriteOutputsFromDataJSONConfiguration( AlgorithmBaseType * algorithm );
+
+  // Reimplemented because we have both a data and algorithm configuration.
+  virtual void SetPrintConfiguration( bool print );
+  virtual void SetAllowHelpComments( bool allow );
 
   static const int COMMON_SUBJECT_ID = -1;  /**< Subject id which is assigned to the datasets which are common for all the subject ids */
 
@@ -347,10 +396,27 @@ protected:
    */
   void SetCurrentImagePreprocessingSettings( TimeSeriesDataPointType& dataPoint );
 
+  /** Read in the given input images and their associated metadata into the
+   * ImageManager memory when the JSON configuration file is in the Basic
+   * format. */
+  void ReadInputsFromBasicDataJSONConfiguration();
+
+  void WriteOutputsFromBasicDataJSONConfiguration( AlgorithmBaseType * algorithm );
+
 private:
 
-  int m_CurrentRunningId; /**< Internal running id for datasets */
+  /** Private to force the use of the SetAlgorithmAutoConfiguration, so it is
+   * known that this is setting algorithm configuration as opposed to the data
+   * configuration. */
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
+  const CJSONConfiguration * GetJSONConfigurationCombined();
+  const CJSONConfiguration * GetJSONConfigurationCleaned();
+
+
+  int m_DatasetGlobalIdCounter; /**< Internal running id for datasets */
   std::map< unsigned int, unsigned int> m_MapIdToSubjectId; /**< map which stores a map from image id to subject id, -1 values indicate common datasets */
+  typedef std::map< std::string, int >      MapSubjectStringToFirstImageGlobalIdType;
+  MapSubjectStringToFirstImageGlobalIdType  m_MapSubjectStringToFirstImageGlobalId; /**< map from the string used to identify the subject in the data configuration file to the integer used to identify the subject during execution */
 
   /********************************
    * Typedefs *
@@ -358,25 +424,25 @@ private:
 
   /* All the image information over <b>all</b> subjects and images of <b>all</b> scales */
   typedef std::multimap< int, TimeSeriesDataPointType, CompareSubjectIds > AllSubjectInformationType;
-  typedef std::vector< TimeSeriesDataPointType > AllCommonSubjectInformationType;
+  typedef std::vector< TimeSeriesDataPointType >                           AllCommonSubjectInformationType;
 
-  AllSubjectInformationType m_AllSubjectInformation;
+  AllSubjectInformationType       m_AllSubjectInformation;
   AllCommonSubjectInformationType m_AllCommonSubjectInformation;
 
-  itk::SmartPointer< ResamplerType > m_Resampler;
+  itk::SmartPointer< ResamplerType >      m_Resampler;
   itk::SmartPointer< GaussianKernelType > m_GaussianKernel;
 
-  unsigned int m_CurrentlySelectedScale;
-  std::vector< FloatType >    m_ScaleVector;
-  std::vector< bool > m_ScaleWasSet;
+  unsigned int              m_CurrentlySelectedScale;
+  std::vector< FloatType >  m_ScaleVector;
+  std::vector< bool >       m_ScaleWasSet;
 
   bool m_AutoScaleImages;
   bool DefaultAutoScaleImages;
   bool m_ExternallySetAutoScaleImages;
 
-  FloatType m_Sigma;
+  FloatType       m_Sigma;
   const FloatType DefaultSigma;
-  bool m_ExternallySetSigma;
+  bool            m_ExternallySetSigma;
 
   FloatType m_SigmaHighestResolutionImage;
   const FloatType DefaultSigmaHighestResolutionImage;
@@ -388,6 +454,13 @@ private:
 
   bool m_ImagesWereRegistered; ///< disallow changes the scales afer images have been registered
 
+  CJSONConfiguration::Pointer m_AlgorithmCombinedJSONConfig;
+  CJSONConfiguration::Pointer m_AlgorithmCleanedJSONConfig;
+  bool m_AlgorithmAutoConfigurationSet;
+
+  CJSONConfiguration::Pointer m_DataCombinedJSONConfig;
+  CJSONConfiguration::Pointer m_DataCleanedJSONConfig;
+  bool m_DataAutoConfigurationSet;
 };
 
 } // end namespace

@@ -70,6 +70,7 @@ set(CALATK_Utilities_sources
   ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/Timer.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/ApplicationUtils.cxx
   ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/CJSONConfiguration.cxx
+  ${CMAKE_CURRENT_SOURCE_DIR}/Utilities/LogUtils.cxx
   )
 
 

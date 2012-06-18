@@ -54,6 +54,8 @@ void CAlgorithmBase< T, VImageDimension >::SetDefaultsIfNeeded()
   this->m_ptrMetric->SetPrintConfiguration( this->GetPrintConfiguration() );
   this->m_ptrMetric->SetAllowHelpComments( this->GetAllowHelpComments() );
   this->m_ptrMetric->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
+  this->m_ptrMetric->SetMaxDesiredLogLevel( this->GetMaxDesiredLogLevel() );
+
 
   if ( this->m_ptrEvolver.GetPointer() == NULL )
     {
@@ -63,6 +65,7 @@ void CAlgorithmBase< T, VImageDimension >::SetDefaultsIfNeeded()
   this->m_ptrEvolver->SetPrintConfiguration( this->GetPrintConfiguration() );
   this->m_ptrEvolver->SetAllowHelpComments( this->GetAllowHelpComments() );
   this->m_ptrEvolver->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
+  this->m_ptrEvolver->SetMaxDesiredLogLevel( this->GetMaxDesiredLogLevel() );
 
   if ( this->m_ptrKernel.GetPointer() == NULL )
     {
@@ -72,6 +75,7 @@ void CAlgorithmBase< T, VImageDimension >::SetDefaultsIfNeeded()
   this->m_ptrKernel->SetPrintConfiguration( this->GetPrintConfiguration() );
   this->m_ptrKernel->SetAllowHelpComments( this->GetAllowHelpComments() );
   this->m_ptrKernel->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
+  this->m_ptrKernel->SetMaxDesiredLogLevel( this->GetMaxDesiredLogLevel() );
 
   if ( this->m_ptrImageManager.GetPointer() == NULL )
   {
@@ -80,7 +84,8 @@ void CAlgorithmBase< T, VImageDimension >::SetDefaultsIfNeeded()
 
   this->m_ptrImageManager->SetPrintConfiguration( this->GetPrintConfiguration() );
   this->m_ptrImageManager->SetAllowHelpComments( this->GetAllowHelpComments() );
-  this->m_ptrImageManager->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
+  this->m_ptrImageManager->SetAlgorithmAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
+  this->m_ptrImageManager->SetMaxDesiredLogLevel( this->GetMaxDesiredLogLevel() );
 
 }
 
@@ -214,7 +219,7 @@ T CAlgorithmBase< T, VImageDimension >::GetMultiScaleScale( unsigned int scaleId
     }
   else
     {
-  return m_MultiScaleScales[ scaleIdx ];
+    return m_MultiScaleScales[ scaleIdx ];
     }
 }
 

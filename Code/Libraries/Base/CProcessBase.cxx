@@ -25,7 +25,8 @@ namespace CALATK
 CProcessBase::CProcessBase():
   m_AutoConfigurationSet( false ),
   m_PrintConfiguration( true ),
-  m_AllowHelpComments( false )
+  m_AllowHelpComments( false ),
+  m_MaxDesiredLogLevel( 1 )
 {
   this->m_CombinedJSONConfig = new CJSONConfiguration;
   this->m_CleanedJSONConfig = new CJSONConfiguration;
@@ -35,6 +36,10 @@ CProcessBase::CProcessBase():
 
   this->m_CleanedJSONConfig->AllowHelpCommentsOff();
   this->m_CombinedJSONConfig->AllowHelpCommentsOff();
+
+  // register what should be logged where
+  LogRegister::instance().register_stream( std::cout, 0, 4, 0 );
+
 }
 
 void CProcessBase::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
@@ -56,6 +61,16 @@ const CJSONConfiguration * CProcessBase::GetJSONConfigurationCleaned()
   return this->m_CleanedJSONConfig.GetPointer();
 }
 
+void CProcessBase::SetMaxDesiredLogLevel( unsigned int maxDesiredLogLevel )
+{
+  m_MaxDesiredLogLevel = maxDesiredLogLevel;
+  logStream.SetMaxDesiredLogLevel( m_MaxDesiredLogLevel );
+}
+
+unsigned int CProcessBase::GetMaxDesiredLogLevel() const
+{
+  return m_MaxDesiredLogLevel;
+}
 
 void CProcessBase::SetPrintConfiguration( bool bPrint )
 {
@@ -63,10 +78,12 @@ void CProcessBase::SetPrintConfiguration( bool bPrint )
   if ( this->m_PrintConfiguration )
     {
     this->m_CombinedJSONConfig->PrintSettingsOn();
+    //this->m_CleanedJSONConfig->PrintSettingsOn();
     }
   else
     {
     this->m_CombinedJSONConfig->PrintSettingsOff();
+    //this->m_CleanedJSONConfig->PrintSettingsOff();
     }
 }
 

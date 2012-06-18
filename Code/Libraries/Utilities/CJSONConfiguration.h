@@ -76,7 +76,7 @@ public:
    *
    * @param fileName Input filename
    */
-  void ReadJSONFile( const std::string & fileName );
+  void ReadJSONConfigurationFile( const std::string & fileName );
 
   /**
    * @brief Writes the JSON description (relative to the root) to a file.
@@ -86,7 +86,7 @@ public:
    *
    * Throws an exception if an error occurs.
    */
-  void  WriteCurrentConfigurationToJSONFile( const std::string & fileName, const std::string & rootCommentString="" );
+  void  WriteJSONConfigurationFile( const std::string & fileName, const std::string & rootCommentString="" );
 
   Json::Value& GetFromKey( std::string sKey, Json::Value vDefault = Json::nullValue );
   Json::Value& GetFromKey( Json::Value& vSubTree, std::string sKey, Json::Value vDefault = Json::nullValue, bool bUseIndent = true );

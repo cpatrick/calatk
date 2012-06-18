@@ -311,7 +311,8 @@ void CAtlasBuilder< TState >::SetDefaultsIfNeeded()
 
   this->m_ptrImageManager->SetPrintConfiguration( this->GetPrintConfiguration() );
   this->m_ptrImageManager->SetAllowHelpComments( this->GetAllowHelpComments() );
-  this->m_ptrImageManager->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
+  this->m_ptrImageManager->SetAlgorithmAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
+  this->m_ptrImageManager->SetMaxDesiredLogLevel( this->GetMaxDesiredLogLevel() );
 
   if ( m_IndividualMetricPointers.empty() )
   {
@@ -323,6 +324,7 @@ void CAtlasBuilder< TState >::SetDefaultsIfNeeded()
     this->m_IndividualMetricPointers[ iI ]->SetPrintConfiguration( this->GetPrintConfiguration() );
     this->m_IndividualMetricPointers[ iI ]->SetAllowHelpComments( this->GetAllowHelpComments() );
     this->m_IndividualMetricPointers[ iI ]->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
+    this->m_IndividualMetricPointers[ iI ]->SetMaxDesiredLogLevel( this->GetMaxDesiredLogLevel() );
   }
 
   if ( m_IndividualEvolverPointers.empty() )
@@ -335,6 +337,7 @@ void CAtlasBuilder< TState >::SetDefaultsIfNeeded()
     this->m_IndividualEvolverPointers[ iI ]->SetPrintConfiguration( this->GetPrintConfiguration() );
     this->m_IndividualEvolverPointers[ iI ]->SetAllowHelpComments( this->GetAllowHelpComments() );
     this->m_IndividualEvolverPointers[ iI ]->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
+    this->m_IndividualEvolverPointers[ iI ]->SetMaxDesiredLogLevel( this->GetMaxDesiredLogLevel() );
   }
 
   if ( m_IndividualKernelPointers.empty() )
@@ -347,6 +350,7 @@ void CAtlasBuilder< TState >::SetDefaultsIfNeeded()
     this->m_IndividualKernelPointers[ iI ]->SetPrintConfiguration( this->GetPrintConfiguration() );
     this->m_IndividualKernelPointers[ iI ]->SetAllowHelpComments( this->GetAllowHelpComments() );
     this->m_IndividualKernelPointers[ iI ]->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
+    this->m_IndividualKernelPointers[ iI ]->SetMaxDesiredLogLevel( this->GetMaxDesiredLogLevel() );
   }
 
 // from algorithm
@@ -358,15 +362,26 @@ void CAtlasBuilder< TState >::SetDefaultsIfNeeded()
   this->m_ptrSolver->SetPrintConfiguration( this->GetPrintConfiguration() );
   this->m_ptrSolver->SetAllowHelpComments( this->GetAllowHelpComments() );
   this->m_ptrSolver->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
+  this->m_ptrSolver->SetMaxDesiredLogLevel( this->GetMaxDesiredLogLevel() );
 
   if ( this->m_ptrObjectiveFunction.GetPointer() == NULL )
     {
     this->SetDefaultObjectiveFunctionPointer();
     }
 
+  for ( unsigned int iI=0; iI < m_IndividualObjectiveFunctionPointers.size(); ++ iI )
+    {
+      m_IndividualObjectiveFunctionPointers[ iI ]->SetPrintConfiguration( this->GetPrintConfiguration() );
+      m_IndividualObjectiveFunctionPointers[ iI ]->SetAllowHelpComments( this->GetAllowHelpComments() );
+      m_IndividualObjectiveFunctionPointers[ iI ]->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
+      m_IndividualObjectiveFunctionPointers[ iI ]->SetMaxDesiredLogLevel( this->GetMaxDesiredLogLevel() );
+    }
+
   this->m_ptrObjectiveFunction->SetPrintConfiguration( this->GetPrintConfiguration() );
   this->m_ptrObjectiveFunction->SetAllowHelpComments( this->GetAllowHelpComments() );
   this->m_ptrObjectiveFunction->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
+  this->m_ptrObjectiveFunction->SetMaxDesiredLogLevel( this->GetMaxDesiredLogLevel() );
+
 }
 
 template < class TState >
@@ -536,9 +551,6 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
           return;
         }
         SetIndividualObjectiveFunction( ptrCurrentIndividualObjectiveFunction.GetPointer() );
-        ptrCurrentIndividualObjectiveFunction->SetPrintConfiguration( this->GetPrintConfiguration() );
-        ptrCurrentIndividualObjectiveFunction->SetAllowHelpComments( this->GetAllowHelpComments() );
-        ptrCurrentIndividualObjectiveFunction->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
       }
     }
 

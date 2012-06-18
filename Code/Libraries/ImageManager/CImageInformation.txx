@@ -135,7 +135,7 @@ CImageInformation< TFloat, VImageDimension >::GetLoadStrategyType() const
 }
 
 template < class TFloat, unsigned int VImageDimension >
-void CImageInformation< TFloat, VImageDimension >::SetImageFileName( std::string imageFileName )
+void CImageInformation< TFloat, VImageDimension >::SetImageFileName( const std::string & imageFileName )
 {
   m_ImageFileName = imageFileName;
 }
@@ -147,7 +147,7 @@ std::string CImageInformation< TFloat, VImageDimension >::GetImageFileName() con
 }
 
 template < class TFloat, unsigned int VImageDimension >
-void CImageInformation< TFloat, VImageDimension >::SetTransformationFileName( std::string imageTransformationFileName )
+void CImageInformation< TFloat, VImageDimension >::SetTransformationFileName( const std::string & imageTransformationFileName )
 {
   m_ImageTransformationFileName = imageTransformationFileName;
 }
@@ -196,14 +196,14 @@ int CImageInformation< TFloat, VImageDimension >::GetUniqueId() const
 }
 
 template < class TFloat, unsigned int VImageDimension >
-void CImageInformation< TFloat, VImageDimension >::SetScales( std::vector< FloatType > scales )
+void CImageInformation< TFloat, VImageDimension >::SetScales( const ScalesType & scales )
 {
   if ( m_ImagesOfAllScales.size() != 0 )
-  {
+    {
     std::cout << "WARNING: multi-scale images appear to have been initialized before, deleting them." << std::endl;
-  }
+    }
 
-  unsigned int numberOfScales = scales.size();
+  const unsigned int numberOfScales = scales.size();
   m_ImagesOfAllScales.clear();
   m_ImagesOfAllScales.resize( numberOfScales, NULL );
 
@@ -218,16 +218,16 @@ void CImageInformation< TFloat, VImageDimension >::SetScales( std::vector< Float
         }
     }
 
-  numberOfScales = m_Scales.size();
+  const unsigned int cleanedNumberOfScales = m_Scales.size();
 
-  if ( numberOfScales > 0 ) // could be zero in case 1.0 was the only one specified
+  if ( cleanedNumberOfScales > 0 ) // could be zero in case 1.0 was the only one specified
     {
       // sort them high to low
       std::sort( m_Scales.rbegin(), m_Scales.rend() );
 
       // make sure there are no negative ones
 
-      if ( m_Scales[ 0 ] <= 0 || m_Scales[ numberOfScales-1 ] <= 0 )
+      if ( m_Scales[ 0 ] <= 0 || m_Scales[ cleanedNumberOfScales-1 ] <= 0 )
         {
           throw std::runtime_error( "Inappropriate scale values. All scales needs to be > 0." );
         }
@@ -243,7 +243,8 @@ bool CImageInformation< TFloat, VImageDimension >::ScalesHaveBeenSet()
 }
 
 template < class TFloat, unsigned int VImageDimension >
-std::vector< TFloat > CImageInformation< TFloat, VImageDimension >::GetScales()
+typename CImageInformation< TFloat, VImageDimension >::ScalesType
+CImageInformation< TFloat, VImageDimension >::GetScales() const
 {
   // return all scales (including 0 for the original image, this is handled totally transparently for the user)
   std::vector< FloatType > allScales;

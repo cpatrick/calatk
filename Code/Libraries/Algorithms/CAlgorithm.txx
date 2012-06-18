@@ -45,6 +45,7 @@ void CAlgorithm< TState >::SetDefaultsIfNeeded()
   this->m_ptrSolver->SetPrintConfiguration( this->GetPrintConfiguration() );
   this->m_ptrSolver->SetAllowHelpComments( this->GetAllowHelpComments() );
   this->m_ptrSolver->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
+  this->m_ptrSolver->SetMaxDesiredLogLevel( this->GetMaxDesiredLogLevel() );
 
   if ( this->m_ptrObjectiveFunction.GetPointer() == NULL )
     {
@@ -54,6 +55,8 @@ void CAlgorithm< TState >::SetDefaultsIfNeeded()
   this->m_ptrObjectiveFunction->SetPrintConfiguration( this->GetPrintConfiguration() );
   this->m_ptrObjectiveFunction->SetAllowHelpComments( this->GetAllowHelpComments() );
   this->m_ptrObjectiveFunction->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
+  this->m_ptrObjectiveFunction->SetMaxDesiredLogLevel( this->GetMaxDesiredLogLevel() );
+
 }
 
 template < class TState >

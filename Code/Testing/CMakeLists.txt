@@ -115,22 +115,26 @@ endfunction(add_ctest_subtest_testdriver_image_compare)
 
 set(testDriverFiltering_SRCS
   calatkGaussianBlurringTest.cxx
-)
+  )
 
 set(testDriverPDESolver_SRCS
   calatkAdvectionTest.cxx
   calatkInterpolationTest.cxx
-)
+  )
 
 set(testDriverAlgorithms_SRCS
   calatkLDDMMTest.cxx
   calatkMetamorphosisTest.cxx
-)
+  )
 
 set(testDriverInterfaces_SRCS
   calatkApplicationImageFileNamesGivenTest.cxx
   calatkApplicationDataConfigTest.cxx
-)
+  )
+
+set(testDriverImageManager_SRCS
+  calatkBasicDataConfigTest.cxx
+  )
 
 add_executable(testDriverFiltering testDriverFiltering.cxx ${testDriverFiltering_SRCS})
 target_link_libraries(testDriverFiltering CALATK ${ITK_LIBRARIES})
@@ -376,6 +380,17 @@ if(BUILD_TESTING AND compile_GenerateBullseyes)
     PROPERTIES DEPENDS GenerateBullseyes)
 endif()
 
+if( BUILD_TESTING )
+  add_executable(testDriverImageManager testDriverImageManager.cxx ${testDriverImageManager_SRCS})
+  target_link_libraries(testDriverImageManager CALATK ${ITK_LIBRARIES})
+
+  add_test(calatkBasicDataConfigTest
+    testDriverImageManager calatkBasicDataConfigTest
+    ${CMAKE_CURRENT_SOURCE_DIR}/calatkBasicDataConfigTestInput.json
+    ${test_temp_dir}/calatkBasicDataConfigTestOutput.json
+    )
+endif( BUILD_TESTING )
+
 #add_ctest_test(writeFileITKTest
 #  # 2D input
 #  ${test_input_dir}/2Dsample.mha
@@ -519,7 +534,7 @@ endif()
 
 #------------------------------------------------------------------------------
 # Cppcheck static code analysis test.
-option( CALATK_USE_CPPCHECK 
+option( CALATK_USE_CPPCHECK
   "Create a test that does static code analysis with cppcheck." OFF )
 if( CALATK_USE_CPPCHECK )
   find_package( Cppcheck REQUIRED )

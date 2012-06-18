@@ -25,6 +25,7 @@
 #include "CALATKCommon.h"
 #include "CBase.h"
 #include "CJSONConfiguration.h"
+#include "LogUtils.h"
 
 namespace CALATK
 {
@@ -33,6 +34,7 @@ namespace CALATK
  * \class CProcessBase
  * Base class for all classes that do processing (and have parameters)
  * so that they can provide functionality to auto-initialize based on a JSON configuration description
+ * Also provides functionality for output with different verbosity levels
  */
 class CProcessBase: public CBase
 {
@@ -61,23 +63,39 @@ public:
   const CJSONConfiguration * GetJSONConfigurationCleaned();
 
   //! if true the Json configurations will be printed
-  void SetPrintConfiguration( bool print );
+  virtual void SetPrintConfiguration( bool print );
   bool GetPrintConfiguration();
 
   //! if true help comments will be added to the JSON configuration file
-  void SetAllowHelpComments( bool allow );
+  virtual void SetAllowHelpComments( bool allow );
   bool GetAllowHelpComments();
+
+  /**
+   * @brief Sets the maximal log level for the object. This affects any this->logStream << output.
+   * Allows to suppress output that is too verbose (i.e., allows to control output verbosity).
+   * Only output with verbosity level <= maxDesiredLogLevel will be created.
+   *
+   * @param maxDesiredLogLevel
+   */
+  virtual void SetMaxDesiredLogLevel( unsigned int maxDesiredLogLevel );
+
+  /**
+   * @brief Returns the maximum desired log level set to control the logStream output verbosity
+   *
+   * @return unsigned int
+   */
+  virtual unsigned int GetMaxDesiredLogLevel() const;
 
 protected:
   CJSONConfiguration::Pointer m_CombinedJSONConfig;
   CJSONConfiguration::Pointer m_CleanedJSONConfig;
 
   bool m_AutoConfigurationSet;
-  int m_LogLevel;
-
-private:
   bool m_PrintConfiguration;
   bool m_AllowHelpComments;
+
+  unsigned int m_MaxDesiredLogLevel;
+  LogStream logStream;
 };
 
 } // end namespace

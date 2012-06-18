@@ -20,7 +20,10 @@
 #ifndef C_IMAGE_MANAGER_TXX
 #define C_IMAGE_MANAGER_TXX
 
-#include"CImageManager.h"
+#include "CImageManager.h"
+
+#include "LDDMMUtils.h"
+#include "CAlgorithmBase.h"
 
 namespace CALATK
 {
@@ -41,7 +44,7 @@ CImageManager< TFloat, VImageDimension >::CImageManager()
   // id for dataset, gets incremented every time a new dataset is added
   // can be used as a unique identifier. Needed since we allow for multiple datasets at the same time point 
   // (for example to support multiple measurements)
-  m_CurrentRunningId = 0;
+  m_DatasetGlobalIdCounter = 0;
 
   m_AutoScaleImages = DefaultAutoScaleImages;
   m_Sigma = DefaultSigma;
@@ -54,6 +57,24 @@ CImageManager< TFloat, VImageDimension >::CImageManager()
   // create the resampler and the Gaussian kernel required for downsampling and smoothing in general
   m_Resampler = new CResamplerLinear< TFloat, VImageDimension >;
   m_GaussianKernel = new CGaussianKernel< TFloat, VImageDimension >;
+
+  m_AlgorithmCombinedJSONConfig = new CJSONConfiguration;
+  m_AlgorithmCleanedJSONConfig = new CJSONConfiguration;
+
+  m_AlgorithmCleanedJSONConfig->PrintSettingsOff();
+  m_AlgorithmCombinedJSONConfig->PrintSettingsOn();
+
+  m_AlgorithmCleanedJSONConfig->AllowHelpCommentsOff();
+  m_AlgorithmCombinedJSONConfig->AllowHelpCommentsOff();
+
+  m_DataCombinedJSONConfig = new CJSONConfiguration;
+  m_DataCleanedJSONConfig = new CJSONConfiguration;
+
+  m_DataCleanedJSONConfig->PrintSettingsOff();
+  m_DataCombinedJSONConfig->PrintSettingsOn();
+
+  m_DataCleanedJSONConfig->AllowHelpCommentsOff();
+  m_DataCombinedJSONConfig->AllowHelpCommentsOff();
 }
 
 
@@ -115,12 +136,14 @@ void CImageManager< TFloat, VImageDimension >::RemoveScale( unsigned int scaleId
     }
 }
 
+
 template < class TFloat, unsigned int VImageDimension >
 unsigned int CImageManager< TFloat, VImageDimension >::GetNumberOfScales()
 {
   // multi-scale levels which contains the image at the original resolution
   return m_ScaleVector.size();
 }
+
 
 template < class TFloat, unsigned int VImageDimension >
 void CImageManager< TFloat, VImageDimension >::SelectScale( unsigned int scaleIdx )
@@ -151,8 +174,20 @@ void CImageManager< TFloat, VImageDimension >::SelectScale( unsigned int scaleId
 template < class TFloat, unsigned int VImageDimension >
 void CImageManager< TFloat, VImageDimension >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
+  throw std::logic_error( "Do not call me." );
+}
+
+
+template < class TFloat, unsigned int VImageDimension >
+void CImageManager< TFloat, VImageDimension >::SetAlgorithmAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
+{
   Superclass::SetAutoConfiguration( combined, cleaned );
-  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "ImageManager", Json::nullValue );
+
+  this->m_AlgorithmCombinedJSONConfig = combined;
+  this->m_AlgorithmCleanedJSONConfig = cleaned;
+  this->m_AlgorithmAutoConfigurationSet = true;
+
+  Json::Value& currentConfigurationIn  = this->m_CombinedJSONConfig->GetFromKey( "ImageManager", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "ImageManager", Json::nullValue );
 
   SetJSONHelpForRootKey( ImageManager, "administers the images, resolutions, and scalings" );
@@ -172,6 +207,224 @@ void CImageManager< TFloat, VImageDimension >::SetAutoConfiguration( CJSONConfig
                      "if set to true blurs also the highest resolution image otherwise keeps the highest resolution image as is." );
 }
 
+
+template < class TFloat, unsigned int VImageDimension >
+const CJSONConfiguration * CImageManager< TFloat, VImageDimension >::GetAlgorithmJSONConfigurationCombined()
+{
+  return this->m_AlgorithmCombinedJSONConfig.GetPointer();
+}
+
+
+template < class TFloat, unsigned int VImageDimension >
+const CJSONConfiguration * CImageManager< TFloat, VImageDimension >::GetAlgorithmJSONConfigurationCleaned()
+{
+  return this->m_AlgorithmCleanedJSONConfig.GetPointer();
+}
+
+
+template < class TFloat, unsigned int VImageDimension >
+void CImageManager< TFloat, VImageDimension >::SetDataAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
+{
+  this->m_DataCombinedJSONConfig = combined;
+  this->m_DataCleanedJSONConfig = cleaned;
+  this->m_DataAutoConfigurationSet = true;
+
+  static const std::string inputHelp = "Input data for the analysis.";
+  this->m_DataCombinedJSONConfig->SetHelpForKey( "Inputs", inputHelp );
+  this->m_DataCleanedJSONConfig->SetHelpForKey( "Inputs", inputHelp );
+  static const std::string outputHelp = "Output data resulting from the analysis.";
+  this->m_DataCombinedJSONConfig->SetHelpForKey( "Outputs", outputHelp );
+  this->m_DataCleanedJSONConfig->SetHelpForKey( "Outputs", outputHelp );
+}
+
+
+template < class TFloat, unsigned int VImageDimension >
+void CImageManager< TFloat, VImageDimension >::ReadInputsFromDataJSONConfiguration()
+{
+  if( !this->m_DataAutoConfigurationSet )
+    {
+    throw std::logic_error( "Must set tho DataAutoConfiguration first." );
+    }
+  //! \todo read from the Basic or Advanced configuration format depending on
+  // its content
+  this->ReadInputsFromBasicDataJSONConfiguration();
+}
+
+template < class TFloat, unsigned int VImageDimension >
+void CImageManager< TFloat, VImageDimension >::WriteOutputsFromDataJSONConfiguration( AlgorithmBaseType * algorithm )
+{
+  if( !this->m_DataAutoConfigurationSet )
+    {
+    throw std::logic_error( "Must set tho DataAutoConfiguration first." );
+    }
+  //! \todo read from the Basic or Advanced configuration format depending on
+  // its content
+  this->WriteOutputsFromBasicDataJSONConfiguration( algorithm );
+}
+
+
+template < class TFloat, unsigned int VImageDimension >
+const CJSONConfiguration * CImageManager< TFloat, VImageDimension >::GetDataJSONConfigurationCombined()
+{
+  return this->m_DataCombinedJSONConfig.GetPointer();
+}
+
+
+template < class TFloat, unsigned int VImageDimension >
+const CJSONConfiguration * CImageManager< TFloat, VImageDimension >::GetDataJSONConfigurationCleaned()
+{
+  return this->m_DataCleanedJSONConfig.GetPointer();
+}
+
+
+template < class TFloat, unsigned int VImageDimension >
+void CImageManager< TFloat, VImageDimension >::SetPrintConfiguration( bool print )
+{
+  Superclass::SetPrintConfiguration( print );
+  if ( this->m_PrintConfiguration )
+    {
+    this->m_DataCombinedJSONConfig->PrintSettingsOn();
+    this->m_DataCleanedJSONConfig->PrintSettingsOn();
+    }
+  else
+    {
+    this->m_DataCombinedJSONConfig->PrintSettingsOff();
+    this->m_DataCleanedJSONConfig->PrintSettingsOff();
+    }
+}
+
+
+template < class TFloat, unsigned int VImageDimension >
+void CImageManager< TFloat, VImageDimension >::SetAllowHelpComments( bool allow )
+{
+  Superclass::SetAllowHelpComments( allow );
+  if ( this->m_AllowHelpComments )
+    {
+    this->m_DataCombinedJSONConfig->AllowHelpCommentsOn();
+    this->m_DataCleanedJSONConfig->AllowHelpCommentsOn();
+    }
+  else
+    {
+    this->m_DataCombinedJSONConfig->AllowHelpCommentsOff();
+    this->m_DataCleanedJSONConfig->AllowHelpCommentsOff();
+    }
+}
+
+
+template < class TFloat, unsigned int VImageDimension >
+void CImageManager< TFloat, VImageDimension >::ReadInputsFromBasicDataJSONConfiguration()
+{
+  Json::Value & dataCombinedConfigRoot = *(this->m_DataCombinedJSONConfig->GetRootPointer());
+  Json::Value & dataCleanedConfigRoot  = *(this->m_DataCleanedJSONConfig->GetRootPointer());
+  Json::Value & combinedInputs = dataCombinedConfigRoot["Inputs"];
+
+  if( combinedInputs == Json::nullValue )
+    {
+    throw std::runtime_error( "No input images given." );
+    }
+  Json::Value & combinedSubject = *(combinedInputs.begin());
+  if( combinedSubject == Json::nullValue || combinedSubject.size() == 0 )
+    {
+    throw std::runtime_error( "No subjects found." );
+    }
+
+  const Json::Value::Members subjects = combinedInputs.getMemberNames();
+  for( unsigned int subjectIndex = 0; subjectIndex < combinedInputs.size(); ++subjectIndex )
+    {
+    Json::Value cleanedSubject( Json::arrayValue );
+    const std::string subject = subjects[subjectIndex];
+    Json::Value & combinedSubject = combinedInputs[subject];
+    for( unsigned int timePointIndex = 0; timePointIndex < combinedSubject.size(); ++timePointIndex )
+      {
+      Json::Value & combinedTimePoint = combinedSubject[timePointIndex];
+
+      Json::Value cleanedTimePoint( Json::arrayValue );
+      cleanedTimePoint[0] = combinedTimePoint[0];
+      if( cleanedTimePoint[0] == Json::nullValue )
+        {
+        throw std::runtime_error( "Expected time point not found in Basic data configuration file." );
+        }
+      cleanedTimePoint[1] = combinedTimePoint[1];
+      if( cleanedTimePoint[1] == Json::nullValue )
+        {
+        throw std::runtime_error( "Expected image file path not found in Basic data configuration file." );
+        }
+
+      const int globalId = this->AddImage( combinedTimePoint[1].asCString(), combinedTimePoint[0].asDouble(), subjectIndex );
+      if( timePointIndex == 0 )
+        {
+        this->m_MapSubjectStringToFirstImageGlobalId[subject] = globalId;
+        }
+
+      cleanedSubject[timePointIndex] = cleanedTimePoint;
+      }
+
+    dataCleanedConfigRoot["Inputs"][subject] = cleanedSubject;
+    }
+}
+
+
+template < class TFloat, unsigned int VImageDimension >
+void CImageManager< TFloat, VImageDimension >::WriteOutputsFromBasicDataJSONConfiguration( AlgorithmBaseType * algorithm )
+{
+  Json::Value & dataCombinedConfigRoot = *(this->m_DataCombinedJSONConfig->GetRootPointer());
+  Json::Value & dataCleanedConfigRoot  = *(this->m_DataCleanedJSONConfig->GetRootPointer());
+  Json::Value & combinedOutputs = dataCombinedConfigRoot["Outputs"];
+
+  if( combinedOutputs != Json::nullValue )
+    {
+    const Json::Value::Members subjects = combinedOutputs.getMemberNames();
+    for( unsigned int configSubjectIndex = 0; configSubjectIndex < combinedOutputs.size(); ++configSubjectIndex )
+      {
+      Json::Value cleanedSubject( Json::arrayValue );
+      const std::string subject = subjects[configSubjectIndex];
+      Json::Value & combinedSubject = combinedOutputs[subject];
+
+      MapSubjectStringToFirstImageGlobalIdType::const_iterator mapSubjectStringIt = this->m_MapSubjectStringToFirstImageGlobalId.find( subject );
+      if( mapSubjectStringIt == this->m_MapSubjectStringToFirstImageGlobalId.end() )
+        {
+        throw std::runtime_error( "Output subject does not have a corresponding input subject." );
+        }
+      const int subjectFirstImageGlobalId = mapSubjectStringIt->second;
+
+      typedef VectorImage< TFloat, VImageDimension > VectorImageType;
+      typename VectorImageType::ConstPointer originalImage = this->GetOriginalImageById( subjectFirstImageGlobalId );
+      typename VectorImageType::Pointer warpedImage = new VectorImageType( originalImage );
+
+      for( unsigned int timePointIndex = 0; timePointIndex < combinedSubject.size(); ++timePointIndex )
+        {
+        Json::Value & combinedTimePoint = combinedSubject[timePointIndex];
+
+        Json::Value cleanedTimePoint( Json::arrayValue );
+        cleanedTimePoint[0] = combinedTimePoint[0];
+        if( cleanedTimePoint[0] == Json::nullValue )
+          {
+          throw std::runtime_error( "Expected time point not found in Basic data configuration file." );
+          }
+        cleanedTimePoint[1] = combinedTimePoint[1];
+        if( cleanedTimePoint[1] == Json::nullValue )
+          {
+          throw std::runtime_error( "Expected image file path not found in Basic data configuration file." );
+          }
+
+        typedef VectorField< TFloat, VImageDimension > VectorFieldType;
+        typename VectorFieldType::ConstPointer map = new VectorFieldType( algorithm->GetMap( combinedTimePoint[0].asDouble() ));
+
+        typedef LDDMMUtils< TFloat, VImageDimension > LDDMMUtilsType;
+        LDDMMUtilsType::applyMap( map, originalImage, warpedImage );
+
+        typedef VectorImageUtils< TFloat, VImageDimension > VectorImageUtilsType;
+        VectorImageUtilsType::writeFileITK( warpedImage, combinedTimePoint[1].asString() );
+
+        cleanedSubject[timePointIndex] = cleanedTimePoint;
+        }
+
+      dataCleanedConfigRoot["Outputs"][subject] = cleanedSubject;
+      }
+    }
+}
+
+
 //
 // gets the original image based on the global id
 //
@@ -184,24 +437,24 @@ CImageManager< TFloat, VImageDimension >::GetOriginalImageById( int uid )
   // search through the individual subject information
   typename AllSubjectInformationType::iterator iter;
   for ( iter = m_AllSubjectInformation.begin(); iter != m_AllSubjectInformation.end(); ++iter )
-  {
-    if ( iter->second.GetUniqueId() == uid )
     {
+    if ( iter->second.GetUniqueId() == uid )
+      {
       SetCurrentImagePreprocessingSettings( iter->second );
       return iter->second.GetOriginalImage();
+      }
     }
-  }
 
   // search through the common dataset
   typename AllCommonSubjectInformationType::iterator iterCommon;
   for ( iterCommon = m_AllCommonSubjectInformation.begin(); iterCommon != m_AllCommonSubjectInformation.end(); ++iterCommon )
-  {
-    if ( iterCommon->GetUniqueId() == uid )
     {
+    if ( iterCommon->GetUniqueId() == uid )
+      {
       SetCurrentImagePreprocessingSettings( *iterCommon );
       return iterCommon->GetOriginalImage();
+      }
     }
-  }
 
   // uid was not found
   return NULL;
@@ -246,7 +499,7 @@ CImageManager< TFloat, VImageDimension >::GetImageById( int uid )
 // Add an image transform
 //
 template < class TFloat, unsigned int VImageDimension >
-bool CImageManager< TFloat, VImageDimension>::AddImageTransform( const std::string filename, int uid )
+bool CImageManager< TFloat, VImageDimension>::AddImageTransform( const std::string & filename, int uid )
 {
   typename AllSubjectInformationType::iterator iter;
   for ( iter = m_AllSubjectInformation.begin(); iter != m_AllSubjectInformation.end(); ++iter )
@@ -277,18 +530,18 @@ bool CImageManager< TFloat, VImageDimension>::AddImageTransform( const std::stri
 // Adds an individual image
 //
 template < class TFloat, unsigned int VImageDimension >
-int CImageManager< TFloat, VImageDimension>::AddImage( const std::string filename, FloatType timepoint, int subjectIndex )
+int CImageManager< TFloat, VImageDimension>::AddImage( const std::string & filename, FloatType timepoint, int subjectIndex )
 {
-  return AddImageAndTransform( filename, "", timepoint, subjectIndex );
+  return this->AddImageAndTransform( filename, "", timepoint, subjectIndex );
 }
 
 //
 // Adds a common individual image
 //
 template < class TFloat, unsigned int VImageDimension >
-int CImageManager< TFloat, VImageDimension >::AddCommonImage( const std::string filename, FloatType timepoint )
+int CImageManager< TFloat, VImageDimension >::AddCommonImage( const std::string & filename, FloatType timepoint )
 {
-  return AddCommonImageAndTransform( filename, "", timepoint );
+  return this->AddCommonImageAndTransform( filename, "", timepoint );
 }
 
 //
@@ -306,7 +559,7 @@ int CImageManager< TFloat, VImageDimension >::AddImage( VectorImageType* pIm, Fl
   // create the object that will hold the information
   CImageInformation< TFloat, VImageDimension > imageInformation;
   imageInformation.SetTimePoint( timepoint );
-  imageInformation.SetUniqueId( m_CurrentRunningId++ );
+  imageInformation.SetUniqueId( m_DatasetGlobalIdCounter++ );
   imageInformation.SetSubjectId( subjectIndex );
   imageInformation.SetExternallySpecifiedImage( pIm );
 
@@ -334,7 +587,7 @@ int CImageManager< TFloat, VImageDimension >::AddCommonImage( VectorImageType* p
   // create the object that will hold the information
   CImageInformation< TFloat, VImageDimension > imageInformation;
   imageInformation.SetTimePoint( timepoint );
-  imageInformation.SetUniqueId( m_CurrentRunningId++ );
+  imageInformation.SetUniqueId( m_DatasetGlobalIdCounter++ );
   imageInformation.SetSubjectId( COMMON_SUBJECT_ID );
   imageInformation.SetExternallySpecifiedImage( pIm );
   imageInformation.SetIsCommonImage( true );
@@ -352,7 +605,7 @@ int CImageManager< TFloat, VImageDimension >::AddCommonImage( VectorImageType* p
 // Register image and transform 
 //
 template < class TFloat, unsigned int VImageDimension >
-int CImageManager< TFloat, VImageDimension>::AddImageAndTransform( const std::string filename, const std::string transformFilename, FloatType timepoint, int subjectIndex )
+int CImageManager< TFloat, VImageDimension>::AddImageAndTransform( const std::string & filename, const std::string & transformFilename, FloatType timepoint, int subjectIndex )
 {
   if ( !this->ScalesForAllIndicesAreSpecified() )
   {
@@ -365,11 +618,11 @@ int CImageManager< TFloat, VImageDimension>::AddImageAndTransform( const std::st
   imageInformation.SetImageFileName( filename );
   imageInformation.SetTransformationFileName( transformFilename );
   imageInformation.SetTimePoint( timepoint );
-  imageInformation.SetUniqueId( m_CurrentRunningId++ );
+  imageInformation.SetUniqueId( m_DatasetGlobalIdCounter++ );
   imageInformation.SetSubjectId( subjectIndex );
 
   // now add this to the multimap
-  m_AllSubjectInformation.insert( std::pair< int, TimeSeriesDataPointType >( subjectIndex ,imageInformation ) );
+  m_AllSubjectInformation.insert( std::pair< int, TimeSeriesDataPointType >( subjectIndex, imageInformation ) );
 
   // keep track of which subject an id came from
   m_MapIdToSubjectId[ imageInformation.GetUniqueId() ] = subjectIndex;
@@ -405,7 +658,7 @@ void CImageManager< TFloat, VImageDimension >::SetCurrentImagePreprocessingSetti
 // Register image and transform
 //
 template < class TFloat, unsigned int VImageDimension >
-int CImageManager< TFloat, VImageDimension>::AddCommonImageAndTransform( const std::string filename, const std::string transformFilename, FloatType timepoint )
+int CImageManager< TFloat, VImageDimension>::AddCommonImageAndTransform( const std::string & filename, const std::string & transformFilename, FloatType timepoint )
 {
   if ( !this->ScalesForAllIndicesAreSpecified() )
   {
@@ -418,7 +671,7 @@ int CImageManager< TFloat, VImageDimension>::AddCommonImageAndTransform( const s
   imageInformation.SetImageFileName( filename );
   imageInformation.SetTransformationFileName( transformFilename );
   imageInformation.SetTimePoint( timepoint );
-  imageInformation.SetUniqueId( m_CurrentRunningId++ );
+  imageInformation.SetUniqueId( m_DatasetGlobalIdCounter++ );
   imageInformation.SetSubjectId( COMMON_SUBJECT_ID );
   imageInformation.SetIsCommonImage( true );
 
@@ -669,22 +922,22 @@ template < class TFloat, unsigned int VImageDimension >
 int CImageManager< TFloat, VImageDimension >::GetFirstSubjectIndexIfNegative( int subjectIndex )
 {
   if ( subjectIndex < 0 )
-  {
+    {
     std::vector< int > availableSubjectIndices;
     this->GetAvailableSubjectIndices( availableSubjectIndices );
     if ( availableSubjectIndices.empty() ) // there are none
-    {
+      {
       return subjectIndex;
-    }
+      }
     else
-    {
+      {
       return availableSubjectIndices[ 0 ];
+      }
     }
-  }
   else
-  {
+    {
     return subjectIndex;
-  }
+    }
 }
 
 //
