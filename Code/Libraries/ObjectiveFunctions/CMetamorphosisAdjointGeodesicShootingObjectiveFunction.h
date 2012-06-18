@@ -44,7 +44,6 @@ public:
   typedef itk::SmartPointer< const Self >                        ConstPointer;
 
   /* Some useful typedefs */
-  typedef typename TState::FloatType T;
   typedef typename TState::FloatType FloatType;
 
   typedef typename Superclass::CEnergyValues CEnergyValues;
@@ -58,13 +57,15 @@ public:
   void InitializeState();
   void InitializeState( TState* ptrState );
 
-  void GetSourceImage( VectorImageType* ptrIm, T dTime );
-  void GetTargetImage( VectorImageType* ptrIm, T dTime );
+  void GetSourceImage( VectorImageType* ptrIm );
+  void GetSourceImage( VectorImageType* ptrIm, FloatType dTime );
+  void GetTargetImage( VectorImageType* ptrIm );
+  void GetTargetImage( VectorImageType* ptrIm, FloatType dTime );
 
-  void GetMomentum( VectorImageType* ptrMomentum, T dTime );
+  void GetMomentum( VectorImageType* ptrMomentum, FloatType dTime );
 
-  void GetMap( VectorFieldType* ptrMap, T dTime );
-  void GetMapFromTo(VectorFieldType *ptrMap, T dTimeFrom, T dTimeTo);
+  void GetMap( VectorFieldType* ptrMap, FloatType dTime );
+  void GetMapFromTo(VectorFieldType *ptrMap, FloatType dTimeFrom, FloatType dTimeTo);
 
   CEnergyValues GetCurrentEnergy();
   void ComputeGradient();
@@ -73,13 +74,13 @@ public:
   void OutputStateInformation( unsigned int uiIter, std::string outputPrefix="" );
 
   // methods for the augmented Lagrangian
-  void SetSquaredPenaltyScalarWeight( T dWeight );
-  T GetSquaredPenaltyScalarWeight();
+  void SetSquaredPenaltyScalarWeight( FloatType dWeight );
+  FloatType GetSquaredPenaltyScalarWeight();
   VectorImageType* GetPointerToImageLagrangianMultiplier();
   const VectorImageType* GetPointerToCurrentImageResidual();
 
-  GetMacro( Rho, T );
-  SetMacro( Rho, T );
+  GetMacro( Rho, FloatType );
+  SetMacro( Rho, FloatType );
 
   virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
@@ -141,21 +142,21 @@ private:
 
   std::vector< typename VectorFieldType::Pointer > m_ptrVelocityField;
 
-  std::vector< T > m_vecMeasurementTimepoints;
+  std::vector< FloatType > m_vecMeasurementTimepoints;
 
   // bookkeeping structure, which keeps track of what measurements need to be compared to what estimated images
 
   std::vector< STimePoint > m_vecTimeDiscretization;
-  std::vector< T > m_vecTimeIncrements;
+  std::vector< FloatType > m_vecTimeIncrements;
 
 
-  T m_Rho;  ///< how much the image source term is penalized
+  FloatType m_Rho;  ///< how much the image source term is penalized
 
-  const T DefaultRho;
+  const FloatType DefaultRho;
   bool m_ExternallySetRho;
 
   // augmented Lagrangian
-  T m_AugmentedLagrangianMu;
+  FloatType m_AugmentedLagrangianMu;
 
   typename VectorImageType::Pointer m_ptrImageLagrangianMultiplier;
 

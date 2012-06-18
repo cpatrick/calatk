@@ -142,12 +142,28 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::DeleteAuxiliaryStructures()
 }
 
 template < class TState >
+void CLDDMMGrowthModelObjectiveFunction< TState >::GetSourceImage( VectorImageType* ptrIm )
+{
+  ptrIm->Copy( m_ptrI0 );
+}
+
+template < class TState >
 void CLDDMMGrowthModelObjectiveFunction< TState >::GetSourceImage( VectorImageType* ptrIm, T dTime )
 {
   // TODO: account for appearance changes, based on closeby images
   this->GetMap( m_ptrMapTmp, dTime );
   // now compute the image by interpolation
   LDDMMUtils< T, TState::ImageDimension >::applyMap( m_ptrMapTmp, m_ptrI0, ptrIm );
+}
+
+template < class TState >
+void CLDDMMGrowthModelObjectiveFunction< TState >::GetTargetImage( VectorImageType* ptrIm )
+{
+  std::vector< TimeSeriesDataPointType > timeseries;
+  this->m_ptrImageManager->GetTimeSeriesWithSubjectIndex( timeseries, this->GetActiveSubjectId() );
+  unsigned int numberOfTimePoints = timeseries.size();
+
+  ptrIm->Copy( timeseries[ numberOfTimePoints - 1 ].GetImage() );
 }
 
 template < class TState >
@@ -161,8 +177,6 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::GetTargetImage( VectorImageTy
   // now compute the image by interpolation
   LDDMMUtils< T, TState::ImageDimension >::applyMap( m_ptrMapTmp, timeseries[ numberOfTimePoints - 1 ].GetImage(), ptrIm );
 }
-
-
 
 template < class TState >
 void CLDDMMGrowthModelObjectiveFunction< TState >::GetInitialImage( VectorImageType* ptrIm )

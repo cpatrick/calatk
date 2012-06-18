@@ -280,6 +280,20 @@ public:
   void MultiplyElementwise(VectorArray* im);
 
   /**
+   * Method that divides the elements the array of by those of the input array (cellwise)
+   *
+   * @param im - the first array
+   */
+  void DivideCellwise(VectorArray* im);
+
+  /**
+    * Method that divides each vector element with a scalar value from a scalar input array
+    * @param im - the scalar array to multiply by
+    */
+  void DivideElementwise(VectorArray* im);
+
+
+  /**
    * Method that adds the elements of the array to those of the input array (cellwise)
    *
    * @param im - the first array

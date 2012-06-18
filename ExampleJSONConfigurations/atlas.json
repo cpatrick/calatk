@@ -1,0 +1,71 @@
+// CALATK version 0.1; JSON configuration file --CLEANED
+
+{
+	"AtlasSettings" : 
+	{
+		"Kernel" : "HelmholtzKernel",
+		"Metric" : "SSD"
+	},
+	"HelmholtzKernel" : 
+	{
+		"Alpha" : 0.050,
+		"Gamma" : 1.0
+	},
+	"ImageManager" : 
+	{
+		"AutoScaleImages" : true,
+		"BlurHighestResolutionImage" : false,
+		"Sigma" : 0.50,
+		"SigmaHighestResolutionImage" : 0.50
+	},
+	"LDDMMGeodesicShooting" : 
+	{
+		"EstimateInitialImage" : false,
+		"NumberOfDiscretizationVolumesPerUnitTime" : 10.0,
+		"SigmaSqr" : 0.009999999776482582
+	},
+	"MultiScaleFinalOutput" : 
+	{
+		"OutputStateInformation" : false,
+		"OutputStateInformationFrequency" : 0
+	},
+	"MultiScaleGeneralSettings" : 
+	{
+		"NumberOfSubIterations" : 1000,
+		"SingleScaleSolver" : "LineSearchUnconstrained"
+	},
+	"MultiScaleSettings" : 
+	[
+		
+		{
+			"Downsample" : 
+			{
+				"Scale" : 1.0
+			},
+			"LineSearch" : 
+			{
+				"AdjustStepSizeDownFactor" : 0.50,
+				"AdjustStepSizeDownNumber" : 2,
+				"AdjustStepSizeUpFactor" : 2.0,
+				"AdjustStepSizeUpNumber" : 2,
+				"DecreaseConstant" : 0.0,
+				"InitialStepSize" : 9.999999747378752e-06,
+				"MaxNumberOfIterations" : 10,
+				"MaxNumberOfTries" : 10,
+				"MinAllowedStepSize" : 9.999999939225290e-09,
+				"OutputStateInformation" : false,
+				"OutputStateInformationFrequency" : 0,
+				"ReductionFactor" : 0.50
+			}
+		}
+	],
+	"OneStepEvolver" : 
+	{
+		"NumberOfThreads" : 1
+	},
+	"OneStepEvolverSemiLagrangianAdvection" : 
+	{
+		"NumberOfIterationsToDetermineFlowField" : 2,
+		"TimeStepFactor" : 1.0
+	}
+}

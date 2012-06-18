@@ -204,6 +204,13 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMomentum( V
 }
 
 template < class TState >
+void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetSourceImage( VectorImageType* ptrIm )
+{
+  VectorImageType* ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
+  ptrIm->Copy( ptrInitialImage );
+}
+
+template < class TState >
 void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetSourceImage( VectorImageType* ptrIm, T dTime )
 {
   // TODO: account for appearance changes, based on closeby images
@@ -211,13 +218,21 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetSourceImage
   // now compute the image by interpolation
   VectorImageType* ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
   LDDMMUtils< T, TState::ImageDimension >::applyMap( m_ptrMapTmp, ptrInitialImage, ptrIm );
+}
 
+template < class TState >
+void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetTargetImage( VectorImageType* ptrIm )
+{
+  std::vector< TimeSeriesDataPointType > timeseries;
+  this->m_ptrImageManager->GetTimeSeriesWithSubjectIndex( timeseries, this->GetActiveSubjectId() );
+  unsigned int numberOfTimePoints = timeseries.size();
+
+  ptrIm->Copy( timeseries[ numberOfTimePoints - 1 ].GetImage() );
 }
 
 template < class TState >
 void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetTargetImage( VectorImageType* ptrIm, T dTime )
 {
-#warning check me for reverse map
   std::vector< TimeSeriesDataPointType > timeseries;
   this->m_ptrImageManager->GetTimeSeriesWithSubjectIndex( timeseries, this->GetActiveSubjectId() );
   unsigned int numberOfTimePoints = timeseries.size();
@@ -225,7 +240,6 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetTargetImage
   GetMapFromTo( m_ptrMapTmp, timeseries[ numberOfTimePoints - 1 ].GetTimePoint(), dTime );
   // now compute the image by interpolation
   LDDMMUtils< T, TState::ImageDimension >::applyMap( m_ptrMapTmp, timeseries[ numberOfTimePoints - 1 ].GetImage(), ptrIm );
-
 }
 
 template < class TState >
@@ -240,6 +254,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
 {
    /**
     * Solves the EPDiff equation forward in time using a map-based approach to compute the map between two time-points
+    * Also allows to compute the inverse map on the fly
     *
     * \f$ I_t + \nabla I^T v = 0, \f$
     * \f$ p_t + div( p v ) = 0, \f$
@@ -247,8 +262,19 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
     *
     */
 
-  assert( dTimeTo >= dTimeFrom );
+  bool isBackwardMap = ( dTimeTo <= dTimeFrom );
+
   std::cout << "Computing map from " << dTimeFrom << " to " << dTimeTo << std::endl;
+
+  typename VectorFieldType::Pointer ptrMapIdentity;
+
+  if ( isBackwardMap ) // swap the times, we will create the backward map on the fly through forward integration
+  {
+    std::swap( dTimeTo, dTimeFrom );
+    std::cout << "Computing backward map (in forward direction)." << std::endl;
+    ptrMapIdentity = new VectorFieldType( ptrMap ); // need an identity map at all times to construct the backward map
+    LDDMMUtilsType::identityMap( ptrMapIdentity );
+  }
 
   if ( dTimeFrom < m_vecTimeDiscretization[0].dTime || dTimeTo > m_vecTimeDiscretization.back().dTime )
     {
@@ -256,7 +282,6 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
     return;
     }
 
-  typedef LDDMMUtils< T, TState::ImageDimension > LDDMMUtilsType;
   LDDMMUtilsType::identityMap( ptrMap );
   // identity map if the time points are the same
   if ( dTimeFrom == dTimeTo )
@@ -318,8 +343,20 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
         // the full map is in between this time interval so just integrate it for a little bit
         std::cout << "1: evolving map for " << dTimeTo - dCurrentTime << std::endl;
         dTimeEvolvedFor += dTimeTo - dCurrentTime;
-        this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, dTimeTo - dCurrentTime );
-        ptrMap->Copy( ptrMapOut );
+
+        if ( isBackwardMap )
+        {
+          // negate the velocity
+          ptrCurrentVelocity->MultiplyByConstant( -1.0 );
+          this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMapIdentity, ptrMapOut, ptrMapTmp, dTimeTo - dCurrentTime );
+          ptrMapTmp->Copy( ptrMap ); // ptrMap is the backmap here
+          LDDMMUtilsType::applyMap( ptrMapTmp, ptrMapOut, ptrMap );
+        }
+        else
+        {
+          this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, dTimeTo - dCurrentTime );
+          ptrMap->Copy( ptrMapOut );
+        }
 
         std::cout << "Overall time evolved for = " << dTimeEvolvedFor << std::endl;
 
@@ -330,8 +367,21 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
          // integrate it for the full interval
         std::cout << "2: evolving map for " << m_vecTimeIncrements[ iI ] << std::endl;
         dTimeEvolvedFor += m_vecTimeIncrements[ iI ];
-        this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, m_vecTimeIncrements[ iI ] );
-        ptrMap->Copy( ptrMapOut );
+
+        if ( isBackwardMap )
+        {
+          // negate the velocity
+          ptrCurrentVelocity->MultiplyByConstant( -1.0 );
+          this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMapIdentity, ptrMapOut, ptrMapTmp, m_vecTimeIncrements[ iI ] );
+          ptrMapTmp->Copy( ptrMap ); // ptrMap is the backmap here
+          LDDMMUtilsType::applyMap( ptrMapTmp, ptrMapOut, ptrMap );
+        }
+        else
+        {
+          this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, m_vecTimeIncrements[ iI ] );
+          ptrMap->Copy( ptrMapOut );
+        }
+
       }
     }
 
@@ -343,8 +393,20 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
         // the full map is in between this time interval so just integrate it for a little bit
         std::cout << "3: evolving map for " << dTimeTo - dTimeFrom << std::endl;
         dTimeEvolvedFor += dTimeTo = dTimeFrom;
-        this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, dTimeTo - dTimeFrom );
-        ptrMap->Copy( ptrMapOut );
+
+        if ( isBackwardMap )
+        {
+          // negate the velocity
+          ptrCurrentVelocity->MultiplyByConstant( -1.0 );
+          this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMapIdentity, ptrMapOut, ptrMapTmp, dTimeTo - dTimeFrom );
+          ptrMapTmp->Copy( ptrMap ); // ptrMap is the backmap here
+          LDDMMUtilsType::applyMap( ptrMapTmp, ptrMapOut, ptrMap );
+        }
+        else
+        {
+          this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, dTimeTo - dTimeFrom );
+          ptrMap->Copy( ptrMapOut );
+        }
 
         std::cout << "Overall time evolved for = " << dTimeEvolvedFor << std::endl;
 
@@ -355,8 +417,21 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
         // integrate the map until the end of this interval
         std::cout << "4: evolving map for " << dCurrentDT << std::endl;
         dTimeEvolvedFor += dCurrentDT;
-        this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, dCurrentDT );
-        ptrMap->Copy( ptrMapOut );
+
+        if ( isBackwardMap )
+        {
+          // negate the velocity
+          ptrCurrentVelocity->MultiplyByConstant( -1.0 );
+          this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMapIdentity, ptrMapOut, ptrMapTmp, dCurrentDT );
+          ptrMapTmp->Copy( ptrMap ); // ptrMap is the backmap here
+          LDDMMUtilsType::applyMap( ptrMapTmp, ptrMapOut, ptrMap );
+        }
+        else
+        {
+          this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMap, ptrMapOut, ptrMapTmp, dCurrentDT );
+          ptrMap->Copy( ptrMapOut );
+        }
+
         bInitializedMap = true;
       }
 

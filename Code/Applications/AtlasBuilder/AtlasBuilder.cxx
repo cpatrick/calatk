@@ -116,8 +116,6 @@ int DoIt( int argc, char** argv )
     VectorImageUtilsType::writeFileITK( ptrAtlasImage, atlasImage );
   }
 
-
-
   return EXIT_SUCCESS;
 
 }

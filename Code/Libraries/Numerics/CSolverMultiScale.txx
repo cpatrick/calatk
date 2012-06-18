@@ -153,11 +153,13 @@ bool CSolverMultiScale< TState >::Solve()
       {
         for ( unsigned int iS=0; iS < m_NumberOfSubIterations; ++iS )
         {
+          bool currentlyReducedEnergy = false;
+
           std::cout << "Solving multiscale level " << iI << "/" << numberOfScales << "; subiteration " << iS+1 << "/" << m_NumberOfSubIterations << std::endl;
           if ( iS==0 )
           {
             std::cout << "Initializing multi-scale solution." << std::endl;
-            bool currentlyReducedEnergy = m_ptrSolver->Solve();
+            currentlyReducedEnergy = m_ptrSolver->Solve();
             reducedEnergy = reducedEnergy || currentlyReducedEnergy;
           }
           else
@@ -165,9 +167,15 @@ bool CSolverMultiScale< TState >::Solve()
             // for iS = 0 not properly initialized
             objectiveFunction->PreSubIterationSolve();
 
-            bool currentlyReducedEnergy = m_ptrSolver->SolvePreInitialized();
+            currentlyReducedEnergy = m_ptrSolver->SolvePreInitialized();
             reducedEnergy = reducedEnergy || currentlyReducedEnergy;
           }
+
+          if ( !currentlyReducedEnergy ) // if it could not be reduced, break out of subiteration
+          {
+            break;
+          }
+
         }
       MultiScaleHasBeenInitialized = true;
       }
@@ -195,6 +203,11 @@ bool CSolverMultiScale< TState >::Solve()
 
           bool currentlyReducedEnergy = m_ptrSolver->SolvePreInitialized();
           reducedEnergy = reducedEnergy || currentlyReducedEnergy;
+
+          if ( ! currentlyReducedEnergy ) // if it could not reduce it, break out of subiteration
+          {
+            break;
+          }
 
           }
       } // end MultiScaleHaseBeenInitialized

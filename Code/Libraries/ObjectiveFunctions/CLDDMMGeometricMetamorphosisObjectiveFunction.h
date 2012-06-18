@@ -53,7 +53,9 @@ public:
   virtual ~CLDDMMGeometricMetamorphosisObjectiveFunction();
 
   void GetImageT( VectorImageType* ptrIm, T dTime );
+  void GetSourceImage( VectorImageType* ptrIm );
   void GetSourceImage( VectorImageType* ptrIm, T dTime );
+  void GetTargetImage( VectorImageType* ptrIm );
   void GetTargetImage( VectorImageType* ptrIm, T dTime );
   void GetInitialImage( VectorImageType* ptrIm );
   const VectorImageType* GetPointerToInitialImage() const;

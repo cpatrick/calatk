@@ -237,12 +237,24 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::G
 }
 
 template < class TState >
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::GetSourceImage( VectorImageType* ptrIm )
+{
+  throw std::runtime_error( "Not yet implemented." );
+}
+
+template < class TState >
 void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::GetSourceImage( VectorImageType* ptrIm, T dTime )
 {
   // This is more complicated than for the standard models, because we have an appearance change here
   // required an integration forward in time
   T dTimeFrom = m_vecTimeDiscretization[0].dTime;
   GetMapFromToAndImageAtFinalTime( NULL, ptrIm, dTimeFrom, dTime );
+}
+
+template < class TState >
+void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::GetTargetImage( VectorImageType* ptrIm )
+{
+  throw std::runtime_error( "Not yet implemented." );
 }
 
 template < class TState >

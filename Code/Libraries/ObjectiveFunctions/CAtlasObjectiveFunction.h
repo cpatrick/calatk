@@ -23,6 +23,8 @@
 #include "CObjectiveFunction.h"
 #include "CVelocityFieldObjectiveFunctionWithMomentum.h"
 #include "CALATKCommon.h"
+#include "LDDMMUtils.h"
+#include "VectorImageUtils.h"
 
 namespace CALATK
 {
@@ -44,11 +46,13 @@ public:
 
   /* Some useful typedefs */
 
-  typedef typename TState::FloatType T;
+  typedef typename TState::FloatType FloatType;
   typedef typename TState::IndividualStateType IndividualStateType;
 
   typedef CAtlasObjectiveFunction< TState >                                   ObjectiveFunctionType;
   typedef CVelocityFieldObjectiveFunctionWithMomentum< IndividualStateType >  IndividualObjectiveFunctionType;
+  typedef LDDMMUtils< FloatType, TState::ImageDimension > LDDMMUtilsType;
+  typedef VectorImageUtils< FloatType, TState::ImageDimension > VectorImageUtilsType;
 
   typedef typename Superclass::CEnergyValues CEnergyValues;
 
@@ -68,7 +72,7 @@ public:
    * @param pObj - pointer to the objective function
    * @param dWeight - weight in the atlas building
    */
-  unsigned int SetObjectiveFunctionAndWeight( IndividualObjectiveFunctionType* pObj, T dWeight );
+  unsigned int SetObjectiveFunctionAndWeight( IndividualObjectiveFunctionType* pObj, FloatType dWeight );
 
   /**
    * @brief Sets one of the objective functions for the registration between an image and the atlas, can be used to overwrite previously assigned individual objective functions
@@ -77,7 +81,7 @@ public:
    * @param pObj - pointer to the objective function
    * @param dWeight - weight in the atlas building
    */
-  void SetObjectiveFunctionAndWeight( unsigned int uiId, const IndividualObjectiveFunctionType* pObj, T dWeight );
+  void SetObjectiveFunctionAndWeight( unsigned int uiId, const IndividualObjectiveFunctionType* pObj, FloatType dWeight );
 
   /**
    * @brief Deletes the data structures used to store the pointers to the objective functions
@@ -124,16 +128,23 @@ public:
   void UpdateAtlasImageAsAverageOfSourceImages();
 
   // Map and image output for the individual objective functions (selection by CurrentActiveObjectiveFunctionOutput)
-  void GetMap( VectorFieldType* ptrMap, T dTime );
-  void GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo );
-  void GetSourceImage( VectorImageType* ptrIm, T dTime );
-  void GetTargetImage( VectorImageType* ptrIm, T dTime );
+  void GetMap( VectorFieldType* ptrMap, FloatType dTime );
+  void GetMapFromTo( VectorFieldType* ptrMap, FloatType dTimeFrom, FloatType dTimeTo );
+  void GetSourceImage( VectorImageType* ptrIm );
+  void GetSourceImage( VectorImageType* ptrIm, FloatType dTime );
+  void GetTargetImage( VectorImageType* ptrIm );
+  void GetTargetImage( VectorImageType* ptrIm, FloatType dTime );
 
   // TODO: needs to be implemented
   const VectorImageType* GetPointerToInitialImage() const;
   void GetInitialImage( VectorImageType* ptrIm );
 
   void PreSubIterationSolve();
+
+  SetMacro( AtlasIsSourceImage, bool );
+  GetMacro( AtlasIsSourceImage, bool );
+
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
 protected:
 
@@ -145,15 +156,17 @@ private:
   CAtlasObjectiveFunction( const CAtlasObjectiveFunction & );
   CAtlasObjectiveFunction& operator=( const CAtlasObjectiveFunction & );
 
-  std::vector< T > m_Weights; ///< Contains the weights for each subject to atlas registration
+  std::vector< FloatType > m_Weights; ///< Contains the weights for each subject to atlas registration
   typedef std::vector< typename IndividualObjectiveFunctionType::Pointer > VectorIndividualObjectiveFunctionPointersType;
 
   VectorIndividualObjectiveFunctionPointersType  m_VectorIndividualObjectiveFunctionPtrs;
 
   unsigned int m_CurrentActiveObjectiveFunctionOutput;  /**< id for currently active individual objective function to create output */
 
-#warning Make this a proper choice
   bool m_AtlasIsSourceImage; // TODO: Make this a proper choice
+
+  const bool DefaultAtlasIsSourceImage;
+  bool m_ExternallySetAtlasIsSourceImage;
 };
 
 #include "CAtlasObjectiveFunction.txx"

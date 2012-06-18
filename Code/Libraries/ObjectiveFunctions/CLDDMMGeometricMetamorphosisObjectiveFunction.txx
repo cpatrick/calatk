@@ -238,11 +238,23 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::CreateAuxiliaryStr
 }
 
 template < class TState >
+void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetSourceImage( VectorImageType* ptrIm )
+{
+  ptrIm->Copy( ptrI0 );
+}
+
+template < class TState >
 void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetSourceImage( VectorImageType* ptrIm, T dTime )
 {
   this->GetMap( m_ptrMapTmp, dTime );
   // now compute the image by interpolation
   LDDMMUtils< T, TState::ImageDimension >::applyMap( m_ptrMapTmp, ptrI0, ptrIm );
+}
+
+template < class TState >
+void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetTargetImage( VectorImageType* ptrIm )
+{
+  ptrIm->Copy( ptrI1 );
 }
 
 template < class TState >

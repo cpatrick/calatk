@@ -260,12 +260,12 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::Initializ
 }
 
 template < class TState >
-void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetMomentum( VectorImageType* ptrMomentum, T dTime )
+void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetMomentum( VectorImageType* ptrMomentum, FloatType dTime )
 {
   GetMap( m_ptrMapTmp, dTime );
   // now compute the momentum by interpolation
   VectorImageType* ptrInitialMomentum = this->m_ptrState->GetPointerToInitialMomentum();
-  typedef LDDMMUtils< T, TState::ImageDimension > LDDMMUtilsType;
+  typedef LDDMMUtils< FloatType, TState::ImageDimension > LDDMMUtilsType;
   LDDMMUtilsType::applyMap( m_ptrMapTmp, ptrInitialMomentum, ptrMomentum );
   LDDMMUtilsType::computeDeterminantOfJacobian( m_ptrMapTmp, m_ptrDeterminantOfJacobian );
   ptrMomentum->MultiplyElementwise( m_ptrDeterminantOfJacobian );
@@ -273,7 +273,13 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetMoment
 }
 
 template < class TState >
-void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetSourceImage( VectorImageType* ptrIm, T dTime )
+void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetSourceImage( VectorImageType* ptrIm )
+{
+  throw std::runtime_error( "Not yet implemented." );
+}
+
+template < class TState >
+void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetSourceImage( VectorImageType* ptrIm, FloatType dTime )
 {
   // This is more complicated than for the standard models, because we have an appearance change here
   // required an integration forward in time
@@ -321,23 +327,29 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetSource
 }
 
 template < class TState >
-void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetTargetImage( VectorImageType* ptrIm, T dTime )
+void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetTargetImage( VectorImageType* ptrIm )
 {
   throw std::runtime_error( "Not yet implemented." );
 }
 
 template < class TState >
-void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetMap( VectorFieldType* ptrMap, T dTime )
+void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetTargetImage( VectorImageType* ptrIm, FloatType dTime )
 {
-  T dTimeFrom = m_vecTimeDiscretization[0].dTime;
+  throw std::runtime_error( "Not yet implemented." );
+}
+
+template < class TState >
+void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetMap( VectorFieldType* ptrMap, FloatType dTime )
+{
+  FloatType dTimeFrom = m_vecTimeDiscretization[0].dTime;
   GetMapFromTo( ptrMap, dTimeFrom, dTime );
 
 }
 
 template < class TState >
-void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo )
+void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( VectorFieldType* ptrMap, FloatType dTimeFrom, FloatType dTimeTo )
 {
-  LDDMMUtils< T, TState::ImageDimension >::GetMapFromToFromSpatioTemporalVelocityField(
+  LDDMMUtils< FloatType, TState::ImageDimension >::GetMapFromToFromSpatioTemporalVelocityField(
         ptrMap,
         dTimeFrom,
         dTimeTo,
@@ -357,7 +369,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState>::CreateTime
 
   std::vector< STimePoint > vecTimePointData;
 
-  typedef LDDMMUtils< T, TState::ImageDimension > LDDMMUtilsType;
+  typedef LDDMMUtils< FloatType, TState::ImageDimension > LDDMMUtilsType;
   LDDMMUtilsType::DetermineTimeSeriesTimePointData( this->m_ptrImageManager, this->GetActiveSubjectId(), vecTimePointData );
   LDDMMUtilsType::CreateTimeDiscretization( vecTimePointData, m_vecTimeDiscretization, m_vecTimeIncrements, this->m_NumberOfDiscretizationVolumesPerUnitTime );
 
@@ -427,7 +439,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ComputeIm
   VectorImageType* ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
   VectorImageType* ptrInitialMomentum = this->m_ptrState->GetPointerToInitialMomentum();
 
-  typedef LDDMMUtils< T, TState::ImageDimension > LDDMMUtilsType;
+  typedef LDDMMUtils< FloatType, TState::ImageDimension > LDDMMUtilsType;
   LDDMMUtilsType::identityMap( m_ptrMapIdentity );
 
   m_ptrI[ 0 ]->Copy( ptrInitialImage );
@@ -512,14 +524,14 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ComputeAd
   // initialize the initial condition for the incremental map used to flow backwards. Will not be changed during
   // the iterations, because the numerical solution is always started from the identity
   // m_ptrMapIncremental maps bewtween different time discretization points; used for the source terms
-  LDDMMUtils< T, TState::ImageDimension >::identityMap( m_ptrMapIdentity );
+  LDDMMUtils< FloatType, TState::ImageDimension >::identityMap( m_ptrMapIdentity );
 
 #ifdef EXTREME_DEBUGGING
   tstLamI[ m_vecTimeDiscretization.size()-1 ]->copy( m_ptrCurrentLambdaI );
   tstLamP[ m_vecTimeDiscretization.size()-1 ]->copy( m_ptrCurrentLambdaP );
 #endif
 
-  typedef LDDMMUtils< T, TState::ImageDimension >      LDDMMUtilsType;
+  typedef LDDMMUtils< FloatType, TState::ImageDimension >      LDDMMUtilsType;
 
   for ( int iI = (int)m_vecTimeDiscretization.size()-1-1; iI>=0; iI--)
   {
@@ -705,7 +717,7 @@ CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetCurrentEner
       E = 0.5 \langle p(t_0)\nabla I(t_0),K*(p(t_0)\nabla I(t_0)\rangle + 0.5 rho \langle p(t_0), p(t_0) \rangle -\langle r, I(1)-I_1\rangle + \frac{\mu}{2}\|I_1-I(1)\|^2
     \f]
   */
-  T dEnergy = 0;
+  FloatType dEnergy = 0;
 
   // computing \f$ 0.5\langle p(t_0) \nabla I(t_0) +  K*( p(t_0)\nabla I(t_0) ) \rangle \f$
   // this is done dimension for dimension (i.e., if we have a multidimensional image, we have as many of these terms as we have dimensions)
@@ -736,11 +748,11 @@ CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetCurrentEner
 
   // multiply the full energy by 0.5
   unsigned int uiNrOfDiscretizationPoints = m_vecTimeDiscretization.size();
-  T dTimeDuration = this->m_vecTimeDiscretization[ uiNrOfDiscretizationPoints-1 ].dTime - this->m_vecTimeDiscretization[0].dTime;
+  FloatType dTimeDuration = this->m_vecTimeDiscretization[ uiNrOfDiscretizationPoints-1 ].dTime - this->m_vecTimeDiscretization[0].dTime;
 
   dEnergy *= 0.5*dTimeDuration;
 
-  T dVelocitySquareNorm = dEnergy;
+  FloatType dVelocitySquareNorm = dEnergy;
 
   // add the contributions of the data terms (of the augmented Lagrangian)
 
@@ -750,10 +762,10 @@ CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetCurrentEner
   m_ptrTmpImage->Copy( m_vecTimeDiscretization[ uiNrOfDiscretizationPoints-1].vecEstimatedImages[ 0 ] );
   m_ptrTmpImage->AddCellwiseMultiply( m_vecTimeDiscretization[ uiNrOfDiscretizationPoints - 1].vecMeasurementImages[ 0 ], -1.0 );
 
-  T dImageNorm = m_ptrTmpImage->ComputeSquaredNorm();
+  FloatType dImageNorm = m_ptrTmpImage->ComputeSquaredNorm();
 
   // +\mu/2\|I(1)-I_1\|^2
-  T dAugmentedLagrangianNorm = 0.5*m_AugmentedLagrangianMu*dImageNorm;
+  FloatType dAugmentedLagrangianNorm = 0.5*m_AugmentedLagrangianMu*dImageNorm;
 
   // -<r,I(1)-I_1>
   dAugmentedLagrangianNorm -= m_ptrTmpImage->ComputeInnerProduct( m_ptrImageLagrangianMultiplier );
@@ -835,7 +847,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::OutputSta
 
 /// functionality for augmented Lagrangian
 template < class TState >
-void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::SetSquaredPenaltyScalarWeight( T dWeight )
+void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::SetSquaredPenaltyScalarWeight( FloatType dWeight )
 {
   m_AugmentedLagrangianMu = dWeight;
 }

@@ -536,6 +536,9 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
           return;
         }
         SetIndividualObjectiveFunction( ptrCurrentIndividualObjectiveFunction.GetPointer() );
+        ptrCurrentIndividualObjectiveFunction->SetPrintConfiguration( this->GetPrintConfiguration() );
+        ptrCurrentIndividualObjectiveFunction->SetAllowHelpComments( this->GetAllowHelpComments() );
+        ptrCurrentIndividualObjectiveFunction->SetAutoConfiguration( this->m_CombinedJSONConfig, this->m_CleanedJSONConfig );
       }
     }
 
@@ -586,6 +589,7 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
   }
 
   this->m_ptrObjectiveFunction->SetImageManagerPointer( this->m_ptrImageManager );
+  pAtlas->SetAtlasIsSourceImage( m_AtlasIsSourceImage );
 
   // TODO: have an alternative method where the image is part of the gradient
 
@@ -674,10 +678,6 @@ void CAtlasBuilder< TState >::InitializeAtlasImage()
 
   // now that we have added all of them we just need to divide to get the average image
   m_AtlasImage->MultiplyByConstant( 1.0/availableSubjectIndices.size() );
-
-#warning DEBUG
-  VectorImageUtilsType::writeFileITK( m_AtlasImage, "initAtlas.nrrd" );
-
 }
 
 template < class TState >

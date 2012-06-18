@@ -532,7 +532,6 @@ void VectorArray<T, VImageDimension>::SetValue(unsigned int x, unsigned int y, u
   m_DataPtr[ToLinearIndex3D(x,y,z,d)] = value;
 }
 
-
 template <class T, unsigned int VImageDimension >
 void VectorArray< T, VImageDimension >::MultiplyCellwise(VectorArray* im)
 {
@@ -550,7 +549,6 @@ void VectorArray< T, VImageDimension >::MultiplyCellwise(VectorArray* im)
     }
 
 }
-
 
 template <class T, unsigned int VImageDimension >
 void VectorArray< T, VImageDimension >::MultiplyElementwise(VectorArray* im)
@@ -579,6 +577,50 @@ void VectorArray< T, VImageDimension >::MultiplyElementwise(VectorArray* im)
 
 }
 
+template <class T, unsigned int VImageDimension >
+void VectorArray< T, VImageDimension >::DivideCellwise(VectorArray* im)
+{
+
+#ifdef DEBUG
+  // make sure they are the same size
+  if (im->GetSizeX() != m_SizeX || im->GetSizeY() != m_SizeY || im->GetSizeZ() != m_SizeZ || im->GetDimension() != m_Dimension) {
+  throw std::invalid_argument("Images are of different sizes");
+  }
+#endif
+
+  for ( unsigned int uiI = 0; uiI < m_Length; ++uiI )
+    {
+    this->SetValue( uiI, this->GetValue( uiI ) / im->GetValue( uiI ) );
+    }
+
+}
+
+template <class T, unsigned int VImageDimension >
+void VectorArray< T, VImageDimension >::DivideElementwise(VectorArray* im)
+{
+  assert( im->GetDimension()==1 ); // make sure that the elements of the image have only one dimension
+
+  unsigned int szX = m_SizeX;
+  unsigned int szY = m_SizeY;
+  unsigned int szZ = m_SizeZ;
+  unsigned int dim = m_Dimension;
+
+  for ( unsigned z = 0; z<szZ; ++z )
+  {
+    for ( unsigned y = 0; y<szY; ++y )
+    {
+      for ( unsigned x = 0; x<szX; ++x )
+      {
+        for ( unsigned d = 0; d<dim; ++d )
+        {
+          T val = this->GetValue( x, y, z, d )/im->GetValue( x, y, z, 0 );
+          this->SetValue( x, y, z, d, val );
+        }
+      }
+    }
+  }
+
+}
 
 template <class T, unsigned int VImageDimension >
 void VectorArray< T, VImageDimension >::AddCellwise(VectorArray* im)

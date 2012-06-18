@@ -23,14 +23,32 @@
 template < class TState >
 CAtlasObjectiveFunction< TState >::CAtlasObjectiveFunction()
   : m_CurrentActiveObjectiveFunctionOutput( 0 ),
-    m_AtlasIsSourceImage( false )
+    DefaultAtlasIsSourceImage( true ),
+    m_ExternallySetAtlasIsSourceImage( false )
 {
+  m_AtlasIsSourceImage = DefaultAtlasIsSourceImage;
 }
 
 template < class TState >
 CAtlasObjectiveFunction< TState >::~CAtlasObjectiveFunction()
 {
 }
+
+template < class TState >
+void CAtlasObjectiveFunction< TState >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
+{
+  Superclass::SetAutoConfiguration( combined, cleaned );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "AtlasObjectiveFunction", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "AtlasObjectiveFunction", Json::nullValue );
+
+  SetJSONHelpForRootKey( Atlas, "settings for the cross-sectional atlas builder" );
+
+  SetJSONFromKeyBool( currentConfigurationIn, currentConfigurationOut, AtlasIsSourceImage );
+
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, AtlasIsSourceImage,
+                     "if set to true the atlas is the source (recommended), otherwise it is the target" );
+}
+
 
 template < class TState >
 void CAtlasObjectiveFunction< TState >::InitializeState()
@@ -109,7 +127,7 @@ void CAtlasObjectiveFunction< TState >::InitializeState( TState *ptrState )
 template < class TState >
 unsigned int
 CAtlasObjectiveFunction< TState >
-::SetObjectiveFunctionAndWeight( IndividualObjectiveFunctionType* pObj, T dWeight )
+::SetObjectiveFunctionAndWeight( IndividualObjectiveFunctionType* pObj, FloatType dWeight )
 {
   m_VectorIndividualObjectiveFunctionPtrs.push_back( pObj );
   m_Weights.push_back( dWeight );
@@ -122,7 +140,7 @@ CAtlasObjectiveFunction< TState >
 template < class TState >
 void
 CAtlasObjectiveFunction< TState >
-::SetObjectiveFunctionAndWeight( unsigned int uiId, const IndividualObjectiveFunctionType* pObj, T dWeight )
+::SetObjectiveFunctionAndWeight( unsigned int uiId, const IndividualObjectiveFunctionType* pObj, FloatType dWeight )
 {
   m_VectorIndividualObjectiveFunctionPtrs.at( uiId ) =  pObj;
   m_Weights.at( uiId ) = dWeight;
@@ -159,25 +177,37 @@ unsigned int CAtlasObjectiveFunction< TState >
 
 // TODO: To implement
 template < class TState >
-void CAtlasObjectiveFunction< TState >::GetMap( VectorFieldType* ptrMap, T dTime )
+void CAtlasObjectiveFunction< TState >::GetMap( VectorFieldType* ptrMap, FloatType dTime )
 {
   m_VectorIndividualObjectiveFunctionPtrs.at( m_CurrentActiveObjectiveFunctionOutput )->GetMap( ptrMap, dTime );
 }
 
 template < class TState >
-void CAtlasObjectiveFunction< TState >::GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo )
+void CAtlasObjectiveFunction< TState >::GetMapFromTo( VectorFieldType* ptrMap, FloatType dTimeFrom, FloatType dTimeTo )
 {
   m_VectorIndividualObjectiveFunctionPtrs.at( m_CurrentActiveObjectiveFunctionOutput )->GetMapFromTo( ptrMap, dTimeFrom, dTimeTo );
 }
 
 template < class TState >
-void CAtlasObjectiveFunction< TState >::GetSourceImage( VectorImageType* ptrImage, T dTime )
+void CAtlasObjectiveFunction< TState >::GetSourceImage( VectorImageType* ptrImage )
+{
+  m_VectorIndividualObjectiveFunctionPtrs.at( m_CurrentActiveObjectiveFunctionOutput )->GetSourceImage( ptrImage );
+}
+
+template < class TState >
+void CAtlasObjectiveFunction< TState >::GetSourceImage( VectorImageType* ptrImage, FloatType dTime )
 {
   m_VectorIndividualObjectiveFunctionPtrs.at( m_CurrentActiveObjectiveFunctionOutput )->GetSourceImage( ptrImage, dTime );
 }
 
 template < class TState >
-void CAtlasObjectiveFunction< TState >::GetTargetImage( VectorImageType* ptrImage, T dTime )
+void CAtlasObjectiveFunction< TState >::GetTargetImage( VectorImageType* ptrImage )
+{
+  m_VectorIndividualObjectiveFunctionPtrs.at( m_CurrentActiveObjectiveFunctionOutput )->GetTargetImage( ptrImage );
+}
+
+template < class TState >
+void CAtlasObjectiveFunction< TState >::GetTargetImage( VectorImageType* ptrImage, FloatType dTime )
 {
   m_VectorIndividualObjectiveFunctionPtrs.at( m_CurrentActiveObjectiveFunctionOutput )->GetTargetImage( ptrImage, dTime );
 }
@@ -221,7 +251,7 @@ void CAtlasObjectiveFunction< TState >::ComputeGradient()
   // compute them for each and create a state which contains pointers to all of the gradients
   // TODO: also multiply the gradients by the weights
   typename VectorIndividualObjectiveFunctionPointersType::iterator iter;
-  typename std::vector< T >::const_iterator iterWeights;
+  typename std::vector< FloatType >::const_iterator iterWeights;
   for ( iter=m_VectorIndividualObjectiveFunctionPtrs.begin(), iterWeights=m_Weights.begin(); iter!=m_VectorIndividualObjectiveFunctionPtrs.end(); ++iter, ++iterWeights )
     {
       (*iter)->ComputeGradient();  // this automatically ends up in the gradient vector
@@ -264,20 +294,35 @@ void CAtlasObjectiveFunction< TState >::UpdateAtlasImageAsAverageOfTargetImages(
   typename VectorImageType::Pointer currentAtlasImage = this->m_ptrImageManager->GetOnlyCommonTimePointSavely( )->GetImage();
   currentAtlasImage->SetToConstant( 0 );
 
+  typename VectorImageType::Pointer determinantOfJacobian = new VectorImageType( currentAtlasImage, 0.0, 1 );
   typename VectorImageType::Pointer tmpImage = new VectorImageType( currentAtlasImage );
+  typename VectorImageType::Pointer currentTargetImage = new VectorImageType( currentAtlasImage );
+  typename VectorFieldType::Pointer tmpMap = new VectorFieldType( currentAtlasImage );
+  typename VectorImageType::Pointer weightImage = new VectorImageType( currentAtlasImage );
+
+  weightImage->SetToConstant( 0 );
 
   unsigned int numberOfObjectiveFunctions = m_VectorIndividualObjectiveFunctionPtrs.size();
 
   for ( unsigned int iI=0; iI < numberOfObjectiveFunctions; ++iI )
-  {
-    // TODO, implement this. Do we need a weighting with the determinant of Jacobian?
-#warning Implement me
-    //GetIndividualObjectiveFunction( iI )->GetTargetImage( tmpImage, 0.0 );
-    currentAtlasImage->AddCellwise( tmpImage );
-  }
+  {   
+    typename IndividualObjectiveFunctionType::Pointer currentObjectiveFunction = m_VectorIndividualObjectiveFunctionPtrs[ iI ];
 
-  // now that we have added all of them we just need to divide to get the average image
-  currentAtlasImage->MultiplyByConstant( 1.0/numberOfObjectiveFunctions );
+    // get the inverse map (so we can move the target image to the source (the atlas image)
+    currentObjectiveFunction->GetMapFromTo( tmpMap, 1.0, 0.0 );
+    currentObjectiveFunction->GetTargetImage( currentTargetImage );
+    LDDMMUtilsType::applyMap( tmpMap, currentTargetImage, tmpImage );
+    LDDMMUtilsType::computeDeterminantOfJacobian( tmpMap, determinantOfJacobian );
+
+    tmpImage->MultiplyElementwise( determinantOfJacobian );
+    currentAtlasImage->AddCellwise( tmpImage );
+
+    weightImage->AddCellwise( determinantOfJacobian );
+
+  }
+  // now that we have added all of them we just need to divide by the weight image
+  // (i.e., to obtain a local weighted average based on the local space deformation)
+  currentAtlasImage->DivideElementwise( weightImage );
 }
 
 template < class TState >

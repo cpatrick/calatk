@@ -140,8 +140,14 @@ public:
   /* Gets the map between specific time points */
   virtual void GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo ) = 0;
 
+  /* Gets the source image */
+  virtual void GetSourceImage( VectorImageType* ptrIm ) = 0;
+
   /* Gets the source image at a specific time point */
   virtual void GetSourceImage( VectorImageType* ptrIm, T dTime ) = 0;
+
+  /* Gets the target image */
+  virtual void GetTargetImage( VectorImageType* ptrIm ) = 0;
 
   /* Gets the target image at a specific time point */
   virtual void GetTargetImage( VectorImageType* ptrIm, T dTime ) = 0;
