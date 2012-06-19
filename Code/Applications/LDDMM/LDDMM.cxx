@@ -25,6 +25,7 @@
 #include <iostream>
 #include "CALATKCommon.h"
 #include "CStateInitialImageMomentum.h"
+#include "CStateInitialMomentum.h"
 #include "CStateSpatioTemporalVelocityField.h"
 #include "CAlgorithmBase.h"
 #include "CLDDMMGenericRegistration.h"
@@ -43,11 +44,16 @@ int DoIt( int argc, char** argv )
   // we need to be able to support different types of states here
 
   // define the type of state
+
   typedef CALATK::CStateInitialImageMomentum< TFLOAT, VImageDimension > TStateInitialImageMomentum;
   typedef CALATK::CStateSpatioTemporalVelocityField< TFLOAT, VImageDimension > TStateSpatioTemporalVelocityField;
   // define the registration method based on this state
   typedef CALATK::CLDDMMGenericRegistration< TStateInitialImageMomentum > regTypeInitialImageMomentum;
   typedef CALATK::CLDDMMGenericRegistration< TStateSpatioTemporalVelocityField > regTypeSpatioTemporalVelocityField;
+
+  typedef CALATK::CStateInitialMomentum< TFLOAT, VImageDimension > TStateInitialMomentum;
+  // define the registration method based on this state
+  typedef CALATK::CLDDMMGenericRegistration< TStateInitialMomentum > regTypeInitialMomentum;
 
   // general typedefs
   typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension > VectorImageUtilsType;
@@ -61,6 +67,7 @@ int DoIt( int argc, char** argv )
   typename TReg::Pointer plddmm = NULL;
   bool bIsInitialImageMomentumType = false;
   bool bIsSpatioTemporalVelocityType = false;
+  bool bStateContainsInitialImage = false;
 
   // instantiate with the correct type
 
@@ -68,16 +75,31 @@ int DoIt( int argc, char** argv )
   // custom specified, set it
   if ( sLDDMMSolverType.compare( "simplifiedShooting" ) == 0 )
   {
-    plddmm = new regTypeInitialImageMomentum;
-    dynamic_cast< regTypeInitialImageMomentum* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMSimplifiedGeodesicShooting" );
+    plddmm = new regTypeInitialMomentum;
+    dynamic_cast< regTypeInitialMomentum* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMSimplifiedGeodesicShooting" );
     bIsInitialImageMomentumType = true;
   }
   else if ( sLDDMMSolverType.compare( "adjointShooting" ) == 0 )
   {
-    plddmm = new regTypeInitialImageMomentum;
-    dynamic_cast< regTypeInitialImageMomentum* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMAdjointGeodesicShooting" );
+    plddmm = new regTypeInitialMomentum;
+    dynamic_cast< regTypeInitialMomentum* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMAdjointGeodesicShooting" );
     bIsInitialImageMomentumType = true;
   }
+  else if ( sLDDMMSolverType.compare( "simplifiedShootingInitialImage" ) == 0 )
+  {
+    plddmm = new regTypeInitialImageMomentum;
+    dynamic_cast< regTypeInitialImageMomentum* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMSimplifiedGeodesicShootingInitialImage" );
+    bIsInitialImageMomentumType = true;
+    bStateContainsInitialImage = true;
+  }
+  else if ( sLDDMMSolverType.compare( "adjointShootingInitialImage" ) == 0 )
+  {
+    plddmm = new regTypeInitialImageMomentum;
+    dynamic_cast< regTypeInitialImageMomentum* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMAdjointGeodesicShootingInitialImage" );
+    bIsInitialImageMomentumType = true;
+    bStateContainsInitialImage = true;
+  }
+
   else if ( sLDDMMSolverType.compare( "relaxation" ) == 0 )
   {
     plddmm = new regTypeSpatioTemporalVelocityField;
@@ -138,8 +160,16 @@ int DoIt( int argc, char** argv )
     const VectorImageType* ptrI0 = NULL;
     if ( bIsInitialImageMomentumType )
     {
-      ptrI0 = dynamic_cast< regTypeInitialImageMomentum* >( plddmm.GetPointer() )->GetInitialMomentum();
-      VectorImageUtilsType::writeFileITK( ptrI0, initialMomentumImage );
+      if ( bStateContainsInitialImage )
+      {
+        ptrI0 = dynamic_cast< regTypeInitialImageMomentum* >( plddmm.GetPointer() )->GetInitialMomentum();
+        VectorImageUtilsType::writeFileITK( ptrI0, initialMomentumImage );
+      }
+      else
+      {
+        ptrI0 = dynamic_cast< regTypeInitialMomentum* >( plddmm.GetPointer() )->GetInitialMomentum();
+        VectorImageUtilsType::writeFileITK( ptrI0, initialMomentumImage );
+      }
     }
     else if ( bIsSpatioTemporalVelocityType )
     {

@@ -28,6 +28,8 @@
 #include "CLDDMMVelocityFieldWithMomentumRegistration.h"
 #include "VectorImageUtils.h"
 #include "CImageManager.h"
+#include "CStateInitialMomentum.h"
+#include "CStateInitialImageMomentum.h"
 
 #include "CJSONConfiguration.h"
 
@@ -35,23 +37,26 @@ template< class TFLOAT, unsigned int VImageDimension >
 int DoIt( std::string MetamorphosisType, char* sourceImage, char* targetImage, char* resultImage, const std::string & configFileName )
 {
   // define the type of state
-  typedef CALATK::CStateInitialImageMomentum< TFLOAT, VImageDimension > TState;
+  typedef CALATK::CStateInitialImageMomentum< TFLOAT, VImageDimension > TStateInitialImageMomentum;
+  typedef CALATK::CStateInitialMomentum< TFLOAT, VImageDimension >      TStateInitialMomentum;
 
   // define the registration method based on this state
-  typedef CALATK::CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TState > regTypeFull;
-  typedef CALATK::CLDDMMSimplifiedMetamorphosisGeodesicShootingRegistration< TState > regTypeSimplified;
+  typedef CALATK::CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TStateInitialMomentum > regTypeFull;
+  typedef CALATK::CLDDMMSimplifiedMetamorphosisGeodesicShootingRegistration< TStateInitialMomentum > regTypeSimplified;
+
+  typedef CALATK::CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TStateInitialImageMomentum > regTypeFullInitialImage;
+  typedef CALATK::CLDDMMSimplifiedMetamorphosisGeodesicShootingRegistration< TStateInitialImageMomentum > regTypeSimplifiedInitialImage;
 
   // general typedefs
   typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension > VectorImageUtilsType;
   typedef CALATK::CImageManager< TFLOAT, VImageDimension >    ImageManagerType;
   typedef CALATK::LDDMMUtils< TFLOAT, VImageDimension >       LDDMMUtilsType;
+  typedef CALATK::VectorImage< TFLOAT, VImageDimension > VectorImageType;
+  typedef CALATK::VectorField< TFLOAT, VImageDimension > VectorFieldType;
 
-  typedef CALATK::CLDDMMVelocityFieldWithMomentumRegistration< TState > regType;
+  typedef CALATK::CAlgorithmBase< TFLOAT, VImageDimension > TReg;
 
-  typedef typename regType::VectorImageType VectorImageType;
-  typedef typename regType::VectorFieldType VectorFieldType;
-
-  typename regType::Pointer plddmm;
+  typename TReg::Pointer plddmm = NULL;
 
   // set the registration type
   if ( MetamorphosisType.compare( "MetamorphosisFullAdjoint" ) == 0 )
@@ -61,6 +66,14 @@ int DoIt( std::string MetamorphosisType, char* sourceImage, char* targetImage, c
   else if ( MetamorphosisType.compare( "MetamorphosisSimplified" ) == 0 )
     {
     plddmm = new regTypeSimplified;
+    }
+  else if ( MetamorphosisType.compare( "MetamorphosisFullAdjointInitialImage" ) == 0 )
+    {
+    plddmm = new regTypeFullInitialImage;
+    }
+  else if ( MetamorphosisType.compare( "MetamorphosisSimplifiedInitialImage" ) == 0 )
+    {
+    plddmm = new regTypeSimplifiedInitialImage;
     }
   else
     {

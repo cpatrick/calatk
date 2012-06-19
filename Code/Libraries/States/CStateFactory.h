@@ -27,7 +27,7 @@
 #include "CStateScalar.h"
 #include "CStateSpatioTemporalVelocityField.h"
 #include "CStateMultipleStates.h"
-//#include "CStateImageMultipleStates.h"
+#include "CStateImageMultipleStates.h"
 
 namespace CALATK
 {
@@ -55,10 +55,10 @@ public:
   typedef CStateInitialMomentum< FloatType, VImageDimension >                  StateInitialMomentumType;
   typedef CStateInitialImageMomentum< FloatType, VImageDimension >             StateInitialImageMomentumType;
   typedef CStateSpatioTemporalVelocityField< FloatType, VImageDimension >      StateSpatioTemporalVelocityFieldType;
-  typedef CStateMultipleStates< StateInitialMomentumType >                  StateMultipleStatesWithInitialMomentumType;
-  typedef CStateMultipleStates< StateSpatioTemporalVelocityFieldType >      StateMultipleStatesWithSpatioTemporalVelocityFieldType;
-  //typedef CStateImageMultipleStates< StateInitialMomentumType >             StateImageMultipleStatesWithInitialMomentumType;
-  //typedef CStateImageMultipleStates< StateSpatioTemporalVelocityFieldType > StateImageMultipleStatesWithSpatioTemporalVelocityFieldType;
+  typedef CStateMultipleStates< StateInitialMomentumType >                     StateMultipleStatesWithInitialMomentumType;
+  typedef CStateMultipleStates< StateSpatioTemporalVelocityFieldType >         StateMultipleStatesWithSpatioTemporalVelocityFieldType;
+  typedef CStateImageMultipleStates< StateInitialMomentumType >                StateImageMultipleStatesWithInitialMomentumType;
+  typedef CStateImageMultipleStates< StateSpatioTemporalVelocityFieldType >    StateImageMultipleStatesWithSpatioTemporalVelocityFieldType;
 
   enum OptimizationStateType
     {
@@ -68,8 +68,8 @@ public:
     StateSpatioTemporalVelocityField,
     StateMultipleStatesWithInitialMomentum,
     StateMultipleStatesWithSpatioTemporalVelocityField,
-    //StateImageMultipleStatesWithInitialMomentum,
-    //StateImageMultipleStatesWithSpatioTemporalVelocityField
+    StateImageMultipleStatesWithInitialMomentum,
+    StateImageMultipleStatesWithSpatioTemporalVelocityField
     };
 
   CStateFactory();

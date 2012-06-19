@@ -25,6 +25,7 @@
 #include <iostream>
 #include "CALATKCommon.h"
 #include "CStateInitialImageMomentum.h"
+#include "CStateInitialMomentum.h"
 #include "CStateSpatioTemporalVelocityField.h"
 #include "CAlgorithmBase.h"
 #include "CLDDMMGenericRegistration.h"
@@ -40,9 +41,11 @@ int DoIt(std::string LDDMMType, const char* sourceImage, const char* targetImage
 {
   // define the type of state
   typedef CALATK::CStateInitialImageMomentum< TFloat, VImageDimension >          StateInitialImageMomentumType;
+  typedef CALATK::CStateInitialMomentum< TFloat, VImageDimension >               StateInitialMomentumType;
   typedef CALATK::CStateSpatioTemporalVelocityField< TFloat, VImageDimension >   StateSpatioTemporalVelocityFieldType;
   // define the registration method based on this state
   typedef CALATK::CLDDMMGenericRegistration< StateInitialImageMomentumType >        InitialImageMomentumRegistrationType;
+  typedef CALATK::CLDDMMGenericRegistration< StateInitialMomentumType >             InitialMomentumRegistrationType;
   typedef CALATK::CLDDMMGenericRegistration< StateSpatioTemporalVelocityFieldType > SpatioTemporalVelocityFieldRegistrationType;
 
   // general typedefs
@@ -64,14 +67,26 @@ int DoIt(std::string LDDMMType, const char* sourceImage, const char* targetImage
   // custom specified, set it
   if ( LDDMMType.compare( "simplifiedShooting" ) == 0 )
   {
-    plddmm = new InitialImageMomentumRegistrationType;
-    dynamic_cast< InitialImageMomentumRegistrationType* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMSimplifiedGeodesicShooting" );
+    plddmm = new InitialMomentumRegistrationType;
+    dynamic_cast< InitialMomentumRegistrationType* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMSimplifiedGeodesicShooting" );
     bIsInitialImageMomentumType = true;
   }
   else if ( LDDMMType.compare( "adjointShooting" ) == 0 )
   {
+    plddmm = new InitialMomentumRegistrationType;
+    dynamic_cast< InitialMomentumRegistrationType* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMAdjointGeodesicShooting" );
+    bIsInitialImageMomentumType = true;
+  }
+  else if ( LDDMMType.compare( "simplifiedShootingInitialImage" ) == 0 )
+  {
     plddmm = new InitialImageMomentumRegistrationType;
-    dynamic_cast< InitialImageMomentumRegistrationType* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMAdjointGeodesicShooting" );
+    dynamic_cast< InitialImageMomentumRegistrationType* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMSimplifiedGeodesicShootingInitialImage" );
+    bIsInitialImageMomentumType = true;
+  }
+  else if ( LDDMMType.compare( "adjointShootingInitialImage" ) == 0 )
+  {
+    plddmm = new InitialImageMomentumRegistrationType;
+    dynamic_cast< InitialImageMomentumRegistrationType* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMAdjointGeodesicShootingInitialImage" );
     bIsInitialImageMomentumType = true;
   }
   else if ( LDDMMType.compare( "relaxation" ) == 0 )

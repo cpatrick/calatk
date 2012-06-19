@@ -54,6 +54,8 @@ public:
   typedef LDDMMUtils< FloatType, TState::ImageDimension > LDDMMUtilsType;
   typedef VectorImageUtils< FloatType, TState::ImageDimension > VectorImageUtilsType;
 
+  typedef std::vector< typename IndividualObjectiveFunctionType::Pointer > VectorIndividualObjectiveFunctionPointersType;
+
   typedef typename Superclass::CEnergyValues CEnergyValues;
 
   typedef typename Superclass::VectorImageType VectorImageType;
@@ -63,7 +65,6 @@ public:
   virtual ~CAtlasObjectiveFunction();
 
   CEnergyValues GetCurrentEnergy();
-  void ComputeGradient();
 
   /**
    * @brief Sets one of the objective functions for the registration between an image and the atlas
@@ -115,18 +116,6 @@ public:
    */
   unsigned int GetCurrentActiveObjectiveFunctionOutput();
 
-  /**
-   * @brief Assumes that the atlas image is the source image and updates it by a weighted average of the target images pulled back to the source
-   *
-   */
-  void UpdateAtlasImageAsAverageOfTargetImages();
-
-  /**
-   * @brief Assumes that the atlas image is the target image and updates it by flowing the source images forward and averaging them.
-   *
-   */
-  void UpdateAtlasImageAsAverageOfSourceImages();
-
   // Map and image output for the individual objective functions (selection by CurrentActiveObjectiveFunctionOutput)
   void GetMap( VectorFieldType* ptrMap, FloatType dTime );
   void GetMapFromTo( VectorFieldType* ptrMap, FloatType dTimeFrom, FloatType dTimeTo );
@@ -135,12 +124,6 @@ public:
   void GetTargetImage( VectorImageType* ptrIm );
   void GetTargetImage( VectorImageType* ptrIm, FloatType dTime );
 
-  // TODO: needs to be implemented
-  const VectorImageType* GetPointerToInitialImage() const;
-  void GetInitialImage( VectorImageType* ptrIm );
-
-  void PreSubIterationSolve();
-
   SetMacro( AtlasIsSourceImage, bool );
   GetMacro( AtlasIsSourceImage, bool );
 
@@ -148,16 +131,7 @@ public:
 
 protected:
 
-  void InitializeState();
-  void InitializeState( TState * ptrState );
-
-private:
-  // intentionally not implemented
-  CAtlasObjectiveFunction( const CAtlasObjectiveFunction & );
-  CAtlasObjectiveFunction& operator=( const CAtlasObjectiveFunction & );
-
   std::vector< FloatType > m_Weights; ///< Contains the weights for each subject to atlas registration
-  typedef std::vector< typename IndividualObjectiveFunctionType::Pointer > VectorIndividualObjectiveFunctionPointersType;
 
   VectorIndividualObjectiveFunctionPointersType  m_VectorIndividualObjectiveFunctionPtrs;
 
@@ -167,6 +141,11 @@ private:
 
   const bool DefaultAtlasIsSourceImage;
   bool m_ExternallySetAtlasIsSourceImage;
+
+private:
+  // intentionally not implemented
+  CAtlasObjectiveFunction( const CAtlasObjectiveFunction & );
+  CAtlasObjectiveFunction& operator=( const CAtlasObjectiveFunction & );
 };
 
 #include "CAtlasObjectiveFunction.txx"

@@ -52,12 +52,17 @@ CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::CLDDMMAdjointGeodesicS
     // tstLamI, tstLamP: just for testing, if EXTREME_DEBUG is defined it will store the full timecoarse of lamI and lamP
     // this is very memory intensive for 3D, hence disabled by default.
 
+    // convenience pointer to the initial image (from the image manager)
+    ptrI0 = NULL;
+
 }
 
 template< class TState >
 void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::DeleteData()
 {
   this->m_ptrKernel->DeallocateMemory();
+
+  ptrI0 = NULL;
 
   m_vecMeasurementTimepoints.clear();
   m_vecTimeDiscretization.clear();
@@ -113,9 +118,18 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::CreateGradientAndA
     // obtain image from which to graft the image information for the data structures
     const VectorImageType* graftImage = this->m_ptrImageManager->GetGraftImagePointer( this->GetActiveSubjectId() );
 
+    std::vector< TimeSeriesDataPointType > timeseries;
+    this->m_ptrImageManager->GetTimeSeriesWithSubjectIndex( timeseries, this->GetActiveSubjectId() );
+    // get information from the first image to figure out the dimensions and determine the source and target image
+    ptrI0 = timeseries[0].GetImage();
+
     // create the gradient
     this->m_ptrGradient = new TState( graftImage );
-    this->m_ptrGradient->GetPointerToInitialImage()->SetToConstant( 0 );
+
+    if ( this->m_ptrGradient->StateContainsInitialImage() )
+    {
+      this->m_ptrGradient->GetPointerToInitialImage()->SetToConstant( 0 );
+    }
     this->m_ptrGradient->GetPointerToInitialMomentum()->SetToConstant( 0 );
 
     // allocate all the auxiliary data
@@ -249,8 +263,15 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::GetMomentum( Vect
 template < class TState >
 void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::GetSourceImage( VectorImageType* ptrIm )
 {
-  VectorImageType* ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
-  ptrIm->Copy( ptrInitialImage );
+  if ( this->m_ptrState->StateContainsInitialImage() )
+  {
+    VectorImageType* ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
+    ptrIm->Copy( ptrInitialImage );
+  }
+  else
+  {
+    ptrIm->Copy( ptrI0 );
+  }
 }
 
 template < class TState >
@@ -259,7 +280,15 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::GetSourceImage( V
   // TODO: account for appearance changes, based on closeby images
   GetMap( m_ptrMapTmp, dTime );
   // now compute the image by interpolation
-  VectorImageType* ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
+  VectorImageType* ptrInitialImage = NULL;
+  if ( this->m_ptrState->StateContainsInitialImage() )
+  {
+    ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
+  }
+  else
+  {
+    ptrInitialImage = ptrI0;
+  }
   LDDMMUtils< T, TState::ImageDimension >::applyMap( m_ptrMapTmp, ptrInitialImage, ptrIm );
 }
 
@@ -383,7 +412,15 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ComputeImageMomen
     *
     */
 
-  VectorImageType* ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
+  VectorImageType* ptrInitialImage = NULL;
+  if ( this->m_ptrState->StateContainsInitialImage() )
+  {
+    ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
+  }
+  else
+  {
+    ptrInitialImage = ptrI0;
+  }
   VectorImageType* ptrInitialMomentum = this->m_ptrState->GetPointerToInitialMomentum();
 
   typedef LDDMMUtils< T, TState::ImageDimension > LDDMMUtilsType;
@@ -421,7 +458,15 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ComputeAdjointsBa
     *
     */
 
-    VectorImageType* ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
+    VectorImageType* ptrInitialImage = NULL;
+    if ( this->m_ptrState->StateContainsInitialImage() )
+    {
+      ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
+    }
+    else
+    {
+      ptrInitialImage = ptrI0;
+    }
 
     // map all the temporary variables to variables with meaningful names for this method
     typename VectorFieldType::Pointer ptrCurrentVelocityField = m_ptrTmpField;
@@ -569,23 +614,39 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::ComputeGradient()
       \f]
       */
 
-    VectorImageType* ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
+    VectorImageType* ptrInitialImage = NULL;
+    if ( this->m_ptrState->StateContainsInitialImage() )
+    {
+      ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
+    }
+    else
+    {
+      ptrInitialImage = ptrI0;
+    }
     VectorImageType* ptrInitialMomentum = this->m_ptrState->GetPointerToInitialMomentum();
 
-    VectorImageType* ptrI0Gradient = this->m_ptrGradient->GetPointerToInitialImage();
+    VectorImageType* ptrI0Gradient = NULL;
+    if ( this->m_ptrGradient->StateContainsInitialImage() )
+    {
+      ptrI0Gradient = this->m_ptrGradient->GetPointerToInitialImage();
+    }
+
     VectorImageType* ptrP0Gradient = this->m_ptrGradient->GetPointerToInitialMomentum();
 
     ptrP0Gradient->Copy( m_ptrCurrentLambdaP );
     ptrP0Gradient->MultiplyByConstant(-1);
 
-    if ( this->m_EstimateInitialImage )
+    if ( this->m_ptrGradient->StateContainsInitialImage() )
     {
-      ptrI0Gradient->Copy( m_ptrCurrentLambdaI );
-      ptrI0Gradient->MultiplyByConstant(-1);
-    }
-    else
-    {
-      ptrI0Gradient->SetToConstant( 0.0 );
+      if ( this->m_EstimateInitialImage )
+      {
+        ptrI0Gradient->Copy( m_ptrCurrentLambdaI );
+        ptrI0Gradient->MultiplyByConstant(-1);
+      }
+      else
+      {
+        ptrI0Gradient->SetToConstant( 0.0 );
+      }
     }
 
     unsigned int dim = ptrInitialImage->GetDimension();
@@ -613,7 +674,7 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::ComputeGradient()
 
       // only compute the gradient if we want to update the initial image
 
-      if ( this->m_EstimateInitialImage )
+      if ( this->m_ptrGradient->StateContainsInitialImage() && this->m_EstimateInitialImage )
       {
         // 2) Second, compute the component for the gradient with respect to the d-th dimension of I
 
@@ -640,14 +701,22 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ComputeInitialUns
   // \f$ \nabla E = (\sum_i \lambda_i \nabla I_0 ) \f$
   // where the \lambda_i are the respective adjoints (based on the chosen metric)
 
-  VectorImageType* ptrI0 = this->m_ptrState->GetPointerToInitialImage();
-  unsigned int dim = ptrI0->GetDimension();
+  VectorImageType* ptrCurrentI0 = NULL;
+  if ( this->m_ptrState->StateContainsInitialImage() )
+  {
+    ptrCurrentI0 = this->m_ptrState->GetPointerToInitialImage();
+  }
+  else
+  {
+    ptrCurrentI0 = ptrI0;
+  }
+  unsigned int dim = ptrCurrentI0->GetDimension();
 
   // compute the initial adjoint, assuming that there is only a zero velocity field
-  typename VectorImageType::Pointer ptrLambda0 = new VectorImageType( ptrI0 );
+  typename VectorImageType::Pointer ptrLambda0 = new VectorImageType( ptrCurrentI0 );
   ptrLambda0->SetToConstant( 0.0 );
 
-  typename VectorImageType::Pointer ptrCurrentAdjointDifference = new VectorImageType( ptrI0 );
+  typename VectorImageType::Pointer ptrCurrentAdjointDifference = new VectorImageType( ptrCurrentI0 );
 
   for ( unsigned int iI = 0; iI< this->m_vecTimeDiscretization.size(); ++iI )
     {
@@ -658,7 +727,7 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ComputeInitialUns
       unsigned int uiNrOfMeasuredImagesAtTimePoint = this->m_vecTimeDiscretization[ iI ].vecMeasurementImages.size();
       for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM )
         {
-        this->m_ptrMetric->GetAdjointMatchingDifferenceImage( ptrCurrentAdjointDifference, ptrI0 , this->m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ] );
+        this->m_ptrMetric->GetAdjointMatchingDifferenceImage( ptrCurrentAdjointDifference, ptrCurrentI0 , this->m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ] );
         ptrCurrentAdjointDifference->MultiplyByConstant( m_vecTimeDiscretization[ iI ].vecWeights[ iM ] );
         ptrLambda0->AddCellwise( ptrCurrentAdjointDifference );
         }
@@ -671,7 +740,7 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ComputeInitialUns
 
   for ( unsigned int iD = 0; iD<dim; ++iD )
     {
-    VectorFieldUtils< T, TState::ImageDimension >::computeCentralGradient( ptrI0, iD, m_ptrTmpField );
+    VectorFieldUtils< T, TState::ImageDimension >::computeCentralGradient( ptrCurrentI0, iD, m_ptrTmpField );
     VectorImageUtils< T, TState::ImageDimension >::multiplyVectorByImageDimensionInPlace( ptrLambda0, iD, m_ptrTmpField );
     ptrCurrentGradient->AddCellwise( m_ptrTmpField );
     }
@@ -693,7 +762,15 @@ CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::GetCurrentEnergy()
   // computing \f$ 0.5\langle p(t_0) \nabla I(t_0) +  K*( p(t_0)\nabla I(t_0) ) \rangle \f$
   // this is done dimension for dimension (i.e., if we have a multidimensional image, we have as many of these terms as we have dimensions)
 
-  VectorImageType* ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
+  VectorImageType* ptrInitialImage = NULL;
+  if ( this->m_ptrState->StateContainsInitialImage() )
+  {
+    ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
+  }
+  else
+  {
+    ptrInitialImage = ptrI0;
+  }
   VectorImageType* ptrInitialMomentum = this->m_ptrState->GetPointerToInitialMomentum();
 
   unsigned int dim = ptrInitialImage->GetDimension();
@@ -773,14 +850,18 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::OutputStateInform
   // write out the kernel
   VectorImageUtils< T, TState::ImageDimension >::writeFileITK( this->m_ptrKernel->GetKernel(), outputPrefix + "Kernel" + CreateIntegerString( 0, 3 ) + suffix );
 
-  VectorImageType* ptrI0Gradient = this->m_ptrGradient->GetPointerToInitialImage();
   VectorImageType* ptrP0Gradient = this->m_ptrGradient->GetPointerToInitialMomentum();
 
   typedef VectorFieldUtils< T, TState::ImageDimension > VectorFieldUtilsType;
   typedef VectorImageUtils< T, TState::ImageDimension > VectorImageUtilsType;
   // write out the currently stored gradient
-  VectorImageUtilsType::writeFileITK( ptrI0Gradient, outputPrefix + "I0Gradient" + CreateIntegerString( 0, 3 ) + suffix );
   VectorImageUtilsType::writeFileITK( ptrP0Gradient, outputPrefix + "P0Gradient" + CreateIntegerString( 0, 3 ) + suffix );
+
+  if ( this->m_ptrGradient->StateContainsInitialImage() )
+  {
+    VectorImageType* ptrI0Gradient = this->m_ptrGradient->GetPointerToInitialImage();
+    VectorImageUtilsType::writeFileITK( ptrI0Gradient, outputPrefix + "I0Gradient" + CreateIntegerString( 0, 3 ) + suffix );
+  }
 
   for ( unsigned int iI = 0; iI < this->m_vecTimeDiscretization.size()-1; ++iI )
     {

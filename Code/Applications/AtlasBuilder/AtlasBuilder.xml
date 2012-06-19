@@ -51,6 +51,13 @@
             <description>Selects the desired LDDMM solver (simplifiedShooting/adjointShooting/relaxation). The relaxation solver performs the optimization over the full spatio-temporal velocity field. This is the algorithm by Beg. The simplified shooting method and the adjoint shooting method perform the optimization over the initial image and the initial momentum. The implementations are based on a modification of the shooting algorithm by Ashburner (simplified shooting) and the adjoint shooting method/geodesic regression formulation by Vialard/Niethammer.</description>
         </string-enumeration>
 
+        <boolean>
+          <name>bSubiterationUpdate</name>
+          <longflag>--subiterationUpdate</longflag>
+          <default>false</default>
+          <description>If set, will use subiteration update otherwise the full gradient to compute the atlas.</description>
+        </boolean>
+
   </parameters>
 
   <parameters>

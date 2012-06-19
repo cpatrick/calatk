@@ -129,6 +129,19 @@
             <description>Sets the verbosity level for the algorithms that support multiple levels of output. Always (0), normal (1), verbose (2), very_verbose(3), most_verbose (4).</description>
         </integer-enumeration>
 
+        <string-enumeration>
+            <name>sLDDMMSolverType</name>
+            <label>LDDMM Solver Type</label>
+            <flag>s</flag>
+            <longflag>--solver</longflag>
+            <default>simplifiedShooting</default>
+            <element>simplifiedShooting</element>
+            <element>simplifiedShootingInitialImage</element>
+            <element>adjointShooting</element>
+            <element>adjointShootingInitialImage</element>
+            <description>Selects the desired LDDMM solver (simplifiedShooting/simplifiedShootingInitialImage/adjointShooting/adjointShootingInitialImage).</description>
+        </string-enumeration>
+
         <boolean>
           <name>bUseFullAdjoint</name>
           <longflag>--useFullAdjoint</longflag>

@@ -27,7 +27,8 @@ namespace CALATK
 /**
   * Implements the state for MultipleStates building.
   * This state is simply a collection of individual states of the individual registrations
-  * between an image and the MultipleStates image. Templated over the state of these registrations.
+  * plus an image (which can be an atlas image for atlas-building).
+  * Templated over the state of these registrations.
   */
 template < class TIndividualState >
 class CStateImageMultipleStates : public CStateImageDomain< typename TIndividualState::FloatType, TIndividualState::ImageDimension >
@@ -43,7 +44,7 @@ public:
   typedef CStateImageMultipleStates                                Self;
   typedef itk::SmartPointer< Self >                                Pointer;
   typedef itk::SmartPointer< const Self >                          ConstPointer;
-  typedef CStateImageDomain< FloatType, ImageDimension >    Superclass;
+  typedef CStateImageDomain< FloatType, ImageDimension >           Superclass;
 
   typedef typename Superclass::VectorImageType                     VectorImageType;
 
@@ -63,7 +64,7 @@ public:
     * copy constructor to initialize from a vector of pointers to states
     * assumes memory will be managed externally, i.e., only a shallow copy will be performed
     */
-  CStateImageMultipleStates( const IndividualStatesCollectionType & individualStates );
+  CStateImageMultipleStates( VectorImageType* commonImage, const IndividualStatesCollectionType & individualStates );
 
   /**
    * Destructor, this class will involve dynamic memory allocation, so needs a destructor
@@ -95,13 +96,20 @@ public:
   CStateImageMultipleStates operator*(const FloatType & p ) const;
 
   /**
-   * @brief Returns the state pointer for one of the underlying objectuve functions of the MultipleStates builder
+   * @brief Returns the state pointer for one of the underlying objective functions of the MultipleStates builder
    *
    * @param idx - nr of the state to be returned, if it does not exist will return NULL
    * @return TState * - returned state pointer
    */
   IndividualStateType* GetIndividualStatePointer( unsigned int idx );
   
+  /**
+   * @brief Returns the image that is part of the state
+   *
+   * @return VectorImageType
+   */
+  VectorImageType* GetImageState();
+
   /**
    * @brief Computes the square norm of the state. To be used for example in a line search method
    * to establish sufficient descrease of an objective function
@@ -118,6 +126,7 @@ protected:
 
   // holds the states of the individual registration algorithms
   IndividualStatesCollectionType  m_IndividualStatesCollection;
+  typename VectorImageType::Pointer m_Image;
 
 private:
 

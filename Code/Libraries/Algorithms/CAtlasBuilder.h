@@ -21,6 +21,8 @@
 #define C_ATLAS_BUILDER_H
 
 #include "CAtlasObjectiveFunction.h"
+#include "CAtlasSubiterationUpdateObjectiveFunction.h"
+#include "CAtlasFullGradientObjectiveFunction.h"
 #include "CAlgorithm.h"
 #include "CSolverMultiScale.h"
 #include "CStationaryEvolver.h"
@@ -68,14 +70,14 @@ public:
 
   typedef KernelUtils< FloatType, TState::ImageDimension > KernelUtilsType;
 
-  typedef CAtlasObjectiveFunction< TState >  ObjectiveFunctionType;
-  typedef typename ObjectiveFunctionType::IndividualObjectiveFunctionType IndividualObjectiveFunctionType;
-  typedef typename Superclass::EvolverType                                EvolverType;
-  typedef typename Superclass::OneStepEvolverType                         OneStepEvolverType;
-  typedef typename Superclass::KernelType                                 KernelType;
-  typedef typename Superclass::MetricType                                 MetricType;
-  typedef typename Superclass::ImageManagerType                           ImageManagerType;
-  typedef typename ImageManagerType::TimeSeriesDataPointType              TimeSeriesDataPointType;
+  typedef CAtlasObjectiveFunction< TState >  AtlasObjectiveFunctionType;
+  typedef typename AtlasObjectiveFunctionType::IndividualObjectiveFunctionType IndividualObjectiveFunctionType;
+  typedef typename Superclass::EvolverType                                     EvolverType;
+  typedef typename Superclass::OneStepEvolverType                              OneStepEvolverType;
+  typedef typename Superclass::KernelType                                      KernelType;
+  typedef typename Superclass::MetricType                                      MetricType;
+  typedef typename Superclass::ImageManagerType                                ImageManagerType;
+  typedef typename ImageManagerType::TimeSeriesDataPointType                   TimeSeriesDataPointType;
 
   typedef VectorImageUtils< FloatType, TState::ImageDimension > VectorImageUtilsType;
 
@@ -84,7 +86,7 @@ public:
   typedef CVelocityFieldObjectiveFunctionWithMomentum< IndividualStateType > LDDMMVelocityFieldObjectiveFunctionWithMomentumType;
 
   CAtlasBuilder();
-  ~CAtlasBuilder();
+  virtual ~CAtlasBuilder();
 
   // need to overwrite all the default implementations for setting solvers, evolvers, metrics, ...
   // as we will have sets of those (we could also point to the same, but this would disallow multi-threading)
@@ -141,6 +143,8 @@ public:
   virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
 protected:
+
+  virtual AtlasObjectiveFunctionType* CreateAtlasObjectiveFunction() = 0;
 
   /** Totally overwrite the default handling since the atlas-builder works
     * fundamentally different from the image-to-image registration algorithms

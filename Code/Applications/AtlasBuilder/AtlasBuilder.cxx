@@ -25,9 +25,12 @@
 
 #include <iostream>
 #include "CALATKCommon.h"
-#include "CAtlasBuilder.h"
+#include "CAtlasBuilderFullGradient.h"
+#include "CAtlasBuilderSubiterationUpdate.h"
 #include "CStateInitialImageMomentum.h"
+#include "CStateInitialMomentum.h"
 #include "CStateMultipleStates.h"
+#include "CStateImageMultipleStates.h"
 #include "VectorImageUtils.h"
 #include "LDDMMUtils.h"
 
@@ -44,22 +47,36 @@ int DoIt( int argc, char** argv )
   // TODO: for now we just support shooting for the atlas-builder, but this should be generalized in a future implementation
 
   // define the individual state
-  typedef CALATK::CStateInitialImageMomentum< TFLOAT, VImageDimension > TIndividualState;
+  typedef CALATK::CStateInitialMomentum< TFLOAT, VImageDimension > TIndividualState;
   // define the atlas state
-  typedef CALATK::CStateMultipleStates< TIndividualState > TState;
+  typedef CALATK::CStateMultipleStates< TIndividualState > TStateSubiterationUpdate;
+  typedef CALATK::CStateImageMultipleStates< TIndividualState > TStateFullGradient;
 
   // define the atlas-building method based on this state
-  typedef CALATK::CAtlasBuilder< TState > regType;
+  typedef CALATK::CAtlasBuilderFullGradient< TStateFullGradient > regTypeFullGradient;
+  typedef CALATK::CAtlasBuilderSubiterationUpdate< TStateSubiterationUpdate > regTypeSubiterationUpdate;
 
   typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension > VectorImageUtilsType;
   typedef CALATK::CImageManager< TFLOAT, VImageDimension > ImageManagerType;
   typedef CALATK::LDDMMUtils< TFLOAT, VImageDimension > LDDMMUtilsType;
-  typedef typename regType::VectorImageType VectorImageType;
-  typedef typename regType::VectorFieldType VectorFieldType;
+  typedef typename regTypeFullGradient::VectorImageType VectorImageType;
+  typedef typename regTypeFullGradient::VectorFieldType VectorFieldType;
 
-  typename regType::Pointer atlasBuilder = new regType;
+  typename ImageManagerType::Pointer ptrImageManager;
 
-  ImageManagerType* ptrImageManager = dynamic_cast< ImageManagerType* >( atlasBuilder->GetImageManagerPointer() );
+  typename regTypeFullGradient::Pointer        atlasBuilderFullGradient;
+  typename regTypeSubiterationUpdate::Pointer  atlasBuilderSubiterationUpdate;
+
+  if ( bSubiterationUpdate )
+  {
+    atlasBuilderSubiterationUpdate = new regTypeSubiterationUpdate;
+    ptrImageManager = dynamic_cast< ImageManagerType* >( atlasBuilderSubiterationUpdate->GetImageManagerPointer() );
+  }
+  else
+  {
+    atlasBuilderFullGradient = new regTypeFullGradient;
+    ptrImageManager = dynamic_cast< ImageManagerType* >( atlasBuilderFullGradient->GetImageManagerPointer() );
+  }
 
   for ( unsigned int iI=0; iI < sourceImages.size(); ++iI )
     {
@@ -76,11 +93,25 @@ int DoIt( int argc, char** argv )
 
   if ( bAtlasImageIsTargetImage )
   {
-    atlasBuilder->SetAtlasIsSourceImage( false );
+    if ( bSubiterationUpdate )
+    {
+      atlasBuilderSubiterationUpdate->SetAtlasIsSourceImage( false );
+    }
+    else
+    {
+      atlasBuilderFullGradient->SetAtlasIsSourceImage( false );
+    }
   }
   else
   {
-    atlasBuilder->SetAtlasIsSourceImage( true );
+    if ( bSubiterationUpdate )
+    {
+      atlasBuilderSubiterationUpdate->SetAtlasIsSourceImage( false );
+    }
+    else
+    {
+      atlasBuilderFullGradient->SetAtlasIsSourceImage( true );
+    }
   }
 
   CALATK::CJSONConfiguration::Pointer combinedConfiguration = new CALATK::CJSONConfiguration;
@@ -90,11 +121,22 @@ int DoIt( int argc, char** argv )
   }
   CALATK::CJSONConfiguration::Pointer cleanedConfiguration = new CALATK::CJSONConfiguration;
 
-  atlasBuilder->SetAutoConfiguration( combinedConfiguration, cleanedConfiguration );
-  atlasBuilder->SetAllowHelpComments( bCreateJSONHelp );
-  atlasBuilder->SetMaxDesiredLogLevel( logLevel );
+  if ( bSubiterationUpdate )
+  {
+    atlasBuilderSubiterationUpdate->SetAutoConfiguration( combinedConfiguration, cleanedConfiguration );
+    atlasBuilderSubiterationUpdate->SetAllowHelpComments( bCreateJSONHelp );
+    atlasBuilderSubiterationUpdate->SetMaxDesiredLogLevel( logLevel );
 
-  atlasBuilder->Solve();
+    atlasBuilderSubiterationUpdate->Solve();
+  }
+  else
+  {
+    atlasBuilderFullGradient->SetAutoConfiguration( combinedConfiguration, cleanedConfiguration );
+    atlasBuilderFullGradient->SetAllowHelpComments( bCreateJSONHelp );
+    atlasBuilderFullGradient->SetMaxDesiredLogLevel( logLevel );
+
+    atlasBuilderFullGradient->Solve();
+  }
 
   // write out the resulting JSON file if desired
   if ( configFileOut.compare("None") != 0 )
@@ -113,7 +155,16 @@ int DoIt( int argc, char** argv )
   if ( atlasImage.compare("None") != 0 )
   {
     const VectorImageType* ptrAtlasImage = NULL;
-    ptrAtlasImage = atlasBuilder->GetAtlasImage();
+
+    if ( bSubiterationUpdate )
+    {
+      ptrAtlasImage = atlasBuilderSubiterationUpdate->GetAtlasImage();
+    }
+    else
+    {
+      ptrAtlasImage = atlasBuilderFullGradient->GetAtlasImage();
+    }
+
     VectorImageUtilsType::writeFileITK( ptrAtlasImage, atlasImage );
   }
 

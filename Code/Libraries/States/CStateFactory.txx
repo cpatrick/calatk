@@ -65,12 +65,12 @@ CStateFactory< TFloat, VImageDimension >::CreateNewState( OptimizationStateType 
   case StateMultipleStatesWithSpatioTemporalVelocityField:
     state = new StateMultipleStatesWithSpatioTemporalVelocityFieldType();
     break;
-/*  case StateImageMultipleStatesWithInitialMomentum:
+  case StateImageMultipleStatesWithInitialMomentum:
     state = new StateImageMultipleStatesWithInitialMomentumType();
     break;
   case StateImageMultipleStatesWithSpatioTemporalVelocityField:
     state = new StateImageMultipleStatesWithSpatioTemporalVelocityFieldType();
-    break;*/
+    break;
   default:
     throw std::logic_error( "CStateFactory: unknown state requested." );
     }
@@ -120,14 +120,14 @@ CStateFactory< TFloat, VImageDimension >::GetStateTypeFromString( const std::str
     {
     return StateMultipleStatesWithSpatioTemporalVelocityField;
     }
-  /*else if ( stateNameLowerCase == "stateimagemultiplestateswithinitialmomentum" )
+  else if ( stateNameLowerCase == "stateimagemultiplestateswithinitialmomentum" )
     {
     return StateImageMultipleStatesWithInitialMomentum;
     }
   else if ( stateNameLowerCase == "stateimagemultiplestateswithspatiotemporalvelocityfield" )
     {
     return StateImageMultipleStatesWithSpatioTemporalVelocityField;
-    }*/
+    }
   else
     {
     std::ostringstream ostrm;

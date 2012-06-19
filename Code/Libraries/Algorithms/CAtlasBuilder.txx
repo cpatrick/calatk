@@ -110,7 +110,6 @@ void CAtlasBuilder< TState >::SetAutoConfiguration( CJSONConfiguration * combine
 
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, AtlasIsSourceImage,
                      "if true the atlas is used as the source image for the registrations, otherwise it will be the target image" );
-
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, Kernel,
                      "kernel: GaussianKernel / MultiGaussianKernel / HelmholtzKernel " );
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, Metric,
@@ -494,8 +493,6 @@ unsigned int CAtlasBuilder< TState >::GetNumberOfIndividualRegistrations() const
 // need to overwrite all the SetDefault methods from CAlgorithmBase,
 // because we are dealing with multiple kernels, metric, ... here
 
-
-
 // this overwrites the default implementation, because we are dealing with a set of objective functions here
 template < class TState >
 void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
@@ -524,7 +521,9 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
     }
 
   typedef CAtlasObjectiveFunction< TState > CAtlasType;
-  CAtlasType* pAtlas = new CAtlasType;
+
+  typename CAtlasType::Pointer pAtlas = CreateAtlasObjectiveFunction();
+
   this->m_ptrObjectiveFunction = pAtlas;
 
   // Now initialize the individual objective functions

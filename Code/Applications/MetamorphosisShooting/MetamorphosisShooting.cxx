@@ -29,6 +29,8 @@
 #include "CLDDMMVelocityFieldWithMomentumRegistration.h"
 #include "VectorImageUtils.h"
 #include "CImageManager.h"
+#include "CStateInitialMomentum.h"
+#include "CStateInitialImageMomentum.h"
 
 #include "CJSONConfiguration.h"
 
@@ -39,30 +41,55 @@ int DoIt( int argc, char** argv )
 {
   PARSE_ARGS;
   // define the type of state
-  typedef CALATK::CStateInitialImageMomentum< TFLOAT, VImageDimension > TState;
+  typedef CALATK::CStateInitialImageMomentum< TFLOAT, VImageDimension > TStateInitialImageMomentum;
+  typedef CALATK::CStateInitialMomentum< TFLOAT, VImageDimension > TStateInitialMomentum;
   // define the registration method based on this state
 
-  typedef CALATK::CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TState > regTypeFull;
-  typedef CALATK::CLDDMMSimplifiedMetamorphosisGeodesicShootingRegistration< TState > regTypeSimplified;
+  typedef CALATK::CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TStateInitialMomentum > regTypeFull;
+  typedef CALATK::CLDDMMSimplifiedMetamorphosisGeodesicShootingRegistration< TStateInitialMomentum > regTypeSimplified;
+
+  typedef CALATK::CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TStateInitialImageMomentum > regTypeFullInitialImage;
+  typedef CALATK::CLDDMMSimplifiedMetamorphosisGeodesicShootingRegistration< TStateInitialImageMomentum > regTypeSimplifiedInitialImage;
 
   typedef CALATK::VectorImageUtils< TFLOAT, VImageDimension > VectorImageUtilsType;
   typedef CALATK::CImageManager< TFLOAT, VImageDimension > ImageManagerType;
   typedef CALATK::LDDMMUtils< TFLOAT, VImageDimension > LDDMMUtilsType;
+  typedef CALATK::VectorImage< TFLOAT, VImageDimension > VectorImageType;
+  typedef CALATK::VectorField< TFLOAT, VImageDimension > VectorFieldType;
 
-  typedef CALATK::CLDDMMVelocityFieldWithMomentumRegistration< TState > regType;
+  typedef CALATK::CAlgorithmBase< TFLOAT, VImageDimension > TReg;
 
-  typedef typename regType::VectorImageType VectorImageType;
-  typedef typename regType::VectorFieldType VectorFieldType;
+  typename TReg::Pointer plddmm = NULL;
 
-  typename regType::Pointer plddmm;
+  bool bStateContainsInitialImage = false;
+  bool bIsSimplified = false;
 
-  if ( bUseFullAdjoint )
+  // set the registration type (as specified through the command line)
+  // custom specified, set it
+  if ( sLDDMMSolverType.compare( "simplifiedShooting" ) == 0 )
+  {
+    plddmm = new regTypeSimplified;
+    bIsSimplified = true;
+  }
+  else if ( sLDDMMSolverType.compare( "adjointShooting" ) == 0 )
   {
     plddmm = new regTypeFull;
   }
+  if ( sLDDMMSolverType.compare( "simplifiedShootingInitialImage" ) == 0 )
+  {
+    plddmm = new regTypeSimplifiedInitialImage;
+    bStateContainsInitialImage = true;
+    bIsSimplified = true;
+  }
+  else if ( sLDDMMSolverType.compare( "adjointShootingInitialImage" ) == 0 )
+  {
+    plddmm = new regTypeFullInitialImage;
+    bStateContainsInitialImage = true;
+  }
   else
   {
-    plddmm = new regTypeSimplified;
+    throw std::runtime_error( "Unknown solver type." );
+    return EXIT_FAILURE;
   }
 
   ImageManagerType* ptrImageManager = dynamic_cast<ImageManagerType*>( plddmm->GetImageManagerPointer() );
@@ -108,8 +135,32 @@ int DoIt( int argc, char** argv )
 
   if ( initialMomentumImage.compare("None") !=0 )
   {
-    const VectorImageType* ptrI0 = plddmm->GetInitialMomentum();
-    VectorImageUtilsType::writeFileITK( ptrI0, initialMomentumImage );
+    if ( bStateContainsInitialImage )
+    {
+      if ( bIsSimplified )
+      {
+        const VectorImageType* ptrI0 = dynamic_cast< regTypeSimplifiedInitialImage* >( plddmm.GetPointer() )->GetInitialMomentum();
+        VectorImageUtilsType::writeFileITK( ptrI0, initialMomentumImage );
+      }
+      else
+      {
+        const VectorImageType* ptrI0 = dynamic_cast< regTypeFullInitialImage* >( plddmm.GetPointer() )->GetInitialMomentum();
+        VectorImageUtilsType::writeFileITK( ptrI0, initialMomentumImage );
+      }
+    }
+    else
+    {
+      if ( bIsSimplified )
+      {
+        const VectorImageType* ptrI0 = dynamic_cast< regTypeSimplified* >( plddmm.GetPointer() )->GetInitialMomentum();
+        VectorImageUtilsType::writeFileITK( ptrI0, initialMomentumImage );
+      }
+      else
+      {
+        const VectorImageType* ptrI0 = dynamic_cast< regTypeFull* >( plddmm.GetPointer() )->GetInitialMomentum();
+        VectorImageUtilsType::writeFileITK( ptrI0, initialMomentumImage );
+      }
+    }
   }
 
   return EXIT_SUCCESS;

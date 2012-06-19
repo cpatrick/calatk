@@ -30,8 +30,11 @@
 #include "CLDDMMSimplifiedGeodesicShootingObjectiveFunction.h"
 #include "CLDDMMGrowthModelObjectiveFunction.h"
 #include "CLDDMMGeometricMetamorphosisObjectiveFunction.h"
+#include "CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction.h"
+#include "CMetamorphosisAdjointGeodesicShootingObjectiveFunction.h"
 
 #include "CStateInitialImageMomentum.h"
+#include "CStateInitialMomentum.h"
 #include "CStateSpatioTemporalVelocityField.h"
 
 namespace CALATK
@@ -56,14 +59,21 @@ public:
   typedef CObjectiveFunctionBase< T, VImageDimension >             ObjectiveFunctionBaseType;
 
   typedef CStateInitialImageMomentum< T, VImageDimension >         InitialImageMomentumStateType;
+  typedef CStateInitialMomentum< T, VImageDimension >              InitialMomentumStateType;
   typedef CStateSpatioTemporalVelocityField< T, VImageDimension >  SpatioTemporalVelocityFieldStateType;
 
   enum NumericObjectiveFunctionType
     {
     LDDMMAdjointGeodesicShooting,
+    LDDMMAdjointGeodesicShootingInitialImage,
     LDDMMSimplifiedGeodesicShooting,
+    LDDMMSimplifiedGeodesicShootingInitialImage,
     LDDMMGrowthModel,
-    LDDMMGeometricMetamorphosis
+    LDDMMGeometricMetamorphosis,
+    LDDMMMetamorphosisAdjointGeodesicShooting,
+    LDDMMMetamorphosisAdjointGeodesicShootingInitialImage,
+    LDDMMSimplifiedMetamorphosisGeodesicShooting,
+    LDDMMSimplifiedMetamorphosisGeodesicShootingInitialImage
     };
 
   CObjectiveFunctionFactory();

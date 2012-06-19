@@ -149,7 +149,10 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState>::Cr
 
   // create the gradient
   this->m_ptrGradient = new TState( graftImage );
-  this->m_ptrGradient->GetPointerToInitialImage()->SetToConstant( 0 );
+  if ( this->m_ptrGradient->StateContainsInitialImage() )
+  {
+    this->m_ptrGradient->GetPointerToInitialImage()->SetToConstant( 0 );
+  }
   this->m_ptrGradient->GetPointerToInitialMomentum()->SetToConstant( 0 );
 
   // storage for the maps
@@ -307,7 +310,14 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::G
   {
     if ( ptrIm != NULL )
     {
-      ptrIm->Copy( this->m_ptrState->GetPointerToInitialImage() );
+      if ( this->m_ptrState->StateContainsInitialImage() )
+      {
+        ptrIm->Copy( this->m_ptrState->GetPointerToInitialImage() );
+      }
+      else
+      {
+        ptrIm->Copy( ptrI0 );
+      }
     }
     return;
   }
@@ -331,7 +341,15 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::G
   LDDMMUtilsType::identityMap( ptrMapIn );
   LDDMMUtilsType::identityMap( ptrMapIdentity );
 
-  VectorImageType* ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
+  VectorImageType* ptrInitialImage = NULL;
+  if ( this->m_ptrState->StateContainsInitialImage() )
+  {
+    ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
+  }
+  else
+  {
+    ptrInitialImage = ptrI0;
+  }
   VectorImageType* ptrInitialMomentum = this->m_ptrState->GetPointerToInitialMomentum();
 
   ptrCurrentI->Copy( ptrInitialImage );
@@ -469,7 +487,15 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::C
     *
     */
 
-  VectorImageType* ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
+  VectorImageType* ptrInitialImage = NULL;
+  if ( this->m_ptrState->StateContainsInitialImage() )
+  {
+    ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
+  }
+  else
+  {
+    ptrInitialImage = ptrI0;
+  }
   VectorImageType* ptrInitialMomentum = this->m_ptrState->GetPointerToInitialMomentum();
 
   LDDMMUtilsType::identityMap( m_ptrMapIn );
@@ -551,14 +577,18 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::C
 
   VectorImageType* ptrInitialMomentum = this->m_ptrState->GetPointerToInitialMomentum();
 
-  VectorImageType* ptrI0Gradient = this->m_ptrGradient->GetPointerToInitialImage();
+  if ( this->m_ptrGradient->StateContainsInitialImage() )
+  {
+    VectorImageType* ptrI0Gradient = this->m_ptrGradient->GetPointerToInitialImage();
+    ptrI0Gradient->SetToConstant( 0.0 );
+  }
+
   VectorImageType* ptrP0Gradient = this->m_ptrGradient->GetPointerToInitialMomentum();
 
   ptrP0Gradient->Copy( m_ptrWarpedFinalToInitialAdjoint );
   ptrP0Gradient->MultiplyByConstant(-1);
 
   ptrP0Gradient->AddCellwise( ptrInitialMomentum );
-  ptrI0Gradient->SetToConstant( 0.0 );
 
 }
 
@@ -613,7 +643,15 @@ CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState>::GetCurr
   // computing \f$ 0.5\langle p(t_0) \nabla I(t_0) +  K*( p(t_0)\nabla I(t_0) ) \rangle \f$
   // this is done dimension for dimension (i.e., if we have a multidimensional image, we have as many of these terms as we have dimensions)
 
-  VectorImageType* ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
+  VectorImageType* ptrInitialImage = NULL;
+  if ( this->m_ptrState->StateContainsInitialImage() )
+  {
+    ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
+  }
+  else
+  {
+    ptrInitialImage = ptrI0;
+  }
   VectorImageType* ptrInitialMomentum = this->m_ptrState->GetPointerToInitialMomentum();
 
   unsigned int dim = ptrInitialImage->GetDimension();
@@ -681,7 +719,15 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::O
   ComputeImageMomentumForwardAndFinalAdjointWarpedToInitialImage( m_ptrWarpedFinalToInitialAdjoint );
 
   VectorImageType* ptrInitialMomentum = this->m_ptrState->GetPointerToInitialMomentum();
-  VectorImageType* ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
+  VectorImageType* ptrInitialImage = NULL;
+  if ( this->m_ptrState->StateContainsInitialImage() )
+  {
+    ptrInitialImage = this->m_ptrState->GetPointerToInitialImage();
+  }
+  else
+  {
+    ptrInitialImage = ptrI0;
+  }
 
   VectorImageType* ptrP0Gradient = this->m_ptrGradient->GetPointerToInitialMomentum();
 

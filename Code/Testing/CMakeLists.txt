@@ -206,11 +206,31 @@ add_ctest_subtest_testdriver_image_compare(calatkLDDMMTest simplifiedShooting1DF
 
 add_ctest_subtest_testdriver_image_compare(calatkLDDMMTest adjointShooting1DFloat ${ALGORITHMS_TESTS_ALGORITHMS}
                           ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
-                          ${test_temp_dir}/1DCurveResultLDDMMAdjointFloat.nhdr
+                          ${test_temp_dir}/1DCurveResultLDDMMAdjointShootingFloat.nhdr
                           adjointShooting 1 float
                           ${test_input_dir}/1DCurveSource.nhdr
                           ${test_input_dir}/1DCurveTarget.nhdr
-                          ${test_temp_dir}/1DCurveResultLDDMMAdjointFloat.nhdr
+                          ${test_temp_dir}/1DCurveResultLDDMMAdjointShootingFloat.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatk1DTest.json
+                          )
+
+add_ctest_subtest_testdriver_image_compare(calatkLDDMMTest simplifiedShootingInitialImage1DFloat ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
+                          ${test_temp_dir}/1DCurveResultLDDMMSimplifiedShootingInitialImageFloat.nhdr
+                          simplifiedShootingInitialImage 1 float
+                          ${test_input_dir}/1DCurveSource.nhdr
+                          ${test_input_dir}/1DCurveTarget.nhdr
+                          ${test_temp_dir}/1DCurveResultLDDMMSimplifiedShootingInitialImageFloat.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatk1DTest.json
+                          )
+
+add_ctest_subtest_testdriver_image_compare(calatkLDDMMTest adjointShootingInitialImage1DFloat ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
+                          ${test_temp_dir}/1DCurveResultLDDMMAdjointShootingInitialImageFloat.nhdr
+                          adjointShootingInitialImage 1 float
+                          ${test_input_dir}/1DCurveSource.nhdr
+                          ${test_input_dir}/1DCurveTarget.nhdr
+                          ${test_temp_dir}/1DCurveResultLDDMMAdjointShootingInitialImageFloat.nhdr
                           ${CALATK_SOURCE_DIR}/Code/Testing/calatk1DTest.json
                           )
 
@@ -241,6 +261,26 @@ add_ctest_subtest_testdriver_image_compare(calatkLDDMMTest adjointShooting1DDoub
                           ${test_input_dir}/1DCurveSource.nhdr
                           ${test_input_dir}/1DCurveTarget.nhdr
                           ${test_temp_dir}/1DCurveResultLDDMMAdjointDouble.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatk1DTest.json
+                          )
+
+add_ctest_subtest_testdriver_image_compare(calatkLDDMMTest simplifiedShootingInitialImage1DDouble ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
+                          ${test_temp_dir}/1DCurveResultLDDMMSimplifiedShootingInitialImageDouble.nhdr
+                          simplifiedShootingInitialImage 1 double
+                          ${test_input_dir}/1DCurveSource.nhdr
+                          ${test_input_dir}/1DCurveTarget.nhdr
+                          ${test_temp_dir}/1DCurveResultLDDMMSimplifiedShootingInitialImageDouble.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatk1DTest.json
+                          )
+
+add_ctest_subtest_testdriver_image_compare(calatkLDDMMTest adjointShootingInitialImage1DDouble ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_input_dir}/Baseline/1DCurveResultBaseline.nhdr
+                          ${test_temp_dir}/1DCurveResultLDDMMAdjointShootingInitialImageDouble.nhdr
+                          adjointShootingInitialImage 1 double
+                          ${test_input_dir}/1DCurveSource.nhdr
+                          ${test_input_dir}/1DCurveTarget.nhdr
+                          ${test_temp_dir}/1DCurveResultLDDMMAdjointShootingInitialImageDouble.nhdr
                           ${CALATK_SOURCE_DIR}/Code/Testing/calatk1DTest.json
                           )
 
@@ -295,6 +335,46 @@ add_ctest_subtest_testdriver_image_compare(calatkMetamorphosisTest adjointMetamo
                           ${test_temp_dir}/1DCurveResultAdjointDouble.nhdr
                           ${CALATK_SOURCE_DIR}/Code/Testing/calatkMetamorphosis1DTest.json
 			  )
+
+add_ctest_subtest_testdriver_image_compare(calatkMetamorphosisTest simplifiedMetamorphosisInitialImage1DFloat ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_input_dir}/Baseline/1DMetamorphosisCurveResultBaseline.nhdr
+                          ${test_temp_dir}/1DCurveResultSimplifiedInitialImageFloat.nhdr
+                          MetamorphosisSimplifiedInitialImage 1 float
+                          ${test_input_dir}/1DMetamorphosisCurveSource.nhdr
+                          ${test_input_dir}/1DMetamorphosisCurveTarget.nhdr
+                          ${test_temp_dir}/1DCurveResultSimplifiedInitialImageFloat.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatkMetamorphosis1DTest.json
+                          )
+
+add_ctest_subtest_testdriver_image_compare(calatkMetamorphosisTest simplifiedMetamorphosisInitialImage1DDouble ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_input_dir}/Baseline/1DMetamorphosisCurveResultBaseline.nhdr
+                          ${test_temp_dir}/1DCurveResultSimplifiedInitialImageDouble.nhdr
+                          MetamorphosisSimplifiedInitialImage 1 double
+                          ${test_input_dir}/1DMetamorphosisCurveSource.nhdr
+                          ${test_input_dir}/1DMetamorphosisCurveTarget.nhdr
+                          ${test_temp_dir}/1DCurveResultSimplifiedInitialImageDouble.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatkMetamorphosis1DTest.json
+                          )
+
+add_ctest_subtest_testdriver_image_compare(calatkMetamorphosisTest adjointMetamorphosisInitialImage1DFloat ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_input_dir}/Baseline/1DMetamorphosisCurveResultBaseline.nhdr
+                          ${test_temp_dir}/1DCurveResultAdjointInitialImageFloat.nhdr
+                          MetamorphosisFullAdjointInitialImage 1 float
+                          ${test_input_dir}/1DMetamorphosisCurveSource.nhdr
+                          ${test_input_dir}/1DMetamorphosisCurveTarget.nhdr
+                          ${test_temp_dir}/1DCurveResultAdjointInitialImageFloat.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatkMetamorphosis1DTest.json
+                          )
+
+add_ctest_subtest_testdriver_image_compare(calatkMetamorphosisTest adjointMetamorphosisInitialImage1DDouble ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_input_dir}/Baseline/1DMetamorphosisCurveResultBaseline.nhdr
+                          ${test_temp_dir}/1DCurveResultAdjointInitialImageDouble.nhdr
+                          MetamorphosisFullAdjointInitialImage 1 double
+                          ${test_input_dir}/1DMetamorphosisCurveSource.nhdr
+                          ${test_input_dir}/1DMetamorphosisCurveTarget.nhdr
+                          ${test_temp_dir}/1DCurveResultAdjointInitialImageDouble.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatkMetamorphosis1DTest.json
+                          )
 
 
 add_test_executable(calatkImageManagerTest CALATK ${ITK_LIBRARIES})

@@ -48,13 +48,31 @@ CObjectiveFunctionFactory< T, VImageDimension >::CreateNewObjectiveFunction( Num
     ptrObjectiveFunction = new CLDDMMGrowthModelObjectiveFunction< SpatioTemporalVelocityFieldStateType >;
     break;
   case  LDDMMAdjointGeodesicShooting:
+    ptrObjectiveFunction = new CLDDMMAdjointGeodesicShootingObjectiveFunction< InitialMomentumStateType >;
+    break;
+  case  LDDMMAdjointGeodesicShootingInitialImage:
     ptrObjectiveFunction = new CLDDMMAdjointGeodesicShootingObjectiveFunction< InitialImageMomentumStateType >;
     break;
   case LDDMMSimplifiedGeodesicShooting:
+    ptrObjectiveFunction = new CLDDMMSimplifiedGeodesicShootingObjectiveFunction< InitialMomentumStateType >;
+    break;
+  case LDDMMSimplifiedGeodesicShootingInitialImage:
     ptrObjectiveFunction = new CLDDMMSimplifiedGeodesicShootingObjectiveFunction< InitialImageMomentumStateType >;
     break;
   case LDDMMGeometricMetamorphosis:
     ptrObjectiveFunction = new CLDDMMGeometricMetamorphosisObjectiveFunction< SpatioTemporalVelocityFieldStateType >;
+    break;
+  case LDDMMMetamorphosisAdjointGeodesicShooting:
+    ptrObjectiveFunction = new CMetamorphosisAdjointGeodesicShootingObjectiveFunction< InitialMomentumStateType >;
+    break;
+  case LDDMMMetamorphosisAdjointGeodesicShootingInitialImage:
+    ptrObjectiveFunction = new CMetamorphosisAdjointGeodesicShootingObjectiveFunction< InitialImageMomentumStateType >;
+    break;
+  case LDDMMSimplifiedMetamorphosisGeodesicShooting:
+    ptrObjectiveFunction = new CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< InitialMomentumStateType >;
+    break;
+  case LDDMMSimplifiedMetamorphosisGeodesicShootingInitialImage:
+    ptrObjectiveFunction = new CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< InitialImageMomentumStateType >;
     break;
   }
 
@@ -81,9 +99,17 @@ CObjectiveFunctionFactory< T, VImageDimension >::GetObjectiveFunctionTypeFromStr
   {
     return LDDMMAdjointGeodesicShooting;
   }
+  else if ( objectiveFunctionLowerCase == "lddmmadjointgeodesicshootinginitialimage" )
+  {
+    return LDDMMAdjointGeodesicShootingInitialImage;
+  }
   else if ( objectiveFunctionLowerCase == "lddmmsimplifiedgeodesicshooting" )
   {
     return LDDMMSimplifiedGeodesicShooting;
+  }
+  else if ( objectiveFunctionLowerCase == "lddmmsimplifiedgeodesicshootinginitialimage" )
+  {
+    return LDDMMSimplifiedGeodesicShootingInitialImage;
   }
   else if ( objectiveFunctionLowerCase == "lddmmgrowthmodel" )
   {
@@ -92,6 +118,22 @@ CObjectiveFunctionFactory< T, VImageDimension >::GetObjectiveFunctionTypeFromStr
   else if ( objectiveFunctionLowerCase == "lddmmgeometricmetamorphosis" )
   {
     return LDDMMGeometricMetamorphosis;
+  }
+  else if ( objectiveFunctionLowerCase == "lddmmmetamorphosisadjointgeodesicshooting" )
+  {
+    return LDDMMMetamorphosisAdjointGeodesicShooting;
+  }
+  else if ( objectiveFunctionLowerCase == "lddmmmetamorphosisadjointgeodesicshootinginitialimage" )
+  {
+    return LDDMMMetamorphosisAdjointGeodesicShootingInitialImage;
+  }
+  else if ( objectiveFunctionLowerCase == "lddmmsimplifiedmetamorphosisgeodesicshooting" )
+  {
+    return LDDMMSimplifiedMetamorphosisGeodesicShooting;
+  }
+  else if ( objectiveFunctionLowerCase == "lddmmsimplifiedmetamorphosisgeodesicshootinginitialimage" )
+  {
+    return LDDMMSimplifiedMetamorphosisGeodesicShootingInitialImage;
   }
   else
   {

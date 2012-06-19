@@ -29,7 +29,6 @@ namespace CALATK
 template < class TState >
 CStateImageMultipleStates< TState  >::CStateImageMultipleStates()
 {
-  throw std::runtime_error( "not fully implemented, needs to hold an image as a state" );
 }
 
 //
@@ -47,6 +46,8 @@ CStateImageMultipleStates< TState  >::CStateImageMultipleStates( const CStateIma
           typename IndividualStateType::Pointer copiedState = new IndividualStateType( **iter );
           this->m_IndividualStatesCollection.push_back( copiedState );
         }
+      // also copy the image that is part of the state
+      m_Image = new VectorImageType( c.m_Image );
     }
 }
 
@@ -54,13 +55,14 @@ CStateImageMultipleStates< TState  >::CStateImageMultipleStates( const CStateIma
 // copy constructor (from individual states which have been allocated externally)
 //
 template < class TState >
-CStateImageMultipleStates< TState  >::CStateImageMultipleStates( const IndividualStatesCollectionType & individualStatesCollection )
+CStateImageMultipleStates< TState  >::CStateImageMultipleStates( VectorImageType* commonImage, const IndividualStatesCollectionType & individualStatesCollection )
 {
   typename IndividualStatesCollectionType::const_iterator iter;
   for ( iter = individualStatesCollection.begin(); iter != individualStatesCollection.end(); ++iter )
     {
     this->m_IndividualStatesCollection.push_back( *iter );
     }
+  m_Image = commonImage;
 }
 
 //
@@ -70,6 +72,7 @@ template < class TState >
 void CStateImageMultipleStates< TState >::ClearDataStructure()
 {
   this->m_IndividualStatesCollection.clear();
+  m_Image = NULL;
 }
 
 //
@@ -90,15 +93,17 @@ CStateImageMultipleStates< TState >::CreateUpsampledStateAndAllocateMemory( cons
 {
   IndividualStatesCollectionType individualStatesCollection;
 
-  // upsample all the individual state components
+  // upsample all the individual state components and the image that is part of the state
   typename IndividualStatesCollectionType::const_iterator iter;
   for ( iter = m_IndividualStatesCollection.begin(); iter != m_IndividualStatesCollection.end(); ++iter )
   {
     typename IndividualStateType::Pointer individualState = dynamic_cast< IndividualStateType * >( (*iter)->CreateUpsampledStateAndAllocateMemory( graftImage ) );
     individualStatesCollection.push_back( individualState );
   }
+  typename VectorImageType::Pointer image = new VectorImageType( graftImage );
+  this->m_Resampler->Upsample( m_Image, image );
 
-  Superclass * upsampledState = new Self( individualStatesCollection );
+  Superclass * upsampledState = new Self( image, individualStatesCollection );
 
   return upsampledState;
 
@@ -143,6 +148,10 @@ CStateImageMultipleStates< TState >::operator=(const CStateImageMultipleStates &
           this->m_IndividualStatesCollection.push_back( copiedState );
         }
       }
+
+    // copy the image
+    m_Image->Copy( p.m_Image );
+
     return *this;
     }
   else
@@ -170,6 +179,9 @@ CStateImageMultipleStates< TState >::operator+=(const CStateImageMultipleStates 
     *(*iterTarget) += *(*iterSource );
     }
 
+  // add the images
+  m_Image->AddCellwise( p.m_Image );
+
   return *this;
 }
 
@@ -193,6 +205,9 @@ CStateImageMultipleStates< TState >::operator-=(const CStateImageMultipleStates 
     *(*iterTarget) -= *( *iterSource );
     }
 
+  // add the images
+  m_Image->SubtractCellwise( p.m_Image );
+
   return *this;
 }
 
@@ -207,6 +222,9 @@ CStateImageMultipleStates< TState >::operator*=(const FloatType & p )
     // multiply by the value
     *(*iterTarget) *= p;
     }
+
+  // multiply by scalar
+  m_Image->MultiplyByConstant( p );
 
   return *this;
 }
@@ -253,6 +271,13 @@ CStateImageMultipleStates< TState >::GetIndividualStatePointer( unsigned int idx
     }
 }
 
+template <class TState >
+typename CStateImageMultipleStates< TState >::VectorImageType*
+CStateImageMultipleStates< TState >::GetImageState()
+{
+  return m_Image;
+}
+
 //
 // computes the squared norm of the state, by adding all the individual square norm components
 //
@@ -268,6 +293,8 @@ CStateImageMultipleStates< TState >::SquaredNorm()
       squaredNorm += (*iter)->SquaredNorm();
     }
 
+  squaredNorm += m_Image->ComputeSquaredNorm();
+
   return squaredNorm;
 
 }
@@ -278,7 +305,7 @@ CStateImageMultipleStates< TState >::SquaredNorm()
 template < class TState >
 bool CStateImageMultipleStates< TState >::StateContainsInitialImage()
 {
-  return false;
+  return true;
 }
 
 } // end namespace CALATK

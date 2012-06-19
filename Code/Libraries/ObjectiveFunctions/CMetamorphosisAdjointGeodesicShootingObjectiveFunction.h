@@ -140,6 +140,8 @@ private:
   typename VectorImageType::Pointer m_ptrCurrentLambdaP; // adjoint 2
   typename VectorFieldType::Pointer m_ptrCurrentLambdaV; // adjoint 3
 
+  typename VectorImageType::Pointer ptrI0;
+
   std::vector< typename VectorFieldType::Pointer > m_ptrVelocityField;
 
   std::vector< FloatType > m_vecMeasurementTimepoints;
