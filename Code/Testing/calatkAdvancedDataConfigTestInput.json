@@ -1,4 +1,6 @@
 {
+"CalaTKDataConfigurationVersion": 1.0,
+
 "Inputs":
 {
   "John":
@@ -15,6 +17,7 @@
   [7.7, "mri_d.dcm"]
   ]
 },
+
 "Outputs":
 {
   "John":

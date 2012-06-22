@@ -400,8 +400,15 @@ protected:
    * ImageManager memory when the JSON configuration file is in the Basic
    * format. */
   void ReadInputsFromBasicDataJSONConfiguration();
+  /** Read in the given input images and their associated metadata into the
+   * ImageManager memory when the JSON configuration file is in the Advanced
+   * format. The Advanced data configuration format is more descriptive, can
+   * accept more optional fields, and is distinguished from the Basic format by
+   * the presence of a "CalaTKDataConfigurationVersion" entry. */
+  void ReadInputsFromAdvancedDataJSONConfiguration();
 
   void WriteOutputsFromBasicDataJSONConfiguration( AlgorithmBaseType * algorithm );
+  void WriteOutputsFromAdvancedDataJSONConfiguration( AlgorithmBaseType * algorithm );
 
 private:
 
@@ -411,6 +418,8 @@ private:
   virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
   const CJSONConfiguration * GetJSONConfigurationCombined();
   const CJSONConfiguration * GetJSONConfigurationCleaned();
+
+  bool IsAdvancedDataConfigurationFormat();
 
 
   int m_DatasetGlobalIdCounter; /**< Internal running id for datasets */
