@@ -134,6 +134,7 @@ set(testDriverInterfaces_SRCS
 
 set(testDriverImageManager_SRCS
   calatkBasicDataConfigTest.cxx
+  calatkAdvancedDataConfigTest.cxx
   )
 
 add_executable(testDriverFiltering testDriverFiltering.cxx ${testDriverFiltering_SRCS})
@@ -468,6 +469,12 @@ if( BUILD_TESTING )
     testDriverImageManager calatkBasicDataConfigTest
     ${CMAKE_CURRENT_SOURCE_DIR}/calatkBasicDataConfigTestInput.json
     ${test_temp_dir}/calatkBasicDataConfigTestOutput.json
+    )
+
+  add_test(calatkAdvancedDataConfigTest
+    testDriverImageManager calatkAdvancedDataConfigTest
+    ${CMAKE_CURRENT_SOURCE_DIR}/calatkAdvancedDataConfigTestInput.json
+    ${test_temp_dir}/calatkAdvancedDataConfigTestOutput.json
     )
 endif( BUILD_TESTING )
 

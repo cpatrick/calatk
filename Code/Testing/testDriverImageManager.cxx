@@ -22,4 +22,5 @@
 void RegisterTests()
 {
   REGISTER_TEST( calatkBasicDataConfigTest );
+  REGISTER_TEST( calatkAdvancedDataConfigTest );
 }
