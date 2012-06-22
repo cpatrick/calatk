@@ -396,7 +396,7 @@ void LDDMMUtils< T, VImageDimension >::GetMapFromToFromSpatioTemporalVelocityFie
 
   // now we can move backward
 
-  for ( unsigned int iI = uiStart; iI >= 0; --iI )
+  for ( int iI = uiStart; iI >= 0; --iI )
     {
     T dCurrentDT = vecTimeDiscretization[ iI+1 ].dTime - vecTimeDiscretization[ iI ].dTime;
     if ( dCurrentTime - dCurrentDT > dTimeTo )
