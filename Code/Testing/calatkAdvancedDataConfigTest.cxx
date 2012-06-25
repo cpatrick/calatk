@@ -46,6 +46,14 @@ int calatkAdvancedDataConfigTest( int argc, char ** argv )
   imageManager->SetDataAutoConfiguration( advancedConfigurationCombined, advancedConfigurationCleaned );
   imageManager->ReadInputsFromDataJSONConfiguration();
 
+  ImageManagerType::SubjectIndicesType subjectIndices;
+  imageManager->GetAvailableSubjectIndices( subjectIndices );
+  if( subjectIndices.size() != 2 )
+    {
+    std::cerr << "Did not find the expected number of subject indices." << std::endl;
+    return EXIT_FAILURE;
+    }
+
   advancedConfigurationCleaned->WriteJSONConfigurationFile( argv[2] );
 
   return EXIT_SUCCESS;

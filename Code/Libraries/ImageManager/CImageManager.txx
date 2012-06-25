@@ -891,7 +891,7 @@ bool CImageManager< TFloat, VImageDimension>::RemoveImage( int uid )
 // Returns the time points for a particular subject index, this will include all the common data
 //
 template < class TFloat, unsigned int VImageDimension >
-void CImageManager< TFloat, VImageDimension>::GetTimePointsForSubjectIndex( std::vector< FloatType >& timepoints, int subjectIndex )
+void CImageManager< TFloat, VImageDimension>::GetTimePointsForSubjectIndex( TimePointsType & timepoints, int subjectIndex )
 {
 
   subjectIndex = GetFirstSubjectIndexIfNegative( subjectIndex );
@@ -971,10 +971,10 @@ CImageManager< TFloat, VImageDimension >::GetOnlyCommonTimePointSavely()
 // get available subject ids
 //
 template < class TFloat, unsigned int VImageDimension >
-void CImageManager< TFloat, VImageDimension>::GetAvailableSubjectIndices( std::vector< int >& availableSubjectIds )
+void CImageManager< TFloat, VImageDimension>::GetAvailableSubjectIndices( SubjectIndicesType & availableSubjectIds )
 {
   availableSubjectIds.clear();
-  
+
   std::set<int> uniqueSubjectIds;
   typename std::set<int>::const_iterator uniqueSubjectIdsIter;
 
@@ -1008,7 +1008,7 @@ unsigned int CImageManager< TFloat, VImageDimension>::GetNumberOfAvailableSubjec
 // Returns the set of images for a particular subject index
 //
 template < class TFloat, unsigned int VImageDimension >
-void CImageManager< TFloat, VImageDimension>::GetTimeSeriesWithSubjectIndex( std::vector< TimeSeriesDataPointType >& timeseries, int subjectIndex )
+void CImageManager< TFloat, VImageDimension>::GetTimeSeriesWithSubjectIndex( TimeSeriesType & timeseries, int subjectIndex )
 {
   subjectIndex = GetFirstSubjectIndexIfNegative( subjectIndex );
 

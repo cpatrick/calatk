@@ -72,6 +72,11 @@ public:
 
   typedef CImageInformation< FloatType, VImageDimension > TimeSeriesDataPointType;
 
+  typedef std::vector< int >                      SubjectIndicesType;
+  typedef std::vector< TimeSeriesDataPointType >  TimeSeriesType;
+  typedef FloatType                               TimePointType;
+  typedef std::vector< TimePointType >            TimePointsType;
+
   /* Sorting */
   /** Custom compare method which makes sure that the datasets will be sorted based on subject ids.*/
   struct CompareSubjectIds
@@ -230,7 +235,7 @@ public:
    * @return pImInfo - the full subject information (a time-series for one subject)
    * @param subjectIndex - subject index of the subject to be returned, if subject index is negative returns the first timeseries
    */
-  virtual void GetTimeSeriesWithSubjectIndex( std::vector< TimeSeriesDataPointType >& timeseries, int subjectIndex );
+  virtual void GetTimeSeriesWithSubjectIndex( TimeSeriesType & timeseries, int subjectIndex );
 
   /**
    * Returns vectors of the time points for a specific subject.
@@ -239,7 +244,7 @@ public:
    * @return timepoint - returns all the timepoints for the specified subject
    * @param subjectIndex - index of the subject whose timepoints should be extracted, if subject index is negative, returns the first timeseries
    */
-  void GetTimePointsForSubjectIndex( std::vector< FloatType >& timepoints, int subjectIndex );
+  void GetTimePointsForSubjectIndex( TimePointsType & timepoints, int subjectIndex );
 
   /**
    * @brief Returns a common time-point based on its unique id. Uses the currently active scale.
@@ -269,7 +274,7 @@ public:
    *
    * @return Returns all the availabe subject indices registered with the image manager.
    */
-  void GetAvailableSubjectIndices( std::vector< int >& availableSubjectIds );
+  void GetAvailableSubjectIndices( SubjectIndicesType & availableSubjectIds );
 
   /**
    * Returns the number of available distinct subjects stored
