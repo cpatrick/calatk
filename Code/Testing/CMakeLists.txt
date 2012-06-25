@@ -418,6 +418,14 @@ if(BUILD_TESTING AND compile_GenerateBullseyes)
     ${test_temp_dir}/CALATKCommandLineBullseyes1D_DataConfig.json
     )
 
+  #add_test(CALATKCommandLineBullseyes1DTest ${CALATKCommandLine_path}
+    #${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfig.json
+    #${test_temp_dir}/Bullseye1DTimePoint0.mha
+    #${test_temp_dir}/Bullseye1DTimePoint1.mha
+    #${test_temp_dir}/CALATKCommandLineBullseyes1D_AlgorithmConfig.json
+    #${test_temp_dir}/CALATKCommandLineBullseyes1D_DataConfig.json
+    #)
+
   add_test(CALATKCommandLineBullseyes1D_ImageDimensionsSpecifiedTest
     ${CALATKCommandLine_path}
     ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfigImageDimensionsSpecified.json

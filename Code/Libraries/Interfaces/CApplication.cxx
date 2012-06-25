@@ -45,8 +45,8 @@ CApplication::CApplication( const int argc, char **argv ):
   if( argc < 3 )
     {
     std::string usage = "Usage: CALATKCommandLine "
-          "<algorithm_parameters_config.json> "
-          "(<data_parameters_config.json> | <source_image_file> <target_image_file>) "
+          "<given_algorithm_parameters_config.json> "
+          "(<given_data_parameters_config.json> | <source_image_file> <target_image_file> <warped_source_output_file>) "
           "[<used_algorithm_parameters_config.json>] "
           "[<used_data_parameters_config.json>]\n";
     throw std::runtime_error( usage.c_str() );

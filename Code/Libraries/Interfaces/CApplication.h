@@ -53,9 +53,8 @@ public:
   /** Parse C main() arguments to find the configuration file arguments.  The
    * arguments will be parsed as:
    *
-   *   appname <input algorithm configuration file>
-   *           <algorithm_parameters_config.json> "
-   *           (<data_parameters_config.json> | <source_image_file> <target_image_file>)
+   *   appname <given_algorithm_parameters_config.json>
+   *           (<given_data_parameters_config.json> | <source_image_file> <target_image_file> <warped_source_output_file>)
    *           [<used_algorithm_parameters_config.json>]
    *           [<used_data_parameters_config.json>]
    */

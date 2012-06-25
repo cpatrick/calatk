@@ -242,12 +242,11 @@ template < class TFloat, unsigned int VImageDimension >
 bool CImageManager< TFloat, VImageDimension >::IsAdvancedDataConfigurationFormat()
 {
   Json::Value & dataCombinedConfigRoot = *(this->m_DataCombinedJSONConfig->GetRootPointer());
-  Json::Value & version = dataCombinedConfigRoot["CalaTKDataConfigurationVersion"];
-  if( version == Json::nullValue )
+  if( dataCombinedConfigRoot.isMember("CalaTKDataConfigurationVersion") )
     {
-    return false;
+    return true;
     }
-  return true;
+  return false;
 }
 
 template < class TFloat, unsigned int VImageDimension >
@@ -544,17 +543,28 @@ void CImageManager< TFloat, VImageDimension >::WriteOutputsFromAdvancedDataJSONC
 
   if( combinedOutputs != Json::nullValue )
     {
-    const Json::Value::Members subjects = combinedOutputs.getMemberNames();
-    for( unsigned int configSubjectIndex = 0; configSubjectIndex < combinedOutputs.size(); ++configSubjectIndex )
+    Json::Value & combinedSubjects = combinedOutputs["Subjects"];
+    Json::Value cleanedSubjects( Json::arrayValue );
+    unsigned int configSubjectIndex = 0;
+    for( Json::Value::iterator combinedSubject = combinedSubjects.begin();
+         configSubjectIndex < combinedOutputs.size();
+         ++configSubjectIndex, ++combinedSubject )
       {
       Json::Value cleanedSubject( Json::arrayValue );
-      const std::string subject = subjects[configSubjectIndex];
-      Json::Value & combinedSubject = combinedOutputs[subject];
+
+      Json::Value & subjectId = (*combinedSubject)["ID"];
+      if( subjectId == Json::nullValue )
+        {
+        throw std::runtime_error( "Could not find expected subject Id." );
+        }
+      cleanedSubject["ID"] = subjectId;
+      const std::string subject = subjectId.asString();
 
       MapSubjectStringToFirstImageGlobalIdType::const_iterator mapSubjectStringIt = this->m_MapSubjectStringToFirstImageGlobalId.find( subject );
       if( mapSubjectStringIt == this->m_MapSubjectStringToFirstImageGlobalId.end() )
         {
-        throw std::runtime_error( "Output subject does not have a corresponding input subject." );
+        const std::string message = "Output subject: " + subject + ", does not have a corresponding input subject.";
+        throw std::runtime_error( message.c_str() );
         }
       const int subjectFirstImageGlobalId = mapSubjectStringIt->second;
 
@@ -562,36 +572,50 @@ void CImageManager< TFloat, VImageDimension >::WriteOutputsFromAdvancedDataJSONC
       typename VectorImageType::ConstPointer originalImage = this->GetOriginalImageById( subjectFirstImageGlobalId );
       typename VectorImageType::Pointer warpedImage = new VectorImageType( originalImage );
 
-      for( unsigned int timePointIndex = 0; timePointIndex < combinedSubject.size(); ++timePointIndex )
+      Json::Value & combinedTimePoints = (*combinedSubject)["TimePoints"];
+      Json::Value cleanedTimePoints( Json::arrayValue );
+      for( unsigned int timePointIndex = 0; timePointIndex < combinedTimePoints.size(); ++timePointIndex )
         {
-        Json::Value & combinedTimePoint = combinedSubject[timePointIndex];
+        Json::Value & combinedTimePoint = combinedTimePoints[timePointIndex];
 
-        Json::Value cleanedTimePoint( Json::arrayValue );
-        cleanedTimePoint[0] = combinedTimePoint[0];
-        if( cleanedTimePoint[0] == Json::nullValue )
+        Json::Value cleanedTimePoint( Json::objectValue );
+
+        Json::Value & time = combinedTimePoint["Time"];
+        if( time == Json::nullValue )
           {
           throw std::runtime_error( "Expected time point not found in Advanced data configuration file." );
           }
-        cleanedTimePoint[1] = combinedTimePoint[1];
-        if( cleanedTimePoint[1] == Json::nullValue )
+        else
+          {
+          cleanedTimePoint["Time"] = time;
+          }
+
+        Json::Value & image = combinedTimePoint["Image"];
+        if( image == Json::nullValue )
           {
           throw std::runtime_error( "Expected image file path not found in Advanced data configuration file." );
           }
+        else
+          {
+          cleanedTimePoint["Image"] = image;
+          }
 
         typedef VectorField< TFloat, VImageDimension > VectorFieldType;
-        typename VectorFieldType::ConstPointer map = new VectorFieldType( algorithm->GetMap( combinedTimePoint[0].asDouble() ));
+        typename VectorFieldType::ConstPointer map = new VectorFieldType( algorithm->GetMap( time.asDouble() ));
 
         typedef LDDMMUtils< TFloat, VImageDimension > LDDMMUtilsType;
         LDDMMUtilsType::applyMap( map, originalImage, warpedImage );
 
         typedef VectorImageUtils< TFloat, VImageDimension > VectorImageUtilsType;
-        VectorImageUtilsType::writeFileITK( warpedImage, combinedTimePoint[1].asString() );
+        VectorImageUtilsType::writeFileITK( warpedImage, image.asString() );
 
-        cleanedSubject[timePointIndex] = cleanedTimePoint;
+        cleanedTimePoints[timePointIndex] = cleanedTimePoint;
         }
+      cleanedSubject["TimePoints"] = cleanedTimePoints;
 
-      dataCleanedConfigRoot["Outputs"][subject] = cleanedSubject;
+      cleanedSubjects[configSubjectIndex] = cleanedSubject;
       }
+    dataCleanedConfigRoot["Outputs"]["Subjects"] = cleanedSubjects;
     }
 }
 
