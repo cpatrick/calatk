@@ -151,12 +151,12 @@ unsigned int LDDMMUtils< T, VImageDimension >::DetermineTimeSeriesTimePointData(
 
   unsigned int uiNumberOfMeasurements = 0;
 
-  std::vector< T > vecMeasurementTimepoints;
+  std::vector< T > vecMeasurementTimePoints;
   // make sure we have at least two timepoints
-  ptrImageManager->GetTimepointsForSubjectIndex( vecMeasurementTimepoints, subjectIndex );
-  assert( vecMeasurementTimepoints.size() > 1 );
+  ptrImageManager->GetTimePointsForSubjectIndex( vecMeasurementTimePoints, subjectIndex );
+  assert( vecMeasurementTimePoints.size() > 1 );
 
-  std::cout << "Measurement timepoints = " << vecMeasurementTimepoints << std::endl;
+  std::cout << "Measurement timepoints = " << vecMeasurementTimePoints << std::endl;
 
   // get the full time-course information for the subject
   std::vector< TimeSeriesDataPointType > timeSeries;

@@ -324,13 +324,13 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::DetermineTimePoint
   // make sure we have exactly two time-points per time-series 
   // (the first one will be the image, the second one the mask)
 
-  std::vector< T > vecTimepoints;
+  std::vector< T > vecTimePoints;
 
-  this->m_ptrImageManager->GetTimepointsForSubjectIndex( vecTimepoints, vecSubjectIndices[ 0 ] );
-  assert( vecTimepoints.size() == 2 );
+  this->m_ptrImageManager->GetTimePointsForSubjectIndex( vecTimePoints, vecSubjectIndices[ 0 ] );
+  assert( vecTimePoints.size() == 2 );
 
-  this->m_ptrImageManager->GetTimepointsForSubjectIndex( vecTimepoints, vecSubjectIndices[ 1 ] );
-  assert( vecTimepoints.size() == 2 );
+  this->m_ptrImageManager->GetTimePointsForSubjectIndex( vecTimePoints, vecSubjectIndices[ 1 ] );
+  assert( vecTimePoints.size() == 2 );
 
   // clear the time-point information vector
 

@@ -399,45 +399,78 @@ void CImageManager< TFloat, VImageDimension >::ReadInputsFromAdvancedDataJSONCon
     {
     throw std::runtime_error( "No input images given." );
     }
-  Json::Value & combinedSubject = *(combinedInputs.begin());
-  if( combinedSubject == Json::nullValue || combinedSubject.size() == 0 )
+  Json::Value & combinedSubjects = combinedInputs["Subjects"];
+  if( combinedSubjects == Json::nullValue || combinedSubjects.size() == 0 )
     {
     throw std::runtime_error( "No subjects found." );
     }
 
-  const Json::Value::Members subjects = combinedInputs.getMemberNames();
-  for( unsigned int subjectIndex = 0; subjectIndex < combinedInputs.size(); ++subjectIndex )
+  Json::Value cleanedSubjects( Json::arrayValue );
+  unsigned int subjectIndex = 0;
+  for( Json::Value::iterator combinedSubject = combinedSubjects.begin();
+         combinedSubject != combinedSubjects.end();
+         ++combinedSubject, ++subjectIndex )
     {
-    Json::Value cleanedSubject( Json::arrayValue );
-    const std::string subject = subjects[subjectIndex];
-    Json::Value & combinedSubject = combinedInputs[subject];
-    for( unsigned int timePointIndex = 0; timePointIndex < combinedSubject.size(); ++timePointIndex )
-      {
-      Json::Value & combinedTimePoint = combinedSubject[timePointIndex];
+    Json::Value cleanedSubject( Json::objectValue );
 
-      Json::Value cleanedTimePoint( Json::arrayValue );
-      cleanedTimePoint[0] = combinedTimePoint[0];
-      if( cleanedTimePoint[0] == Json::nullValue )
+    Json::Value & subjectId = (*combinedSubject)["ID"];
+    if( subjectId == Json::nullValue )
+      {
+      throw std::runtime_error( "Could not find expected subject Id." );
+      }
+    cleanedSubject["ID"] = subjectId;
+    const std::string subject = subjectId.asString();
+
+    Json::Value & combinedTimePoints = (*combinedSubject)["TimePoints"];
+    Json::Value cleanedTimePoints( Json::arrayValue );
+    for( unsigned int timePointIndex = 0; timePointIndex < combinedTimePoints.size(); ++timePointIndex )
+      {
+      Json::Value & combinedTimePoint = combinedTimePoints[timePointIndex];
+
+      Json::Value cleanedTimePoint( Json::objectValue );
+
+      Json::Value & time = combinedTimePoint["Time"];
+      if( time == Json::nullValue )
         {
         throw std::runtime_error( "Expected time point not found in Advanced data configuration file." );
         }
-      cleanedTimePoint[1] = combinedTimePoint[1];
-      if( cleanedTimePoint[1] == Json::nullValue )
+      else
+        {
+        cleanedTimePoint["Time"] = time;
+        }
+
+      Json::Value & image = combinedTimePoint["Image"];
+      if( image == Json::nullValue )
         {
         throw std::runtime_error( "Expected image file path not found in Advanced data configuration file." );
         }
+      else
+        {
+        cleanedTimePoint["Image"] = image;
+        }
 
-      const int globalId = this->AddImage( combinedTimePoint[1].asCString(), combinedTimePoint[0].asDouble(), subjectIndex );
+      const int globalId = this->AddImage( image.asCString(), time.asDouble(), subjectIndex );
       if( timePointIndex == 0 )
         {
         this->m_MapSubjectStringToFirstImageGlobalId[subject] = globalId;
         }
 
-      cleanedSubject[timePointIndex] = cleanedTimePoint;
-      }
+      Json::Value & transform = combinedTimePoint["Transform"];
+      if( transform != Json::nullValue )
+        {
+        cleanedTimePoint["Transform"] = transform;
 
-    dataCleanedConfigRoot["Inputs"][subject] = cleanedSubject;
+        const bool transformAddedSuccessfully = this->AddImageTransform( transform.asString(), globalId );
+        assert( transformAddedSuccessfully );
+        }
+
+      cleanedTimePoints[timePointIndex] = cleanedTimePoint;
+      }
+    cleanedSubject["TimePoints"] = cleanedTimePoints;
+
+    cleanedSubjects[subjectIndex] = cleanedSubject;
     }
+  dataCleanedConfigRoot["Inputs"]["Subjects"] = cleanedSubjects;
 }
 
 
@@ -858,7 +891,7 @@ bool CImageManager< TFloat, VImageDimension>::RemoveImage( int uid )
 // Returns the time points for a particular subject index, this will include all the common data
 //
 template < class TFloat, unsigned int VImageDimension >
-void CImageManager< TFloat, VImageDimension>::GetTimepointsForSubjectIndex( std::vector< FloatType >& timepoints, int subjectIndex )
+void CImageManager< TFloat, VImageDimension>::GetTimePointsForSubjectIndex( std::vector< FloatType >& timepoints, int subjectIndex )
 {
 
   subjectIndex = GetFirstSubjectIndexIfNegative( subjectIndex );

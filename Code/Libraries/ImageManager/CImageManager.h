@@ -239,7 +239,7 @@ public:
    * @return timepoint - returns all the timepoints for the specified subject
    * @param subjectIndex - index of the subject whose timepoints should be extracted, if subject index is negative, returns the first timeseries
    */
-  void GetTimepointsForSubjectIndex( std::vector< FloatType >& timepoints, int subjectIndex );
+  void GetTimePointsForSubjectIndex( std::vector< FloatType >& timepoints, int subjectIndex );
 
   /**
    * @brief Returns a common time-point based on its unique id. Uses the currently active scale.
@@ -419,6 +419,7 @@ private:
   const CJSONConfiguration * GetJSONConfigurationCombined();
   const CJSONConfiguration * GetJSONConfigurationCleaned();
 
+  /** Determined by the presence of a "CalaTKDataConfigurationVersion" entry. */
   bool IsAdvancedDataConfigurationFormat();
 
 
