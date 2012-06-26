@@ -1,11 +1,15 @@
-// CALATK version ?.?; JSON configuration file
-
 
 {
+	"Algorithm" :
+	{
+		"FloatType" : "float",
+		"ImageDimension" : 1
+	},
 	"GeneralRegistrationSettings" :
 	{
 		"Kernel" : "HelmholtzKernel",
-		"Metric" : "SSD"
+		"Metric" : "SSD",
+		"ObjectiveFunction" : "LDDMMGrowthModel"
 	},
 	"GrowthModel" :
 	{
@@ -20,13 +24,18 @@
 	{
 		"AutoScaleImages" : false,
 		"BlurHighestResolutionImage" : false,
-		"Sigma" : 0.0050,
-		"SigmaHighestResolutionImage" : 0.0050
+		"Sigma" : 0.50,
+		"SigmaHighestResolutionImage" : 0.50
 	},
 	"MultiScaleFinalOutput" :
 	{
 		"OutputStateInformation" : false,
 		"OutputStateInformationFrequency" : 100
+	},
+	"MultiScaleGeneralSettings" :
+	{
+		"NumberOfSubIterations" : 1,
+		"SingleScaleSolver" : "LineSearchUnconstrained"
 	},
 	"MultiScaleSettings" :
 	[
@@ -34,7 +43,7 @@
 		{
 			"Downsample" :
 			{
-				"Scale" : 1
+				"Scale" : 1.0
 			},
 			"LineSearch" :
 			{
@@ -43,10 +52,10 @@
 				"AdjustStepSizeUpFactor" : 2.0,
 				"AdjustStepSizeUpNumber" : 2,
 				"DecreaseConstant" : 0.0,
-				"InitialStepSize" : 1.000000000000000e-01,
+				"InitialStepSize" : 0.10,
 				"MaxNumberOfIterations" : 50,
 				"MaxNumberOfTries" : 10,
-				"MinAllowedStepSize" : 1.000000000000000e-08,
+				"MinAllowedStepSize" : 0.00010,
 				"OutputStateInformation" : false,
 				"OutputStateInformationFrequency" : 100,
 				"ReductionFactor" : 0.50
@@ -65,10 +74,10 @@
 				"AdjustStepSizeUpFactor" : 2.0,
 				"AdjustStepSizeUpNumber" : 2,
 				"DecreaseConstant" : 0.0,
-				"InitialStepSize" : 1.000000000000000e-01,
+				"InitialStepSize" : 0.10,
 				"MaxNumberOfIterations" : 100,
 				"MaxNumberOfTries" : 10,
-				"MinAllowedStepSize" : 1.000000000000000e-08,
+				"MinAllowedStepSize" : 1.000000000000000e-05,
 				"OutputStateInformation" : false,
 				"OutputStateInformationFrequency" : 100,
 				"ReductionFactor" : 0.50
@@ -87,10 +96,10 @@
 				"AdjustStepSizeUpFactor" : 2.0,
 				"AdjustStepSizeUpNumber" : 2,
 				"DecreaseConstant" : 0.0,
-				"InitialStepSize" : 1.000000000000000e-03,
+				"InitialStepSize" : 0.0010,
 				"MaxNumberOfIterations" : 200,
 				"MaxNumberOfTries" : 10,
-				"MinAllowedStepSize" : 1.000000000000000e-08,
+				"MinAllowedStepSize" : 1.000000000000000e-07,
 				"OutputStateInformation" : false,
 				"OutputStateInformationFrequency" : 100,
 				"ReductionFactor" : 0.50

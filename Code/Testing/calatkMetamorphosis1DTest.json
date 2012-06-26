@@ -1,44 +1,44 @@
 // CALATK version 0.1; JSON configuration file --COMBINED
 
 {
-	"GeneralRegistrationSettings" : 
+	"GeneralRegistrationSettings" :
 	{
 		"Kernel" : "HelmholtzKernel",
 		"Metric" : "SSD"
 	},
-	"HelmholtzKernel" : 
+	"HelmholtzKernel" :
 	{
 		"Alpha" : 0.050,
 		"Gamma" : 1.0
 	},
-	"ImageManager" : 
+	"ImageManager" :
 	{
 		"AutoScaleImages" : false,
 		"BlurHighestResolutionImage" : true,
 		"Sigma" : 0.01,
 		"SigmaHighestResolutionImage" : 0.01
 	},
-	"LDDMMGeodesicShooting" : 
+	"LDDMMGeodesicShooting" :
 	{
 		"EstimateInitialImage" : false,
 		"NumberOfDiscretizationVolumesPerUnitTime" : 10.0,
 		"SigmaSqr" : 0.010
 	},
-	"MultiScaleFinalOutput" : 
+	"MultiScaleFinalOutput" :
 	{
 		"OutputStateInformation" : false,
 		"OutputStateInformationFrequency" : 0
 	},
-	"MultiScaleGeneralSettings" : 
+	"MultiScaleGeneralSettings" :
 	{
 		"NumberOfSubIterations" : 1,
 		"SingleScaleSolver" : "LineSearchUnconstrained"
 	},
-	"MultiScaleSettings" : 
+	"MultiScaleSettings" :
 	[
-		
+
 		{
-			"LineSearch" : 
+			"LineSearch" :
 			{
 				"AdjustStepSizeDownFactor" : 0.50,
 				"AdjustStepSizeDownNumber" : 2,
@@ -58,16 +58,16 @@
 			}
 		}
 	],
-	"OneStepEvolver" : 
+	"OneStepEvolver" :
 	{
 		"NumberOfThreads" : 1
 	},
-	"OneStepEvolverSemiLagrangianAdvection" : 
+	"OneStepEvolverSemiLagrangianAdvection" :
 	{
 		"NumberOfIterationsToDetermineFlowField" : 2,
 		"TimeStepFactor" : 1.0
 	},
-	"SimplifiedMetamorphosis" : 
+	"SimplifiedMetamorphosis" :
 	{
 		"Rho" : 1.0
 	}

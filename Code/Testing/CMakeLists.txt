@@ -9,6 +9,10 @@ set(ALGORITHMS_TESTS_FILTERING ${test_bin_dir}/testDriverFiltering)
 set(ALGORITHMS_TESTS_PDESOLVER ${test_bin_dir}/testDriverPDESolver)
 set(ALGORITHMS_TESTS_ALGORITHMS ${test_bin_dir}/testDriverAlgorithms)
 
+# For performing JSON regression tests.
+add_executable( RegressionTestJSON RegressionTestJSON.cxx ${CMAKE_SOURCE_DIR}/Code/External/jsoncpp/jsoncpp.cpp )
+set(regression_test_json ${test_bin_dir}/RegressionTestJSON)
+
 #
 # Define a function for adding a test with an optional set of libraries to link against
 #
@@ -461,6 +465,19 @@ if(BUILD_TESTING AND compile_GenerateBullseyes)
     ${test_temp_dir}/calatkApplicationDataConfigTest_AlgorithmConfig.json
     ${test_temp_dir}/calatkApplicationDataConfigTest_DataConfig.json
     )
+  add_test(calatkApplicationDataConfigTest_CleanedAlgorithmConfigVerification
+    ${regression_test_json}
+    ${test_temp_dir}/calatkApplicationDataConfigTest_AlgorithmConfig.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationDataConfigTest_CleanedAlgorithmConfigBaseline.json
+    )
+  add_test(calatkApplicationDataConfigTest_CleanedDataConfigVerification
+    ${regression_test_json}
+    ${test_temp_dir}/calatkApplicationDataConfigTest_DataConfig.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationDataConfigTest_CleanedDataConfigBaseline.json
+    )
+  set_tests_properties(calatkApplicationDataConfigTest_CleanedAlgorithmConfigVerification
+    calatkApplicationDataConfigTest_CleanedDataConfigVerification
+    PROPERTIES DEPENDS calatkApplicationDataConfigTest)
 
   set_tests_properties(calatkApplicationImageFileNamesGivenTest
     CALATKCommandLineBullseyes1DTest
