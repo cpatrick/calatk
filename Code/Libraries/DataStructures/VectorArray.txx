@@ -21,6 +21,7 @@
 #define VECTOR_ARRAY_TXX
 
 #include "VectorArray.h"
+#include <cstring>
 
 namespace CALATK
 {
@@ -117,13 +118,8 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, VImageDimensi
   m_ManageMemory( true )
 {
   this->Allocate();
-
-  // copy the data, just based on linear indexing for efficiency
-  for (unsigned int uiIndx = 0; uiIndx < m_Length; ++uiIndx )
-    {
-    m_DataPtr[ uiIndx ] = source->GetValue( uiIndx );
-    }
-
+  VectorArray<T, VImageDimension> * nonConstSource = const_cast< VectorArray<T, VImageDimension>* >( source );
+  std::memcpy( this->m_DataPtr, nonConstSource->GetDataPointer(), sizeof( T ) * this->m_Length );
 }
 
 
@@ -136,14 +132,9 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, VImageDimensi
   m_Length(m_SizeX*m_SizeY*m_SizeZ*m_Dimension),
   m_DataPtr( ptrMemory ),
   m_ManageMemory( false )
-{  
-  
-  // copy the data, just based on linear indexing for efficiency
-  for (unsigned int uiIndx = 0; uiIndx < m_Length; ++uiIndx )
-    {
-    m_DataPtr[ uiIndx ] = source->GetValue( uiIndx );
-    }
-
+{
+  VectorArray<T, VImageDimension> * nonConstSource = const_cast< VectorArray<T, VImageDimension>* >( source );
+  std::memcpy( this->m_DataPtr, nonConstSource->GetDataPointer(), sizeof( T ) * this->m_Length );
 }
 
 
@@ -161,13 +152,8 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, VImageDimensi
   m_ManageMemory( true )
 {
   this->Allocate();
-
-  // copy the data, just based on linear indexing for efficiency
-  for (unsigned int uiIndx = 0; uiIndx < m_Length; ++uiIndx )
-    {
-    m_DataPtr[ uiIndx ] = dVal;
-    }
-
+  VectorArray<T, VImageDimension> * nonConstSource = const_cast< VectorArray<T, VImageDimension>* >( source );
+  std::memcpy( this->m_DataPtr, nonConstSource->GetDataPointer(), sizeof( T ) * this->m_Length );
 }
 
 
@@ -189,12 +175,12 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, 1>* source, T
   unsigned int szX = source->GetSizeX();
 
   for ( unsigned int x = 0; x < szX; ++x )
-  {
-    for ( unsigned int d = 0; d < uiNumDim; ++ d )
     {
+    for ( unsigned int d = 0; d < uiNumDim; ++ d )
+      {
       this->SetValue(x, d, dVal );
+      }
     }
-  }
 
 }
 
@@ -218,15 +204,15 @@ VectorArray<T, VImageDimension>::VectorArray( const VectorArray<T, 2>* source, T
   unsigned int szY = source->GetSizeY();
 
   for ( unsigned int y = 0; y < szY; ++y )
-  {
-    for ( unsigned int x = 0; x < szX; ++x )
     {
-      for ( unsigned int d = 0; d < uiNumDim; ++ d )
+    for ( unsigned int x = 0; x < szX; ++x )
       {
+      for ( unsigned int d = 0; d < uiNumDim; ++ d )
+        {
         this->SetValue(x, y, d, dVal );
+        }
       }
     }
-  }
 
 }
 
@@ -826,12 +812,8 @@ void VectorArray<T, VImageDimension>::Copy(const VectorArray<T, VImageDimension>
 #endif
 
   // if nothing wrong, do the copy
-
-  // copy the data, just based on linear indexing for efficiency
-  for (unsigned int uiIndx = 0; uiIndx < m_Length; ++uiIndx )
-    {
-    m_DataPtr[ uiIndx ] = source->GetValue( uiIndx );
-    }
+  VectorArray<T, VImageDimension> * nonConstSource = const_cast< VectorArray<T, VImageDimension>* >( source );
+  std::memcpy( this->m_DataPtr, nonConstSource->GetDataPointer(), sizeof( T ) * this->m_Length );
 }
 
 
