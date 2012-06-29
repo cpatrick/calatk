@@ -414,21 +414,40 @@ if(BUILD_TESTING AND compile_GenerateBullseyes)
     PROPERTIES WILL_FAIL TRUE
     )
 
-  add_test(CALATKCommandLineBullseyes1DTest ${CALATKCommandLine_path}
+  add_test(NAME CALATKCommandLineBullseyes1DTest
+    WORKING_DIRECTORY ${test_temp_dir}
+    COMMAND ${CALATKCommandLine_path}
     ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfig.json
-    ${test_temp_dir}/Bullseye1DTimePoint0.mha
-    ${test_temp_dir}/Bullseye1DTimePoint1.mha
+    Bullseye1DTimePoint0.mha
+    Bullseye1DTimePoint1.mha
     ${test_temp_dir}/CALATKCommandLineBullseyes1D_AlgorithmConfig.json
     ${test_temp_dir}/CALATKCommandLineBullseyes1D_DataConfig.json
     )
+  add_test(CALATKCommandLineBullseyes1DTest_CleanedAlgorithmConfigVerification
+    ${regression_test_json}
+    ${test_temp_dir}/CALATKCommandLineBullseyes1D_AlgorithmConfig.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/CALATKCommandLineBullseyes1D_AlgorithmConfigBaseline.json
+    )
+  add_test(CALATKCommandLineBullseyes1DTest_CleanedDataConfigVerification
+    ${regression_test_json}
+    ${test_temp_dir}/CALATKCommandLineBullseyes1D_DataConfig.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/CALATKCommandLineBullseyes1D_DataConfigBaseline.json
+    )
+  set_tests_properties(CALATKCommandLineBullseyes1DTest_CleanedAlgorithmConfigVerification
+    CALATKCommandLineBullseyes1DTest_CleanedDataConfigVerification
+    PROPERTIES DEPENDS CALATKCommandLineBullseyes1DTest
+    )
 
-  #add_test(CALATKCommandLineBullseyes1DTest ${CALATKCommandLine_path}
-    #${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfig.json
-    #${test_temp_dir}/Bullseye1DTimePoint0.mha
-    #${test_temp_dir}/Bullseye1DTimePoint1.mha
-    #${test_temp_dir}/CALATKCommandLineBullseyes1D_AlgorithmConfig.json
-    #${test_temp_dir}/CALATKCommandLineBullseyes1D_DataConfig.json
-    #)
+  add_test(NAME CALATKCommandLineBullseyes1DOutputTest
+    WORKING_DIRECTORY ${test_temp_dir}
+    COMMAND ${CALATKCommandLine_path}
+    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfig.json
+    Bullseye1DTimePoint0.mha
+    Bullseye1DTimePoint1.mha
+    Bullseye1DTimePoint0WarpedTo1.mha
+    ${test_temp_dir}/CALATKCommandLineBullseyes1DOutput_AlgorithmConfig.json
+    ${test_temp_dir}/CALATKCommandLineBullseyes1DOutput_DataConfig.json
+    )
 
   add_test(CALATKCommandLineBullseyes1D_ImageDimensionsSpecifiedTest
     ${CALATKCommandLine_path}
