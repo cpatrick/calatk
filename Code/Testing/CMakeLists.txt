@@ -448,6 +448,20 @@ if(BUILD_TESTING AND compile_GenerateBullseyes)
     ${test_temp_dir}/CALATKCommandLineBullseyes1DOutput_AlgorithmConfig.json
     ${test_temp_dir}/CALATKCommandLineBullseyes1DOutput_DataConfig.json
     )
+  add_test(CALATKCommandLineBullseyes1DOutputTest_CleanedAlgorithmConfigVerification
+    ${regression_test_json}
+    ${test_temp_dir}/CALATKCommandLineBullseyes1DOutput_AlgorithmConfig.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/CALATKCommandLineBullseyes1DOutput_AlgorithmConfigBaseline.json
+    )
+  add_test(CALATKCommandLineBullseyes1DOutputTest_CleanedDataConfigVerification
+    ${regression_test_json}
+    ${test_temp_dir}/CALATKCommandLineBullseyes1DOutput_DataConfig.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/CALATKCommandLineBullseyes1DOutput_DataConfigBaseline.json
+    )
+  set_tests_properties(CALATKCommandLineBullseyes1DOutputTest_CleanedAlgorithmConfigVerification
+    CALATKCommandLineBullseyes1DOutputTest_CleanedDataConfigVerification
+    PROPERTIES DEPENDS CALATKCommandLineBullseyes1DOutputTest
+    )
 
   add_test(CALATKCommandLineBullseyes1D_ImageDimensionsSpecifiedTest
     ${CALATKCommandLine_path}
