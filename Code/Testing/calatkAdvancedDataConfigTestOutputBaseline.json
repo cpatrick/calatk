@@ -1,0 +1,65 @@
+
+{
+	"Inputs" :
+	{
+		"Subjects" :
+		[
+
+			{
+				"ID" : "John",
+				"TimePoints" :
+				[
+
+					{
+						"Image" : "ultrasound1.mha",
+						"Time" : 0.0,
+						"Transform" : "ultrasound1_transform.hdf"
+					},
+
+					{
+						"Image" : "ultrasound2.mha",
+						"Time" : 0.20,
+						"Transform" : "ultrasound2_transform.hdf"
+					},
+
+					{
+						"Image" : "ultrasound3.mha",
+						"Time" : 0.90,
+						"Transform" : "ultrasound3_transform.hdf"
+					}
+				]
+			},
+
+			{
+				"ID" : "Alice",
+				"TimePoints" :
+				[
+
+					{
+						"Image" : "mri_a.dcm",
+						"Time" : 0.0,
+						"Transform" : "mri_a_transform.hdf"
+					},
+
+					{
+						"Image" : "mri_b.dcm",
+						"Time" : 2.20,
+						"Transform" : "mri_b_transform.hdf"
+					},
+
+					{
+						"Image" : "mri_c.dcm",
+						"Time" : 3.70,
+						"Transform" : "mri_c_transform.hdf"
+					},
+
+					{
+						"Image" : "mri_d.dcm",
+						"Time" : 7.70,
+						"Transform" : "mri_d_transform.hdf"
+					}
+				]
+			}
+		]
+	}
+}

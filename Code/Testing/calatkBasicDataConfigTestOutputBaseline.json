@@ -1,0 +1,19 @@
+
+{
+	"Inputs" :
+	{
+		"Alice" :
+		[
+			[ 0.0, "mri_a.dcm" ],
+			[ 2.20, "mri_b.dcm" ],
+			[ 3.70, "mri_c.dcm" ],
+			[ 7.70, "mri_d.dcm" ]
+		],
+		"John" :
+		[
+			[ 0.0, "ultrasound1.mha" ],
+			[ 0.20, "ultrasound2.mha" ],
+			[ 0.90, "ultrasound3.mha" ]
+		]
+	}
+}

@@ -50,6 +50,8 @@
 #include "itkImageRegion.h"
 #include "itksys/SystemTools.hxx"
 
+#include "calatkRegressionTestJSON.h"
+
 #define ITK_TEST_DIMENSION_MAX 6
 
 typedef int (*MainFuncPointer)(int , char* [] );
@@ -89,7 +91,9 @@ int main(int ac, char* av[] )
   unsigned int radiusTolerance = 0;
 
   typedef std::pair< char *, char *> ComparePairType;
-  std::vector< ComparePairType > compareList;
+  typedef std::vector< ComparePairType > CompareListType;
+  CompareListType compareList;
+  CompareListType jsonCompareList;
 
   RegisterTests();
   std::string testToRun;
@@ -133,6 +137,12 @@ int main(int ac, char* av[] )
       else if (ac > 3 && strcmp(av[1], "--compare") == 0)
         {
         compareList.push_back( ComparePairType( av[2], av[3] ) );
+        av += 3;
+        ac -= 3;
+        }
+      else if (ac > 3 && strcmp(av[1], "--compare-json") == 0)
+        {
+        jsonCompareList.push_back( ComparePairType( av[2], av[3] ) );
         av += 3;
         ac -= 3;
         }
@@ -215,6 +225,12 @@ int main(int ac, char* av[] )
         std::cout << "</DartMeasurement>" << std::endl;
         
         result += bestBaselineStatus;
+        }
+      for( size_t ii = 0; ii < jsonCompareList.size(); ++ii )
+        {
+        char * baselineFilename = jsonCompareList[ii].first;
+        char * testFilename = jsonCompareList[ii].second;
+        result += RegressionTestJSON( testFilename, baselineFilename );
         }
       }
     catch(const itk::ExceptionObject& e)

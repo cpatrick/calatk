@@ -28,26 +28,26 @@
 // Compare a test JSON file to a baseline JSON file.  Implementation is
 // contained within the header for convenience.
 
-/** Return true if the test file and baseline file have the same JSON content
- * and false otherwise. */
-bool RegressionTestJSON( const char *testJSONFileName,
+/** Return 0 if the test file and baseline file have the same JSON content
+ * and 1 otherwise. */
+int RegressionTestJSON( const char *testJSONFileName,
                          const char *baselineJSONFileName,
                          bool reportErrors = true,
                          bool verbose = true );
 
 // Recursively compare test and baseline.
-bool compareJSON( const Json::Value & test, const Json::Value & baseline, bool reportErrors, bool verbose )
+int compareJSON( const Json::Value & test, const Json::Value & baseline, bool reportErrors, bool verbose )
 {
-  bool same = true;
+  int same = 0;
   for( Json::Value::const_iterator baselineIt = baseline.begin(), testIt = test.begin();
        testIt != test.end();
        ++baselineIt, ++testIt )
     {
     if( !((*baselineIt).isNull()) && ((*baselineIt).isArray() || (*baselineIt).isObject()) )
       {
-      if( !compareJSON( *testIt, *baselineIt, reportErrors, verbose ) )
+      if( compareJSON( *testIt, *baselineIt, reportErrors, verbose ) )
         {
-        same = false;
+        same = 1;
         break;
         }
       }
@@ -65,7 +65,7 @@ bool compareJSON( const Json::Value & test, const Json::Value & baseline, bool r
             {
             std::cerr << "The test value was non-null when the baseline value was null." << std::endl;
             }
-          same = false;
+          same = 1;
           break;
           }
         }
@@ -77,7 +77,7 @@ bool compareJSON( const Json::Value & test, const Json::Value & baseline, bool r
             {
             std::cerr << "The test value: " << (*testIt).asBool() << " does not equal the baseline value: " << (*baselineIt).asBool() << std::endl;
             }
-          same = false;
+          same = 1;
           break;
           }
         }
@@ -89,7 +89,7 @@ bool compareJSON( const Json::Value & test, const Json::Value & baseline, bool r
             {
             std::cerr << "The test value: " << (*testIt).asInt() << " does not equal the baseline value: " << (*baselineIt).asInt() << std::endl;
             }
-          same = false;
+          same = 1;
           break;
           }
         }
@@ -101,7 +101,7 @@ bool compareJSON( const Json::Value & test, const Json::Value & baseline, bool r
             {
             std::cerr << "The test value: " << (*testIt).asDouble() << " does not equal the baseline value: " << (*baselineIt).asDouble() << std::endl;
             }
-          same = false;
+          same = 1;
           break;
           }
         }
@@ -113,7 +113,7 @@ bool compareJSON( const Json::Value & test, const Json::Value & baseline, bool r
             {
             std::cerr << "The test value: " << (*testIt).asString() << " does not equal the baseline value: " << (*baselineIt).asString() << std::endl;
             }
-          same = false;
+          same = 1;
           break;
           }
         }
@@ -122,7 +122,7 @@ bool compareJSON( const Json::Value & test, const Json::Value & baseline, bool r
   return same;
 }
 
-bool RegressionTestJSON( const char *testJSONFileName,
+int RegressionTestJSON( const char *testJSONFileName,
                          const char *baselineJSONFileName,
                          bool reportErrors,
                          bool verbose )
@@ -135,26 +135,26 @@ bool RegressionTestJSON( const char *testJSONFileName,
   if( !testFile.is_open() )
     {
     std::cerr << "Could not open test file: " << testJSONFileName << std::endl;
-    return false;
+    return 1;
     }
   if( !reader.parse( testFile, testRoot ) )
     {
     std::cerr << "Could not parse test file: " << testJSONFileName << std::endl;
     testFile.close();
-    return false;
+    return 1;
     }
   testFile.close();
   std::ifstream baselineFile( baselineJSONFileName );
   if( !baselineFile.is_open() )
     {
     std::cerr << "Could not open baseline file: " << baselineJSONFileName << std::endl;
-    return false;
+    return 1;
     }
   if( !reader.parse( baselineFile, baselineRoot ) )
     {
     std::cerr << "Could not parse baseline file: " << baselineJSONFileName << std::endl;
     baselineFile.close();
-    return false;
+    return 1;
     }
   baselineFile.close();
 

@@ -5,6 +5,9 @@ set(test_temp_dir ${CALATK_BINARY_DIR}/Testing/Temporary)
 set(test_input_dir ${CALATK_SOURCE_DIR}/TestingData)
 set(test_bin_dir ${CALATK_BINARY_DIR}/Code/Testing)
 
+# for calatkRegressionTestJSON.h
+include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
+
 set(ALGORITHMS_TESTS_FILTERING ${test_bin_dir}/testDriverFiltering)
 set(ALGORITHMS_TESTS_PDESOLVER ${test_bin_dir}/testDriverPDESolver)
 set(ALGORITHMS_TESTS_ALGORITHMS ${test_bin_dir}/testDriverAlgorithms)
@@ -524,13 +527,19 @@ if( BUILD_TESTING )
   target_link_libraries(testDriverImageManager CALATK ${ITK_LIBRARIES})
 
   add_test(calatkBasicDataConfigTest
-    testDriverImageManager calatkBasicDataConfigTest
+    testDriverImageManager
+    --compare-json ${CMAKE_CURRENT_SOURCE_DIR}/calatkBasicDataConfigTestOutputBaseline.json
+                   ${test_temp_dir}/calatkBasicDataConfigTestOutput.json
+    calatkBasicDataConfigTest
     ${CMAKE_CURRENT_SOURCE_DIR}/calatkBasicDataConfigTestInput.json
     ${test_temp_dir}/calatkBasicDataConfigTestOutput.json
     )
 
   add_test(calatkAdvancedDataConfigTest
-    testDriverImageManager calatkAdvancedDataConfigTest
+    testDriverImageManager
+    --compare-json ${CMAKE_CURRENT_SOURCE_DIR}/calatkAdvancedDataConfigTestOutputBaseline.json
+                   ${test_temp_dir}/calatkAdvancedDataConfigTestOutput.json
+    calatkAdvancedDataConfigTest
     ${CMAKE_CURRENT_SOURCE_DIR}/calatkAdvancedDataConfigTestInput.json
     ${test_temp_dir}/calatkAdvancedDataConfigTestOutput.json
     )
