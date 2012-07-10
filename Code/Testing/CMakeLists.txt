@@ -475,11 +475,20 @@ if(BUILD_TESTING AND compile_GenerateBullseyes)
     ${test_temp_dir}/CALATKCommandLineBullseyes1D_ImageDimensionSpecified_DataConfig.json
     )
 
+  # For profiling performance,
+  #
+  #  ${test_temp_dir}/Bullseye1DTimePoint0.mha
+  #  ${test_temp_dir}/Bullseye1DTimePoint1.mha
+  #
+  # can be changed to
+  #
+  #  ${test_temp_dir}/Bullseye2DTimePoint0.mha
+  #  ${test_temp_dir}/Bullseye2DTimePoint1.mha
   add_ctest_test_testdriver(calatkApplicationImageFileNamesGivenTest
     testDriverInterfaces
     ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfig.json
-    ${test_temp_dir}/Bullseye2DTimePoint0.mha
-    ${test_temp_dir}/Bullseye2DTimePoint1.mha
+    ${test_temp_dir}/Bullseye1DTimePoint0.mha
+    ${test_temp_dir}/Bullseye1DTimePoint1.mha
     ${test_temp_dir}/calatkApplicationImageFileNamesGivenTest_AlgorithmConfig.json
     ${test_temp_dir}/calatkApplicationImageFileNamesGivenTest_DataConfig.json
     )
