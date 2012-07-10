@@ -483,16 +483,6 @@ if(BUILD_TESTING AND compile_GenerateBullseyes)
     ${test_temp_dir}/calatkApplicationImageFileNamesGivenTest_AlgorithmConfig.json
     ${test_temp_dir}/calatkApplicationImageFileNamesGivenTest_DataConfig.json
     )
-  add_executable(DefaultInputConfigVerification
-    calatkDefaultInputConfigVerification.cxx
-    )
-  target_link_libraries(DefaultInputConfigVerification CALATK)
-  add_test(calatkDefaultInputConfigVerificationTest
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/DefaultInputConfigVerification
-    ${test_temp_dir}/calatkApplicationImageFileNamesGivenTest_DataConfig.json
-    )
-  set_tests_properties(calatkDefaultInputConfigVerificationTest
-    PROPERTIES DEPENDS calatkApplicationImageFileNamesGivenTest)
 
   add_ctest_test_testdriver(calatkApplicationDataConfigTest
     testDriverInterfaces
