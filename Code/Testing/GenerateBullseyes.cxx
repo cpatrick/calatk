@@ -241,7 +241,7 @@ int main( int argc, char * argv[] )
     }
 
   typedef unsigned char PixelType;
-  const unsigned int Dimension = 3;
+  static const unsigned int Dimension = 3;
   typedef itk::Image< PixelType, Dimension > ImageType;
 
   typedef BullseyeWriter< ImageType > BullseyeWriterType;
