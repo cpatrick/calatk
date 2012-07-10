@@ -191,7 +191,7 @@ std::string ApplicationUtils::getCWD() {
   char buffer[maxSize];
 
   char* temp = getcwd(buffer, maxSize);
-  temp = temp;  // Supress unused warning
+  (void) temp; // Supress unused warning
   
   std::string out(buffer);
   
