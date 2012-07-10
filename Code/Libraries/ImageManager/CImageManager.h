@@ -430,12 +430,13 @@ private:
 
   /** Master internal AddImageAndTransform used by AddImage, AddCommonImage,
    * and AddImageAndTransform to prevent code duplication. */
-  int InternalAddImage( FloatType timePoint, int subjectIndex, const std::string & fileName = "", VectorImageType * pIm = NULL, const std::string & transformFileName = "" );
+  int InternalAddImage( FloatType timePoint, int subjectIndex, const std::string & fileName = "", VectorImageType * pIm = NULL, const std::string & transformFileName = "", const std::string & subjectString = "" );
 
 
   int m_DatasetGlobalIdCounter; /**< Internal running id for datasets */
   std::map< unsigned int, unsigned int> m_MapIdToSubjectId; /**< map which stores a map from image id to subject id, -1 values indicate common datasets */
   typedef std::map< std::string, int >      MapSubjectStringToFirstImageGlobalIdType;
+  typedef std::pair< std::string, int >     SubjectStringToFirstImageGlobalIdPairType;
   MapSubjectStringToFirstImageGlobalIdType  m_MapSubjectStringToFirstImageGlobalId; /**< map from the string used to identify the subject in the data configuration file to the integer used to identify the subject during execution */
 
   /********************************
