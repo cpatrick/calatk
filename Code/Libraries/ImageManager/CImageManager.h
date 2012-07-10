@@ -428,6 +428,11 @@ private:
   bool IsAdvancedDataConfigurationFormat();
 
 
+  /** Master internal AddImageAndTransform used by AddImage, AddCommonImage,
+   * and AddImageAndTransform to prevent code duplication. */
+  int InternalAddImage( FloatType timePoint, int subjectIndex, const std::string & fileName = "", VectorImageType * pIm = NULL, const std::string & transformFileName = "" );
+
+
   int m_DatasetGlobalIdCounter; /**< Internal running id for datasets */
   std::map< unsigned int, unsigned int> m_MapIdToSubjectId; /**< map which stores a map from image id to subject id, -1 values indicate common datasets */
   typedef std::map< std::string, int >      MapSubjectStringToFirstImageGlobalIdType;
@@ -440,6 +445,7 @@ private:
   /* All the image information over <b>all</b> subjects and images of <b>all</b> scales */
   typedef std::multimap< int, TimeSeriesDataPointType, CompareSubjectIds > AllSubjectInformationType;
   typedef std::vector< TimeSeriesDataPointType >                           AllCommonSubjectInformationType;
+  typedef std::pair< int, TimeSeriesDataPointType >                        IdAndTimeSeriesDataPointPairType;
 
   AllSubjectInformationType       m_AllSubjectInformation;
   AllCommonSubjectInformationType m_AllCommonSubjectInformation;
