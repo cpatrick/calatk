@@ -29,14 +29,16 @@
 // contained within the header for convenience.
 
 /** Return 0 if the test file and baseline file have the same JSON content
- * and 1 otherwise. */
+ * and 1 otherwise.
+ **/
 int RegressionTestJSON( const char *testJSONFileName,
                          const char *baselineJSONFileName,
                          bool reportErrors = true,
-                         bool verbose = true );
+                         bool verbose = true,
+                         double floatTolerance = 0.00001 );
 
 // Recursively compare test and baseline.
-int compareJSON( const Json::Value & test, const Json::Value & baseline, bool reportErrors, bool verbose )
+int compareJSON( const Json::Value & test, const Json::Value & baseline, bool reportErrors, bool verbose, const double & floatTolerance )
 {
   int same = 0;
   for( Json::Value::const_iterator baselineIt = baseline.begin(), testIt = test.begin();
@@ -45,7 +47,7 @@ int compareJSON( const Json::Value & test, const Json::Value & baseline, bool re
     {
     if( !((*baselineIt).isNull()) && ((*baselineIt).isArray() || (*baselineIt).isObject()) )
       {
-      if( compareJSON( *testIt, *baselineIt, reportErrors, verbose ) )
+      if( compareJSON( *testIt, *baselineIt, reportErrors, verbose, floatTolerance ) )
         {
         same = 1;
         break;
@@ -95,7 +97,9 @@ int compareJSON( const Json::Value & test, const Json::Value & baseline, bool re
         }
       else if( (*baselineIt).isDouble() )
         {
-        if( (*baselineIt).asDouble() != (*testIt).asDouble() )
+        /// \todo This should be using itk::Math::FloatAlmostEquals available in
+        //  ITKv4 once we start requiring ITKv4
+        if( ((*baselineIt).asDouble() - (*testIt).asDouble()) / (*baselineIt).asDouble() > floatTolerance )
           {
           if( reportErrors )
             {
@@ -125,7 +129,8 @@ int compareJSON( const Json::Value & test, const Json::Value & baseline, bool re
 int RegressionTestJSON( const char *testJSONFileName,
                          const char *baselineJSONFileName,
                          bool reportErrors,
-                         bool verbose )
+                         bool verbose,
+                         double floatTolerance )
 {
   Json::Value testRoot;
   Json::Value baselineRoot;
@@ -158,7 +163,7 @@ int RegressionTestJSON( const char *testJSONFileName,
     }
   baselineFile.close();
 
-  return compareJSON( testRoot, baselineRoot, reportErrors, verbose );
+  return compareJSON( testRoot, baselineRoot, reportErrors, verbose, floatTolerance );
 }
 
 #endif

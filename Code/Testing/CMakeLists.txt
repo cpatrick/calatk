@@ -475,24 +475,39 @@ if(BUILD_TESTING AND compile_GenerateBullseyes)
     ${test_temp_dir}/CALATKCommandLineBullseyes1D_ImageDimensionSpecified_DataConfig.json
     )
 
+  # For profiling performance,
+  #
+  #  Bullseye1DTimePoint0.mha
+  #  Bullseye1DTimePoint1.mha
+  #
+  # can be changed to
+  #
+  #  Bullseye2DTimePoint0.mha
+  #  Bullseye2DTimePoint1.mha
   add_ctest_test_testdriver(calatkApplicationImageFileNamesGivenTest
     testDriverInterfaces
     ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfig.json
-    ${test_temp_dir}/Bullseye2DTimePoint0.mha
-    ${test_temp_dir}/Bullseye2DTimePoint1.mha
+    Bullseye1DTimePoint0.mha
+    Bullseye1DTimePoint1.mha
+    calatkApplicationImageFileNamesGivenTest_AlgorithmConfig.json
+    calatkApplicationImageFileNamesGivenTest_DataConfig.json
+    )
+  set_tests_properties( calatkApplicationImageFileNamesGivenTest
+    PROPERTIES WORKING_DIRECTORY ${test_temp_dir} )
+  add_test(calatkApplicationImageFileNamesGivenTest_CleanedAlgorithmConfigVerification
+    ${regression_test_json}
     ${test_temp_dir}/calatkApplicationImageFileNamesGivenTest_AlgorithmConfig.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationImageFileNamesGivenTest_CleanedAlgorithmConfigBaseline.json
+    )
+  add_test(calatkApplicationImageFileNamesGivenTest_CleanedDataConfigVerification
+    ${regression_test_json}
     ${test_temp_dir}/calatkApplicationImageFileNamesGivenTest_DataConfig.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationImageFileNamesGivenTest_CleanedDataConfigBaseline.json
     )
-  add_executable(DefaultInputConfigVerification
-    calatkDefaultInputConfigVerification.cxx
+  set_tests_properties(calatkApplicationImageFileNamesGivenTest_CleanedAlgorithmConfigVerification
+    calatkApplicationImageFileNamesGivenTest_CleanedDataConfigVerification
+    PROPERTIES DEPENDS calatkApplicationImageFileNamesGivenTest
     )
-  target_link_libraries(DefaultInputConfigVerification CALATK)
-  add_test(calatkDefaultInputConfigVerificationTest
-    ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/DefaultInputConfigVerification
-    ${test_temp_dir}/calatkApplicationImageFileNamesGivenTest_DataConfig.json
-    )
-  set_tests_properties(calatkDefaultInputConfigVerificationTest
-    PROPERTIES DEPENDS calatkApplicationImageFileNamesGivenTest)
 
   add_ctest_test_testdriver(calatkApplicationDataConfigTest
     testDriverInterfaces
@@ -513,13 +528,15 @@ if(BUILD_TESTING AND compile_GenerateBullseyes)
     )
   set_tests_properties(calatkApplicationDataConfigTest_CleanedAlgorithmConfigVerification
     calatkApplicationDataConfigTest_CleanedDataConfigVerification
-    PROPERTIES DEPENDS calatkApplicationDataConfigTest)
+    PROPERTIES DEPENDS calatkApplicationDataConfigTest
+    )
 
   set_tests_properties(calatkApplicationImageFileNamesGivenTest
     CALATKCommandLineBullseyes1DTest
     CALATKCommandLineBullseyes1D_ImageDimensionsSpecifiedTest
     calatkApplicationDataConfigTest
-    PROPERTIES DEPENDS GenerateBullseyes)
+    PROPERTIES DEPENDS GenerateBullseyes
+    )
 endif()
 
 if( BUILD_TESTING )
