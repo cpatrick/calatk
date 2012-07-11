@@ -751,7 +751,7 @@ int CImageManager< TFloat, VImageDimension >::InternalAddImage( FloatType timePo
   if( subjectString.empty() )
     {
     std::ostringstream ostrm;
-    ostrm << uniqueId;
+    ostrm << subjectIndex;
     requiredSubjectString = ostrm.str();
     }
   else
@@ -778,8 +778,16 @@ int CImageManager< TFloat, VImageDimension >::InternalAddImage( FloatType timePo
 
     Json::Value timePointEntry( Json::arrayValue );
     timePointEntry[0] = timePoint;
-    assert( !fileName.empty() );
-    timePointEntry[1] = fileName;
+    if( fileName.empty() )
+      {
+      std::ostringstream ostrm;
+      ostrm << "Memory address: " << pIm;
+      timePointEntry[0] = ostrm.str();
+      }
+    else
+      {
+      timePointEntry[1] = fileName;
+      }
 
     const Json::ArrayIndex timePointIndex = cleanedSubject.size();
     assert( timePointIndex <= combinedSubject.size() );

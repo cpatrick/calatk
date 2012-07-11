@@ -45,6 +45,12 @@ int calatkBasicDataConfigTest( int argc, char ** argv )
 
   imageManager->SetDataAutoConfiguration( basicConfigurationCombined, basicConfigurationCleaned );
   imageManager->ReadInputsFromDataJSONConfiguration();
+  imageManager->AddImage( "Exercising AddImage", 7743, 7 );
+  imageManager->AddCommonImage( "Exercising AddCommonImage", 4329 );
+  typedef ImageManagerType::VectorImageType VectorImageType;
+  VectorImageType::Pointer image = new VectorImageType;
+  imageManager->AddImage( image, 3333, 7 );
+
 
   basicConfigurationCleaned->WriteJSONConfigurationFile( argv[2] );
 

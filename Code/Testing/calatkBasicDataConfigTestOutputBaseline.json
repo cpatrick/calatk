@@ -2,6 +2,14 @@
 {
 	"Inputs" :
 	{
+		"-1" :
+		[
+			[ 4329.0, "Exercising AddCommonImage" ]
+		],
+		"7" :
+		[
+			[ 7743.0, "Exercising AddImage" ]
+		],
 		"Alice" :
 		[
 			[ 0.0, "mri_a.dcm" ],
