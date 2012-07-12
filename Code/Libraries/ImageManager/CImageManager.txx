@@ -782,7 +782,7 @@ int CImageManager< TFloat, VImageDimension >::InternalAddImage( FloatType timePo
       {
       std::ostringstream ostrm;
       ostrm << "Memory address: " << pIm;
-      timePointEntry[0] = ostrm.str();
+      timePointEntry[1] = ostrm.str();
       }
     else
       {
