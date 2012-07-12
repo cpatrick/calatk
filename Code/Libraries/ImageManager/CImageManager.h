@@ -178,22 +178,6 @@ public:
   int AddCommonImage( VectorImageType* pIm, FloatType timepoint );
 
   /**
-   * @brief Returns the image at full resolution (as loaded), based on the unique image id.
-   *
-   * @param uid - unique id of a registered image
-   * @return image with given id
-   */
-  const VectorImageType* GetOriginalImageById( int uid );
-
-  /**
-   * @brief Returns the image at the currently selected resolution, based on the unique image id.
-   *
-   * @param uid -- unique id of a registered image
-   * @return const VectorImageType
-   */
-  const VectorImageType* GetImageById( int uid );
-
-  /**
    * @brief Registers the filename of an image transform for a given image
    * @param uid - id of the image the transform should be registered with
    * @return int -- returns true if the registration was successful (false if there is no image with uiId)
@@ -209,7 +193,7 @@ public:
    * @param subjectIndex - subject index (if multiple subject should be stored)
    * @return int -- returns the unique id of the registered file, can be used to register a transform later on or to delete it
    */
-  int AddImageAndTransform( const std::string & filename, const std::string & transformFilename, FloatType timepoint, int subjectIndex );
+  int AddImageAndTransform( const std::string & fileName, const std::string & transformFileName, FloatType timePoint, int subjectIndex );
 
   /**
    * @brief Registers the filename of an image with a given timepoint *for all subject ids* (for longitudinal studies) together with its transformation
@@ -219,7 +203,7 @@ public:
    * @param timepoint -- time associated with image
    * @return int -- returns the unique id of the registered file
    */
-  int AddCommonImageAndTransform( const std::string & filename, const std::string & transformFilename, FloatType timepoint );
+  int AddCommonImageAndTransform( const std::string & fileName, const std::string & transformFileName, FloatType timePoint );
 
   /**
    * Unregisters an image (also removes its transform and all data associated with it)
@@ -228,6 +212,22 @@ public:
    * @return returns true if the image could be removed and false otherwise
    */
   virtual bool RemoveImage( int uiId );
+
+  /**
+   * @brief Returns the image at full resolution (as loaded), based on the unique image id.
+   *
+   * @param uid - unique id of a registered image
+   * @return image with given id
+   */
+  const VectorImageType* GetOriginalImageById( int uid );
+
+  /**
+   * @brief Returns the image at the currently selected resolution, based on the unique image id.
+   *
+   * @param uid -- unique id of a registered image
+   * @return const VectorImageType
+   */
+  const VectorImageType* GetImageById( int uid );
 
   /**
    * Returns vectors to the actual image data, needs to be implemented by a derived class.

@@ -765,6 +765,11 @@ int CImageManager< TFloat, VImageDimension >::InternalAddImage( FloatType timePo
     }
   else // Basic Data Configuration Format
     {
+    if( !transformFileName.empty() )
+      {
+      throw std::runtime_error( "Transforms are not supported for the Basic data configuration file format." );
+      }
+
     if( !combinedInputs.isMember( requiredSubjectString ) )
       {
       combinedInputs[requiredSubjectString] = Json::Value( Json::arrayValue );
@@ -873,6 +878,15 @@ int CImageManager< TFloat, VImageDimension>::AddCommonImageAndTransform( const s
 template < class TFloat, unsigned int VImageDimension >
 bool CImageManager< TFloat, VImageDimension>::AddImageTransform( const std::string & fileName, int uid )
 {
+  if( this->IsAdvancedDataConfigurationFormat() )
+    {
+    /// \todo
+    }
+  else
+    {
+    throw std::runtime_error( "Transforms are not supported for the Basic data configuration file format." );
+    }
+
   typename AllSubjectInformationType::iterator iter;
   for ( iter = m_AllSubjectInformation.begin(); iter != m_AllSubjectInformation.end(); ++iter )
     {

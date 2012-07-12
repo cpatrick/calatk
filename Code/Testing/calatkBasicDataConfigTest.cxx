@@ -51,7 +51,33 @@ int calatkBasicDataConfigTest( int argc, char ** argv )
   VectorImageType::Pointer image = new VectorImageType;
   imageManager->AddImage( image, 3333, 7 );
   imageManager->AddCommonImage( image, 3819.3 );
-
+  try
+    {
+    imageManager->AddImageTransform( "Transform for 7", 7 );
+    return EXIT_FAILURE;
+    }
+  catch ( const std::runtime_error & e )
+    {
+    // it should throw (Basic format does not support transforms)
+    }
+  try
+    {
+    imageManager->AddImageAndTransform( "Exercising AddImageAndTransform", "TransformFileName", 123.1, 5 );
+    return EXIT_FAILURE;
+    }
+  catch ( const std::runtime_error & e )
+    {
+    // it should throw (Basic format does not support transforms)
+    }
+  try
+    {
+    imageManager->AddCommonImageAndTransform( "Exercising AddCommonImageAndTransform", "TransformFileName", 123.1 );
+    return EXIT_FAILURE;
+    }
+  catch ( const std::runtime_error & e )
+    {
+    // it should throw (Basic format does not support transforms)
+    }
 
   basicConfigurationCleaned->WriteJSONConfigurationFile( argv[2] );
 
