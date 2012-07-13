@@ -25,6 +25,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <cmath>
 
 // Compare a test JSON file to a baseline JSON file.  Implementation is
 // contained within the header for convenience.
@@ -65,7 +66,7 @@ int compareJSON( const Json::Value & test, const Json::Value & baseline, bool re
       }
     else
       {
-      if( verbose )
+      if( verbose && !(*baselineIt).isNull() && !(*testIt).isNull() )
         {
         std::cout << "Comparing: " << *testIt << " to " << *baselineIt << std::endl;
         }
@@ -109,7 +110,7 @@ int compareJSON( const Json::Value & test, const Json::Value & baseline, bool re
         {
         /// \todo This should be using itk::Math::FloatAlmostEquals available in
         //  ITKv4 once we start requiring ITKv4
-        if( ((*baselineIt).asDouble() - (*testIt).asDouble()) / (*baselineIt).asDouble() > floatTolerance )
+        if( std::fabs((*baselineIt).asDouble() - (*testIt).asDouble()) / (*baselineIt).asDouble() > floatTolerance )
           {
           if( reportErrors )
             {

@@ -144,10 +144,10 @@ public:
    *
    * @param filename - filename of the image
    * @param timepoint - time associated with image
-   * @param subjectIndex - subject index (if multiple subject should be stored)
+   * @param subjectId - subject Id (if multiple subject should be stored)
    * @return int -- returns the id of the registered file, can be used to register a transform later on or to delete it
    */
-  int AddImage( const std::string & filename, FloatType timepoint, int subjectIndex );
+  int AddImage( const std::string & filename, FloatType timepoint, int subjectId );
 
   /**
    * @brief Registers the filename of an image with a given timepoint *for all subject ids*
@@ -163,10 +163,10 @@ public:
    *
    * @param pIm - pointer to image
    * @param timepoint - time associated with image
-   * @param subjectIndex - subject index
+   * @param subjectId - subject Id
    * @return int - returns the id of the registered image
    */
-  int AddImage( VectorImageType* pIm, FloatType timepoint, int subjectIndex );
+  int AddImage( VectorImageType* pIm, FloatType timepoint, int subjectId );
 
   /**
    * @brief  Registers an image with a given timepoint *for all subject ids*
@@ -190,10 +190,10 @@ public:
    * @param filename - filename of the image
    * @param transformFilename - filename of the transform
    * @param timepoint - time associated with image
-   * @param subjectIndex - subject index (if multiple subject should be stored)
+   * @param subjectId - subject Id (if multiple subject should be stored)
    * @return int -- returns the unique id of the registered file, can be used to register a transform later on or to delete it
    */
-  int AddImageAndTransform( const std::string & fileName, const std::string & transformFileName, FloatType timePoint, int subjectIndex );
+  int AddImageAndTransform( const std::string & fileName, const std::string & transformFileName, FloatType timePoint, int subjectId );
 
   /**
    * @brief Registers the filename of an image with a given timepoint *for all subject ids* (for longitudinal studies) together with its transformation
@@ -233,7 +233,7 @@ public:
    * Returns vectors to the actual image data, needs to be implemented by a derived class.
    *
    * @return pImInfo - the full subject information (a time-series for one subject)
-   * @param subjectIndex - subject index of the subject to be returned, if subject index is negative returns the first timeseries
+   * @param subjectIndex - subject Id of the subject to be returned, if subject index is negative returns the first timeseries
    */
   virtual void GetTimeSeriesWithSubjectIndex( TimeSeriesType & timeseries, int subjectIndex );
 
@@ -241,10 +241,10 @@ public:
    * Returns vectors of the time points for a specific subject.
    * To be used for example for numerical solvers which need to discretize time over all time points
    *
-   * @return timepoint - returns all the timepoints for the specified subject
-   * @param subjectIndex - index of the subject whose timepoints should be extracted, if subject index is negative, returns the first timeseries
+   * @return timePoint - returns all the time points for the specified subject
+   * @param subjectIndex - index of the subject whose timePoints should be extracted, if subject Id is negative, returns the first timeseries
    */
-  void GetTimePointsForSubjectIndex( TimePointsType & timepoints, int subjectIndex );
+  void GetTimePointsForSubjectIndex( TimePointsType & timePoints, int subjectIndex );
 
   /**
    * @brief Returns a common time-point based on its unique id. Uses the currently active scale.
@@ -252,7 +252,7 @@ public:
    * @param uid
    * @return dataPoint
    */
-  TimeSeriesDataPointType* GetCommonTimePointByUniqueId( int uid = 0);
+  TimeSeriesDataPointType* GetTimePointByUniqueId( int uid = 0);
 
   /**
    * @brief Returns a common time-point based on a vector index. This is a direct lookup. Only use when you know excaclty what you are doing. Primarily useful to access the first element if there is only one.
@@ -287,8 +287,8 @@ public:
    * Convenience method which returns a pointer to the first stored image.
    * This can be used for example to initialize data sizes for upsampling
    *
-   * @param uiSubjectIndex - desired subject index, if subject index is negative it returns the first image of the first timeseries
-   * @return Returns the first image of the time series of the subject with the given subject index
+   * @param uiSubjectIndex - desired subject Id, if subject Id is negative it returns the first image of the first timeseries
+   * @return Returns the first image of the time series of the subject with the given subject Id
    */
   const VectorImageType* GetGraftImagePointer( int uiSubjectIndex = 0 );
 
@@ -296,9 +296,9 @@ public:
    * Convenience method which returns a pointer to the first stored image at a give scale.
    * This can be used for example to initialize data sizes for upsampling
    *
-   * @param subjectIndex - desired subject index, if subject index is negative it returns the first image of the first timeseries
+   * @param subjectId - desired subject Id, if subject Id is negative it returns the first image of the first timeseries
    * @param scale -- desired scale
-   * @return Returns the first image of the time series of the subject with the given subject index
+   * @return Returns the first image of the time series of the subject with the given subject Id
    */
   const VectorImageType* GetGraftImagePointerAtScale( int uiSubjectIndex = 0, unsigned int scale = 0 );
 
@@ -310,12 +310,12 @@ public:
   bool SupportsMultiScaling();
 
   /**
-   * @brief Convenience function to return the subjectIndex or the subjectIndex of the first timeseries if subjectIndex is negative
+   * @brief Convenience function to return the subjectId or the subjectId of the first timeseries if subjectId is negative
    *
-   * @param subjectIndex
+   * @param subjectId
    * @return int
    */
-  int GetFirstSubjectIndexIfNegative( int subjectIndex );
+  int GetFirstSubjectIndexIfNegative( int subjectId );
 
   /**
    * Prints the state of the image manager
@@ -430,14 +430,16 @@ private:
 
   /** Master internal AddImageAndTransform used by AddImage, AddCommonImage,
    * and AddImageAndTransform to prevent code duplication. */
-  int InternalAddImage( FloatType timePoint, int subjectIndex, const std::string & fileName = "", VectorImageType * pIm = NULL, const std::string & transformFileName = "", const std::string & subjectString = "" );
+  int InternalAddImage( FloatType timePoint, int subjectId, const std::string & fileName = "", VectorImageType * pIm = NULL, const std::string & transformFileName = "", const std::string & subjectString = "" );
 
 
   int m_DatasetGlobalIdCounter; /**< Internal running id for datasets */
-  std::map< unsigned int, unsigned int> m_MapIdToSubjectId; /**< map which stores a map from image id to subject id, -1 values indicate common datasets */
-  typedef std::map< std::string, int >      MapSubjectStringToFirstImageGlobalIdType;
-  typedef std::pair< std::string, int >     SubjectStringToFirstImageGlobalIdPairType;
-  MapSubjectStringToFirstImageGlobalIdType  m_MapSubjectStringToFirstImageGlobalId; /**< map from the string used to identify the subject in the data configuration file to the integer used to identify the subject during execution */
+  typedef std::map< int, int >              MapIdToSubjectIdType;
+  MapIdToSubjectIdType                      m_MapIdToSubjectId; /**< map which stores a map from image id to subject id, -1 values indicate common datasets */
+
+  typedef std::map< std::string, int >      MapSubjectStringToSubjectIdType;
+  typedef std::pair< std::string, int >     SubjectStringToSubjectIdPairType;
+  MapSubjectStringToSubjectIdType  m_MapSubjectStringToSubjectId; /**< map from the string used to identify the subject in the data configuration file to the integer used to identify the subject during execution */
 
   /********************************
    * Typedefs *

@@ -79,6 +79,9 @@ int calatkBasicDataConfigTest( int argc, char ** argv )
     // it should throw (Basic format does not support transforms)
     }
 
+  const int idToRemove = imageManager->AddImage( "Image that will be removed", 464.2, 7 );
+  imageManager->RemoveImage( idToRemove );
+
   basicConfigurationCleaned->WriteJSONConfigurationFile( argv[2] );
 
   return EXIT_SUCCESS;
