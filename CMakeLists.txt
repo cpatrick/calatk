@@ -34,6 +34,7 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 option(COMPILE_APPLICATIONS "Compile command line applications." ON)
 option(BUILD_DOCUMENTATION  "Build the documentation." OFF)
 
+
 # option to use NLOPT as an optimizer
 OPTION(USE_NLOPT "Use NLOpt (not recommended)" OFF)
 IF(USE_NLOPT)
@@ -82,15 +83,7 @@ INCLUDE_DIRECTORIES(${FFTW_PATH})
 FIND_LIBRARY(FFTW_LIB fftw3)
 FIND_LIBRARY(FFTWF_LIB fftw3f)
 
-#
-# Find ITK (used for file IO)
-#
-find_package(ITK REQUIRED)
-if(ITK_FOUND)
-  include(${ITK_USE_FILE})
-ELSE(ITK_FOUND)
-  MESSAGE(FATAL_ERROR "ITK not found. Please set ITK_DIR.")
-endif(ITK_FOUND)
+
 
 #
 # Shared libraries do not link correctly yet on Windows.
@@ -158,6 +151,33 @@ IF(CHOOSE_FLOATING_POINT_TYPE)
 ENDIF(CHOOSE_FLOATING_POINT_TYPE)
 
 #
+# ITK Setup
+#
+option( USE_SYSTEM_ITK "Exclude ITK from SuperBuild and use an existing build instead." OFF )
+mark_as_advanced( USE_SYSTEM_ITK )
+if( USE_SYSTEM_ITK )
+  find_package( ITK REQUIRED )
+  include( ${ITK_USE_FILE} )
+endif()
+
+# Superbuild setup
+option( CALATK_USE_SUPERBUILD
+  "Build calatk and the projects it depends on via SuperBuild.cmake." ON )
+mark_as_advanced( CALATK_USE_SUPERBUILD )
+
+if( CALATK_USE_SUPERBUILD )
+
+  include( "${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake" )
+  return()
+
+else( CALATK_USE_SUPERBUILD )
+
+  find_package( ITK REQUIRED )
+  include( ${ITK_USE_FILE} )
+endif()
+
+
+#
 # Include directories
 #
 set(CALATK_INCLUDE_DIRS
@@ -181,6 +201,7 @@ set(CALATK_INCLUDE_DIRS
   ${CMAKE_SOURCE_DIR}/Utilities/DTIProcess/Library
 )
 
+
 if(USE_NLOPT)
   include_directories(${CMAKE_SOURCE_DIR}/Code/External/nlopt-2.2.4/api)
 endif(USE_NLOPT)
@@ -190,7 +211,6 @@ if(USE_LBFGS)
 endif(USE_LBFGS)
 
 include_directories(${CALATK_INCLUDE_DIRS})
-
 
 #
 # Configure CALATKConfig.cmake.in and UseCALATK.cmake.in for external projects
@@ -243,7 +263,7 @@ set (CPACK_PACKAGE_VENDOR "The CALATK Team")
 set (CPACK_PACKAGE_VERSION_MAJOR "${CALATK_VERSION_MAJOR}")
 set (CPACK_PACKAGE_VERSION_MINOR "${CALATK_VERSION_MINOR}")
 set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "CALATK - Cross-sectional and longitudinal atlas-building toolkit")
-set (CPACK_PACKAGE_INSTALL_DIRECTORY "calatk-${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
+set (CPACK_PACKAGE_INSTALL_DIRECTORY "CALATK-${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
 
 include (CPack)
 
@@ -259,4 +279,5 @@ add_subdirectory(${CMAKE_SOURCE_DIR}/Code)
 #
 configure_file(${CALATK_SOURCE_DIR}/Scripts/CTestCustom.cmake.in
   ${CALATK_BINARY_DIR}/CTestCustom.cmake)
+
 
