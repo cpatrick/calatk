@@ -392,82 +392,87 @@ void CImageManager< TFloat, VImageDimension >::ReadInputsFromAdvancedDataJSONCon
 {
   Json::Value & dataCombinedConfigRoot = *(this->m_DataCombinedJSONConfig->GetRootPointer());
   Json::Value & dataCleanedConfigRoot  = *(this->m_DataCleanedJSONConfig->GetRootPointer());
-  Json::Value & combinedInputs = dataCombinedConfigRoot["Inputs"];
-
-  if( combinedInputs == Json::nullValue )
+  const char * dataTypes[] = {"Inputs", "Outputs"};
+  for( unsigned int ii = 0; ii < 2; ++ii )
     {
-    throw std::runtime_error( "No input images given." );
-    }
-  Json::Value & combinedSubjects = combinedInputs["Subjects"];
-  if( combinedSubjects == Json::nullValue || combinedSubjects.size() == 0 )
-    {
-    throw std::runtime_error( "No subjects found." );
-    }
+    const char * dataType = dataTypes[ii];
+    Json::Value & combinedData = dataCombinedConfigRoot[dataType];
 
-  Json::Value cleanedSubjects( Json::arrayValue );
-  unsigned int subjectId = 0;
-  for( Json::Value::iterator combinedSubject = combinedSubjects.begin();
-         combinedSubject != combinedSubjects.end();
-         ++combinedSubject, ++subjectId )
-    {
-    Json::Value cleanedSubject( Json::objectValue );
-
-    Json::Value & subjectString = (*combinedSubject)["ID"];
-    if( subjectString == Json::nullValue )
+    if( combinedData == Json::nullValue )
       {
-      throw std::runtime_error( "Could not find expected subject Id." );
+      throw std::runtime_error( "No images given." );
       }
-    cleanedSubject["ID"] = subjectString;
-    const std::string subject = subjectString.asString();
-
-    Json::Value & combinedTimePoints = (*combinedSubject)["TimePoints"];
-    Json::Value cleanedTimePoints( Json::arrayValue );
-    for( unsigned int timePointIndex = 0; timePointIndex < combinedTimePoints.size(); ++timePointIndex )
+    Json::Value & combinedSubjects = combinedData["Subjects"];
+    if( combinedSubjects == Json::nullValue || combinedSubjects.size() == 0 )
       {
-      Json::Value & combinedTimePoint = combinedTimePoints[timePointIndex];
-
-      Json::Value cleanedTimePoint( Json::objectValue );
-
-      Json::Value & time = combinedTimePoint["Time"];
-      if( time == Json::nullValue )
-        {
-        throw std::runtime_error( "Expected time point not found in Advanced data configuration file." );
-        }
-      else
-        {
-        cleanedTimePoint["Time"] = time;
-        }
-
-      Json::Value & image = combinedTimePoint["Image"];
-      if( image == Json::nullValue )
-        {
-        throw std::runtime_error( "Expected image file path not found in Advanced data configuration file." );
-        }
-      else
-        {
-        cleanedTimePoint["Image"] = image;
-        }
-
-      VectorImageType * nullImage = NULL;
-      const std::string nullTransformFileName( "" );
-      const int globalId = this->InternalAddImage( time.asDouble(), subjectId, image.asCString(), nullImage, nullTransformFileName, subject );
-
-      Json::Value & transform = combinedTimePoint["Transform"];
-      if( transform != Json::nullValue )
-        {
-        cleanedTimePoint["Transform"] = transform;
-
-        const bool transformAddedSuccessfully = this->AddImageTransform( transform.asString(), globalId );
-        assert( transformAddedSuccessfully );
-        }
-
-      cleanedTimePoints[timePointIndex] = cleanedTimePoint;
+      throw std::runtime_error( "No subjects found." );
       }
-    cleanedSubject["TimePoints"] = cleanedTimePoints;
 
-    cleanedSubjects[subjectId] = cleanedSubject;
-    }
-  dataCleanedConfigRoot["Inputs"]["Subjects"] = cleanedSubjects;
+    Json::Value cleanedSubjects( Json::arrayValue );
+    unsigned int subjectId = 0;
+    for( Json::Value::iterator combinedSubject = combinedSubjects.begin();
+           combinedSubject != combinedSubjects.end();
+           ++combinedSubject, ++subjectId )
+      {
+      Json::Value cleanedSubject( Json::objectValue );
+
+      Json::Value & subjectString = (*combinedSubject)["ID"];
+      if( subjectString == Json::nullValue )
+        {
+        throw std::runtime_error( "Could not find expected subject Id." );
+        }
+      cleanedSubject["ID"] = subjectString;
+      const std::string subject = subjectString.asString();
+
+      Json::Value & combinedTimePoints = (*combinedSubject)["TimePoints"];
+      Json::Value cleanedTimePoints( Json::arrayValue );
+      for( unsigned int timePointIndex = 0; timePointIndex < combinedTimePoints.size(); ++timePointIndex )
+        {
+        Json::Value & combinedTimePoint = combinedTimePoints[timePointIndex];
+
+        Json::Value cleanedTimePoint( Json::objectValue );
+
+        Json::Value & time = combinedTimePoint["Time"];
+        if( time == Json::nullValue )
+          {
+          throw std::runtime_error( "Expected time point not found in Advanced data configuration file." );
+          }
+        else
+          {
+          cleanedTimePoint["Time"] = time;
+          }
+
+        Json::Value & image = combinedTimePoint["Image"];
+        if( image == Json::nullValue )
+          {
+          throw std::runtime_error( "Expected image file path not found in Advanced data configuration file." );
+          }
+        else
+          {
+          cleanedTimePoint["Image"] = image;
+          }
+
+        VectorImageType * nullImage = NULL;
+        const std::string nullTransformFileName( "" );
+        const int globalId = this->InternalAddImage( time.asDouble(), subjectId, image.asCString(), nullImage, nullTransformFileName, subject );
+
+        Json::Value & transform = combinedTimePoint["Transform"];
+        if( transform != Json::nullValue )
+          {
+          cleanedTimePoint["Transform"] = transform;
+
+          const bool transformAddedSuccessfully = this->AddImageTransform( transform.asString(), globalId );
+          assert( transformAddedSuccessfully );
+          }
+
+        cleanedTimePoints[timePointIndex] = cleanedTimePoint;
+        }
+      cleanedSubject["TimePoints"] = cleanedTimePoints;
+
+      cleanedSubjects[subjectId] = cleanedSubject;
+      }
+    dataCleanedConfigRoot[dataType]["Subjects"] = cleanedSubjects;
+  } // end for Inputs Outputs
 }
 
 
