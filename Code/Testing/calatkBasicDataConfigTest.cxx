@@ -45,6 +45,42 @@ int calatkBasicDataConfigTest( int argc, char ** argv )
 
   imageManager->SetDataAutoConfiguration( basicConfigurationCombined, basicConfigurationCleaned );
   imageManager->ReadInputsFromDataJSONConfiguration();
+  imageManager->AddImage( "Exercising AddImage", 7743, 7 );
+  imageManager->AddCommonImage( "Exercising AddCommonImage", 4329 );
+  typedef ImageManagerType::VectorImageType VectorImageType;
+  VectorImageType::Pointer image = new VectorImageType;
+  imageManager->AddImage( image, 3333, 7 );
+  imageManager->AddCommonImage( image, 3819.3 );
+  try
+    {
+    imageManager->AddImageTransform( "Transform for 7", 7 );
+    return EXIT_FAILURE;
+    }
+  catch ( const std::runtime_error & e )
+    {
+    // it should throw (Basic format does not support transforms)
+    }
+  try
+    {
+    imageManager->AddImageAndTransform( "Exercising AddImageAndTransform", "TransformFileName", 123.1, 5 );
+    return EXIT_FAILURE;
+    }
+  catch ( const std::runtime_error & e )
+    {
+    // it should throw (Basic format does not support transforms)
+    }
+  try
+    {
+    imageManager->AddCommonImageAndTransform( "Exercising AddCommonImageAndTransform", "TransformFileName", 123.1 );
+    return EXIT_FAILURE;
+    }
+  catch ( const std::runtime_error & e )
+    {
+    // it should throw (Basic format does not support transforms)
+    }
+
+  const int idToRemove = imageManager->AddImage( "Image that will be removed", 464.2, 7 );
+  imageManager->RemoveImage( idToRemove );
 
   basicConfigurationCleaned->WriteJSONConfigurationFile( argv[2] );
 

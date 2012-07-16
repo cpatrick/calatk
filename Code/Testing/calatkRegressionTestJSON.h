@@ -22,14 +22,19 @@
 
 #include "json/json-forwards.h"
 #include "json/json.h"
+#include <cstdlib>
 #include <iostream>
 #include <fstream>
+#include <cmath>
 
 // Compare a test JSON file to a baseline JSON file.  Implementation is
 // contained within the header for convenience.
 
 /** Return 0 if the test file and baseline file have the same JSON content
  * and 1 otherwise.
+ *
+ * Values within the JSON object can be ignored by setting them to
+ *   "Regression test NA"
  **/
 int RegressionTestJSON( const char *testJSONFileName,
                          const char *baselineJSONFileName,
@@ -40,22 +45,28 @@ int RegressionTestJSON( const char *testJSONFileName,
 // Recursively compare test and baseline.
 int compareJSON( const Json::Value & test, const Json::Value & baseline, bool reportErrors, bool verbose, const double & floatTolerance )
 {
-  int same = 0;
+  int same = EXIT_SUCCESS;
   for( Json::Value::const_iterator baselineIt = baseline.begin(), testIt = test.begin();
        testIt != test.end();
        ++baselineIt, ++testIt )
     {
+    // Certain points in the hierarchy can be avoided by setting them to
+    // "Regression test NA"
+    if( (*baselineIt).isString() && (*baselineIt).asString() == "Regression test NA" )
+      {
+      continue;
+      }
     if( !((*baselineIt).isNull()) && ((*baselineIt).isArray() || (*baselineIt).isObject()) )
       {
       if( compareJSON( *testIt, *baselineIt, reportErrors, verbose, floatTolerance ) )
         {
-        same = 1;
+        same = EXIT_FAILURE;
         break;
         }
       }
     else
       {
-      if( verbose )
+      if( verbose && !(*baselineIt).isNull() && !(*testIt).isNull() )
         {
         std::cout << "Comparing: " << *testIt << " to " << *baselineIt << std::endl;
         }
@@ -67,7 +78,7 @@ int compareJSON( const Json::Value & test, const Json::Value & baseline, bool re
             {
             std::cerr << "The test value was non-null when the baseline value was null." << std::endl;
             }
-          same = 1;
+          same = EXIT_FAILURE;
           break;
           }
         }
@@ -79,7 +90,7 @@ int compareJSON( const Json::Value & test, const Json::Value & baseline, bool re
             {
             std::cerr << "The test value: " << (*testIt).asBool() << " does not equal the baseline value: " << (*baselineIt).asBool() << std::endl;
             }
-          same = 1;
+          same = EXIT_FAILURE;
           break;
           }
         }
@@ -91,7 +102,7 @@ int compareJSON( const Json::Value & test, const Json::Value & baseline, bool re
             {
             std::cerr << "The test value: " << (*testIt).asInt() << " does not equal the baseline value: " << (*baselineIt).asInt() << std::endl;
             }
-          same = 1;
+          same = EXIT_FAILURE;
           break;
           }
         }
@@ -99,13 +110,13 @@ int compareJSON( const Json::Value & test, const Json::Value & baseline, bool re
         {
         /// \todo This should be using itk::Math::FloatAlmostEquals available in
         //  ITKv4 once we start requiring ITKv4
-        if( ((*baselineIt).asDouble() - (*testIt).asDouble()) / (*baselineIt).asDouble() > floatTolerance )
+        if( std::fabs((*baselineIt).asDouble() - (*testIt).asDouble()) / (*baselineIt).asDouble() > floatTolerance )
           {
           if( reportErrors )
             {
             std::cerr << "The test value: " << (*testIt).asDouble() << " does not equal the baseline value: " << (*baselineIt).asDouble() << std::endl;
             }
-          same = 1;
+          same = EXIT_FAILURE;
           break;
           }
         }
@@ -117,7 +128,7 @@ int compareJSON( const Json::Value & test, const Json::Value & baseline, bool re
             {
             std::cerr << "The test value: " << (*testIt).asString() << " does not equal the baseline value: " << (*baselineIt).asString() << std::endl;
             }
-          same = 1;
+          same = EXIT_FAILURE;
           break;
           }
         }

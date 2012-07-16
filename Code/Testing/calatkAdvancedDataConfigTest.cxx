@@ -54,6 +54,9 @@ int calatkAdvancedDataConfigTest( int argc, char ** argv )
     return EXIT_FAILURE;
     }
 
+  /// \todo check this works right.
+  // imageManager->AddImage( "Exercising AddImage", 7743, 7 );
+
   advancedConfigurationCleaned->WriteJSONConfigurationFile( argv[2] );
 
   return EXIT_SUCCESS;

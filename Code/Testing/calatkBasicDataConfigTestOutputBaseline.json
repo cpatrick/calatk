@@ -2,6 +2,16 @@
 {
 	"Inputs" :
 	{
+		"-1" :
+		[
+			[ 4329.0, "Exercising AddCommonImage" ],
+			[ 3819.3, "Regression test NA" ]
+		],
+		"7" :
+		[
+			[ 7743.0, "Exercising AddImage" ],
+			[ 3333.0, "Regression test NA" ]
+		],
 		"Alice" :
 		[
 			[ 0.0, "mri_a.dcm" ],
