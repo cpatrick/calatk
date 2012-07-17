@@ -365,7 +365,7 @@ void CImageManager< TFloat, VImageDimension >::ReadInputsFromBasicDataJSONConfig
   for( unsigned int subjectId = 0; subjectId < combinedInputs.size(); ++subjectId )
     {
     const std::string subject = subjects[subjectId];
-    Json::Value & combinedSubject = combinedInputs[subject];
+    Json::Value combinedSubject = combinedInputs[subject];
     for( unsigned int timePointIndex = 0; timePointIndex < combinedSubject.size(); ++timePointIndex )
       {
       Json::Value & combinedTimePoint = combinedSubject[timePointIndex];
@@ -402,7 +402,7 @@ void CImageManager< TFloat, VImageDimension >::ReadInputsFromAdvancedDataJSONCon
       {
       throw std::runtime_error( "No images given." );
       }
-    Json::Value & combinedSubjects = combinedData["Subjects"];
+    Json::Value combinedSubjects = combinedData["Subjects"];
     if( combinedSubjects == Json::nullValue || combinedSubjects.size() == 0 )
       {
       throw std::runtime_error( "No subjects found." );
@@ -454,8 +454,6 @@ void CImageManager< TFloat, VImageDimension >::ReadInputsFromAdvancedDataJSONCon
 
         VectorImageType * nullImage = NULL;
         const std::string nullTransformFileName( "" );
-        const int globalId = this->InternalAddImage( time.asDouble(), subjectId, image.asCString(), nullImage, nullTransformFileName, subject );
-
         Json::Value & transform = combinedTimePoint["Transform"];
         if( transform != Json::nullValue )
           {
@@ -464,6 +462,7 @@ void CImageManager< TFloat, VImageDimension >::ReadInputsFromAdvancedDataJSONCon
           const bool transformAddedSuccessfully = this->AddImageTransform( transform.asString(), globalId );
           assert( transformAddedSuccessfully );
           }
+        const int globalId = this->InternalAddImage( time.asDouble(), subjectId, image.asCString(), nullImage, nullTransformFileName, subject );
 
         cleanedTimePoints[timePointIndex] = cleanedTimePoint;
         }
@@ -768,9 +767,46 @@ int CImageManager< TFloat, VImageDimension >::InternalAddImage( FloatType timePo
     requiredSubjectString = subjectString;
     }
 
+  std::string requiredFileName( fileName );
+  if( requiredFileName.empty() )
+    {
+    std::ostringstream ostrm;
+    ostrm << "Memory address: " << pIm;
+    requiredFileName = ostrm.str();
+    }
+
   if( this->IsAdvancedDataConfigurationFormat() )
     {
-    /// \todo
+    if( !combinedInputs.isMember( "Subjects" ) )
+      {
+      combinedInputs["Subjects"] = Json::Value( Json::arrayValue );
+      }
+    Json::Value & subjects = combinedInputs["Subjects"];
+    bool subjectFound = false;
+    Json::Value * timePoints;
+    for( Json::Value::iterator subjectsIt = subjects.begin(); subjectsIt != subjects.end(); ++subjectsIt )
+      {
+      Json::Value & id = (*subjectsIt)["ID"];
+      if( id.asString() == requiredSubjectString )
+        {
+        subjectFound = true;
+        timePoints = &((*subjectsIt)["TimePoints"]);
+        }
+      }
+    if( !subjectFound )
+      {
+      Json::Value newSubject = Json::Value( Json::objectValue );
+      newSubject["ID"] = requiredSubjectString;
+      newSubject["TimePoints"] = Json::Value( Json::arrayValue );
+      timePoints = &(newSubject["TimePoints"]);
+      subjects.append( newSubject );
+      }
+
+    Json::Value timePoint( Json::objectValue );
+    timePoint["Time"] = timePoint;
+    timePoint["Image"] = requiredFileName;
+    timePoint["Transform"] = transformFileName;
+    timePoints->append( timePoint );
     }
   else // Basic Data Configuration Format
     {
@@ -792,16 +828,7 @@ int CImageManager< TFloat, VImageDimension >::InternalAddImage( FloatType timePo
 
     Json::Value timePointEntry( Json::arrayValue );
     timePointEntry[0] = timePoint;
-    if( fileName.empty() )
-      {
-      std::ostringstream ostrm;
-      ostrm << "Memory address: " << pIm;
-      timePointEntry[1] = ostrm.str();
-      }
-    else
-      {
-      timePointEntry[1] = fileName;
-      }
+    timePointEntry[1] = requiredFileName;
 
     const Json::ArrayIndex timePointIndex = cleanedSubject.size();
     assert( timePointIndex <= combinedSubject.size() );
