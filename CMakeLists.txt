@@ -84,6 +84,10 @@ mark_as_advanced( USE_SYSTEM_ITK )
 if( USE_SYSTEM_ITK )
   find_package( ITK REQUIRED )
   include( ${ITK_USE_FILE} )
+  FIND_PATH(FFTW_PATH fftw3.h DOC "include directory for FFTW")
+  INCLUDE_DIRECTORIES(${FFTW_PATH})
+  FIND_LIBRARY(FFTW_LIB fftw3)
+  FIND_LIBRARY(FFTWF_LIB fftw3f)
 endif()
 
 # Superbuild setup
@@ -100,12 +104,11 @@ else( CALATK_USE_SUPERBUILD )
 
   find_package( ITK REQUIRED )
   include( ${ITK_USE_FILE} )
+  FIND_PATH(FFTW_PATH fftw3.h DOC "include directory for FFTW")
+  INCLUDE_DIRECTORIES(${FFTW_PATH})
+  FIND_LIBRARY(FFTW_LIB fftw3)
+  FIND_LIBRARY(FFTWF_LIB fftw3f)
 endif()
-
-  #FIND_PATH(FFTW_PATH fftw3.h DOC "include directory for FFTW")
-  #INCLUDE_DIRECTORIES(${FFTW_PATH})
-  #FIND_LIBRARY(FFTW_LIB fftw3)
-  #FIND_LIBRARY(FFTWF_LIB fftw3f)
 
 #
 # Shared libraries do not link correctly yet on Windows.
