@@ -4,7 +4,7 @@ set( base "${CMAKE_BINARY_DIR}" )
 set_property( DIRECTORY PROPERTY EP_BASE ${base} )
 
 set( shared ON )
-set( testing OFF )
+set( testing ON )
 set( build_type "Debug" )
 if( CMAKE_BUILD_TYPE )
   set( build_type "${CMAKE_BUILD_TYPE}" )
@@ -33,14 +33,14 @@ if( NOT USE_SYSTEM_ITK )
   mark_as_advanced( GIT_PROTOCOL )
 
   ##
-  ## Insight
+  ## ITK
   ##
-  set( proj Insight )
+  set( proj ITK )
   ExternalProject_Add( ${proj}
     GIT_REPOSITORY "${GIT_PROTOCOL}://itk.org/ITK.git"
     GIT_TAG "v4.2.0"
-    SOURCE_DIR "${CMAKE_BINARY_DIR}/Insight"
-    BINARY_DIR Insight-Build
+    SOURCE_DIR "${CMAKE_BINARY_DIR}/ITK"
+    BINARY_DIR ITK-Build
     CMAKE_GENERATOR ${gen}
     CMAKE_ARGS
       -DCMAKE_CXX_FLAGS:STRING=${CMAKE_CXX_FLAGS}
@@ -56,21 +56,22 @@ if( NOT USE_SYSTEM_ITK )
       -DUSE_FFTWD:BOOL=ON
       -DUSE_SYSTEM_FFTW:BOOL=OFF
       -DITKGroup_IO:BOOL=ON
-      -DITK_BUILD_ALL_MODULES:BOOL=OFF
+      -DITKGroup_Filtering:BOOL=ON
+      -DITK_BUIL_ALL_MODULES:BOOL=OFF
     INSTALL_COMMAND ""
     )
-  set( ITK_DIR "${base}/Insight-Build" )
-  set( CALATK_DEPENDS ${CALATK_DEPENDS} "Insight" )
+  set( ITK_DIR "${base}/ITK-Build" )
+  set( CALATK_DEPENDS ${CALATK_DEPENDS} "ITK" )
 endif( NOT USE_SYSTEM_ITK )
 
 ##
 ## calatk - Normal Build
 ##
-set( proj CALATK )
+set( proj CalaTK )
 ExternalProject_Add( ${proj}
   DOWNLOAD_COMMAND ""
   SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}"
-  BINARY_DIR CALATK-Build
+  BINARY_DIR CalaTK-Build
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS
     -DCMAKE_BUILD_TYPE:STRING=${build_type}
@@ -83,9 +84,9 @@ ExternalProject_Add( ${proj}
     -DCMAKE_C_FLAGS:STRING=${CMAKE_C_FLAGS}
     -DCALATK_USE_SUPERBUILD:BOOL=FALSE
     -DITK_DIR:PATH=${ITK_DIR}
-    -DFFTWF_LIB:FILEPATH=${CMAKE_BINARY_DIR}/Insight-Build/fftw/lib/libfftw3f.a
-    -DFFTW_LIB:FILEPATH=${CMAKE_BINARY_DIR}/Insight-Build/fftw/lib/libfftw3.a
-    -DFFTW_PATH:PATH=${CMAKE_BINARY_DIR}/Insight-Build/fftw/include
+    -DFFTWF_LIB:FILEPATH=${CMAKE_BINARY_DIR}/ITK-Build/fftw/lib/libfftw3f.a
+    -DFFTW_LIB:FILEPATH=${CMAKE_BINARY_DIR}/ITK-Build/fftw/lib/libfftw3.a
+    -DFFTW_PATH:PATH=${CMAKE_BINARY_DIR}/ITK-Build/fftw/include
   INSTALL_COMMAND ""
   DEPENDS
     ${CALATK_DEPENDS}
