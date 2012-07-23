@@ -453,16 +453,14 @@ void CImageManager< TFloat, VImageDimension >::ReadInputsFromAdvancedDataJSONCon
           }
 
         VectorImageType * nullImage = NULL;
-        const std::string nullTransformFileName( "" );
-        Json::Value & transform = combinedTimePoint["Transform"];
-        if( transform != Json::nullValue )
+        std::string transformFileName( "" );
+        if( combinedTimePoint.isMember( "Transform" ) )
           {
+          Json::Value & transform = combinedTimePoint["Transform"];
           cleanedTimePoint["Transform"] = transform;
-
-          const bool transformAddedSuccessfully = this->AddImageTransform( transform.asString(), globalId );
-          assert( transformAddedSuccessfully );
+          transformFileName = transform.asString();
           }
-        const int globalId = this->InternalAddImage( time.asDouble(), subjectId, image.asCString(), nullImage, nullTransformFileName, subject );
+        const int globalId = this->InternalAddImage( time.asDouble(), subjectId, image.asCString(), nullImage, transformFileName, subject );
 
         cleanedTimePoints[timePointIndex] = cleanedTimePoint;
         }
@@ -805,7 +803,10 @@ int CImageManager< TFloat, VImageDimension >::InternalAddImage( FloatType timePo
     Json::Value timePoint( Json::objectValue );
     timePoint["Time"] = timePoint;
     timePoint["Image"] = requiredFileName;
-    timePoint["Transform"] = transformFileName;
+    if( !transformFileName.empty() )
+      {
+      timePoint["Transform"] = transformFileName;
+      }
     timePoints->append( timePoint );
     }
   else // Basic Data Configuration Format
