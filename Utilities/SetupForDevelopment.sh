@@ -97,6 +97,10 @@ echo "Setting up Gerrit..."
 ./setup-gerrit || echo "Gerrit setup failed, continuing. Run this again to setup Gerrit."
 echo
 
+echo "Setting up SSH push access..."
+./setup-ssh || exit 1
+echo
+
 echo "Suggesting git tips..."
 ./tips || exit 1
 echo

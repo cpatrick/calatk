@@ -24,6 +24,8 @@
 #    ssh.user = Username on host, if not "git"
 #    ssh.key = Local ssh key name
 #    ssh.request-url = Web page URL to request ssh access
+#    ssh.remote = Git remote to push to, if not "origin"
+#    ssh.pushurl = Remote URL to push to
 
 egrep-q() {
 	egrep "$@" >/dev/null 2>/dev/null
@@ -41,6 +43,10 @@ host=$(git config -f config --get ssh.host) &&
 user=$(git config -f config --get ssh.user || echo git) &&
 key=$(git config -f config --get ssh.key) &&
 request_url=$(git config -f config --get ssh.request-url) ||
+die 'This project is not configured for ssh push access.'
+remote=$(git config -f config --get ssh.remote ||
+	 echo "origin") &&
+pushurl=$(git config -f config --get ssh.pushurl) ||
 die 'This project is not configured for ssh push access.'
 
 # Check for existing configuration.
@@ -61,6 +67,16 @@ read -ep "${question} push access by ssh to $user@$host? [y/N]: " access &&
 if test "$access" != "y" -a "$access" != "Y"; then
 	exit 0
 fi &&
+
+# Configure the remote if necessary.
+if git config remote.${remote}.pushurl >/dev/null; then
+	echo 'SSH pushurl already configured.'
+else
+	echo 'Setting up the pushurl...' &&
+	if test -n "$pushurl"; then
+		git config remote.${remote}.pushurl "$pushurl"
+	fi
+fi || die 'Could not setup the ssh pushurl.'
 
 # Setup host configuration if necessary.
 if test -n "$setup"; then
