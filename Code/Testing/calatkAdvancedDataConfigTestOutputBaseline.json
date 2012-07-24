@@ -26,6 +26,16 @@
 						"Image" : "ultrasound3.mha",
 						"Time" : 0.90,
 						"Transform" : "ultrasound3_transform.hdf"
+					},
+
+					{
+						"Image" : "ultrasound_warped2.mha",
+						"Time" : 0.2000000029802322
+					},
+
+					{
+						"Image" : "ultrasound_warped3.mha",
+						"Time" : 0.6999999880790710
 					}
 				]
 			},
@@ -57,6 +67,58 @@
 						"Image" : "mri_d.dcm",
 						"Time" : 7.70,
 						"Transform" : "mri_d_transform.hdf"
+					},
+
+					{
+						"Image" : "mri_warped_a.dcm",
+						"Time" : 0.0,
+						"Transform" : "mri_warped_a_transform.hdf"
+					},
+
+					{
+						"Image" : "mri_warped_c.dcm",
+						"Time" : 3.299999952316284,
+						"Transform" : "mri_warped_c_transform.hdf"
+					},
+
+					{
+						"Image" : "mri_warped_d.dcm",
+						"Time" : 7.699999809265137,
+						"Transform" : "mri_warped_d_transform.hdf"
+					}
+				]
+			},
+
+			{
+				"ID" : "7",
+				"TimePoints" :
+				[
+
+					{
+						"Image" : "Exercising AddImage",
+						"Time" : 7743.0
+					},
+
+					{
+						"Image" : "Regression test NA",
+						"Time" : 3333.0
+					}
+				]
+			},
+
+			{
+				"ID" : "-1",
+				"TimePoints" :
+				[
+
+					{
+						"Image" : "Exercising AddCommonImage",
+						"Time" : 4329.0
+					},
+
+					{
+						"Image" : "Regression test NA",
+						"Time" : 3819.300048828125
 					}
 				]
 			}

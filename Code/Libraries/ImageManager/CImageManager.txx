@@ -365,7 +365,7 @@ void CImageManager< TFloat, VImageDimension >::ReadInputsFromBasicDataJSONConfig
   for( unsigned int subjectId = 0; subjectId < combinedInputs.size(); ++subjectId )
     {
     const std::string subject = subjects[subjectId];
-    Json::Value & combinedSubject = combinedInputs[subject];
+    Json::Value combinedSubject = combinedInputs[subject];
     for( unsigned int timePointIndex = 0; timePointIndex < combinedSubject.size(); ++timePointIndex )
       {
       Json::Value & combinedTimePoint = combinedSubject[timePointIndex];
@@ -402,7 +402,7 @@ void CImageManager< TFloat, VImageDimension >::ReadInputsFromAdvancedDataJSONCon
       {
       throw std::runtime_error( "No images given." );
       }
-    Json::Value & combinedSubjects = combinedData["Subjects"];
+    Json::Value combinedSubjects = combinedData["Subjects"];
     if( combinedSubjects == Json::nullValue || combinedSubjects.size() == 0 )
       {
       throw std::runtime_error( "No subjects found." );
@@ -453,17 +453,14 @@ void CImageManager< TFloat, VImageDimension >::ReadInputsFromAdvancedDataJSONCon
           }
 
         VectorImageType * nullImage = NULL;
-        const std::string nullTransformFileName( "" );
-        const int globalId = this->InternalAddImage( time.asDouble(), subjectId, image.asCString(), nullImage, nullTransformFileName, subject );
-
-        Json::Value & transform = combinedTimePoint["Transform"];
-        if( transform != Json::nullValue )
+        std::string transformFileName( "" );
+        if( combinedTimePoint.isMember( "Transform" ) )
           {
+          Json::Value & transform = combinedTimePoint["Transform"];
           cleanedTimePoint["Transform"] = transform;
-
-          const bool transformAddedSuccessfully = this->AddImageTransform( transform.asString(), globalId );
-          assert( transformAddedSuccessfully );
+          transformFileName = transform.asString();
           }
+        const int globalId = this->InternalAddImage( time.asDouble(), subjectId, image.asCString(), nullImage, transformFileName, subject );
 
         cleanedTimePoints[timePointIndex] = cleanedTimePoint;
         }
@@ -768,9 +765,86 @@ int CImageManager< TFloat, VImageDimension >::InternalAddImage( FloatType timePo
     requiredSubjectString = subjectString;
     }
 
+  std::string requiredFileName( fileName );
+  if( requiredFileName.empty() )
+    {
+    std::ostringstream ostrm;
+    ostrm << "Memory address: " << pIm;
+    requiredFileName = ostrm.str();
+    }
+
   if( this->IsAdvancedDataConfigurationFormat() )
     {
-    /// \todo
+    if( !combinedInputs.isMember( "Subjects" ) )
+      {
+      combinedInputs["Subjects"] = Json::Value( Json::arrayValue );
+      }
+    if( !cleanedInputs.isMember( "Subjects" ) )
+      {
+      cleanedInputs["Subjects"] = Json::Value( Json::arrayValue );
+      }
+    Json::Value & combinedSubjects = combinedInputs["Subjects"];
+    Json::Value & cleanedSubjects = cleanedInputs["Subjects"];
+    bool combinedSubjectFound = false;
+    bool cleanedSubjectFound = false;
+    Json::Value newCleanedSubject = Json::Value( Json::objectValue );
+    Json::Value newCombinedSubject = Json::Value( Json::objectValue );
+    Json::Value * cleanedSubject = &newCleanedSubject;
+    Json::Value * combinedSubject = &newCombinedSubject;
+    // todo try to make this into the subject *, then set the cleaned and
+    // combined at the end.
+    for( Json::Value::iterator combinedSubjectsIt = combinedSubjects.begin();
+         combinedSubjectsIt != combinedSubjects.end();
+         ++combinedSubjectsIt )
+      {
+      Json::Value & combinedSubjectId = (*combinedSubjectsIt)["ID"];
+      if( combinedSubjectId.asString() == requiredSubjectString )
+        {
+        combinedSubjectFound = true;
+        combinedSubject = &(*combinedSubjectsIt);
+        break;
+        }
+      }
+    for( Json::Value::iterator cleanedSubjectsIt = cleanedSubjects.begin();
+         cleanedSubjectsIt != cleanedSubjects.end();
+         ++cleanedSubjectsIt )
+      {
+      Json::Value & cleanedSubjectId = (*cleanedSubjectsIt)["ID"];
+      if( cleanedSubjectId.asString() == requiredSubjectString )
+        {
+        cleanedSubjectFound = true;
+        cleanedSubject = &(*cleanedSubjectsIt);
+        break;
+        }
+      }
+    if( !combinedSubjectFound )
+      {
+      newCombinedSubject["ID"] = requiredSubjectString;
+      newCombinedSubject["TimePoints"] = Json::Value( Json::arrayValue );
+      }
+    if( !cleanedSubjectFound )
+      {
+      newCleanedSubject["ID"] = requiredSubjectString;
+      newCleanedSubject["TimePoints"] = Json::Value( Json::arrayValue );
+      }
+
+    Json::Value jsonTimePoint( Json::objectValue );
+    jsonTimePoint["Time"] = timePoint;
+    jsonTimePoint["Image"] = requiredFileName;
+    if( !transformFileName.empty() )
+      {
+      jsonTimePoint["Transform"] = transformFileName;
+      }
+    (*combinedSubject)["TimePoints"].append( jsonTimePoint );
+    (*cleanedSubject)["TimePoints"].append( jsonTimePoint );
+    if( !combinedSubjectFound )
+      {
+      combinedSubjects.append( newCombinedSubject );
+      }
+    if( !cleanedSubjectFound )
+      {
+      cleanedSubjects.append( newCleanedSubject );
+      }
     }
   else // Basic Data Configuration Format
     {
@@ -792,16 +866,7 @@ int CImageManager< TFloat, VImageDimension >::InternalAddImage( FloatType timePo
 
     Json::Value timePointEntry( Json::arrayValue );
     timePointEntry[0] = timePoint;
-    if( fileName.empty() )
-      {
-      std::ostringstream ostrm;
-      ostrm << "Memory address: " << pIm;
-      timePointEntry[1] = ostrm.str();
-      }
-    else
-      {
-      timePointEntry[1] = fileName;
-      }
+    timePointEntry[1] = requiredFileName;
 
     const Json::ArrayIndex timePointIndex = cleanedSubject.size();
     assert( timePointIndex <= combinedSubject.size() );
