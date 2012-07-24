@@ -779,35 +779,72 @@ int CImageManager< TFloat, VImageDimension >::InternalAddImage( FloatType timePo
       {
       combinedInputs["Subjects"] = Json::Value( Json::arrayValue );
       }
-    Json::Value & subjects = combinedInputs["Subjects"];
-    bool subjectFound = false;
-    Json::Value * timePoints;
-    for( Json::Value::iterator subjectsIt = subjects.begin(); subjectsIt != subjects.end(); ++subjectsIt )
+    if( !cleanedInputs.isMember( "Subjects" ) )
       {
-      Json::Value & id = (*subjectsIt)["ID"];
-      if( id.asString() == requiredSubjectString )
+      cleanedInputs["Subjects"] = Json::Value( Json::arrayValue );
+      }
+    Json::Value & combinedSubjects = combinedInputs["Subjects"];
+    Json::Value & cleanedSubjects = cleanedInputs["Subjects"];
+    bool combinedSubjectFound = false;
+    bool cleanedSubjectFound = false;
+    Json::Value newCleanedSubject = Json::Value( Json::objectValue );
+    Json::Value newCombinedSubject = Json::Value( Json::objectValue );
+    Json::Value * cleanedSubject = &newCleanedSubject;
+    Json::Value * combinedSubject = &newCombinedSubject;
+    // todo try to make this into the subject *, then set the cleaned and
+    // combined at the end.
+    for( Json::Value::iterator combinedSubjectsIt = combinedSubjects.begin();
+         combinedSubjectsIt != combinedSubjects.end();
+         ++combinedSubjectsIt )
+      {
+      Json::Value & combinedSubjectId = (*combinedSubjectsIt)["ID"];
+      if( combinedSubjectId.asString() == requiredSubjectString )
         {
-        subjectFound = true;
-        timePoints = &((*subjectsIt)["TimePoints"]);
+        combinedSubjectFound = true;
+        combinedSubject = &(*combinedSubjectsIt);
+        break;
         }
       }
-    if( !subjectFound )
+    for( Json::Value::iterator cleanedSubjectsIt = cleanedSubjects.begin();
+         cleanedSubjectsIt != cleanedSubjects.end();
+         ++cleanedSubjectsIt )
       {
-      Json::Value newSubject = Json::Value( Json::objectValue );
-      newSubject["ID"] = requiredSubjectString;
-      newSubject["TimePoints"] = Json::Value( Json::arrayValue );
-      timePoints = &(newSubject["TimePoints"]);
-      subjects.append( newSubject );
+      Json::Value & cleanedSubjectId = (*cleanedSubjectsIt)["ID"];
+      if( cleanedSubjectId.asString() == requiredSubjectString )
+        {
+        cleanedSubjectFound = true;
+        cleanedSubject = &(*cleanedSubjectsIt);
+        break;
+        }
+      }
+    if( !combinedSubjectFound )
+      {
+      newCombinedSubject["ID"] = requiredSubjectString;
+      newCombinedSubject["TimePoints"] = Json::Value( Json::arrayValue );
+      }
+    if( !cleanedSubjectFound )
+      {
+      newCleanedSubject["ID"] = requiredSubjectString;
+      newCleanedSubject["TimePoints"] = Json::Value( Json::arrayValue );
       }
 
-    Json::Value timePoint( Json::objectValue );
-    timePoint["Time"] = timePoint;
-    timePoint["Image"] = requiredFileName;
+    Json::Value jsonTimePoint( Json::objectValue );
+    jsonTimePoint["Time"] = timePoint;
+    jsonTimePoint["Image"] = requiredFileName;
     if( !transformFileName.empty() )
       {
-      timePoint["Transform"] = transformFileName;
+      jsonTimePoint["Transform"] = transformFileName;
       }
-    timePoints->append( timePoint );
+    (*combinedSubject)["TimePoints"].append( jsonTimePoint );
+    (*cleanedSubject)["TimePoints"].append( jsonTimePoint );
+    if( !combinedSubjectFound )
+      {
+      combinedSubjects.append( newCombinedSubject );
+      }
+    if( !cleanedSubjectFound )
+      {
+      cleanedSubjects.append( newCleanedSubject );
+      }
     }
   else // Basic Data Configuration Format
     {
