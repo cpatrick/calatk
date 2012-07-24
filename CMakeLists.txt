@@ -75,15 +75,40 @@ ELSE(USE_IPOPT)
   SET(IPOPT_LIBS "")
 ENDIF(USE_IPOPT)
 
-#
-# Include the fftw path
-#
-FIND_PATH(FFTW_PATH fftw3.h DOC "include directory for FFTW")
-INCLUDE_DIRECTORIES(${FFTW_PATH})
-FIND_LIBRARY(FFTW_LIB fftw3)
-FIND_LIBRARY(FFTWF_LIB fftw3f)
 
+#
+# ITK Setup
+#
+option( USE_SYSTEM_ITK "Exclude ITK from SuperBuild and use an existing build instead." OFF )
+mark_as_advanced( USE_SYSTEM_ITK )
+if( USE_SYSTEM_ITK )
+  find_package( ITK REQUIRED )
+  include( ${ITK_USE_FILE} )
+  FIND_PATH(FFTW_PATH fftw3.h DOC "include directory for FFTW")
+  INCLUDE_DIRECTORIES(${FFTW_PATH})
+  FIND_LIBRARY(FFTW_LIB fftw3)
+  FIND_LIBRARY(FFTWF_LIB fftw3f)
+endif()
 
+# Superbuild setup
+option( CALATK_USE_SUPERBUILD
+  "Build calatk and the projects it depends on via SuperBuild.cmake." ON )
+mark_as_advanced( CALATK_USE_SUPERBUILD )
+
+if( CALATK_USE_SUPERBUILD )
+
+  include( "${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake" )
+  return()
+
+else( CALATK_USE_SUPERBUILD )
+
+  find_package( ITK REQUIRED )
+  include( ${ITK_USE_FILE} )
+  FIND_PATH(FFTW_PATH fftw3.h DOC "include directory for FFTW")
+  INCLUDE_DIRECTORIES(${FFTW_PATH})
+  FIND_LIBRARY(FFTW_LIB fftw3)
+  FIND_LIBRARY(FFTWF_LIB fftw3f)
+endif()
 
 #
 # Shared libraries do not link correctly yet on Windows.
@@ -149,33 +174,6 @@ OPTION(CHOOSE_FLOATING_POINT_TYPE "Choose floating point type on command line." 
 IF(CHOOSE_FLOATING_POINT_TYPE)
   ADD_DEFINITIONS(-DFLOATING_POINT_CHOICE)
 ENDIF(CHOOSE_FLOATING_POINT_TYPE)
-
-#
-# ITK Setup
-#
-option( USE_SYSTEM_ITK "Exclude ITK from SuperBuild and use an existing build instead." OFF )
-mark_as_advanced( USE_SYSTEM_ITK )
-if( USE_SYSTEM_ITK )
-  find_package( ITK REQUIRED )
-  include( ${ITK_USE_FILE} )
-endif()
-
-# Superbuild setup
-option( CALATK_USE_SUPERBUILD
-  "Build calatk and the projects it depends on via SuperBuild.cmake." ON )
-mark_as_advanced( CALATK_USE_SUPERBUILD )
-
-if( CALATK_USE_SUPERBUILD )
-
-  include( "${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake" )
-  return()
-
-else( CALATK_USE_SUPERBUILD )
-
-  find_package( ITK REQUIRED )
-  include( ${ITK_USE_FILE} )
-endif()
-
 
 #
 # Include directories
