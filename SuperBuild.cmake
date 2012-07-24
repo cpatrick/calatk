@@ -57,7 +57,8 @@ if( NOT USE_SYSTEM_ITK )
       -DUSE_SYSTEM_FFTW:BOOL=OFF
       -DITKGroup_IO:BOOL=ON
       -DITKGroup_Filtering:BOOL=ON
-      -DITK_BUIL_ALL_MODULES:BOOL=OFF
+      -DITKGroup_Nonunit:BOOL=ON
+      -DITK_BUILD_ALL_MODULES:BOOL=OFF
     INSTALL_COMMAND ""
     )
   set( ITK_DIR "${base}/ITK-Build" )
