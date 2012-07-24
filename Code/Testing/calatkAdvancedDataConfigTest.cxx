@@ -54,8 +54,12 @@ int calatkAdvancedDataConfigTest( int argc, char ** argv )
     return EXIT_FAILURE;
     }
 
-  /// \todo check this works right.
-  // imageManager->AddImage( "Exercising AddImage", 7743, 7 );
+  imageManager->AddImage( "Exercising AddImage", 7743, 7 );
+  imageManager->AddCommonImage( "Exercising AddCommonImage", 4329 );
+  typedef ImageManagerType::VectorImageType VectorImageType;
+  VectorImageType::Pointer image = new VectorImageType;
+  imageManager->AddImage( image, 3333, 7 );
+  imageManager->AddCommonImage( image, 3819.3 );
 
   advancedConfigurationCleaned->WriteJSONConfigurationFile( argv[2] );
 
