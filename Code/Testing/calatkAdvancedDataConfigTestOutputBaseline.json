@@ -119,6 +119,25 @@
 					{
 						"Image" : "Regression test NA",
 						"Time" : 3819.300048828125
+					},
+
+					{
+						"Image" : "Exercising AddCommonImageAndTransform",
+						"Time" : 123.0999984741211,
+						"Transform" : "TransformFileName"
+					}
+				]
+			},
+
+			{
+				"ID" : "5",
+				"TimePoints" :
+				[
+
+					{
+						"Image" : "Exercising AddImageAndTransform",
+						"Time" : 123.0999984741211,
+						"Transform" : "TransformFileName"
 					}
 				]
 			}

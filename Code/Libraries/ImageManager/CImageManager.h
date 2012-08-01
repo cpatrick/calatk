@@ -178,7 +178,9 @@ public:
   int AddCommonImage( VectorImageType* pIm, FloatType timepoint );
 
   /**
-   * @brief Registers the filename of an image transform for a given image
+   * @brief Registers the filename of an image transform for a given image,
+   * \warning the transform will not be added to the configuration file with
+   * this method.
    * @param uid - id of the image the transform should be registered with
    * @return int -- returns true if the registration was successful (false if there is no image with uiId)
    */

@@ -60,6 +60,8 @@ int calatkAdvancedDataConfigTest( int argc, char ** argv )
   VectorImageType::Pointer image = new VectorImageType;
   imageManager->AddImage( image, 3333, 7 );
   imageManager->AddCommonImage( image, 3819.3 );
+  imageManager->AddImageAndTransform( "Exercising AddImageAndTransform", "TransformFileName", 123.1, 5 );
+  imageManager->AddCommonImageAndTransform( "Exercising AddCommonImageAndTransform", "TransformFileName", 123.1 );
 
   advancedConfigurationCleaned->WriteJSONConfigurationFile( argv[2] );
 

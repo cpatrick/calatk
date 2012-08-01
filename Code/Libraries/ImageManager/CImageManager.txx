@@ -791,8 +791,6 @@ int CImageManager< TFloat, VImageDimension >::InternalAddImage( FloatType timePo
     Json::Value newCombinedSubject = Json::Value( Json::objectValue );
     Json::Value * cleanedSubject = &newCleanedSubject;
     Json::Value * combinedSubject = &newCombinedSubject;
-    // todo try to make this into the subject *, then set the cleaned and
-    // combined at the end.
     for( Json::Value::iterator combinedSubjectsIt = combinedSubjects.begin();
          combinedSubjectsIt != combinedSubjects.end();
          ++combinedSubjectsIt )
@@ -960,15 +958,6 @@ int CImageManager< TFloat, VImageDimension>::AddCommonImageAndTransform( const s
 template < class TFloat, unsigned int VImageDimension >
 bool CImageManager< TFloat, VImageDimension>::AddImageTransform( const std::string & fileName, int uid )
 {
-  if( this->IsAdvancedDataConfigurationFormat() )
-    {
-    /// \todo
-    }
-  else
-    {
-    throw std::runtime_error( "Transforms are not supported for the Basic data configuration file format." );
-    }
-
   typename AllSubjectInformationType::iterator iter;
   for ( iter = m_AllSubjectInformation.begin(); iter != m_AllSubjectInformation.end(); ++iter )
     {
