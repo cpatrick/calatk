@@ -995,7 +995,6 @@ bool CImageManager< TFloat, VImageDimension>::RemoveImage( int uid )
     {
     if( iter->second.GetUniqueId() == uid )
       {
-      m_AllSubjectInformation.erase( iter );
       idFound = true;
       break;
       }
@@ -1007,7 +1006,6 @@ bool CImageManager< TFloat, VImageDimension>::RemoveImage( int uid )
     {
     if( iterCommon->GetUniqueId() == uid )
       {
-      m_AllCommonSubjectInformation.erase( iterCommon );
       idFound = true;
       break;
       }
@@ -1020,7 +1018,64 @@ bool CImageManager< TFloat, VImageDimension>::RemoveImage( int uid )
     Json::Value & dataCleanedConfigRoot  = *(this->m_DataCleanedJSONConfig->GetRootPointer());
     if( this->IsAdvancedDataConfigurationFormat() )
       {
-      /// \todo
+      TimeSeriesDataPointType * information;
+      if( iter == m_AllSubjectInformation.end() )
+        {
+        information = &(*iterCommon);
+        }
+      else
+        {
+        information = &(iter->second);
+        }
+      if( dataCleanedConfigRoot.isMember( "Inputs" ) )
+        {
+        Json::Value & inputs = dataCleanedConfigRoot["Inputs"];
+        if( inputs.isMember( "Subjects" ) )
+          {
+          Json::Value & subjects = inputs["Subjects"];
+          const int subjectId = information->GetSubjectId();
+          std::string subjectString;
+          for( MapSubjectStringToSubjectIdType::const_iterator subjectStringIt = this->m_MapSubjectStringToSubjectId.begin();
+               subjectStringIt != this->m_MapSubjectStringToSubjectId.end();
+               ++subjectStringIt )
+            {
+            if( subjectStringIt->second == subjectId )
+              {
+              subjectString = subjectStringIt->first;
+              break;
+              }
+            }
+          Json::Value newSubjects( Json::arrayValue );
+          for( Json::Value::iterator subjectIt = subjects.begin(); subjectIt != subjects.end(); ++subjectIt )
+            {
+            Json::Value newSubject( Json::objectValue );
+            newSubject["ID"] = (*subjectIt)["ID"];
+            if( (*subjectIt)["ID"] == subjectString )
+              {
+              const std::string imageFileName = information->GetImageFileName();
+              Json::Value & timePoints = (*subjectIt)["TimePoints"];
+              Json::Value newTimePoints( Json::arrayValue );
+              for( Json::Value::iterator timePointsIt = timePoints.begin();
+                   timePointsIt != timePoints.end();
+                   ++timePointsIt )
+                {
+                const std::string whatWeGet = (*timePointsIt)["Image"].asString();
+                if( (*timePointsIt)["Image"].asString().compare( imageFileName ) )
+                  {
+                  newTimePoints.append( *timePointsIt );
+                  }
+                }
+              newSubject["TimePoints"] = newTimePoints;
+              }
+            else
+              {
+              newSubject["TimePoints"] = (*subjectIt)["ID"];
+              }
+            newSubjects.append( newSubject );
+            }
+          inputs["Subjects"] = newSubjects;
+          }
+        }
       }
     else
       {
@@ -1066,6 +1121,16 @@ bool CImageManager< TFloat, VImageDimension>::RemoveImage( int uid )
             }
           }
         }
+      }
+
+    // Erase it from the member variables.
+    if( iter == m_AllSubjectInformation.end() )
+      {
+      this->m_AllCommonSubjectInformation.erase( iterCommon );
+      }
+    else
+      {
+      this->m_AllSubjectInformation.erase( iter );
       }
 
     return true;

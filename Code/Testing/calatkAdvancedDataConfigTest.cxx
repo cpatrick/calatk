@@ -63,6 +63,9 @@ int calatkAdvancedDataConfigTest( int argc, char ** argv )
   imageManager->AddImageAndTransform( "Exercising AddImageAndTransform", "TransformFileName", 123.1, 5 );
   imageManager->AddCommonImageAndTransform( "Exercising AddCommonImageAndTransform", "TransformFileName", 123.1 );
 
+  const int idToRemove = imageManager->AddImage( "Image that will be removed", 464.2, 7 );
+  imageManager->RemoveImage( idToRemove );
+
   advancedConfigurationCleaned->WriteJSONConfigurationFile( argv[2] );
 
   return EXIT_SUCCESS;
