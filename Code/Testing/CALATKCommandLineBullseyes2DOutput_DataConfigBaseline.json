@@ -7,5 +7,12 @@
 			[ 0.0, "Bullseye2DTimePoint0.mha" ],
 			[ 1.0, "Bullseye2DTimePoint1.mha" ]
 		]
+	},
+	"Outputs" :
+	{
+		"subject1" :
+		[
+			[ 1.0, "Bullseye2DTimePoint0WarpedTo1.mha" ]
+		]
 	}
 }

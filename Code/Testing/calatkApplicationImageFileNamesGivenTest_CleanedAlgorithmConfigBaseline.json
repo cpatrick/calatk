@@ -3,7 +3,7 @@
 	"Algorithm" :
 	{
 		"FloatType" : "float",
-		"ImageDimension" : 1
+		"ImageDimension" : 2
 	},
 	"GeneralRegistrationSettings" :
 	{
@@ -13,7 +13,7 @@
 	},
 	"HelmholtzKernel" :
 	{
-		"Alpha" : 0.050,
+		"Alpha" : 10.050,
 		"Gamma" : 1.0
 	},
 	"ImageManager" :

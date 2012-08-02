@@ -17,12 +17,26 @@
 *
 */
 
-#include "itkTestMain.h"
+/**
+  * Tests the behavior of CApplication class.
+  */
 
-void RegisterTests()
+#include <cstdlib>
+#include "CApplication.h"
+
+int calatkApplicationDataConfigTest2( int argc, char ** argv )
 {
-  REGISTER_TEST( calatkApplicationImageFileNamesGivenTest );
-  REGISTER_TEST( calatkApplicationDataConfigTest );
-  REGISTER_TEST( calatkApplicationDataConfigTest2 );
-  REGISTER_TEST( calatkCompareWarping );
+  CALATK::CApplication::Pointer calatkApplication;
+  try
+    {
+    calatkApplication = new CALATK::CApplication( argc, argv );
+    calatkApplication->Solve();
+    }
+  catch( const std::exception & e )
+    {
+    std::cerr << e.what() << std::endl;
+    return EXIT_FAILURE;
+    }
+
+  return EXIT_SUCCESS;
 }

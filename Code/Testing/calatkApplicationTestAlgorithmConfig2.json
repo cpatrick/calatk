@@ -1,44 +1,39 @@
+// CALATK version ?.?; JSON configuration file
+
 
 {
-	"Algorithm" :
-	{
-		"FloatType" : "float",
-		"ImageDimension" : 2
-	},
+        "Algorithm" :
+        {
+                "FloatType" : "float"
+        },
 	"GeneralRegistrationSettings" :
 	{
 		"Kernel" : "HelmholtzKernel",
-		"Metric" : "SSD",
-		"ObjectiveFunction" : "LDDMMGrowthModel"
+		"Metric" : "SSD"
+	},
+	"GrowthModel" :
+	{
+		"SigmaSqr" : 0.010
 	},
 	"HelmholtzKernel" :
 	{
 		"Alpha" : 10.050,
 		"Gamma" : 1.0
 	},
-	"ImageManager" :
-	{
-		"AutoScaleImages" : true,
-		"BlurHighestResolutionImage" : true,
-		"Sigma" : 0.020,
-		"SigmaHighestResolutionImage" : 0.020
-	},
+	"MultiScaleBlurHighestResolutionImage" : false,
 	"MultiScaleFinalOutput" :
 	{
 		"OutputStateInformation" : false,
 		"OutputStateInformationFrequency" : 100
 	},
-	"MultiScaleGeneralSettings" :
-	{
-		"NumberOfSubIterations" : 1,
-		"SingleScaleSolver" : "LineSearchUnconstrained"
-	},
+	"MultiScaleSigmaInVoxels" : 0.50,
 	"MultiScaleSettings" :
 	[
+
 		{
 			"Downsample" :
 			{
-				"Scale" : 1.0
+				"Scale" : 1
 			},
 			"LineSearch" :
 			{
@@ -47,15 +42,16 @@
 				"AdjustStepSizeUpFactor" : 2.0,
 				"AdjustStepSizeUpNumber" : 2,
 				"DecreaseConstant" : 0.0,
-				"InitialStepSize" : 0.10,
+				"InitialStepSize" : 1.000000000000000e-01,
 				"MaxNumberOfIterations" : 50,
 				"MaxNumberOfTries" : 10,
-				"MinAllowedStepSize" : 0.00010,
+				"MinAllowedStepSize" : 1.000000000000000e-04,
 				"OutputStateInformation" : false,
 				"OutputStateInformationFrequency" : 100,
 				"ReductionFactor" : 0.50
 			}
 		},
+
 		{
 			"Downsample" :
 			{
@@ -68,7 +64,7 @@
 				"AdjustStepSizeUpFactor" : 2.0,
 				"AdjustStepSizeUpNumber" : 2,
 				"DecreaseConstant" : 0.0,
-				"InitialStepSize" : 0.10,
+				"InitialStepSize" : 1.000000000000000e-01,
 				"MaxNumberOfIterations" : 100,
 				"MaxNumberOfTries" : 10,
 				"MinAllowedStepSize" : 1.000000000000000e-05,
@@ -77,6 +73,7 @@
 				"ReductionFactor" : 0.50
 			}
 		},
+
 		{
 			"Downsample" :
 			{
@@ -89,7 +86,7 @@
 				"AdjustStepSizeUpFactor" : 2.0,
 				"AdjustStepSizeUpNumber" : 2,
 				"DecreaseConstant" : 0.0,
-				"InitialStepSize" : 0.0010,
+				"InitialStepSize" : 1.000000000000000e-03,
 				"MaxNumberOfIterations" : 200,
 				"MaxNumberOfTries" : 10,
 				"MinAllowedStepSize" : 1.000000000000000e-07,
@@ -99,11 +96,6 @@
 			}
 		}
 	],
-	"ObjectiveFunction" :
-	{
-		"EnergyWeight" : 1.0,
-		"SigmaSqr" : 0.010
-	},
 	"OneStepEvolver" :
 	{
 		"NumberOfThreads" : 1
