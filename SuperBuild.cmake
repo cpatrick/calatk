@@ -59,6 +59,7 @@ if( NOT USE_SYSTEM_ITK )
       -DITKGroup_Filtering:BOOL=ON
       -DITKGroup_Nonunit:BOOL=ON
       -DITK_BUILD_ALL_MODULES:BOOL=OFF
+      -DITKTestKernel:BOOL=ON
     INSTALL_COMMAND ""
     )
   set( ITK_DIR "${base}/ITK-Build" )
