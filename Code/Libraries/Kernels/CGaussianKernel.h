@@ -27,10 +27,9 @@ namespace CALATK
 {
 
 /**
- * CGaussianKernel: Implements the Gaussian kernel with standard deviation \sigma
+ * CGaussianKernel: Implements the Gaussian kernel with standard deviation \f$\sigma\f$.
  *
  */
-
 template < class T, unsigned int VImageDimension=3 >
 class CGaussianKernel : public CFourierDomainKernel< T, VImageDimension >
 {

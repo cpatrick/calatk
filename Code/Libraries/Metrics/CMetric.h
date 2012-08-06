@@ -53,8 +53,8 @@ public:
   /**
    * Get value of the similarity metric with respect to two images
    *
-   * @params pI0 - pointer to image 0 which is the one influenced by the transform
-   * @params pI1 - pointer to image 1 (to be compared with image 0), which is the image to be compared to
+   * @param pI0 - pointer to image 0 which is the one influenced by the transform
+   * @param pI1 - pointer to image 1 (to be compared with image 0), which is the image to be compared to
    */
   virtual T GetMetric( const VectorImageType* pI0, const VectorImageType* pI1 ) const = 0;
 
@@ -62,8 +62,9 @@ public:
    * Get value of the similarity metric with respect to two images, but do not sum it over all space but return the local
    * values. For SSD of scalar images this would amount to computing the sum of squared intensity differences at every point in space
    *
-   * @params pI0 - pointer to image 0 which is the one influenced by the transform
-   * @params pI1 - pointer to image 1 (to be compared with image 0), which is the image to be compared to
+   * @param pLocalizedMetric - metric
+   * @param pI0 - pointer to image 0 which is the one influenced by the transform
+   * @param pI1 - pointer to image 1 (to be compared with image 0), which is the image to be compared to
    */
   virtual void GetLocalizedMetric( VectorImageType* pLocalizedMetric, const VectorImageType* pI0, const VectorImageType* pI1 ) = 0;
   
@@ -73,11 +74,11 @@ public:
    * with respect to a transformation, but in this case there is not actual image gradient, 
    * because the solutions are computed using the adjoint.
    *
-   * E.g., for SSD: \|I(1)-I_1\|^2 -> 2 ( I(1)-I_1 )
+   * E.g., for SSD: \f$ \|I(1)-I_1\|^2 -> 2 ( I(1)-I_1 ) \f$
    *
-   * @params pAdjointDiffernce - output image which will hold the difference image influencing the adjoint variable
-   * @params pIEstimated - pointer to image 0 which is the one influenced by the transform
-   * @params pIMeasured - pointer to image 1 (to be compared with image 0), which is the image to be compared to
+   * @param pAdjointDifference - output image which will hold the difference image influencing the adjoint variable
+   * @param pIEstimated - pointer to image 0 which is the one influenced by the transform
+   * @param pIMeasured - pointer to image 1 (to be compared with image 0), which is the image to be compared to
    */
   virtual void GetAdjointMatchingDifferenceImage( VectorImageType* pAdjointDifference, const VectorImageType* pIEstimated, const VectorImageType* pIMeasured ) = 0;
 

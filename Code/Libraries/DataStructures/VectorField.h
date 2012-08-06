@@ -99,8 +99,9 @@ public:
    * The vector field will be set to a constant specified value (by default zero).
    *
    * @param source - the vector image to copy the information from
+   * @param defaultValue - the default value for each element.
    */
-  VectorField( const VectorImageType* source, T dVal = 0 );
+  VectorField( const VectorImageType* source, T defaultValue = 0.0 );
 
   /**
    * Destructor that frees up all memory

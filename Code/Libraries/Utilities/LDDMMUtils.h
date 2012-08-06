@@ -107,7 +107,7 @@ public:
     * Function that teases out the timepoints for a particular subject from an image manager
     * and returns a vector of this time point information which can be used to compute a time-discretization for LDDMM
     *
-    * @param pImageMangager - pointer to the image manager
+    * @param pImageManager - pointer to the image manager
     * @param subjectIndex - index of subject of which the timepoints should be extracted
     * @param vecTimePointData - resulting vector of timepoint data
     * @return number of measurements in the time series
@@ -118,7 +118,7 @@ public:
     * Function which computes a map between two time-points given a spatio-temporal velocity field.
     * Here, the assumption is that dTimeFrom<dTimeTo.
     *
-    * @return ptrMap - resulting map
+    * @param ptrMap - resulting map
     * @param dTimeFrom - beginning time-point
     * @param dTimeTo - ending time-point
     * @param vecTimeDiscretization - vector which holds the temporal discretization information (t's)

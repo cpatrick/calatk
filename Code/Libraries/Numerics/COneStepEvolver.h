@@ -98,21 +98,17 @@ public:
   /**
    * Determines the number of desired threads for parallel implementations. 
    * Default is 1, i.e., no threading.
-   *
-   * @params uiThreads - number of threads
    */
   SetMacro( NumberOfThreads, unsigned int );
 
   /**
    * Returns the set number of desired threads for parallel implementations. 
-   *
    */
   GetMacro( NumberOfThreads, unsigned int );
 
   virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
   /**
-    *
     * Sets a flag that any dynamic information needs to be initialized.
     * The solver will call this prior to a solution.
     */

@@ -175,27 +175,27 @@ public:
   /**
    * 1D function computing the gradient of an individual dimension of an image using central differences
    *
-   * @params imIn - input image
-   * @params dim - image dimension (for vector-valued image) for which the gradient should be calculated
-   * @params fieldOut - gradient output field
+   * @param imIn - input image
+   * @param dim - image dimension (for vector-valued image) for which the gradient should be calculated
+   * @param fieldOut - gradient output field
    */
   static void computeCentralGradient( const VectorImageType1D* imIn, unsigned int dim, VectorFieldType1D* fieldOut );
 
   /**
    * 2D function computing the gradient of an individual dimension of an image using central differences
    *
-   * @params imIn - input image
-   * @params dim - image dimension (for vector-valued image) for which the gradient should be calculated
-   * @params fieldOut - gradient output field
+   * @param imIn - input image
+   * @param dim - image dimension (for vector-valued image) for which the gradient should be calculated
+   * @param fieldOut - gradient output field
    */
   static void computeCentralGradient( const VectorImageType2D* imIn, unsigned int dim, VectorFieldType2D* fieldOut );
 
   /**
    * 3D function computing the gradient of an individual dimension of an image using central differences
    *
-   * @params imIn - input image
-   * @params dim - image dimension (for vector-valued image) for which the gradient should be calculated
-   * @params fieldOut - gradient output field
+   * @param imIn - input image
+   * @param dim - image dimension (for vector-valued image) for which the gradient should be calculated
+   * @param fieldOut - gradient output field
    */
   static void computeCentralGradient( const VectorImageType3D* imIn, unsigned int dim, VectorFieldType3D* fieldOut );
 

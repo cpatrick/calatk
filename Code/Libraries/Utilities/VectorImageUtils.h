@@ -367,10 +367,8 @@ public:
    * @param itkAffine - the affine transform
    * @param imIn - the image to be transformed
    * @param imOut - the output image
-   * @param originX - the x coordinate of the origin (default = 0)
-   * @param originY - the y coordinate of the origin (default = 0)
-   * @param originZ - the z coordinate of the origin (default = 0)
    * @param defaultPixelValue - the value for background pixels
+   * @param originX - the x coordinate of the origin (default = 0)
    */
   static void applyAffineITK(typename ITKAffineTransform<T,1>::Type* itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue = 0, T originX = 0);
 
@@ -381,10 +379,9 @@ public:
    * @param itkAffine - the affine transform
    * @param imIn - the image to be transformed
    * @param imOut - the output image
+   * @param defaultPixelValue - the value for background pixels
    * @param originX - the x coordinate of the origin (default = 0)
    * @param originY - the y coordinate of the origin (default = 0)
-   * @param originZ - the z coordinate of the origin (default = 0)
-   * @param defaultPixelValue - the value for background pixels
    */
   static void applyAffineITK(typename ITKAffineTransform<T,2>::Type* itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue = 0, T originX = 0, T originY = 0);
 
@@ -394,10 +391,10 @@ public:
    * @param itkAffine - the affine transform
    * @param imIn - the image to be transformed
    * @param imOut - the output image
+   * @param defaultPixelValue - the value for background pixels
    * @param originX - the x coordinate of the origin (default = 0)
    * @param originY - the y coordinate of the origin (default = 0)
    * @param originZ - the z coordinate of the origin (default = 0)
-   * @param defaultPixelValue - the value for background pixels
    */
   static void applyAffineITK(typename ITKAffineTransform<T,3>::Type* itkAffine, VectorImageType* imIn, VectorImageType* imOut, T defaultPixelValue = 0, T originX = 0, T originY = 0, T originZ = 0);
 
@@ -619,7 +616,6 @@ public:
    * 2D Method that uses ITK to write the time dependant image set out
    *
    * @param ims - the image to write
-   * @param numTimes - the number of time discretized images
    * @param filename - the name of the file to write to
    */
   static bool writeTimeDependantImagesITK1D( const std::vector< VectorImageType* >* ims, const std::string& filename);
@@ -628,7 +624,6 @@ public:
    * 2D Method that uses ITK to write the time dependant image set out
    *
    * @param ims - the image to write
-   * @param numTimes - the number of time discretized images
    * @param filename - the name of the file to write to
    */
   static bool writeTimeDependantImagesITK2D( const std::vector< VectorImageType* >* ims, const std::string& filename);
@@ -637,7 +632,6 @@ public:
    * 3D Method that uses ITK to write the time dependant image set out
    *
    * @param ims - the image to write
-   * @param numTimes - the number of time discretized images
    * @param filename - the name of the file to write to
    */
   static bool writeTimeDependantImagesITK3D( const std::vector< VectorImageType* >* ims, const std::string& filename);
@@ -646,7 +640,6 @@ public:
    * Method that uses ITK to write the time dependant image set out
    *
    * @param ims - the image to write
-   * @param numTimes - the number of time discretized images
    * @param filename - the name of the file to write to
    */
   static bool writeTimeDependantImagesITK( const std::vector< VectorImageType* >* ims, const std::string& filename);

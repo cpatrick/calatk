@@ -625,8 +625,8 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeGradient()
 template < class TState >
 void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeInitialUnsmoothedVelocityGradient( VectorFieldType* ptrInitialUnsmoothedVelocityGradient, unsigned int uiKernelNumber )
 {
-  /// uiKernelNumber == 0 -> kernel for the image-terms t\in[0,1]
-  /// uiKernelNumber == 1 -> kernel for the mask-terms t\in(1,2]
+  /// uiKernelNumber == 0 -> kernel for the image-terms \f$ t\in[0,1] \f$
+  /// uiKernelNumber == 1 -> kernel for the mask-terms \f$ t\in(1,2] \f$
 
   // shorthand for convenience
   VectorFieldType* ptrGradient = ptrInitialUnsmoothedVelocityGradient;
