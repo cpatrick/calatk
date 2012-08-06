@@ -361,10 +361,25 @@ void CImageManager< TFloat, VImageDimension >::WriteOutputsFromDataJSONConfigura
     typename VectorImageType::ConstPointer originalImage = timeseries[ 0 ].GetOriginalImage();
     typename VectorImageType::Pointer warpedImage = new VectorImageType( originalImage );
 
+<<<<<<< HEAD
     // now let's output the current time-point that we are iterating over
 
     typedef VectorField< TFloat, VImageDimension > VectorFieldType;
     typename VectorFieldType::ConstPointer map = new VectorFieldType( algorithm->GetMap( iter->timePoint ) );
+=======
+        typedef VectorField< TFloat, VImageDimension > VectorFieldType;
+        typename VectorFieldType::ConstPointer map = new VectorFieldType( algorithm->GetMap( time.asDouble() ));
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	typedef VectorFieldUtils< TFloat, VImageDimension > VectorFieldUtilsType;
+	typename VectorFieldUtils< TFloat, VImageDimension >::VectorFieldType2D vec;
+	//VectorFieldUtilsType=&map;
+	static typename ITKDeformationField< TFloat, VImageDimension >::Type::Pointer Deform;
+	//Deform = VectorFieldUtilsType::mapToITKDeformationField(map);
+	//Deform=VectorFieldUtilsType.mapToITKDeformationField(map);
+//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+        typedef LDDMMUtils< TFloat, VImageDimension > LDDMMUtilsType;
+        LDDMMUtilsType::applyMap( map, originalImage, warpedImage );
+>>>>>>> 1480fa3... Generating deformation field for transform
 
     typedef LDDMMUtils< TFloat, VImageDimension > LDDMMUtilsType;
     LDDMMUtilsType::applyMap( map, originalImage, warpedImage );

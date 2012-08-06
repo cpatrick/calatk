@@ -26,6 +26,7 @@
 #include "ApplicationUtils.h"
 #include <itkSimilarityIndexImageFilter.h>
 #include "CImageManager.h"
+#include "VectorImageUtils.h"
 
 // Recursively compare test1 and test2
 int Compare( const Json::Value & test1, const Json::Value & test2, bool reportErrors, bool verbose, const double & floatTolerance )
@@ -85,10 +86,7 @@ double timepoint=0;
           same = 1;
           break;
           }
-         else
-	 {
-	   timepoint=(*test1It).asInt();
-	 }
+	timepoint=(double)((*test1It).asInt());
         }
       else if( (*test2It).isDouble() )
         {
@@ -103,25 +101,36 @@ double timepoint=0;
           same = 1;
           break;
           }
-         else
-	 {
-	   timepoint=(*test1It).asDouble();
-	 }
+	timepoint=(*test1It).asDouble();
         }
       }
-      /*if ((*test2It).isString())
+      if ((*test2It).isString())
       {
-        if (CALATK::ApplicationUtils::endsWith((*test1It).asString(), ".mha") || CALATK::ApplicationUtils::endsWith((*test2It).asString(), ".mha"))
-        {
-	  const std::string Image1=(*test1It).asString();
-	  //int id=CALATK::CImageManager<double, 2>::AddCommonImage(Image1,timepoint);
-	  CALATK::VectorImage< double, 2 > Image1;// = ((*test1It).asString());
-	  CALATK::VectorImage< double, 2 > Image2;// = ((*test2It).asString());
-	  //CALATK::VectorImageUtils< double, 2 >::convertToITK(Image1);
-	  //itk::SimilarityIndexImageFilter< Image1, Image2> ();
-	  //SimImFilt.SimilarityIndexImageFilter();
+        if (CALATK::ApplicationUtils::endsWith((*test1It).asString(), ".mha") && CALATK::ApplicationUtils::endsWith((*test2It).asString(), ".mha"))
+	{
+	  const std::string Im1=(*test1It).asString();
+	  const std::string Im2=(*test2It).asString();
+	  CALATK::CImageManager< double, 2 > Image1;
+	  CALATK::CImageManager< double, 2 > Image2;
+	  int id1 = Image1.AddImage(Im1, timepoint, 9);
+	  int id2 = Image2.AddImage(Im2, timepoint, 2);
+
+	  //int id=CALATK::CImageManager< double, 2 >::AddImage(Im1, timepoint, 1);
+	  //const CALATK::CImageManager< double, 2 >::VectorImageType VecIm1 = Image1.GetImageById(id1);
+	  //const CALATK::CImageManager< double, 2 >::VectorImageType VecIm2 = Image2.GetImageById(id2);
+	  CALATK::VectorImageUtils< double,2 >::VectorImageType2D Vec2DIm1=Image1.GetImageById(id1);//VecIm1;
+	  CALATK::VectorImageUtils< double,2 >::VectorImageType2D Vec2DIm2=Image2.GetImageById(id2);//VecIm2;
+	  static CALATK::ITKVectorImage< double,2 >::Type::Pointer Imag1;
+	  static CALATK::ITKVectorImage< double,2 >::Type::Pointer Imag2;
+
+	  std::cout<<"Time is "<< timepoint <<std::endl;
+	  std::cout<<"Image id is "<< id1 << " / "<< id2 << std::endl;
+
+	  //Imag1 = CALATK::VectorImageUtils< double,2 >::convertToITK(Vec2DIm1);
+	  //Imag2 = CALATK::VectorImageUtils< double,2 >::convertToITK(Vec2DIm2);
+	  //itk::ImageToImageFilter<Image1,Image2>();
         }
-      }*/
+      }
     }
   return same;
 
