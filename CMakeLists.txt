@@ -2,11 +2,9 @@
 # CMake file for the CALATK project STILL CHANGING
 
 cmake_minimum_required(VERSION 2.6)
-
-IF(COMMAND cmake_policy)
+if(COMMAND cmake_policy)
   CMAKE_POLICY(SET CMP0012 NEW)
-ENDIF(COMMAND cmake_policy)
-
+endif(COMMAND cmake_policy)
 
 project(CALATK)
 
@@ -21,9 +19,8 @@ if(Verbose_Compilation)
 endif(Verbose_Compilation)
 
 #
-# Output path
+# Output paths
 #
-
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
@@ -34,46 +31,43 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/bin)
 option(COMPILE_APPLICATIONS "Compile command line applications." ON)
 option(BUILD_DOCUMENTATION  "Build the documentation." OFF)
 
-
 # option to use NLOPT as an optimizer
-OPTION(USE_NLOPT "Use NLOpt (not recommended)" OFF)
-IF(USE_NLOPT)
-# So that it finds nlopt
-  FIND_LIBRARY(NLOPT_LIB nlopt)
-  ADD_DEFINITIONS(-DUSE_NLOPT)
-ELSE(USE_NLOPT)
-  SET(NLOPT_LIB "")
-ENDIF(USE_NLOPT)
+option(USE_NLOPT "Use NLOpt (not recommended)" OFF)
+if(USE_NLOPT)
+  # So that it finds nlopt
+  find_library(NLOPT_LIB nlopt)
+  add_definitions(-DUSE_NLOPT)
+else(USE_NLOPT)
+  set(NLOPT_LIB "")
+endif(USE_NLOPT)
 
 # option to use LBFGS as an optimizer
-OPTION(USE_LBFGS "Use LBFGS" OFF)
-IF(USE_LBFGS)
-  ADD_DEFINITIONS(-DUSE_LBFGS)
-ENDIF(USE_LBFGS) 
+option(USE_LBFGS "Use LBFGS" OFF)
+if(USE_LBFGS)
+  add_definitions(-DUSE_LBFGS)
+endif(USE_LBFGS)
 
 # option to use IPOPT as an optimizer
-OPTION(USE_IPOPT "Use IpOpt" OFF)
-IF(USE_IPOPT)
+option(USE_IPOPT "Use IpOpt" OFF)
+if(USE_IPOPT)
   # Find the Ipopt library and includes
-  FIND_PATH(IPOPT_PATH IpoptConfig.h DOC "where IpoptConfig.h is found")
-  INCLUDE_DIRECTORIES(${IPOPT_PATH})
-  FIND_PATH(IPOPT_LIB_PATH ipopt DOC "path where libipopt is located")
+  find_path(IPOPT_PATH IpoptConfig.h DOC "where IpoptConfig.h is found")
+  include_directories(${IPOPT_PATH})
+  find_path(IPOPT_LIB_PATH ipopt DOC "path where libipopt is located")
 
-  SET(IPOPT_LIBS 
+  set(IPOPT_LIBS
     ${IPOPT_LIB_PATH}/libcoinlapack.a
     ${IPOPT_LIB_PATH}/libcoinblas.a
-    ${IPOPT_LIB_PATH}/libcoinasl.a 
+    ${IPOPT_LIB_PATH}/libcoinasl.a
     ${IPOPT_LIB_PATH}/libipopt.a
     ${IPOPT_LIB_PATH}/libipoptamplinterface.a
     ${IPOPT_LIB_PATH}/libcoinmumps.a
     -lgfortran
   )
-  
-  ADD_DEFINITIONS(-DUSE_IPOPT)
-
-ELSE(USE_IPOPT)
-  SET(IPOPT_LIBS "")
-ENDIF(USE_IPOPT)
+  add_definitions(-DUSE_IPOPT)
+else(USE_IPOPT)
+  set(IPOPT_LIBS "")
+endif(USE_IPOPT)
 
 
 #
@@ -84,10 +78,10 @@ mark_as_advanced( USE_SYSTEM_ITK )
 if( USE_SYSTEM_ITK )
   find_package( ITK REQUIRED )
   include( ${ITK_USE_FILE} )
-  FIND_PATH(FFTW_PATH fftw3.h DOC "include directory for FFTW")
-  INCLUDE_DIRECTORIES(${FFTW_PATH})
-  FIND_LIBRARY(FFTW_LIB fftw3)
-  FIND_LIBRARY(FFTWF_LIB fftw3f)
+  find_path(FFTW_PATH fftw3.h DOC "include directory for FFTW")
+  include_directories(${FFTW_PATH})
+  find_library(FFTW_LIB fftw3)
+  find_library(FFTWF_LIB fftw3f)
 endif()
 
 # Superbuild setup
@@ -96,18 +90,15 @@ option( CALATK_USE_SUPERBUILD
 mark_as_advanced( CALATK_USE_SUPERBUILD )
 
 if( CALATK_USE_SUPERBUILD )
-
   include( "${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake" )
   return()
-
 else( CALATK_USE_SUPERBUILD )
-
   find_package( ITK REQUIRED )
   include( ${ITK_USE_FILE} )
-  FIND_PATH(FFTW_PATH fftw3.h DOC "include directory for FFTW")
-  INCLUDE_DIRECTORIES(${FFTW_PATH})
-  FIND_LIBRARY(FFTW_LIB fftw3)
-  FIND_LIBRARY(FFTWF_LIB fftw3f)
+  find_path(FFTW_PATH fftw3.h DOC "include directory for FFTW")
+  include_directories(${FFTW_PATH})
+  find_library(FFTW_LIB fftw3)
+  find_library(FFTWF_LIB fftw3f)
 endif()
 
 #
@@ -150,30 +141,30 @@ endif()
 
 #
 # Allow for boost support for some of the libraries (this is optional)
-# 
+#
 option(USE_BOOST "Use boost." OFF)
 if(USE_BOOST)
-	FIND_PATH(BOOST_INCLUDE_DIR boost/config.hpp)
-	FIND_PATH(BOOST_LIBRARY_DIR boost_date_time-vc71-mt.lib)
-	
-	LINK_DIRECTORIES(${BOOST_LIBRARY_DIR})
-	include_directories(${BOOST_INCLUDE_DIR})
+  find_path(BOOST_INCLUDE_DIR boost/config.hpp)
+  find_path(BOOST_LIBRARY_DIR boost_date_time-vc71-mt.lib)
 
-	# Win32 has automatic linking of boost libraries so only add boost
-	# libaries on unix
-	IF(NOT WIN32 OR CYGWIN)
-	  SET(BOOST_LIBRARIES boost_program_options)
-	ENDIF(NOT WIN32 OR CYGWIN)
-	ADD_DEFINITIONS(-DUSE_BOOST)
-ENDIF(USE_BOOST)
+  link_directories(${BOOST_LIBRARY_DIR})
+  include_directories(${BOOST_INCLUDE_DIR})
+
+  # Win32 has automatic linking of boost libraries so only add boost
+  # libaries on unix
+  if(NOT WIN32 OR CYGWIN)
+    set(BOOST_LIBRARIES boost_program_options)
+  endif(NOT WIN32 OR CYGWIN)
+  add_definitions(-DUSE_BOOST)
+endif(USE_BOOST)
 
 #
 # Allow to choose the floating point type
 #
-OPTION(CHOOSE_FLOATING_POINT_TYPE "Choose floating point type on command line." ON)
-IF(CHOOSE_FLOATING_POINT_TYPE)
-  ADD_DEFINITIONS(-DFLOATING_POINT_CHOICE)
-ENDIF(CHOOSE_FLOATING_POINT_TYPE)
+option(CHOOSE_FLOATING_POINT_TYPE "Choose floating point type on command line." ON)
+if(CHOOSE_FLOATING_POINT_TYPE)
+  add_definitions(-DFLOATING_POINT_CHOICE)
+endif(CHOOSE_FLOATING_POINT_TYPE)
 
 #
 # Include directories
@@ -227,45 +218,39 @@ configure_file(${CMAKE_SOURCE_DIR}/CALATKConfig.cmake.in
 # Create the documentation
 #
 if(BUILD_DOCUMENTATION)
-  #include( ${CMAKE_ROOT}/Modules/FindDoxygen.cmake)
-  #configure_file(${CMAKE_CURRENT_SOURCE_DIR}/Doxyfile
-  #         ${CMAKE_CURRENT_SOURCE_DIR}/documents
-  #         @ONLY IMMEDIATE)
-  
   find_package(Doxygen)
   if(DOXYGEN_FOUND)
     configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.in ${CMAKE_BINARY_DIR}/Doxyfile)
-    ADD_CUSTOM_TARGET(doc doxygen ${CMAKE_BINARY_DIR}/Doxyfile)
+    add_custom_target(doc doxygen ${CMAKE_BINARY_DIR}/Doxyfile)
   endif(DOXYGEN_FOUND)
 endif(BUILD_DOCUMENTATION)
 
 # Set up for testing
+include(CTest)
 enable_testing()
-include (CTest)
 
 # For Cppcheck.
 set( CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CALATK_SOURCE_DIR}/Scripts/Cppcheck" )
 
 # Build a CPack driven installer package
-include (InstallRequiredSystemLibraries)
-set (CPACK_RESOURCE_FILE_LICENSE  
+include(InstallRequiredSystemLibraries)
+set(CPACK_RESOURCE_FILE_LICENSE
      "${CMAKE_CURRENT_SOURCE_DIR}/LICENSEInstaller.txt")
-set (CPACK_RESOURCE_FILE_README
+set(CPACK_RESOURCE_FILE_README
      "${CMAKE_CURRENT_SOURCE_DIR}/README.txt")
-set (CPACK_RESOURCE_FILE_WELCOME
+set(CPACK_RESOURCE_FILE_WELCOME
      "${CMAKE_CURRENT_SOURCE_DIR}/WELCOME.txt")
 
-set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "Image Registration and Atlas-Building")
-set (CPACK_PACKAGE_VENDOR "The CALATK Team")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "Image Registration and Atlas-Building")
+set(CPACK_PACKAGE_VENDOR "The CALATK Team")
 
-set (CPACK_PACKAGE_VERSION_MAJOR "${CALATK_VERSION_MAJOR}")
-set (CPACK_PACKAGE_VERSION_MINOR "${CALATK_VERSION_MINOR}")
-set (CPACK_PACKAGE_DESCRIPTION_SUMMARY "CALATK - Cross-sectional and longitudinal atlas-building toolkit")
-set (CPACK_PACKAGE_INSTALL_DIRECTORY "CALATK-${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
+set(CPACK_PACKAGE_VERSION_MAJOR "${CALATK_VERSION_MAJOR}")
+set(CPACK_PACKAGE_VERSION_MINOR "${CALATK_VERSION_MINOR}")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "CALATK - Cross-sectional and longitudinal atlas-building toolkit")
+set(CPACK_PACKAGE_INSTALL_DIRECTORY "CALATK-${CMake_VERSION_MAJOR}.${CMake_VERSION_MINOR}")
 
 include (CPack)
-
-ADD_DEFINITIONS(-DCALATK_VERSION_MAJOR=${CALATK_VERSION_MAJOR} -DCALATK_VERSION_MINOR=${CALATK_VERSION_MINOR})
+add_definitions(-DCALATK_VERSION_MAJOR=${CALATK_VERSION_MAJOR} -DCALATK_VERSION_MINOR=${CALATK_VERSION_MINOR})
 
 #
 # Go to Code
