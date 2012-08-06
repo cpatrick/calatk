@@ -38,7 +38,7 @@ PROJECT_NUMBER         = @CALATK_VERSION_MAJOR@.@CALATK_VERSION_MINOR@
 # If a relative path is entered, it will be relative to the location
 # where doxygen was started. If left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = documents
+OUTPUT_DIRECTORY       = doxygen
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create
 # 4096 sub-directories (in 2 levels) under the output directory of each output
@@ -782,7 +782,7 @@ COLS_IN_ALPHA_INDEX    = 2
 # The IGNORE_PREFIX tag can be used to specify one or more prefixes that
 # should be ignored while generating the index headers.
 
-IGNORE_PREFIX          =
+IGNORE_PREFIX          = C
 
 #---------------------------------------------------------------------------
 # configuration options related to the HTML output
