@@ -220,7 +220,7 @@ configure_file(${CMAKE_SOURCE_DIR}/CALATKConfig.cmake.in
 if(BUILD_DOCUMENTATION)
   find_package(Doxygen)
   if(DOXYGEN_FOUND)
-    configure_file(${CMAKE_SOURCE_DIR}/Doxyfile.in ${CMAKE_BINARY_DIR}/Doxyfile)
+    configure_file(${CMAKE_SOURCE_DIR}/Utilities/Doxyfile.in ${CMAKE_BINARY_DIR}/Doxyfile)
     add_custom_target(Documentation ALL doxygen ${CMAKE_BINARY_DIR}/Doxyfile)
   endif(DOXYGEN_FOUND)
 endif(BUILD_DOCUMENTATION)
