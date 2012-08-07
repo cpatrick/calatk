@@ -144,6 +144,10 @@ set(testDriverImageManager_SRCS
   calatkAdvancedDataConfigTest.cxx
   )
 
+set(testDriverUtilities_SRCS
+  calatkVectorFieldUtilsTest.cxx
+  )
+
 add_executable(testDriverFiltering testDriverFiltering.cxx ${testDriverFiltering_SRCS})
 target_link_libraries(testDriverFiltering CALATK ${ITK_LIBRARIES})
 
@@ -559,6 +563,20 @@ if( BUILD_TESTING )
     calatkAdvancedDataConfigTest
     ${CMAKE_CURRENT_SOURCE_DIR}/calatkAdvancedDataConfigTestInput.json
     ${test_temp_dir}/calatkAdvancedDataConfigTestOutput.json
+    )
+
+  # LDDMM tests
+  add_executable(testDriverUtilities testDriverUtilities.cxx ${testDriverUtilities_SRCS})
+  target_link_libraries(testDriverUtilities CALATK ${ITK_LIBRARIES})
+
+  add_test( calatkVectorFieldUtilsTest
+    testDriverUtilities
+    --compare
+      ${test_input_dir}/Baseline/VectorFieldUtilsTest2DDeformationFieldBaseline.mha
+      ${test_temp_dir}/VectorFieldUtilsTest2DDeformationField.mha
+    calatkVectorFieldUtilsTest
+    ${test_temp_dir}/VectorFieldUtilsTest2DDeformationField.mha
+    ${test_temp_dir}/VectorFieldUtilsTest3DDeformationField.mha
     )
 endif( BUILD_TESTING )
 

@@ -917,12 +917,11 @@ void VectorFieldUtils< T, VImageDimension >::computeCentralGradient( const Vecto
 template <class T, unsigned int VImageDimension >
 typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils< T, VImageDimension >::mapToITKDeformationField(VectorFieldType2D* inMap)
 {
-
   unsigned int szX = inMap->GetSizeX();
   unsigned int szY = inMap->GetSizeY();
 
   // initialize the ITK field
-  typename ITKDeformationField<T,VImageDimension>::Type::Pointer outField = typename ITKDeformationField<T,VImageDimension>::Type::New();
+  typename ITKDeformationField<T,VImageDimension>::Type::Pointer outField = ITKDeformationField<T,VImageDimension>::Type::New();
 
   // Set up region
   typename ITKDeformationField<T,VImageDimension>::Type::IndexType start;
@@ -976,7 +975,6 @@ typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils<
   outField->SetOrigin(VectorImageUtils< T, VImageDimension >::convertITKVectorOrigin(inMap->GetOrigin()));
   outField->SetDirection(VectorImageUtils< T, VImageDimension >::convertITKVectorDirection(inMap->GetDirection()));
 
-  // return
   return outField;
 
 }
@@ -1056,7 +1054,6 @@ typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils<
   outField->SetOrigin(VectorImageUtils<T,VImageDimension>::convertITKVectorOrigin(inMap->GetOrigin()));
   outField->SetDirection(VectorImageUtils<T,VImageDimension>::convertITKVectorDirection(inMap->GetDirection()));
 
-  // return
   return outField;
 
 }

@@ -24,9 +24,6 @@
 #include "VectorField.h"
 #include "VectorImage.h"
 #include "VectorImageUtils.h"
-#include "itkImage.h"
-#include "itkImageFileReader.h"
-#include "itkImageFileWriter.h"
 #include "itkHFieldToDeformationFieldImageFilter.h"
 #include <cmath>
 #include <string>
