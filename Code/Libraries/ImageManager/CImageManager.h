@@ -383,6 +383,8 @@ public:
    * */
   void WriteOutputsFromDataJSONConfiguration( AlgorithmBaseType * algorithm );
 
+  void GetTransformsFromDataJSONConfiguration( AlgorithmBaseType * algorithm);
+
   // Reimplemented because we have both a data and algorithm configuration.
   virtual void SetPrintConfiguration( bool print );
   virtual void SetAllowHelpComments( bool allow );
@@ -476,7 +478,12 @@ private:
 
   CJSONConfiguration::Pointer m_DataCombinedJSONConfig;
   CJSONConfiguration::Pointer m_DataCleanedJSONConfig;
+
   bool m_DataAutoConfigurationSet;
+  std::string m_UsedTransformConfigurationFile;
+
+  CJSONConfiguration::Pointer m_DisplacementVectorJSONName;
+  Json::Value CoordOut;
 };
 
 } // end namespace

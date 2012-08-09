@@ -29,6 +29,7 @@ void CApplication::InstantiateConfigs()
   this->m_CombinedDataJSONConfig->InitializeEmptyRoot();
   this->m_CleanedAlgorithmJSONConfig = new CJSONConfiguration;
   this->m_CleanedDataJSONConfig = new CJSONConfiguration;
+  JSONTransform=false;
 }
 
 CApplication::CApplication()
@@ -50,39 +51,46 @@ CApplication::CApplication( const int argc, char **argv )
           "[<used_data_parameters_config.json>]\n";
     throw std::runtime_error( usage.c_str() );
     }
-
-  this->SetGivenAlgorithmConfigurationFile( argv[1] );
-  const std::string argv2( argv[2] );
+  int i=0;
+  const std::string argv1( argv[i+1] );
+  if( !(std::string( "GenerateJSONTransform" ).compare(argv1)))
+  {
+      JSONTransform=true;
+      i=1;
+  }
+  std::cout<<"TESTOK"<<std::endl;
+  this->SetGivenAlgorithmConfigurationFile( argv[i+1] );
+  const std::string argv2( argv[i+2] );
   if( argv2.length() > 5 && std::string( ".json" ).compare( argv2.substr( argv2.length() - 5 )))
     {
-    if( argc < 4 )
+    if( argc < i+4 )
       {
       throw std::runtime_error( "Insufficient number of arguments, must supply both source and target image." );
       }
-    this->SetGivenSourceAndTargetImageFiles( argv[2], argv[3] );
+    this->SetGivenSourceAndTargetImageFiles( argv[i+2], argv[i+3] );
 
-    const std::string argv4( argv[4] );
-    if( argc > 4 && std::string( ".json" ).compare( argv4.substr( argv4.length() - 5 )))
+    const std::string argv4( argv[i+4] );
+    if( argc > i+4 && std::string( ".json" ).compare( argv4.substr( argv4.length() - 5 )))
       {
-      this->SetGivenWarpedImageFile( argv[4] );
-      if( argc > 5 )
+      this->SetGivenWarpedImageFile( argv[i+4] );
+      if( argc > i+5 )
         {
-        this->SetUsedAlgorithmConfigurationFile( argv[5] );
+        this->SetUsedAlgorithmConfigurationFile( argv[i+5] );
         }
-      if( argc > 6 )
+      if( argc > i+6 )
         {
-        this->SetUsedDataConfigurationFile( argv[6] );
+        this->SetUsedDataConfigurationFile( argv[i+6] );
         }
       }
     else
       {
-      if( argc > 4 )
+      if( argc > i+4 )
         {
-        this->SetUsedAlgorithmConfigurationFile( argv[4] );
+        this->SetUsedAlgorithmConfigurationFile( argv[i+4] );
         }
-      if( argc > 5 )
+      if( argc > i+5 )
         {
-        this->SetUsedDataConfigurationFile( argv[5] );
+        this->SetUsedDataConfigurationFile( argv[i+5] );
         }
       }
     }
@@ -90,14 +98,14 @@ CApplication::CApplication( const int argc, char **argv )
     {
     this->SetGivenDataConfigurationFile( argv2 );
 
-    if( argc > 3 )
+    if( argc > i+3 )
       {
-      this->SetUsedAlgorithmConfigurationFile( argv[3] );
+      this->SetUsedAlgorithmConfigurationFile( argv[i+3] );
       }
 
-    if( argc > 4 )
+    if( argc > i+4 )
       {
-      this->SetUsedDataConfigurationFile( argv[4] );
+      this->SetUsedDataConfigurationFile( argv[i+4] );
       }
     }
 }
@@ -376,6 +384,8 @@ CApplication::InternalSolve()
   algorithmBase->Solve();
 
   imageManager->WriteOutputsFromDataJSONConfiguration( algorithmBase );
+
+  if(JSONTransform) imageManager->GetTransformsFromDataJSONConfiguration(algorithmBase);
 }
 
 } // end namespace CALATK

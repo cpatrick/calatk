@@ -5,10 +5,7 @@
 		"subject1" :
 		[
 			[ 0.0, "Bullseye2DTimePoint0.mha" ],
-			[ 1.0, "Bullseye2DTimePoint1.mha" ],
-			[ 2.0, "Bullseye2DTimePoint2.mha" ],
-			[ 3.0, "Bullseye2DTimePoint3.mha" ]
-
+			[ 1.0, "Bullseye2DTimePoint1.mha" ]
 		]
 	},
 	"Outputs" :
@@ -16,15 +13,10 @@
 		"subject1" :
 		[
 			[ 0.0, "Bullseye2DTime0.00Warped.mha" ],
-			[ 0.100, "Bullseye2DTime0.10Warped.mha" ],
 			[ 0.200, "Bullseye2DTime0.20Warped.mha" ],
-			[ 0.300, "Bullseye2DTime0.30Warped.mha" ],
 			[ 0.400, "Bullseye2DTime0.40Warped.mha" ],
-			[ 0.500, "Bullseye2DTime0.50Warped.mha" ],
 			[ 0.600, "Bullseye2DTime0.60Warped.mha" ],
-			[ 0.700, "Bullseye2DTime0.70Warped.mha" ],
 			[ 0.800, "Bullseye2DTime0.80Warped.mha" ],
-			[ 0.900, "Bullseye2DTime0.90Warped.mha" ],
 			[ 1.0, "Bullseye2DTime1.00Warped.mha" ]
 		]
 	}

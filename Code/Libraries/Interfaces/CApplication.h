@@ -46,6 +46,7 @@ public:
   typedef CBase                           Superclass;
   typedef itk::SmartPointer< Self >       Pointer;
   typedef itk::SmartPointer< const Self > ConstPointer;
+  bool JSONTransform;
 
   /** Default constructor. */
   CApplication();

@@ -17,176 +17,171 @@
 *
 */
 
-/**
-  * Regression test, verification of warping test
-  */
 
-#include <cstdlib>
-#include "CApplication.h"
-#include "ApplicationUtils.h"
-#include <itkSimilarityIndexImageFilter.h>
-#include "CImageManager.h"
-#include "VectorImageUtils.h"
+#include "calatkCompareWarping.h"
+#include <sstream>
 
-// Recursively compare test1 and test2
-int Compare( const Json::Value & test1, const Json::Value & test2, bool reportErrors, bool verbose, const double & floatTolerance )
+// Latest version of the Advanced data configuration file format.
+// Since we do not have a JSON schema, the data configuration format is
+// implicitly define by how it is processed in this file (it would be nice to
+// improve this situation in the future).
+#define CALATK_CURRENT_DATA_CONFIG_VERSION 1.0
+
+namespace CALATK
 {
-int same = 0;
-double timepoint=0;
-  for( Json::Value::const_iterator test2It = test2.begin(), test1It = test1.begin();
-       test1It != test1.end();
-       ++test2It, ++test1It )
+template < class TFloat, unsigned int VImageDimension >
+void Warping< TFloat, VImageDimension >::InstantiateConfigs()
+{
+    m_DisplacementVectorJSONConfig = new CJSONConfiguration;
+    m_DisplacementVectorJSONConfig->InitializeEmptyRoot();
+    Json::Value & displacementVectorConfigRoot  = *(m_DisplacementVectorJSONConfig->GetRootPointer());
+    displacementVectorConfigRoot["CalaTKDataConfigurationVersion"] = CALATK_CURRENT_DATA_CONFIG_VERSION;
+}
+
+//For a Transform, writes a Json file with inputs coord and the 2D data
+//stored in the specified dimension of the transform at the specified grid location
+template < class TFloat, unsigned int VImageDimension >
+void Warping< TFloat, VImageDimension >::CreateJsonConfigTransform(typename DisplacementVectorType::Pointer displacementVector,
+                                                                   int displacementVectornumber)
+{
+    InstantiateConfigs();
+    Json::Value & displacementVectorConfigRoot  = *(m_DisplacementVectorJSONConfig->GetRootPointer());
+    Json::Value inputCoord( Json::arrayValue );
+    Json::Value outputCoord( Json::arrayValue );
+    Json::Value allInputs( Json::arrayValue );
+    Json::Value allOutputs( Json::arrayValue );
+    Json::Value coordIn( Json::objectValue );
+    Json::Value coordOut( Json::objectValue );
+    int i=0, j=0;
+
+    for (int x=5;x<=25;x=x+10)
     {
-    if( !((*test2It).isNull()) && ((*test2It).isArray() || (*test2It).isObject()) )
-      {
-      if( Compare( *test1It, *test2It, reportErrors, verbose, floatTolerance ) )
+        if (x==5 || x==25)
         {
-        same = 1;
-        break;
-        }
-      }
-    else
-      {
-      if( verbose )
-        {
-        std::cout << "Comparing: " << *test1It << " to " << *test2It << std::endl;
-        }
-      if( (*test2It).isNull() )
-        {
-        if( !(*test1It).isNull() )
-          {
-          if( reportErrors )
-            {
-            std::cerr << "The test value was non-null when the baseline value was null." << std::endl;
-            }
-          same = 1;
-          break;
-          }
-        }
-      else if( (*test2It).isBool() )
-        {
-        if( (*test2It).asBool() != (*test1It).asBool() )
-          {
-          if( reportErrors )
-            {
-            std::cerr << "The test value: " << (*test1It).asBool() << " does not equal the baseline value: " << (*test2It).asBool() << std::endl;
-            }
-          same = 1;
-          break;
-          }
-        }
-      else if( (*test2It).isIntegral() )
-        {
-        if( (*test2It).asInt() != (*test1It).asInt() )
-          {
-          if( reportErrors )
-            {
-            std::cerr << "The test value: " << (*test1It).asInt() << " does not equal the baseline value: " << (*test2It).asInt() << std::endl;
-            }
-          same = 1;
-          break;
-          }
-	timepoint=(double)((*test1It).asInt());
-        }
-      else if( (*test2It).isDouble() )
-        {
-        /// \todo This should be using itk::Math::FloatAlmostEquals available in
-        //  ITKv4 once we start requiring ITKv4
-        if( ((*test2It).asDouble() - (*test1It).asDouble()) / (*test2It).asDouble() > floatTolerance )
-          {
-          if( reportErrors )
-            {
-            std::cerr << "The test value: " << (*test1It).asDouble() << " does not equal the baseline value: " << (*test2It).asDouble() << std::endl;
-            }
-          same = 1;
-          break;
-          }
-	timepoint=(*test1It).asDouble();
-        }
-      }
-      if ((*test2It).isString())
-      {
-        if (CALATK::ApplicationUtils::endsWith((*test1It).asString(), ".mha") && CALATK::ApplicationUtils::endsWith((*test2It).asString(), ".mha"))
-	{
-	  const std::string Im1=(*test1It).asString();
-	  const std::string Im2=(*test2It).asString();
-	  CALATK::CImageManager< double, 2 > Image1;
-	  CALATK::CImageManager< double, 2 > Image2;
-	  int id1 = Image1.AddImage(Im1, timepoint, 9);
-	  int id2 = Image2.AddImage(Im2, timepoint, 2);
+            inputCoord[0] = x;
+            inputCoord[1] = 15;
+            allInputs[i] = inputCoord;
+            outputCoord[0] = displacementVector->GetValue(x,15,0);
+            outputCoord[1] = displacementVector->GetValue(x,15,1);
+            allOutputs[j] = outputCoord;
+            i++;j++;
 
-	  //int id=CALATK::CImageManager< double, 2 >::AddImage(Im1, timepoint, 1);
-	  //const CALATK::CImageManager< double, 2 >::VectorImageType VecIm1 = Image1.GetImageById(id1);
-	  //const CALATK::CImageManager< double, 2 >::VectorImageType VecIm2 = Image2.GetImageById(id2);
-	  CALATK::VectorImageUtils< double,2 >::VectorImageType2D Vec2DIm1=Image1.GetImageById(id1);//VecIm1;
-	  CALATK::VectorImageUtils< double,2 >::VectorImageType2D Vec2DIm2=Image2.GetImageById(id2);//VecIm2;
-	  static CALATK::ITKVectorImage< double,2 >::Type::Pointer Imag1;
-	  static CALATK::ITKVectorImage< double,2 >::Type::Pointer Imag2;
-
-	  std::cout<<"Time is "<< timepoint <<std::endl;
-	  std::cout<<"Image id is "<< id1 << " / "<< id2 << std::endl;
-
-	  //Imag1 = CALATK::VectorImageUtils< double,2 >::convertToITK(Vec2DIm1);
-	  //Imag2 = CALATK::VectorImageUtils< double,2 >::convertToITK(Vec2DIm2);
-	  //itk::ImageToImageFilter<Image1,Image2>();
         }
-      }
+        if (x==15)
+        {
+            for(int y=10; y<=20; y=y+5)
+            {
+                inputCoord[0] = x;
+                inputCoord[1] = y;
+                allInputs[i] = inputCoord;
+                outputCoord[0] = displacementVector->GetValue(x,y,0);
+                outputCoord[1] = displacementVector->GetValue(x,y,1);
+                allOutputs[j] = outputCoord;
+                i++;j++;
+            }
+        }
     }
-  return same;
+
+    std::string displacementVectorNumberString,displacementVectorName;
+    std::stringstream ss;
+    ss << displacementVectornumber;
+    displacementVectorNumberString=ss.str();
+    displacementVectorName="DisplacementVector"+displacementVectorNumberString;
+    coordIn["DisplacementVectorInputPoints"] = allInputs;
+    displacementVectorConfigRoot["Inputs"] = coordIn;
+    coordOut[displacementVectorName+"OutputPoints"] = allOutputs;
+    displacementVectorConfigRoot["Outputs"] = coordOut;
+
+    std::string filename = displacementVectorName + ".json";
+    m_DisplacementVectorJSONConfig->WriteJSONConfigurationFile( filename );
+}
+
+//Reads the JSON file, opening each transform
+template < class TFloat, unsigned int VImageDimension >
+int Warping< TFloat, VImageDimension >::ReadJSONContent( const Json::Value & baseline)
+{
+    int same = EXIT_SUCCESS, displacementVectornumber = 0;
+    typedef VectorImageUtils< TFloat, VImageDimension > DisplacementVectorType;
+    typedef Warping< TFloat , VImageDimension > WarpingType;
+    typename WarpingType::Pointer warperIterator = new WarpingType;
+
+    for( Json::Value::iterator baselineIt = baseline.begin(); baselineIt != baseline.end(); ++baselineIt )
+    {
+        if( (*baselineIt).isString() && (*baselineIt).asString() == "Regression test NA" )
+          {
+          continue;
+          }
+        if( !((*baselineIt).isNull()) && ((*baselineIt).isArray() || (*baselineIt).isObject()) )
+          {
+          if( warperIterator->ReadJSONContent( *baselineIt))
+            {
+            same = EXIT_FAILURE;
+            break;
+            }
+          }
+        else
+        {
+            if( ((*baselineIt).isString()) )
+            {
+                if ((*baselineIt).isString())
+                {
+                    std::string fileName=(*baselineIt).asString();
+                    typename VectorImage< TFloat, VImageDimension >::Pointer map;
+                    map=DisplacementVectorType::readFileITK(fileName);
+                    typename WarpingType::Pointer warper = new WarpingType;
+                    warper->CreateJsonConfigTransform(map,displacementVectornumber);
+                    displacementVectornumber++;
+                }
+            }
+        }
+    }
+    return same;
 
 }
 
-int RegressionTestJSON2( const char *testJSONFileName,
-                         const char *baselineJSONFileName,
-                         bool reportErrors,
-                         bool verbose,
-                         double floatTolerance )
+//Opens JSON file with the reference to the transforms
+template < class TFloat, unsigned int VImageDimension >
+int Warping< TFloat, VImageDimension >::TestOpenJSON(const char *baselineJSONFileName )
 {
-  Json::Value testRoot;
-  Json::Value baselineRoot;
-
-  Json::Reader reader;
-  std::ifstream testFile( testJSONFileName );
-  if( !testFile.is_open() )
+    Json::Value baselineRoot;
+    Json::Reader reader;
+    std::ifstream baselineFile( baselineJSONFileName );
+    int TestResult;
+    if( !baselineFile.is_open() )
     {
-    std::cerr << "Could not open test file: " << testJSONFileName << std::endl;
-    return 1;
+        std::cerr << "Could not open baseline file: " << baselineJSONFileName << std::endl;
+        return 1;
     }
-  if( !reader.parse( testFile, testRoot ) )
+    if( !reader.parse( baselineFile, baselineRoot ) )
     {
-    std::cerr << "Could not parse test file: " << testJSONFileName << std::endl;
-    testFile.close();
-    return 1;
+        std::cerr << "Could not parse baseline file: " << baselineJSONFileName << std::endl;
+        baselineFile.close();
+        return 1;
     }
-  testFile.close();
-  std::ifstream baselineFile( baselineJSONFileName );
-  if( !baselineFile.is_open() )
-    {
-    std::cerr << "Could not open baseline file: " << baselineJSONFileName << std::endl;
-    return 1;
-    }
-  if( !reader.parse( baselineFile, baselineRoot ) )
-    {
-    std::cerr << "Could not parse baseline file: " << baselineJSONFileName << std::endl;
     baselineFile.close();
-    return 1;
-    }
-  baselineFile.close();
 
-  return Compare( testRoot, baselineRoot, reportErrors, verbose, floatTolerance );
+    typedef Warping< TFloat , VImageDimension > WarpingType;
+    typename WarpingType::Pointer warper = new WarpingType;
+    TestResult = warper->ReadJSONContent(baselineRoot);
+
+    return TestResult;
 }
+}//End namespace
 
-int calatkCompareWarping( int argc, char ** argv )
+int calatkCompareWarping( int argc, char * argv[] )
 {
-  if( argc < 3 )
-    {
-    std::cerr << "Usage: " << argv[0] << " <test1>.json <test2>.json" << std::endl;
+  if( argc < 1 )
+  {
+    std::cerr << "Usage: " << argv[0] << " <test>.json " << std::endl;
     return EXIT_FAILURE;
-    }
-  const int result = RegressionTestJSON2( argv[1], argv[2], true, true, 0.00001 );
+  }
+  typedef CALATK::Warping< float , 2 > WarpingType;
+  typename WarpingType::Pointer warper = new WarpingType;
+
+  int result = warper->TestOpenJSON( argv[1] );
   if( result == 0 )
-    {
-    return EXIT_SUCCESS;
-    }
+  {
+      return EXIT_SUCCESS;
+  }
   return EXIT_FAILURE;
 }

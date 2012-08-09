@@ -10,6 +10,7 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
 set(ALGORITHMS_TESTS_FILTERING ${test_bin_dir}/testDriverFiltering)
 set(ALGORITHMS_TESTS_PDESOLVER ${test_bin_dir}/testDriverPDESolver)
 set(ALGORITHMS_TESTS_ALGORITHMS ${test_bin_dir}/testDriverAlgorithms)
+set(ALGORITHMS_TESTS_TEST ${test_bin_dir}/testDriverTest)
 
 # For performing JSON regression tests.
 add_executable( RegressionTestJSON RegressionTestJSON.cxx ${CMAKE_SOURCE_DIR}/Code/External/jsoncpp/jsoncpp.cpp )
@@ -139,13 +140,14 @@ set(testDriverAlgorithms_SRCS
 set(testDriverInterfaces_SRCS
   calatkApplicationImageFileNamesGivenTest.cxx
   calatkApplicationDataConfigTest.cxx
-  calatkApplicationDataConfigTest2.cxx
-  calatkCompareWarping.cxx
   )
 
 set(testDriverImageManager_SRCS
   calatkBasicDataConfigTest.cxx
   calatkAdvancedDataConfigTest.cxx
+  )
+set(testDriverTest_SRCS
+  calatkCompareWarping.cxx
   )
 
 set(testDriverUtilities_SRCS
@@ -206,7 +208,7 @@ add_test_executable(calatkCStateFactoryTest CALATK)
 add_ctest_test(calatkCStateFactoryTest)
 
 # LDDMM tests
-add_executable(testDriverAlgorithms testDriverAlgorithms.cxx ${testDriverAlgorithms_SRCS})
+add_executable( testDriverAlgorithms testDriverAlgorithms.cxx ${testDriverAlgorithms_SRCS})
 target_link_libraries(testDriverAlgorithms CALATK ${ITK_LIBRARIES})
 
 # Add 1D Tests for different solvers
@@ -463,17 +465,6 @@ if(BUILD_TESTING AND compile_GenerateBullseyes)
     ${test_temp_dir}/CALATKCommandLineBullseyes1D_DataConfig.json
     )
 
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  add_test(NAME CALATKCommandLineBullseyes2DTest
-    WORKING_DIRECTORY ${test_temp_dir}
-    COMMAND ${CALATKCommandLine_path}
-    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfig2.json
-    Bullseye2DTimePoint0.mha
-    Bullseye2DTimePoint1.mha
-    ${test_temp_dir}/CALATKCommandLineBullseyes2D_AlgorithmConfig.json
-    ${test_temp_dir}/CALATKCommandLineBullseyes2D_DataConfig.json
-    )
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   add_test(CALATKCommandLineBullseyes1DTest_CleanedAlgorithmConfigVerification
     ${regression_test_json}
     ${test_temp_dir}/CALATKCommandLineBullseyes1D_AlgorithmConfig.json
@@ -488,23 +479,6 @@ if(BUILD_TESTING AND compile_GenerateBullseyes)
     CALATKCommandLineBullseyes1DTest_CleanedDataConfigVerification
     PROPERTIES DEPENDS CALATKCommandLineBullseyes1DTest
     )
-
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  add_test(CALATKCommandLineBullseyes2DTest_CleanedAlgorithmConfigVerification
-    ${regression_test_json}
-    ${test_temp_dir}/CALATKCommandLineBullseyes2D_AlgorithmConfig.json
-    ${CMAKE_CURRENT_SOURCE_DIR}/CALATKCommandLineBullseyes2D_AlgorithmConfigBaseline.json
-    )
-  add_test(CALATKCommandLineBullseyes2DTest_CleanedDataConfigVerification
-    ${regression_test_json}
-    ${test_temp_dir}/CALATKCommandLineBullseyes2D_DataConfig.json
-    ${CMAKE_CURRENT_SOURCE_DIR}/CALATKCommandLineBullseyes2D_DataConfigBaseline.json
-    )
-  set_tests_properties(CALATKCommandLineBullseyes2DTest_CleanedAlgorithmConfigVerification
-    CALATKCommandLineBullseyes2DTest_CleanedDataConfigVerification
-    PROPERTIES DEPENDS CALATKCommandLineBullseyes2DTest
-    )
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
   add_test(NAME CALATKCommandLineBullseyes1DOutputTest
     WORKING_DIRECTORY ${test_temp_dir}
@@ -539,7 +513,33 @@ if(BUILD_TESTING AND compile_GenerateBullseyes)
     ${test_temp_dir}/CALATKCommandLineBullseyes1D_ImageDimensionSpecified_AlgorithmConfig.json
     ${test_temp_dir}/CALATKCommandLineBullseyes1D_ImageDimensionSpecified_DataConfig.json
     )
-#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+
+  add_test(NAME CALATKCommandLineBullseyes2DTest
+    WORKING_DIRECTORY ${test_temp_dir}
+    COMMAND ${CALATKCommandLine_path}
+    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfig2.json
+    Bullseye2DTimePoint0.mha
+    Bullseye2DTimePoint1.mha
+    ${test_temp_dir}/CALATKCommandLineBullseyes2D_AlgorithmConfig.json
+    ${test_temp_dir}/CALATKCommandLineBullseyes2D_DataConfig.json
+    )
+
+  add_test(CALATKCommandLineBullseyes2DTest_CleanedAlgorithmConfigVerification
+    ${regression_test_json}
+    ${test_temp_dir}/CALATKCommandLineBullseyes2D_AlgorithmConfig.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/CALATKCommandLineBullseyes2D_AlgorithmConfigBaseline.json
+    )
+  add_test(CALATKCommandLineBullseyes2DTest_CleanedDataConfigVerification
+    ${regression_test_json}
+    ${test_temp_dir}/CALATKCommandLineBullseyes2D_DataConfig.json
+    ${CMAKE_CURRENT_SOURCE_DIR}/CALATKCommandLineBullseyes2D_DataConfigBaseline.json
+    )
+  set_tests_properties(CALATKCommandLineBullseyes2DTest_CleanedAlgorithmConfigVerification
+    CALATKCommandLineBullseyes2DTest_CleanedDataConfigVerification
+    PROPERTIES DEPENDS CALATKCommandLineBullseyes2DTest
+    )
+
  add_test(NAME CALATKCommandLineBullseyes2DOutputTest
     WORKING_DIRECTORY ${test_temp_dir}
     COMMAND ${CALATKCommandLine_path}
@@ -611,6 +611,7 @@ if(BUILD_TESTING AND compile_GenerateBullseyes)
 
   add_ctest_test_testdriver(calatkApplicationDataConfigTest
     testDriverInterfaces
+    GenerateJSONTransform
     ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfig2.json
     ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestDataConfig2.json
     ${test_temp_dir}/calatkApplicationDataConfigTest_AlgorithmConfig.json
@@ -631,29 +632,42 @@ if(BUILD_TESTING AND compile_GenerateBullseyes)
     PROPERTIES DEPENDS calatkApplicationDataConfigTest
     )
 
-  add_ctest_test_testdriver(calatkApplicationDataConfigTest2
-    testDriverInterfaces
-    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfig2.json
-    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestDataConfig2_reg.json
-    ${test_temp_dir}/calatkApplicationDataConfigTest2_AlgorithmConfig.json
-    ${test_temp_dir}/calatkApplicationDataConfigTest2_DataConfig.json
-    )
+  add_executable(testDriverTest testDriverTest.cxx ${testDriverTest_SRCS})
+  target_link_libraries(testDriverTest CALATK ${ITK_LIBRARIES})
 
   add_ctest_test_testdriver(calatkCompareWarping
-    testDriverInterfaces
-    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestDataConfig2.json
-    ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestDataConfig2_reg.json
+    testDriverTest
+    ${test_temp_dir}/DisplacementVectorFileNames.json
     )
-  set_tests_properties(
-    calatkCompareWarping
-    PROPERTIES DEPENDS calatkApplicationDataConfigTest2
+
+  add_test(calatkCompareWarpingTest
+    ${regression_test_json}
+    ${test_input_dir}/DisplacementVectorData0.json
+    ${test_temp_dir}/DisplacementVector0.json
+    ${test_input_dir}/DisplacementVectorData1.json
+    ${test_temp_dir}/DisplacementVector1.json
+    ${test_input_dir}/DisplacementVectorData2.json
+    ${test_temp_dir}/DisplacementVector2.json
+    ${test_input_dir}/DisplacementVectorData3.json
+    ${test_temp_dir}/DisplacementVector3.json
+    ${test_input_dir}/DisplacementVectorData4.json
+    ${test_temp_dir}/DisplacementVector4.json
+    ${test_input_dir}/DisplacementVectorData5.json
+    ${test_temp_dir}/DisplacementVector5.json
     )
   set_tests_properties(calatkApplicationImageFileNamesGivenTest
     CALATKCommandLineBullseyes2DTest
     CALATKCommandLineBullseyes2D_ImageDimensionsSpecifiedTest
     calatkApplicationDataConfigTest
-    calatkApplicationDataConfigTest2
     PROPERTIES DEPENDS GenerateBullseyes
+    )
+  set_tests_properties(
+    calatkCompareWarping
+    PROPERTIES DEPENDS calatkApplicationDataConfigTest
+    )
+  set_tests_properties(
+    calatkCompareWarpingTest
+    PROPERTIES DEPENDS calatkCompareWarping
     )
 endif()
 

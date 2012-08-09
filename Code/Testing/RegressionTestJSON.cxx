@@ -30,10 +30,11 @@ int main( int argc, char * argv[] )
     return EXIT_FAILURE;
     }
 
-  const int result = RegressionTestJSON( argv[1], argv[2] );
-  if( result == 0 )
-    {
-    return EXIT_SUCCESS;
-    }
-  return EXIT_FAILURE;
+  for( int i = 1; i < argc; i=i+2 )
+  {
+      const int result = RegressionTestJSON( argv[i], argv[i+1] );
+      if( result !=0)   return EXIT_FAILURE;
+  }
+  return EXIT_SUCCESS;
+
 }

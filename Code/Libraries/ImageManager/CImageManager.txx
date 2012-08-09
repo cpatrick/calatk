@@ -23,6 +23,7 @@
 
 #include "LDDMMUtils.h"
 #include "CAlgorithmBase.h"
+#include <sstream>
 
 // Latest version of the Advanced data configuration file format.
 // Since we do not have a JSON schema, the data configuration format is
@@ -74,6 +75,7 @@ CImageManager< TFloat, VImageDimension >::CImageManager()
 
   m_DataCombinedJSONConfig = new CJSONConfiguration;
   m_DataCleanedJSONConfig = new CJSONConfiguration;
+  m_DisplacementVectorJSONName = new CJSONConfiguration;
 
   m_DataCleanedJSONConfig->PrintSettingsOff();
   m_DataCombinedJSONConfig->PrintSettingsOn();
@@ -84,8 +86,10 @@ CImageManager< TFloat, VImageDimension >::CImageManager()
   // By default, we use the "Advanced" data configuration format.
   Json::Value & dataCombinedConfigRoot = *(m_DataCombinedJSONConfig->GetRootPointer());
   Json::Value & dataCleanedConfigRoot  = *(m_DataCleanedJSONConfig->GetRootPointer());
+  Json::Value & displacementVectorNameRoot  = *(m_DisplacementVectorJSONName->GetRootPointer());
   dataCombinedConfigRoot["CalaTKDataConfigurationVersion"] = "CALATK_CURRENT_DATA_CONFIG_VERSION";
   dataCleanedConfigRoot["CalaTKDataConfigurationVersion"] = "CALATK_CURRENT_DATA_CONFIG_VERSION";
+  displacementVectorNameRoot["CalaTKDataConfigurationVersion"] = CALATK_CURRENT_DATA_CONFIG_VERSION;
 }
 
 
@@ -369,14 +373,7 @@ void CImageManager< TFloat, VImageDimension >::WriteOutputsFromDataJSONConfigura
 =======
         typedef VectorField< TFloat, VImageDimension > VectorFieldType;
         typename VectorFieldType::ConstPointer map = new VectorFieldType( algorithm->GetMap( time.asDouble() ));
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-	typedef VectorFieldUtils< TFloat, VImageDimension > VectorFieldUtilsType;
-	typename VectorFieldUtils< TFloat, VImageDimension >::VectorFieldType2D vec;
-	//VectorFieldUtilsType=&map;
-	static typename ITKDeformationField< TFloat, VImageDimension >::Type::Pointer Deform;
-	//Deform = VectorFieldUtilsType::mapToITKDeformationField(map);
-	//Deform=VectorFieldUtilsType.mapToITKDeformationField(map);
-//~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
         typedef LDDMMUtils< TFloat, VImageDimension > LDDMMUtilsType;
         LDDMMUtilsType::applyMap( map, originalImage, warpedImage );
 >>>>>>> 1480fa3... Generating deformation field for transform
@@ -389,7 +386,10 @@ void CImageManager< TFloat, VImageDimension >::WriteOutputsFromDataJSONConfigura
   }
 
 }
+<<<<<<< HEAD
 
+=======
+>>>>>>> c8294c1... Adding Regression test for bullseyes2D after warping
 //
 // gets the original image based on the global id
 //
@@ -1213,6 +1213,88 @@ void CImageManager< TFloat, VImageDimension>::print( std::ostream& output )
       output << std::endl;
       }
   }
+}
+
+//Generate the transforms and a JSON File with their file name
+template < class TFloat, unsigned int VImageDimension >
+void CImageManager< TFloat, VImageDimension >::GetTransformsFromDataJSONConfiguration( AlgorithmBaseType * algorithm)
+{
+    Json::Value & dataCombinedConfigRoot = *(this->m_DataCombinedJSONConfig->GetRootPointer());
+    Json::Value & dataCleanedConfigRoot  = *(this->m_DataCleanedJSONConfig->GetRootPointer());
+    Json::Value & combinedOutputs = dataCombinedConfigRoot["Outputs"];
+
+    Json::Value fileName( Json::arrayValue );
+    Json::Value allDisplacementVector( Json::objectValue );
+    Json::Value & displacementVectorNameRoot  = *(m_DisplacementVectorJSONName->GetRootPointer());
+    std::string filename = "DisplacementVectorFileNames.json";
+
+    if( combinedOutputs != Json::nullValue )
+      {
+      const Json::Value::Members subjects = combinedOutputs.getMemberNames();
+      for( unsigned int configSubjectIndex = 0; configSubjectIndex < combinedOutputs.size(); ++configSubjectIndex )
+        {
+        Json::Value cleanedSubject( Json::arrayValue );
+        const std::string subject = subjects[configSubjectIndex];
+        Json::Value & combinedSubject = combinedOutputs[subject];
+
+        MapSubjectStringToSubjectIdType::const_iterator mapSubjectStringIt = this->m_MapSubjectStringToSubjectId.find( subject );
+        if( mapSubjectStringIt == this->m_MapSubjectStringToSubjectId.end() )
+          {
+          throw std::runtime_error( "Output subject does not have a corresponding input subject." );
+          }
+        const int subjectId = mapSubjectStringIt->second;
+
+        for( MapIdToSubjectIdType::const_iterator idIt = this->m_MapIdToSubjectId.begin(); idIt != this->m_MapIdToSubjectId.end(); ++idIt )
+          {
+          if( subjectId == idIt->second )
+            {
+            typedef VectorImage< TFloat, VImageDimension > VectorImageType;
+            typename VectorImageType::ConstPointer originalImage = this->GetOriginalImageById( idIt->first );
+            typename VectorImageType::Pointer warpedImage = new VectorImageType( originalImage );
+            int displacementVectornumber=0;
+
+            for( unsigned int timePointIndex = 0; timePointIndex < combinedSubject.size(); ++timePointIndex )
+              {
+              Json::Value & combinedTimePoint = combinedSubject[timePointIndex];
+
+              Json::Value cleanedTimePoint( Json::arrayValue );
+              cleanedTimePoint[0] = combinedTimePoint[0];
+              if( cleanedTimePoint[0] == Json::nullValue )
+                {
+                throw std::runtime_error( "Expected time point not found in Basic data configuration file." );
+                }
+              cleanedTimePoint[1] = combinedTimePoint[1];
+              if( cleanedTimePoint[1] == Json::nullValue )
+                {
+                throw std::runtime_error( "Expected image file path not found in Basic data configuration file." );
+                }
+
+              typedef VectorField< TFloat, VImageDimension > VectorFieldType;
+              typename VectorFieldType::ConstPointer map = new VectorFieldType( algorithm->GetMap( combinedTimePoint[0].asDouble() ));
+
+              typedef VectorImageUtils< TFloat, VImageDimension > VectorImageUtilsType;
+
+              std::string displacementVectorName;
+              std::stringstream ss;
+              ss << displacementVectornumber;
+              displacementVectorName="DisplacementVector"+ss.str();
+
+              std::string filepath = displacementVectorName+".mha";
+              VectorImageUtilsType::writeFileITK( map, filepath );
+              fileName[displacementVectornumber]=filepath;
+              displacementVectornumber++;
+
+              cleanedSubject[timePointIndex] = cleanedTimePoint;
+              }
+
+            dataCleanedConfigRoot["Outputs"][subject] = cleanedSubject;
+            }
+          }
+        }
+      allDisplacementVector["DisplacementVectors"]=fileName;
+      displacementVectorNameRoot["Outputs"]=allDisplacementVector;
+      this->m_DisplacementVectorJSONName->WriteJSONConfigurationFile( filename );
+      }
 }
 
 } // namespace CALATK
