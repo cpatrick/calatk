@@ -604,6 +604,7 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::ComputeGradient()
 
     /**
       * The gradient is computed as follows (note, there is a typo in the MICCAI paper and the initial energy is multipled by 0.5):
+      * (finally it is multiplied by the energy weight)
       *
       \f[
         \nabla_{I_0(t_0)}E = -\lambda^I(t_0) - div( p(t_0) K* ( p(t_0)\nabla I(t_0) ) )
@@ -647,6 +648,8 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::ComputeGradient()
       {
         ptrI0Gradient->SetToConstant( 0.0 );
       }
+      // now multiply by energy weight
+      ptrI0Gradient->MultiplyByConstant( this->m_EnergyWeight );
     }
 
     unsigned int dim = ptrInitialImage->GetDimension();
@@ -690,6 +693,10 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState>::ComputeGradient()
         VectorImageUtilsType::addScalarImageToVectorImageAtDimensionInPlace( m_ptrTmpScalarImage, ptrI0Gradient, iD );
       }
     }
+
+    // now multiply by energy weight
+    ptrP0Gradient->MultiplyByConstant( this->m_EnergyWeight );
+
 }
 
 template < class TState >
@@ -744,6 +751,9 @@ void CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::ComputeInitialUns
     VectorImageUtils< T, TState::ImageDimension >::multiplyVectorByImageDimensionInPlace( ptrLambda0, iD, m_ptrTmpField );
     ptrCurrentGradient->AddCellwise( m_ptrTmpField );
     }
+
+  ptrCurrentGradient->MultiplyByConstant( this->m_EnergyWeight );
+
 }
 
 template < class TState >
@@ -796,7 +806,7 @@ CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::GetCurrentEnergy()
   unsigned int uiNrOfDiscretizationPoints = m_vecTimeDiscretization.size();
   T dTimeDuration = this->m_vecTimeDiscretization[ uiNrOfDiscretizationPoints-1 ].dTime - this->m_vecTimeDiscretization[0].dTime;
 
-  dEnergy *= 0.5*dTimeDuration;
+  dEnergy *= 0.5*dTimeDuration*this->m_EnergyWeight;
 
   T dVelocitySquareNorm = dEnergy;
 
@@ -817,6 +827,8 @@ CLDDMMAdjointGeodesicShootingObjectiveFunction< TState >::GetCurrentEnergy()
       }
 
     }
+
+  dImageNorm *= this->m_EnergyWeight;
 
   dEnergy += dImageNorm;
 

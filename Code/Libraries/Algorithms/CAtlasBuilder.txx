@@ -689,6 +689,7 @@ void CAtlasBuilder< TState >::InitializeAtlasImage()
 
   // now that we have added all of them we just need to divide to get the average image
   m_AtlasImage->MultiplyByConstant( 1.0/availableSubjectIndices.size() );
+
 }
 
 template < class TState >

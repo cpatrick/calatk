@@ -176,6 +176,8 @@ add_ctest_subtest_testdriver_image_compare(calatkAdvectionTest xytranslation ${A
 
 # Set up all the test which go through the standard (non-test-driver) testing mechanism
 
+add_test_executable(calatkAtlasBuilderTest CALATK ${ITK_LIBRARIES})
+
 add_test_executable(calatkImageDataStructureTest CALATK ${ITK_LIBRARIES})
 add_ctest_test(calatkImageDataStructureTest ${test_temp_dir})
 

@@ -139,6 +139,13 @@ else(CMAKE_COMPILER_IS_GNUCC)
   endif()
 endif()
 
+# Suppress duplicate dynlib warnings.
+# For more information, see http://public.kitware.com/Bug/view.php?id=10179
+#
+#if(APPLE)
+#  set(CMAKE_SHARED_LINKER_FLAGS ${CMAKE_SHARED_LINKER_FLAGS} -w)
+#endif()
+
 #
 # Allow for boost support for some of the libraries (this is optional)
 #

@@ -115,6 +115,8 @@ public:
 
   bool StateContainsInitialImage();
 
+  void WriteStateToFile( std::string prefix, std::string postfix, int offset = 0 );
+
 protected:
   void ClearDataStructure();
 

@@ -321,6 +321,15 @@ bool CStateInitialMomentum< TFloat, VImageDimension >::StateContainsInitialImage
   return false;
 }
 
+//
+// writes the state to a file
+//
+template < class TFloat, unsigned int VImageDimension >
+void CStateInitialMomentum< TFloat, VImageDimension >::WriteStateToFile( std::string prefix, std::string postfix, int offset )
+{
+  VectorImageUtils< TFloat, VImageDimension>::writeFileITK( m_ptrInitialMomentum, CreateNumberedFileName( prefix, offset, postfix ) );
+}
+
 } // end namespace
 
 #endif

@@ -112,19 +112,11 @@ void CAtlasSubiterationUpdateObjectiveFunction< TState >::InitializeState( TStat
 }
 
 template < class TState >
-void CAtlasSubiterationUpdateObjectiveFunction< TState >::GetInitialImage( VectorImageType* ptrIm )
+void CAtlasSubiterationUpdateObjectiveFunction< TState >::GetSourceImage( VectorImageType* ptrIm )
 {
   // this should be the initial image of the atlas-builder, same as for the individual registration
   // if the atlas-image is indeed at the center
-  throw std::runtime_error( "GetInitialImage: not yet implemented" );
-}
-
-template < class TState >
-const typename CAtlasSubiterationUpdateObjectiveFunction< TState >::VectorImageType*
-CAtlasSubiterationUpdateObjectiveFunction< TState >::GetPointerToInitialImage() const
-{
-  throw std::runtime_error( "GetPointerToInitialImage: not yet implemented" );
-  return NULL;
+  throw std::runtime_error( "GetSourceImage: not yet implemented" );
 }
 
 // this is the gradient given all the individual registrations, i.e., just the concatenation of all the individual gradients
@@ -133,15 +125,17 @@ template < class TState >
 void CAtlasSubiterationUpdateObjectiveFunction< TState >::ComputeGradient()
 {
   // compute them for each and create a state which contains pointers to all of the gradients
-  // TODO: also multiply the gradients by the weights
   typename VectorIndividualObjectiveFunctionPointersType::iterator iter;
-  typename std::vector< FloatType >::const_iterator iterWeights;
-  for ( iter=this->m_VectorIndividualObjectiveFunctionPtrs.begin(), iterWeights=this->m_Weights.begin(); iter!=this->m_VectorIndividualObjectiveFunctionPtrs.end(); ++iter, ++iterWeights )
+
+  int iI=0;
+  for ( iter=this->m_VectorIndividualObjectiveFunctionPtrs.begin(); iter!=this->m_VectorIndividualObjectiveFunctionPtrs.end(); ++iter )
     {
+      // weights are included in the gradient
       (*iter)->ComputeGradient();  // this automatically ends up in the gradient vector
-      // TODO: multiply by weight, this should be handled by the individual algorithms, don't want to modift values here
-      //IndividualStateType* currentGradientPointer = (*iter)->GetGradientPointer();
-      //*currentGradientPointer *= *iterWeights;
+
+      VectorImageUtilsType::writeFileITK( (*iter)->GetGradientPointer()->GetPointerToInitialMomentum(), CreateNumberedFileName( "gradient", iI, ".nrrd" ));
+
+      iI++;
     }
 
   // We don't compute the gradient with respect to the atlas image. This is handled explicitly in an outside loop in the atlas-builder algorithm.
@@ -174,19 +168,25 @@ void CAtlasSubiterationUpdateObjectiveFunction< TState >::UpdateAtlasImageAsAver
 {
   std::cout << "Updating atlas image as average of target images." << std::endl;
 
+  std::cerr << "WARNING: This atlas builder type does not stable. Use at your own risk." << std::endl;
+
+
   // need to use the atlas image at the current resolution (so it works properly in case of multi scaling)
   typename VectorImageType::Pointer currentAtlasImage = this->m_ptrImageManager->GetOnlyCommonTimePointSavely( )->GetImage();
-  currentAtlasImage->SetToConstant( 0 );
 
-  typename VectorImageType::Pointer determinantOfJacobian = new VectorImageType( currentAtlasImage, 0.0, 1 );
-  typename VectorImageType::Pointer tmpImage = new VectorImageType( currentAtlasImage );
-  typename VectorImageType::Pointer currentTargetImage = new VectorImageType( currentAtlasImage );
-  typename VectorFieldType::Pointer tmpMap = new VectorFieldType( currentAtlasImage );
-  typename VectorImageType::Pointer weightImage = new VectorImageType( currentAtlasImage );
-
-  weightImage->SetToConstant( 0 );
+  typename VectorImageType::Pointer newAtlasImage = new VectorImageType( currentAtlasImage );
 
   unsigned int numberOfObjectiveFunctions = this->m_VectorIndividualObjectiveFunctionPtrs.size();
+
+  newAtlasImage->SetToConstant( 0 );
+
+  typename VectorImageType::Pointer determinantOfJacobian = new VectorImageType( newAtlasImage, 0.0, 1 );
+  typename VectorImageType::Pointer tmpImage = new VectorImageType( newAtlasImage );
+  typename VectorImageType::Pointer currentTargetImage = new VectorImageType( newAtlasImage );
+  typename VectorFieldType::Pointer tmpMap = new VectorFieldType( newAtlasImage );
+  typename VectorImageType::Pointer weightImage = new VectorImageType( newAtlasImage );
+
+  weightImage->SetToConstant( 0 );
 
   for ( unsigned int iI=0; iI < numberOfObjectiveFunctions; ++iI )
   {   
@@ -194,19 +194,27 @@ void CAtlasSubiterationUpdateObjectiveFunction< TState >::UpdateAtlasImageAsAver
 
     // get the inverse map (so we can move the target image to the source (the atlas image)
     currentObjectiveFunction->GetMapFromTo( tmpMap, 1.0, 0.0 );
-    currentObjectiveFunction->GetTargetImage( currentTargetImage );
-    LDDMMUtilsType::applyMap( tmpMap, currentTargetImage, tmpImage );
     LDDMMUtilsType::computeDeterminantOfJacobian( tmpMap, determinantOfJacobian );
 
+    currentObjectiveFunction->GetTargetImage( currentTargetImage );
+
+    LDDMMUtilsType::applyMap( tmpMap, currentTargetImage, tmpImage );
+
     tmpImage->MultiplyElementwise( determinantOfJacobian );
-    currentAtlasImage->AddCellwise( tmpImage );
+
+    newAtlasImage->AddCellwise( tmpImage );
 
     weightImage->AddCellwise( determinantOfJacobian );
 
   }
   // now that we have added all of them we just need to divide by the weight image
   // (i.e., to obtain a local weighted average based on the local space deformation)
-  currentAtlasImage->DivideElementwise( weightImage );
+
+  newAtlasImage->DivideElementwise( weightImage );
+
+  // now copy the new one into the old one
+  currentAtlasImage->Copy( newAtlasImage );
+
 }
 
 template < class TState >
@@ -216,9 +224,12 @@ void CAtlasSubiterationUpdateObjectiveFunction< TState >::UpdateAtlasImageAsAver
 
   // need to use the atlas image at the current resolution (so it works properly in case of multi scaling)
   typename VectorImageType::Pointer currentAtlasImage = this->m_ptrImageManager->GetOnlyCommonTimePointSavely( )->GetImage();
-  currentAtlasImage->SetToConstant( 0 );
 
-  typename VectorImageType::Pointer tmpImage = new VectorImageType( currentAtlasImage );
+  typename VectorImageType::Pointer newAtlasImage = new VectorImageType( currentAtlasImage );
+
+  newAtlasImage->SetToConstant( 0 );
+
+  typename VectorImageType::Pointer tmpImage = new VectorImageType( newAtlasImage );
 
   unsigned int numberOfObjectiveFunctions = this->m_VectorIndividualObjectiveFunctionPtrs.size();
 
@@ -226,11 +237,13 @@ void CAtlasSubiterationUpdateObjectiveFunction< TState >::UpdateAtlasImageAsAver
   {
       typename IndividualObjectiveFunctionType::Pointer currentObjectiveFunction = this->m_VectorIndividualObjectiveFunctionPtrs[ iI ];
       currentObjectiveFunction->GetSourceImage( tmpImage, 1.0 );
-      currentAtlasImage->AddCellwise( tmpImage );
+      newAtlasImage->AddCellwise( tmpImage );
   }
 
   // now that we have added all of them we just need to divide to get the average image
-  currentAtlasImage->MultiplyByConstant( 1.0/numberOfObjectiveFunctions );
+  newAtlasImage->MultiplyByConstant( 1.0/numberOfObjectiveFunctions );
+
+  currentAtlasImage->Copy( newAtlasImage );
 }
 
 #endif

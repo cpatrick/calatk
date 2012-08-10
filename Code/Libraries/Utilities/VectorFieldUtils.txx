@@ -308,9 +308,6 @@ void VectorFieldUtils< T, VImageDimension >::computeDeterminantOfJacobian( const
     D->SetValue(x,0, det);
     }
 
-  // take the absolute value
-  VectorImageUtils< T, VImageDimension >::abs(D);
-
 }
 
 //
@@ -387,9 +384,6 @@ void VectorFieldUtils< T, VImageDimension >::computeDeterminantOfJacobian( const
 
     }
   }
-
-  // take the absolute value
-  VectorImageUtils< T, VImageDimension >::abs(D);
 
 }
 
@@ -509,8 +503,6 @@ void VectorFieldUtils< T, VImageDimension >::computeDeterminantOfJacobian( const
     }
   }
 
-  // take the absolute value
-  VectorImageUtils< T, VImageDimension >::abs(D);
 
 }
 
@@ -922,7 +914,7 @@ typename ITKDeformationField<T,VImageDimension>::Type::Pointer VectorFieldUtils<
   unsigned int szY = inMap->GetSizeY();
 
   // initialize the ITK field
-  typename ITKDeformationField<T,VImageDimension>::Type::Pointer outField = typename ITKDeformationField<T,VImageDimension>::Type::New();
+  typename ITKDeformationField<T,VImageDimension>::Type::Pointer outField = ITKDeformationField<T,VImageDimension>::Type::New();
 
   // Set up region
   typename ITKDeformationField<T,VImageDimension>::Type::IndexType start;

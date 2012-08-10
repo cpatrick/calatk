@@ -70,11 +70,16 @@ public:
 
   virtual void Solve();
 
+  virtual void SetDisplayCleanedConfigurations( bool displayCleanedConfigurations );
+  virtual bool GetDisplayCleanedConfigurations();
+
 protected:
   virtual void SetDefaultsIfNeeded();
 
   typename ObjectiveFunctionType::Pointer m_ptrObjectiveFunction;
   typename SolverType::Pointer            m_ptrSolver;
+
+  bool m_DisplayCleanedConfigurations;
 
   virtual void SetDefaultObjectiveFunctionPointer() = 0;
   virtual void SetDefaultSolverPointer() = 0;

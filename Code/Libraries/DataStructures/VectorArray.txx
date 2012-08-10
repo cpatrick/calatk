@@ -609,6 +609,157 @@ void VectorArray< T, VImageDimension >::DivideElementwise(VectorArray* im)
 }
 
 template <class T, unsigned int VImageDimension >
+void VectorArray< T, VImageDimension >::SaveDivideCellwise(VectorArray* im, T minAbsValue, T replacementValue )
+{
+
+#ifdef DEBUG
+  // make sure they are the same size
+  if (im->GetSizeX() != m_SizeX || im->GetSizeY() != m_SizeY || im->GetSizeZ() != m_SizeZ || im->GetDimension() != m_Dimension) {
+  throw std::invalid_argument("Images are of different sizes");
+  }
+#endif
+
+  for ( unsigned int uiI = 0; uiI < m_Length; ++uiI )
+    {
+      T currentValue = im->GetValue( uiI );
+      if ( fabs( currentValue ) >= minAbsValue )
+        {
+          this->SetValue( uiI, this->GetValue( uiI ) / im->GetValue( uiI ) );
+        }
+      else
+        {
+          this->SetValue( uiI, replacementValue );
+        }
+    }
+
+}
+
+template <class T, unsigned int VImageDimension >
+void VectorArray< T, VImageDimension >::SaveDivideElementwise(VectorArray* im, T minAbsValue, T replacementValue )
+{
+  assert( im->GetDimension()==1 ); // make sure that the elements of the image have only one dimension
+
+  unsigned int szX = m_SizeX;
+  unsigned int szY = m_SizeY;
+  unsigned int szZ = m_SizeZ;
+  unsigned int dim = m_Dimension;
+
+  for ( unsigned z = 0; z<szZ; ++z )
+  {
+    for ( unsigned y = 0; y<szY; ++y )
+    {
+      for ( unsigned x = 0; x<szX; ++x )
+      {
+          T currentValue = im->GetValue( x, y, z, 0 );
+          if ( fabs( currentValue ) >= minAbsValue )
+          {
+            for ( unsigned d = 0; d<dim; ++d )
+            {
+              T val = this->GetValue( x, y, z, d )/currentValue;
+              this->SetValue( x, y, z, d, val );
+            }
+          }
+          else
+          {
+              for ( unsigned d = 0; d<dim; ++d )
+            {
+                  this->SetValue( x, y, z, d, replacementValue );
+            }
+          }
+        }
+      }
+    }
+}
+
+template < class T, unsigned int VImageDimension >
+void VectorArray< T, VImageDimension >::Clamp( T minValue, T maxValue )
+{
+  unsigned int szX = m_SizeX;
+  unsigned int szY = m_SizeY;
+  unsigned int szZ = m_SizeZ;
+  unsigned int dim = m_Dimension;
+
+  for ( unsigned z = 0; z<szZ; ++z )
+  {
+    for ( unsigned y = 0; y<szY; ++y )
+    {
+      for ( unsigned x = 0; x<szX; ++x )
+      {
+          for ( unsigned d = 0; d<dim; ++d )
+            {
+              T currentValue = this->GetValue( x, y, z, d );
+              if ( currentValue < minValue ) currentValue = minValue;
+              if ( currentValue > maxValue ) currentValue = maxValue;
+
+              this->SetValue( x, y, z, d, currentValue );
+            }
+        }
+      }
+    }
+
+}
+
+
+template < class T, unsigned int VImageDimension >
+void VectorArray< T, VImageDimension >::SubstituteBoundaryLayer( VectorArray* im, int width )
+{
+  unsigned int szX = m_SizeX;
+  unsigned int szY = m_SizeY;
+  unsigned int szZ = m_SizeZ;
+  unsigned int dim = m_Dimension;
+
+  // This is a rather inefficient implementation. Achieves the result by copying twice
+  // TODO: speed up
+
+  typename VectorArray::Pointer arrayCopy = new VectorArray( this );
+  this->Copy( im );
+  // and now copy the old values back to the desired locations
+
+  int xFrom = 0;
+  int xTo = m_SizeX-1;
+  int yFrom = 0;
+  int yTo = m_SizeY-1;
+  int zFrom = 0;
+  int zTo = m_SizeZ-1;
+
+  if ( m_SizeX > 2*width )
+    {
+      xFrom += width;
+      xTo -= width;
+    }
+
+  if ( m_SizeY > 2*width )
+    {
+      yFrom += width;
+      yTo -= width;
+    }
+
+  if ( m_SizeZ > 2*width )
+    {
+      zFrom += width;
+      yTo -= width;
+    }
+
+  for ( int z = zFrom; z <= zTo; ++z )
+    {
+      for ( int y = yFrom; y <= yTo; ++y )
+        {
+          for ( int x = xFrom; x <= xTo; ++x )
+            {
+              for ( unsigned int d = 0; d<dim; ++ d )
+                {
+                  this->SetValue( x, y, z, d , arrayCopy->GetValue( x, y, z, d ) );
+                }
+            }
+        }
+    }
+
+
+
+
+}
+
+template <class T, unsigned int VImageDimension >
 void VectorArray< T, VImageDimension >::AddCellwise(VectorArray* im)
 {
 

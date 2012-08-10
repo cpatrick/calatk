@@ -7,8 +7,9 @@
 		"Metric" : "SSD",
 		"ObjectiveFunction" : "LDDMMGrowthModel"
 	},
-	"GrowthModel" : 
+	"ObjectiveFunction" :
 	{
+		"EnergyWeight" : 1.0,
 		"SigmaSqr" : 0.00001
 	},
 	"ImageManager" : 

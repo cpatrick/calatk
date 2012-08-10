@@ -581,6 +581,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::C
   {
     VectorImageType* ptrI0Gradient = this->m_ptrGradient->GetPointerToInitialImage();
     ptrI0Gradient->SetToConstant( 0.0 );
+    ptrI0Gradient->MultiplyByConstant( this->m_EnergyWeight );
   }
 
   VectorImageType* ptrP0Gradient = this->m_ptrGradient->GetPointerToInitialMomentum();
@@ -589,6 +590,7 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::C
   ptrP0Gradient->MultiplyByConstant(-1);
 
   ptrP0Gradient->AddCellwise( ptrInitialMomentum );
+  ptrP0Gradient->MultiplyByConstant( this->m_EnergyWeight );
 
 }
 
@@ -622,6 +624,8 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::C
     VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( m_ptrTmpImage, iD, m_ptrTmpField );
     ptrCurrentGradient->AddCellwise( m_ptrTmpField );
     }
+
+  ptrCurrentGradient->MultiplyByConstant( this->m_EnergyWeight );
 }
 
 template < class TState >
@@ -679,6 +683,7 @@ CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState>::GetCurr
   T dTimeDuration = this->m_vecTimeDiscretization[ uiNrOfDiscretizationPoints-1 ].dTime - this->m_vecTimeDiscretization[0].dTime;
 
   dEnergy *= 0.5*dTimeDuration;
+  dEnergy *= this->m_EnergyWeight;
 
   T dVelocitySquareNorm = dEnergy;
 
@@ -699,12 +704,12 @@ CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState>::GetCurr
   // -<r,I(1)-I_1>
   dAugmentedLagrangianNorm -= m_ptrTmpImage->ComputeInnerProduct( m_ptrImageLagrangianMultiplier );
 
-  dEnergy += dAugmentedLagrangianNorm;
+  dEnergy += dAugmentedLagrangianNorm*this->m_EnergyWeight;
 
   CEnergyValues energyValues;
   energyValues.dEnergy = dEnergy;
   energyValues.dRegularizationEnergy = dVelocitySquareNorm;
-  energyValues.dMatchingEnergy = dImageNorm;
+  energyValues.dMatchingEnergy = dImageNorm*this->m_EnergyWeight;
 
   return energyValues;
 }

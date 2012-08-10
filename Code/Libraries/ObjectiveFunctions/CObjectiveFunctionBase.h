@@ -152,11 +152,17 @@ public:
   /* Gets the target image at a specific time point */
   virtual void GetTargetImage( VectorImageType* ptrIm, T dTime ) = 0;
 
-  /* Gets a pointer to the initial image */
-  virtual const VectorImageType* GetPointerToInitialImage() const = 0;
+  /* Sets weight for data attachment term */
+  SetMacro( SigmaSqr, T );
 
-  /* Gets the initial image */
-  virtual void GetInitialImage( VectorImageType* ptrIm ) = 0;
+  /* Gets weight for data attachment term */
+  GetMacro( SigmaSqr, T );
+
+  /* Sets weighting of the energy function (useful for kernel regression for example) */
+  SetMacro( EnergyWeight, T );
+
+  /* Gets weighting of the energy function (useful for kernel regression for example) */
+  GetMacro( EnergyWeight, T );
 
   /* Can get called to create an output of a current state (input is iteration number) */
   virtual void OutputStateInformation( unsigned int uiIter, std::string outputPrefix="" )
@@ -192,6 +198,8 @@ public:
   // method being called before a subiteration of a numerical solver for the multi-scale solver, overwrite
   virtual void PreSubIterationSolve();
 
+  virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
+
 protected:
 
   // TODO: FIXME, needs to be an array, so we can in principle support registrations at every measurement
@@ -199,6 +207,17 @@ protected:
   PointerImageManagerType m_ptrImageManager;
 
   int m_CurrentlyActiveSubjectId;
+
+  T m_SigmaSqr; // 1/m_SigmaSqr is the multiplier for the data attachment term
+
+  const T DefaultSigmaSqr;
+  bool m_ExternallySetSigmaSqr;
+
+  T m_EnergyWeight;
+
+  const T DefaultEnergyWeight;
+  bool m_ExternallySetEnergyWeight;
+
 };
 
 } // end namespace

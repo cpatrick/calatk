@@ -70,6 +70,8 @@ void CAtlasFullGradientObjectiveFunction< TState >::InitializeState()
   // memory and is therefore also responsible to free the memory in the constructor
   // all the pointers are aready stored in m_VectorObjectiveFunctionPtrs
 
+  std::cout << "DEBUG: Initialized with current atlas image!" << std::endl;
+
   // associate the allocated memory with the atlas state
   this->m_ptrState = new TState( currentAtlasImage, vecState );
 
@@ -119,19 +121,11 @@ void CAtlasFullGradientObjectiveFunction< TState >::InitializeState( TState *ptr
 }
 
 template < class TState >
-void CAtlasFullGradientObjectiveFunction< TState >::GetInitialImage( VectorImageType* ptrIm )
+void CAtlasFullGradientObjectiveFunction< TState >::GetSourceImage( VectorImageType* ptrIm )
 {
   // this should be the initial image of the atlas-builder, same as for the individual registration
   // if the atlas-image is indeed at the center
-  throw std::runtime_error( "GetInitialImage: not yet implemented" );
-}
-
-template < class TState >
-const typename CAtlasFullGradientObjectiveFunction< TState >::VectorImageType*
-CAtlasFullGradientObjectiveFunction< TState >::GetPointerToInitialImage() const
-{
-  throw std::runtime_error( "GetPointerToInitialImage: not yet implemented" );
-  return NULL;
+  throw std::runtime_error( "GetSourceImage: not yet implemented" );
 }
 
 // this is the gradient given all the individual registrations, i.e., just the concatenation of all the individual gradients
@@ -143,40 +137,59 @@ void CAtlasFullGradientObjectiveFunction< TState >::ComputeGradient()
   // In any case, we need the adjoint variables
 
   // compute them for each and create a state which contains pointers to all of the gradients
-  // TODO: also multiply the gradients by the weights
   typename VectorIndividualObjectiveFunctionPointersType::iterator iter;
-  typename std::vector< FloatType >::const_iterator iterWeights;
-  for ( iter=this->m_VectorIndividualObjectiveFunctionPtrs.begin(), iterWeights=this->m_Weights.begin(); iter!=this->m_VectorIndividualObjectiveFunctionPtrs.end(); ++iter, ++iterWeights )
+  for ( iter=this->m_VectorIndividualObjectiveFunctionPtrs.begin(); iter!=this->m_VectorIndividualObjectiveFunctionPtrs.end(); ++iter )
     {
+      // weights for the energies have been set previously, so this gradient also includes the weighting terms
       (*iter)->ComputeGradient();  // this automatically ends up in the gradient vector and also computes the adjoints
-      // TODO: multiply by weight, this should be handled by the individual algorithms, don't want to modift values here
-      //IndividualStateType* currentGradientPointer = (*iter)->GetGradientPointer();
-      //*currentGradientPointer *= *iterWeights;
     }
 
   // need to use the atlas image at the current resolution (so it works properly in case of multi scaling)
   typename VectorImageType::Pointer imageGradient = this->m_ptrGradient->GetImageState();
-  typename VectorImageType::Pointer tmpMomentum = new VectorImageType( imageGradient );
+
   imageGradient->SetToConstant( 0.0 );
 
   if ( this->m_AtlasIsSourceImage )
   {
-    for ( iter=this->m_VectorIndividualObjectiveFunctionPtrs.begin(), iterWeights=this->m_Weights.begin(); iter!=this->m_VectorIndividualObjectiveFunctionPtrs.end(); ++iter, ++iterWeights )
-      {
-        (*iter)->GetInitialMomentum( tmpMomentum );
-        imageGradient->SubtractCellwise( tmpMomentum );
-      }
-  }
-  else
-  {
-    for ( iter=this->m_VectorIndividualObjectiveFunctionPtrs.begin(), iterWeights=this->m_Weights.begin(); iter!=this->m_VectorIndividualObjectiveFunctionPtrs.end(); ++iter, ++iterWeights )
-      {
-        (*iter)->GetMomentum( tmpMomentum, 1.0 );
-        imageGradient->SubtractCellwise( tmpMomentum );
-      }
-  }
+      typename VectorImageType::Pointer tmpImage = new VectorImageType( imageGradient );
+      typename VectorImageType::Pointer tmpTargetImage = new VectorImageType( imageGradient );
+      typename VectorImageType::Pointer determinantOfJacobian = new VectorImageType( imageGradient, 0.0, 1 );
+      typename VectorFieldType::Pointer tmpMap = new VectorFieldType( imageGradient );
 
-  //VectorImageUtilsType::writeFileITK( imageGradient, "imageGradient.nrrd" );
+      for ( iter=this->m_VectorIndividualObjectiveFunctionPtrs.begin(); iter!=this->m_VectorIndividualObjectiveFunctionPtrs.end(); ++iter )
+        {
+          (*iter)->GetMapFromTo( tmpMap, 1.0, 0.0 );
+          LDDMMUtilsType::computeDeterminantOfJacobian( tmpMap, determinantOfJacobian );
+
+          (*iter)->GetTargetImage( tmpTargetImage );
+
+          LDDMMUtilsType::applyMap( tmpMap, tmpTargetImage, tmpImage );
+
+          tmpImage->SubtractCellwise( this->m_ptrState->GetImageState() );
+          tmpImage->MultiplyElementwise( determinantOfJacobian );
+          tmpImage->MultiplyByConstant( 2.0/(*iter)->GetSigmaSqr() );; // no - here, because order of subtraction includes it
+
+          imageGradient->SubtractCellwise( tmpImage );
+
+        }
+  }
+  else // atlas is target image
+  {
+    typename VectorImageType::Pointer tmpImage = new VectorImageType( imageGradient );
+
+    int it = 0;
+    for ( iter=this->m_VectorIndividualObjectiveFunctionPtrs.begin(); iter!=this->m_VectorIndividualObjectiveFunctionPtrs.end(); ++iter )
+      {
+        (*iter)->GetSourceImage( tmpImage, 1.0 );
+        VectorImageUtilsType::writeFileITK( tmpImage, CreateNumberedFileName( "sourceImage", it, ".nrrd" ));
+        tmpImage->SubtractCellwise( this->m_ptrState->GetImageState() );
+        // now multiply by -2/sigma^2, because we assume SSD for the similarity measure to build the atlas
+        tmpImage->MultiplyByConstant( -2.0/(*iter)->GetSigmaSqr() );
+
+        imageGradient->AddCellwise( tmpImage );
+        it++;
+      }
+  }
 
 }
 

@@ -91,27 +91,13 @@ int DoIt( int argc, char** argv )
       }
     }
 
-  if ( bAtlasImageIsTargetImage )
+  if ( bSubiterationUpdate )
   {
-    if ( bSubiterationUpdate )
-    {
-      atlasBuilderSubiterationUpdate->SetAtlasIsSourceImage( false );
-    }
-    else
-    {
-      atlasBuilderFullGradient->SetAtlasIsSourceImage( false );
-    }
+    atlasBuilderSubiterationUpdate->SetAtlasIsSourceImage( !bAtlasImageIsTargetImage );
   }
   else
   {
-    if ( bSubiterationUpdate )
-    {
-      atlasBuilderSubiterationUpdate->SetAtlasIsSourceImage( false );
-    }
-    else
-    {
-      atlasBuilderFullGradient->SetAtlasIsSourceImage( true );
-    }
+    atlasBuilderFullGradient->SetAtlasIsSourceImage( !bAtlasImageIsTargetImage );
   }
 
   CALATK::CJSONConfiguration::Pointer combinedConfiguration = new CALATK::CJSONConfiguration;

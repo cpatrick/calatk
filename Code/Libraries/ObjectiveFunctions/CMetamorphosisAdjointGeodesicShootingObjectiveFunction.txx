@@ -678,6 +678,7 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState>::ComputeGra
   {
     ptrI0Gradient = this->m_ptrGradient->GetPointerToInitialImage();
     ptrI0Gradient->SetToConstant( 0.0 );
+    // TODO: support actual gradient with respect to I0
   }
   VectorImageType* ptrP0Gradient = this->m_ptrGradient->GetPointerToInitialMomentum();
 
@@ -707,6 +708,9 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState>::ComputeGra
     // now add it to the p0 gradient
     VectorImageUtilsType::addScalarImageToVectorImageAtDimensionInPlace( m_ptrTmpScalarImage, ptrP0Gradient, iD );
   }
+
+  ptrP0Gradient->MultiplyByConstant( this->m_EnergyWeight );
+
 }
 
 template < class TState >
@@ -751,6 +755,8 @@ void CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::ComputeIn
     VectorImageUtilsType::multiplyVectorByImageDimensionInPlace( m_ptrTmpImage, iD, m_ptrTmpField );
     ptrCurrentGradient->AddCellwise( m_ptrTmpField );
     }
+
+  ptrCurrentGradient->MultiplyByConstant( this->m_EnergyWeight );
 
 }
 
@@ -806,6 +812,7 @@ CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetCurrentEner
   FloatType dTimeDuration = this->m_vecTimeDiscretization[ uiNrOfDiscretizationPoints-1 ].dTime - this->m_vecTimeDiscretization[0].dTime;
 
   dEnergy *= 0.5*dTimeDuration;
+  dEnergy *= this->m_EnergyWeight;
 
   FloatType dVelocitySquareNorm = dEnergy;
 
@@ -825,12 +832,12 @@ CMetamorphosisAdjointGeodesicShootingObjectiveFunction< TState >::GetCurrentEner
   // -<r,I(1)-I_1>
   dAugmentedLagrangianNorm -= m_ptrTmpImage->ComputeInnerProduct( m_ptrImageLagrangianMultiplier );
 
-  dEnergy += dAugmentedLagrangianNorm;
+  dEnergy += dAugmentedLagrangianNorm*this->m_EnergyWeight;
 
   CEnergyValues energyValues;
   energyValues.dEnergy = dEnergy;
   energyValues.dRegularizationEnergy = dVelocitySquareNorm;
-  energyValues.dMatchingEnergy = dImageNorm;
+  energyValues.dMatchingEnergy = dImageNorm*this->m_EnergyWeight;
 
   return energyValues;
 

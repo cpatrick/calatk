@@ -57,8 +57,6 @@ public:
   void GetSourceImage( VectorImageType* ptrIm, T dTime );
   void GetTargetImage( VectorImageType* ptrIm );
   void GetTargetImage( VectorImageType* ptrIm, T dTime );
-  void GetInitialImage( VectorImageType* ptrIm );
-  const VectorImageType* GetPointerToInitialImage() const;
   void GetMomentum( VectorImageType* ptrMomentum, T dTime );
   void GetInitialMomentum( VectorImageType* ptrMomentum );
 
@@ -107,6 +105,9 @@ protected:
   unsigned int DetermineTimeIndexOfTimePoint1();
 
 private:
+
+  void SetSigmaSqr( const T ) {}; // intentionally not implemented
+  T GetSigmaSqr( const T ) {}; // intentionally not implemented
 
   unsigned int m_uiTimeIndexOfTimePoint1;
 

@@ -141,6 +141,10 @@ Json::Value* CJSONConfiguration::GetRootPointer()
   return m_ptrRoot;
 }
 
+Json::Value* CJSONConfiguration::GetConfigurationPointer() const
+{
+  return m_ptrRoot;
+}
 
 void CJSONConfiguration::InitializeEmptyRoot()
 {

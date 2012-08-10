@@ -392,7 +392,7 @@ std::vector< T > CMultiGaussianKernel< T, VImageDimension >::ComputeDataDependen
   else
   {
     // initialize a vector field of appropriate size
-    typename VectorFieldType::Pointer ptrGradient = new VectorFieldType( this->m_ptrObjectiveFunction->GetPointerToInitialImage() );
+    typename VectorFieldType::Pointer ptrGradient = new VectorFieldType( this->m_ptrObjectiveFunction->GetImageManagerPointer()->GetGraftImagePointer() );
 
     this->m_ptrObjectiveFunction->ComputeInitialUnsmoothedVelocityGradient( ptrGradient, this->m_KernelNumber );
     // now go through all the sigmas and determine what the weights should be
