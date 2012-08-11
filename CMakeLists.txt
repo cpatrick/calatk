@@ -88,11 +88,15 @@ endif()
 option( CALATK_USE_SUPERBUILD
   "Build calatk and the projects it depends on via SuperBuild.cmake." ON )
 mark_as_advanced( CALATK_USE_SUPERBUILD )
+if( CALATK_USE_SUPERBUILD AND WIN32 )
+  # FFTW is not built.
+  message( WARNING "Superbuild is not supported on Windows yet." )
+endif()
 
-if( CALATK_USE_SUPERBUILD )
+if( CALATK_USE_SUPERBUILD AND NOT WIN32 )
   include( "${CMAKE_CURRENT_SOURCE_DIR}/SuperBuild.cmake" )
   return()
-else( CALATK_USE_SUPERBUILD )
+else()
   find_package( ITK REQUIRED )
   include( ${ITK_USE_FILE} )
   find_path(FFTW_PATH fftw3.h DOC "include directory for FFTW")
