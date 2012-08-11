@@ -22,6 +22,7 @@
 
 #include "CStateImageDomain.h"
 #include "VectorField.h"
+#include "VectorImageUtils.h"
 
 namespace CALATK
 {
@@ -112,6 +113,8 @@ public:
   virtual FloatType SquaredNorm();
 
   virtual bool StateContainsInitialImage();
+
+  void WriteStateToFile( std::string prefix, std::string postfix, int offset );
 
 protected:
   void ClearDataStructure();

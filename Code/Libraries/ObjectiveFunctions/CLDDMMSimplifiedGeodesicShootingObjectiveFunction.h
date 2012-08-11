@@ -23,6 +23,7 @@
 #include "CLDDMMGeodesicShootingObjectiveFunction.h"
 #include "CALATKCommon.h"
 #include "LDDMMUtils.h"
+#include "VectorImageUtils.h"
 
 namespace CALATK
 {
@@ -59,6 +60,7 @@ public:
   typedef typename VectorFieldType::Pointer VectorFieldPointerType;
 
   typedef LDDMMUtils< T, TState::ImageDimension > LDDMMUtilsType;
+  typedef VectorImageUtils< T, TState::ImageDimension > VectorImageUtilsType;
 
   CLDDMMSimplifiedGeodesicShootingObjectiveFunction();
   virtual ~CLDDMMSimplifiedGeodesicShootingObjectiveFunction();

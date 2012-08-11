@@ -308,9 +308,6 @@ void VectorFieldUtils< T, VImageDimension >::computeDeterminantOfJacobian( const
     D->SetValue(x,0, det);
     }
 
-  // take the absolute value
-  VectorImageUtils< T, VImageDimension >::abs(D);
-
 }
 
 //
@@ -387,9 +384,6 @@ void VectorFieldUtils< T, VImageDimension >::computeDeterminantOfJacobian( const
 
     }
   }
-
-  // take the absolute value
-  VectorImageUtils< T, VImageDimension >::abs(D);
 
 }
 
@@ -509,8 +503,6 @@ void VectorFieldUtils< T, VImageDimension >::computeDeterminantOfJacobian( const
     }
   }
 
-  // take the absolute value
-  VectorImageUtils< T, VImageDimension >::abs(D);
 
 }
 

@@ -18,6 +18,7 @@
 */
 
 #include "CALATKCommon.h"
+#include "ApplicationUtils.h"
 
 //
 // Create a filename with numbering
@@ -70,8 +71,11 @@ std::string CreateIntegerString( int iNr, unsigned int uiW )
   return ss.str(); //return a string with the contents of the stream
 }
 
-unsigned int GetNonSingletonImageDimensionFromFile( const std::string & sourceImage )
+unsigned int GetNonSingletonImageDimensionFromFile( const std::string & sourceImageOrig )
 {
+
+  // expand file name
+  std::string sourceImage = ApplicationUtils::findDataFileName( sourceImageOrig );
 
   itk::ImageIOBase::Pointer imageIO =
     itk::ImageIOFactory::CreateImageIO( sourceImage.c_str(),

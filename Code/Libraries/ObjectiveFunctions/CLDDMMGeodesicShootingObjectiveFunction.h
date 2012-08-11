@@ -56,18 +56,12 @@ public:
   CLDDMMGeodesicShootingObjectiveFunction();
   virtual ~CLDDMMGeodesicShootingObjectiveFunction();
 
-  void GetInitialImage( VectorImageType* ptrIm );
-  const VectorImageType* GetPointerToInitialImage() const;
   void GetInitialMomentum( VectorImageType* ptrMomentum );
 
   SetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );
   GetMacro( NumberOfDiscretizationVolumesPerUnitTime, T );
 
-  /// Sigma square is the (here constant) weight for the dataterms, w = 1/sigmaSqr
-  SetMacro( SigmaSqr, T );
-  GetMacro( SigmaSqr, T );
-
-  SetMacro( EstimateInitialImage, bool );
+    SetMacro( EstimateInitialImage, bool );
   GetMacro( EstimateInitialImage, bool );
 
   virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
@@ -86,10 +80,6 @@ protected:
   bool m_EstimateInitialImage;
   const bool DefaultEstimateInitialImage;
   bool m_ExternallySetEstimateInitialImage;
-
-  T m_SigmaSqr;
-  const T DefaultSigmaSqr;
-  bool m_ExternallySetSigmaSqr;
 
 };
 

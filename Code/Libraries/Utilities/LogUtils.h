@@ -37,13 +37,22 @@ struct LogLevelManipulator {
 // This is just a convenience function for creating level manipulators
 LogLevelManipulator log_level( unsigned int n);
 
+// enumerations which can be used externally
+enum {
+  LOG_LEVEL_ALWAYS,
+  LOG_LEVEL_NORMAL,
+  LOG_LEVEL_VERBOSE,
+  LOG_LEVEL_VERY_VERBOSE,
+  LOG_LEVEL_MOST_VERBOSE
+};
+
 // Define some level manipulators
 const LogLevelManipulator
-  log_level_most_verbose = log_level(4),
-  log_level_very_verbose = log_level(3),
-  log_level_verbose = log_level(2),
-  log_level_normal = log_level(1),
-  log_level_always = log_level(0);
+  log_level_most_verbose = log_level( LOG_LEVEL_MOST_VERBOSE ),
+  log_level_very_verbose = log_level( LOG_LEVEL_VERY_VERBOSE ),
+  log_level_verbose = log_level( LOG_LEVEL_VERBOSE ),
+  log_level_normal = log_level( LOG_LEVEL_NORMAL ),
+  log_level_always = log_level( LOG_LEVEL_ALWAYS );
 
 
 // A class with which users can register logging streams

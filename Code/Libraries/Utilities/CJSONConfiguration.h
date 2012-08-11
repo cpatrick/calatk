@@ -31,6 +31,8 @@
 #include <stdexcept>
 #include <vector>
 
+#include "ApplicationUtils.h"
+
 namespace CALATK
 {
 
@@ -57,11 +59,18 @@ public:
   typedef std::vector< float > VectorFloatType;
 
   /**
-   * @brief Returns the root pointer.
+   * @brief Returns the root pointer. Creates one if necessary.
    *
    * @return Pointer to the jsoncpp root
    */
   Json::Value* GetRootPointer();
+
+  /**
+    * @brief Returns pointer to the root of the configuration, so it can be printed for example
+    *
+    * @return Pointer to the jsoncpp root
+    */
+  Json::Value* GetConfigurationPointer() const;
 
   /**
    * @brief Intialize the root to an empty JSON decription. This is a useful initialization

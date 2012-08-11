@@ -7,10 +7,6 @@
 		"Kernel" : "HelmholtzKernel",
 		"Metric" : "SSD"
 	},
-	"GrowthModel" :
-	{
-		"SigmaSqr" : 0.010
-	},
 	"HelmholtzKernel" :
 	{
 		"Alpha" : 0.050,
@@ -92,6 +88,11 @@
 			}
 		}
 	],
+	"ObjectiveFunction" :
+	{
+		"EnergyWeight" : 1.0,
+		"SigmaSqr" : 0.01
+	},
 	"OneStepEvolver" :
 	{
 		"NumberOfThreads" : 1

@@ -1,48 +1,46 @@
 // CALATK version 0.1; JSON configuration file --CLEANED
 
 {
-	"AtlasSettings" : 
+	"AtlasSettings" :
 	{
 		"Kernel" : "HelmholtzKernel",
 		"Metric" : "SSD"
 	},
-	"HelmholtzKernel" : 
+	"HelmholtzKernel" :
 	{
-		"Alpha" : 0.050,
+		"Alpha" : 0.25,
 		"Gamma" : 1.0
 	},
-	"ImageManager" : 
+	"ImageManager" :
 	{
 		"AutoScaleImages" : true,
-		"BlurHighestResolutionImage" : false,
-		"Sigma" : 0.50,
-		"SigmaHighestResolutionImage" : 0.50
+		"BlurHighestResolutionImage" : true,
+		"Sigma" : 0.02,
+		"SigmaHighestResolutionImage" : 0.02
 	},
-	"LDDMMGeodesicShooting" : 
+	"LDDMMGeodesicShooting" :
 	{
 		"EstimateInitialImage" : false,
-		"NumberOfDiscretizationVolumesPerUnitTime" : 10.0,
-		"SigmaSqr" : 0.009999999776482582
+		"NumberOfDiscretizationVolumesPerUnitTime" : 10.0
 	},
-	"MultiScaleFinalOutput" : 
+	"MultiScaleFinalOutput" :
 	{
 		"OutputStateInformation" : false,
 		"OutputStateInformationFrequency" : 0
 	},
-	"MultiScaleGeneralSettings" : 
+	"MultiScaleGeneralSettings" :
 	{
-		"NumberOfSubIterations" : 1000,
+		"NumberOfSubIterations" : 10,
 		"SingleScaleSolver" : "LineSearchUnconstrained"
 	},
-	"MultiScaleSettings" : 
+	"MultiScaleSettings" :
 	[
-		
 		{
-			"Downsample" : 
+			"Downsample" :
 			{
 				"Scale" : 1.0
 			},
-			"LineSearch" : 
+			"LineSearch" :
 			{
 				"AdjustStepSizeDownFactor" : 0.50,
 				"AdjustStepSizeDownNumber" : 2,
@@ -50,20 +48,25 @@
 				"AdjustStepSizeUpNumber" : 2,
 				"DecreaseConstant" : 0.0,
 				"InitialStepSize" : 9.999999747378752e-06,
-				"MaxNumberOfIterations" : 10,
+				"MaxNumberOfIterations" : 100,
 				"MaxNumberOfTries" : 10,
-				"MinAllowedStepSize" : 9.999999939225290e-09,
+				"MinAllowedStepSize" : 9.999999939225290e-14,
 				"OutputStateInformation" : false,
 				"OutputStateInformationFrequency" : 0,
 				"ReductionFactor" : 0.50
 			}
 		}
 	],
-	"OneStepEvolver" : 
+	"ObjectiveFunction" :
+	{
+		"EnergyWeight" : 1.0,
+		"SigmaSqr" : 0.001
+	},
+	"OneStepEvolver" :
 	{
 		"NumberOfThreads" : 1
 	},
-	"OneStepEvolverSemiLagrangianAdvection" : 
+	"OneStepEvolverSemiLagrangianAdvection" :
 	{
 		"NumberOfIterationsToDetermineFlowField" : 2,
 		"TimeStepFactor" : 1.0

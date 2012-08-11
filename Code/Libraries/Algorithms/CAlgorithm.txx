@@ -22,6 +22,7 @@
 
 template < class TState >
 CAlgorithm< TState >::CAlgorithm()
+  : m_DisplayCleanedConfigurations( true )
 {
   this->m_ptrObjectiveFunction = NULL;
   this->m_ptrSolver = NULL;
@@ -31,6 +32,19 @@ template < class TState >
 CAlgorithm< TState >::~CAlgorithm()
 {
 }
+
+template < class TState >
+void CAlgorithm< TState >::SetDisplayCleanedConfigurations( bool displayCleanedConfigurations )
+{
+  this->m_DisplayCleanedConfigurations = displayCleanedConfigurations;
+}
+
+template < class TState >
+bool CAlgorithm< TState >::GetDisplayCleanedConfigurations()
+{
+  return this->m_DisplayCleanedConfigurations;
+}
+
 
 template < class TState >
 void CAlgorithm< TState >::SetDefaultsIfNeeded()
@@ -100,6 +114,20 @@ void CAlgorithm< TState >::Solve()
 
   this->m_ptrSolver->SetObjectiveFunction( this->m_ptrObjectiveFunction );
   this->m_ptrSolver->Solve();
+
+  if ( this->m_DisplayCleanedConfigurations )
+    {
+      Json::Value* algorithmSettings = this->GetJSONConfigurationCleaned()->GetConfigurationPointer();
+      Json::Value* dataSettings = this->m_ptrImageManager->GetDataJSONConfigurationCleaned()->GetConfigurationPointer();
+
+      std::cout << std::endl;
+      std::cout << "Configuration used for the run: " << std::endl;
+      std::cout << *algorithmSettings << std::endl << std::endl;
+
+      std::cout << "Data used for the run: " << std::endl;
+      std::cout << *dataSettings << std::endl << std::endl;
+    }
+
 }
 
 template < class TState >

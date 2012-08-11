@@ -157,30 +157,88 @@ int DoIt( int argc, char** argv )
 
   if ( initialMomentumImage.compare("None") !=0 )
   {
-    const VectorImageType* ptrI0 = NULL;
+    const VectorImageType* ptrp0 = NULL;
     if ( bIsInitialImageMomentumType )
     {
       if ( bStateContainsInitialImage )
       {
-        ptrI0 = dynamic_cast< regTypeInitialImageMomentum* >( plddmm.GetPointer() )->GetInitialMomentum();
-        VectorImageUtilsType::writeFileITK( ptrI0, initialMomentumImage );
+        ptrp0 = dynamic_cast< regTypeInitialImageMomentum* >( plddmm.GetPointer() )->GetInitialMomentum();
+        VectorImageUtilsType::writeFileITK( ptrp0, initialMomentumImage );
       }
       else
       {
-        ptrI0 = dynamic_cast< regTypeInitialMomentum* >( plddmm.GetPointer() )->GetInitialMomentum();
-        VectorImageUtilsType::writeFileITK( ptrI0, initialMomentumImage );
+        ptrp0 = dynamic_cast< regTypeInitialMomentum* >( plddmm.GetPointer() )->GetInitialMomentum();
+        VectorImageUtilsType::writeFileITK( ptrp0, initialMomentumImage );
       }
     }
     else if ( bIsSpatioTemporalVelocityType )
     {
-      ptrI0 = dynamic_cast< regTypeSpatioTemporalVelocityField* >( plddmm.GetPointer() )->GetInitialMomentum();
-      VectorImageUtilsType::writeFileITK( ptrI0, initialMomentumImage );
+      ptrp0 = dynamic_cast< regTypeSpatioTemporalVelocityField* >( plddmm.GetPointer() )->GetInitialMomentum();
+      VectorImageUtilsType::writeFileITK( ptrp0, initialMomentumImage );
     }
     else
     {
       std::cerr << "Unknown state type: cannot write momentum image" << std::endl;
     }
   }
+
+  if ( internalInitialImage.compare("None") !=0 )
+  {
+    const VectorImageType* ptrI0 = NULL;
+    if ( bIsInitialImageMomentumType )
+    {
+      if ( bStateContainsInitialImage )
+      {
+        ptrI0 = dynamic_cast< regTypeInitialImageMomentum* >( plddmm.GetPointer() )->GetSourceImage();
+        VectorImageUtilsType::writeFileITK( ptrI0, internalInitialImage );
+      }
+      else
+      {
+
+        ptrI0 = dynamic_cast< regTypeInitialMomentum* >( plddmm.GetPointer() )->GetSourceImage();
+        VectorImageUtilsType::writeFileITK( ptrI0, internalInitialImage );
+      }
+    }
+    else if ( bIsSpatioTemporalVelocityType )
+    {
+      ptrI0 = dynamic_cast< regTypeSpatioTemporalVelocityField* >( plddmm.GetPointer() )->GetSourceImage();
+      VectorImageUtilsType::writeFileITK( ptrI0, internalInitialImage );
+    }
+    else
+    {
+      std::cerr << "Unknown state type: cannot write initial image" << std::endl;
+    }
+  }
+
+
+  if ( internalTargetImage.compare("None") !=0 )
+  {
+    const VectorImageType* ptrI0 = NULL;
+    if ( bIsInitialImageMomentumType )
+    {
+      if ( bStateContainsInitialImage )
+      {
+        ptrI0 = dynamic_cast< regTypeInitialImageMomentum* >( plddmm.GetPointer() )->GetTargetImage();
+        VectorImageUtilsType::writeFileITK( ptrI0, internalTargetImage );
+      }
+      else
+      {
+
+        ptrI0 = dynamic_cast< regTypeInitialMomentum* >( plddmm.GetPointer() )->GetTargetImage();
+        VectorImageUtilsType::writeFileITK( ptrI0, internalTargetImage );
+      }
+    }
+    else if ( bIsSpatioTemporalVelocityType )
+    {
+      ptrI0 = dynamic_cast< regTypeSpatioTemporalVelocityField* >( plddmm.GetPointer() )->GetTargetImage();
+      VectorImageUtilsType::writeFileITK( ptrI0, internalTargetImage );
+    }
+    else
+    {
+      std::cerr << "Unknown state type: cannot write initial image" << std::endl;
+    }
+  }
+
 
   return EXIT_SUCCESS;
 }

@@ -22,6 +22,7 @@
 
 #include "CBase.h"
 #include "itkSmartPointer.h"
+#include <string>
 
 namespace CALATK
 {
@@ -68,6 +69,11 @@ public:
   {
     return NULL;
   };
+
+  virtual void WriteStateToFile( std::string prefix, std::string postfix, int offset = 0 )
+  {
+    throw std::runtime_error( "Not yet implementded." );
+  }
 
 protected:
   virtual FloatType SquaredNorm() = 0;

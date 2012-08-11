@@ -23,4 +23,5 @@ void RegisterTests()
 {
   REGISTER_TEST( calatkLDDMMTest );
   REGISTER_TEST( calatkMetamorphosisTest );
+  REGISTER_TEST( calatkAtlasBuilderTest );
 }

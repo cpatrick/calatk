@@ -22,10 +22,7 @@
 
 template < class TState >
 CLDDMMGrowthModelObjectiveFunction< TState >::CLDDMMGrowthModelObjectiveFunction()
-  : DefaultSigmaSqr( 0.01 ), m_ExternallySetSigmaSqr( false )
 {
-  m_SigmaSqr = DefaultSigmaSqr;
-
   m_ptrI0 = NULL;
   m_ptrTmpVelocityField = NULL;
   m_ptrTmpGradient = NULL;
@@ -49,15 +46,6 @@ template < class TState >
 void CLDDMMGrowthModelObjectiveFunction< TState >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
   Superclass::SetAutoConfiguration( combined, cleaned );
-  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "GrowthModel", Json::nullValue );
-  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "GrowthModel", Json::nullValue );
-
-  SetJSONHelpForRootKey( GrowthModel, "settings for the LDDMM growth model" );
-
-  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, SigmaSqr );
-
-  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, SigmaSqr,
-                     "1/SigmaSqr is the weight for the data match term" );
 }
 
 template < class TState >
@@ -179,20 +167,6 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::GetTargetImage( VectorImageTy
 }
 
 template < class TState >
-void CLDDMMGrowthModelObjectiveFunction< TState >::GetInitialImage( VectorImageType* ptrIm )
-{
-  ptrIm->Copy( m_ptrI0 );
-}
-
-template < class TState >
-const typename CLDDMMGrowthModelObjectiveFunction< TState >::VectorImageType*
-CLDDMMGrowthModelObjectiveFunction< TState >::GetPointerToInitialImage() const
-{
-  return m_ptrI0;
-}
-
-
-template < class TState >
 void CLDDMMGrowthModelObjectiveFunction< TState >::GetMomentum( VectorImageType* ptrMomentum, T dTime )
 {
   ComputeImagesForward();
@@ -255,7 +229,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeAdjointBackward()
   for ( unsigned int iM = 0; iM <  uiNrOfMeasuredImagesAtTimePoint; ++iM )
     {
     this->m_ptrMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, this->m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecEstimatedImages[0] , this->m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecMeasurementImages[ iM ] );
-    m_ptrCurrentAdjointDifference->MultiplyByConstant( 1.0/m_SigmaSqr );
+    m_ptrCurrentAdjointDifference->MultiplyByConstant( 1.0/this->m_SigmaSqr );
     m_ptrCurrentLambdaEnd->AddCellwise( m_ptrCurrentAdjointDifference );
     }
 
@@ -299,7 +273,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeAdjointBackward()
       for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM )
         {
         this->m_ptrMetric->GetAdjointMatchingDifferenceImage( m_ptrCurrentAdjointDifference, this->m_vecTimeDiscretization[ iI ].vecEstimatedImages[0] , this->m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ] );
-        m_ptrCurrentAdjointDifference->MultiplyByConstant( 1.0/m_SigmaSqr );
+        m_ptrCurrentAdjointDifference->MultiplyByConstant( 1.0/this->m_SigmaSqr );
         m_ptrLambda[iI]->AddCellwise( m_ptrCurrentAdjointDifference );
         }
       // reset the current adjoint to the adjoint at current time point
@@ -347,6 +321,9 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeGradient()
     VectorFieldType* ptrCurrentVelocity = this->m_ptrState->GetVectorFieldPointer( iI );
     ptrCurrentGradient->AddCellwise( ptrCurrentVelocity );
 
+    // multiply by global energy weight
+    ptrCurrentGradient->MultiplyByConstant( this->m_EnergyWeight );
+
     }
 
   //VectorFieldUtils< T, ImageDimension >::writeTimeDependantImagesITK( this->m_ptrGradient->GetVectorPointerToVectorFieldPointer(), "gradientAfterComputation.nrrd" );
@@ -379,7 +356,7 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeInitialUnsmoothedVeloc
       for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM )
         {
         this->m_ptrMetric->GetAdjointMatchingDifferenceImage( ptrCurrentAdjointDifference, m_ptrI0 , this->m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ] );
-        ptrCurrentAdjointDifference->MultiplyByConstant( 1.0/m_SigmaSqr );
+        ptrCurrentAdjointDifference->MultiplyByConstant( 1.0/this->m_SigmaSqr );
         ptrLambda0->AddCellwise( ptrCurrentAdjointDifference );
         }
       }
@@ -395,6 +372,9 @@ void CLDDMMGrowthModelObjectiveFunction< TState >::ComputeInitialUnsmoothedVeloc
     VectorImageUtils< T, TState::ImageDimension >::multiplyVectorByImageDimensionInPlace( ptrLambda0, iD, m_ptrTmpGradient );
     ptrCurrentGradient->AddCellwise( m_ptrTmpGradient );
     }
+
+  ptrCurrentGradient->MultiplyByConstant( this->m_EnergyWeight );
+
 }
 
 template < class TState >
@@ -421,6 +401,8 @@ CLDDMMGrowthModelObjectiveFunction< TState >::GetCurrentEnergy()
 
     }
 
+  dEnergy *= this->m_EnergyWeight;
+
   T dVelocitySquareNorm = dEnergy;
 
   // now add the contributions of the data terms
@@ -438,11 +420,13 @@ CLDDMMGrowthModelObjectiveFunction< TState >::GetCurrentEnergy()
     unsigned int uiNrOfMeasuredImagesAtTimePoint = this->m_vecTimeDiscretization[ iI ].vecMeasurementImages.size();
     for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM )
       {
-      T dCurrentImageMetric = 1.0/m_SigmaSqr*this->m_ptrMetric->GetMetric( this->m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ], this->m_vecTimeDiscretization[ iI ].vecEstimatedImages[0] );
+      T dCurrentImageMetric = 1.0/this->m_SigmaSqr*this->m_ptrMetric->GetMetric( this->m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ], this->m_vecTimeDiscretization[ iI ].vecEstimatedImages[0] );
       dImageNorm += dCurrentImageMetric;
       }
 
     }
+
+  dImageNorm *= this->m_EnergyWeight;
 
   dEnergy += dImageNorm;
 
@@ -459,6 +443,8 @@ CLDDMMGrowthModelObjectiveFunction< TState >::GetCurrentEnergy()
   energyValues.dEnergy = dEnergy;
   energyValues.dRegularizationEnergy = dVelocitySquareNorm;
   energyValues.dMatchingEnergy = dImageNorm;
+
+  std::cout << "E(I) = " << dImageNorm << std::endl;
 
   return energyValues;
 

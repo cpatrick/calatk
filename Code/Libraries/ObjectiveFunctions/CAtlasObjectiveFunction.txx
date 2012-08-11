@@ -55,6 +55,7 @@ CAtlasObjectiveFunction< TState >
 ::SetObjectiveFunctionAndWeight( IndividualObjectiveFunctionType* pObj, FloatType dWeight )
 {
   m_VectorIndividualObjectiveFunctionPtrs.push_back( pObj );
+  pObj->SetEnergyWeight( dWeight );
   m_Weights.push_back( dWeight );
 
   assert( m_VectorIndividualObjectiveFunctionPtrs.size() == m_Weights.size() );
@@ -68,6 +69,7 @@ CAtlasObjectiveFunction< TState >
 ::SetObjectiveFunctionAndWeight( unsigned int uiId, const IndividualObjectiveFunctionType* pObj, FloatType dWeight )
 {
   m_VectorIndividualObjectiveFunctionPtrs.at( uiId ) =  pObj;
+  pObj->SetEnergyWeight( dWeight );
   m_Weights.at( uiId ) = dWeight;
 }
 

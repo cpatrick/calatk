@@ -30,10 +30,17 @@ namespace CALATK
 //
 template < class T, unsigned int VImageDimension >
 CObjectiveFunctionBase< T, VImageDimension >::CObjectiveFunctionBase()
-  : m_CurrentlyActiveSubjectId( -1 )
+  : m_CurrentlyActiveSubjectId( -1 ),
+    DefaultSigmaSqr( 1.0 ),
+    m_ExternallySetSigmaSqr( false ),
+    DefaultEnergyWeight( 1.0 ),
+    m_ExternallySetEnergyWeight( false )
 {
   m_ptrMetric = NULL;
   m_ptrImageManager = NULL;
+
+  m_SigmaSqr = DefaultSigmaSqr;
+  m_EnergyWeight = DefaultEnergyWeight;
 }
 
 //
@@ -43,6 +50,25 @@ template < class T, unsigned int VImageDimension >
 CObjectiveFunctionBase< T, VImageDimension >::~CObjectiveFunctionBase()
 {
 }
+
+template < class T, unsigned int VImageDimension >
+void CObjectiveFunctionBase< T, VImageDimension >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
+{
+  Superclass::SetAutoConfiguration( combined, cleaned );
+  Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "ObjectiveFunction", Json::nullValue );
+  Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "ObjectiveFunction", Json::nullValue );
+
+  SetJSONHelpForRootKey( ObjectiveFunction, "general settings for the objective function" );
+
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, SigmaSqr );
+  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, EnergyWeight );
+
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, SigmaSqr,
+                     "1/SigmaSqr is the weight for the data match term" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, EnergyWeight,
+                     "EnergyWeight is multiplies the energy (useful for example for kernel regression)" );
+}
+
 
 template < class T, unsigned int VImageDimension >
 void CObjectiveFunctionBase< T, VImageDimension >::PreSubIterationSolve()

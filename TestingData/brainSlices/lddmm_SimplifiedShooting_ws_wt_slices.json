@@ -15,7 +15,11 @@
 	{
 		"EstimateInitialImage" : false,
 		"NumberOfDiscretizationVolumesPerUnitTime" : 10.0,
-		"SigmaSqr" : 1.000000000000000e-05
+	},
+	"ObjectiveFunction" :
+	{
+		"EnergyWeight" : 1.0,
+		"SigmaSqr" : 1.0e-5
 	},
 	"MultiGaussianKernel" : 
 	{

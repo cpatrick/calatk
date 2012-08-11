@@ -27,6 +27,7 @@
 #include "VectorArray.h"
 #include "VectorImage.h"
 #include "VectorField.h"
+#include "VectorFieldUtils.h"
 #include "VectorImageUtils.h"
 #include "CImageManager.h"
 #include "LDDMMUtils.h"
@@ -54,7 +55,11 @@
 int main(int argc, char **argv)
 {
   typedef CALATK::VectorImageUtils< TFLOAT, DIMENSION > VectorImageUtilsType;
+  typedef CALATK::VectorFieldUtils< TFLOAT, DIMENSION > VectorFieldUtilsType;
   typedef CALATK::VectorImage< TFLOAT, DIMENSION > VectorImageType;
+  typedef CALATK::VectorField< TFLOAT, DIMENSION > VectorFieldType;
+
+  typedef CALATK::ITKDeformationField< TFLOAT, DIMENSION >::Type ITKDeformationFieldType;
 
   typedef CALATK::CImageManager< TFLOAT, DIMENSION > ImageManagerType;
   
@@ -89,6 +94,11 @@ int main(int argc, char **argv)
 
   VectorImageUtilsType::writeFileITK( imageBlurred, "imBlurred.nrrd" );
   VectorImageUtilsType::writeFileITK( gaussianKernel.GetKernel(), "imKernel.nrrd" );
+
+  /* test the vector field stuff */
+
+  VectorFieldType::Pointer field = new VectorFieldType( image );
+  ITKDeformationFieldType::Pointer defField = VectorFieldUtilsType::mapToITKDeformationField( field );
 
   return EXIT_SUCCESS;
 }

@@ -21,8 +21,7 @@
 	"LDDMMGeodesicShooting" :
 	{
 		"EstimateInitialImage" : false,
-		"NumberOfDiscretizationVolumesPerUnitTime" : 10.0,
-		"SigmaSqr" : 0.010
+		"NumberOfDiscretizationVolumesPerUnitTime" : 10.0
 	},
 	"MultiScaleFinalOutput" :
 	{
@@ -58,6 +57,11 @@
 			}
 		}
 	],
+	"ObjectiveFunction" :
+	{
+		"EnergyWeight" : 1.0,
+		"SigmaSqr" : 0.01
+	},
 	"OneStepEvolver" :
 	{
 		"NumberOfThreads" : 1

@@ -23,12 +23,10 @@
 template < class TState >
 CLDDMMGeodesicShootingObjectiveFunction< TState >::CLDDMMGeodesicShootingObjectiveFunction()
     : DefaultNumberOfDiscretizationVolumesPerUnitTime( 10.0 ), m_ExternallySetNumberOfDiscretizationVolumesPerUnitTime( false ),
-      DefaultEstimateInitialImage( false ), m_ExternallySetEstimateInitialImage( false ),
-      DefaultSigmaSqr( 0.01 ), m_ExternallySetSigmaSqr( false )
+      DefaultEstimateInitialImage( false ), m_ExternallySetEstimateInitialImage( false )
 {
     m_NumberOfDiscretizationVolumesPerUnitTime = DefaultNumberOfDiscretizationVolumesPerUnitTime;
     m_EstimateInitialImage = DefaultEstimateInitialImage;
-    m_SigmaSqr = DefaultSigmaSqr;
 }
 
 template < class TState >
@@ -47,28 +45,11 @@ void CLDDMMGeodesicShootingObjectiveFunction< TState >::SetAutoConfiguration( CJ
 
   SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, NumberOfDiscretizationVolumesPerUnitTime );
   SetJSONFromKeyBool( currentConfigurationIn, currentConfigurationOut, EstimateInitialImage );
-  SetJSONFromKeyDouble( currentConfigurationIn, currentConfigurationOut, SigmaSqr );
 
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, NumberOfDiscretizationVolumesPerUnitTime,
                      "if time is discretized, determines how many discretization steps are used for each unit of time" );
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, EstimateIntialImage,
                      "when true the initial image is jointly estimated with the initial momentum" );
-  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, SigmaSqr,
-                     "1/SigmaSqr is the weight for the datamatch term" );
-
-}
-
-template < class TState >
-void CLDDMMGeodesicShootingObjectiveFunction< TState >::GetInitialImage( VectorImageType* ptrIm )
-{
-  ptrIm->Copy( this->m_ptrState->GetPointerToInitialImage() );
-}
-
-template < class TState >
-const typename CLDDMMGeodesicShootingObjectiveFunction< TState >::VectorImageType*
-CLDDMMGeodesicShootingObjectiveFunction< TState >::GetPointerToInitialImage() const
-{
-  return this->m_ptrState->GetPointerToInitialImage();
 }
 
 template < class TState >

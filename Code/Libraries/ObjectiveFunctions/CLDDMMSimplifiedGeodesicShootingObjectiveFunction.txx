@@ -264,7 +264,7 @@ template < class TState >
 void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMap( VectorFieldType* ptrMap, T dTime )
 {
   T dTimeFrom = m_vecTimeDiscretization[0].dTime;
-  GetMapFromTo( ptrMap, dTimeFrom, dTime );
+ GetMapFromTo( ptrMap, dTimeFrom, dTime );
 }
 
 template < class TState >
@@ -351,6 +351,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::GetMapFromTo( 
     T dCurrentDT = m_vecTimeDiscretization[ iI+1 ].dTime - m_vecTimeDiscretization[ iI ].dTime;
 
     this->ComputeVelocity( ptrCurrentI, ptrCurrentP, ptrCurrentVelocity, ptrMapOut );
+
     this->logStream << log_level_verbose << "evolving overall map for " << m_vecTimeIncrements[ iI ] << std::endl;
     this->m_ptrEvolver->SolveForward( ptrCurrentVelocity, ptrMapIn, ptrMapOut, ptrMapTmp, m_vecTimeIncrements[ iI ] );
 
@@ -587,8 +588,11 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeGradien
 {
   ComputeImageMomentumForwardAndFinalAdjointWarpedToInitialImage( m_ptrWarpedFinalToInitialAdjoint );
 
+  typedef VectorImageUtils< T, TState::ImageDimension > VectorImageUtilsType;
+  VectorImageUtilsType::writeFileITK( m_ptrWarpedFinalToInitialAdjoint, "finalATo0.nrrd" );
+
   /**
-    * The gradient is now simply
+    * The gradient is now simply (and then multiplied by the global energy weight)
     *
     \f[
       \nabla_{I_0(t_0)}E = -\lambda(0) -\frac{1}{\sigma^2}\nabla d^2(I(0),I_0)
@@ -614,6 +618,9 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeGradien
 
   ptrP0Gradient->AddCellwise( ptrInitialMomentum );
 
+  VectorImageUtilsType::writeFileITK( ptrInitialMomentum, "initialMomentum.nrrd" );
+
+
   if ( this->m_ptrState->StateContainsInitialImage() )
   {
     if ( this->m_EstimateInitialImage )
@@ -625,7 +632,14 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeGradien
     {
       ptrI0Gradient->SetToConstant( 0.0 );
     }
+    // multiply by global weight
+    ptrI0Gradient->MultiplyByConstant( this->m_EnergyWeight );
+
   }
+
+  // multiply by global weight
+  ptrP0Gradient->MultiplyByConstant( this->m_EnergyWeight );
+
 }
 
 template < class TState >
@@ -656,7 +670,7 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeInitial
     ptrCurrentGradient->AddCellwise( m_ptrTmpField );
     }
 
-  ptrCurrentGradient->MultiplyByConstant( 1.0 );
+  ptrCurrentGradient->MultiplyByConstant( this->m_EnergyWeight );
 }
 
 template < class TState >
@@ -712,6 +726,7 @@ CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::GetCurrentEnergy()
   T dTimeDuration = this->m_vecTimeDiscretization[ uiNrOfDiscretizationPoints-1 ].dTime - this->m_vecTimeDiscretization[0].dTime;
 
   dEnergy *= 0.5*dTimeDuration;
+  dEnergy *= this->m_EnergyWeight;
 
   T dVelocitySquareNorm = dEnergy;
 
@@ -725,6 +740,8 @@ CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState>::GetCurrentEnergy()
 
   dImageNorm += m_vecTimeDiscretization[ 0 ].vecWeights[ 0 ] * this->m_ptrMetric->GetMetric( ptrI0, ptrInitialImage );
   dImageNorm += m_vecTimeDiscretization[ uiNrOfDiscretizationPoints-1 ].vecWeights[ 0 ] * this->m_ptrMetric->GetMetric( ptrI1, m_ptrCurrentI );
+
+  dImageNorm *= this->m_EnergyWeight;
 
   dEnergy += dImageNorm;
 

@@ -292,6 +292,29 @@ public:
     */
   void DivideElementwise(VectorArray* im);
 
+  /**
+   * Method that divides the elements the array of by those of the input array (cellwise)
+   *
+   * @param im - the first array
+   * @param minAbsValue - smallest allowable absolute value of the divisor
+   * @param replacementValue - value which is substituted for the result if the absolute value is smaller than minAbsValue
+   */
+  void SaveDivideCellwise(VectorArray* im, T minAbsValue, T replacementValue );
+
+  /**
+    * Method that divides each vector element with a scalar value from a scalar input array
+    * @param im - the scalar array to multiply by
+    * @param minAbsValue - smallest allowable absolute value of the divisor
+    * @param replacementValue - value which is substituted for the result if the absolute value is smaller than minAbsValue
+    */
+  void SaveDivideElementwise(VectorArray* im, T minAbsValue, T replacementValue );
+
+  /**
+    * Method that substitutes the boundary of a certain width of one array by the values of another array
+    * @param im - the array to substitute with
+    * @param width - thickness of boundary layer in voxels
+    */
+  void SubstituteBoundaryLayer( VectorArray* im, int width );
 
   /**
    * Method that adds the elements of the array to those of the input array (cellwise)
@@ -343,6 +366,13 @@ public:
    */
   void AddConstant(T c);
 
+  /**
+    * Clamps the array between two given values
+    *
+    * @param minValue - lower clamping value (everything smaller will be set to this value)
+    * @param maxValue - upper clamping value (everything larger will be set to this value)
+    */
+  void Clamp( T minValue, T maxValue );
   
   /**
    * Method that returns the size in the x dimension

@@ -178,7 +178,12 @@ int main(int ac, char* av[] )
     try
       {
       // Invoke the test's "main" function.
+
       result = (*f)(ac-1, av+1);
+      if ( result != 0 )
+        {
+        std::cout << "Executed program exited with errors." << std::endl;
+        }
 
       // Make a list of possible baselines
       for( int i=0; i<static_cast<int>(compareList.size()); i++)
@@ -193,7 +198,7 @@ int main(int ac, char* av[] )
           {
           baseline->second = RegressionTestImage(testFilename,
                                                  (baseline->first).c_str(),
-                                                 0, 
+                                                 1,
                                                  intensityTolerance, 
                                                  numberOfPixelsTolerance, 
                                                  radiusTolerance );
@@ -250,6 +255,9 @@ int main(int ac, char* av[] )
       std::cerr << "ITK test driver caught an unknown exception!!!\n";
       result = -1;
       }
+
+    std::cout << "returned result = " << result << std::endl;
+
     return result;
     }
   PrintAvailableTests();
@@ -304,14 +312,14 @@ int RegressionTestImage (const char *testImageFilename,
   ImageType::SizeType testSize;
     testSize = testReader->GetOutput()->GetLargestPossibleRegion().GetSize();
   
-  if (baselineSize != testSize)
+    if (baselineSize != testSize)
     {
     std::cerr << "The size of the Baseline image and Test image do not match!" << std::endl;
     std::cerr << "Baseline image: " << baselineImageFilename
               << " has size " << baselineSize << std::endl;
     std::cerr << "Test image:     " << testImageFilename
               << " has size " << testSize << std::endl;
-    return 1;
+    //return 1;
     }
 
   // Now compare the two images
@@ -329,6 +337,9 @@ int RegressionTestImage (const char *testImageFilename,
 
     unsigned long status = 0;
     status = diff->GetNumberOfPixelsWithDifferences();
+
+    std::cout << "Number of pixels with difference " << status << std::endl;
+    std::cout << "Number of pixels tolerance " << numberOfPixelsTolerance << std::endl;
 
   // if there are discrepencies, create an diff image
   if ( (status > numberOfPixelsTolerance) && reportErrors )
@@ -481,6 +492,10 @@ int RegressionTestImage (const char *testImageFilename,
 
 
     }
+
+  bool bTest = (status > numberOfPixelsTolerance) ? 1 : 0;
+  std::cout << "test = " << bTest << std::endl;
+
   return (status > numberOfPixelsTolerance) ? 1 : 0;
 }
 

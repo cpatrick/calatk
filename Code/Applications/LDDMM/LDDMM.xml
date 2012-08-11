@@ -99,6 +99,22 @@
             <description>Name of the initial momentum image.</description>
         </image>
 
+        <image>
+            <name>internalInitialImage</name>
+            <label>Initial image</label>
+            <longflag>--internalInitialImage</longflag>
+            <default>None</default>
+            <description>Name of the initial image. This is the actual initial image used (including internal processing).</description>
+        </image>
+
+        <image>
+            <name>internalTargetImage</name>
+            <label>Target image</label>
+            <longflag>--internalTargetImage</longflag>
+            <default>None</default>
+            <description>Name of the target image. This is the actual target image used (including internal processing).</description>
+        </image>
+
 	<file>
 	  <name>configFile</name>
 	  <longflag>--config</longflag>

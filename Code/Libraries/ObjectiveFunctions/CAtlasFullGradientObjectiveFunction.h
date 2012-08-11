@@ -68,8 +68,7 @@ public:
   void ComputeGradient();
 
   // TODO: needs to be implemented
-  const VectorImageType* GetPointerToInitialImage() const;
-  void GetInitialImage( VectorImageType* ptrIm );
+  void GetSourceImage( VectorImageType* ptrIm );
 
   void PreSubIterationSolve();
 

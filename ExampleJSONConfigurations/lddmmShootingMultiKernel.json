@@ -11,7 +11,6 @@
 	{
 		"EstimateInitialImage" : false,
 		"NumberOfDiscretizationVolumesPerUnitTime" : 10.0,
-		"SigmaSqr" : 0.01
 	},
 	"MultiGaussianKernel" :
 	{
@@ -51,6 +50,11 @@
 			}
 		}
 	],
+	"ObjectiveFunction" :
+	{
+		"EnergyWeight" : 1.0,
+		"SigmaSqr" : 0.01
+	},
 	"OneStepEvolver" :
 	{
 		"NumberOfThreads" : 1

@@ -282,6 +282,21 @@ bool CStateMultipleStates< TState >::StateContainsInitialImage()
   return false;
 }
 
+//
+// writes the state to a file
+//
+template < class TState >
+void CStateMultipleStates< TState >::WriteStateToFile( std::string prefix, std::string postfix, int offset )
+{
+  typename IndividualStatesCollectionType::iterator iter;
+  int iI = 0;
+  for ( iter = m_IndividualStatesCollection.begin(); iter != m_IndividualStatesCollection.end(); ++iter )
+  {
+    (*iter)->WriteStateToFile( prefix, postfix, offset + iI );
+    ++iI;
+  }
+}
+
 } // end namespace CALATK
 
 #endif

@@ -53,15 +53,10 @@ public:
   void ComputeGradient();
   void ComputeInitialUnsmoothedVelocityGradient( VectorFieldType* ptrInitialUnsmoothedVelocityGradient, unsigned int uiKernelNumber = 0 );
 
-  SetMacro( SigmaSqr, T );
-  GetMacro( SigmaSqr, T );
-
   void GetSourceImage( VectorImageType* ptrIm );
   void GetSourceImage( VectorImageType* ptrIm, T dTime );
   void GetTargetImage( VectorImageType *ptrIm );
   void GetTargetImage( VectorImageType* ptrIm, T dTime );
-  void GetInitialImage( VectorImageType* ptrIm );
-  const VectorImageType* GetPointerToInitialImage() const;
   void GetMomentum( VectorImageType* ptrMomentum, T dTime );
   void GetInitialMomentum( VectorImageType* ptrMomentum );
 
@@ -103,11 +98,6 @@ private:
 
   std::vector< VectorImagePointerType > m_ptrI; // image
   std::vector< VectorImagePointerType > m_ptrLambda; // adjoint
-
-  T m_SigmaSqr; // 1/m_SigmaSqr is the multiplier for the data attachment term
-
-  const T DefaultSigmaSqr;
-  bool m_ExternallySetSigmaSqr;
 
 };
 

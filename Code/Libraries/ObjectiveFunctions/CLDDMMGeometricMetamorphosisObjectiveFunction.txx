@@ -266,19 +266,6 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetTargetImage( Ve
 }
 
 template < class TState >
-void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetInitialImage( VectorImageType* ptrIm )
-{
-  ptrIm->Copy( ptrI0 );
-}
-
-template < class TState >
-const typename CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::VectorImageType*
-CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetPointerToInitialImage() const
-{
-  return ptrI0;
-}
-
-template < class TState >
 void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetMomentum( VectorImageType* ptrMomentum, T dTime )
 {
   ComputeImagesForward();
@@ -563,6 +550,7 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeGradient()
   // \f$ E = (1-w)\int_0^1 \|v\|_L^2~dt + w\int_1^2 \|v\|_L^2~dt 
   // + 1/(sigma1^2)Sim(I^c(I_1,I^\tau(1)(1),T_2),I^c(I(1),I^\tau(1),T_2)) + 1/(sigma2^2)Sim(I^\tau(2),T_2) \f$
   // and the gradient used is the Hilbert gradient
+  // and everything is multiplied by a global energy weight
 
   unsigned int dim = ptrI0->GetDimension();
 
@@ -597,6 +585,8 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeGradient()
     m_ptrTmpGradient->MultiplyByConstant( 2*(1-m_W) );
     ptrCurrentGradient->AddCellwise( m_ptrTmpGradient );
 
+    ptrCurrentGradient->MultiplyByConstant( this->m_EnergyWeight );
+
     }
 
   // now the inverval from [1,2]
@@ -618,7 +608,12 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeGradient()
     m_ptrTmpGradient->Copy( ptrCurrentVelocity );
     m_ptrTmpGradient->MultiplyByConstant( 2*m_W );
     ptrCurrentGradient->AddCellwise( m_ptrTmpGradient );
+
+    ptrCurrentGradient->MultiplyByConstant( this->m_EnergyWeight );
+
     }
+
+
 }
 
 
@@ -740,6 +735,9 @@ void CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::ComputeInitialUnsm
       ptrGradient->SetToConstant( 0.0 );
     }
 
+  // multiply by energy weight
+  ptrGradient->MultiplyByConstant( this->m_EnergyWeight );
+
 }
 
 template < class TState >
@@ -784,6 +782,8 @@ CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetCurrentEnergy()
 
     }
 
+  dEnergy *= this->m_EnergyWeight;
+
   T dVelocitySquareNorm = dEnergy;
 
   // now add the contributions of the data terms
@@ -815,6 +815,8 @@ CLDDMMGeometricMetamorphosisObjectiveFunction< TState >::GetCurrentEnergy()
   dCurrentImageMetric = 1.0/m_Sigma2Sqr*this->m_ptrMetric->GetMetric( ptrEstT2, ptrT2 );
 
   dImageNorm += dCurrentImageMetric;
+
+  dImageNorm *= this->m_EnergyWeight;
 
   dEnergy += dImageNorm;
 
