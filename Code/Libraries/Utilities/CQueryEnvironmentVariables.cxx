@@ -17,11 +17,12 @@
 *
 */
 
-#include "itkTestMain.h"
+#include "CQueryEnvironmentVariables.txx"
 
-void RegisterTests()
+namespace CALATK
 {
-  REGISTER_TEST( calatkLDDMMTest );
-  REGISTER_TEST( calatkMetamorphosisTest );
-  REGISTER_TEST( calatkAtlasBuilderTest );
+
+template int CQueryEnvironmentVariables::GetFromString< int >( std::string, int );
+template double CQueryEnvironmentVariables::GetFromString< double >( std::string, double );
+
 }

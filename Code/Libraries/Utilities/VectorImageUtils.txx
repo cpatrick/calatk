@@ -3017,9 +3017,8 @@ VectorImageUtils< T, VImageDimension >::readFileITK(const std::string& filename)
     }
   catch( itk::ExceptionObject & err )
     {
-    std::cerr << "VectorImageUtils< T, VImageDimension >::readFileITK -> Reading Failed" << std::endl;
-    std::cerr << err << std::endl;
-    return false;
+    throw std::runtime_error( "VectorImageUtils< T, VImageDimension >::readFileITK -> Reading Failed" );
+    return NULL;
     }
 
   // Convert to VectorImageType and return

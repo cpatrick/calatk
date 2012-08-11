@@ -370,8 +370,10 @@ std::string CJSONConfiguration::ReadFileContentIntoString( const std::string & f
 }
 
 
-void CJSONConfiguration::ReadJSONConfigurationFile( const std::string & fileName )
+void CJSONConfiguration::ReadJSONConfigurationFile( const std::string & fileNameOrig )
 {
+  std::string fileName = ApplicationUtils::findJSONFileName( fileNameOrig );
+
   this->DeleteRoot();
 
   m_ptrRoot = new Json::Value;

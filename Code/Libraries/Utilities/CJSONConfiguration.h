@@ -31,6 +31,8 @@
 #include <stdexcept>
 #include <vector>
 
+#include "ApplicationUtils.h"
+
 namespace CALATK
 {
 

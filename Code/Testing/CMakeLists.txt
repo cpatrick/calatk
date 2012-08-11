@@ -110,6 +110,8 @@ function(add_ctest_subtest_testdriver_image_compare testName subtestName testDri
       ${testName}
       ${ARGN}
       )
+    # set environment so it can also find test data which is specified through JSON files
+    set_property(TEST ${testName}_${subtestName} PROPERTY ENVIRONMENT "CALATK.dataPath=${CALATK_SOURCE_DIR}/TestingData")
   endif(BUILD_TESTING)
 endfunction(add_ctest_subtest_testdriver_image_compare)
 
@@ -132,6 +134,7 @@ set(testDriverPDESolver_SRCS
 set(testDriverAlgorithms_SRCS
   calatkLDDMMTest.cxx
   calatkMetamorphosisTest.cxx
+  calatkAtlasBuilderTest.cxx
   )
 
 set(testDriverInterfaces_SRCS
@@ -175,8 +178,6 @@ add_ctest_subtest_testdriver_image_compare(calatkAdvectionTest xytranslation ${A
 )
 
 # Set up all the test which go through the standard (non-test-driver) testing mechanism
-
-add_test_executable(calatkAtlasBuilderTest CALATK ${ITK_LIBRARIES})
 
 add_test_executable(calatkImageDataStructureTest CALATK ${ITK_LIBRARIES})
 add_ctest_test(calatkImageDataStructureTest ${test_temp_dir})
@@ -385,6 +386,31 @@ add_ctest_subtest_testdriver_image_compare(calatkMetamorphosisTest adjointMetamo
                           ${test_temp_dir}/1DCurveResultAdjointInitialImageDouble.nhdr
                           ${CALATK_SOURCE_DIR}/Code/Testing/calatkMetamorphosis1DTest.json
                           )
+
+
+add_ctest_subtest_testdriver_image_compare(calatkAtlasBuilderTest atlasBuilder_atlasTarget_fullGradient ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_input_dir}/Baseline/baseline_atlasIsTargetResult_fullGradient.nrrd
+                          ${test_temp_dir}/atlasIsTargetResult_fullGradient.nrrd
+                          ${CALATK_SOURCE_DIR}/Code/Testing/atlas.json
+			  ${CALATK_SOURCE_DIR}/Code/Testing/atlasDataAtlasIsTargetTwoDatasets.json
+			  ${test_temp_dir}/atlasIsTargetResult_fullGradient.nrrd 0
+			  )
+
+add_ctest_subtest_testdriver_image_compare(calatkAtlasBuilderTest atlasBuilder_atlasTarget_subiterations ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_input_dir}/Baseline/baseline_atlasIsTargetResult_subiterations.nrrd
+                          ${test_temp_dir}/atlasIsTargetResult_subiterations.nrrd
+                          ${CALATK_SOURCE_DIR}/Code/Testing/atlas.json
+			  ${CALATK_SOURCE_DIR}/Code/Testing/atlasDataAtlasIsTargetTwoDatasets.json
+			  ${test_temp_dir}/atlasIsTargetResult_subiterations.nrrd 1
+			  )
+
+add_ctest_subtest_testdriver_image_compare(calatkAtlasBuilderTest atlasBuilder_atlasSource_fullGradient ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_input_dir}/Baseline/baseline_atlasIsSourceResult_fullGradient.nrrd
+                          ${test_temp_dir}/atlasIsSourceResult_fullGradient.nrrd
+                          ${CALATK_SOURCE_DIR}/Code/Testing/atlas.json
+			  ${CALATK_SOURCE_DIR}/Code/Testing/atlasDataAtlasIsSourceTwoDatasets.json
+			  ${test_temp_dir}/atlasIsSourceResult_fullGradient.nrrd 0
+			  )
 
 
 add_test_executable(calatkImageManagerTest CALATK ${ITK_LIBRARIES})

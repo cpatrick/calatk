@@ -55,15 +55,15 @@ int main( int argc, char* argv[] )
   std::cout << "MultiScale settings = " << std::endl;
   std::cout << valMultiScale;
 
-  Json::Value& objectiveFunction = config.GetFromKey( "ObjectiveFunction", Json::nullValue );
+  Json::Value& arrayTest = config.GetFromKey( "ArrayTest", Json::nullValue );
 
-  objectiveFunction[0]["test"]=1;
-  objectiveFunction[1]["test"]=2;
+  arrayTest[0]["test"]=1;
+  arrayTest[1]["test"]=2;
 
-  objectiveFunction[0]["test"].setComment("// one value", Json::commentAfterOnSameLine );
+  arrayTest[0]["test"].setComment("// one value", Json::commentAfterOnSameLine );
 
-  objectiveFunction.setComment( "// sets the objective function; comment after on same line", Json::commentAfterOnSameLine );
-  objectiveFunction.setComment( "// sets the objective function; comment before", Json::commentBefore );
+  arrayTest.setComment( "// sets the objective function; comment after on same line", Json::commentAfterOnSameLine );
+  arrayTest.setComment( "// sets the objective function; comment before", Json::commentBefore );
 
   try
     {

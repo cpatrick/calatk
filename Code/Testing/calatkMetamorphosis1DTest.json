@@ -21,7 +21,7 @@
 	"LDDMMGeodesicShooting" :
 	{
 		"EstimateInitialImage" : false,
-		"NumberOfDiscretizationVolumesPerUnitTime" : 10.0,
+		"NumberOfDiscretizationVolumesPerUnitTime" : 10.0
 	},
 	"MultiScaleFinalOutput" :
 	{

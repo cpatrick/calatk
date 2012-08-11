@@ -21,6 +21,7 @@
 #define C_IMAGE_INFORMATION_TXX
 
 #include "CImageInformation.h"
+#include "ApplicationUtils.h"
 
 namespace CALATK
 {
@@ -365,7 +366,10 @@ CImageInformation< TFloat, VImageDimension >::GetOriginalTransform()
       VectorFieldUtils< TFloat, VImageDimension>::identityMap( mapTrans );
 
       std::cout << "Initializing affine map for source image" << std::endl;
-      typename ITKAffineTransform< TFloat, VImageDimension>::Type::Pointer aTrans = VectorImageUtils< TFloat, VImageDimension>::readAffineTransformITK( m_ImageTransformationFileName );
+
+      // expand file name
+      std::string expandedTransformationFileName = ApplicationUtils::findDataFileName( m_ImageTransformationFileName );
+      typename ITKAffineTransform< TFloat, VImageDimension>::Type::Pointer aTrans = VectorImageUtils< TFloat, VImageDimension>::readAffineTransformITK( expandedTransformationFileName );
       VectorFieldUtils< TFloat, VImageDimension>::affineITKtoMap( aTrans, mapTrans );
 
       m_OriginalTransform = mapTrans;
@@ -401,7 +405,14 @@ CImageInformation< TFloat, VImageDimension >::GetOriginalImage()
       {
         // load it from file
         std::cout << "Loading " << m_ImageFileName << " ... ";
-        m_OriginalImage = VectorImageUtils< TFloat, VImageDimension>::readFileITK( m_ImageFileName );
+        std::string expandedImageFileName = ApplicationUtils::findDataFileName( m_ImageFileName );
+        m_OriginalImage = VectorImageUtils< TFloat, VImageDimension>::readFileITK( expandedImageFileName );
+
+        if ( m_OriginalImage.GetPointer() == NULL )
+        {
+          // could not be read, just return
+          return m_OriginalImage;
+        }
       }
       else
       {

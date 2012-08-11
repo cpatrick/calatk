@@ -35,6 +35,7 @@
 #include "CStateImageMultipleStates.h"
 #include "VectorImageUtils.h"
 #include "LDDMMUtils.h"
+#include "CQueryEnvironmentVariables.h"
 
 #include "CJSONConfiguration.h"
 
@@ -157,13 +158,17 @@ int DoIt( int argc, char** argv )
     return EXIT_FAILURE;
   }
 
+  CALATK::CQueryEnvironmentVariables env;
+
   if ( bSubiterationUpdate )
   {
     atlasBuilderSubiterationUpdate->SetAtlasIsSourceImage( bAtlasImageIsSourceImage );
+    atlasBuilderSubiterationUpdate->SetMaxDesiredLogLevel( env.GetLogLevel() );
   }
   else
   {
     atlasBuilderFullGradient->SetAtlasIsSourceImage( bAtlasImageIsSourceImage );
+    atlasBuilderFullGradient->SetMaxDesiredLogLevel( env.GetLogLevel() );
   }
 
   CALATK::CJSONConfiguration::Pointer combinedConfiguration = new CALATK::CJSONConfiguration;
@@ -204,11 +209,11 @@ int DoIt( int argc, char** argv )
 }
 
 
-int main(int argc, char **argv)
+int calatkAtlasBuilderTest(int argc, char **argv)
 {
 // TODO: Also do it for float and for different dimension, for now let's just stick to a simple 1D double test
   DoIt< double, 1 >( argc, argv );
 
-  return EXIT_FAILURE;
+  return EXIT_SUCCESS;
 
 }

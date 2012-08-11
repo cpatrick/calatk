@@ -19,7 +19,6 @@
 
 #include "ApplicationUtils.h"
 
-
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -37,61 +36,81 @@ namespace CALATK
  *
  */
 
+//
+// Finds a filename in path
+//
+std::string ApplicationUtils::findFileNameInPath( std::string fileNameOrig, std::vector< std::string > pathNames )
+{
+  std::string fileName = fileNameOrig;
 
-//
-// Split a string by a delimiting character
-//
-std::vector<std::string> ApplicationUtils::splitString(std::string str, char delim) {
-  
-  std::vector<std::string> out(0);
-  
-  std::size_t pos1 = 0;
-  std::size_t pos2 = 0;
-  bool reachedEnd = false;
-  while(!reachedEnd) {
-  pos2 = str.find(delim, pos1);
-  
-  if (pos2 == std::string::npos) {
-    reachedEnd = true;    
-    if (pos1 != str.size()) {
-    out.push_back(str.substr(pos1, str.size()-pos1));
+  // check if we have an absolute path name here
+  if ( itksys::SystemTools::FileIsFullPath( fileName.c_str() ))
+  {
+    // there is nothing to complete here, because a full path was specified
+    return fileName;
+  }
+  else
+  {
+    // go through all possible path combinations (also works if it was relative)
+    std::vector< std::string > foundFiles;
+    typedef std::vector< std::string >::const_iterator IteratorType;
+    for ( IteratorType iter = pathNames.begin(); iter != pathNames.end(); ++iter )
+    {
+      std::vector< std::string > vecOfStrings;
+      vecOfStrings.push_back(""); // because the first two components are contained in *iter
+      vecOfStrings.push_back( *iter );
+      vecOfStrings.push_back( fileName );
+      std::string fullPathFileName = itksys::SystemTools::JoinPath( vecOfStrings );
+      std::string fullPathFileNameCollapsed = itksys::SystemTools::CollapseFullPath( fullPathFileName.c_str() );
+
+      // check if it exists
+      if ( itksys::SystemTools::FileExists( fullPathFileNameCollapsed.c_str(), true ) )
+      {
+        foundFiles.push_back( fullPathFileNameCollapsed );
+      }
     }
-  } else {
-    out.push_back(str.substr(pos1, pos2-pos1));
+
+    if ( foundFiles.size() == 0 )
+    {
+      // no file found (even with expansion), let ITK deal with it
+      return fileNameOrig;
+    }
+    else if ( foundFiles.size()>1 )
+    {
+      std::cout << std::endl;
+      std::cout << "Detected ambiguous filename expansions:" << std::endl;
+
+      for ( int iI=0; iI < foundFiles.size(); ++iI )
+      {
+        std::cout << iI << ": " << foundFiles[ iI ] << std::endl;
+      }
+
+      std::cout << "Refusing to expand and using original filename = " << fileNameOrig << std::endl;
+      return fileNameOrig;
+    }
+    else
+    {
+      // only one. This is non-ambiguous
+      return foundFiles[ 0 ];
+    }
+
   }
-  
-  pos1 = pos2+1;
-  }
-  
-  return out;
-  
 }
 
-//
-// Function to get the base directory from a file path
-//
-std::string ApplicationUtils::getBaseDir(std::string str) {
+std::string ApplicationUtils::findDataFileName( std::string fileName )
+{
+  CQueryEnvironmentVariables env;
+  std::vector< std::string > jsonPath = env.GetDataPath();
 
-  size_t pos = str.find_last_of('/');
-  std::string out = str.substr(0, pos);
-  
-  if (out.size() == 0) {
-  out = "./";
-  }
-  
-  return out;
-  
+  return findFileNameInPath( fileName, jsonPath );
 }
 
-//
-// Function to check the validity of a path
-//
-bool ApplicationUtils::validPath(std::string str) {
-  struct stat st;
-  if(stat(str.c_str(),&st) == 0) {
-    return true;
-  }
-  return false;
+std::string ApplicationUtils::findJSONFileName( std::string fileName )
+{
+  CQueryEnvironmentVariables env;
+  std::vector< std::string > jsonPath = env.GetJSONPath();
+
+  return findFileNameInPath( fileName, jsonPath );
 }
 
 //
@@ -128,155 +147,6 @@ bool ApplicationUtils::startsWith(std::string str, std::string pfx) {
   }
   std::string start = str.substr(0, pfx.size());
   return (strcmp(start.c_str(), pfx.c_str()) == 0);
-}
-
-//
-// Function to get the type of time series file
-//
-int ApplicationUtils::getTStype(std::string path) {
-  if (!validPath(path)) {
-  return TS_BAD;
-  }
-  std::vector<std::string> split = splitString(path, '.');
-  if (strcmp(split[split.size()-1].c_str(),"ts2") == 0) {
-  return TS_2D;
-  } else if (strcmp(split[split.size()-1].c_str(),"ts3") == 0) {
-  return TS_3D;
-  } else {
-  return TS_BAD;
-  }
-}
-
-//
-// Function to get the command line arguments for a sub function
-//
-std::vector<std::string> ApplicationUtils::getSubArgv(int argc, char** argv) {
-  
-  std::vector<std::string> subArgv(argc-1);
-  
-  for (int i = 1; i < argc; i++) {
-  subArgv[i-1] = std::string(argv[i]);
-  }
-  
-  return subArgv;
-}
-
-//
-// getNextGoodLine
-//
-bool ApplicationUtils::getNextGoodLine(std::ifstream* reader, std::string* out) {
-  bool goodLine = false;
-  bool lineExists = true;
-  std::string temp;
-  while (!goodLine && lineExists) {
-  lineExists = std::getline(*reader, temp);
-  if(temp.size() > 0 && temp[0] != '#') {
-    goodLine = true;
-  }
-  }
-  
-  *out = temp;
-  return lineExists;
-}
-
-//
-// getCWD
-//
-#if CALATK_SYSTEM_WINDOWS
-#include <direct.h>
-#endif
-std::string ApplicationUtils::getCWD() {
-  
-  const unsigned int maxSize = 4096;
-  char buffer[maxSize];
-
-  char* temp = getcwd(buffer, maxSize);
-  (void) temp; // Supress unused warning
-  
-  std::string out(buffer);
-  
-  return out;
-}
-
-
-//
-// dirExists
-//
-bool ApplicationUtils::dirExists(std::string path) {
-  path = removeDoubleSlashes(path);
-  struct stat st;
-  return (stat(path.c_str(), &st) == 0);
-}
-
-//
-// removeDoubleSlashes
-//
-std::string ApplicationUtils::removeDoubleSlashes(std::string path) {
-
-  // first replace "//" with "/"
-  std::string out = path;
-  size_t pos = out.find("//");
-  while (pos != std::string::npos) {
-    out.replace(pos, 2, "/");
-    pos = out.find("//");
-  }
-
-  // next replace "\\" with "\"
-  pos = out.find("\\\\");
-  while (pos != std::string::npos) {
-    out.replace(pos, 2, "\\");
-    pos = out.find("\\\\");
-  }
-
-  return out;
-}
-
-std::string ApplicationUtils::removeLastSlash(std::string path) {
-
-  // first replace "//" with "/"
-  std::string out = path;
-
-  if (out.length() > 0)
-  {
-    std::string::iterator it = out.end() - 1;
-    if ( (*it == '/') || (*it == '\\'))
-    {
-      out.erase(it);
-    }
-  }
-
-  return out;
-}
-
-
-//
-// makeDirIfNeeded
-//
-bool ApplicationUtils::makeDirIfNeeded(std::string& path)
-{
-  path = removeDoubleSlashes(path);
-  const std::string outpath = removeLastSlash(path);
-  if (!dirExists(outpath))
-    {
-    bool dirCreated = false;
-#if CALATK_SYSTEM_UNIX
-    dirCreated = (mkdir(outpath.c_str(), 0755) == 0);
-#elif CALATK_SYSTEM_WINDOWS
-    dirCreated = (_mkdir(outpath.c_str()) == 0);
-#else
-    itkGenericExceptionMacro("Unkown Operating System. Cannot make directory");
-#endif
-    if (!dirCreated)
-      {
-      path = "";
-      return false;
-      }
-    else
-      {
-      return true;
-      }
-    }
-  return true;
 }
 
 } // end namespace
