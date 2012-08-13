@@ -151,6 +151,7 @@
     break; \
   default: \
     std::cerr << "Unsupported image dimension = " << ImageDimension << std::endl; \
+    return EXIT_FAILURE; \
   } \
 
 /** multi-dimensional datatype macro */

@@ -33,6 +33,7 @@
 #include "CStateImageMultipleStates.h"
 #include "VectorImageUtils.h"
 #include "LDDMMUtils.h"
+#include "CQueryEnvironmentVariables.h"
 
 #include "CJSONConfiguration.h"
 
@@ -78,18 +79,79 @@ int DoIt( int argc, char** argv )
     ptrImageManager = dynamic_cast< ImageManagerType* >( atlasBuilderFullGradient->GetImageManagerPointer() );
   }
 
-  for ( unsigned int iI=0; iI < sourceImages.size(); ++iI )
+  if ( configFileData.compare( "None" ) != 0 )
+  {
+    CALATK::CJSONConfiguration::Pointer advancedDataConfigurationCombined = new CALATK::CJSONConfiguration;
+    CALATK::CJSONConfiguration::Pointer advancedDataConfigurationCleaned  = new CALATK::CJSONConfiguration;
+    advancedDataConfigurationCombined->ReadJSONConfigurationFile( configFileData );
+
+    ptrImageManager->SetDataAutoConfiguration( advancedDataConfigurationCombined, advancedDataConfigurationCleaned );
+    ptrImageManager->ReadInputsFromDataJSONConfiguration();
+
+    // sanity check to see if all of the input images are either at time 0 or at time 1 and have only one time-point per timeseries
+
+    typename ImageManagerType::SubjectIndicesType allSubjectIndices;
+    typename ImageManagerType::TimePointsType timePoints;
+    typename ImageManagerType::SubjectIndicesType::const_iterator iterSI;
+    ptrImageManager->GetAvailableSubjectIndices( allSubjectIndices );
+
+    unsigned int numberOfZeroTimePoints = 0;
+    unsigned int numberOfOneTimePoints = 0;
+
+    for ( iterSI = allSubjectIndices.begin(); iterSI != allSubjectIndices.end(); ++iterSI )
     {
-    // give each image its own id, because this is cross-sectional atlas building
-      if ( bAtlasImageIsTargetImage)
+      ptrImageManager->GetTimePointsForSubjectIndex( timePoints, *iterSI );
+      if ( timePoints.size() != 1 )
       {
-        ptrImageManager->AddImage( sourceImages[ iI ], 0.0, iI );
+        std::cerr << "ERROR: Only one time-point per time-series allowed for cross-sectional atlas-building" << std::endl;
+        return EXIT_FAILURE;
+      }
+
+      if ( timePoints[0] == 0 )
+      {
+        ++numberOfZeroTimePoints;
+      } else if ( timePoints[0] == 1)
+      {
+        ++numberOfOneTimePoints;
       }
       else
       {
-        ptrImageManager->AddImage( sourceImages[ iI ], 1.0, iI );
+        std::cerr << "ERROR: Timepoints need to be either 0 or 1" << std::endl;
+        return EXIT_FAILURE;
       }
     }
+
+    bool bAtlasImageIsSourceImage = false;
+    if ( numberOfZeroTimePoints == 0 )
+    {
+      bAtlasImageIsSourceImage = true;
+      std::cout << "Atlas image is source image" << std::endl;
+    } else if ( numberOfOneTimePoints == 0 )
+    {
+      bAtlasImageIsSourceImage = false;
+      std::cout << "Atlas image is target image" << std::endl;
+    }
+    else
+    {
+      std::cerr << "ERROR: Timepoints need to be either all 0 or all 1" << std::endl;
+      return EXIT_FAILURE;
+    }
+  }
+  else // no data config file given, data needs to be specified manually
+  {
+    for ( unsigned int iI=0; iI < sourceImages.size(); ++iI )
+      {
+      // give each image its own id, because this is cross-sectional atlas building
+        if ( bAtlasImageIsTargetImage)
+        {
+          ptrImageManager->AddImage( sourceImages[ iI ], 0.0, iI );
+        }
+        else
+        {
+          ptrImageManager->AddImage( sourceImages[ iI ], 1.0, iI );
+        }
+      }
+  }
 
   if ( bSubiterationUpdate )
   {
@@ -107,11 +169,13 @@ int DoIt( int argc, char** argv )
   }
   CALATK::CJSONConfiguration::Pointer cleanedConfiguration = new CALATK::CJSONConfiguration;
 
+  CALATK::CQueryEnvironmentVariables env;
+
   if ( bSubiterationUpdate )
   {
     atlasBuilderSubiterationUpdate->SetAutoConfiguration( combinedConfiguration, cleanedConfiguration );
     atlasBuilderSubiterationUpdate->SetAllowHelpComments( bCreateJSONHelp );
-    atlasBuilderSubiterationUpdate->SetMaxDesiredLogLevel( logLevel );
+    atlasBuilderSubiterationUpdate->SetMaxDesiredLogLevel( env.GetLogLevel() );
 
     atlasBuilderSubiterationUpdate->Solve();
   }
@@ -119,7 +183,7 @@ int DoIt( int argc, char** argv )
   {
     atlasBuilderFullGradient->SetAutoConfiguration( combinedConfiguration, cleanedConfiguration );
     atlasBuilderFullGradient->SetAllowHelpComments( bCreateJSONHelp );
-    atlasBuilderFullGradient->SetMaxDesiredLogLevel( logLevel );
+    atlasBuilderFullGradient->SetMaxDesiredLogLevel( env.GetLogLevel() );
 
     atlasBuilderFullGradient->Solve();
   }
@@ -163,18 +227,35 @@ int main(int argc, char **argv)
 {
   PARSE_ARGS;
 
+  unsigned int uiImageDimension = 0;
+
   if ( sourceImages.size()==0 )
     {
-    throw std::runtime_error( "No images to build the atlas from specified. Use --images" );
-    return EXIT_FAILURE;
+      // check if this is specified in a JSON data file intead
+      if ( configFileData.compare( "None" ) != 0 )
+      {
+        CALATK::CJSONConfiguration::Pointer advancedDataConfiguration = new CALATK::CJSONConfiguration;
+        advancedDataConfiguration->ReadJSONConfigurationFile( configFileData );
+
+        //CONTINUE HERE. NEED TO MODIFY THE IMAGE MANAGER TO AVOID DUPLICATION.
+        //NEED A WAY TO PARSE THE DATA JSON FILES SO WE CAN READ AN IMAGE TO GET THE DIMENSION
+        //MOVE GENERIC PARSING FUNCTIONALITY TO A DIFFERENT CLASS
+
+        throw std::runtime_error( "Data JSON file not yet fully implemented." );
+        return EXIT_FAILURE;
+
+      }
+    else
+      {
+        throw std::runtime_error( "No images to build the atlas from specified. Use --images" );
+        return EXIT_FAILURE;
+      }
     }
   else
     {
     std::cout << "Detected " << sourceImages.size() << " source images." << std::endl;
-    }
-
-  unsigned int uiImageDimension = CALATK::GetNonSingletonImageDimensionFromFile( sourceImages[ 0 ] );
-
+    uiImageDimension = CALATK::GetNonSingletonImageDimensionFromFile( sourceImages[ 0 ] );
+  }
 
   std::cout << "Image dimension = " << uiImageDimension << std::endl;
 
@@ -190,7 +271,7 @@ int main(int argc, char **argv)
   DoItND( float, uiImageDimension, argc, argv );
 #endif
 
-  return EXIT_FAILURE;
+  return EXIT_SUCCESS;
 
 }
 
