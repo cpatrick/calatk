@@ -34,6 +34,8 @@
 #include "CGaussianKernel.h"
 #include "CResamplerLinear.h"
 
+#include "CJSONDataParser.h"
+
 namespace CALATK
 {
 
@@ -403,20 +405,6 @@ protected:
    */
   void SetCurrentImagePreprocessingSettings( TimeSeriesDataPointType& dataPoint );
 
-  /** Read in the given input images and their associated metadata into the
-   * ImageManager memory when the JSON configuration file is in the Basic
-   * format. */
-  void ReadInputsFromBasicDataJSONConfiguration();
-  /** Read in the given input images and their associated metadata into the
-   * ImageManager memory when the JSON configuration file is in the Advanced
-   * format. The Advanced data configuration format is more descriptive, can
-   * accept more optional fields, and is distinguished from the Basic format by
-   * the presence of a "CalaTKDataConfigurationVersion" entry. */
-  void ReadInputsFromAdvancedDataJSONConfiguration();
-
-  void WriteOutputsFromBasicDataJSONConfiguration( AlgorithmBaseType * algorithm );
-  void WriteOutputsFromAdvancedDataJSONConfiguration( AlgorithmBaseType * algorithm );
-
 private:
 
   /** Private to force the use of the SetAlgorithmAutoConfiguration, so it is
@@ -425,10 +413,6 @@ private:
   virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
   const CJSONConfiguration * GetJSONConfigurationCombined();
   const CJSONConfiguration * GetJSONConfigurationCleaned();
-
-  /** Determined by the presence of a "CalaTKDataConfigurationVersion" entry. */
-  bool IsAdvancedDataConfigurationFormat();
-
 
   /** Master internal AddImageAndTransform used by AddImage, AddCommonImage,
    * and AddImageAndTransform to prevent code duplication. */
@@ -442,6 +426,8 @@ private:
   typedef std::map< std::string, int >      MapSubjectStringToSubjectIdType;
   typedef std::pair< std::string, int >     SubjectStringToSubjectIdPairType;
   MapSubjectStringToSubjectIdType  m_MapSubjectStringToSubjectId; /**< map from the string used to identify the subject in the data configuration file to the integer used to identify the subject during execution */
+
+  typedef typename CJSONDataParser< TFloat >::SImageDatum ImageDatumType;
 
   /********************************
    * Typedefs *
