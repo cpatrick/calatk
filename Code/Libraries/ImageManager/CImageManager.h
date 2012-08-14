@@ -418,6 +418,10 @@ private:
    * and AddImageAndTransform to prevent code duplication. */
   int InternalAddImage( FloatType timePoint, int subjectId, const std::string & fileName = "", VectorImageType * pIm = NULL, const std::string & transformFileName = "", const std::string & subjectString = "" );
 
+  /** Auxiliary function for InternalAddImage which does not keep track
+    * of any JSON information, but just adds an image to the image manager. */
+  int InternalAddImageWithoutJSONUpdate( FloatType timePoint, int subjectId, const std::string & fileName = "", VectorImageType * pIm = NULL, const std::string & transformFileName = "", const std::string & subjectString = "" );
+
 
   int m_DatasetGlobalIdCounter; /**< Internal running id for datasets */
   typedef std::map< int, int >              MapIdToSubjectIdType;

@@ -315,8 +315,7 @@ void CImageManager< TFloat, VImageDimension >::ReadInputsFromDataJSONConfigurati
   for ( iter = inputData.begin(); iter != inputData.end(); ++iter )
     {
       VectorImageType * nullImage = NULL;
-      this->InternalAddImage( iter->timePoint, iter->subjectId, iter->fileName, nullImage, iter->transformFileName, iter->subjectString );
-
+      this->InternalAddImageWithoutJSONUpdate( iter->timePoint, iter->subjectId, iter->fileName, nullImage, iter->transformFileName, iter->subjectString );
     }
 }
 
@@ -446,11 +445,8 @@ CImageManager< TFloat, VImageDimension >::GetImageById( int uid )
   return NULL;
 }
 
-//
-// Internal method for adding an input image
-//
 template < class TFloat, unsigned int VImageDimension >
-int CImageManager< TFloat, VImageDimension >::InternalAddImage( FloatType timePoint, int subjectId, const std::string & fileName, VectorImageType * pIm, const std::string & transformFileName, const std::string & subjectString )
+int CImageManager< TFloat, VImageDimension >::InternalAddImageWithoutJSONUpdate( FloatType timePoint, int subjectId, const std::string & fileName, VectorImageType * pIm, const std::string & transformFileName, const std::string & subjectString )
 {
   if ( !this->ScalesForAllIndicesAreSpecified() )
     {
@@ -487,6 +483,35 @@ int CImageManager< TFloat, VImageDimension >::InternalAddImage( FloatType timePo
     {
     m_AllSubjectInformation.insert( IdAndTimeSeriesDataPointPairType( subjectId, imageInformation ) );
     }
+
+  // keep track of which subject an id came from
+  this->m_MapIdToSubjectId[ uniqueId ] = subjectId;
+
+  if( this->m_MapSubjectStringToSubjectId.find( subjectString ) == this->m_MapSubjectStringToSubjectId.end() )
+    {
+    this->m_MapSubjectStringToSubjectId.insert( SubjectStringToSubjectIdPairType( subjectString, subjectId ));
+    }
+  else if( subjectId != this->m_MapSubjectStringToSubjectId[subjectString] )
+    {
+    std::ostringstream ostrm;
+    ostrm << "Tried to associate subject id: " << subjectId << " with subject string: " << subjectString
+      << " when it already had the Id: " << this->m_MapSubjectStringToSubjectId[subjectString]
+      << " associated with it.";
+    throw std::logic_error( ostrm.str().c_str() );
+    }
+
+  return uniqueId;
+}
+
+//
+// Internal method for adding an input image
+//
+template < class TFloat, unsigned int VImageDimension >
+int CImageManager< TFloat, VImageDimension >::InternalAddImage( FloatType timePoint, int subjectId, const std::string & fileName, VectorImageType * pIm, const std::string & transformFileName, const std::string & subjectString )
+{
+  // Do all the JSON business (not necessary when using the JSONDataParser
+  // as it does all of this on-the-fly. But required functionality if images are added
+  // not based on an external JSON data configuration
 
   // Add the entry to the data configuration file.
   Json::Value & dataCombinedConfigRoot = *(this->m_DataCombinedJSONConfig->GetRootPointer());
@@ -626,23 +651,9 @@ int CImageManager< TFloat, VImageDimension >::InternalAddImage( FloatType timePo
     cleanedSubject[timePointIndex] = timePointEntry;
     }
 
-  // keep track of which subject an id came from
-  this->m_MapIdToSubjectId[ uniqueId ] = subjectId;
+  // now add it
+  return this->InternalAddImageWithoutJSONUpdate( timePoint, subjectId, fileName, pIm, transformFileName, requiredSubjectString );
 
-  if( this->m_MapSubjectStringToSubjectId.find( requiredSubjectString ) == this->m_MapSubjectStringToSubjectId.end() )
-    {
-    this->m_MapSubjectStringToSubjectId.insert( SubjectStringToSubjectIdPairType( requiredSubjectString, subjectId ));
-    }
-  else if( subjectId != this->m_MapSubjectStringToSubjectId[requiredSubjectString] )
-    {
-    std::ostringstream ostrm;
-    ostrm << "Tried to associate subject id: " << subjectId << " with subject string: " << requiredSubjectString
-      << " when it already had the Id: " << this->m_MapSubjectStringToSubjectId[requiredSubjectString]
-      << " associated with it.";
-    throw std::logic_error( ostrm.str().c_str() );
-    }
-
-  return uniqueId;
 }
 
 //

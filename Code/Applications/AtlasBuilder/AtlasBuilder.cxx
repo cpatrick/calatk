@@ -36,6 +36,7 @@
 #include "CQueryEnvironmentVariables.h"
 
 #include "CJSONConfiguration.h"
+#include "CJSONDataParser.h"
 
 #include "AtlasBuilderCLP.h"
 
@@ -237,13 +238,23 @@ int main(int argc, char **argv)
         CALATK::CJSONConfiguration::Pointer advancedDataConfiguration = new CALATK::CJSONConfiguration;
         advancedDataConfiguration->ReadJSONConfigurationFile( configFileData );
 
-        //CONTINUE HERE. NEED TO MODIFY THE IMAGE MANAGER TO AVOID DUPLICATION.
-        //NEED A WAY TO PARSE THE DATA JSON FILES SO WE CAN READ AN IMAGE TO GET THE DIMENSION
-        //MOVE GENERIC PARSING FUNCTIONALITY TO A DIFFERENT CLASS
+        CALATK::CJSONDataParser< double > parser;
+        typedef CALATK::CJSONDataParser< double >::SImageDatum SImageDatum;
+        std::vector< SImageDatum > parsedData;
 
-        throw std::runtime_error( "Data JSON file not yet fully implemented." );
-        return EXIT_FAILURE;
+        parser.ParseInputDataFromJSONConfiguration( parsedData, advancedDataConfiguration );
 
+        if ( parsedData.size() > 0 )
+        {
+          std::string fileNameToDetermineDimensionFrom = parsedData[ 0 ].fileName;
+          std::cout << "Determining image dimension from " << fileNameToDetermineDimensionFrom << std::endl;
+          uiImageDimension = CALATK::GetNonSingletonImageDimensionFromFile( fileNameToDetermineDimensionFrom );
+        }
+        else
+        {
+          throw std::runtime_error( "No data in JSON data file." );
+          return EXIT_FAILURE;
+        }
       }
     else
       {

@@ -71,7 +71,8 @@ void CJSONDataParser< TFloat >::ParseDataFromBasicJSONConfigurationInternal( std
 
   if( combinedData == Json::nullValue )
     {
-    throw std::runtime_error( "No images of type " + dataType + " given." );
+    std::cout << "No images of type " + dataType + " given." << std::endl;
+    return;
     }
   Json::Value & combinedSubjects = *(combinedData.begin());
   if( combinedSubjects == Json::nullValue || combinedSubjects.size() == 0 )
@@ -137,7 +138,8 @@ void CJSONDataParser< TFloat >::ParseDataFromAdvancedJSONConfigurationInternal( 
 
   if( combinedData == Json::nullValue )
     {
-    throw std::runtime_error( "No images of type " + dataType + " given." );
+    std::cout << "No images of type " + dataType + " given." << std::endl;
+    return;
     }
   Json::Value combinedSubjects = combinedData["Subjects"];
   if( combinedSubjects == Json::nullValue || combinedSubjects.size() == 0 )

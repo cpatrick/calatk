@@ -16,6 +16,13 @@
 		"Alpha" : 0.050,
 		"Gamma" : 1.0
 	},
+	"ImageManager" :
+	{
+		"AutoScaleImages" : true,
+		"BlurHighestResolutionImage" : true,
+		"Sigma" : 0.02,
+		"SigmaHighestResolutionImage" : 0.02
+	},
 	"MultiScaleBlurHighestResolutionImage" : false,
 	"MultiScaleFinalOutput" :
 	{
