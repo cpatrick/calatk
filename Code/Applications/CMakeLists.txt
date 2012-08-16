@@ -15,8 +15,6 @@ if(COMPILE_CLP_MODULES)
 
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/MetamorphosisShooting)
 
-  #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/TimeSeries)
-
-  #add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/LongitudinalAtlasBuilder)
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/LongitudinalAtlasBuilder)
 
 endif(COMPILE_CLP_MODULES)

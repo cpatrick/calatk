@@ -231,9 +231,8 @@ private:
 
 };
 
-#include "CAtlasBuilder.txx"
-
 } // end namespace
 
+#include "CAtlasBuilder.txx"
 
 #endif // C_ATLAS_BUILDER_H

@@ -3,7 +3,7 @@
 
   <category>Registration</category>
     <title>Atlas-builder</title>
-    <description>Cross-sectional atlas-building</description>
+    <description>Longitudinal atlas-building</description>
     <version>1.0</version>
     <documentation-url></documentation-url>
     <license>Apache 2.0</license>
@@ -39,44 +39,11 @@
             <description>Specifies the floating point type for the computations (float/double). In general float is recommended (because it will save memory). If CALATK is not compiled to support floating point choice, this option is ignored.</description>
         </string-enumeration>
 
-        <string-enumeration>
-            <name>sLDDMMSolverType</name>
-            <label>LDDMM Solver Type</label>
-            <flag>s</flag>
-            <longflag>--solver</longflag>
-            <default>relaxation</default>
-            <element>simplifiedShooting</element>
-            <element>adjointShooting</element>
-            <element>relaxation</element>
-            <description>Selects the desired LDDMM solver (simplifiedShooting/adjointShooting/relaxation). The relaxation solver performs the optimization over the full spatio-temporal velocity field. This is the algorithm by Beg. The simplified shooting method and the adjoint shooting method perform the optimization over the initial image and the initial momentum. The implementations are based on a modification of the shooting algorithm by Ashburner (simplified shooting) and the adjoint shooting method/geodesic regression formulation by Vialard/Niethammer.</description>
-        </string-enumeration>
-
-        <boolean>
-          <name>bSubiterationUpdate</name>
-          <longflag>--subiterationUpdate</longflag>
-          <default>false</default>
-          <description>If set, will use subiteration update otherwise the full gradient to compute the atlas.</description>
-        </boolean>
-
   </parameters>
 
   <parameters>
         <label>Input/Output</label>
         <description>Input/Output Parameters</description>
-
-        <string-vector>
-            <name>sourceImages</name>
-	    <longflag>--images</longflag>
-            <label>Source Images</label>
-            <description>Source images for the atlas building.</description>
-        </string-vector>
-
-	<string-vector>
-	  <name>sourceToAtlasMaps</name>
-	  <longflag>--sourceToAtlasMaps</longflag>
-	  <label>Source to atlas maps</label>
-	  <description>Resulting source to atlas maps.</description>
-	</string-vector>
 
         <file>
           <name>configFileData</name>
@@ -116,21 +83,6 @@
           <default>false</default>
           <description>If set, will generate annotated settings in the JSON configuration file. This is to help understand the meaning and options of the different settings.</description>
         </boolean>
-
-        <boolean>
-          <name>bAtlasImageIsTargetImage</name>
-          <longflag>--atlasImageIsTargetImage</longflag>
-          <default>false</default>
-          <description>Controls who the atlas will be built. If set the given images are treated as source images and warped towards the atlas (not recommended). Otherwise the atlas becomes the source image and potential registation mismatches only occur at the target, but everything is computed with respect to a proper central atlas (recommended).</description>
-        </boolean>
-
-        <image>
-            <name>atlasImage</name>
-            <label>Atlas Image</label>
-            <channel>output</channel>
-            <index>0</index>
-            <description>Resulting atlas image from atlas computation.</description>
-        </image>
 
   </parameters>
 </executable>

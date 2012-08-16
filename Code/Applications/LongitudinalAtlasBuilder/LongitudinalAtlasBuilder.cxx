@@ -31,24 +31,45 @@
 
 #include <iostream>
 #include "CALATKCommon.h"
-#include "CAtlasBuilderFullGradient.h"
-#include "CAtlasBuilderSubiterationUpdate.h"
-#include "CStateInitialImageMomentum.h"
-#include "CStateInitialMomentum.h"
-#include "CStateMultipleStates.h"
-#include "CStateImageMultipleStates.h"
-#include "VectorImageUtils.h"
-#include "LDDMMUtils.h"
-#include "CQueryEnvironmentVariables.h"
-
 #include "CJSONConfiguration.h"
+#include "CJSONDataParser.h"
+
+#include "CLongitudinalAtlasBuilder.h"
 
 #include "LongitudinalAtlasBuilderCLP.h"
+
 
 template < class TFLOAT, unsigned int VImageDimension >
 int DoIt( int argc, char** argv )
 {
   PARSE_ARGS;
+
+  typedef CALATK::CLongitudinalAtlasBuilder< TFLOAT, VImageDimension > LongitudinalAtlasBuilderType;
+  typename LongitudinalAtlasBuilderType::Pointer ptrLongitudinalAtlasBuilder = new LongitudinalAtlasBuilderType;
+
+  CALATK::CJSONConfiguration::Pointer combinedConfiguration = new CALATK::CJSONConfiguration;
+  if ( configFile.compare( "None" ) != 0 )
+  {
+    combinedConfiguration->ReadJSONConfigurationFile( configFile );
+  }
+  CALATK::CJSONConfiguration::Pointer cleanedConfiguration = new CALATK::CJSONConfiguration;
+
+  CALATK::CQueryEnvironmentVariables env;
+
+  ptrLongitudinalAtlasBuilder->SetAutoConfiguration( combinedConfiguration, cleanedConfiguration );
+  ptrLongitudinalAtlasBuilder->SetAllowHelpComments( bCreateJSONHelp );
+  ptrLongitudinalAtlasBuilder->SetMaxDesiredLogLevel( env.GetLogLevel() );
+
+  CALATK::CJSONConfiguration::Pointer dataConfigurationCombined = new CALATK::CJSONConfiguration;
+  if ( configFileData.compare( "None" ) != 0 )
+  {
+    dataConfigurationCombined->ReadJSONConfigurationFile( configFileData );
+  }
+  CALATK::CJSONConfiguration::Pointer dataConfigurationCleaned = new CALATK::CJSONConfiguration;
+
+  ptrLongitudinalAtlasBuilder->SetDataAutoConfiguration( dataConfigurationCombined, dataConfigurationCleaned );
+
+  ptrLongitudinalAtlasBuilder->Solve();
 
   return EXIT_SUCCESS;
 }
@@ -57,5 +78,47 @@ int main(int argc, char **argv)
 {
   PARSE_ARGS;
 
+  unsigned int uiImageDimension = 0;
 
+  // check if this is specified in a JSON data file intead
+  // the longitudinal atlas-builder does not support command-line specified data input
+  if ( configFileData.compare( "None" ) != 0 )
+    {
+      CALATK::CJSONConfiguration::Pointer dataConfiguration = new CALATK::CJSONConfiguration;
+      dataConfiguration->ReadJSONConfigurationFile( configFileData );
+
+      CALATK::CJSONDataParser< double > parser;
+      typedef CALATK::CJSONDataParser< double >::SImageDatum SImageDatum;
+      std::vector< SImageDatum > parsedData;
+
+      parser.ParseInputDataFromJSONConfiguration( parsedData, dataConfiguration );
+
+      if ( parsedData.size() > 0 )
+      {
+        std::string fileNameToDetermineDimensionFrom = parsedData[ 0 ].fileName;
+        std::cout << "Determining image dimension from " << fileNameToDetermineDimensionFrom << std::endl;
+        uiImageDimension = CALATK::GetNonSingletonImageDimensionFromFile( fileNameToDetermineDimensionFrom );
+
+        std::cout << "Detected dimension d = " << uiImageDimension << " for image." << std::endl;
+      }
+      else
+      {
+        throw std::runtime_error( "No data in JSON data file." );
+        return EXIT_FAILURE;
+      }
+
+    }
+    else
+    {
+      throw std::runtime_error( "No JSON data file specified." );
+      return EXIT_FAILURE;
+    }
+
+#ifdef FLOATING_POINT_CHOICE
+  DoItNDWithType( sFloatingPointType, uiImageDimension, argc, argv );
+#else
+  DoItND( float, uiImageDimension, argc, argv );
+#endif
+
+  return EXIT_SUCCESS;
 }

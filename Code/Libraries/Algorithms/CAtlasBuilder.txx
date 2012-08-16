@@ -20,6 +20,9 @@
 #ifndef C_ATLAS_BUILDER_TXX
 #define C_ATLAS_BUILDER_TXX
 
+namespace CALATK
+{
+
 template < class TState >
 CAtlasBuilder< TState >::CAtlasBuilder()
   : DefaultKernel( "HelmholtzKernel" ),
@@ -749,6 +752,7 @@ void CAtlasBuilder< TState >::Solve()
   Superclass::Solve();
 }
 
+} // end namespace CALATK
 
 #endif
 
