@@ -35,6 +35,10 @@
 #include <map>
 #include <algorithm>
 
+#include "VectorImage.h"
+#include "VectorField.h"
+#include "VectorImageUtils.h"
+
 namespace CALATK
 {
 
@@ -58,6 +62,7 @@ public:
   typedef TFloat FloatType;
   typedef typename Superclass::VectorImageType VectorImageType;
   typedef typename Superclass::VectorFieldType VectorFieldType;
+  typedef VectorImageUtils< TFloat, VImageDimension > VectorImageUtilsType;
 
   typedef typename Superclass::EvolverType        EvolverType;
   typedef typename Superclass::KernelType         KernelType;
@@ -109,12 +114,12 @@ protected:
 
   void DetermineOverallTimeInterval( FloatType &minTime, FloatType &maxTime, std::vector< std::vector< typename CALATK::CJSONDataParser< FloatType >::SImageDatum > > &dataBySubject );
   void DetermineOverallTimeDiscretization( std::vector< FloatType >& overallTimeDiscretization, FloatType minTime, FloatType maxTime );
-  void DetermineDesiredTimePointsForIndividualSubject( std::vector< FloatType > &desiredTimePointsForIndividualSubject, std::vector< std::vector< int > > &desiredSubjectIDsForTimePoint, std::vector< FloatType > &overallTimeDiscretization, std::vector< typename CALATK::CJSONDataParser< FloatType >::SImageDatum > & dataOfIndividualSubject );
-  void DetermineDesiredTimePointsPerSubject( std::vector< std::vector< FloatType > >& desiredTimePointPerSubject, std::vector< std::vector< int > > &desiredSubjectIDsForTimePoint, std::vector< FloatType > &overallTimeDiscretization, std::vector< std::vector< typename CALATK::CJSONDataParser< FloatType >::SImageDatum > > &dataBySubject );
+  void DetermineDesiredTimePointsForIndividualSubject( std::vector< FloatType > &desiredTimePointsForIndividualSubject, std::vector< std::vector< std::pair< int, int > > > &desiredSubjectIDsAndTimePointIndicesForTimePoint, std::vector< FloatType > &overallTimeDiscretization, std::vector< typename CALATK::CJSONDataParser< FloatType >::SImageDatum > & dataOfIndividualSubject );
+  void DetermineDesiredTimePointsPerSubject( std::vector< std::vector< FloatType > >& desiredTimePointPerSubject, std::vector< std::vector< std::pair< int, int > > > &desiredSubjectIDsAndTimePointIndicesForTimePoint, std::vector< FloatType > &overallTimeDiscretization, std::vector< std::vector< typename CALATK::CJSONDataParser< FloatType >::SImageDatum > > &dataBySubject );
   void GetSubjectAndTimeSortedData( std::vector< std::vector< typename CALATK::CJSONDataParser< FloatType >::SImageDatum > > &dataBySubject, std::map< int, int > &subjectIdToArrayId, CALATK::CJSONConfiguration *dataConfiguration );
 
-  void ComputeIndividualGrowthModel( std::vector< SImageDatum > individualSubjectData );
-  void ComputeCrossSectionalAtlas( std::vector< SImageDatum > crossSectionalSubjectData );
+  void ComputeIndividualGrowthModel( std::vector< SImageDatum > individualSubjectData, std::vector< TFloat > desiredTimePoints );
+  void ComputeCrossSectionalAtlas( std::vector< SImageDatum > crossSectionalSubjectData, int timeIndex );
   void ComputePopulationGrowthModel( std::vector< SImageDatum > populationGrowthModelData );
 
 private:
@@ -128,6 +133,11 @@ private:
   MetricType* GetMetricPointer();
   void SetImageManagerPointer( ImageManagerType *ptrImageManager );
   ImageManagerType* GetImageManagerPointer();
+
+  // helper-functions to create consistent filenames
+  std::string CreateIndividualGrowthModelFileNameForSubjectAtTimeIndex( int sId, int tIndex );
+  std::string CreateCrossSectionalAtlasFileNameAtTimeIndex( int tIndex );
+  std::string CreatePopulationGrowthModelFileNameAtTimeIndex( int tIndex );
 
   CJSONConfiguration::Pointer m_DataCombinedJSONConfig;
   CJSONConfiguration::Pointer m_DataCleanedJSONConfig;

@@ -157,6 +157,8 @@ void CLDDMMGeometricMetamorphosisRegistration< TState >::PreFirstSolve()
   plddmm->SetMetricPointer( this->m_ptrMetric );
   plddmm->SetImageManagerPointer( this->m_ptrImageManager );
 
+  plddmm->SetActiveSubjectId( this->GetActiveSubjectId() );
+
   // set the objective functions for the kernels and the kernel numbers
 
   KernelUtilsType::SetObjectiveFunctionAndKernelNumberIfNeeded( this->m_ptrKernel, plddmm, 0 );

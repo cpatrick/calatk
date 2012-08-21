@@ -108,6 +108,8 @@ void CLDDMMGenericRegistration< TState >::PreFirstSolve()
   plddmm->SetMetricPointer( this->m_ptrMetric );
   plddmm->SetImageManagerPointer( this->m_ptrImageManager );
 
+  plddmm->SetActiveSubjectId( this->GetActiveSubjectId() );
+
   KernelUtilsType::SetObjectiveFunctionAndKernelNumberIfNeeded( this->m_ptrKernel, plddmm );
 
 }

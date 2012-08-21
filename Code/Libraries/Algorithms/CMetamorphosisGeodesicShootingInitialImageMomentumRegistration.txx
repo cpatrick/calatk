@@ -97,6 +97,8 @@ void CMetamorphosisGeodesicShootingInitialImageMomentumRegistration< TState >::P
   pMetamorphosis->SetMetricPointer( this->m_ptrMetric );
   pMetamorphosis->SetImageManagerPointer( this->m_ptrImageManager );
 
+  pMetamorphosis->SetActiveSubjectId( this->GetActiveSubjectId() );
+
   KernelUtilsType::SetObjectiveFunctionAndKernelNumberIfNeeded( this->m_ptrKernel, pMetamorphosis );
 }
 

@@ -27,6 +27,7 @@ namespace CALATK
 
 template < class T, unsigned int VImageDimension >
 CAlgorithmBase< T, VImageDimension >::CAlgorithmBase()
+  : m_CurrentlyActiveSubjectId( -1 )
   {
   this->m_ptrMetric = NULL;
   this->m_ptrImageManager = NULL;
@@ -41,6 +42,18 @@ CAlgorithmBase< T, VImageDimension >::CAlgorithmBase()
 template < class T, unsigned int VImageDimension >
 CAlgorithmBase< T, VImageDimension >::~CAlgorithmBase()
 {
+}
+
+template < class T, unsigned int VImageDimension >
+void CAlgorithmBase< T, VImageDimension >::SetActiveSubjectId( int uid )
+{
+  this->m_CurrentlyActiveSubjectId = uid;
+}
+
+template < class T, unsigned int VImageDimension >
+int CAlgorithmBase< T, VImageDimension >::GetActiveSubjectId() const
+{
+  return this->m_CurrentlyActiveSubjectId;
 }
 
 template < class T, unsigned int VImageDimension >
@@ -93,7 +106,7 @@ template < class T, unsigned int VImageDimension >
 void CAlgorithmBase< T, VImageDimension >::PreFirstSolve()
 {
   // create the memory for the map and the image at the resolution of the original image, so we can use it to return a map and an image at any time
-  const VectorImageType* graftImage = m_ptrImageManager->GetGraftImagePointerAtScale();
+  const VectorImageType* graftImage = m_ptrImageManager->GetGraftImagePointerAtScale( this->GetActiveSubjectId() );
 
   assert( this->m_ptrIm.GetPointer() == NULL );
   this->m_ptrIm = new VectorImageType( graftImage );

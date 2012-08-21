@@ -92,6 +92,20 @@ public:
   void SetAllowJSONHelpComments( bool bCreateJSONHelp );
   bool GetAllowJSONHelpComments();
 
+  /**
+   * @brief Sets the subject id which is then used in subsequent algorithms to select subject-specific timeseries
+   *
+   * @param uid  -- unique subject id
+   */
+  void SetActiveSubjectId( int uid );
+
+  /**
+   * @brief Returns the currently set subject id which is used to select timeseries
+   *
+   * @return int
+   */
+  int GetActiveSubjectId() const;
+
   virtual void SetAutoConfiguration( CJSONConfiguration * configValueIn, CJSONConfiguration * configValueOut );
 
 protected:
@@ -112,6 +126,8 @@ protected:
 
   unsigned int GetMultiScaleNumberOfScales() const ;
   TFloat       GetMultiScaleScale( unsigned int scaleIdx ) const;
+
+  int m_CurrentlyActiveSubjectId;
 
   // Multi-scale settings for the image-manager
   typedef std::vector< TFloat > MultiScaleScalesType;
