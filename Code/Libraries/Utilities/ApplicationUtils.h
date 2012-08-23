@@ -45,6 +45,11 @@ class ApplicationUtils
 public:
 
   /**
+    * Combines a path and a filename, e.g., on unix path/fileName
+    */
+  static std::string combinePathAndFileName( std::string path, std::string fileName );
+
+  /**
     * Finds a filename given a set of paths and returns the first one found
     */
   static std::string findFileNameInPath( std::string fileName, std::vector< std::string > pathNames );

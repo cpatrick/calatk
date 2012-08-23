@@ -35,9 +35,12 @@
 #include <map>
 #include <algorithm>
 
+#include <itksys/SystemTools.hxx>
+
 #include "VectorImage.h"
 #include "VectorField.h"
 #include "VectorImageUtils.h"
+#include "ApplicationUtils.h"
 
 namespace CALATK
 {
@@ -95,6 +98,14 @@ public:
 
   virtual void Solve();
 
+  CJSONConfiguration* GetCombinedIndividualGrowthModelJSONConfiguration();
+  CJSONConfiguration* GetCombinedCrossSectionalAtlasJSONConfiguration();
+  CJSONConfiguration* GetCombinedPopulationGrowthModelJSONConfiguration();
+
+  CJSONConfiguration* GetCleanedIndividualGrowthModelJSONConfiguration();
+  CJSONConfiguration* GetCleanedCrossSectionalAtlasJSONConfiguration();
+  CJSONConfiguration* GetCleanedPopulationGrowthModelJSONConfiguration();
+
   SetMacro( IndividualGrowthModelJSONConfigurationFile, std::string );
   GetMacro( IndividualGrowthModelJSONConfigurationFile, std::string );
 
@@ -103,6 +114,15 @@ public:
 
   SetMacro( PopulationGrowthModelJSONConfigurationFile, std::string );
   GetMacro( PopulationGrowthModelJSONConfigurationFile, std::string );
+
+  SetMacro( IndividualGrowthModelOutputDirectory, std::string );
+  GetMacro( IndividualGrowthModelOutputDirectory, std::string );
+
+  SetMacro( CrossSectionalAtlasOutputDirectory, std::string );
+  GetMacro( CrossSectionalAtlasOutputDirectory, std::string );
+
+  SetMacro( PopulationGrowthModelOutputDirectory, std::string );
+  GetMacro( PopulationGrowthModelOutputDirectory, std::string );
 
 protected:
 
@@ -121,6 +141,8 @@ protected:
   void ComputeIndividualGrowthModel( std::vector< SImageDatum > individualSubjectData, std::vector< TFloat > desiredTimePoints );
   void ComputeCrossSectionalAtlas( std::vector< SImageDatum > crossSectionalSubjectData, int timeIndex );
   void ComputePopulationGrowthModel( std::vector< SImageDatum > populationGrowthModelData );
+
+  void CreateDirectoriesIfNeeded();
 
 private:
 
@@ -154,6 +176,27 @@ private:
   std::string       m_PopulationGrowthModelJSONConfigurationFile;
   const std::string DefaultPopulationGrowthModelJSONConfigurationFile;
   bool              m_ExternallySetPopulationGrowthModelJSONConfigurationFile;
+
+  std::string       m_IndividualGrowthModelOutputDirectory;
+  const std::string DefaultIndividualGrowthModelOutputDirectory;
+  bool              m_ExternallySetIndividualGrowthModelOutputDirectory;
+
+  std::string       m_CrossSectionalAtlasOutputDirectory;
+  const std::string DefaultCrossSectionalAtlasOutputDirectory;
+  bool              m_ExternallySetCrossSectionalAtlasOutputDirectory;
+
+  std::string       m_PopulationGrowthModelOutputDirectory;
+  const std::string DefaultPopulationGrowthModelOutputDirectory;
+  bool              m_ExternallySetPopulationGrowthModelOutputDirectory;
+
+  CJSONConfiguration::Pointer m_CombinedConfigurationIndividualGrowthModel;
+  CJSONConfiguration::Pointer m_CleanedConfigurationIndividualGrowthModel;
+
+  CJSONConfiguration::Pointer m_CombinedConfigurationCrossSectionalAtlas;
+  CJSONConfiguration::Pointer m_CleanedConfigurationCrossSectionalAtlas;
+
+  CJSONConfiguration::Pointer m_CombinedConfigurationPopulationGrowthModel;
+  CJSONConfiguration::Pointer m_CleanedConfigurationPopulationGrowthModel;
 
 };
 

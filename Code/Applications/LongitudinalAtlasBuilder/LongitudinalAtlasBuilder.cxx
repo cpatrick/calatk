@@ -58,6 +58,7 @@ int DoIt( int argc, char** argv )
 
   ptrLongitudinalAtlasBuilder->SetAutoConfiguration( combinedConfiguration, cleanedConfiguration );
   ptrLongitudinalAtlasBuilder->SetAllowHelpComments( bCreateJSONHelp );
+
   ptrLongitudinalAtlasBuilder->SetMaxDesiredLogLevel( env.GetLogLevel() );
 
   CALATK::CJSONConfiguration::Pointer dataConfigurationCombined = new CALATK::CJSONConfiguration;
@@ -70,6 +71,46 @@ int DoIt( int argc, char** argv )
   ptrLongitudinalAtlasBuilder->SetDataAutoConfiguration( dataConfigurationCombined, dataConfigurationCleaned );
 
   ptrLongitudinalAtlasBuilder->Solve();
+
+
+  std::string mainConfigFileOut = configFileOutPrefix + "-main.json";
+  std::string individualGrowthModelConfigFileOut = configFileOutPrefix + "-individualGrowthModel.json";
+  std::string crossSectionalAtlasConfigFileOut = configFileOutPrefix + "-crossSectionalAtlas.json";
+  std::string populationGrowthModelConfigFileOut = configFileOutPrefix + "-populationGrowthModel.json";
+
+  // write out the resulting JSON file if desired
+  if ( configFileOutPrefix.compare("None") != 0 )
+    {
+
+      if ( bCleanJSONConfigOutput )
+      {
+          // overwrite the output files
+          Json::Value& currentConfiguration = cleanedConfiguration->GetFromKey( "LongitudinalAtlasSettings", Json::nullValue );
+          currentConfiguration[ "IndividualGrowthModelJSONConfigurationFile" ] = individualGrowthModelConfigFileOut;
+          currentConfiguration[ "CrossSectionalAtlasJSONConfigurationFile" ] = crossSectionalAtlasConfigFileOut;
+          currentConfiguration[ "PopulationGrowthModelJSONConfigurationFile" ] = populationGrowthModelConfigFileOut;
+
+          cleanedConfiguration->WriteJSONConfigurationFile( mainConfigFileOut, CALATK::GetCALATKJsonHeaderString() + " --CLEANED" );
+          ptrLongitudinalAtlasBuilder->GetCleanedIndividualGrowthModelJSONConfiguration()->WriteJSONConfigurationFile( individualGrowthModelConfigFileOut, CALATK::GetCALATKJsonHeaderString() + " --CLEANED" );
+          ptrLongitudinalAtlasBuilder->GetCleanedCrossSectionalAtlasJSONConfiguration()->WriteJSONConfigurationFile( crossSectionalAtlasConfigFileOut, CALATK::GetCALATKJsonHeaderString() + " --CLEANED" );
+          ptrLongitudinalAtlasBuilder->GetCleanedPopulationGrowthModelJSONConfiguration()->WriteJSONConfigurationFile( populationGrowthModelConfigFileOut, CALATK::GetCALATKJsonHeaderString() + " --CLEANED" );
+        }
+      else
+        {
+          // overwrite the output files
+          Json::Value& currentConfiguration = combinedConfiguration->GetFromKey( "LongitudinalAtlasSettings", Json::nullValue );
+          currentConfiguration[ "IndividualGrowthModelJSONConfigurationFile" ] = individualGrowthModelConfigFileOut;
+          currentConfiguration[ "CrossSectionalAtlasJSONConfigurationFile" ] = crossSectionalAtlasConfigFileOut;
+          currentConfiguration[ "PopulationGrowthModelJSONConfigurationFile" ] = populationGrowthModelConfigFileOut;
+
+          combinedConfiguration->WriteJSONConfigurationFile( mainConfigFileOut, CALATK::GetCALATKJsonHeaderString() + " --COMBINED" );
+          ptrLongitudinalAtlasBuilder->GetCombinedIndividualGrowthModelJSONConfiguration()->WriteJSONConfigurationFile( individualGrowthModelConfigFileOut, CALATK::GetCALATKJsonHeaderString() + " --CLEANED" );
+          ptrLongitudinalAtlasBuilder->GetCombinedCrossSectionalAtlasJSONConfiguration()->WriteJSONConfigurationFile( crossSectionalAtlasConfigFileOut, CALATK::GetCALATKJsonHeaderString() + " --CLEANED" );
+          ptrLongitudinalAtlasBuilder->GetCombinedPopulationGrowthModelJSONConfiguration()->WriteJSONConfigurationFile( populationGrowthModelConfigFileOut, CALATK::GetCALATKJsonHeaderString() + " --CLEANED" );
+
+        }
+
+    }
 
   return EXIT_SUCCESS;
 }

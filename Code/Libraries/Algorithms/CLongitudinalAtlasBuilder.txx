@@ -30,11 +30,21 @@ CLongitudinalAtlasBuilder< TFloat, VImageDimension >::CLongitudinalAtlasBuilder(
     DefaultCrossSectionalAtlasJSONConfigurationFile( "None" ),
     m_ExternallySetCrossSectionalAtlasJSONConfigurationFile( false ),
     DefaultPopulationGrowthModelJSONConfigurationFile( "None" ),
-    m_ExternallySetPopulationGrowthModelJSONConfigurationFile( "None" )
+    m_ExternallySetPopulationGrowthModelJSONConfigurationFile( "None" ),
+    DefaultIndividualGrowthModelOutputDirectory( "" ),
+    m_ExternallySetIndividualGrowthModelOutputDirectory( false ),
+    DefaultCrossSectionalAtlasOutputDirectory( "" ),
+    m_ExternallySetCrossSectionalAtlasOutputDirectory( false ),
+    DefaultPopulationGrowthModelOutputDirectory( "" ),
+    m_ExternallySetPopulationGrowthModelOutputDirectory( false )
 {
   this->m_IndividualGrowthModelJSONConfigurationFile = DefaultIndividualGrowthModelJSONConfigurationFile;
   this->m_CrossSectionalAtlasJSONConfigurationFile = DefaultCrossSectionalAtlasJSONConfigurationFile;
   this->m_PopulationGrowthModelJSONConfigurationFile = DefaultPopulationGrowthModelJSONConfigurationFile;
+
+  this->m_IndividualGrowthModelOutputDirectory = DefaultIndividualGrowthModelOutputDirectory;
+  this->m_CrossSectionalAtlasOutputDirectory = DefaultCrossSectionalAtlasOutputDirectory;
+  this->m_PopulationGrowthModelOutputDirectory = DefaultPopulationGrowthModelOutputDirectory;
 
   m_DataCombinedJSONConfig = new CJSONConfiguration;
   m_DataCleanedJSONConfig = new CJSONConfiguration;
@@ -50,6 +60,16 @@ CLongitudinalAtlasBuilder< TFloat, VImageDimension >::CLongitudinalAtlasBuilder(
   Json::Value & dataCleanedConfigRoot  = *(m_DataCleanedJSONConfig->GetRootPointer());
   dataCombinedConfigRoot["CalaTKDataConfigurationVersion"] = "CALATK_CURRENT_DATA_CONFIG_VERSION";
   dataCleanedConfigRoot["CalaTKDataConfigurationVersion"] = "CALATK_CURRENT_DATA_CONFIG_VERSION";
+
+  m_CombinedConfigurationIndividualGrowthModel = new CJSONConfiguration;
+  m_CleanedConfigurationIndividualGrowthModel = new CJSONConfiguration;
+
+  m_CombinedConfigurationCrossSectionalAtlas = new CJSONConfiguration;
+  m_CleanedConfigurationCrossSectionalAtlas = new CJSONConfiguration;
+
+  m_CombinedConfigurationPopulationGrowthModel = new CJSONConfiguration;
+  m_CleanedConfigurationPopulationGrowthModel = new CJSONConfiguration;
+
 }
 
 template < class TFloat, unsigned int VImageDimension >
@@ -58,9 +78,55 @@ CLongitudinalAtlasBuilder< TFloat, VImageDimension >::~CLongitudinalAtlasBuilder
 }
 
 template < class TFloat, unsigned int VImageDimension >
+CJSONConfiguration*
+CLongitudinalAtlasBuilder< TFloat, VImageDimension >::GetCombinedIndividualGrowthModelJSONConfiguration()
+{
+  return m_CombinedConfigurationIndividualGrowthModel;
+}
+
+template < class TFloat, unsigned int VImageDimension >
+CJSONConfiguration*
+CLongitudinalAtlasBuilder< TFloat, VImageDimension >::GetCleanedIndividualGrowthModelJSONConfiguration()
+{
+  return m_CleanedConfigurationIndividualGrowthModel;
+}
+
+template < class TFloat, unsigned int VImageDimension >
+CJSONConfiguration*
+CLongitudinalAtlasBuilder< TFloat, VImageDimension >::GetCombinedCrossSectionalAtlasJSONConfiguration()
+{
+  return m_CombinedConfigurationCrossSectionalAtlas;
+}
+
+template < class TFloat, unsigned int VImageDimension >
+CJSONConfiguration*
+CLongitudinalAtlasBuilder< TFloat, VImageDimension >::GetCleanedCrossSectionalAtlasJSONConfiguration()
+{
+  return m_CleanedConfigurationCrossSectionalAtlas;
+}
+
+template < class TFloat, unsigned int VImageDimension >
+CJSONConfiguration*
+CLongitudinalAtlasBuilder< TFloat, VImageDimension >::GetCombinedPopulationGrowthModelJSONConfiguration()
+{
+  return m_CombinedConfigurationPopulationGrowthModel;
+}
+
+template < class TFloat, unsigned int VImageDimension >
+CJSONConfiguration*
+CLongitudinalAtlasBuilder< TFloat, VImageDimension >::GetCleanedPopulationGrowthModelJSONConfiguration()
+{
+  return m_CleanedConfigurationPopulationGrowthModel;
+}
+
+template < class TFloat, unsigned int VImageDimension >
 void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned )
 {
   Superclass::SetAutoConfiguration( combined, cleaned );
+
+  // suppress multiscale settings if present (should not be part of the main file)
+  Json::Value& currentCleanedRoot = *(this->m_CleanedJSONConfig->GetRootPointer() );
+  currentCleanedRoot.removeMember( "MultiScaleSettings" );
 
   Json::Value& currentConfigurationIn = this->m_CombinedJSONConfig->GetFromKey( "LongitudinalAtlasSettings", Json::nullValue );
   Json::Value& currentConfigurationOut = this->m_CleanedJSONConfig->GetFromKey( "LongitudinalAtlasSettings", Json::nullValue );
@@ -71,6 +137,10 @@ void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::SetAutoConfiguration(
   SetJSONFromKeyString( currentConfigurationIn, currentConfigurationOut, CrossSectionalAtlasJSONConfigurationFile );
   SetJSONFromKeyString( currentConfigurationIn, currentConfigurationOut, PopulationGrowthModelJSONConfigurationFile );
 
+  SetJSONFromKeyString( currentConfigurationIn, currentConfigurationOut, IndividualGrowthModelOutputDirectory );
+  SetJSONFromKeyString( currentConfigurationIn, currentConfigurationOut, CrossSectionalAtlasOutputDirectory );
+  SetJSONFromKeyString( currentConfigurationIn, currentConfigurationOut, PopulationGrowthModelOutputDirectory );
+
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, IndividualGrowthModelJSONConfigurationFile,
                      "Configuration JSON file which controls the computation of the subject-specific growth models." );
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, CrossSectionalAtlasJSONConfigurationFile,
@@ -78,6 +148,40 @@ void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::SetAutoConfiguration(
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, PopulationGrowthModelJSONConfigurationFile,
                      "Configuration JSON file which controls the computation of the final growth model (over the computed cross-sectional atlases)." );
 
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, IndividualGrowthModelOutputDirectory,
+                     "Directory where the output of the individual growth models will be stored" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, CrossSectionalAtlasOutputDirectory,
+                     "Directory where the output of the cross-sectional atlases will be stored" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, PopulationGrowthModelOutputDirectory,
+                     "Directory where the output of the population growth models will be stored" );
+
+
+  CreateDirectoriesIfNeeded();
+
+  // if files were specified for input read them
+  if ( m_IndividualGrowthModelJSONConfigurationFile.compare("None") != 0 )
+    {
+      m_CombinedConfigurationIndividualGrowthModel->ReadJSONConfigurationFile( m_IndividualGrowthModelJSONConfigurationFile );
+    }
+
+  if ( m_CrossSectionalAtlasJSONConfigurationFile.compare("None") != 0 )
+    {
+      m_CombinedConfigurationCrossSectionalAtlas->ReadJSONConfigurationFile( m_CrossSectionalAtlasJSONConfigurationFile );
+    }
+
+  if ( m_PopulationGrowthModelJSONConfigurationFile.compare("None") != 0 )
+    {
+      m_CombinedConfigurationPopulationGrowthModel->ReadJSONConfigurationFile( m_PopulationGrowthModelJSONConfigurationFile );
+    }
+
+}
+
+template < class TFloat, unsigned int VImageDimension >
+void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::CreateDirectoriesIfNeeded()
+{
+  itksys::SystemTools::MakeDirectory( m_IndividualGrowthModelOutputDirectory.c_str() );
+  itksys::SystemTools::MakeDirectory( m_CrossSectionalAtlasOutputDirectory.c_str() );
+  itksys::SystemTools::MakeDirectory( m_PopulationGrowthModelOutputDirectory.c_str() );
 }
 
 template < class TFloat, unsigned int VImageDimension >
@@ -130,7 +234,10 @@ CLongitudinalAtlasBuilder< TFloat, VImageDimension >::CreateIndividualGrowthMode
 {
   std::stringstream ss;
   ss << "individualGrowthModel-sid-" << sId << "-timeIndex-" << tIndex << ".nrrd";
-  return ss.str();
+
+  std::string fullName = ApplicationUtils::combinePathAndFileName( m_IndividualGrowthModelOutputDirectory, ss.str() );
+
+  return fullName;
 }
 
 template < class TFloat, unsigned int VImageDimension >
@@ -139,7 +246,10 @@ CLongitudinalAtlasBuilder< TFloat, VImageDimension >::CreateCrossSectionalAtlasF
 {
   std::stringstream ss;
   ss << "crossSectionalAtlas-timeIndex-" << tIndex << ".nrrd";
-  return ss.str();
+
+  std::string fullName = ApplicationUtils::combinePathAndFileName( m_CrossSectionalAtlasOutputDirectory, ss.str() );
+
+  return fullName;
 }
 
 template < class TFloat, unsigned int VImageDimension >
@@ -148,7 +258,10 @@ CLongitudinalAtlasBuilder< TFloat, VImageDimension >::CreatePopulationGrowthMode
 {
   std::stringstream ss;
   ss << "populationGrowthModel-timeIndex-" << tIndex << ".nrrd";
-  return ss.str();
+
+  std::string fullName = ApplicationUtils::combinePathAndFileName( m_PopulationGrowthModelOutputDirectory, ss.str() );
+
+  return fullName;
 }
 
 template < class TFloat, unsigned int VImageDimension >
@@ -163,14 +276,7 @@ void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::ComputeIndividualGrow
 
   ImageManagerType* ptrImageManager = dynamic_cast<ImageManagerType*>( plddmm->GetImageManagerPointer() );
 
-  CALATK::CJSONConfiguration::Pointer combinedIndividualGrowthModelConfiguration = new CALATK::CJSONConfiguration;
-  if ( m_IndividualGrowthModelJSONConfigurationFile.compare( "None" ) != 0 )
-  {
-    combinedIndividualGrowthModelConfiguration->ReadJSONConfigurationFile( m_IndividualGrowthModelJSONConfigurationFile );
-  }
-  CALATK::CJSONConfiguration::Pointer cleanedIndividualGrowthModelConfiguration = new CALATK::CJSONConfiguration;
-
-  plddmm->SetAutoConfiguration( combinedIndividualGrowthModelConfiguration, cleanedIndividualGrowthModelConfiguration );
+  plddmm->SetAutoConfiguration( m_CombinedConfigurationIndividualGrowthModel, m_CleanedConfigurationIndividualGrowthModel );
 
   plddmm->SetAllowHelpComments( this->GetAllowHelpComments() );
   plddmm->SetMaxDesiredLogLevel( this->GetMaxDesiredLogLevel() );
@@ -222,14 +328,7 @@ void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::ComputePopulationGrow
 
   ImageManagerType* ptrImageManager = dynamic_cast<ImageManagerType*>( plddmm->GetImageManagerPointer() );
 
-  CALATK::CJSONConfiguration::Pointer combinedPopulationGrowthModelConfiguration = new CALATK::CJSONConfiguration;
-  if ( m_PopulationGrowthModelJSONConfigurationFile.compare( "None" ) != 0 )
-  {
-    combinedPopulationGrowthModelConfiguration->ReadJSONConfigurationFile( m_PopulationGrowthModelJSONConfigurationFile );
-  }
-  CALATK::CJSONConfiguration::Pointer cleanedPopulationGrowthModelConfiguration = new CALATK::CJSONConfiguration;
-
-  plddmm->SetAutoConfiguration( combinedPopulationGrowthModelConfiguration, cleanedPopulationGrowthModelConfiguration );
+  plddmm->SetAutoConfiguration( m_CombinedConfigurationPopulationGrowthModel, m_CleanedConfigurationPopulationGrowthModel );
 
   plddmm->SetAllowHelpComments( this->GetAllowHelpComments() );
   plddmm->SetMaxDesiredLogLevel( this->GetMaxDesiredLogLevel() );
@@ -287,14 +386,7 @@ void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::ComputeCrossSectional
 
   crossSectionalAtlasBuilderFullGradient->SetAtlasIsSourceImage( true );
 
-  CALATK::CJSONConfiguration::Pointer combinedCrossSectionalAtlasConfiguration = new CALATK::CJSONConfiguration;
-  if ( m_CrossSectionalAtlasJSONConfigurationFile.compare( "None" ) != 0 )
-  {
-    combinedCrossSectionalAtlasConfiguration->ReadJSONConfigurationFile( m_CrossSectionalAtlasJSONConfigurationFile );
-  }
-  CALATK::CJSONConfiguration::Pointer cleanedCrossSectionalAtlasConfiguration = new CALATK::CJSONConfiguration;
-
-  crossSectionalAtlasBuilderFullGradient->SetAutoConfiguration( combinedCrossSectionalAtlasConfiguration, cleanedCrossSectionalAtlasConfiguration );
+  crossSectionalAtlasBuilderFullGradient->SetAutoConfiguration( m_CombinedConfigurationCrossSectionalAtlas, m_CleanedConfigurationCrossSectionalAtlas );
   crossSectionalAtlasBuilderFullGradient->SetAllowHelpComments( this->GetAllowHelpComments() );
   crossSectionalAtlasBuilderFullGradient->SetMaxDesiredLogLevel( this->GetMaxDesiredLogLevel() );
 

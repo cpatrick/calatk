@@ -36,6 +36,26 @@ namespace CALATK
  *
  */
 
+std::string ApplicationUtils::combinePathAndFileName( std::string path, std::string fileName )
+{
+  std::string fullPathFileName;
+
+  if ( path.compare("") != 0 )
+    {
+    std::vector< std::string > vecOfStrings;
+    vecOfStrings.push_back(""); // because the full path is contained in path
+    vecOfStrings.push_back( path );
+    vecOfStrings.push_back( fileName );
+    fullPathFileName = itksys::SystemTools::JoinPath( vecOfStrings );
+    }
+  else
+    {
+      // no path, so just return the fileName
+      fullPathFileName = fileName;
+    }
+    return fullPathFileName;
+}
+
 //
 // Finds a filename in path
 //
@@ -56,11 +76,7 @@ std::string ApplicationUtils::findFileNameInPath( std::string fileNameOrig, std:
     typedef std::vector< std::string >::const_iterator IteratorType;
     for ( IteratorType iter = pathNames.begin(); iter != pathNames.end(); ++iter )
     {
-      std::vector< std::string > vecOfStrings;
-      vecOfStrings.push_back(""); // because the first two components are contained in *iter
-      vecOfStrings.push_back( *iter );
-      vecOfStrings.push_back( fileName );
-      std::string fullPathFileName = itksys::SystemTools::JoinPath( vecOfStrings );
+      std::string fullPathFileName = ApplicationUtils::combinePathAndFileName( *iter, fileName );
       std::string fullPathFileNameCollapsed = itksys::SystemTools::CollapseFullPath( fullPathFileName.c_str() );
 
       // check if it exists
