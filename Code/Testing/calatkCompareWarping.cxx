@@ -21,82 +21,9 @@
 #include "calatkCompareWarping.h"
 #include <sstream>
 
-// Latest version of the Advanced data configuration file format.
-// Since we do not have a JSON schema, the data configuration format is
-// implicitly define by how it is processed in this file (it would be nice to
-// improve this situation in the future).
-#define CALATK_CURRENT_DATA_CONFIG_VERSION 1.0
-
 namespace CALATK
 {
-template < class TFloat, unsigned int VImageDimension >
-void Warping< TFloat, VImageDimension >::InstantiateConfigs()
-{
-    m_DisplacementVectorJSONConfig = new CJSONConfiguration;
-    m_DisplacementVectorJSONConfig->InitializeEmptyRoot();
-    Json::Value & displacementVectorConfigRoot  = *(m_DisplacementVectorJSONConfig->GetRootPointer());
-    displacementVectorConfigRoot["CalaTKDataConfigurationVersion"] = CALATK_CURRENT_DATA_CONFIG_VERSION;
-}
-
-//For a Transform, writes a Json file with inputs coord and the 2D data
-//stored in the specified dimension of the transform at the specified grid location
-template < class TFloat, unsigned int VImageDimension >
-void Warping< TFloat, VImageDimension >::CreateJsonConfigTransform(typename DisplacementVectorType::Pointer displacementVector,
-                                                                   int displacementVectornumber)
-{
-    InstantiateConfigs();
-    Json::Value & displacementVectorConfigRoot  = *(m_DisplacementVectorJSONConfig->GetRootPointer());
-    Json::Value inputCoord( Json::arrayValue );
-    Json::Value outputCoord( Json::arrayValue );
-    Json::Value allInputs( Json::arrayValue );
-    Json::Value allOutputs( Json::arrayValue );
-    Json::Value coordIn( Json::objectValue );
-    Json::Value coordOut( Json::objectValue );
-    int i=0, j=0;
-
-    for (int x=5;x<=25;x=x+10)
-    {
-        if (x==5 || x==25)
-        {
-            inputCoord[0] = x;
-            inputCoord[1] = 15;
-            allInputs[i] = inputCoord;
-            outputCoord[0] = displacementVector->GetValue(x,15,0);
-            outputCoord[1] = displacementVector->GetValue(x,15,1);
-            allOutputs[j] = outputCoord;
-            i++;j++;
-
-        }
-        if (x==15)
-        {
-            for(int y=10; y<=20; y=y+5)
-            {
-                inputCoord[0] = x;
-                inputCoord[1] = y;
-                allInputs[i] = inputCoord;
-                outputCoord[0] = displacementVector->GetValue(x,y,0);
-                outputCoord[1] = displacementVector->GetValue(x,y,1);
-                allOutputs[j] = outputCoord;
-                i++;j++;
-            }
-        }
-    }
-
-    std::string displacementVectorNumberString,displacementVectorName;
-    std::stringstream ss;
-    ss << displacementVectornumber;
-    displacementVectorNumberString=ss.str();
-    displacementVectorName="DisplacementVector"+displacementVectorNumberString;
-    coordIn["DisplacementVectorInputPoints"] = allInputs;
-    displacementVectorConfigRoot["Inputs"] = coordIn;
-    coordOut[displacementVectorName+"OutputPoints"] = allOutputs;
-    displacementVectorConfigRoot["Outputs"] = coordOut;
-
-    std::string filename = displacementVectorName + ".json";
-    m_DisplacementVectorJSONConfig->WriteJSONConfigurationFile( filename );
-}
-
-//Reads the JSON file, opening each transform
+//Reads the JSON file, opening each Displacement vector
 template < class TFloat, unsigned int VImageDimension >
 int Warping< TFloat, VImageDimension >::ReadJSONContent( const Json::Value & baseline)
 {
@@ -128,8 +55,6 @@ int Warping< TFloat, VImageDimension >::ReadJSONContent( const Json::Value & bas
                     std::string fileName=(*baselineIt).asString();
                     typename VectorImage< TFloat, VImageDimension >::Pointer map;
                     map=DisplacementVectorType::readFileITK(fileName);
-                    typename WarpingType::Pointer warper = new WarpingType;
-                    warper->CreateJsonConfigTransform(map,displacementVectornumber);
                     displacementVectornumber++;
                 }
             }
@@ -139,7 +64,7 @@ int Warping< TFloat, VImageDimension >::ReadJSONContent( const Json::Value & bas
 
 }
 
-//Opens JSON file with the reference to the transforms
+//Opens JSON file with the reference to the Displacement vector
 template < class TFloat, unsigned int VImageDimension >
 int Warping< TFloat, VImageDimension >::TestOpenJSON(const char *baselineJSONFileName )
 {

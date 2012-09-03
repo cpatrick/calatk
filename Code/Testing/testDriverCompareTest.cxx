@@ -22,4 +22,5 @@
 void RegisterTests()
 {
   REGISTER_TEST( calatkCompareWarping );
+  REGISTER_TEST( calatkMetamorphosisCompareTest );
 }

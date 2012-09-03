@@ -53,7 +53,7 @@ CApplication::CApplication( const int argc, char **argv )
     }
   int i=0;
   const std::string argv1( argv[i+1] );
-  if( !(std::string( "GenerateJSONTransform" ).compare(argv1)))
+  if( !(std::string( "GenerateJSONDisplacementVectorField" ).compare(argv1)))
   {
       JSONTransform=true;
       i=1;

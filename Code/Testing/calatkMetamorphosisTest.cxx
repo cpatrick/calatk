@@ -93,9 +93,12 @@ int DoIt( std::string MetamorphosisType, char* sourceImage, char* targetImage, c
 
   plddmm->Solve();
 
+  std::string filename(resultImage);
+  filename=filename.substr( 0,filename.length()-5 )+"Map.mha";
+
   // generating map
-  // const typename VectorFieldType::Pointer ptrMap1 = new VectorFieldType( plddmm->GetMap( 1.0 ) );
-  // VectorImageUtilsType::writeFileITK( ptrMap1, resultImage );
+  const typename VectorFieldType::Pointer ptrMap1 = new VectorFieldType( plddmm->GetMap( 1.0 ) );
+  VectorImageUtilsType::writeFileITK( ptrMap1, filename );
 
   const typename VectorImageType::Pointer ptrI0W1 = new VectorImageType( plddmm->GetSourceImage( 1.0 ) );
   // generating warped image

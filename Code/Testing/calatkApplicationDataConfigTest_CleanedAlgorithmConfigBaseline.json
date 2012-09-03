@@ -18,10 +18,10 @@
 	},
 	"ImageManager" :
 	{
-		"AutoScaleImages" : true,
-		"BlurHighestResolutionImage" : true,
-		"Sigma" : 0.020,
-		"SigmaHighestResolutionImage" : 0.020
+		"AutoScaleImages" : false,
+		"BlurHighestResolutionImage" : false,
+		"Sigma" : 0.50,
+		"SigmaHighestResolutionImage" : 0.50
 	},
 	"MultiScaleFinalOutput" :
 	{
@@ -102,7 +102,7 @@
 	"ObjectiveFunction" :
 	{
 		"EnergyWeight" : 1.0,
-		"SigmaSqr" : 0.010
+		"SigmaSqr" : 1.0
 	},
 	"OneStepEvolver" :
 	{
