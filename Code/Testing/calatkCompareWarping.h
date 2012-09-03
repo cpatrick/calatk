@@ -36,11 +36,6 @@ public:
     typedef itk::SmartPointer< Self >       Pointer;
     typedef itk::SmartPointer< const Self > ConstPointer;
 
-    typedef VectorImage< TFloat, VImageDimension > DisplacementVectorType;
-    CJSONConfiguration::Pointer m_DisplacementVectorJSONConfig;
-
-    void InstantiateConfigs();
-    void CreateJsonConfigTransform(typename DisplacementVectorType::Pointer map, int DisplacementVectormnumber);
     int TestOpenJSON( const char *baselineJSONFileName);
     int ReadJSONContent( const Json::Value & baseline);
 };

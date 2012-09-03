@@ -10,7 +10,7 @@ include_directories( ${CMAKE_CURRENT_SOURCE_DIR} )
 set(ALGORITHMS_TESTS_FILTERING ${test_bin_dir}/testDriverFiltering)
 set(ALGORITHMS_TESTS_PDESOLVER ${test_bin_dir}/testDriverPDESolver)
 set(ALGORITHMS_TESTS_ALGORITHMS ${test_bin_dir}/testDriverAlgorithms)
-set(ALGORITHMS_TESTS_TEST ${test_bin_dir}/testDriverTest)
+set(ALGORITHMS_TESTS_TEST ${test_bin_dir}/testDriverCompareTest)
 
 # For performing JSON regression tests.
 add_executable( RegressionTestJSON RegressionTestJSON.cxx ${CMAKE_SOURCE_DIR}/Code/External/jsoncpp/jsoncpp.cpp )
@@ -79,6 +79,17 @@ function(add_ctest_test_testdriver testName testDriver)
       )
   endif(BUILD_TESTING)
 endfunction(add_ctest_test_testdriver)
+
+function(add_ctest_subtest_testdriver testName subtestName testDriver)
+  if(BUILD_TESTING)
+    add_test(NAME ${testName}_${subtestName}
+      WORKING_DIRECTORY ${test_temp_dir}
+      COMMAND ${testDriver}
+      ${testName}
+      ${ARGN}
+      )
+  endif(BUILD_TESTING)
+endfunction(add_ctest_subtest_testdriver)
 #
 # Define a function that adds a ctest test with image comparison
 #
@@ -115,6 +126,20 @@ function(add_ctest_subtest_testdriver_image_compare testName subtestName testDri
   endif(BUILD_TESTING)
 endfunction(add_ctest_subtest_testdriver_image_compare)
 
+function(add_ctest_subtest_testdriver_image2D_compare testName subtestName testDriver imBaseline imResult)
+  if(BUILD_TESTING)
+    add_test(NAME ${testName}_${subtestName}
+      WORKING_DIRECTORY ${test_temp_dir}
+      COMMAND ${testDriver}
+      --compareIntensityTolerance 220
+      --compare ${imBaseline}
+                ${imResult}
+      ${testName}
+      ${ARGN}
+      )
+  endif(BUILD_TESTING)
+endfunction(add_ctest_subtest_testdriver_image2D_compare)
+
 
 #------------------------------------------------------------------------------
 # New tests, added during the redevelopment of FRAT -> CALATK
@@ -146,8 +171,9 @@ set(testDriverImageManager_SRCS
   calatkBasicDataConfigTest.cxx
   calatkAdvancedDataConfigTest.cxx
   )
-set(testDriverTest_SRCS
+set(testDriverCompareTest_SRCS
   calatkCompareWarping.cxx
+  calatkMetamorphosisCompareTest.cxx
   )
 
 set(testDriverUtilities_SRCS
@@ -393,36 +419,193 @@ add_ctest_subtest_testdriver_image_compare(calatkMetamorphosisTest adjointMetamo
                           ${test_temp_dir}/1DCurveResultAdjointInitialImageDouble.nhdr
                           ${CALATK_SOURCE_DIR}/Code/Testing/calatkMetamorphosis1DTest.json
                           )
+#~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-<<<<<<< HEAD
+add_ctest_subtest_testdriver_image2D_compare(calatkMetamorphosisTest simplifiedMetamorphosis2DFloat ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_temp_dir}/Bullseye2DTimePoint1.mha
+                          ${test_temp_dir}/2DCurveResultSimplifiedFloat.nhdr
+                          MetamorphosisSimplified 2 float
+                          ${test_temp_dir}/Bullseye2DTimePoint0.mha
+                          ${test_temp_dir}/Bullseye2DTimePoint1.mha
+                          ${test_temp_dir}/2DCurveResultSimplifiedFloat.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatkMetamorphosis2DTest.json
+                          )
+
+add_ctest_subtest_testdriver_image2D_compare(calatkMetamorphosisTest simplifiedMetamorphosis2DDouble ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_temp_dir}/Bullseye2DTimePoint1.mha
+                          ${test_temp_dir}/2DCurveResultSimplifiedDouble.nhdr
+                          MetamorphosisSimplified 2 double
+                          ${test_temp_dir}/Bullseye2DTimePoint0.mha
+                          ${test_temp_dir}/Bullseye2DTimePoint1.mha
+                          ${test_temp_dir}/2DCurveResultSimplifiedDouble.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatkMetamorphosis2DTest.json
+                          )
+
+add_ctest_subtest_testdriver_image2D_compare(calatkMetamorphosisTest adjointMetamorphosis2DFloat ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_temp_dir}/Bullseye2DTimePoint1.mha
+                          ${test_temp_dir}/2DCurveResultAdjointFloat.nhdr
+                          MetamorphosisFullAdjoint 2 float
+                          ${test_temp_dir}/Bullseye2DTimePoint0.mha
+                          ${test_temp_dir}/Bullseye2DTimePoint1.mha
+                          ${test_temp_dir}/2DCurveResultAdjointFloat.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatkMetamorphosis2DTest.json
+                          )
+
+add_ctest_subtest_testdriver_image2D_compare(calatkMetamorphosisTest adjointMetamorphosis2DDouble ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_temp_dir}/Bullseye2DTimePoint1.mha
+                          ${test_temp_dir}/2DCurveResultAdjointDouble.nhdr
+                          MetamorphosisFullAdjoint 2 double
+                          ${test_temp_dir}/Bullseye2DTimePoint0.mha
+                          ${test_temp_dir}/Bullseye2DTimePoint1.mha
+                          ${test_temp_dir}/2DCurveResultAdjointDouble.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatkMetamorphosis2DTest.json
+                          )
+
+add_ctest_subtest_testdriver_image2D_compare(calatkMetamorphosisTest simplifiedMetamorphosisInitialImage2DFloat ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_temp_dir}/Bullseye2DTimePoint1.mha
+                          ${test_temp_dir}/2DCurveResultSimplifiedInitialImageFloat.nhdr
+                          MetamorphosisSimplifiedInitialImage 2 float
+                          ${test_temp_dir}/Bullseye2DTimePoint0.mha
+                          ${test_temp_dir}/Bullseye2DTimePoint1.mha
+                          ${test_temp_dir}/2DCurveResultSimplifiedInitialImageFloat.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatkMetamorphosis2DTest.json
+                          )
+
+add_ctest_subtest_testdriver_image2D_compare(calatkMetamorphosisTest simplifiedMetamorphosisInitialImage2DDouble ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_temp_dir}/Bullseye2DTimePoint1.mha
+                          ${test_temp_dir}/2DCurveResultSimplifiedInitialImageDouble.nhdr
+                          MetamorphosisSimplifiedInitialImage 2 double
+                          ${test_temp_dir}/Bullseye2DTimePoint0.mha
+                          ${test_temp_dir}/Bullseye2DTimePoint1.mha
+                          ${test_temp_dir}/2DCurveResultSimplifiedInitialImageDouble.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatkMetamorphosis2DTest.json
+                          )
+
+add_ctest_subtest_testdriver_image2D_compare(calatkMetamorphosisTest adjointMetamorphosisInitialImage2DFloat ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_temp_dir}/Bullseye2DTimePoint1.mha
+                          ${test_temp_dir}/2DCurveResultAdjointInitialImageFloat.nhdr
+                          MetamorphosisFullAdjointInitialImage 2 float
+                          ${test_temp_dir}/Bullseye2DTimePoint0.mha
+                          ${test_temp_dir}/Bullseye2DTimePoint1.mha
+                          ${test_temp_dir}/2DCurveResultAdjointInitialImageFloat.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatkMetamorphosis2DTest.json
+                          )
+
+add_ctest_subtest_testdriver_image2D_compare(calatkMetamorphosisTest adjointMetamorphosisInitialImage2DDouble ${ALGORITHMS_TESTS_ALGORITHMS}
+                          ${test_temp_dir}/Bullseye2DTimePoint1.mha
+                          ${test_temp_dir}/2DCurveResultAdjointInitialImageDouble.nhdr
+                          MetamorphosisFullAdjointInitialImage 2 double
+                          ${test_temp_dir}/Bullseye2DTimePoint0.mha
+                          ${test_temp_dir}/Bullseye2DTimePoint1.mha
+                          ${test_temp_dir}/2DCurveResultAdjointInitialImageDouble.nhdr
+                          ${CALATK_SOURCE_DIR}/Code/Testing/calatkMetamorphosis2DTest.json
+                          )
+
+set_tests_properties(
+    calatkMetamorphosisTest_simplifiedMetamorphosis2DFloat
+    PROPERTIES DEPENDS calatkApplicationDataConfigTest
+    )
+set_tests_properties(
+    calatkMetamorphosisTest_simplifiedMetamorphosis2DDouble
+    PROPERTIES DEPENDS calatkMetamorphosisTest_simplifiedMetamorphosis2DFloat
+    )
+set_tests_properties(
+    calatkMetamorphosisTest_adjointMetamorphosis2DFloat
+    PROPERTIES DEPENDS calatkMetamorphosisTest_simplifiedMetamorphosis2DDouble
+    )
+set_tests_properties(
+    calatkMetamorphosisTest_adjointMetamorphosis2DDouble
+    PROPERTIES DEPENDS calatkMetamorphosisTest_adjointMetamorphosis2DFloat
+    )
+set_tests_properties(
+    calatkMetamorphosisTest_simplifiedMetamorphosisInitialImage2DFloat
+    PROPERTIES DEPENDS calatkMetamorphosisTest_adjointMetamorphosis2DDouble
+    )
+set_tests_properties(
+    calatkMetamorphosisTest_simplifiedMetamorphosisInitialImage2DDouble
+    PROPERTIES DEPENDS calatkMetamorphosisTest_simplifiedMetamorphosisInitialImage2DFloat
+    )
+set_tests_properties(
+    calatkMetamorphosisTest_adjointMetamorphosisInitialImage2DFloat
+    PROPERTIES DEPENDS calatkMetamorphosisTest_simplifiedMetamorphosisInitialImage2DDouble
+    )
+set_tests_properties(
+    calatkMetamorphosisTest_adjointMetamorphosisInitialImage2DDouble
+    PROPERTIES DEPENDS calatkMetamorphosisTest_adjointMetamorphosisInitialImage2DFloat
+    )
+
+add_executable(testDriverCompareTest testDriverCompareTest.cxx ${testDriverCompareTest_SRCS})
+target_link_libraries(testDriverCompareTest CALATK ${ITK_LIBRARIES})
+
+add_test(NAME calatkMetamorphosisCompareTest
+    WORKING_DIRECTORY ${test_temp_dir}
+    COMMAND
+    testDriverCompareTest
+    --compareIntensityTolerance 0.1
+    --compare ${test_input_dir}/2DCurveResultSimplifiedFloatMapBaseline.mha
+              ${test_temp_dir}/2DCurveResultSimplifiedFloatMap.mha
+
+    --compare ${test_input_dir}/2DCurveResultSimplifiedDoubleMapBaseline.mha
+              ${test_temp_dir}/2DCurveResultSimplifiedDoubleMap.mha
+
+    --compare ${test_input_dir}/2DCurveResultAdjointFloatMapBaseline.mha
+              ${test_temp_dir}/2DCurveResultAdjointFloatMap.mha
+
+    --compare ${test_input_dir}/2DCurveResultAdjointDoubleMapBaseline.mha
+              ${test_temp_dir}/2DCurveResultAdjointDoubleMap.mha
+
+    --compare ${test_input_dir}/2DCurveResultSimplifiedInitialImageFloatMapBaseline.mha
+              ${test_temp_dir}/2DCurveResultSimplifiedInitialImageFloatMap.mha
+
+    --compare ${test_input_dir}/2DCurveResultSimplifiedInitialImageDoubleMapBaseline.mha
+              ${test_temp_dir}/2DCurveResultSimplifiedInitialImageDoubleMap.mha
+
+    --compare ${test_input_dir}/2DCurveResultAdjointInitialImageFloatMapBaseline.mha
+              ${test_temp_dir}/2DCurveResultAdjointInitialImageFloatMap.mha
+
+    --compare ${test_input_dir}/2DCurveResultAdjointInitialImageDoubleMapBaseline.mha
+              ${test_temp_dir}/2DCurveResultAdjointInitialImageDoubleMap.mha
+
+    calatkMetamorphosisCompareTest
+    ${test_temp_dir}/2DCurveResultSimplifiedFloatMap.mha 2 float
+    ${test_temp_dir}/2DCurveResultSimplifiedDoubleMap.mha 2 double
+    ${test_temp_dir}/2DCurveResultAdjointFloatMap.mha 2 float
+    ${test_temp_dir}/2DCurveResultAdjointDoubleMap.mha 2 double
+    ${test_temp_dir}/2DCurveResultSimplifiedInitialImageFloatMap.mha 2 float
+    ${test_temp_dir}/2DCurveResultSimplifiedInitialImageDoubleMap.mha 2 double
+    ${test_temp_dir}/2DCurveResultAdjointInitialImageFloatMap.mha 2 float
+    ${test_temp_dir}/2DCurveResultAdjointInitialImageDoubleMap.mha 2 double
+    )
+
+set_tests_properties(
+    calatkMetamorphosisCompareTest
+    PROPERTIES DEPENDS calatkMetamorphosisTest_adjointMetamorphosisInitialImage2DDouble
+    )
 
 add_ctest_subtest_testdriver_image_compare(calatkAtlasBuilderTest atlasBuilder_atlasTarget_fullGradient ${ALGORITHMS_TESTS_ALGORITHMS}
                           ${test_input_dir}/Baseline/baseline_atlasIsTargetResult_fullGradient.nrrd
                           ${test_temp_dir}/atlasIsTargetResult_fullGradient.nrrd
                           ${CALATK_SOURCE_DIR}/Code/Testing/atlas.json
-			  ${CALATK_SOURCE_DIR}/Code/Testing/atlasDataAtlasIsTargetTwoDatasets.json
-			  ${test_temp_dir}/atlasIsTargetResult_fullGradient.nrrd 0
-			  )
+                          ${CALATK_SOURCE_DIR}/Code/Testing/atlasDataAtlasIsTargetTwoDatasets.json
+                          ${test_temp_dir}/atlasIsTargetResult_fullGradient.nrrd 0
+                          )
 
 add_ctest_subtest_testdriver_image_compare(calatkAtlasBuilderTest atlasBuilder_atlasTarget_subiterations ${ALGORITHMS_TESTS_ALGORITHMS}
                           ${test_input_dir}/Baseline/baseline_atlasIsTargetResult_subiterations.nrrd
                           ${test_temp_dir}/atlasIsTargetResult_subiterations.nrrd
                           ${CALATK_SOURCE_DIR}/Code/Testing/atlas.json
-			  ${CALATK_SOURCE_DIR}/Code/Testing/atlasDataAtlasIsTargetTwoDatasets.json
-			  ${test_temp_dir}/atlasIsTargetResult_subiterations.nrrd 1
-			  )
+                          ${CALATK_SOURCE_DIR}/Code/Testing/atlasDataAtlasIsTargetTwoDatasets.json
+                          ${test_temp_dir}/atlasIsTargetResult_subiterations.nrrd 1
+                          )
 
 add_ctest_subtest_testdriver_image_compare(calatkAtlasBuilderTest atlasBuilder_atlasSource_fullGradient ${ALGORITHMS_TESTS_ALGORITHMS}
                           ${test_input_dir}/Baseline/baseline_atlasIsSourceResult_fullGradient.nrrd
                           ${test_temp_dir}/atlasIsSourceResult_fullGradient.nrrd
                           ${CALATK_SOURCE_DIR}/Code/Testing/atlas.json
-			  ${CALATK_SOURCE_DIR}/Code/Testing/atlasDataAtlasIsSourceTwoDatasets.json
-			  ${test_temp_dir}/atlasIsSourceResult_fullGradient.nrrd 0
-			  )
+                          ${CALATK_SOURCE_DIR}/Code/Testing/atlasDataAtlasIsSourceTwoDatasets.json
+                          ${test_temp_dir}/atlasIsSourceResult_fullGradient.nrrd 0
+                          )
 
-
-=======
->>>>>>> e6a578a... Adding 2D test
 add_test_executable(calatkImageManagerTest CALATK ${ITK_LIBRARIES})
 add_ctest_test(calatkImageManagerTest)
 
@@ -611,7 +794,7 @@ if(BUILD_TESTING AND compile_GenerateBullseyes)
 
   add_ctest_test_testdriver(calatkApplicationDataConfigTest
     testDriverInterfaces
-    GenerateJSONTransform
+    GenerateJSONDisplacementVectorField
     ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestAlgorithmConfig2.json
     ${CMAKE_CURRENT_SOURCE_DIR}/calatkApplicationTestDataConfig2.json
     ${test_temp_dir}/calatkApplicationDataConfigTest_AlgorithmConfig.json
@@ -632,29 +815,27 @@ if(BUILD_TESTING AND compile_GenerateBullseyes)
     PROPERTIES DEPENDS calatkApplicationDataConfigTest
     )
 
-  add_executable(testDriverTest testDriverTest.cxx ${testDriverTest_SRCS})
-  target_link_libraries(testDriverTest CALATK ${ITK_LIBRARIES})
-
-  add_ctest_test_testdriver(calatkCompareWarping
-    testDriverTest
+  add_test(NAME calatkCompareWarping
+    WORKING_DIRECTORY ${test_temp_dir}
+    COMMAND
+    testDriverCompareTest
+    --compareIntensityTolerance 10
+    --compare ${test_input_dir}/DisplacementVectorBaseline0.mha
+              ${test_temp_dir}/DisplacementVector0.mha
+    --compare ${test_input_dir}/DisplacementVectorBaseline1.mha
+              ${test_temp_dir}/DisplacementVector1.mha
+    --compare ${test_input_dir}/DisplacementVectorBaseline2.mha
+              ${test_temp_dir}/DisplacementVector2.mha
+    --compare ${test_input_dir}/DisplacementVectorBaseline3.mha
+              ${test_temp_dir}/DisplacementVector3.mha
+    --compare ${test_input_dir}/DisplacementVectorBaseline4.mha
+              ${test_temp_dir}/DisplacementVector4.mha
+    --compare ${test_input_dir}/DisplacementVectorBaseline5.mha
+              ${test_temp_dir}/DisplacementVector5.mha
+    calatkCompareWarping
     ${test_temp_dir}/DisplacementVectorFileNames.json
     )
 
-  add_test(calatkCompareWarpingTest
-    ${regression_test_json}
-    ${test_input_dir}/DisplacementVectorData0.json
-    ${test_temp_dir}/DisplacementVector0.json
-    ${test_input_dir}/DisplacementVectorData1.json
-    ${test_temp_dir}/DisplacementVector1.json
-    ${test_input_dir}/DisplacementVectorData2.json
-    ${test_temp_dir}/DisplacementVector2.json
-    ${test_input_dir}/DisplacementVectorData3.json
-    ${test_temp_dir}/DisplacementVector3.json
-    ${test_input_dir}/DisplacementVectorData4.json
-    ${test_temp_dir}/DisplacementVector4.json
-    ${test_input_dir}/DisplacementVectorData5.json
-    ${test_temp_dir}/DisplacementVector5.json
-    )
   set_tests_properties(calatkApplicationImageFileNamesGivenTest
     CALATKCommandLineBullseyes2DTest
     CALATKCommandLineBullseyes2D_ImageDimensionsSpecifiedTest
@@ -664,10 +845,6 @@ if(BUILD_TESTING AND compile_GenerateBullseyes)
   set_tests_properties(
     calatkCompareWarping
     PROPERTIES DEPENDS calatkApplicationDataConfigTest
-    )
-  set_tests_properties(
-    calatkCompareWarpingTest
-    PROPERTIES DEPENDS calatkCompareWarping
     )
 endif()
 

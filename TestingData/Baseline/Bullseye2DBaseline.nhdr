@@ -1,0 +1,12 @@
+NRRD0004
+# Complete NRRD file format specification at:
+# http://teem.sourceforge.net/nrrd/format.html
+type: unsigned char
+dimension: 3
+space: left-posterior-superior
+sizes: 32 32 1
+space directions: (0.40000000596046448,0,0) (0,0.40000000596046448,0) (0,0,1)
+kinds: domain domain domain
+encoding: gzip
+space origin: (-6.2000000000000011,-6.2000000000000011,0)
+data file: Bullseye2DBaseline.raw.gz

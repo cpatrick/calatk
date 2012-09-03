@@ -56,14 +56,9 @@ if( NOT USE_SYSTEM_ITK )
       -DUSE_SYSTEM_FFTW:BOOL=OFF
       -DITKGroup_IO:BOOL=ON
       -DITKGroup_Filtering:BOOL=ON
-<<<<<<< HEAD
       -DITKGroup_Nonunit:BOOL=ON
       -DITK_BUILD_ALL_MODULES:BOOL=OFF
       -DModule_ITKTestKernel:BOOL=ON
-=======
-      -DITKTestKernel:BOOL=ON
-      -DITK_BUILD_ALL_MODULES:BOOL=OFF
->>>>>>> 26924fd... Adding modules
     INSTALL_COMMAND ""
     )
   set( ITK_DIR "${base}/ITK-Build" )

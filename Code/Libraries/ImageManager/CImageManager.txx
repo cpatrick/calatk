@@ -364,19 +364,10 @@ void CImageManager< TFloat, VImageDimension >::WriteOutputsFromDataJSONConfigura
     typedef VectorImage< TFloat, VImageDimension > VectorImageType;
     typename VectorImageType::ConstPointer originalImage = timeseries[ 0 ].GetOriginalImage();
     typename VectorImageType::Pointer warpedImage = new VectorImageType( originalImage );
-
-<<<<<<< HEAD
     // now let's output the current time-point that we are iterating over
 
     typedef VectorField< TFloat, VImageDimension > VectorFieldType;
     typename VectorFieldType::ConstPointer map = new VectorFieldType( algorithm->GetMap( iter->timePoint ) );
-=======
-        typedef VectorField< TFloat, VImageDimension > VectorFieldType;
-        typename VectorFieldType::ConstPointer map = new VectorFieldType( algorithm->GetMap( time.asDouble() ));
-
-        typedef LDDMMUtils< TFloat, VImageDimension > LDDMMUtilsType;
-        LDDMMUtilsType::applyMap( map, originalImage, warpedImage );
->>>>>>> 1480fa3... Generating deformation field for transform
 
     typedef LDDMMUtils< TFloat, VImageDimension > LDDMMUtilsType;
     LDDMMUtilsType::applyMap( map, originalImage, warpedImage );
@@ -386,10 +377,7 @@ void CImageManager< TFloat, VImageDimension >::WriteOutputsFromDataJSONConfigura
   }
 
 }
-<<<<<<< HEAD
 
-=======
->>>>>>> c8294c1... Adding Regression test for bullseyes2D after warping
 //
 // gets the original image based on the global id
 //
