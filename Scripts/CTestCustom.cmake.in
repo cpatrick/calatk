@@ -42,6 +42,6 @@ set(CTEST_CUSTOM_WARNING_EXCEPTION
   ${CTEST_CUSTOM_WARNING_EXCEPTION}
   "warning -.: directory name .* does not exist"
   "ld.*warning.*duplicate dylib.*"
-  "ranlib:.*\.libs.* has no symbols"
+  "ranlib:.*.libs.* has no symbols"
   )
 endif(APPLE)
