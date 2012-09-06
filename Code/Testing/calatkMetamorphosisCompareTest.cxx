@@ -46,7 +46,8 @@ int calatkMetamorphosisCompareTest( int argc, char * argv[] )
               case 1:
               {
                   typedef CALATK::VectorImageUtils< float, 1 > DisplacementVectorType1D_float;
-                  typename CALATK::VectorImage< float, 1 >::Pointer map1D_float;
+                  typedef CALATK::VectorImage< float, 1 > VectorImageType1D_float;
+                  VectorImageType1D_float::Pointer map1D_float;
 
                   map1D_float=DisplacementVectorType1D_float::readFileITK(filename);
                 break;
@@ -54,7 +55,8 @@ int calatkMetamorphosisCompareTest( int argc, char * argv[] )
               case 2:
               {
                   typedef CALATK::VectorImageUtils< float, 2 > DisplacementVectorType2D_float;
-                  typename CALATK::VectorImage< float, 2 >::Pointer map2D_float;
+                  typedef CALATK::VectorImage< float, 2 > VectorImageType2D_float;
+                  VectorImageType2D_float::Pointer map2D_float;
 
                   map2D_float=DisplacementVectorType2D_float::readFileITK(filename);
                 break;
@@ -62,7 +64,8 @@ int calatkMetamorphosisCompareTest( int argc, char * argv[] )
               case 3:
               {
                   typedef CALATK::VectorImageUtils< float, 3 > DisplacementVectorType3D_float;
-                  typename CALATK::VectorImage< float, 3 >::Pointer map3D_float;
+                  typedef CALATK::VectorImage< float, 3 > VectorImageType3D_float;
+                  VectorImageType3D_float::Pointer map3D_float;
 
                   map3D_float=DisplacementVectorType3D_float::readFileITK(filename);
                 break;
@@ -78,7 +81,8 @@ int calatkMetamorphosisCompareTest( int argc, char * argv[] )
               case 1:
               {
                   typedef CALATK::VectorImageUtils< double, 1 > DisplacementVectorType1D_double;
-                  typename CALATK::VectorImage< double, 1 >::Pointer map1D_double;
+                  typedef CALATK::VectorImage< double, 1 > VectorImageType1D_double;
+                  VectorImageType1D_double::Pointer map1D_double;
 
                   map1D_double=DisplacementVectorType1D_double::readFileITK(filename);
                 break;
@@ -86,7 +90,8 @@ int calatkMetamorphosisCompareTest( int argc, char * argv[] )
               case 2:
               {
                   typedef CALATK::VectorImageUtils< double, 2 > DisplacementVectorType2D_double;
-                  typename CALATK::VectorImage< double, 2 >::Pointer map2D_double;
+                  typedef CALATK::VectorImage< double, 2 > VectorImageType2D_double;
+                  VectorImageType2D_double::Pointer map2D_double;
 
                   map2D_double=DisplacementVectorType2D_double::readFileITK(filename);
                 break;
@@ -94,7 +99,8 @@ int calatkMetamorphosisCompareTest( int argc, char * argv[] )
               case 3:
               {
                   typedef CALATK::VectorImageUtils< double, 3 > DisplacementVectorType3D_double;
-                  typename CALATK::VectorImage< double, 3 >::Pointer map3D_double;
+                  typedef CALATK::VectorImage< double, 3 > VectorImageType3D_double;
+                  VectorImageType3D_double::Pointer map3D_double;
 
                   map3D_double=DisplacementVectorType3D_double::readFileITK(filename);
                 break;

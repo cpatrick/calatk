@@ -101,7 +101,7 @@ int calatkCompareWarping( int argc, char * argv[] )
     return EXIT_FAILURE;
   }
   typedef CALATK::Warping< float , 2 > WarpingType;
-  typename WarpingType::Pointer warper = new WarpingType;
+  WarpingType::Pointer warper = new WarpingType;
 
   int result = warper->TestOpenJSON( argv[1] );
   if( result == 0 )
