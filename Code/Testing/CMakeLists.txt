@@ -541,7 +541,7 @@ add_test(NAME calatkMetamorphosisCompareTest
     WORKING_DIRECTORY ${test_temp_dir}
     COMMAND
     testDriverCompareTest
-    --compareIntensityTolerance 0.1
+    --compareIntensityTolerance 15.0
     --compare ${test_input_dir}/2DCurveResultSimplifiedFloatMapBaseline.mha
               ${test_temp_dir}/2DCurveResultSimplifiedFloatMap.mha
 
