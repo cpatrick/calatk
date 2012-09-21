@@ -119,6 +119,9 @@ int main(int argc, char **argv)
 {
   PARSE_ARGS;
 
+  std::cerr << "The longitudinal atlas-builder has not been fully implemented yet. Please check back later." << std::endl;
+  return EXIT_FAILURE;
+
   unsigned int uiImageDimension = 0;
 
   // check if this is specified in a JSON data file intead

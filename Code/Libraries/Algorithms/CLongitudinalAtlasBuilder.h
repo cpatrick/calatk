@@ -124,6 +124,27 @@ public:
   SetMacro( PopulationGrowthModelOutputDirectory, std::string );
   GetMacro( PopulationGrowthModelOutputDirectory, std::string );
 
+  SetMacro( DesiredPopulationAtlasTimePoints, std::vector< FloatType > );
+  GetMacro( DesiredPopulationAtlasTimePoints, std::vector< FloatType > );
+
+  SetMacro( OnlyComputePopulationAtlasForFirstAvailableTimePoint, bool );
+  GetMacro( OnlyComputePopulationAtlasForFirstAvailableTimePoint, bool );
+
+  SetMacro( OnlyComputePopulationAtlasForLastAvailableTimePoint, bool );
+  GetMacro( OnlyComputePopulationAtlasForLastAvailableTimePoint, bool );
+
+  SetMacro( DesiredCrossSectionalAtlasTimePoints, std::vector< FloatType > );
+  GetMacro( DesiredCrossSectionalAtlasTimePoints, std::vector< FloatType > );
+
+  SetMacro( DetermineCrossSectionalAtlasTimePointsByNumber, bool );
+  GetMacro( DetermineCrossSectionalAtlasTimePointsByNumber, bool );
+
+  SetMacro( NumberOfCrossSectionalAtlasTimePoints, unsigned int );
+  GetMacro( NumberOfCrossSectionalAtlasTimePoints, unsigned int );
+
+  SetMacro( UseWeightedAveragesForIndividualGrowthModelTimePoints, bool );
+  GetMacro( UseWeightedAveragesForIndividualGrowthModelTimePoints, bool );
+
 protected:
 
   virtual void SetDefaultsIfNeeded();
@@ -133,14 +154,24 @@ protected:
   virtual void SetDefaultEvolverPointer();
 
   void DetermineOverallTimeInterval( FloatType &minTime, FloatType &maxTime, std::vector< std::vector< typename CALATK::CJSONDataParser< FloatType >::SImageDatum > > &dataBySubject );
-  void DetermineOverallTimeDiscretization( std::vector< FloatType >& overallTimeDiscretization, FloatType minTime, FloatType maxTime );
-  void DetermineDesiredTimePointsForIndividualSubject( std::vector< FloatType > &desiredTimePointsForIndividualSubject, std::vector< std::vector< std::pair< int, int > > > &desiredSubjectIDsAndTimePointIndicesForTimePoint, std::vector< FloatType > &overallTimeDiscretization, std::vector< typename CALATK::CJSONDataParser< FloatType >::SImageDatum > & dataOfIndividualSubject );
-  void DetermineDesiredTimePointsPerSubject( std::vector< std::vector< FloatType > >& desiredTimePointPerSubject, std::vector< std::vector< std::pair< int, int > > > &desiredSubjectIDsAndTimePointIndicesForTimePoint, std::vector< FloatType > &overallTimeDiscretization, std::vector< std::vector< typename CALATK::CJSONDataParser< FloatType >::SImageDatum > > &dataBySubject );
-  void GetSubjectAndTimeSortedData( std::vector< std::vector< typename CALATK::CJSONDataParser< FloatType >::SImageDatum > > &dataBySubject, std::map< int, int > &subjectIdToArrayId, CALATK::CJSONConfiguration *dataConfiguration );
+  void DetermineCrossSectionalAtlasTimePoints( std::vector< FloatType >& desiredCrossSectionalAtlasTimePoints, FloatType minTime, FloatType maxTime );
+  void DetermineCrossSectionalAtlasTimePointsByNumber( std::vector< FloatType >& desiredCrossSectionalAtlasTimePoints, FloatType minTime, FloatType maxTime );
+  void DetermineCrossSectionalAtlasTimePointsByTimePoints( std::vector< FloatType >& desiredCrossSectionalAtlasTimePoints, FloatType minTime, FloatType maxTime );
 
-  void ComputeIndividualGrowthModel( std::vector< SImageDatum > individualSubjectData, std::vector< TFloat > desiredTimePoints );
-  void ComputeCrossSectionalAtlas( std::vector< SImageDatum > crossSectionalSubjectData, int timeIndex );
-  void ComputePopulationGrowthModel( std::vector< SImageDatum > populationGrowthModelData );
+  std::vector< unsigned int > ComputeDesiredTimePointIndicesForSubject( std::vector< SImageDatum > dataOfIndividualSubject, std::vector< FloatType > desiredCrossSectionalAtlasTimePoints );
+  void GetSubjectAndTimeSortedData( std::vector< std::vector< typename CALATK::CJSONDataParser< FloatType >::SImageDatum > > &dataBySubject, std::map< int, int > &subjectIdToArrayId, CALATK::CJSONConfiguration *dataConfiguration );
+  void GetTemporallyClosestIndicesAndWeights( std::vector< unsigned int >& closestIndices, std::vector< TFloat >& closestWeights, std::vector< SImageDatum > individualSubjectData, TFloat timePoint );
+
+  void CreateDiscretizationInformation( std::vector< std::vector< SImageDatum > > &dataBySubject, std::map< int, int >& subjectIdToArrayId, std::vector< std::vector< unsigned int > >& desiredTimePointIndicesForSubjects, std::vector< TFloat >& desiredCrossSectionalAtlasTimePoints );
+
+  std::vector< std::vector< std::pair< SImageDatum, FloatType > > > ComputeIndividualGrowthModel( std::vector< SImageDatum > individualSubjectData, std::vector< TFloat > desiredTimePoints );
+  std::multimap< unsigned int, std::pair< SImageDatum, FloatType > > SetupDataForAndComputeIndividualGrowthModels( std::vector< FloatType > desiredCrossSectionalAtlasTimePoints );
+
+  SImageDatum ComputeCrossSectionalAtlas( std::vector< std::pair< SImageDatum, FloatType > > crossSectionalSubjectData );
+
+  std::vector< SImageDatum > SetupDataForAndComputeCrossSectionalAtlases( std::multimap< unsigned int , std::pair< SImageDatum, FloatType > > crossSectionalAtlasImagesAndWeightsForTimeIndex, std::vector< TFloat > desiredCrossSectionalAtlasTimePoints );
+  std::vector< SImageDatum > ComputePopulationGrowthModel( std::vector< SImageDatum > populationGrowthModelData );
+  std::vector< SImageDatum > SetupDataForAndComputePopulationGrowthModel( std::vector< SImageDatum > populationGrowthModelData );
 
   void CreateDirectoriesIfNeeded();
 
@@ -157,9 +188,16 @@ private:
   ImageManagerType* GetImageManagerPointer();
 
   // helper-functions to create consistent filenames
-  std::string CreateIndividualGrowthModelFileNameForSubjectAtTimeIndex( int sId, int tIndex );
-  std::string CreateCrossSectionalAtlasFileNameAtTimeIndex( int tIndex );
-  std::string CreatePopulationGrowthModelFileNameAtTimeIndex( int tIndex );
+  std::string CreateIndividualGrowthModelFileNameForSubjectAtTimePoint( std::string subjectString, FloatType timePoint, int iIndex );
+  std::string CreateIndividualGrowthModelMapFileNameForSubjectFromToTimePoint( std::string subjectString, FloatType fromTime, FloatType toTime, int iIndex );
+  std::string CreateCrossSectionalAtlasFileNameAtTimePoint( FloatType timePoint );
+  std::string CreateCrossSectionalAtlasMapFileNameForSubjectAtTimePoint( std::string subjectString, FloatType timePoint, int iIndex );
+  std::string CreatePopulationGrowthModelFileNameAtTimePoint( FloatType timePoint );
+
+  // discretization information
+  std::vector< std::vector< SImageDatum > > m_DataBySubject;
+  std::map< int, int > m_SubjectIdToArrayId;
+  std::vector< std::vector< unsigned int > > m_DesiredTimePointIndicesForSubjects;
 
   CJSONConfiguration::Pointer m_DataCombinedJSONConfig;
   CJSONConfiguration::Pointer m_DataCleanedJSONConfig;
@@ -180,7 +218,6 @@ private:
   std::string       m_IndividualGrowthModelOutputDirectory;
   const std::string DefaultIndividualGrowthModelOutputDirectory;
   bool              m_ExternallySetIndividualGrowthModelOutputDirectory;
-
   std::string       m_CrossSectionalAtlasOutputDirectory;
   const std::string DefaultCrossSectionalAtlasOutputDirectory;
   bool              m_ExternallySetCrossSectionalAtlasOutputDirectory;
@@ -188,6 +225,34 @@ private:
   std::string       m_PopulationGrowthModelOutputDirectory;
   const std::string DefaultPopulationGrowthModelOutputDirectory;
   bool              m_ExternallySetPopulationGrowthModelOutputDirectory;
+
+  std::vector< FloatType >       m_DesiredPopulationAtlasTimePoints;
+  const std::vector< FloatType > DefaultDesiredPopulationAtlasTimePoints;
+  bool                           m_ExternallySetDesiredPopulationAtlasTimePoints;
+
+  bool       m_OnlyComputePopulationAtlasForFirstAvailableTimePoint;
+  const bool DefaultOnlyComputePopulationAtlasForFirstAvailableTimePoint;
+  bool       m_ExternallySetOnlyComputePopulationAtlasForFirstAvailableTimePoint;
+
+  bool       m_OnlyComputePopulationAtlasForLastAvailableTimePoint;
+  const bool DefaultOnlyComputePopulationAtlasForLastAvailableTimePoint;
+  bool       m_ExternallySetOnlyComputePopulationAtlasForLastAvailableTimePoint;
+
+  std::vector< FloatType >       m_DesiredCrossSectionalAtlasTimePoints;
+  const std::vector< FloatType > DefaultDesiredCrossSectionalAtlasTimePoints;
+  bool                           m_ExternallySetDesiredCrossSectionalAtlasTimePoints;
+
+  bool       m_DetermineCrossSectionalAtlasTimePointsByNumber;
+  const bool DefaultDetermineCrossSectionalAtlasTimePointsByNumber;
+  bool       m_ExternallySetDetermineCrossSectionalAtlasTimePointsByNumber;
+
+  unsigned int       m_NumberOfCrossSectionalAtlasTimePoints;
+  const unsigned int DefaultNumberOfCrossSectionalAtlasTimePoints;
+  bool               m_ExternallySetNumberOfCrossSectionalAtlasTimePoints;
+
+  bool       m_UseWeightedAveragesForIndividualGrowthModelTimePoints;
+  const bool DefaultUseWeightedAveragesForIndividualGrowthModelTimePoints;
+  bool       m_ExternallySetUseWeightedAveragesForIndividualGrowthModelTimePoints;
 
   CJSONConfiguration::Pointer m_CombinedConfigurationIndividualGrowthModel;
   CJSONConfiguration::Pointer m_CleanedConfigurationIndividualGrowthModel;

@@ -121,15 +121,41 @@ void CAtlasBuilder< TState >::SetAutoConfiguration( CJSONConfiguration * combine
 }
 
 template < class TState >
-void CAtlasBuilder< TState >::SetIndividualObjectiveFunction( IndividualObjectiveFunctionType * objectiveFunction )
+void CAtlasBuilder< TState >::SetWeights( std::vector< FloatType > weights )
+{
+  m_ObjectiveFunctionWeights = weights;
+}
+
+template < class TState >
+std::vector< typename TState::FloatType > CAtlasBuilder< TState >::GetWeights()
+{
+  return m_ObjectiveFunctionWeights;
+}
+
+template < class TState >
+void CAtlasBuilder< TState >::SetIndividualObjectiveFunctionAndWeight( IndividualObjectiveFunctionType * objectiveFunction, FloatType weight )
 {
   m_IndividualObjectiveFunctionPointers.push_back( objectiveFunction );
+  m_ObjectiveFunctionWeights.push_back( weight );
+}
+
+template < class TState >
+void CAtlasBuilder< TState >::SetIndividualObjectiveFunctionAndWeight( unsigned int uiId, IndividualObjectiveFunctionType * objectiveFunction, FloatType weight )
+{
+  m_IndividualObjectiveFunctionPointers.at( uiId ) = objectiveFunction;
+  m_ObjectiveFunctionWeights.at( uiId ) = weight;
+}
+
+template < class TState >
+void CAtlasBuilder< TState >::SetIndividualObjectiveFunction( IndividualObjectiveFunctionType * objectiveFunction )
+{
+  this->SetIndividualObjectiveFunctionAndWeight( objectiveFunction, 1.0 );
 }
 
 template < class TState >
 void CAtlasBuilder< TState >::SetIndividualObjectiveFunction( unsigned int uiId, IndividualObjectiveFunctionType * objectiveFunction )
 {
-  m_IndividualObjectiveFunctionPointers.at( uiId ) = objectiveFunction;
+  this->SetIndividualObjectiveFunctionAndWeight( uiId, objectiveFunction, 1.0 );
 }
 
 template < class TState >
@@ -542,6 +568,24 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
 
     if ( m_IndividualObjectiveFunctionPointers.empty() )
     {
+
+      bool useWeights = false;
+
+      std::vector< FloatType > weights = m_ObjectiveFunctionWeights; // in case they have previously been set
+      m_ObjectiveFunctionWeights.clear();
+
+      if ( !weights.empty() )
+      {
+        if ( weights.size() == numberOfIndividualRegistrations )
+        {
+          useWeights = true;
+        }
+        else
+        {
+          std::cout << "WARNING: atlas-builder: weights specified, but incorrect number (" << m_ObjectiveFunctionWeights.size() << "). Setting all weights to 1.0" << std::endl;
+        }
+      }
+
       // initialize default (since none have been specified)
       for ( unsigned int iI = 0; iI < numberOfIndividualRegistrations; ++iI )
       {
@@ -552,7 +596,14 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
           throw std::runtime_error("Could not initialize the objective function. Make sure the instantiated state type is consistent with the objective function chosen.");
           return;
         }
-        SetIndividualObjectiveFunction( ptrCurrentIndividualObjectiveFunction.GetPointer() );
+        if ( useWeights )
+        {
+          SetIndividualObjectiveFunctionAndWeight( ptrCurrentIndividualObjectiveFunction.GetPointer(), weights[ iI ] );
+        }
+        else
+        {
+          SetIndividualObjectiveFunction( ptrCurrentIndividualObjectiveFunction.GetPointer() );
+        }
       }
     }
 
@@ -577,6 +628,15 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
     assert( availableSubjectIndices.size() == numberOfIndividualRegistrations );
     assert( numberOfIndividualRegistrations > 0 );
 
+    if ( m_ObjectiveFunctionWeights.empty() || m_ObjectiveFunctionWeights.size() != numberOfIndividualRegistrations )
+    {
+      m_ObjectiveFunctionWeights.clear();
+      for ( unsigned int iI = 0; iI < numberOfIndividualRegistrations; ++iI )
+      {
+        m_ObjectiveFunctionWeights.push_back( 1.0 );
+      }
+    }
+
     for ( unsigned int iI = 0; iI < numberOfIndividualRegistrations; ++iI )
     {
       typename LDDMMVelocityFieldObjectiveFunctionWithMomentumType::Pointer ptrCurrentIndividualObjectiveFunction = dynamic_cast< LDDMMVelocityFieldObjectiveFunctionWithMomentumType * >( GetIndividualObjectiveFunction( iI ) );
@@ -596,7 +656,7 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
 
       // add the individual objective function to the overall atlas objective function
       // TODO: allow weights that are different from 1
-      pAtlas->SetObjectiveFunctionAndWeight( GetIndividualObjectiveFunction( iI ), 1.0 );
+      pAtlas->SetObjectiveFunctionAndWeight( GetIndividualObjectiveFunction( iI ), m_ObjectiveFunctionWeights[ iI ] );
 
     }
 
@@ -604,10 +664,6 @@ void CAtlasBuilder< TState >::SetDefaultObjectiveFunctionPointer()
 
   this->m_ptrObjectiveFunction->SetImageManagerPointer( this->m_ptrImageManager );
   pAtlas->SetAtlasIsSourceImage( m_AtlasIsSourceImage );
-
-  // TODO: have an alternative method where the image is part of the gradient
-
-  // TODO: Implement two options, one with atlas image as source and one with the atlas-image as target image
 }
 
 template < class TState >
@@ -620,7 +676,23 @@ CAtlasBuilder< TState >::GetMap( FloatType dTime )
 
 template < class TState >
 const typename CAtlasBuilder< TState >::VectorFieldType*
+CAtlasBuilder< TState >::GetMap( FloatType dTime, unsigned int uiId )
+{
+  throw std::runtime_error( "GetMap not yet implemented");
+  return NULL;
+}
+
+template < class TState >
+const typename CAtlasBuilder< TState >::VectorFieldType*
 CAtlasBuilder< TState >::GetMapFromTo( FloatType dTimeFrom, FloatType dTimeTo )
+{
+  throw std::runtime_error( "GetMapFromTo not yet implemented");
+  return NULL;
+}
+
+template < class TState >
+const typename CAtlasBuilder< TState >::VectorFieldType*
+CAtlasBuilder< TState >::GetMapFromTo( FloatType dTimeFrom, FloatType dTimeTo, unsigned int uiId )
 {
   throw std::runtime_error( "GetMapFromTo not yet implemented");
   return NULL;
@@ -636,7 +708,23 @@ CAtlasBuilder< TState >::GetSourceImage( FloatType dTime )
 
 template < class TState >
 const typename CAtlasBuilder< TState >::VectorImageType*
+CAtlasBuilder< TState >::GetSourceImage( FloatType dTime, unsigned int uiId )
+{
+  throw std::runtime_error( "GetSourceImage not yet implemented");
+  return NULL;
+}
+
+template < class TState >
+const typename CAtlasBuilder< TState >::VectorImageType*
 CAtlasBuilder< TState >::GetTargetImage( FloatType dTime )
+{
+  throw std::runtime_error( "GetTargetImage not yet implemented");
+  return NULL;
+}
+
+template < class TState >
+const typename CAtlasBuilder< TState >::VectorImageType*
+CAtlasBuilder< TState >::GetTargetImage( FloatType dTime, unsigned int uiId )
 {
   throw std::runtime_error( "GetTargetImage not yet implemented");
   return NULL;
@@ -657,6 +745,15 @@ void CAtlasBuilder< TState >::InitializeAtlasImage()
   // initialize the atlas image as the average over all the other images
 
   m_AtlasImage->SetToConstant( 0 );
+
+  FloatType overallWeight = 0;
+
+  if ( availableSubjectIndices.size() != m_ObjectiveFunctionWeights.size() )
+  {
+    throw std::runtime_error( "Objective function weights not properly specified. Cannot compute atlas image. Defaulting to one." );
+    m_ObjectiveFunctionWeights.clear();
+    m_ObjectiveFunctionWeights.resize( availableSubjectIndices.size(), 1.0 );
+  }
 
   for ( unsigned int iI = 0; iI < availableSubjectIndices.size(); ++iI )
     {
@@ -684,14 +781,15 @@ void CAtlasBuilder< TState >::InitializeAtlasImage()
                   return;
                 }
 
-              m_AtlasImage->AddCellwise( timeseries[ iJ ].GetImageAtScale( 0 ) );
+              m_AtlasImage->AddCellwiseMultiply( timeseries[ iJ ].GetImageAtScale( 0 ), this->m_ObjectiveFunctionWeights[ iI ] );
+              overallWeight += this->m_ObjectiveFunctionWeights[ iI ];
               break;
             }
         }
     }
 
   // now that we have added all of them we just need to divide to get the average image
-  m_AtlasImage->MultiplyByConstant( 1.0/availableSubjectIndices.size() );
+  m_AtlasImage->MultiplyByConstant( 1.0/overallWeight );
 
 }
 
