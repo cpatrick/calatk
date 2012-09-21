@@ -5,7 +5,6 @@
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/CALATKCommandLine)
 
 if(COMPILE_CLP_MODULES)
-  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/testme)
 
   add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/GeometricMetamorphosis)
 

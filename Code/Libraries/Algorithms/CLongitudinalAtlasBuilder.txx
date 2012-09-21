@@ -48,7 +48,9 @@ CLongitudinalAtlasBuilder< TFloat, VImageDimension >::CLongitudinalAtlasBuilder(
     DefaultDetermineCrossSectionalAtlasTimePointsByNumber( true ),
     m_ExternallySetDetermineCrossSectionalAtlasTimePointsByNumber( false ),
     DefaultNumberOfCrossSectionalAtlasTimePoints( 10 ),
-    m_ExternallySetNumberOfCrossSectionalAtlasTimePoints( false )
+    m_ExternallySetNumberOfCrossSectionalAtlasTimePoints( false ),
+    DefaultUseWeightedAveragesForIndividualGrowthModelTimePoints( false ),
+    m_ExternallySetUseWeightedAveragesForIndividualGrowthModelTimePoints( false )
 {
   this->m_IndividualGrowthModelJSONConfigurationFile = DefaultIndividualGrowthModelJSONConfigurationFile;
   this->m_CrossSectionalAtlasJSONConfigurationFile = DefaultCrossSectionalAtlasJSONConfigurationFile;
@@ -59,6 +61,12 @@ CLongitudinalAtlasBuilder< TFloat, VImageDimension >::CLongitudinalAtlasBuilder(
   this->m_PopulationGrowthModelOutputDirectory = DefaultPopulationGrowthModelOutputDirectory;
 
   this->m_DesiredPopulationAtlasTimePoints = DefaultDesiredPopulationAtlasTimePoints;
+  this->m_OnlyComputePopulationAtlasForFirstAvailableTimePoint = DefaultOnlyComputePopulationAtlasForFirstAvailableTimePoint;
+  this->m_OnlyComputePopulationAtlasForLastAvailableTimePoint = DefaultOnlyComputePopulationAtlasForLastAvailableTimePoint;
+  this->m_DesiredCrossSectionalAtlasTimePoints = DefaultDesiredCrossSectionalAtlasTimePoints;
+  this->m_DetermineCrossSectionalAtlasTimePointsByNumber = DefaultDetermineCrossSectionalAtlasTimePointsByNumber;
+  this->m_NumberOfCrossSectionalAtlasTimePoints = DefaultNumberOfCrossSectionalAtlasTimePoints;
+  this->m_UseWeightedAveragesForIndividualGrowthModelTimePoints = DefaultUseWeightedAveragesForIndividualGrowthModelTimePoints;
 
   m_DataCombinedJSONConfig = new CJSONConfiguration;
   m_DataCleanedJSONConfig = new CJSONConfiguration;
@@ -162,6 +170,7 @@ void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::SetAutoConfiguration(
   SetJSONFromKeyVector( currentConfigurationIn, currentConfigurationOut, DesiredCrossSectionalAtlasTimePoints );
   SetJSONFromKeyBool( currentConfigurationIn, currentConfigurationOut, DetermineCrossSectionalAtlasTimePointsByNumber );
   SetJSONFromKeyUInt( currentConfigurationIn, currentConfigurationOut, NumberOfCrossSectionalAtlasTimePoints );
+  SetJSONFromKeyBool( currentConfigurationIn, currentConfigurationOut, UseWeightedAveragesForIndividualGrowthModelTimePoints );
 
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, IndividualGrowthModelJSONConfigurationFile,
                      "Configuration JSON file which controls the computation of the subject-specific growth models." );
@@ -190,6 +199,8 @@ void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::SetAutoConfiguration(
                      "if true, time points do not need to be explicitly specified, will be equally distributed across time" );
   SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, NumberOfCrossSectionalAtlasTimePoints,
                      "number of time-points which are distributed equally across time" );
+  SetJSONHelpForKey( currentConfigurationIn, currentConfigurationOut, UseWeightedAveragesForIndividualGrowthModelTimePoints,
+                     "if true puts nearest timepoints of an individual growth trajectory into cross-sectional atlas-building step with appropriate linear interpolation weights." );
 
   CreateDirectoriesIfNeeded();
 
@@ -280,7 +291,7 @@ std::string
 CLongitudinalAtlasBuilder< TFloat, VImageDimension >::CreateIndividualGrowthModelMapFileNameForSubjectFromToTimePoint( std::string subjectString, FloatType fromTime, FloatType toTime, int iIndex )
 {
   std::stringstream ss;
-  ss << "individualGrowthModel-map-subject-" << subjectString << "-fromTimePoint-" << timeFrom << "-toTimePoint-" << timeTo << "-index-" << iIndex << ".nrrd";
+  ss << "individualGrowthModel-map-subject-" << subjectString << "-fromTimePoint-" << fromTime << "-toTimePoint-" << toTime << "-index-" << iIndex << ".nrrd";
 
   std::string fullName = ApplicationUtils::combinePathAndFileName( m_IndividualGrowthModelOutputDirectory, ss.str() );
 
@@ -402,7 +413,7 @@ void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::GetTemporallyClosestI
 }
 
 template < class TFloat, unsigned int VImageDimension >
-std::vector< std::vector< std::pair< SImageDatum, FloatType > > >
+std::vector< std::vector< std::pair< typename CLongitudinalAtlasBuilder< TFloat, VImageDimension>::SImageDatum, TFloat > > >
 CLongitudinalAtlasBuilder< TFloat, VImageDimension >::ComputeIndividualGrowthModel( std::vector< SImageDatum > individualSubjectData, std::vector< TFloat > desiredTimePoints )
 {
 
@@ -427,7 +438,7 @@ CLongitudinalAtlasBuilder< TFloat, VImageDimension >::ComputeIndividualGrowthMod
   if ( individualSubjectData.empty() )
     {
       throw std::runtime_error( "No individual subject data specified." );
-      return;
+      return warpedImagesAndWeightsAtTimePoint; // will be empty at this point
     }
 
   std::vector< unsigned int > imageIDs;
@@ -459,6 +470,11 @@ CLongitudinalAtlasBuilder< TFloat, VImageDimension >::ComputeIndividualGrowthMod
       std::vector< unsigned int > closestIndices;
       std::vector< FloatType > closestWeights;
 
+      if ( this->m_UseWeightedAveragesForIndividualGrowthModelTimePoints )
+      {
+        std::cerr << "Weighted averages for individual growth model time points not yet implemented. Defaulting to using multiple images in the atlas-builder." << std::endl;
+      }
+
       GetTemporallyClosestIndicesAndWeights( closestIndices, closestWeights, individualSubjectData, desiredTimePoints[ iT ] );
 
       //
@@ -469,6 +485,7 @@ CLongitudinalAtlasBuilder< TFloat, VImageDimension >::ComputeIndividualGrowthMod
         currentDatum.transformFileName = ""; // TODO: add transform
         currentDatum.subjectId = individualSubjectData[ 0 ].subjectId ;
         currentDatum.subjectString = individualSubjectData[ 0 ].subjectString;
+        currentDatum.timeSeriesIndex = closestIndices[ iC ];
         currentDatum.fileName = CreateIndividualGrowthModelFileNameForSubjectAtTimePoint( currentDatum.subjectString, currentDatum.timePoint, iC );
         warpedImagesAndWeightsAtTimePoint[ iT ].push_back( std::pair< SImageDatum, FloatType >( currentDatum, closestWeights[ iC ] ) );
 
@@ -476,10 +493,8 @@ CLongitudinalAtlasBuilder< TFloat, VImageDimension >::ComputeIndividualGrowthMod
         typename VectorFieldType::ConstPointer currentMap = new VectorFieldType( plddmm->GetMapFromTo( individualSubjectData[ closestIndices[ iC ] ].timePoint, desiredTimePoints[ iT ] ) );
 
         // now get the image this should be applied to, warp it and write it out with the just created filename
-        std::cerr << "TODO: get the right image here" << std::endl;
-
-        typename VectorImageType::ConstPointer currentImage = new VectorImageType( plddmm->GetImageManager()->GetImageById( ) );
-        typename VectorImageType::ConstPointer warpedImage = new VectorImageType( currentImage );
+        typename VectorImageType::ConstPointer currentImage = new VectorImageType( ptrImageManager->GetOriginalImageById( imageIDs[ closestIndices[ iC ] ] ) );
+        typename VectorImageType::Pointer warpedImage = new VectorImageType( currentImage );
 
         // apply the map
         LDDMMUtils< FloatType, VImageDimension >::applyMap( currentMap, currentImage, warpedImage );
@@ -506,7 +521,8 @@ CLongitudinalAtlasBuilder< TFloat, VImageDimension >::ComputeIndividualGrowthMod
 }
 
 template < class TFloat, unsigned int VImageDimension >
-void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::ComputePopulationGrowthModel( std::vector< SImageDatum > populationGrowthModelData )
+std::vector< typename CLongitudinalAtlasBuilder< TFloat, VImageDimension >::SImageDatum >
+CLongitudinalAtlasBuilder< TFloat, VImageDimension >::ComputePopulationGrowthModel( std::vector< SImageDatum > populationGrowthModelData )
 {
   // currently only relaxation supported. Implement a shooting variant
   typedef CALATK::CStateSpatioTemporalVelocityField< TFloat, VImageDimension > TStateSpatioTemporalVelocityField;
@@ -534,6 +550,9 @@ void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::ComputePopulationGrow
 
   // write out some images
 
+  // keep track of what was written out
+  std::vector< SImageDatum > populationGrowthModelResults;
+
   for ( int iI=0; iI<populationGrowthModelData.size(); ++iI )
   {
       // create output for images here
@@ -541,13 +560,28 @@ void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::ComputePopulationGrow
       // now write it out
       std::string currentImageFileName = CreatePopulationGrowthModelFileNameAtTimePoint( populationGrowthModelData[ iI ].timePoint );
       VectorImageUtilsType::writeFileITK( currentImage, currentImageFileName );
+
+      SImageDatum currentDatum;
+      currentDatum.timePoint = populationGrowthModelData[ iI ].timePoint;
+      currentDatum.transformFileName = ""; // TODO: add transform
+      currentDatum.subjectId = -1;
+      currentDatum.subjectString = "populationGrowthModel";
+      currentDatum.fileName = currentImageFileName;
+      currentDatum.timeSeriesIndex = iI;
+
+      populationGrowthModelResults.push_back( currentDatum );
   }
+
+  // write out the maps from every point to every other point; TODO
+
+  return populationGrowthModelResults;
 
 
 }
 
 template < class TFloat, unsigned int VImageDimension >
-void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::ComputeCrossSectionalAtlas( std::vector< std::pair< SImageDatum, FloatType > > crossSectionalSubjectData )
+typename CLongitudinalAtlasBuilder< TFloat, VImageDimension >::SImageDatum
+CLongitudinalAtlasBuilder< TFloat, VImageDimension >::ComputeCrossSectionalAtlas( std::vector< std::pair< SImageDatum, FloatType > > crossSectionalSubjectData )
 {
   // we use a simplified shooting-based atlas-builder here, with the atlas being the source image
   // TODO: Support alternative atlas-builders
@@ -565,11 +599,14 @@ void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::ComputeCrossSectional
   if ( crossSectionalSubjectData.empty() )
     {
       throw std::runtime_error( "No subject data to build cross-sectional atlas available." );
-      return;
+      SImageDatum empty;
+      return empty;
     }
 
   crossSectionalAtlasBuilderFullGradient = new regTypeFullGradient;
   ptrImageManager = dynamic_cast< ImageManagerType* >( crossSectionalAtlasBuilderFullGradient->GetImageManagerPointer() );
+
+  std::vector< FloatType > weights; // keeps track of the weights of the individual images
 
   // add the data to the image manager
   // add all images at time-point 1, this instructs the atlas-builder to compute the atlas as the source image
@@ -577,8 +614,10 @@ void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::ComputeCrossSectional
   {
     unsigned int uiI0 = ptrImageManager->AddImage( crossSectionalSubjectData[ iI ].first.fileName, 1.0, crossSectionalSubjectData[ iI ].first.subjectId );
     // TODO: Add transform, if transform is to be supported
-    std::cerr << "TODO: add weight information!!" << std::endl;
+    weights.push_back( crossSectionalSubjectData[ iI ].second );
   }
+
+  crossSectionalAtlasBuilderFullGradient->SetWeights( weights );
 
   crossSectionalAtlasBuilderFullGradient->SetAtlasIsSourceImage( true );
 
@@ -598,18 +637,33 @@ void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::ComputeCrossSectional
   // also write out the maps for all the different subjects to atlas-space
   for ( int iI=0; iI< crossSectionalSubjectData.size(); ++iI )
     {
+    std::cout << "ERROR: TODO: create map" << std::endl;
+      // TODO: Also support atlas-builder which has atlas as target
       typename VectorFieldType::ConstPointer currentMap = new VectorFieldType( crossSectionalAtlasBuilderFullGradient->GetMapFromTo( 1.0, 0.0, iI ) );
-      // TODO: subject-subindex (indices to closest measured images)
-      std::string currentMapFileName = CreateCrossSectionalAtlasMapFileNameForSubjectAtTimePoint( crossSectionalSubjectData[ iI ].first.subjectString, atlasTimePoint, iSubjectSubIndex);
+      // subject-subindex (indices to closest measured images)
+
+      int iSubjectSubIndex = crossSectionalSubjectData[ iI ].first.timeSeriesIndex;
+
+      std::string currentMapFileName = CreateCrossSectionalAtlasMapFileNameForSubjectAtTimePoint( crossSectionalSubjectData[ iI ].first.subjectString, atlasTimePoint, iSubjectSubIndex );
       // write it out
-      VectorImageUtils::writeFileITK( currentMap, currentMapFileName );
+      VectorImageUtilsType::writeFileITK( currentMap, currentMapFileName );
     }
 
+  // keep track of what was written out
+  SImageDatum currentCrossSectionalAtlas;
+  currentCrossSectionalAtlas.timePoint = atlasTimePoint;
+  currentCrossSectionalAtlas.fileName = currentCrossSectionalAtlasFileName;
+  currentCrossSectionalAtlas.transformFileName = ""; // TODO: add transform
+  currentCrossSectionalAtlas.subjectId = 0; // all the same, this is for the population growth model
+  currentCrossSectionalAtlas.subjectString = "crossSectionalAtlas";
+  currentCrossSectionalAtlas.timeSeriesIndex = -1;
+
+  return currentCrossSectionalAtlas;
 }
 
 template < class TFloat, unsigned int VImageDimension >
 std::vector< unsigned int >
-CLongitudinalAtlasBuilder< TFloat, VImageDimension >::ComputeDesiredTimePointIndicesForSubject( std::vector< SImageDatum > dataForSubject, std::vector< FloatType > desiredCrossSectionalAtlasTimePoints )
+CLongitudinalAtlasBuilder< TFloat, VImageDimension >::ComputeDesiredTimePointIndicesForSubject( std::vector< SImageDatum > dataOfIndividualSubject, std::vector< FloatType > desiredCrossSectionalAtlasTimePoints )
 {
   std::vector< unsigned int > desiredTimePointIndicesForSubject;
 
@@ -639,12 +693,17 @@ CLongitudinalAtlasBuilder< TFloat, VImageDimension >::ComputeDesiredTimePointInd
 
 
 template < class TFloat, unsigned int VImageDimension >
-void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::CreateDiscretizationInformation()
+void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::CreateDiscretizationInformation(
+    std::vector< std::vector< typename CLongitudinalAtlasBuilder< TFloat, VImageDimension>::SImageDatum > > &dataBySubject,
+    std::map< int, int >& subjectIdToArrayId,
+    std::vector< std::vector< unsigned int > >& desiredTimePointIndicesForSubjects,
+    std::vector< TFloat >& desiredCrossSectionalAtlasTimePoints
+    )
 {
-  typedef typename CALATK::CJSONDataParser< FloatType >::SImageDatum SImageDatum;
-  std::vector< std::vector< SImageDatum > > dataBySubject;
-  std::map< int, int > subjectIdToArrayId;
-  std::vector< FloatType > desiredCrossSectionalAtlasTimePoints;
+  dataBySubject.clear();
+  subjectIdToArrayId.clear();
+  desiredCrossSectionalAtlasTimePoints.clear();
+  desiredTimePointIndicesForSubjects.clear();
 
   // parse the input JSON file and organize all the datasets for all subjects
   GetSubjectAndTimeSortedData( dataBySubject, subjectIdToArrayId, this->m_DataCombinedJSONConfig );
@@ -659,8 +718,6 @@ void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::CreateDiscretizationI
 
   DetermineCrossSectionalAtlasTimePoints( desiredCrossSectionalAtlasTimePoints, minTime, maxTime );
 
-  std::vector< std::vector< unsigned int > > desiredTimePointIndicesForSubjects;
-
   for ( int iS=0; iS<dataBySubject.size(); ++iS )
     {
       std::vector< unsigned int > desiredTimePointIndicesForSubject;
@@ -671,115 +728,109 @@ void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::CreateDiscretizationI
 }
 
 template < class TFloat, unsigned VImageDimension >
-void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::SetupDataForAndComputeIndividualGrowthModels( std::vector< std::vector< unsigned int > > desiredTimePointIndicesForSubjects, std::vector< FloatType > desiredCrossSectionalAtlasTimePoints )
+std::multimap< unsigned int, std::pair< typename CLongitudinalAtlasBuilder< TFloat, VImageDimension >::SImageDatum, TFloat > >
+CLongitudinalAtlasBuilder< TFloat, VImageDimension >::SetupDataForAndComputeIndividualGrowthModels( std::vector< FloatType > desiredCrossSectionalAtlasTimePoints )
 {
   // with all the given time information compute the individual models
-  unsigned int nrOfSubjects = dataBySubject.size();
+  unsigned int nrOfSubjects = m_DataBySubject.size();
 
-  std::multimap< unsigned int, std::pair< SImageDatum, FloatType > > CrossSectionalAtlasImagesAndWeightsForTimeIndex;
+  std::multimap< unsigned int, std::pair< SImageDatum, FloatType > > crossSectionalAtlasImagesAndWeightsForTimeIndex;
 
   for ( int iS=0; iS<nrOfSubjects; ++iS )
   {
-    std::cout << "Processing subject: " << dataBySubject[ iS ][ 0 ].subjectString << std::endl;
+    std::cout << "Processing subject: " << m_DataBySubject[ iS ][ 0 ].subjectString << std::endl;
 
     // get the time-points we want
     std::vector< FloatType > desiredTimePointsForSubject;
-    for ( int iT=0; iT<desiredTimePointIndicesForSubjects[ iS ].size(); ++iT )
+    for ( int iT=0; iT< m_DesiredTimePointIndicesForSubjects[ iS ].size(); ++iT )
       {
-        unsigned int timeIndex = desiredTimePointIndicesForSubjects[ iS ][ iT ];
-        desiredTimePointsForSubject.push_back( desiredCrossSectionalAtlasTimePoints[ timeIndex ] );
+        unsigned int timeIndex = m_DesiredTimePointIndicesForSubjects[ iS ][ iT ];
+        desiredTimePointsForSubject.push_back( m_DesiredCrossSectionalAtlasTimePoints[ timeIndex ] );
       }
 
     // compute the growth model
     std::vector< std::vector< std::pair< SImageDatum, FloatType > > > warpedImagesAndWeightsAtTimePointForSubject;
 
-    warpedImagesAndWeightsAtTimePointForSubject = ComputeIndividualGrowthModel( dataBySubject[ iS ], desiredTimePointsForSubject );
+    warpedImagesAndWeightsAtTimePointForSubject = ComputeIndividualGrowthModel( m_DataBySubject[ iS ], desiredTimePointsForSubject );
 
     // add the result to the data-structure which holds which images should be used to build the cross-sectional atlas
 
-    for ( int iW=0; iW<warpedImagesAndWeightsAtTimePointForSubject.size(); ++iW )
-      {
-        CrossSectionalAtlasImagesAndWeightsForTimeIndex[ iT ] = warpedImagesAndWeightsAtTimePointForSubject[ iW ];
-      }
+    for ( int iT=0; iT<desiredTimePointsForSubject.size(); ++iT )
+    {
+      unsigned int timeIndex = m_DesiredTimePointIndicesForSubjects[ iS ][ iT ];
+
+      for ( int iW=0; iW<warpedImagesAndWeightsAtTimePointForSubject[ iT ].size(); ++iW )
+        {
+          crossSectionalAtlasImagesAndWeightsForTimeIndex.insert( std::pair< unsigned int, std::pair< SImageDatum, FloatType > >
+                                                                  ( timeIndex, warpedImagesAndWeightsAtTimePointForSubject[ iT ][ iW ] ) );
+        }
+    }
   }
+
+  return crossSectionalAtlasImagesAndWeightsForTimeIndex;
 
 }
 
 
 template < class TFloat, unsigned int VImageDimension >
-void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::SetupDataForAndComputeCrossSectionalAtlas()
+std::vector< typename CLongitudinalAtlasBuilder< TFloat, VImageDimension >::SImageDatum >
+CLongitudinalAtlasBuilder< TFloat, VImageDimension >::SetupDataForAndComputeCrossSectionalAtlases( std::multimap< unsigned int , std::pair< SImageDatum, FloatType > > crossSectionalAtlasImagesAndWeightsForTimeIndex, std::vector< TFloat > desiredCrossSectionalAtlasTimePoints )
 {
-  // now compute the cross-sectional atlases
-  for ( int iI=0; iI<overallTimeDiscretization.size(); ++iI )
-  {
-      std::vector< SImageDatum > crossSectionalSubjectData;
+  typedef typename std::multimap< unsigned int, std::pair< SImageDatum, FloatType > >::const_iterator MapConstIteratorType;
 
-      std::cout << "Computing cross-sectional atlas for t = " << overallTimeDiscretization[ iI ] << std::endl;
+  std::vector< SImageDatum > crossSectionalAtlasesResult;
+
+  // now compute the cross-sectional atlases
+  for ( int iT=0; iT<desiredCrossSectionalAtlasTimePoints.size(); ++iT )
+  {
+      std::vector< std::pair< SImageDatum , FloatType > > crossSectionalSubjectData;
+
+      std::cout << "Computing cross-sectional atlas for t = " << desiredCrossSectionalAtlasTimePoints[ iT ] << std::endl;
       std::cout << "   Involving subjects = ";
-      for ( int iS=0; iS<desiredSubjectIDsAndTimePointIndicesForTimePoint[ iI ].size(); ++iS )
+
+      MapConstIteratorType beginT = crossSectionalAtlasImagesAndWeightsForTimeIndex.lower_bound( iT );
+      MapConstIteratorType endT = crossSectionalAtlasImagesAndWeightsForTimeIndex.upper_bound( iT );
+      MapConstIteratorType iter;
+
+      for ( iter = beginT; iter != endT; ++iter )
       {
-        std::cout << desiredSubjectIDsAndTimePointIndicesForTimePoint[ iI ][ iS ].first
-                     << "("
-                     << desiredSubjectIDsAndTimePointIndicesForTimePoint[ iI ][ iS ].second
-                     << ")"
-                     << " ";
-        SImageDatum currentDatum;
+        std::cout << "id = " << iter->second.first.subjectId << " with weight " << iter->second.second << " from file = " << iter->second.first.fileName << std::endl;
+        SImageDatum currentDatum = iter->second.first;
         currentDatum.timePoint = 1.0; // atlas as source image; TODO: make this more flexible
 
-        currentDatum.transformFileName = ""; // TODO: add transform
-        currentDatum.subjectId = desiredSubjectIDsAndTimePointIndicesForTimePoint[ iI ][ iS ].first;
-        int aId = subjectIdToArrayId[ desiredSubjectIDsAndTimePointIndicesForTimePoint[ iI ][ iS ].first ];
-        currentDatum.subjectString = dataBySubject[ aId ][0].subjectString;
-        currentDatum.fileName = CreateIndividualGrowthModelFileNameForSubjectAtTimePoint(
-              currentDatum.subjectString,
-              overallTimeDiscretization[ iI ]
-              );
-        crossSectionalSubjectData.push_back( currentDatum );
+        crossSectionalSubjectData.push_back( std::make_pair( currentDatum, iter->second.second ) );
+
       }
-      std::cout << std::endl;
-      std::cout << "   Corresponding to indices = ";
-      for ( int iJ=0; iJ<desiredSubjectIDsAndTimePointIndicesForTimePoint[ iI ].size(); ++iJ )
-      {
-        std::cout << subjectIdToArrayId[ desiredSubjectIDsAndTimePointIndicesForTimePoint[ iI ][ iJ ].first ] << " ";
-      }
-      std::cout << std::endl;
 
       // put the cross-sectional atlas-builder here
-      ComputeCrossSectionalAtlas( crossSectionalSubjectData,overallTimeDiscretization[ iI ] );
-
+      SImageDatum currentCrossSectionalAtlas;
+      currentCrossSectionalAtlas = ComputeCrossSectionalAtlas( crossSectionalSubjectData );
+      crossSectionalAtlasesResult.push_back( currentCrossSectionalAtlas );
   }
 
-
+  return crossSectionalAtlasesResult;
 }
 
 template < class TFloat, unsigned int VImageDimension >
-void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::SetupDataForAndComputePopulationGrowthModel()
+std::vector< typename CLongitudinalAtlasBuilder< TFloat, VImageDimension >::SImageDatum >
+CLongitudinalAtlasBuilder< TFloat, VImageDimension >::SetupDataForAndComputePopulationGrowthModel( std::vector< SImageDatum > populationGrowthModelData )
 {
-  std::vector< SImageDatum > populationGrowthModelData;
+  std::vector< SImageDatum > populationGrowthModelResult;
 
   // now compute the growth model based on the cross sectional atlases
   std::cout << "Computing growth-model from the cross-sectional atlases." << std::endl;
   std::cout << "Using timepoints t in { ";
-  for ( int iT=0; iT<overallTimeDiscretization.size(); ++iT )
+  for ( int iT=0; iT<populationGrowthModelData.size(); ++iT )
   {
-    std::cout << overallTimeDiscretization[ iT ];
-    if ( iT != overallTimeDiscretization.size() -1 ) std::cout << " , ";
-
-    SImageDatum currentDatum;
-    currentDatum.timePoint = overallTimeDiscretization[ iT ];
-    currentDatum.fileName = CreateCrossSectionalAtlasFileNameAtTimePoint( overallTimeDiscretization[ iT ] );
-    currentDatum.transformFileName = ""; // TODO: add transform
-    currentDatum.subjectId = 0; // all the same, this is for the population growth model
-    currentDatum.subjectString = "populationGrowthModel";
-
-    populationGrowthModelData.push_back( currentDatum );
-
+    std::cout << populationGrowthModelData[ iT ].timePoint;
+    if ( iT != populationGrowthModelData.size() -1 ) std::cout << " , ";
   }
   std::cout << "}" << std::endl;
 
   // put the growth model here
-  ComputePopulationGrowthModel( populationGrowthModelData );
+  populationGrowthModelResult = ComputePopulationGrowthModel( populationGrowthModelData );
 
+  return populationGrowthModelResult;
 }
 
 
@@ -798,10 +849,16 @@ void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::Solve()
 
   this->SetDefaultsIfNeeded();
 
-  CreateDiscretizationInformation();
-  SetupDataForAndComputeIndividualGrowthModels();
-  SetupDataForAndComputeCrossSectionalAtlases();
-  SetupDataForAndComputePopulationGrowthModel();
+  std::multimap< unsigned int, std::pair< SImageDatum, FloatType > > crossSectionalAtlasImagesAndWeightsForTimeIndex;
+  std::vector< SImageDatum > crossSectionalAtlasesResult;
+  std::vector< SImageDatum > populationGrowthModelResult;
+
+  std::vector< FloatType > desiredCrossSectionalAtlasTimePoints;
+
+  CreateDiscretizationInformation( m_DataBySubject, m_SubjectIdToArrayId, m_DesiredTimePointIndicesForSubjects, desiredCrossSectionalAtlasTimePoints );
+  crossSectionalAtlasImagesAndWeightsForTimeIndex = SetupDataForAndComputeIndividualGrowthModels( desiredCrossSectionalAtlasTimePoints );
+  crossSectionalAtlasesResult = SetupDataForAndComputeCrossSectionalAtlases( crossSectionalAtlasImagesAndWeightsForTimeIndex, desiredCrossSectionalAtlasTimePoints );
+  populationGrowthModelResult = SetupDataForAndComputePopulationGrowthModel( crossSectionalAtlasesResult );
 
 }
 
@@ -859,7 +916,7 @@ void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::DetermineOverallTimeI
 }
 
 template < class TFloat, unsigned int VImageDimension >
-void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::DetermineCrossSectionAtlasTimePointsByNumber( std::vector< TFloat >& desiredCrossSectionalAtlasTimePoints, TFloat minTime, TFloat maxTime )
+void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::DetermineCrossSectionalAtlasTimePointsByNumber( std::vector< TFloat >& desiredCrossSectionalAtlasTimePoints, TFloat minTime, TFloat maxTime )
 {
   TFloat startTime = minTime;
   TFloat endTime = maxTime;
@@ -916,56 +973,6 @@ void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::DetermineCrossSection
     }
 }
 
-template < class TFloat, unsigned int VImageDimension >
-void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::DetermineDesiredTimePointsPerSubject( std::vector< std::vector< TFloat > >& desiredTimePointPerSubject, std::vector< std::vector< std::pair< int, int > > > &desiredSubjectIDsAndTimePointIndicesForTimePoint, std::vector< TFloat > &overallTimeDiscretization, std::vector< std::vector< typename CALATK::CJSONDataParser< TFloat >::SImageDatum > > &dataBySubject )
-{
-
-
-  std::cout << "Time discretization: ";
-  for ( int iI=0; iI<overallTimeDiscretization.size(); ++iI )
-  {
-    std::cout << overallTimeDiscretization[ iI ] << " ";
-  }
-  std::cout << std::endl;
-
-  unsigned int nrOfSubjects = dataBySubject.size();
-  desiredTimePointPerSubject.clear();
-  desiredSubjectIDsAndTimePointIndicesForTimePoint.clear();
-
-  for ( int iI=0; iI<overallTimeDiscretization.size(); ++iI )
-  {
-    std::vector< std::pair< int, int > > emptyVector;
-    desiredSubjectIDsAndTimePointIndicesForTimePoint.push_back( emptyVector );
-  }
-
-  for ( int iI=0; iI<nrOfSubjects; ++iI )
-  {
-    std::vector< TFloat > desiredTimePointsForIndividualSubject;
-    DetermineDesiredTimePointsForIndividualSubject( desiredTimePointsForIndividualSubject, desiredSubjectIDsAndTimePointIndicesForTimePoint, overallTimeDiscretization, dataBySubject[ iI ] );
-
-    std::cout << "Desired time points for subject: " << dataBySubject[ iI ][ 0 ].subjectString << ": ";
-    for ( unsigned int iJ=0; iJ<desiredTimePointsForIndividualSubject.size(); ++iJ )
-    {
-      std::cout << desiredTimePointsForIndividualSubject[ iJ ] << " ";
-    }
-    std::cout << std::endl;
-
-    desiredTimePointPerSubject.push_back( desiredTimePointsForIndividualSubject );
-  }
-
-  // print out the used subject id's per time-point
-  std::cout << "Subject IDs per time-discretization:" << std::endl;
-  for ( int iI=0; iI<overallTimeDiscretization.size(); ++iI )
-  {
-    std::cout << "t = " << overallTimeDiscretization[ iI ] << ": ";
-    for ( int iJ=0; iJ<desiredSubjectIDsAndTimePointIndicesForTimePoint[ iI ].size(); ++iJ )
-    {
-      std::cout << desiredSubjectIDsAndTimePointIndicesForTimePoint[ iI ][ iJ ].first << " ";
-    }
-    std::cout << std::endl;
-  }
-
-}
 
 template < class TFloat, unsigned int VImageDimension >
 void CLongitudinalAtlasBuilder< TFloat, VImageDimension >::GetSubjectAndTimeSortedData( std::vector< std::vector< typename CALATK::CJSONDataParser< TFloat >::SImageDatum > > &dataBySubject, std::map< int, int > &subjectIdToArrayId, CALATK::CJSONConfiguration *dataConfiguration )

@@ -556,6 +556,9 @@ void CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< TState >::C
   m_ptrCurrentFinalAdjoint->AddCellwise( m_ptrImageLagrangianMultiplier );
 
   LDDMMUtilsType::applyMap( m_ptrCurrentBackMap, m_ptrCurrentFinalAdjoint, ptrWarpedFinalToInitialAdjoint );
+  LDDMMUtilsType::computeDeterminantOfJacobian( m_ptrCurrentBackMap, m_ptrDeterminantOfJacobian );
+
+  ptrWarpedFinalToInitialAdjoint->MultiplyElementwise( m_ptrDeterminantOfJacobian );
 }
 
 template < class TState >

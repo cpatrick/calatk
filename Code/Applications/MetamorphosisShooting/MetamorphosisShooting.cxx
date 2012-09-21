@@ -75,7 +75,7 @@ int DoIt( int argc, char** argv )
   {
     plddmm = new regTypeFull;
   }
-  if ( sLDDMMSolverType.compare( "simplifiedShootingInitialImage" ) == 0 )
+  else if ( sLDDMMSolverType.compare( "simplifiedShootingInitialImage" ) == 0 )
   {
     plddmm = new regTypeSimplifiedInitialImage;
     bStateContainsInitialImage = true;

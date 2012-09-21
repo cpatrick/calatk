@@ -142,6 +142,9 @@ public:
   SetMacro( NumberOfCrossSectionalAtlasTimePoints, unsigned int );
   GetMacro( NumberOfCrossSectionalAtlasTimePoints, unsigned int );
 
+  SetMacro( UseWeightedAveragesForIndividualGrowthModelTimePoints, bool );
+  GetMacro( UseWeightedAveragesForIndividualGrowthModelTimePoints, bool );
+
 protected:
 
   virtual void SetDefaultsIfNeeded();
@@ -155,13 +158,20 @@ protected:
   void DetermineCrossSectionalAtlasTimePointsByNumber( std::vector< FloatType >& desiredCrossSectionalAtlasTimePoints, FloatType minTime, FloatType maxTime );
   void DetermineCrossSectionalAtlasTimePointsByTimePoints( std::vector< FloatType >& desiredCrossSectionalAtlasTimePoints, FloatType minTime, FloatType maxTime );
 
+  std::vector< unsigned int > ComputeDesiredTimePointIndicesForSubject( std::vector< SImageDatum > dataOfIndividualSubject, std::vector< FloatType > desiredCrossSectionalAtlasTimePoints );
   void GetSubjectAndTimeSortedData( std::vector< std::vector< typename CALATK::CJSONDataParser< FloatType >::SImageDatum > > &dataBySubject, std::map< int, int > &subjectIdToArrayId, CALATK::CJSONConfiguration *dataConfiguration );
-
   void GetTemporallyClosestIndicesAndWeights( std::vector< unsigned int >& closestIndices, std::vector< TFloat >& closestWeights, std::vector< SImageDatum > individualSubjectData, TFloat timePoint );
 
+  void CreateDiscretizationInformation( std::vector< std::vector< SImageDatum > > &dataBySubject, std::map< int, int >& subjectIdToArrayId, std::vector< std::vector< unsigned int > >& desiredTimePointIndicesForSubjects, std::vector< TFloat >& desiredCrossSectionalAtlasTimePoints );
+
   std::vector< std::vector< std::pair< SImageDatum, FloatType > > > ComputeIndividualGrowthModel( std::vector< SImageDatum > individualSubjectData, std::vector< TFloat > desiredTimePoints );
-  void ComputeCrossSectionalAtlas( std::vector< std::pair< SImageDatum, FloatType > > crossSectionalSubjectData );
-  void ComputePopulationGrowthModel( std::vector< SImageDatum > populationGrowthModelData );
+  std::multimap< unsigned int, std::pair< SImageDatum, FloatType > > SetupDataForAndComputeIndividualGrowthModels( std::vector< FloatType > desiredCrossSectionalAtlasTimePoints );
+
+  SImageDatum ComputeCrossSectionalAtlas( std::vector< std::pair< SImageDatum, FloatType > > crossSectionalSubjectData );
+
+  std::vector< SImageDatum > SetupDataForAndComputeCrossSectionalAtlases( std::multimap< unsigned int , std::pair< SImageDatum, FloatType > > crossSectionalAtlasImagesAndWeightsForTimeIndex, std::vector< TFloat > desiredCrossSectionalAtlasTimePoints );
+  std::vector< SImageDatum > ComputePopulationGrowthModel( std::vector< SImageDatum > populationGrowthModelData );
+  std::vector< SImageDatum > SetupDataForAndComputePopulationGrowthModel( std::vector< SImageDatum > populationGrowthModelData );
 
   void CreateDirectoriesIfNeeded();
 
@@ -183,6 +193,11 @@ private:
   std::string CreateCrossSectionalAtlasFileNameAtTimePoint( FloatType timePoint );
   std::string CreateCrossSectionalAtlasMapFileNameForSubjectAtTimePoint( std::string subjectString, FloatType timePoint, int iIndex );
   std::string CreatePopulationGrowthModelFileNameAtTimePoint( FloatType timePoint );
+
+  // discretization information
+  std::vector< std::vector< SImageDatum > > m_DataBySubject;
+  std::map< int, int > m_SubjectIdToArrayId;
+  std::vector< std::vector< unsigned int > > m_DesiredTimePointIndicesForSubjects;
 
   CJSONConfiguration::Pointer m_DataCombinedJSONConfig;
   CJSONConfiguration::Pointer m_DataCleanedJSONConfig;
@@ -234,6 +249,10 @@ private:
   unsigned int       m_NumberOfCrossSectionalAtlasTimePoints;
   const unsigned int DefaultNumberOfCrossSectionalAtlasTimePoints;
   bool               m_ExternallySetNumberOfCrossSectionalAtlasTimePoints;
+
+  bool       m_UseWeightedAveragesForIndividualGrowthModelTimePoints;
+  const bool DefaultUseWeightedAveragesForIndividualGrowthModelTimePoints;
+  bool       m_ExternallySetUseWeightedAveragesForIndividualGrowthModelTimePoints;
 
   CJSONConfiguration::Pointer m_CombinedConfigurationIndividualGrowthModel;
   CJSONConfiguration::Pointer m_CleanedConfigurationIndividualGrowthModel;

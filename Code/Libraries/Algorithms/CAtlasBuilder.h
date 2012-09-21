@@ -91,6 +91,12 @@ public:
   // need to overwrite all the default implementations for setting solvers, evolvers, metrics, ...
   // as we will have sets of those (we could also point to the same, but this would disallow multi-threading)
 
+  void SetWeights( std::vector< FloatType > );
+  std::vector< FloatType > GetWeights();
+
+  void SetIndividualObjectiveFunctionAndWeight( IndividualObjectiveFunctionType * objectiveFunction, FloatType weight = 1.0 );
+  void SetIndividualObjectiveFunctionAndWeight( unsigned int uiId, IndividualObjectiveFunctionType * objectiveFunction, FloatType weight = 1.0 );
+
   void SetIndividualObjectiveFunction( IndividualObjectiveFunctionType * objectiveFunction );
   void SetIndividualObjectiveFunction( unsigned int uiId, IndividualObjectiveFunctionType * objectiveFunction );
   IndividualObjectiveFunctionType * GetIndividualObjectiveFunction( unsigned int uiId );
@@ -142,6 +148,16 @@ public:
 
   virtual void SetAutoConfiguration( CJSONConfiguration * combined, CJSONConfiguration * cleaned );
 
+  // TODO: Implement
+  const VectorFieldType* GetMap( FloatType dTime );
+  const VectorFieldType* GetMap( FloatType dTime, unsigned int uiId );
+  const VectorFieldType* GetMapFromTo( FloatType dTimeFrom, FloatType dTimeTo );
+  const VectorFieldType* GetMapFromTo( FloatType dTimeFrom, FloatType dTimeTo, unsigned int uiId );
+  const VectorImageType* GetSourceImage( FloatType dTime );
+  const VectorImageType* GetSourceImage( FloatType dTime, unsigned int uiId );
+  const VectorImageType* GetTargetImage( FloatType dTime );
+  const VectorImageType* GetTargetImage( FloatType dTime, unsigned int uiId );
+
 protected:
 
   virtual AtlasObjectiveFunctionType* CreateAtlasObjectiveFunction() = 0;
@@ -163,12 +179,6 @@ protected:
   void SetDefaultKernelPointer();
   void SetDefaultEvolverPointer();
 
-  // TODO: Implement
-  const VectorFieldType* GetMap( FloatType dTime );
-  const VectorFieldType* GetMapFromTo( FloatType dTimeFrom, FloatType dTimeTo );
-  const VectorImageType* GetSourceImage( FloatType dTime );
-  const VectorImageType* GetTargetImage( FloatType dTime );
-
   void PreFirstSolve();
 
   /**
@@ -177,6 +187,8 @@ protected:
    * @return unsigned int -- number of individual registration
    */
   unsigned int GetNumberOfIndividualRegistrations() const;
+
+  std::vector< FloatType > m_ObjectiveFunctionWeights;
 
 private:
 

@@ -233,15 +233,19 @@ void CAtlasSubiterationUpdateObjectiveFunction< TState >::UpdateAtlasImageAsAver
 
   unsigned int numberOfObjectiveFunctions = this->m_VectorIndividualObjectiveFunctionPtrs.size();
 
+  FloatType overallWeight = 0;
+
   for ( unsigned int iI=0; iI < numberOfObjectiveFunctions; ++iI )
   {
       typename IndividualObjectiveFunctionType::Pointer currentObjectiveFunction = this->m_VectorIndividualObjectiveFunctionPtrs[ iI ];
       currentObjectiveFunction->GetSourceImage( tmpImage, 1.0 );
-      newAtlasImage->AddCellwise( tmpImage );
+      FloatType currentWeight = currentObjectiveFunction->GetEnergyWeight();
+      overallWeight += currentWeight;
+      newAtlasImage->AddCellwiseMultiply( tmpImage, currentWeight );
   }
 
   // now that we have added all of them we just need to divide to get the average image
-  newAtlasImage->MultiplyByConstant( 1.0/numberOfObjectiveFunctions );
+  newAtlasImage->MultiplyByConstant( 1.0/overallWeight );
 
   currentAtlasImage->Copy( newAtlasImage );
 }

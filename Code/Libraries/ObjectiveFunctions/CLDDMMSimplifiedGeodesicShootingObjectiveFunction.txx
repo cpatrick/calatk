@@ -581,6 +581,9 @@ void CLDDMMSimplifiedGeodesicShootingObjectiveFunction< TState >::ComputeImageMo
   m_ptrCurrentFinalAdjoint->MultiplyByConstant( m_vecTimeDiscretization[ uiNrOfTimePoints-1 ].vecWeights[ 0 ] );
 
   LDDMMUtilsType::applyMap( m_ptrCurrentBackMap, m_ptrCurrentFinalAdjoint, ptrWarpedFinalToInitialAdjoint );
+  LDDMMUtilsType::computeDeterminantOfJacobian( m_ptrCurrentBackMap, m_ptrDeterminantOfJacobian );
+
+  ptrWarpedFinalToInitialAdjoint->MultiplyElementwise( m_ptrDeterminantOfJacobian );
 }
 
 template < class TState >

@@ -112,6 +112,7 @@ void CJSONDataParser< TFloat >::ParseDataFromBasicJSONConfigurationInternal( std
         imageDatum.fileName = combinedTimePoint[1].asCString();
         imageDatum.transformFileName = nullTransformFileName;
         imageDatum.subjectString = subject;
+        imageDatum.timeSeriesIndex = -1; // default
 
         parsedData.push_back( imageDatum );
 
@@ -205,6 +206,7 @@ void CJSONDataParser< TFloat >::ParseDataFromAdvancedJSONConfigurationInternal( 
       imageDatum.fileName = image.asCString();
       imageDatum.transformFileName = transformFileName;
       imageDatum.subjectString = subject;
+      imageDatum.timeSeriesIndex = -1;
 
       parsedData.push_back( imageDatum );
 
