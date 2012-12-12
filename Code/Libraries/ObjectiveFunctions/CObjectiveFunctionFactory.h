@@ -32,6 +32,7 @@
 #include "CLDDMMGeometricMetamorphosisObjectiveFunction.h"
 #include "CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction.h"
 #include "CMetamorphosisAdjointGeodesicShootingObjectiveFunction.h"
+#include "CLDDMMMultiVelocityObjectiveFunction.h"
 
 #include "CStateInitialImageMomentum.h"
 #include "CStateInitialMomentum.h"
@@ -73,7 +74,8 @@ public:
     LDDMMMetamorphosisAdjointGeodesicShooting,
     LDDMMMetamorphosisAdjointGeodesicShootingInitialImage,
     LDDMMSimplifiedMetamorphosisGeodesicShooting,
-    LDDMMSimplifiedMetamorphosisGeodesicShootingInitialImage
+    LDDMMSimplifiedMetamorphosisGeodesicShootingInitialImage,
+    LDDMMMultiVelocity
     };
 
   CObjectiveFunctionFactory();

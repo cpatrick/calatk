@@ -74,6 +74,8 @@ CObjectiveFunctionFactory< T, VImageDimension >::CreateNewObjectiveFunction( Num
   case LDDMMSimplifiedMetamorphosisGeodesicShootingInitialImage:
     ptrObjectiveFunction = new CLDDMMSimplifiedMetamorphosisGeodesicShootingObjectiveFunction< InitialImageMomentumStateType >;
     break;
+  case LDDMMMultiVelocity:
+    ptrObjectiveFunction = new CLDDMMMultiVelocityObjectiveFunction< SpatioTemporalVelocityFieldStateType >;
   }
 
   return ptrObjectiveFunction;
@@ -134,6 +136,10 @@ CObjectiveFunctionFactory< T, VImageDimension >::GetObjectiveFunctionTypeFromStr
   else if ( objectiveFunctionLowerCase == "lddmmsimplifiedmetamorphosisgeodesicshootinginitialimage" )
   {
     return LDDMMSimplifiedMetamorphosisGeodesicShootingInitialImage;
+  }
+  else if ( objectiveFunctionLowerCase == "lddmmmultivelocity")
+  {
+    return LDDMMMultiVelocity;
   }
   else
   {

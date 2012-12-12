@@ -251,7 +251,7 @@ CStateSpatioTemporalVelocityField< T, VImageDimension >::operator-=(const CState
 template <class T, unsigned int VImageDimension >
 CStateSpatioTemporalVelocityField< T, VImageDimension > &
 CStateSpatioTemporalVelocityField< T, VImageDimension >::operator*=(const T & p )
-{
+  {
   typename VectorFieldTimeSeriesType::iterator iterTarget;
   for ( iterTarget = m_VectorFieldTimeSeries.begin(); iterTarget != m_VectorFieldTimeSeries.end(); ++iterTarget )
     {

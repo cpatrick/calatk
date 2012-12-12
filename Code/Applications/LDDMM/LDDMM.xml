@@ -50,6 +50,7 @@
             <element>adjointShooting</element>
             <element>adjointShootingInitialImage</element>
             <element>relaxation</element>
+            <element>multirelaxation</element>
             <description>Selects the desired LDDMM solver (simplifiedShooting/simplifiedShootingInitialImage/adjointShooting/adjointShootingInitialImage/relaxation). The relaxation solver performs the optimization over the full spatio-temporal velocity field. This is the algorithm by Beg. The simplified shooting method and the adjoint shooting method perform the optimization over the initial image and the initial momentum. The implementations are based on a modification of the shooting algorithm by Ashburner (simplified shooting) and the adjoint shooting method/geodesic regression formulation by Vialard/Niethammer.</description>
         </string-enumeration>
 

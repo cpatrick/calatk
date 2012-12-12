@@ -106,6 +106,12 @@ int DoIt( int argc, char** argv )
     dynamic_cast< regTypeSpatioTemporalVelocityField* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMGrowthModel" );
     bIsSpatioTemporalVelocityType = true;
   }
+  else if ( sLDDMMSolverType.compare( "multirelaxation" ) == 0 )
+  {
+    plddmm = new regTypeSpatioTemporalVelocityField;
+    dynamic_cast< regTypeSpatioTemporalVelocityField* >( plddmm.GetPointer() )->SetObjectiveFunction( "LDDMMMultiVelocity" );
+    bIsSpatioTemporalVelocityType = true;
+  }
   else
   {
     std::cerr << "Unknown solver type " << sLDDMMSolverType << ". ABORT." << std::endl;
