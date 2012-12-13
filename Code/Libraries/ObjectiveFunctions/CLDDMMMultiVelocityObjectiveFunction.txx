@@ -20,9 +20,14 @@
 #ifndef C_LDDMM_MULTI_VELOCITY_OBJECTIVE_FUNCTION_TXX
 #define C_LDDMM_MULTI_VELOCITY_OBJECTIVE_FUNCTION_TXX
 
+#define DEBUG
+
 template < class TState >
 CLDDMMMultiVelocityObjectiveFunction< TState >::CLDDMMMultiVelocityObjectiveFunction()
 {
+
+  //std::cout << "CLDDMMMultiVelocityObjectiveFunction Constructor" << std::endl;
+
   m_ptrI0 = NULL;
   m_ptrTmpVelocityField = NULL;
   m_ptrTmpGradient = NULL;
@@ -65,18 +70,22 @@ template < class TState >
 void CLDDMMMultiVelocityObjectiveFunction< TState >::CreateAuxiliaryStructures()
 {
 
+  //std::cout << "CreateAuxiliaryStructures() Start" << std::endl;
+
   // obtain image from which to graft the image information for the data structures
   const VectorImageType* pGraftIm = this->m_ptrImageManager->GetGraftImagePointer( this->GetActiveSubjectId() );
 
   // Hardcoding some S images
+  //std::cout << "CreateAuxiliaryStructures() Start Creating Masks" << std::endl;
   this->SetNumberOfMasks(2);
   m_ptrS0s[0] = new VectorImageType( pGraftIm );
   m_ptrS0s[1] = new VectorImageType( pGraftIm );
   m_ptrS0s[0]->MultiplyByConstant(0);
   m_ptrS0s[1]->MultiplyByConstant(0);
+  //std::cout << "got here" << std::endl;
   for ( int i = 0; i < 32; ++i )
     {
-      for ( int j = 0; j < 32; ++i )
+      for ( int j = 0; j < 32; ++j )
         {
         if (j < 16 )
           {
@@ -88,6 +97,9 @@ void CLDDMMMultiVelocityObjectiveFunction< TState >::CreateAuxiliaryStructures()
           }
         }
     }
+  //std::cout << "CreateAuxiliaryStructures() Done Creating Masks" << std::endl;
+
+  m_Sigma2Sqr = 1.0;
 
   // get the subject ids
   std::vector< int > vecSubjectIndices;
@@ -99,6 +111,7 @@ void CLDDMMMultiVelocityObjectiveFunction< TState >::CreateAuxiliaryStructures()
 
   // image and adjoint time-series
   m_ptrIs.clear();
+  m_ptrSs.clear();
   m_ptrLambdaIs.clear();
   m_ptrLambdaSs.clear();
   m_ptrVs.clear();
@@ -108,37 +121,53 @@ void CLDDMMMultiVelocityObjectiveFunction< TState >::CreateAuxiliaryStructures()
   // storage for the initial image
   // and initialize it with the first image of the time-series
   m_ptrI0 = new VectorImageType( pGraftIm );
+  m_ptrI1 = new VectorImageType( pGraftIm );
+  this->GetTargetImage( m_ptrI1 );
+
+  //std::cout << "CreateAuxiliaryStructures() Done Clearing vectors" << std::endl;
+
+  //std::cout << "CreateAuxiliaryStructures() " << m_ptrS0s.size() << std::endl;
 
   // one more than for the velocity fields
   for ( unsigned int maskIndex = 0; maskIndex < m_ptrS0s.size(); ++maskIndex)
     {
     m_ptrVs.push_back(std::vector< VectorFieldPointerType >());
     m_ptrIs.push_back(std::vector< VectorImagePointerType >());
+    m_ptrSs.push_back(std::vector< VectorImagePointerType >());
     m_ptrLambdaIs.push_back(std::vector< VectorImagePointerType >());
     m_ptrLambdaSs.push_back(std::vector< VectorImagePointerType >());
 
+    typename VectorImageType::Pointer ptrCurrentVectorImage;
+    ptrCurrentVectorImage = new VectorImageType( pGraftIm );
+    m_ptrCurrentLambdaEnds.push_back( ptrCurrentVectorImage );
+    ptrCurrentVectorImage = new VectorImageType( pGraftIm );
+    m_ptrCurrentMaskLambdaEnds.push_back( ptrCurrentVectorImage );
+
+    //std::cout << "outer loop" << std::endl;
     for ( unsigned int iI=0; iI < this->m_vecTimeDiscretization.size(); ++iI )
       {
-      typename VectorImageType::Pointer ptrCurrentVectorImage = new VectorImageType( pGraftIm );
+      //std::cout << "inner loop 0 " << std::endl;
+      ptrCurrentVectorImage = new VectorImageType( pGraftIm );
+      //std::cout << "inner loop 1" << std::endl;
       m_ptrIs[maskIndex].push_back( ptrCurrentVectorImage );
-
+      ptrCurrentVectorImage = new VectorImageType( pGraftIm );
+      m_ptrSs[maskIndex].push_back( ptrCurrentVectorImage );
+      //std::cout << "inner loop 2" << std::endl;
       // bookkeeping to simplify metric computations
       // TODO cpatrick This might need to come back
       //this->m_vecTimeDiscretization[ iI ].vecEstimatedImages.push_back( ptrCurrentVectorImage );
-
+//std::cout << "inner loop 3" << std::endl;
       typename VectorFieldType::Pointer ptrCurrentVectorField = new VectorFieldType( pGraftIm );
+      //std::cout << "inner loop 4" << std::endl;
       m_ptrVs[maskIndex].push_back( ptrCurrentVectorField );
-
+//std::cout << "inner loop 5" << std::endl;
       ptrCurrentVectorImage = new VectorImageType( pGraftIm );
       m_ptrLambdaIs[maskIndex].push_back( ptrCurrentVectorImage );
       ptrCurrentVectorImage = new VectorImageType( pGraftIm );
       m_ptrLambdaSs[maskIndex].push_back( ptrCurrentVectorImage );
-      ptrCurrentVectorImage = new VectorImageType( pGraftIm );
-      m_ptrCurrentLambdaEnds[maskIndex] = ptrCurrentVectorImage;
-      ptrCurrentVectorImage = new VectorImageType( pGraftIm );
-      m_ptrCurrentMaskLambdaEnds[maskIndex] = ptrCurrentVectorImage;
       }
     }
+  //std::cout << "Out of main loop" << std::endl;
 
   // storage for the maps
 
@@ -161,11 +190,16 @@ void CLDDMMMultiVelocityObjectiveFunction< TState >::CreateAuxiliaryStructures()
   // storage for the temporary gradient
   m_ptrTmpGradient = new VectorFieldType( pGraftIm );
 
+  //std::cout << "CreateAuxiliaryStructures() End" << std::endl;
+
 }
 
 template < class TState >
 void CLDDMMMultiVelocityObjectiveFunction< TState >::DeleteAuxiliaryStructures()
 {
+
+  //std::cout << "DeleteAuxiliaryStructures()" << std::endl;
+
   this->m_ptrMapIn  = NULL;
   this->m_ptrMapOut = NULL;
   this->m_ptrMapTmp = NULL;
@@ -189,9 +223,10 @@ void CLDDMMMultiVelocityObjectiveFunction< TState >::DeleteAuxiliaryStructures()
   this->m_ptrCurrentMaskLambdaEnds.clear();
 }
 
-/*template < class TState >
+template < class TState >
 void CLDDMMMultiVelocityObjectiveFunction< TState >::GetMap( VectorFieldType* ptrMap, T dTime )
 {
+  //std::cout << "GetMap()" << std::endl;
   T dTimeFrom = this->m_vecTimeDiscretization[0].dTime;
   GetMapFromTo( ptrMap, dTimeFrom, dTime );
 }
@@ -199,6 +234,8 @@ void CLDDMMMultiVelocityObjectiveFunction< TState >::GetMap( VectorFieldType* pt
 template < class TState >
 void CLDDMMMultiVelocityObjectiveFunction< TState >::GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo )
 {
+
+  //std::cout << "GetMapFromTo()" << std::endl;
 
   std::vector< VectorFieldType* > tmpMaps( m_ptrS0s.size(), new VectorFieldType(ptrMap) );
 
@@ -209,19 +246,19 @@ void CLDDMMMultiVelocityObjectiveFunction< TState >::GetMapFromTo( VectorFieldTy
     std::vector<VectorFieldPointerType>* curVs = new std::vector<VectorFieldPointerType>();
     for ( unsigned int i = 0; i < m_ptrVs.size(); ++i )
       {
-      curVs->push_back( const_cast<const VectorFieldPointerType>(m_ptrVs[maskIndex][i]) );
+      curVs->push_back( m_ptrVs[maskIndex][i] );
       }
     CALATK::LDDMMUtils< T, TState::ImageDimension >::GetMapFromToFromSpatioTemporalVelocityField(
           tmpMaps[maskIndex],
           dTimeFrom,
           dTimeTo,
           this->m_vecTimeDiscretization,
-          this->m_ptrState->GetVectorFieldTimeSeries()
+          curVs,
           this->m_ptrEvolver );
     //tmpMaps[maskIndex]->MultiplyElementwise(m_ptrS0s[maskIndex]); // Maybe this isn't needed
     ptrMap->AddElementwise(tmpMaps[maskIndex]);
     }
-}*/
+}
 
 template < class TState >
 void CLDDMMMultiVelocityObjectiveFunction< TState >::GetSourceImage( VectorImageType* ptrIm )
@@ -263,6 +300,7 @@ void CLDDMMMultiVelocityObjectiveFunction< TState >::GetTargetImage( VectorImage
 template < class TState >
 void CLDDMMMultiVelocityObjectiveFunction< TState >::GetMomentum( VectorImageType* ptrMomentum, T dTime )
 {
+  //std::cout << "GetMomentum()" << std::endl;
   ComputeImagesForward();
   ComputeAdjointBackward();
 
@@ -290,36 +328,47 @@ void CLDDMMMultiVelocityObjectiveFunction< TState >::DetermineTimePointData( std
 template < class TState >
 void CLDDMMMultiVelocityObjectiveFunction< TState >::ComputeImagesForward()
 {
+
+  //std::cout << "ComputeImagesForward()" << std::endl;
+
   LDDMMUtils< T, TState::ImageDimension >::identityMap( m_ptrMapIn );
   // FIXME: This is just to make things easier and to support estimating the initial image (todo) later
   m_ptrIs[0][0]->Copy( m_ptrI0 );
+  //std::cout << "copy done" << std::endl;
 
   for ( unsigned int maskIndex = 0; maskIndex < m_ptrS0s.size(); ++maskIndex)
     {
     for ( unsigned int iI = 0; iI < this->m_vecTimeDiscretization.size()-1; ++iI )
       {
+      //std::cout << "forward inner loop start" << std::endl;
       this->m_ptrEvolver->SolveForward(
         (VectorFieldType*) m_ptrVs[maskIndex][iI].GetPointer(), m_ptrMapIn,
         m_ptrMapOut, m_ptrMapTmp, this->m_vecTimeIncrements[ iI ] );
+      //std::cout << "forward inner loop after SolveForward" << std::endl;
 
       // for next step, copy
       m_ptrMapIn->Copy( m_ptrMapOut );
+      //std::cout << "forward inner loop after copy" << std::endl;
 
       // now compute the image by interpolation
       LDDMMUtils< T, TState::ImageDimension >::applyMap( m_ptrMapIn, m_ptrI0,
         m_ptrIs[maskIndex][ iI+1 ] );
+      //std::cout << "forward inner loop after applyMap" << std::endl;
 
       // now compute the new masks by interpolation
       LDDMMUtils< T, TState::ImageDimension >::applyMap( m_ptrMapIn, m_ptrI0,
         m_ptrSs[maskIndex][ iI+1 ] );
-
+      //std::cout << "forward inner loop end" << std::endl;
       }
     }
+  //std::cout << "ComputeImagesForward() end" << std::endl;
 }
 
 template < class TState >
 void CLDDMMMultiVelocityObjectiveFunction< TState >::ComputeAdjointBackward()
 {
+
+  //std::cout << "ComputeAdjointBackward()" << std::endl;
 
   // Create R^c that ties the different velocity fields and masks together in the
   // adjoints
@@ -415,7 +464,7 @@ void CLDDMMMultiVelocityObjectiveFunction< TState >::ComputeAdjointBackward()
 template < class TState >
 void CLDDMMMultiVelocityObjectiveFunction< TState >::ComputeGradient()
 {
-
+  //std::cout << "Compute Grad" << std::endl;
   ComputeImagesForward();
   ComputeAdjointBackward();
 
@@ -514,25 +563,30 @@ template < class TState >
 typename CLDDMMMultiVelocityObjectiveFunction< TState >::CEnergyValues
 CLDDMMMultiVelocityObjectiveFunction< TState >::GetCurrentEnergy()
 {
+  //std::cout << "GetCurrentEnergy()" << std::endl;
 
   T dEnergy = 0;
 
   // computing the square velocity for this time step using the inverse kernel measuring non-smoothness (and not it's inverse)
-  for ( unsigned int iI=0; iI < this->m_vecTimeDiscretization.size()-1; ++iI )
+  for ( unsigned int maskIndex = 0; maskIndex < m_ptrS0s.size(); ++maskIndex )
     {
-    // copy current velocity field (of the state)
-    m_ptrTmpVelocityField->Copy( this->m_ptrState->GetVectorFieldPointer( iI ) );
-
-    // convolve it with the inverse kernel, L^\dagger L v
-    this->m_ptrKernel->ConvolveWithInverseKernel( m_ptrTmpVelocityField );
-
-    // now multiply it with v
-    T dCurrentEnergy = 0.5*this->m_vecTimeIncrements[ iI ]*m_ptrTmpVelocityField->ComputeInnerProduct( this->m_ptrState->GetVectorFieldPointer( iI ) );
-
-    // add energy increment, assuring that we have the correct spatio-temporal volume contribution
-    dEnergy += dCurrentEnergy;
-
-    }
+    for ( unsigned int iI=0; iI < this->m_vecTimeDiscretization.size()-1; ++iI )
+      {
+      //std::cout << "get energy inner loop start" << std::endl;
+      // copy current velocity field (of the state)
+      m_ptrTmpVelocityField->Copy( m_ptrVs[maskIndex][iI] );
+      //std::cout << "get energy inner loop 1" << std::endl;
+      // convolve it with the inverse kernel, L^\dagger L v
+      this->m_ptrKernel->ConvolveWithInverseKernel( m_ptrTmpVelocityField );
+//std::cout << "get energy inner loop 2" << std::endl;
+      // now multiply it with v
+      T dCurrentEnergy = 0.5*this->m_vecTimeIncrements[ iI ]*m_ptrTmpVelocityField->ComputeInnerProduct( m_ptrVs[maskIndex][iI] );
+//std::cout << "get energy inner loop 3" << std::endl;
+      // add energy increment, assuring that we have the correct spatio-temporal volume contribution
+      dEnergy += dCurrentEnergy;
+      //std::cout << "get energy inner loop end" << std::endl;
+      }
+  }
 
   dEnergy *= this->m_EnergyWeight;
 
@@ -543,41 +597,29 @@ CLDDMMMultiVelocityObjectiveFunction< TState >::GetCurrentEnergy()
   // create the current images according to the current state
   // (in case the velocities were updated externally by the optimizer for example)
 
+  //std::cout << "GetCurrentEnergy() right before compute images forward" << std::endl;
   ComputeImagesForward();
 
   T dImageNorm = 0;
 
-  for ( unsigned int iI=0; iI < this->m_vecTimeDiscretization.size(); ++iI )
+  unsigned int lastTime = this->m_vecTimeDiscretization.size()-1;
+  for ( unsigned int maskIndex = 0; maskIndex < m_ptrS0s.size(); ++maskIndex )
     {
-    // account for all possible measurements
-    unsigned int uiNrOfMeasuredImagesAtTimePoint = this->m_vecTimeDiscretization[ iI ].vecMeasurementImages.size();
-    for ( unsigned int iM = 0; iM < uiNrOfMeasuredImagesAtTimePoint; ++iM )
-      {
-      T dCurrentImageMetric = 1.0/this->m_SigmaSqr*this->m_ptrMetric->GetMetric( this->m_vecTimeDiscretization[ iI ].vecMeasurementImages[ iM ], this->m_vecTimeDiscretization[ iI ].vecEstimatedImages[0] );
+      T dCurrentImageMetric = 1.0/this->m_SigmaSqr *
+        this->m_ptrMetric->GetMetric( m_ptrIs[maskIndex][lastTime], m_ptrI1 );
       dImageNorm += dCurrentImageMetric;
-      }
-
     }
 
   dImageNorm *= this->m_EnergyWeight;
 
   dEnergy += dImageNorm;
 
-  //std::cout << "E = " << dEnergy << "; dV = " << dVelocitySquareNorm << "; dI = " << dImageNorm << std::endl;
-
-  // write out the velocity, the image and the adjoint (everything basically)
-
-  //VectorFieldUtils< T, ImageDimension >::writeTimeDependantImagesITK( this->m_ptrState->GetVectorPointerToVectorFieldPointer(), "vs.nrrd" );
-  //VectorImageUtils< T, ImageDimension >::writeTimeDependantImagesITK( this->m_ptrI, "is.nrrd" );
-  //VectorImageUtils< T, ImageDimension >::writeTimeDependantImagesITK( this->m_ptrI, "lambdas.nrrd" );
-  //VectorImageUtils< T, ImageDimension >::writeFileITK( this->m_ptrKernel->GetKernel() , "kernel.nrrd");
-
   CEnergyValues energyValues;
   energyValues.dEnergy = dEnergy;
   energyValues.dRegularizationEnergy = dVelocitySquareNorm;
   energyValues.dMatchingEnergy = dImageNorm;
 
-  std::cout << "E(I) = " << dImageNorm << std::endl;
+  //std::cout << "E(I) = " << dImageNorm << std::endl;
 
   return energyValues;
 
@@ -586,19 +628,12 @@ CLDDMMMultiVelocityObjectiveFunction< TState >::GetCurrentEnergy()
 template < class TState >
 void CLDDMMMultiVelocityObjectiveFunction< TState >::OutputStateInformation( unsigned int uiIter, std::string outputPrefix )
 {
-  std::cout << "saving gradient components at iteration " << uiIter << std::endl;
+  //std::cout << "saving gradient components at iteration " << uiIter << std::endl;
 
   outputPrefix = outputPrefix + "LDDMM-";
 
   ComputeImagesForward();
   ComputeAdjointBackward();
-
-  // can compute the gradient from this
-  // \f$ \nabla E = v + (L^\dagger L)^{-1}(\sum_i \lambda_i \nabla I_i ) \f$
-  //
-  // Here the energy is defined as
-  // \f$ E = 1/2 \int_0^1 \|v\|_L^2~dt + 1/(sigma^2)\|I(1)-I_1\|^2
-  // and the gradient used is the Hilbert gradient
 
   unsigned int dim = m_ptrI0->GetDimension();
 

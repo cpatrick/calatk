@@ -76,8 +76,8 @@ public:
   /* Gets weight for mask-data attachment term */
   //GetMacro( Sigma2Sqr, T );
 
-  /*virtual void GetMap( VectorFieldType* ptrMap, T dTime );
-  virtual void GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo );*/
+  virtual void GetMap( VectorFieldType* ptrMap, T dTime );
+  virtual void GetMapFromTo( VectorFieldType* ptrMap, T dTimeFrom, T dTimeTo );
 
 protected:
 
@@ -108,6 +108,7 @@ private:
   VectorFieldPointerType m_ptrTmpVelocityField; // generic temporary velocity field
   VectorFieldPointerType m_ptrTmpGradient; // to store the temporary gradient
   VectorImagePointerType m_ptrI0; // initial image
+  VectorImagePointerType m_ptrI1; // target image
   VectorImagePointerType m_ptrCurrentAdjointDifference;
   VectorImagePointerType m_ptrCurrentAdjointMaskDifference;
 
@@ -116,6 +117,8 @@ private:
   std::vector< VectorImagePointerType > m_ptrCurrentLambdaEnds;
   std::vector< VectorImagePointerType > m_ptrCurrentMaskLambdaEnds;
   std::vector< VectorImagePointerType > m_ptrS0s;
+
+
 
   std::vector< std::vector< VectorFieldPointerType > > m_ptrVs; // image
   std::vector< std::vector< VectorImagePointerType > > m_ptrIs; // image
